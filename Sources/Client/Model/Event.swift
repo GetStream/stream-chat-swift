@@ -95,6 +95,8 @@ public enum Event: Decodable, Equatable {
     /// When the total count of unread messages (across all channels the user is a member) changed
     /// (when clients from the user affected by the change).
     case notificationMarkAllRead(MessageRead, EventType)
+    /// When the user mutes a channel.
+    case notificationChannelMutesUpdated(User, EventType)
     /// When the user mutes someone.
     case notificationMutesUpdated(User, ChannelId?, EventType)
     
@@ -150,6 +152,7 @@ public enum Event: Decodable, Equatable {
              .notificationMessageNew(_, _, _, _, let type),
              .notificationMarkRead(_, _, _, let type),
              .notificationMarkAllRead(_, let type),
+             .notificationChannelMutesUpdated(_, let type),
              .notificationMutesUpdated(_, _, let type),
              
              .notificationAddedToChannel(_, _, let type),
@@ -168,6 +171,7 @@ public enum Event: Decodable, Equatable {
         case .connectionChanged,
              .healthCheck,
              .pong,
+             .notificationChannelMutesUpdated,
              .notificationMarkAllRead:
             return nil
             
@@ -227,6 +231,7 @@ public enum Event: Decodable, Equatable {
              .reactionDeleted(_, _, let user, _, _),
              .typingStart(let user, _, _),
              .typingStop(let user, _, _),
+             .notificationChannelMutesUpdated(let user, _),
              .notificationMutesUpdated(let user, _, _):
             return user
         case .memberAdded(let member, _, _),
@@ -235,7 +240,22 @@ public enum Event: Decodable, Equatable {
         case .messageNew(let message, _, _, _, _),
              .notificationMessageNew(let message, _, _, _, _):
             return message.user
-        default:
+        case .connectionChanged,
+             .pong,
+             .userBanned,
+             .channelUpdated,
+             .channelDeleted,
+             .channelHidden,
+             .messageUpdated,
+             .messageDeleted,
+             .messageRead,
+             .notificationMarkRead,
+             .notificationMarkAllRead,
+             .notificationAddedToChannel,
+             .notificationRemovedFromChannel,
+             .notificationInvited,
+             .notificationInviteAccepted,
+             .notificationInviteRejected:
             return nil
         }
     }
@@ -245,6 +265,7 @@ public enum Event: Decodable, Equatable {
         case .notificationMarkAllRead,
              .notificationMarkRead,
              .notificationMessageNew,
+             .notificationChannelMutesUpdated,
              .notificationMutesUpdated,
              .notificationAddedToChannel,
              .notificationRemovedFromChannel,
@@ -396,6 +417,8 @@ public enum Event: Decodable, Equatable {
             self = try .reactionDeleted(reaction(), message(), user(), cid(), type)
             
         // Notifications
+        case .notificationChannelMutesUpdated:
+            self = try .notificationChannelMutesUpdated(container.decode(User.self, forKey: .me), type)
         case .notificationMutesUpdated:
             self = try .notificationMutesUpdated(container.decode(User.self, forKey: .me), cid(), type)
         case .notificationMarkRead:

@@ -182,6 +182,24 @@ public extension Client {
         request(endpoint: .showChannel(channel, user), completion)
     }
     
+    /// Mutes a channel.
+    /// - Parameters:
+    ///   - channel: a channel.
+    ///   - completion: an empty completion block.
+    @discardableResult
+    func mute(channel: Channel, _ completion: @escaping Client.Completion<MutedChannelResponse> = { _ in }) -> Cancellable {
+        request(endpoint: .muteChannel(channel), completion)
+    }
+    
+    /// Unmutes a channel.
+    /// - Parameters:
+    ///   - channel: a channel.
+    ///   - completion: an empty completion block.
+    @discardableResult
+    func unmute(channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
+        request(endpoint: .unmuteChannel(channel), completion)
+    }
+    
     /// Update channel data.
     /// - Parameters:
     ///   - channel: a channel.

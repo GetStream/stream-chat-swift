@@ -96,6 +96,7 @@ final class EventTests: XCTestCase {
              .notificationMessageNew,
              .notificationMarkRead,
              .notificationMarkAllRead,
+             .notificationChannelMutesUpdated,
              .notificationMutesUpdated,
              .notificationAddedToChannel,
              .notificationRemovedFromChannel,

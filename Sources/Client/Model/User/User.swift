@@ -22,6 +22,7 @@ public struct User: Codable {
         case lastActiveDate = "last_active"
         case isInvisible = "invisible"
         case devices
+        case mutedChannels = "channel_mutes"
         case mutedUsers = "mutes"
         case unreadMessagesCount = "unread_count"
         case unreadChannelsCount = "unread_channels"
@@ -87,6 +88,8 @@ public struct User: Codable {
     public internal(set) var devices: [Device]
     /// A list of devices.
     public internal(set) var currentDevice: Device?
+    /// Muted channels.
+    public internal(set) var mutedChannels: [MutedChannel]
     /// Muted users.
     public internal(set) var mutedUsers: [MutedUser]
     /// Teams the user belongs to. You need to enable multi-tenancy if you want to use this, else it'll be empty.
@@ -127,6 +130,7 @@ public struct User: Codable {
                 lastActiveDate: Date? = nil,
                 isInvisible: Bool = false,
                 isBanned: Bool = false,
+                mutedChannels: [MutedChannel] = [],
                 mutedUsers: [MutedUser] = [],
                 teams: [String] = []) {
         self.id = id
@@ -137,6 +141,7 @@ public struct User: Codable {
         self.lastActiveDate = lastActiveDate
         self.isInvisible = isInvisible
         self.isBanned = isBanned
+        self.mutedChannels = mutedChannels
         self.mutedUsers = mutedUsers
         self.teams = teams
         isOnline = false
@@ -161,6 +166,7 @@ public struct User: Codable {
         isInvisible = try container.decodeIfPresent(Bool.self, forKey: .isInvisible) ?? false
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
+        mutedChannels = try container.decodeIfPresent([MutedChannel].self, forKey: .mutedChannels) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUser].self, forKey: .mutedUsers) ?? []
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         extraData = User.decodeUserExtraData(from: decoder)

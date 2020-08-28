@@ -166,16 +166,22 @@ final class DarkChannelsViewController: ChannelsViewController {
         alertController.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
         
         alertController.addAction(.init(title: "Hide", style: .default, handler: { [weak self] _ in
-            if let self = self {
-                self.presenter.hide(channelPresenter)
-            }
+            self?.presenter.hide(channelPresenter)
         }))
         
         alertController.addAction(.init(title: "Hide and Clear History", style: .default, handler: { [weak self] _ in
-            if let self = self {
-                self.presenter.hide(channelPresenter, clearHistory: true)
-            }
+            self?.presenter.hide(channelPresenter, clearHistory: true)
         }))
+        
+        if Client.shared.user.mutedChannels.firstIndex(where: { $0.channel.cid == channelPresenter.channel.cid }) != nil {
+            alertController.addAction(.init(title: "Unmute", style: .default, handler: { [weak self] _ in
+                self?.presenter.unmute(channelPresenter)
+            }))
+        } else {
+            alertController.addAction(.init(title: "Mute", style: .default, handler: { [weak self] _ in
+                self?.presenter.mute(channelPresenter)
+            }))
+        }
         
         if (channelPresenter.channel.createdBy?.isCurrent ?? false) {
             alertController.addAction(.init(title: "Rename", style: .default, handler: { [weak self] _ in

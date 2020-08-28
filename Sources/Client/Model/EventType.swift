@@ -73,6 +73,8 @@ public enum EventType: String, Codable, CaseIterable {
     /// When the total count of unread messages (across all channels the user is a member) changes
     /// (when clients from the user affected by the change).
     case notificationMarkRead = "notification.mark_read"
+    /// When the user mutes a channel.
+    case notificationChannelMutesUpdated = "notification.channel_mutes_updated"
     /// When the user mutes someone.
     case notificationMutesUpdated = "notification.mutes_updated"
     
