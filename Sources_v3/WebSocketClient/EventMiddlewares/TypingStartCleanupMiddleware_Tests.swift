@@ -16,7 +16,7 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
         super.setUp()
         
         currentUser = User(id: "Luke")
-        middleware = TypingStartCleanupMiddleware(excludedUserIds: [currentUser.id])
+        middleware = TypingStartCleanupMiddleware(excludedUserIds: { [self.currentUser.id] })
         
         time = VirtualTime()
         VirtualTimeTimer.time = time

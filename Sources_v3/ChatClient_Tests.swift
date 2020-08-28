@@ -325,6 +325,11 @@ class ChatClient_Tests: StressTestCase {
             // WebSocketClient connect endpoint is updated
             Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(client.webSocketClient.connectEndpoint))
             
+            // New user id is used in `TypingStartCleanupMiddleware`
+            Assert.willBeTrue(
+                client.webSocketClient.typingMiddleware?.excludedUserIds().contains(client.currentUserId) == true
+            )
+            
             // WebSocketClient connect is called
             Assert.willBeEqual(self.testEnv.webSocketClient?.connect_calledCounter, 1)
         }
@@ -370,6 +375,11 @@ class ChatClient_Tests: StressTestCase {
             
             // WebSocketClient connect endpoint is updated
             Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(client.webSocketClient.connectEndpoint))
+            
+            // New user id is used in `TypingStartCleanupMiddleware`
+            Assert.willBeTrue(
+                client.webSocketClient.typingMiddleware?.excludedUserIds().contains(newUserId) == true
+            )
             
             // WebSocketClient connect is called
             Assert.willBeEqual(self.testEnv.webSocketClient?.connect_calledCounter, 1)
@@ -441,6 +451,11 @@ class ChatClient_Tests: StressTestCase {
             
             // New user id is set
             Assert.willBeEqual(client.currentUserId, newUser.userId)
+            
+            // New user id is used in `TypingStartCleanupMiddleware`
+            Assert.willBeTrue(
+                client.webSocketClient.typingMiddleware?.excludedUserIds().contains(newUser.userId) == true
+            )
             
             // Make sure `guest` endpoint is called
             Assert.willBeEqual(
@@ -740,5 +755,11 @@ extension WebSocketClientMock {
             eventDecoder: EventDecoder<DefaultDataTypes>(),
             eventNotificationCenter: .init()
         )
+    }
+}
+
+private extension WebSocketClient {
+    var typingMiddleware: TypingStartCleanupMiddleware<DefaultDataTypes>? {
+        eventNotificationCenter.middlewares.compactMap { $0 as? TypingStartCleanupMiddleware<DefaultDataTypes> }.first
     }
 }
