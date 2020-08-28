@@ -22,16 +22,17 @@ public class Controller {
     public internal(set) var state: State = .inactive {
         didSet {
             callback {
-                self.stateDelegate?.controller(self, didChangeState: self.state)
+                self.stateMulticastDelegate.invoke { $0.controller(self, didChangeState: self.state) }
             }
         }
     }
 
-    /// Delegate for getting updates on `state` changes.
-    internal weak var stateDelegate: ControllerStateDelegate?
-    
     /// The queue which is used to perform callback calls. The default value is `.main`.
     public var callbackQueue: DispatchQueue = .main
+    
+    /// The delegate use for controller state update callbacks.
+    // swiftlint:disable:next weak_delegate
+    internal var stateMulticastDelegate: MulticastDelegate<ControllerStateDelegate> = .init()
 }
 
 extension Controller {
@@ -63,14 +64,16 @@ public extension ControllerStateDelegate {
 protocol DelegateCallable {
     associatedtype Delegate
     func callback(_ action: @escaping () -> Void)
-    var anyDelegate: Delegate { get }
+    
+    /// The multicast delegate wrapper for all delegates of the controller
+    var multicastDelegate: MulticastDelegate<Delegate> { get }
 }
 
 extension DelegateCallable {
     /// A helper function to ensure the delegate callback is performed using the `callback` method.
     func delegateCallback(_ callback: @escaping (Delegate) -> Void) {
         self.callback {
-            callback(self.anyDelegate)
+            self.multicastDelegate.invoke(callback)
         }
     }
 }

@@ -49,13 +49,13 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
         )
 
     /// A type-erased delegate.
-    private(set) var anyDelegate: AnyChannelListControllerDelegate<ExtraData>? {
+    var multicastDelegate: MulticastDelegate<AnyChannelListControllerDelegate<ExtraData>> = .init() {
         didSet {
-            // Set `Controller` `ControllerStateDelegate` delegate
-            stateDelegate = anyDelegate
+            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
+            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
         }
     }
-
+    
     /// Used for observing the database for changes.
     private(set) lazy var channelListObserver: ListDatabaseObserver<ChannelModel<ExtraData>, ChannelDTO> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
@@ -68,12 +68,16 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
         
         observer.onChange = { [unowned self] changes in
             self.delegateCallback {
-                $0?.controller(self, didChangeChannels: changes)
+                $0.controller(self, didChangeChannels: changes)
             }
         }
         
         return observer
     }()
+    
+    /// An wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
+    @available(iOS 13, *)
+    public private(set) lazy var observableObject: ObservableObject = ObservableObject(controller: self)
     
     private let environment: Environment
     
@@ -129,7 +133,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     /// alive if you want keep receiving updates.
     public func setDelegate<Delegate: ChannelListControllerDelegateGeneric>(_ delegate: Delegate)
         where Delegate.ExtraData == ExtraData {
-        anyDelegate = AnyChannelListControllerDelegate(delegate)
+        multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(delegate)
     }
 }
 
@@ -179,8 +183,8 @@ extension ChannelListControllerGeneric where ExtraData == DefaultDataTypes {
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
     /// instead to set the delegate, if you're using custom extra data types.
     public weak var delegate: ChannelListControllerDelegate? {
-        set { anyDelegate = AnyChannelListControllerDelegate(newValue) }
-        get { anyDelegate?.wrappedDelegate as? ChannelListControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChannelListControllerDelegate }
     }
 }
 

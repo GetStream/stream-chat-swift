@@ -122,10 +122,10 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     )
     
     /// A type-erased delegate.
-    private(set) var anyDelegate: AnyChannelControllerDelegate<ExtraData>? {
+    var multicastDelegate: MulticastDelegate<AnyChannelControllerDelegate<ExtraData>> = .init() {
         didSet {
-            // Set `Controller` `ControllerStateDelegate` delegate
-            stateDelegate = anyDelegate
+            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
+            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
         }
     }
 
@@ -179,7 +179,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
                 itemCreator: ChannelModel<ExtraData>.create
             )
             observer.onChange { change in
-                self.delegateCallback { $0?.channelController(self, didUpdateChannel: change) }
+                self.delegateCallback { $0.channelController(self, didUpdateChannel: change) }
             }
 
             return observer
@@ -195,7 +195,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
             )
             observer.onChange = { changes in
                 self.delegateCallback {
-                    $0?.channelController(self, didUpdateMessages: changes)
+                    $0.channelController(self, didUpdateMessages: changes)
                 }
             }
 
@@ -262,12 +262,12 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
         eventObservers = [
             MemberEventObserver(notificationCenter: center, cid: channelId) { [unowned self] event in
                 self.delegateCallback {
-                    $0?.channelController(self, didReceiveMemberEvent: event)
+                    $0.channelController(self, didReceiveMemberEvent: event)
                 }
             },
             TypingEventObserver(notificationCenter: center, cid: channelId) { [unowned self] event in
                 self.delegateCallback {
-                    $0?.channelController(self, didReceiveTypingEvent: event)
+                    $0.channelController(self, didReceiveTypingEvent: event)
                 }
             }
         ]
@@ -283,7 +283,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     /// alive if you want keep receiving updates.
     public func setDelegate<Delegate: ChannelControllerDelegateGeneric>(_ delegate: Delegate)
         where Delegate.ExtraData == ExtraData {
-        anyDelegate = AnyChannelControllerDelegate(delegate)
+        multicastDelegate.mainDelegate = AnyChannelControllerDelegate(delegate)
     }
 }
 
@@ -566,8 +566,8 @@ public extension ChannelControllerGeneric where ExtraData == DefaultDataTypes {
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
     /// instead to set the delegate, if you're using custom extra data types.
     var delegate: ChannelControllerDelegate? {
-        set { anyDelegate = AnyChannelControllerDelegate(newValue) }
-        get { anyDelegate?.wrappedDelegate as? ChannelControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyChannelControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChannelControllerDelegate }
     }
 }
 
