@@ -38,6 +38,8 @@ public final class Channel: Codable {
         case members
         /// The team the channel belongs to.
         case team
+        /// The total number of members in the channel
+        case memberCount = "member_count"
     }
     
     /// Coding keys for the encoding.
@@ -75,6 +77,16 @@ public final class Channel: Codable {
     var membership: Member?
     /// A list of channel members.
     public internal(set) var members = Set<Member>()
+    
+    /// A members count.
+    public var memberCount: Int { memberCountAtomic.get() }
+    
+    private(set) lazy var memberCountAtomic = Atomic<Int>(0, callbackQueue: .main) { [weak self] _, _ in
+        if let self = self {
+            self.onUpdate?(self)
+        }
+    }
+    
     /// A list of channel watchers.
     public internal(set) var watchers = Set<User>()
     /// A list of users to invite in the channel.
@@ -166,6 +178,7 @@ public final class Channel: Codable {
         self.namingStrategy = namingStrategy
         self.config = config
         didLoad = false
+        memberCountAtomic.set(members.count)
     }
     
     public required init(from decoder: Decoder) throws {
@@ -187,6 +200,7 @@ public final class Channel: Codable {
         team = try container.decodeIfPresent(String.self, forKey: .team) ?? ""
         didLoad = true
         extraData = Channel.decodeChannelExtraData(from: decoder)
+        memberCountAtomic.set(try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? members.count)
     }
     
     /// Safely decode channel extra data and if it fail try to decode only default properties: name, imageURL.
@@ -219,7 +233,7 @@ public final class Channel: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: EncodingKeys.self)
         extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a channel extra data")
-      
+        
         try container.encode(team, forKey: .team)
         
         var allMembers = members

@@ -57,8 +57,10 @@ extension Client {
     /// - Returns: an URLSessionTask that can be canncelled.
     @discardableResult
     func request<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> Cancellable {
-        let task = prepareRequest(endpoint: endpoint, completion)
+        let loggerTaskId = UUID()
+        let task = prepareRequest(endpoint: endpoint, loggerTaskId: loggerTaskId, completion)
         task?.resume()
+        logger?.logTaskStarted("URL request to /\(endpoint.path)", taskId: loggerTaskId)
         return Subscription { _  in task?.cancel() }
     }
     
@@ -73,11 +75,16 @@ extension Client {
     func request<T: Decodable>(endpoint: Endpoint,
                                progress: @escaping Progress,
                                completion: @escaping Completion<T>) -> Cancellable {
-        let task = prepareRequest(endpoint: endpoint, completion)
+        let loggerTaskId = UUID()
+        let task = prepareRequest(endpoint: endpoint, loggerTaskId: loggerTaskId, completion)
+        
         if let taskIdentifier = task?.taskIdentifier {
             urlSessionTaskDelegate.addProgessHandler(id: taskIdentifier, progress)
         }
+        
         task?.resume()
+        logger?.logTaskStarted("URL request to /\(endpoint.path)", taskId: loggerTaskId)
+        
         return Subscription { _  in task?.cancel() }
     }
     
@@ -94,12 +101,15 @@ extension Client {
             : encodeRequest(for: endpoint, url: url).get()
     }
     
-    private func prepareRequest<T: Decodable>(endpoint: Endpoint, _ completion: @escaping Completion<T>) -> URLSessionTask? {
+    private func prepareRequest<T: Decodable>(endpoint: Endpoint,
+                                              loggerTaskId: UUID? = nil,
+                                              _ completion: @escaping Completion<T>) -> URLSessionTask? {
         if let logger = logger {
-            logger.log("Request: \(String(describing: endpoint).prefix(100))...", level: .debug)
+            logger.log("Preparing a \(endpoint.method.rawValue.uppercased()) request to /\(endpoint.path)...", level: .debug)
         }
         
         if isExpiredTokenInProgress {
+            logger?.log("The token was expired. Add the request to a waiting list", level: .debug)
             addWaitingRequest(endpoint: endpoint, completion)
             return nil
         }
@@ -108,9 +118,13 @@ extension Client {
             let task: URLSessionDataTask
             let urlRequest = try self.encodeRequest(for: endpoint)
             
-            task = urlSession.dataTask(with: urlRequest) { [unowned self] in
+            task = urlSession.dataTask(with: urlRequest) { [unowned self] data, response, error in
+                self.logger?.logTaskFinished(taskId: loggerTaskId)
+                
                 // Parse the response.
-                self.parse(data: $0, response: $1, error: $2, completion: completion)
+                let parsingloggerTaskId = self.logger?.logTaskStarted("Parsing the JSON response from /\(endpoint.path)")
+                self.parse(data: data, response: response, error: error, completion: completion)
+                self.logger?.logTaskFinished(taskId: parsingloggerTaskId)
                 
                 // Check expired Token on the request.
                 if self.isExpiredTokenInProgress {

@@ -19,6 +19,7 @@ public struct ChannelsQuery: Encodable {
         case presence
         case pagination
         case messagesLimit = "message_limit"
+        case membersLimit = "member_limit"
     }
     
     /// A filter for the query (see `Filter`).
@@ -29,6 +30,11 @@ public struct ChannelsQuery: Encodable {
     public let pagination: Pagination
     /// A number of messages inside each channel.
     public let messagesLimit: Pagination
+    
+    /// The maximum number of Member detail object included in the response. This value doesn't affect to total number
+    /// of members reported in the channel.
+    public let membersLimit: Int
+    
     /// Query options.
     public let options: QueryOptions
     /// An hash id for filter and sorting properties.
@@ -39,12 +45,14 @@ public struct ChannelsQuery: Encodable {
     ///   - filter: a channels filter.
     ///   - sort: a sorting list for channels.
     ///   - pagination: a channels pagination.
-    ///   - messagesLimit: a messages pagination for the each channel.
+    ///   - messagesLimit: a messages pagination for each channel.
+    ///   - membersLimit: a members limit for each channel.
     ///   - options: a query options (see `QueryOptions`).
     public init(filter: Filter,
                 sort: [Sorting] = [],
                 pagination: Pagination = [.channelsPageSize],
                 messagesLimit: Pagination = [.messagesPageSize],
+                membersLimit: Int = 100,
                 options: QueryOptions = []) {
         if case .none = filter {
             ClientLogger.log("⚠️",
@@ -58,6 +66,9 @@ public struct ChannelsQuery: Encodable {
         self.pagination = pagination
         self.messagesLimit = messagesLimit
         self.options = options
+        
+        ClientLogger.logAssert(membersLimit >= 0 && membersLimit <= 100, "Member limit must be between 0-100.")
+        self.membersLimit = min(100, max(membersLimit, 0))
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -71,6 +82,8 @@ public struct ChannelsQuery: Encodable {
         try container.encode(messagesLimit.limit ?? 0, forKey: .messagesLimit)
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
+        
+        try container.encode(membersLimit, forKey: .membersLimit)
     }
 }
 
