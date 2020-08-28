@@ -141,9 +141,13 @@ public protocol ChannelExtraData: ExtraData {}
 public protocol AnyChannel {}
 extension ChannelModel: AnyChannel {}
 
-extension ChannelModel: Equatable {
+extension ChannelModel: Hashable {
     public static func == (lhs: ChannelModel<ExtraData>, rhs: ChannelModel<ExtraData>) -> Bool {
         lhs.cid == rhs.cid
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(cid)
     }
 }
 
