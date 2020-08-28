@@ -67,12 +67,17 @@ extension LoginViewController {
         case .swiftUISimpleChatIndexPath:
             if #available(iOS 13, *) {
                 logIn(apiKey: apiKey, userId: userId, userName: userName, token: token) {
+                    // Ideally, we'd pass the `Client` instance as the environment object and create the list controller later.
+                    let listController = chatClient.channelListController(
+                        query: .init(filter: .in("members", ["broken-waterfall-5"]))
+                    )
+                    
                     DispatchQueue.main.async {
                         UIView.transition(with: self.view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
                             self.view.window?.rootViewController = UIHostingController(
                                 rootView:
                                 NavigationView {
-                                    ChannelListView()
+                                    ChannelListView(channelList: listController.observableObject)
                                 }
                             )
                         })

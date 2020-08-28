@@ -2,23 +2,21 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import StreamChatClient
 import SwiftUI
 
 @available(iOS 13, *)
 struct ChannelListView: View {
-    @State var channels = [String]()
+    // TODO: It's safer to use `@StateObject` here because `@ObservedObject` can sometimes release the
+    // reference and this will crash.
+    @ObservedObject var channelList: ChannelListController.ObservableObject
 
     var body: some View {
         VStack {
-            List(channels, id: \.self) { channelId in
-                NavigationLink(destination: ChatView(channelId: channelId)) {
-                    Text(channelId)
-                }
-            }.onAppear(perform: loadChannels)
-        }.navigationBarTitle("Channels")
-    }
-    
-    func loadChannels() {
-        channels = ["# StreamChat", "# Foobar", "# Appleseed"]
+            List(channelList.channels, id: \.self) { channel in
+                Text(channel.extraData.name ?? "missing channel name")
+            }
+        }
+        .navigationBarTitle("Channels")
     }
 }
