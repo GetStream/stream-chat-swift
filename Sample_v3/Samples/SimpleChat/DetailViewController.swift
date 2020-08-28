@@ -134,6 +134,10 @@ extension DetailViewController: ChannelControllerDelegate {
         
         tableView.endUpdates()
     }
+    
+    func channelController(_ channelController: ChannelController, didReceiveTypingEvent event: TypingEvent) {
+        log.debug("\(event.userId) \(event.isTyping ? "started" : "stopped") typing.")
+    }
 }
 
 extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
