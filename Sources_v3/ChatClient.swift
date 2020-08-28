@@ -55,7 +55,10 @@ public class Client<ExtraData: ExtraDataTypes> {
             
     /// The notification center used to send and receive notifications about incoming events.
     private(set) lazy var eventNotificationCenter = environment.notificationCenterBuilder([
-        EventDataProcessorMiddleware<ExtraData>(database: databaseContainer)
+        EventDataProcessorMiddleware<ExtraData>(database: databaseContainer),
+        TypingStartCleanupMiddleware<ExtraData>(
+            excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) }
+        )
     ])
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
@@ -374,7 +377,7 @@ public class Client<ExtraData: ExtraDataTypes> {
         // Set up a new user id
         currentUserId = userId
         
-        // Set a new WebSocketClient connect endpoint and refresh the middlewares.
+        // Set a new WebSocketClient connect endpoint
         webSocketClient.connectEndpoint = webSocketConnectEndpoint(userId: userId, role: role, extraData: extraData)
         
         // Reset all existing data
