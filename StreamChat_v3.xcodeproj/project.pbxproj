@@ -112,6 +112,7 @@
 		7988F6B724D15F100004219B /* StressTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7988F6B624D15F100004219B /* StressTestCase.swift */; };
 		7990503224CEEAA600689CDC /* MessageDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7990503124CEEAA600689CDC /* MessageDTO_Tests.swift */; };
 		7991D83B24F5427E00D21BA3 /* EphemeralValuesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */; };
+		7991D83F24F8F1BF00D21BA3 /* ChatClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83E24F8F1BF00D21BA3 /* ChatClient_Mock.swift */; };
 		799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */; };
 		799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */; };
 		799C941F247D2F80001F1104 /* Sources_v3.h in Headers */ = {isa = PBXBuildFile; fileRef = 799C941D247D2F80001F1104 /* Sources_v3.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -405,6 +406,7 @@
 		7988F6B624D15F100004219B /* StressTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressTestCase.swift; sourceTree = "<group>"; };
 		7990503124CEEAA600689CDC /* MessageDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDTO_Tests.swift; sourceTree = "<group>"; };
 		7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EphemeralValuesContainer.swift; sourceTree = "<group>"; };
+		7991D83E24F8F1BF00D21BA3 /* ChatClient_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClient_Mock.swift; sourceTree = "<group>"; };
 		799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy.swift; sourceTree = "<group>"; };
 		799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketReconnectionStrategy_Tests.swift; sourceTree = "<group>"; };
 		799C941B247D2F80001F1104 /* StreamChatClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -866,6 +868,7 @@
 			children = (
 				79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */,
 				799C942F247D2FB9001F1104 /* ChatClient_Tests.swift */,
+				7991D83E24F8F1BF00D21BA3 /* ChatClient_Mock.swift */,
 				7962958A2481473A0078EB53 /* Config */,
 				799C9426247D2FB9001F1104 /* WebSocketClient */,
 				799C9435247D2FB9001F1104 /* APIClient */,
@@ -1635,6 +1638,7 @@
 				799C947D247E6114001F1104 /* TestError.swift in Sources */,
 				799C946A247D791A001F1104 /* AssertAsync.swift in Sources */,
 				F69C4BC624F66CC200A3D740 /* EventLogger.swift in Sources */,
+				7991D83F24F8F1BF00D21BA3 /* ChatClient_Mock.swift in Sources */,
 				792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */,
 				79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */,
 				79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */,
