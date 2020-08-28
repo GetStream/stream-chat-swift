@@ -27,18 +27,21 @@ public final class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Cont
     private lazy var currentUserObserver = createUserObserver()
         .onChange { [unowned self] change in
             self.delegateCallback {
-                $0?.currentUserController(self, didChangeCurrentUser: change)
+                $0.currentUserController(self, didChangeCurrentUser: change)
             }
         }
         .onFieldChange(\.unreadCount) { [unowned self] change in
             self.delegateCallback {
-                $0?.currentUserController(self, didChangeCurrentUserUnreadCount: change.unreadCount)
+                $0.currentUserController(self, didChangeCurrentUserUnreadCount: change.unreadCount)
             }
         }
 
     /// A type-erased delegate.
-    private(set) var anyDelegate: AnyCurrentUserControllerDelegate<ExtraData>? {
-        didSet { stateDelegate = anyDelegate }
+    private(set) var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate<ExtraData>> = .init() {
+        didSet {
+            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
+            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+        }
     }
     
     /// The currently logged-in user.
@@ -277,7 +280,7 @@ public extension CurrentUserControllerGeneric {
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     func setDelegate<Delegate: CurrentUserControllerDelegateGeneric>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData {
-        anyDelegate = delegate.flatMap(AnyCurrentUserControllerDelegate.init)
+        multicastDelegate.mainDelegate = delegate.flatMap(AnyCurrentUserControllerDelegate.init)
     }
 }
 
@@ -288,7 +291,7 @@ public extension CurrentUserController {
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
     /// instead to set the delegate, if you're using custom extra data types.
     var delegate: CurrentUserControllerDelegate? {
-        set { anyDelegate = AnyCurrentUserControllerDelegate(newValue) }
-        get { anyDelegate?.wrappedDelegate as? CurrentUserControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyCurrentUserControllerDelegate(newValue) }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? CurrentUserControllerDelegate }
     }
 }

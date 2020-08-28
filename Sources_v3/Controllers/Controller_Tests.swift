@@ -12,7 +12,7 @@ class Controller_Tests: XCTestCase {
         let delegate = TestDelegate()
         
         delegate.expectedQueueId = delegateQueueId
-        controller.stateDelegate = delegate
+        controller.stateMulticastDelegate.mainDelegate = delegate
         controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
         
         // Check if state is `inactive` initially.
