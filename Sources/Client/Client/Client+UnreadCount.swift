@@ -107,8 +107,11 @@ extension Client {
         
         weakChannels.forEach { $0.value?.unreadCountAtomic.set(maxUnreadCount) }
         
-        // Update watcher count.
+        // Update watchers count.
         weakChannels.forEach { $0.value?.watcherCountAtomic.set(channel.watcherCount) }
+        
+        // Update members count.
+        weakChannels.forEach { $0.value?.memberCountAtomic.set(channel.memberCount) }
         
         watchingChannelsAtomic.update { watchingChannels in
             var watchingChannels = watchingChannels
