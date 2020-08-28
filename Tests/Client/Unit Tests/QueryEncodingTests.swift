@@ -40,9 +40,10 @@ final class QueryEncodingTests: XCTestCase {
                                     sort: [.init("name", isAscending: true)],
                                     pagination: self.complexPagination(),
                                     messagesLimit: self.mediumPagination(),
+                                    membersLimit: 1,
                                     options: .presence) }
 
-        let expectedString = #"{"offset":10,"sort":[{"field":"name","direction":1}],"filter_conditions":{"id":42},"message_limit":10,"presence":true,"limit":10,"id_lt":"92","id_gt":"42"}"#
+        let expectedString = #"{"offset":10,"sort":[{"field":"name","direction":1}],"filter_conditions":{"id":42},"message_limit":10,"member_limit":1,"presence":true,"limit":10,"id_lt":"92","id_gt":"42"}"#
 
         AssertJSONEqual(Data(expectedString.utf8), try encode(query()))
     }
