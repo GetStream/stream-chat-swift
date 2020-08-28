@@ -78,8 +78,14 @@ public final class Channel: Codable {
     /// A list of channel members.
     public internal(set) var members = Set<Member>()
     
-    // TODO: Implement updates
-    public let memberCount: Int
+    /// A members count.
+    public var memberCount: Int { memberCountAtomic.get() }
+    
+    private(set) lazy var memberCountAtomic = Atomic<Int>(0, callbackQueue: .main) { [weak self] _, _ in
+        if let self = self {
+            self.onUpdate?(self)
+        }
+    }
     
     /// A list of channel watchers.
     public internal(set) var watchers = Set<User>()
@@ -171,9 +177,8 @@ public final class Channel: Codable {
         self.team = team
         self.namingStrategy = namingStrategy
         self.config = config
-        // TODO: properly?
-        self.memberCount = members.count
         didLoad = false
+        memberCountAtomic.set(members.count)
     }
     
     public required init(from decoder: Decoder) throws {
@@ -184,10 +189,6 @@ public final class Channel: Codable {
         cid = try container.decode(ChannelId.self, forKey: .cid)
         let members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
         self.members = Set<Member>(members)
-        
-        // TODO: properly?
-        self.memberCount = try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? 0
-        
         invitedMembers = Set<Member>()
         let config = try container.decode(Config.self, forKey: .config)
         self.config = config
@@ -199,6 +200,7 @@ public final class Channel: Codable {
         team = try container.decodeIfPresent(String.self, forKey: .team) ?? ""
         didLoad = true
         extraData = Channel.decodeChannelExtraData(from: decoder)
+        memberCountAtomic.set(try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? members.count)
     }
     
     /// Safely decode channel extra data and if it fail try to decode only default properties: name, imageURL.
@@ -231,7 +233,7 @@ public final class Channel: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: EncodingKeys.self)
         extraData?.encodeSafely(to: encoder, logMessage: "📦 when encoding a channel extra data")
-      
+        
         try container.encode(team, forKey: .team)
         
         var allMembers = members
