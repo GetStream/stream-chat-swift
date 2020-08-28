@@ -265,7 +265,7 @@ def setCIEnvironmentVariable(testPlanFile)
 end
 
 desc "Runs tests for v3 in Debug config"
-lane :test_v3 do
+lane :test_v3 do |options|
 
   setCIEnvironmentVariable("../Tests_v3/StreamChatClientTestPlan.xctestplan")
 
@@ -275,6 +275,7 @@ lane :test_v3 do
     testplan: "StreamChatClientTestPlan",
     configuration: "Debug",
     clean: true,
+    devices: options[:device],
     )
 end
 
