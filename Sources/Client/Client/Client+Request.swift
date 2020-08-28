@@ -119,19 +119,12 @@ extension Client {
             let urlRequest = try self.encodeRequest(for: endpoint)
             
             task = urlSession.dataTask(with: urlRequest) { [unowned self] data, response, error in
-                if let taskId = loggerTaskId {
-                    self.logger?.logTaskFinished(taskId: taskId)
-                }
+                self.logger?.logTaskFinished(taskId: loggerTaskId)
                 
-                if let logger = self.logger {
-                    logger.logTaskDuration("Parsing the JSON response from /\(endpoint.path)") {
-                        // Parse the response.
-                        self.parse(data: data, response: response, error: error, completion: completion)
-                    }
-                } else {
-                    // Parse the response.
-                    self.parse(data: data, response: response, error: error, completion: completion)
-                }
+                // Parse the response.
+                let parsingloggerTaskId = self.logger?.logTaskStarted("Parsing the JSON response from /\(endpoint.path)")
+                self.parse(data: data, response: response, error: error, completion: completion)
+                self.logger?.logTaskFinished(taskId: parsingloggerTaskId)
                 
                 // Check expired Token on the request.
                 if self.isExpiredTokenInProgress {

@@ -81,7 +81,7 @@ public final class ClientLogger {
         public static let webSocketInfo = Options(rawValue: 1 << 21)
         /// Logs for a database 💽. [Info]
         public static let databaseInfo = Options(rawValue: 1 << 23)
-
+        
         /// All errors.
         public static let error: Options = [.requestsError, .webSocketError, .notificationsError, databaseError]
         
@@ -128,7 +128,7 @@ public final class ClientLogger {
             return intersectedOptions.isEnabled ? ClientLogger(icon: icon, level: .level(intersectedOptions)) : nil
         }
     }
-  
+    
     /// Controls whether connection error dialogue is shown on WebSocket errors.
     /// you can check `showConnectionErrorAlert` function to see how the dialogue is being shown.
     public static var showConnectionErrorAlert = false
@@ -229,23 +229,39 @@ public final class ClientLogger {
         lastTime = startTime
     }
     
-    public func logTaskDuration(_ description: String, task: () -> Void) {
-        let id = logTaskStarted(description)
-        task()
-        logTaskFinished(taskId: id)
-    }
-    
+    /// Creates a measurement log task. Call it before a heavy operation then call `logTaskFinished` with a specified `taskId`.
+    ///
+    /// Example:
+    /// ```
+    /// let taskId = logger.logTaskStarted("Parsing the JSON response")
+    /// // Parse data...
+    /// logger.logTaskFinished(taskId: taskId)
+    /// ```
+    /// The output will be like this:
+    /// ```
+    /// [28 Aug 11:01:07.047] [DEBUG] ⏱ Parsing the JSON response finished in 0.144 seconds.
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - message: a log message.
+    ///   - taskId: a measurement task id `UUID`. You can skip this parameter and use the generated id from the function result.
+    /// - Returns: a generated task id `UUID`.
     @discardableResult
-    public func logTaskStarted(_ description: String, taskId: UUID = .init()) -> UUID {
+    public func logTaskStarted(_ message: String, taskId: UUID = .init()) -> UUID {
         measuredTasksStart.update {
             var tasks = $0
-            tasks[taskId] = (start: CACurrentMediaTime(), description: description)
+            tasks[taskId] = (start: CACurrentMediaTime(), description: message)
             return tasks
         }
+        
         return taskId
     }
-
-    public func logTaskFinished(taskId id: UUID) {
+    
+    /// Finishes the measurement log task and logs the result.
+    /// - Parameter id: a measurement task id.
+    public func logTaskFinished(taskId id: UUID?) {
+        guard let id = id else { return }
+        
         guard let task = measuredTasksStart[id] else {
             log("Trying to finish a logger measuring task with \(id) but the task wasn't started.", level: .error)
             return
@@ -254,9 +270,8 @@ public final class ClientLogger {
         let duration = CACurrentMediaTime() - task.start
         log("⏱ \(task.description) finished in \(String(format: "%.3f", duration)) seconds.", level: .debug)
     }
-
+    
     /// Log a request.
-    ///
     /// - Parameter request: an URL request.
     public func log(_ request: URLRequest, isUploading: Bool = false) {
         log("➡️ \(request.httpMethod ?? "Request") \(request.description)")
@@ -402,7 +417,7 @@ public final class ClientLogger {
             ClientLogger.log(icon, dateTime, level, message)
         }
     }
-
+    
     /// Performs `Swift.assert` and stops program execution if `condition` evaluated to false. In RELEASE builds only
     /// logs the failure.
     ///
@@ -413,13 +428,13 @@ public final class ClientLogger {
                                  _ message: @autoclosure () -> String,
                                  file: StaticString = #file,
                                  line: UInt = #line) {
-
+        
         guard condition == false else { return }
         let evaluatedMessage = message()
         Swift.assert(condition, evaluatedMessage, file: file, line: line)
         ClientLogger.log("", dateTime: "", level: .error, "Assertion failure in \(file)[\(line)]: " + evaluatedMessage)
     }
-
+    
     /// Triggers `Swift.assertionFailure`. In RELEASE builds only logs the failure.
     ///
     /// - Parameter message: A custom message to log.
@@ -427,7 +442,7 @@ public final class ClientLogger {
         Swift.assertionFailure(message, file: file, line: line)
         ClientLogger.log("", dateTime: "", level: .error, "Assertion failure \(file)[\(line)]: " + message)
     }
-
+    
     static func showConnectionAlert(_ error: Error, jsonError: ClientErrorResponse?) {
         #if DEBUG
         guard ClientLogger.showConnectionErrorAlert else { return }
