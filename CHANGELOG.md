@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### 🔄 Changed
+
+# [2.3.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.3.1)
+_August 31, 2020_
+
+### 🔄 Changed
 - `User` changed from struct to class, to prevent `Atomic` crashes [#450](https://github.com/GetStream/stream-chat-swift/issues/450)
 
 ### 🐞 Fixed
