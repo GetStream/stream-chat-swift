@@ -5,7 +5,7 @@
 </p>
 
 <p align="center">
-  <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5.1-orange.svg" /></a>
+  <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-5.2-orange.svg" /></a>
   <a href="https://github.com/GetStream/stream-chat-swift/actions"><img src="https://github.com/GetStream/stream-chat-swift/workflows/CI/badge.svg" /></a>
 </p>
 
@@ -45,7 +45,7 @@ You'll typically want to start out using the UI components, and implement your c
 
 - iOS 11+/macOS 10.15+
 - Xcode 11.2+
-- Swift 5.1
+- Swift 5.2
 - CocoaPods 1.7+
 - Carthage 0.33.0+
 
@@ -155,7 +155,7 @@ Now you can build your app and use `StreamChat`.
 
 You can directly add dependency in Xcode 11+ using repo url, or in your `Package.swift` file, add to `dependencies`:
 ```swift
-.package(url: "https://github.com/GetStream/stream-chat-swift.git", from: "1.5.5"),
+.package(url: "https://github.com/GetStream/stream-chat-swift.git", from: "2.3.0"),
 ```
 
 ## Supported features
