@@ -509,7 +509,7 @@ extension AssertAsync {
         line: UInt = #line
     ) {
         AssertAsync {
-            Assert.canBeReleased(&object, timeout: timeout, message: message())
+            Assert.canBeReleased(&object, timeout: timeout, message: message(), file: file, line: line)
         }
     }
 }
