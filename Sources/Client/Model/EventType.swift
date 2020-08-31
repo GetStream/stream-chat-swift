@@ -98,6 +98,7 @@ public enum EventType: String, Codable, CaseIterable {
     /// All channel event types.
     public static var channelEventTypes: Set<EventType> {
         [.userBanned,
+         .userUnbanned,
          .userStartWatching,
          .userStopWatching,
          .typingStart,
