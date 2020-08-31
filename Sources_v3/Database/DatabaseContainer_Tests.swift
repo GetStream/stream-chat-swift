@@ -92,10 +92,10 @@ class DatabaseContainer_Tests: StressTestCase {
         XCTAssertEqual(testObject?.resetEphemeralValuesCalled, false)
         
         // Get rid of the original database
-        database = nil
+        AssertAsync.canBeReleased(&database)
         
         // Create a new database with the same underlying SQLite store
-        let newDatabase = try DatabaseContainerMock(
+        var newDatabase: DatabaseContainer! = try DatabaseContainerMock(
             kind: .onDisk(databaseFileURL: dbURL),
             modelName: "TestDataModel",
             bundle: Bundle(for: DatabaseContainer_Tests.self)
@@ -106,6 +106,9 @@ class DatabaseContainer_Tests: StressTestCase {
             .first
         
         AssertAsync.willBeEqual(testObject2?.resetEphemeralValuesCalled, true)
+        
+        // Wait for the new DB instance to be released
+        AssertAsync.canBeReleased(&newDatabase)
     }
 }
 
