@@ -129,6 +129,8 @@ public class Client<ExtraData: ExtraDataTypes> {
         }
     }()
     
+    private(set) lazy var internetConnection = environment.internetConnection()
+    
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
     
@@ -438,6 +440,8 @@ extension Client {
         var eventDecoderBuilder: () -> EventDecoder<ExtraData> = EventDecoder<ExtraData>.init
         
         var notificationCenterBuilder: ([EventMiddleware]) -> EventNotificationCenter = EventNotificationCenter.init
+        
+        var internetConnection: () -> InternetConnection = { InternetConnection() }
     }
 }
 
