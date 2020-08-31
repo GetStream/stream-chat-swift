@@ -2,6 +2,8 @@
 --header "\nCopyright © {year} Stream.io Inc. All rights reserved.\n"
 --swiftversion 5.2
 
+--exclude **/*_Vendor.swift
+
 # Rules inferred from Swift Standard Library:
 --disable anyObjectProtocol, wrapMultilineStatementBraces
 --indent 4
