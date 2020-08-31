@@ -371,6 +371,12 @@
                 <a href="../Structs.html#/s:16StreamChatClient16MessagesResponseV">MessagesResponse</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MutedChannel.html">MutedChannel</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MutedChannelResponse.html">MutedChannelResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/MutedUser.html">MutedUser</a>
               </li>
               <li class="nav-group-task">
@@ -929,6 +935,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:16StreamChatClient4UserV13mutedChannelsSayAA12MutedChannelVGvp"></a>
+                    <a name="//apple_ref/swift/Property/mutedChannels" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient4UserV13mutedChannelsSayAA12MutedChannelVGvp">mutedChannels</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Muted channels.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">internal(set)</span> <span class="k">var</span> <span class="nv">mutedChannels</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/MutedChannel.html">MutedChannel</a></span><span class="p">]</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:16StreamChatClient4UserV10mutedUsersSayAA05MutedD0VGvp"></a>
                     <a name="//apple_ref/swift/Property/mutedUsers" class="dashAnchor"></a>
                     <a class="token" href="#/s:16StreamChatClient4UserV10mutedUsersSayAA05MutedD0VGvp">mutedUsers</a>
@@ -1146,9 +1179,9 @@ Refer to <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=swi
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient4UserV2id4role9extraData7created7updated14lastActiveDate11isInvisible0N6Banned10mutedUsers5teamsACSS_AC4RoleOAA0d5ExtraH7Codable_pSg10Foundation0M0VA2TSgS2bSayAA05MutedD0VGSaySSGtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(id:role:extraData:created:updated:lastActiveDate:isInvisible:isBanned:mutedUsers:teams:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient4UserV2id4role9extraData7created7updated14lastActiveDate11isInvisible0N6Banned10mutedUsers5teamsACSS_AC4RoleOAA0d5ExtraH7Codable_pSg10Foundation0M0VA2TSgS2bSayAA05MutedD0VGSaySSGtcfc">init(id:<wbr>role:<wbr>extraData:<wbr>created:<wbr>updated:<wbr>lastActiveDate:<wbr>isInvisible:<wbr>isBanned:<wbr>mutedUsers:<wbr>teams:<wbr>)</a>
+                    <a name="/s:16StreamChatClient4UserV2id4role9extraData7created7updated14lastActiveDate11isInvisible0N6Banned13mutedChannels0Q5Users5teamsACSS_AC4RoleOAA0d5ExtraH7Codable_pSg10Foundation0M0VA2USgS2bSayAA12MutedChannelVGSayAA0yD0VGSaySSGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(id:role:extraData:created:updated:lastActiveDate:isInvisible:isBanned:mutedChannels:mutedUsers:teams:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient4UserV2id4role9extraData7created7updated14lastActiveDate11isInvisible0N6Banned13mutedChannels0Q5Users5teamsACSS_AC4RoleOAA0d5ExtraH7Codable_pSg10Foundation0M0VA2USgS2bSayAA12MutedChannelVGSayAA0yD0VGSaySSGtcfc">init(id:<wbr>role:<wbr>extraData:<wbr>created:<wbr>updated:<wbr>lastActiveDate:<wbr>isInvisible:<wbr>isBanned:<wbr>mutedChannels:<wbr>mutedUsers:<wbr>teams:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1171,6 +1204,7 @@ Refer to <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=swi
             <span class="nv">lastActiveDate</span><span class="p">:</span> <span class="kt">Date</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
             <span class="nv">isInvisible</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
             <span class="nv">isBanned</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="nv">mutedChannels</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/MutedChannel.html">MutedChannel</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
             <span class="nv">mutedUsers</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/MutedUser.html">MutedUser</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
             <span class="nv">teams</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">]</span> <span class="o">=</span> <span class="p">[])</span></code></pre>
 
@@ -1717,7 +1751,7 @@ Refer to <a href="https://getstream.io/chat/docs/multi_tenant_chat/?language=swi
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-12)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-31)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

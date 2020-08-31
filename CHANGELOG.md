@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.3.0)
+_August 31, 2020_
+
 ### ✅ Added
 - `ChannelsPresenter.delete` & `ChannelsPresenter.rx.delete` methods to delete a channel and remove it from items list [#394](https://github.com/GetStream/stream-chat-swift/pull/394)
 - Mute/unmute a channel [#428](https://github.com/GetStream/stream-chat-swift/issues/428)

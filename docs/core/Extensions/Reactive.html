@@ -440,25 +440,6 @@
 
                         </div>
                       </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>completion</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>a completion block with <code>ChannelResponse</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
                     </section>
                   </div>
                 </li>
@@ -681,9 +662,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4showyAA10ObservableCyAE9EmptyDataVGys6ResultOyAlE0G5ErrorOGcF"></a>
-                    <a name="//apple_ref/swift/Method/show(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4showyAA10ObservableCyAE9EmptyDataVGys6ResultOyAlE0G5ErrorOGcF">show(_:<wbr>)</a>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4showAA10ObservableCyAE9EmptyDataVGyF"></a>
+                    <a name="//apple_ref/swift/Method/show()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4showAA10ObservableCyAE9EmptyDataVGyF">show()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -698,7 +679,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">show</span><span class="p">(</span><span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt">Completion</span><span class="o">&lt;</span><span class="kt">EmptyData</span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span> <span class="p">})</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">EmptyData</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">show</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">EmptyData</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -720,6 +701,60 @@
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4muteAA10ObservableCyAE05MutedH8ResponseVGyF"></a>
+                    <a name="//apple_ref/swift/Method/mute()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE4muteAA10ObservableCyAE05MutedH8ResponseVGyF">mute()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Mutes a channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">mute</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MutedChannelResponse</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE6unmuteAA10ObservableCyAE9EmptyDataVGyF"></a>
+                    <a name="//apple_ref/swift/Method/unmute()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client7ChannelCRszlE6unmuteAA10ObservableCyAE9EmptyDataVGyF">unmute()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unmutes a channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">unmute</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">EmptyData</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
                       </div>
                     </section>
                   </div>
@@ -2447,6 +2482,100 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                               <td>
                                 <div>
                                   <p>the current user.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE4mute7channelAA10ObservableCyAE20MutedChannelResponseVGAE0L0C_tF"></a>
+                    <a name="//apple_ref/swift/Method/mute(channel:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE4mute7channelAA10ObservableCyAE20MutedChannelResponseVGAE0L0C_tF">mute(channel:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Mutes a channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">mute</span><span class="p">(</span><span class="nv">channel</span><span class="p">:</span> <span class="kt">Channel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MutedChannelResponse</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channel</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE6unmute7channelAA10ObservableCyAE9EmptyDataVGAE7ChannelC_tF"></a>
+                    <a name="//apple_ref/swift/Method/unmute(channel:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCore0dE6Client0G0CRszlE6unmute7channelAA10ObservableCyAE9EmptyDataVGAE7ChannelC_tF">unmute(channel:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unmutes a channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">unmute</span><span class="p">(</span><span class="nv">channel</span><span class="p">:</span> <span class="kt">Channel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">EmptyData</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channel</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel.</p>
                                 </div>
                               </td>
                             </tr>
@@ -6616,6 +6745,144 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCoreAD17ChannelsPresenterCRszlE4muteyAA10ObservableCy0dE6Client20MutedChannelResponseVGAD0mH0CF"></a>
+                    <a name="//apple_ref/swift/Method/mute(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCoreAD17ChannelsPresenterCRszlE4muteyAA10ObservableCy0dE6Client20MutedChannelResponseVGAD0mH0CF">mute(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Mutes a channel from a given <code><a href="../Classes/ChannelPresenter.html">ChannelPresenter</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">mute</span><span class="p">(</span><span class="n">_</span> <span class="nv">channelPresenter</span><span class="p">:</span> <span class="kt"><a href="../Classes/ChannelPresenter.html">ChannelPresenter</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">MutedChannelResponse</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channelPresenter</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel presenter.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCoreAD17ChannelsPresenterCRszlE6unmuteyAA10ObservableCy0dE6Client9EmptyDataVGAD07ChannelH0CF"></a>
+                    <a name="//apple_ref/swift/Method/unmute(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCoreAD17ChannelsPresenterCRszlE6unmuteyAA10ObservableCy0dE6Client9EmptyDataVGAD07ChannelH0CF">unmute(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unmutes a channel from a given <code><a href="../Classes/ChannelPresenter.html">ChannelPresenter</a></code>.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">unmute</span><span class="p">(</span><span class="n">_</span> <span class="nv">channelPresenter</span><span class="p">:</span> <span class="kt"><a href="../Classes/ChannelPresenter.html">ChannelPresenter</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Observable</span><span class="o">&lt;</span><span class="kt">EmptyData</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channelPresenter</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel presenter.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:7RxSwift8ReactiveV14StreamChatCoreAD17ChannelsPresenterCRszlE6deletey0A5Cocoa14SharedSequenceVyAH21DriverSharingStrategyV0dE6Client7ChannelCGAD0qH0CF"></a>
+                    <a name="//apple_ref/swift/Method/delete(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:7RxSwift8ReactiveV14StreamChatCoreAD17ChannelsPresenterCRszlE6deletey0A5Cocoa14SharedSequenceVyAH21DriverSharingStrategyV0dE6Client7ChannelCGAD0qH0CF">delete(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delete a channel and remove a channel presenter from items.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="n">_</span> <span class="nv">channelPresenter</span><span class="p">:</span> <span class="kt"><a href="../Classes/ChannelPresenter.html">ChannelPresenter</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Driver</span><span class="o">&lt;</span><span class="kt">Channel</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channelPresenter</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel presenter.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
             <div class="task-group">
@@ -6794,7 +7061,7 @@ Creates a <code>ChannelQuery</code> with given parameters and call <code>queryCh
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-12)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-31)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

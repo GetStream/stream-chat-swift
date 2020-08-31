@@ -371,6 +371,12 @@
                 <a href="../Structs.html#/s:16StreamChatClient16MessagesResponseV">MessagesResponse</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MutedChannel.html">MutedChannel</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MutedChannelResponse.html">MutedChannelResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/MutedUser.html">MutedUser</a>
               </li>
               <li class="nav-group-task">
@@ -843,6 +849,125 @@ By default error messages will print to the console, but you can customize it to
                               <td>
                                 <div>
                                   <p>level (see <code><a href="../Classes/ClientLogger/Level.html">ClientLogger.Level</a></code>).</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C6LoggerC14logTaskStarted_6taskId10Foundation4UUIDVSS_AHtF"></a>
+                    <a name="//apple_ref/swift/Method/logTaskStarted(_:taskId:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C6LoggerC14logTaskStarted_6taskId10Foundation4UUIDVSS_AHtF">logTaskStarted(_:<wbr>taskId:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates a measurement log task. Call it before a heavy operation then call <code>logTaskFinished</code> with a specified <code>taskId</code>.</p>
+
+<p>Example:</p>
+<pre class="highlight swift"><code><span class="k">let</span> <span class="nv">taskId</span> <span class="o">=</span> <span class="n">logger</span><span class="o">.</span><span class="nf">logTaskStarted</span><span class="p">(</span><span class="s">"Parsing the JSON response"</span><span class="p">)</span>
+<span class="c1">// Parse data...</span>
+<span class="n">logger</span><span class="o">.</span><span class="nf">logTaskFinished</span><span class="p">(</span><span class="nv">taskId</span><span class="p">:</span> <span class="n">taskId</span><span class="p">)</span>
+</code></pre>
+
+<p>The output will be like this:</p>
+<pre class="highlight swift"><code><span class="p">[</span><span class="mi">28</span> <span class="kt">Aug</span> <span class="mi">11</span><span class="p">:</span><span class="mo">01</span><span class="p">:</span><span class="mf">07.047</span><span class="p">]</span> <span class="p">[</span><span class="kt">DEBUG</span><span class="p">]</span> <span class="err">⏱</span> <span class="kt">Parsing</span> <span class="n">the</span> <span class="kt">JSON</span> <span class="n">response</span> <span class="n">finished</span> <span class="k">in</span> <span class="mf">0.144</span> <span class="n">seconds</span><span class="o">.</span>
+</code></pre>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">public</span> <span class="kd">func</span> <span class="nf">logTaskStarted</span><span class="p">(</span><span class="n">_</span> <span class="nv">message</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">taskId</span><span class="p">:</span> <span class="kt">UUID</span> <span class="o">=</span> <span class="o">.</span><span class="nf">init</span><span class="p">())</span> <span class="o">-&gt;</span> <span class="kt">UUID</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>message</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a log message.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>taskId</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a measurement task id <code>UUID</code>. You can skip this parameter and use the generated id from the function result.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>a generated task id <code>UUID</code>.</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C6LoggerC15logTaskFinished6taskIdy10Foundation4UUIDVSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/logTaskFinished(taskId:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C6LoggerC15logTaskFinished6taskIdy10Foundation4UUIDVSg_tF">logTaskFinished(taskId:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Finishes the measurement log task and logs the result.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">logTaskFinished</span><span class="p">(</span><span class="n">taskId</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">UUID</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>id</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a measurement task id.</p>
                                 </div>
                               </td>
                             </tr>
@@ -1432,7 +1557,7 @@ logs the failure.</p>
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-12)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-31)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

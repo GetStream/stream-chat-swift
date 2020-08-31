@@ -371,6 +371,12 @@
                 <a href="../Structs.html#/s:16StreamChatClient16MessagesResponseV">MessagesResponse</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MutedChannel.html">MutedChannel</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MutedChannelResponse.html">MutedChannelResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/MutedUser.html">MutedUser</a>
               </li>
               <li class="nav-group-task">
@@ -1762,6 +1768,124 @@ Creates a <code><a href="../Structs/ChannelQuery.html">ChannelQuery</a></code> w
                               <td>
                                 <div>
                                   <p>the current user.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an empty completion block.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C0C4mute7channel_AA11Cancellable_pAA7ChannelC_ys6ResultOyAA05MutedG8ResponseVAA0C5ErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/mute(channel:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C4mute7channel_AA11Cancellable_pAA7ChannelC_ys6ResultOyAA05MutedG8ResponseVAA0C5ErrorOGctF">mute(channel:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Mutes a channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">mute</span><span class="p">(</span><span class="nv">channel</span><span class="p">:</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt"><a href="../Classes/Client.html#/s:16StreamChatClient0C0C10Completiona">Completion</a></span><span class="o">&lt;</span><span class="kt"><a href="../Structs/MutedChannelResponse.html">MutedChannelResponse</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span> <span class="p">})</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channel</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>completion</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>an empty completion block.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:16StreamChatClient0C0C6unmute7channel_AA11Cancellable_pAA7ChannelC_ys6ResultOyAA9EmptyDataVAA0C5ErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/unmute(channel:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C6unmute7channel_AA11Cancellable_pAA7ChannelC_ys6ResultOyAA9EmptyDataVAA0C5ErrorOGctF">unmute(channel:<wbr>_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Unmutes a channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@discardableResult</span>
+<span class="kd">func</span> <span class="nf">unmute</span><span class="p">(</span><span class="nv">channel</span><span class="p">:</span> <span class="kt"><a href="../Classes/Channel.html">Channel</a></span><span class="p">,</span> <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt"><a href="../Classes/Client.html#/s:16StreamChatClient0C0C10Completiona">Completion</a></span><span class="o">&lt;</span><span class="kt"><a href="../Structs/EmptyData.html">EmptyData</a></span><span class="o">&gt;</span> <span class="o">=</span> <span class="p">{</span> <span class="n">_</span> <span class="k">in</span> <span class="p">})</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>channel</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a channel.</p>
                                 </div>
                               </td>
                             </tr>
@@ -3905,9 +4029,9 @@ Creates a <code><a href="../Structs/ChannelQuery.html">ChannelQuery</a></code> w
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient0C0C13queryChannels6filter4sort10pagination13messagesLimit7options_AA11Cancellable_pAA6FilterO_SayAA7SortingVGShyAA16PaginationOptionOGArA12QueryOptionsVys6ResultOySayAA15ChannelResponseVGAA0C5ErrorOGctF"></a>
-                    <a name="//apple_ref/swift/Method/queryChannels(filter:sort:pagination:messagesLimit:options:_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient0C0C13queryChannels6filter4sort10pagination13messagesLimit7options_AA11Cancellable_pAA6FilterO_SayAA7SortingVGShyAA16PaginationOptionOGArA12QueryOptionsVys6ResultOySayAA15ChannelResponseVGAA0C5ErrorOGctF">queryChannels(filter:<wbr>sort:<wbr>pagination:<wbr>messagesLimit:<wbr>options:<wbr>_:<wbr>)</a>
+                    <a name="/s:16StreamChatClient0C0C13queryChannels6filter4sort10pagination13messagesLimit07membersJ07options_AA11Cancellable_pAA6FilterO_SayAA7SortingVGShyAA16PaginationOptionOGASSiAA12QueryOptionsVys6ResultOySayAA15ChannelResponseVGAA0C5ErrorOGctF"></a>
+                    <a name="//apple_ref/swift/Method/queryChannels(filter:sort:pagination:messagesLimit:membersLimit:options:_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient0C0C13queryChannels6filter4sort10pagination13messagesLimit07membersJ07options_AA11Cancellable_pAA6FilterO_SayAA7SortingVGShyAA16PaginationOptionOGASSiAA12QueryOptionsVys6ResultOySayAA15ChannelResponseVGAA0C5ErrorOGctF">queryChannels(filter:<wbr>sort:<wbr>pagination:<wbr>messagesLimit:<wbr>membersLimit:<wbr>options:<wbr>_:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -3927,6 +4051,7 @@ Creates a <code><a href="../Structs/ChannelQuery.html">ChannelQuery</a></code> w
                    <span class="nv">sort</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Sorting.html">Sorting</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
                    <span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:16StreamChatClient10Paginationa">Pagination</a></span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="n">channelsPageSize</span><span class="p">],</span>
                    <span class="nv">messagesLimit</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:16StreamChatClient10Paginationa">Pagination</a></span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="n">messagesPageSize</span><span class="p">],</span>
+                   <span class="nv">membersLimit</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
                    <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="p">[],</span>
                    <span class="n">_</span> <span class="nv">completion</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="kt">Client</span><span class="o">.</span><span class="kt"><a href="../Classes/Client.html#/s:16StreamChatClient0C0C10Completiona">Completion</a></span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ChannelResponse.html">ChannelResponse</a></span><span class="p">]</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Protocols/Cancellable.html">Cancellable</a></span></code></pre>
 
@@ -3980,7 +4105,19 @@ Creates a <code><a href="../Structs/ChannelQuery.html">ChannelQuery</a></code> w
                               </td>
                               <td>
                                 <div>
-                                  <p>a messages pagination for the each channel.</p>
+                                  <p>a messages pagination for each channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>membersLimit</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a members limit for each channel.</p>
                                 </div>
                               </td>
                             </tr>
@@ -6119,7 +6256,7 @@ Then you send it to the client to complete the setup with a callback function fr
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-12)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-31)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

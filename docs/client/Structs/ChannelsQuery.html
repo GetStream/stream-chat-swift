@@ -371,6 +371,12 @@
                 <a href="../Structs.html#/s:16StreamChatClient16MessagesResponseV">MessagesResponse</a>
               </li>
               <li class="nav-group-task">
+                <a href="../Structs/MutedChannel.html">MutedChannel</a>
+              </li>
+              <li class="nav-group-task">
+                <a href="../Structs/MutedChannelResponse.html">MutedChannelResponse</a>
+              </li>
+              <li class="nav-group-task">
                 <a href="../Structs/MutedUser.html">MutedUser</a>
               </li>
               <li class="nav-group-task">
@@ -570,6 +576,34 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:16StreamChatClient13ChannelsQueryV12membersLimitSivp"></a>
+                    <a name="//apple_ref/swift/Property/membersLimit" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient13ChannelsQueryV12membersLimitSivp">membersLimit</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>The maximum number of Member detail object included in the response. This value doesn&rsquo;t affect to total number
+of members reported in the channel.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">membersLimit</span><span class="p">:</span> <span class="kt">Int</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:16StreamChatClient13ChannelsQueryV7optionsAA0E7OptionsVvp"></a>
                     <a name="//apple_ref/swift/Property/options" class="dashAnchor"></a>
                     <a class="token" href="#/s:16StreamChatClient13ChannelsQueryV7optionsAA0E7OptionsVvp">options</a>
@@ -624,9 +658,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:16StreamChatClient13ChannelsQueryV6filter4sort10pagination13messagesLimit7optionsAcA6FilterO_SayAA7SortingVGShyAA16PaginationOptionOGApA0E7OptionsVtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(filter:sort:pagination:messagesLimit:options:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:16StreamChatClient13ChannelsQueryV6filter4sort10pagination13messagesLimit7optionsAcA6FilterO_SayAA7SortingVGShyAA16PaginationOptionOGApA0E7OptionsVtcfc">init(filter:<wbr>sort:<wbr>pagination:<wbr>messagesLimit:<wbr>options:<wbr>)</a>
+                    <a name="/s:16StreamChatClient13ChannelsQueryV6filter4sort10pagination13messagesLimit07membersJ07optionsAcA6FilterO_SayAA7SortingVGShyAA16PaginationOptionOGAQSiAA0E7OptionsVtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(filter:sort:pagination:messagesLimit:membersLimit:options:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:16StreamChatClient13ChannelsQueryV6filter4sort10pagination13messagesLimit07membersJ07optionsAcA6FilterO_SayAA7SortingVGShyAA16PaginationOptionOGAQSiAA0E7OptionsVtcfc">init(filter:<wbr>sort:<wbr>pagination:<wbr>messagesLimit:<wbr>membersLimit:<wbr>options:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -645,6 +679,7 @@
             <span class="nv">sort</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/Sorting.html">Sorting</a></span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
             <span class="nv">pagination</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:16StreamChatClient10Paginationa">Pagination</a></span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="n">channelsPageSize</span><span class="p">],</span>
             <span class="nv">messagesLimit</span><span class="p">:</span> <span class="kt"><a href="../Typealiases.html#/s:16StreamChatClient10Paginationa">Pagination</a></span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="n">messagesPageSize</span><span class="p">],</span>
+            <span class="nv">membersLimit</span><span class="p">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
             <span class="nv">options</span><span class="p">:</span> <span class="kt"><a href="../Structs/QueryOptions.html">QueryOptions</a></span> <span class="o">=</span> <span class="p">[])</span></code></pre>
 
                         </div>
@@ -697,7 +732,19 @@
                               </td>
                               <td>
                                 <div>
-                                  <p>a messages pagination for the each channel.</p>
+                                  <p>a messages pagination for each channel.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>membersLimit</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>a members limit for each channel.</p>
                                 </div>
                               </td>
                             </tr>
@@ -750,7 +797,7 @@
           </section>
         </section>
         <section id="footer">
-          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-12)</p>
+          <p>&copy; 2020 <a class="link" href="getstream.io" target="_blank" rel="external">GetStream.io</a>. All rights reserved. (Last updated: 2020-08-31)</p>
           <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
         </section>
       </article>

@@ -18,12 +18,15 @@ lane :release do |options|
   
   ensure_git_branch # We can only release on master
   
-  ensure_git_status_clean
+  ensure_git_status_clean unless options[:no_ensure_clean]
   
-  version_number = increment_version_number(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj")
-  increment_version_number(version_number: version_number, xcodeproj: "./Sample/Carthage/ChatExample.xcodeproj")
-  increment_version_number(version_number: version_number, xcodeproj: "./Sample/Cocoapods/ChatExample.xcodeproj")
-  increment_version_number(version_number: version_number, xcodeproj: "./Sample/SPM/ChatExample.xcodeproj")
+  version_number = increment_version_number_in_plist(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj", target: "StreamChatClient")
+  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChatCore")
+  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
+
+  increment_version_number_in_plist(version_number: version_number, xcodeproj: "./Sample/Carthage/ChatExample.xcodeproj")
+  increment_version_number_in_plist(version_number: version_number, xcodeproj: "./Sample/Cocoapods/ChatExample.xcodeproj")
+  increment_version_number_in_plist(version_number: version_number, xcodeproj: "./Sample/SPM/ChatExample.xcodeproj")
   
   if git_tag_exists(tag: version_number)
     UI.user_error!("Tag for version #{version_number} already exists!")

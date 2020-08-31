@@ -159,6 +159,7 @@ GEM
       xcpretty (~> 0.3.0)
       xcpretty-travis-formatter (>= 0.0.3)
     fastlane-plugin-firebase_app_distribution (0.1.4)
+    fastlane-plugin-versioning (0.4.3)
     ffi (1.13.1)
     fourflusher (2.3.1)
     fuzzy_match (2.0.4)
@@ -309,6 +310,7 @@ DEPENDENCIES
   danger-swiftlint
   fastlane
   fastlane-plugin-firebase_app_distribution
+  fastlane-plugin-versioning
   jazzy
   json
   xcode-install
