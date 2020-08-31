@@ -2,10 +2,14 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import StreamChatClient
 import UIKit
 
 class MasterViewController: UITableViewController {
+    @available(iOS 13, *)
+    private lazy var cancellables: Set<AnyCancellable> = []
+    
     private lazy var longPressRecognizer = UILongPressGestureRecognizer(
         target: self,
         action: #selector(handleLongPress)
@@ -43,6 +47,12 @@ class MasterViewController: UITableViewController {
         }
 
         tableView.addGestureRecognizer(longPressRecognizer)
+        
+        if #available(iOS 13, *) {
+            channelListController.statePublisher.sink { (state) in
+                print("State changed: \(state)")
+            }.store(in: &cancellables)
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
