@@ -22,7 +22,15 @@ extension UITableViewController {
         )
     }
     
-    var topHeight: CGFloat {
+    func adjustContentInsetsIfNeeded() {
+        var contentInset = tableView.contentInset
+        contentInset.bottom = topHeight
+        contentInset.top = bottomHeight
+        tableView.contentInset = contentInset
+        tableView.scrollIndicatorInsets = contentInset
+    }
+    
+    private var topHeight: CGFloat {
         if navigationController?.navigationBar.isTranslucent ?? false {
             var top = navigationController?.navigationBar.frame.height ?? 0.0
             top += UIApplication.shared.statusBarFrame.height
@@ -32,20 +40,12 @@ extension UITableViewController {
         return 0.0
     }
 
-    var bottomHeight: CGFloat {
+    private var bottomHeight: CGFloat {
         guard let keyboardView = inputAccessoryView?.superview else {
             return 0
         }
         
         return view.frame.intersection(keyboardView.frame).height
-    }
-    
-    func adjustContentInsetsIfNeeded() {
-        var contentInset = tableView.contentInset
-        contentInset.bottom = topHeight
-        contentInset.top = bottomHeight
-        tableView.contentInset = contentInset
-        tableView.scrollIndicatorInsets = contentInset
     }
     
     private struct AssociatedKeys {
