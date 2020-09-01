@@ -17,23 +17,9 @@ class ComposerView: UIView {
             textView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
         }
     }
-    
-    var isKeyboardShown: Bool = false {
-        didSet {
-            UIView.animate(withDuration: 0.5) {
-                self.invalidateIntrinsicContentSize()
-                self.superview?.setNeedsLayout()
-                self.superview?.layoutIfNeeded()
-            }
-        }
-    }
 
     var calculatedHeight: CGFloat {
-        if isKeyboardShown {
-            return textView.contentSize.height + 20
-        } else {
-            return textView.contentSize.height + 20 + (window?.safeAreaInsets.bottom ?? 0)
-        }
+        textView.contentSize.height + safeAreaInsets.bottom + 20
     }
     
     override var intrinsicContentSize: CGSize {
@@ -44,49 +30,7 @@ class ComposerView: UIView {
         super.awakeFromNib()
         translatesAutoresizingMaskIntoConstraints = false
         
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handle(keyboardShowNotification:)),
-            name: UIResponder.keyboardWillShowNotification,
-            object: nil
-        )
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(handle(keyboardHideNotification:)),
-            name: UIResponder.keyboardWillHideNotification,
-            object: nil
-        )
-    }
-    
-    @objc
-    func handle(keyboardShowNotification notification: Notification) {
-        guard
-            let userInfo = notification.userInfo,
-            let beginFrame = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect,
-            let endFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
-        else {
-            return
-        }
-        
-        if endFrame.size.height - beginFrame.height > intrinsicContentSize.height {
-            isKeyboardShown = true
-        }
-    }
-    
-    @objc
-    func handle(keyboardHideNotification notification: Notification) {
-        guard
-            let userInfo = notification.userInfo,
-            let beginFrame = userInfo[UIResponder.keyboardFrameBeginUserInfoKey] as? CGRect,
-            let endFrame = userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect
-        else {
-            return
-        }
-        
-        if beginFrame.size.height - endFrame.height > intrinsicContentSize.height {
-            isKeyboardShown = false
-        }
+        addObserver(self, forKeyPath: "safeAreaInsets", options: .new, context: nil)
     }
     
     override func observeValue(
@@ -96,6 +40,8 @@ class ComposerView: UIView {
         context: UnsafeMutableRawPointer?
     ) {
         if object as AnyObject? === textView, keyPath == "contentSize" {
+            invalidateIntrinsicContentSize()
+        } else if object as AnyObject? === self, keyPath == "safeAreaInsets" {
             invalidateIntrinsicContentSize()
         }
     }

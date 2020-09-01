@@ -6,10 +6,10 @@ import Combine
 import StreamChatClient
 import UIKit
 
-class MasterViewController: UITableViewController {
+class SimpleChannelsViewController: UITableViewController {
     @available(iOS 13, *)
     private lazy var cancellables: Set<AnyCancellable> = []
-    
+
     private lazy var longPressRecognizer = UILongPressGestureRecognizer(
         target: self,
         action: #selector(handleLongPress)
@@ -22,7 +22,7 @@ class MasterViewController: UITableViewController {
             options: [.watch]
         ))
     
-    var detailViewController: DetailViewController?
+    var detailViewController: SimpleChatViewController?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,7 +43,7 @@ class MasterViewController: UITableViewController {
         if let split = splitViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count - 1] as! UINavigationController)
-                .topViewController as? DetailViewController
+                .topViewController as? SimpleChatViewController
         }
 
         tableView.addGestureRecognizer(longPressRecognizer)
@@ -86,7 +86,7 @@ class MasterViewController: UITableViewController {
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 let channel = channelListController.channels[indexPath.row]
-                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
+                let controller = (segue.destination as! UINavigationController).topViewController as! SimpleChatViewController
                 controller.channelId = channel.cid
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
@@ -140,7 +140,7 @@ class MasterViewController: UITableViewController {
 
 // MARK: - Private
 
-private extension MasterViewController {
+private extension SimpleChannelsViewController {
     @objc
     func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         guard
@@ -182,7 +182,7 @@ private extension MasterViewController {
     }
 }
 
-extension MasterViewController: ChannelListControllerDelegate {
+extension SimpleChannelsViewController: ChannelListControllerDelegate {
     func controller(
         _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
         didChangeChannels changes: [ListChange<Channel>]
