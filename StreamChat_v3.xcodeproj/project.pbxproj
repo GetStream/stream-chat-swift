@@ -177,9 +177,11 @@
 		8008C19624F456C300F5BCCE /* ComposerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8008C18E24F44D6E00F5BCCE /* ComposerView.xib */; };
 		8008C19C24F7EF1F00F5BCCE /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008C19A24F7EF1A00F5BCCE /* ChatView.swift */; };
 		8008C19D24F7EF2400F5BCCE /* ChannelListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008C19824F7EE5B00F5BCCE /* ChannelListView.swift */; };
+		8008C1A024F8517000F5BCCE /* UITableViewController+KeyboardAvoidance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008C19E24F84DB600F5BCCE /* UITableViewController+KeyboardAvoidance.swift */; };
+		8040BC5E24FDAB1E00DE369F /* UIColor+ForUsername.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8040BC5C24FDA9B200DE369F /* UIColor+ForUsername.swift */; };
 		804B126924E6C820002B00EA /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804B126724E6C80B002B00EA /* LoginViewController.swift */; };
 		804B127124E712F1002B00EA /* MasterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F28247FF01800EAF71D /* MasterViewController.swift */; };
-		804B127224E712F5002B00EA /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F2A247FF01800EAF71D /* DetailViewController.swift */; };
+		804B127224E712F5002B00EA /* SimpleChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F2A247FF01800EAF71D /* SimpleChatViewController.swift */; };
 		804B127324E712FA002B00EA /* SimpleChat.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 804B126B24E712C2002B00EA /* SimpleChat.storyboard */; };
 		804B127524ED596C002B00EA /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804B127424ED596C002B00EA /* SettingsViewController.swift */; };
 		804B127724ED59FE002B00EA /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 804B127624ED59FE002B00EA /* Settings.storyboard */; };
@@ -335,7 +337,7 @@
 		792A4F24247FF01800EAF71D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		792A4F26247FF01800EAF71D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		792A4F28247FF01800EAF71D /* MasterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterViewController.swift; sourceTree = "<group>"; };
-		792A4F2A247FF01800EAF71D /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		792A4F2A247FF01800EAF71D /* SimpleChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleChatViewController.swift; sourceTree = "<group>"; };
 		792A4F2D247FF01800EAF71D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		792A4F2F247FF01900EAF71D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		792A4F32247FF01900EAF71D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -477,6 +479,8 @@
 		8008C19024F44DF600F5BCCE /* UIView+InstantiateFromNib.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+InstantiateFromNib.swift"; sourceTree = "<group>"; };
 		8008C19824F7EE5B00F5BCCE /* ChannelListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListView.swift; sourceTree = "<group>"; };
 		8008C19A24F7EF1A00F5BCCE /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
+		8008C19E24F84DB600F5BCCE /* UITableViewController+KeyboardAvoidance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+KeyboardAvoidance.swift"; sourceTree = "<group>"; };
+		8040BC5C24FDA9B200DE369F /* UIColor+ForUsername.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+ForUsername.swift"; sourceTree = "<group>"; };
 		804B126724E6C80B002B00EA /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		804B126B24E712C2002B00EA /* SimpleChat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SimpleChat.storyboard; sourceTree = "<group>"; };
 		804B127424ED596C002B00EA /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -1069,6 +1073,8 @@
 				8008C17F24ED64C000F5BCCE /* UIViewController+MoveToStoryboard.swift */,
 				8008C18224ED65A500F5BCCE /* UIStoryboard+Definitions.swift */,
 				8008C19024F44DF600F5BCCE /* UIView+InstantiateFromNib.swift */,
+				8008C19E24F84DB600F5BCCE /* UITableViewController+KeyboardAvoidance.swift */,
+				8040BC5C24FDA9B200DE369F /* UIColor+ForUsername.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -1108,7 +1114,7 @@
 			children = (
 				8008C18B24F44D3200F5BCCE /* Views */,
 				792A4F28247FF01800EAF71D /* MasterViewController.swift */,
-				792A4F2A247FF01800EAF71D /* DetailViewController.swift */,
+				792A4F2A247FF01800EAF71D /* SimpleChatViewController.swift */,
 				804B126B24E712C2002B00EA /* SimpleChat.storyboard */,
 			);
 			path = SimpleChat;
@@ -1499,6 +1505,7 @@
 				804B127124E712F1002B00EA /* MasterViewController.swift in Sources */,
 				804B126924E6C820002B00EA /* LoginViewController.swift in Sources */,
 				8008C19D24F7EF2400F5BCCE /* ChannelListView.swift in Sources */,
+				8008C1A024F8517000F5BCCE /* UITableViewController+KeyboardAvoidance.swift in Sources */,
 				8008C18A24EEB8CA00F5BCCE /* LogStore.swift in Sources */,
 				8008C18424ED65AB00F5BCCE /* UIStoryboard+Definitions.swift in Sources */,
 				8008C19C24F7EF1F00F5BCCE /* ChatView.swift in Sources */,
@@ -1506,8 +1513,9 @@
 				792A4F25247FF01800EAF71D /* AppDelegate.swift in Sources */,
 				8008C18724EDBCFF00F5BCCE /* LogsViewController.swift in Sources */,
 				8008C19524F456BF00F5BCCE /* ComposerView.swift in Sources */,
-				804B127224E712F5002B00EA /* DetailViewController.swift in Sources */,
+				804B127224E712F5002B00EA /* SimpleChatViewController.swift in Sources */,
 				8008C19224F44DF900F5BCCE /* UIView+InstantiateFromNib.swift in Sources */,
+				8040BC5E24FDAB1E00DE369F /* UIColor+ForUsername.swift in Sources */,
 				8008C18124ED64D300F5BCCE /* UIViewController+MoveToStoryboard.swift in Sources */,
 				792A4F27247FF01800EAF71D /* SceneDelegate.swift in Sources */,
 				8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */,

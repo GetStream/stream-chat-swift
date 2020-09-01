@@ -5,9 +5,7 @@
 import StreamChatClient
 import UIKit
 
-class DetailViewController: UIViewController {
-    private let tableView = UITableView()
-    
+class SimpleChatViewController: UITableViewController {
     private var controller: ChannelController?
     
     var messages: [Message] { controller?.messages ?? [] }
@@ -33,19 +31,25 @@ class DetailViewController: UIViewController {
         true
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        startAvoidingKeyboard()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        stopAvoidingKeyboard()
+    }
+    
+    override func viewWillLayoutSubviews() {
+        super.viewWillLayoutSubviews()
+        adjustContentInsetsIfNeeded()
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(tableView)
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.rightAnchor.constraint(equalTo: view.rightAnchor)
-        ])
+        setupTableView()
         
         controller?.delegate = self
         controller?.startUpdating()
@@ -104,7 +108,7 @@ class DetailViewController: UIViewController {
     }
 }
 
-extension DetailViewController: ChannelControllerDelegate {
+extension SimpleChatViewController: ChannelControllerDelegate {
     func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<Channel>) {
         switch channel {
         case .create: break
@@ -140,12 +144,12 @@ extension DetailViewController: ChannelControllerDelegate {
     }
 }
 
-extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+extension SimpleChatViewController {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         messages.count
     }
     
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell!
         if let _cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell") {
             cell = _cell
@@ -153,20 +157,57 @@ extension DetailViewController: UITableViewDataSource, UITableViewDelegate {
             cell = UITableViewCell(style: .default, reuseIdentifier: "MessageCell")
         }
         
+        cell.textLabel?.numberOfLines = 0
+        cell.transform = CGAffineTransform(scaleX: 1, y: -1)
+        
         let message = messages[indexPath.row]
-        cell.textLabel?.text = message.type == .deleted
-            ? "❌ the message was deleted"
-            : "\(message.author.id): \(message.text)"
+        
+        switch message.type {
+        case .deleted:
+            cell?.textLabel?.text = "❌ the message was deleted"
+        case .error:
+            cell?.textLabel?.text = "⚠️ something wrong happened"
+        default:
+            let font = cell.textLabel?.font ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
+            let boldFont = UIFont(
+                descriptor: font.fontDescriptor.withSymbolicTraits([.traitBold]) ?? font.fontDescriptor,
+                size: font.pointSize
+            )
+            
+            let attributedString = NSMutableAttributedString()
+            attributedString.append(
+                .init(
+                    string: "\(message.author.name ?? message.author.id) ",
+                    attributes: [
+                        NSAttributedString.Key.font: boldFont,
+                        NSAttributedString.Key.foregroundColor: UIColor.forUsername(message.author.id)
+                    ]
+                )
+            )
+            attributedString.append(.init(string: message.text))
+            
+            cell.textLabel?.attributedText = attributedString
+        }
         
         cell.backgroundColor = message.localState == nil ? .white : .lightGray
         
         return cell
     }
     
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.section == tableView.numberOfSections - 1,
             indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             controller?.loadNextMessages()
         }
+    }
+}
+
+// MARK: - TableView
+
+extension SimpleChatViewController {
+    func setupTableView() {
+        tableView.contentInsetAdjustmentBehavior = .never
+        tableView.separatorColor = .clear
+        tableView.transform = CGAffineTransform(scaleX: 1, y: -1)
     }
 }
