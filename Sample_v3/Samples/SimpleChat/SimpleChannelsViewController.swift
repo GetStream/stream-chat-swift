@@ -6,10 +6,10 @@ import Combine
 import StreamChatClient
 import UIKit
 
-class MasterViewController: UITableViewController {
+class SimpleChannelsViewController: UITableViewController {
     @available(iOS 13, *)
     private lazy var cancellables: Set<AnyCancellable> = []
-    
+
     private lazy var longPressRecognizer = UILongPressGestureRecognizer(
         target: self,
         action: #selector(handleLongPress)
@@ -140,7 +140,7 @@ class MasterViewController: UITableViewController {
 
 // MARK: - Private
 
-private extension MasterViewController {
+private extension SimpleChannelsViewController {
     @objc
     func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         guard
@@ -182,7 +182,7 @@ private extension MasterViewController {
     }
 }
 
-extension MasterViewController: ChannelListControllerDelegate {
+extension SimpleChannelsViewController: ChannelListControllerDelegate {
     func controller(
         _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
         didChangeChannels changes: [ListChange<Channel>]

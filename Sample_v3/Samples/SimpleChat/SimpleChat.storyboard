@@ -26,7 +26,7 @@
         <!--Split View Controller-->
         <scene sceneID="wls-pL-HvF">
             <objects>
-                <splitViewController id="LxB-C7-hWF" sceneMemberID="viewController">
+                <splitViewController id="LxB-C7-hWF" customClass="SplitViewController" customModule="Sample" sceneMemberID="viewController">
                     <toolbarItems/>
                     <navigationItem key="navigationItem" id="3qB-BX-KgF"/>
                     <connections>
@@ -41,7 +41,7 @@
         <!--Master-->
         <scene sceneID="FBh-Le-W2E">
             <objects>
-                <tableViewController title="Master" clearsSelectionOnViewWillAppear="NO" id="Cum-XP-LTo" customClass="MasterViewController" customModule="Sample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Master" clearsSelectionOnViewWillAppear="NO" id="Cum-XP-LTo" customClass="SimpleChannelsViewController" customModule="Sample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="o4B-s6-tOX">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -144,6 +144,6 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="hXO-6Y-GML"/>
+        <segue reference="Aa1-cW-qVp"/>
     </inferredMetricsTieBreakers>
 </document>
