@@ -16,7 +16,7 @@ class WebSocketClient {
     let eventNotificationCenter: EventNotificationCenter
     
     /// The current state the web socket connection.
-    @Atomic fileprivate(set) var connectionState: ConnectionState = .notConnected() {
+    @Atomic fileprivate(set) var connectionState: WebSocketConnectionState = .notConnected() {
         didSet {
             log.info("Web socket connection state changed: \(connectionState)")
             connectionStateDelegate?.webSocketClient(self, didUpdateConectionState: connectionState)
@@ -31,6 +31,10 @@ class WebSocketClient {
                 // No reconnection attempts are scheduled
                 cancelBackgroundTaskIfNeeded()
             }
+            
+            // Publish Connection event with the new state
+            let event = ConnectionStatusUpdated(webSocketConnectionState: connectionState)
+            eventNotificationCenter.process(event)
         }
     }
     
@@ -152,7 +156,7 @@ class WebSocketClient {
     ///
     /// Calling this function has no effect, if the connection is in an inactive state.
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
-    func disconnect(source: ConnectionState.DisconnectionSource = .userInitiated) {
+    func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         connectionState = .disconnecting(source: source)
         engineQueue.async { [engine] in
             engine.disconnect()
@@ -203,7 +207,7 @@ class WebSocketClient {
 }
 
 protocol ConnectionStateDelegate: AnyObject {
-    func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: ConnectionState)
+    func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: WebSocketConnectionState)
 }
 
 extension WebSocketClient {
@@ -319,6 +323,17 @@ extension Notification {
         userInfo?[Self.eventKey] as? Event
     }
 }
+
+// MARK: - Test helpers
+
+#if TESTS
+    extension WebSocketClient {
+        /// Simulates connection status change
+        func simulateConnectionStatus(_ status: WebSocketConnectionState) {
+            connectionState = status
+        }
+    }
+#endif
 
 extension ClientError {
     public class WebSocket: ClientError {}
