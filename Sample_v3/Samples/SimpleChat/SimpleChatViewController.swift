@@ -140,7 +140,8 @@ extension SimpleChatViewController: ChannelControllerDelegate {
     }
     
     func channelController(_ channelController: ChannelController, didReceiveTypingEvent event: TypingEvent) {
-        log.debug("\(event.userId) \(event.isTyping ? "started" : "stopped") typing.")
+        guard let user = channelController.dataStore.user(id: event.userId) else { return }
+        log.debug("\(user.name ?? "_missing name_") \(event.isTyping ? "started" : "stopped") typing.")
     }
 }
 
