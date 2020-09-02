@@ -260,6 +260,8 @@
 		DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */; };
 		DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */; };
 		DA99D0D024ED63C600AD5354 /* NewChannelQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */; };
+		DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE566E624FFD22300E39431 /* ChannelController+SwiftUI.swift */; };
+		DAE566F02500140300E39431 /* ChannelController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE566E824FFD24000E39431 /* ChannelController+SwiftUI_Tests.swift */; };
 		DAEAF4B324DAD99E0015FB28 /* HideChannelRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */; };
 		DAEAF4B824DC026C0015FB28 /* ChannelEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */; };
 		DAF8359924F8042D00392699 /* TypingEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF8359824F8042D00392699 /* TypingEventObserver.swift */; };
@@ -581,6 +583,8 @@
 		DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload_Tests.swift; sourceTree = "<group>"; };
 		DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCodingKeys.swift; sourceTree = "<group>"; };
 		DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChannelQueryUpdater.swift; sourceTree = "<group>"; };
+		DAE566E624FFD22300E39431 /* ChannelController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelController+SwiftUI.swift"; sourceTree = "<group>"; };
+		DAE566E824FFD24000E39431 /* ChannelController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideChannelRequest.swift; sourceTree = "<group>"; };
 		DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints_Tests.swift; sourceTree = "<group>"; };
 		DAF8359824F8042D00392699 /* TypingEventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingEventObserver.swift; sourceTree = "<group>"; };
@@ -999,6 +1003,8 @@
 				8A0D64AD24E5853F0017A3C0 /* Controller_Tests.swift */,
 				799C944B247D5766001F1104 /* ChannelController.swift */,
 				7952B3B224D314B100AC53D4 /* ChannelController_Tests.swift */,
+				DAE566E624FFD22300E39431 /* ChannelController+SwiftUI.swift */,
+				DAE566E824FFD24000E39431 /* ChannelController+SwiftUI_Tests.swift */,
 				792A4F1C247FEA2200EAF71D /* ChannelListController.swift */,
 				792921C824C056F400116BBB /* ChannelListController_Tests.swift */,
 				7991D83C24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift */,
@@ -1536,6 +1542,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
 				792CA62624CEE93700D70A5E /* ChannelListQueryUpdater.swift in Sources */,
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
 				8AC9CBD624C73689006E236C /* NotificationEvents.swift in Sources */,
@@ -1734,6 +1741,7 @@
 				79CD959624F9414700E87377 /* ChannelListController+SwiftUI_Tests.swift in Sources */,
 				7988F6B124D010890004219B /* TestRunnerEnvironment.swift in Sources */,
 				799C9469247D791A001F1104 /* AssertResult.swift in Sources */,
+				DAE566F02500140300E39431 /* ChannelController+SwiftUI_Tests.swift in Sources */,
 				7952B3B524D45DA300AC53D4 /* ChannelUpdater_Tests.swift in Sources */,
 				F69C4BC424F664A700A3D740 /* EventNotificationCenter_Tests.swift in Sources */,
 				8AC9CBD424C7351D006E236C /* ReactionEvents_Tests.swift in Sources */,

@@ -112,7 +112,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
         return channelObserver.item
     }
     
-    /// The channel matching the channelId. To observe updates to the channel,
+    /// The messages related to the channel. To observe updates to the channel,
     /// set your class as a delegate of this controller and call `startUpdating`.
     public var messages: [MessageModel<ExtraData>] {
         guard state != .inactive else {

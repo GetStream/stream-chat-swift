@@ -2,7 +2,6 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-import CoreData
 @testable import StreamChatClient
 import XCTest
 

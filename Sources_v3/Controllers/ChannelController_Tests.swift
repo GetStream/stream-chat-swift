@@ -1360,8 +1360,3 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
         validateQueue()
     }
 }
-
-private struct TestMemberEvent: MemberEvent, Equatable {
-    let cid: ChannelId
-    let userId: UserId
-}
