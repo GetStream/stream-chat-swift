@@ -78,6 +78,15 @@ extension Client {
 /// A convenience typealias for `ChannelControllerGeneric` with `DefaultDataTypes`
 public typealias ChannelController = ChannelControllerGeneric<DefaultDataTypes>
 
+/// Describes the flow of the items in the list
+public enum ListOrdering {
+    /// New items appear on the top of the list.
+    case topToBottom
+    
+    /// New items appear on the bottom of the list.
+    case bottomToTop
+}
+
 /// `ChannelController` allows observing and mutating the controlled channel.
 ///
 ///  ... you can do this and that
