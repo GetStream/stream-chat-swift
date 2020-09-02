@@ -47,8 +47,15 @@ extension DatabaseContainer {
             throw error
         }
     }
-    
-    /// Synchrnously creates a new CurrentUserDTO in the DB with the given id.
+
+    /// Synchronously creates a new UserDTO in the DB with the given id.
+    func createUser(id: UserId = .unique) throws {
+        try writeSynchronously { session in
+            try session.saveUser(payload: .dummy(userId: id))
+        }
+    }
+
+    /// Synchronously creates a new CurrentUserDTO in the DB with the given id.
     func createCurrentUser(id: UserId = .unique) throws {
         try writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(
@@ -59,7 +66,7 @@ extension DatabaseContainer {
         }
     }
     
-    /// Synchrnously creates a new ChannelDTO in the DB with the given cid.
+    /// Synchronously creates a new ChannelDTO in the DB with the given cid.
     func createChannel(cid: ChannelId = .unique) throws {
         try writeSynchronously { session in
             try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
@@ -75,6 +82,16 @@ extension DatabaseContainer {
                 ) as! ChannelListQueryDTO
             dto.filterHash = filter.filterHash
             dto.filterJSONData = try JSONEncoder.default.encode(filter)
+        }
+    }
+    
+    /// Synchronously creates a new MessageDTO in the DB with the given id.
+    func createMessage(id: MessageId = .unique, authorId: UserId = .unique, cid: ChannelId = .unique) throws {
+        try writeSynchronously { session in
+            try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            
+            let message: MessagePayload<DefaultDataTypes> = .dummy(messageId: id, authorUserId: authorId)
+            try session.saveMessage(payload: message, for: cid)
         }
     }
 }
