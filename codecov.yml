@@ -3,3 +3,6 @@ ignore:
   - "**/*_Tests.swift"
   - "**/*_Mock.swift"
   - "**/*_Vendor.swift"
+  
+github_checks:
+    annotations: false
