@@ -385,6 +385,25 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.willBeEqual(eventLogger.equatableEvents, [processedEvent.asEquatable])
     }
     
+    func test_connectionStatusUpdated_eventsArePublished_whenWSConnectionStateChanges() {
+        // Start logging events
+        let eventLogger = EventLogger(eventNotificationCenter)
+
+        // Simulate connection state changes
+        let connectionStates: [WebSocketConnectionState] = [
+            .connecting,
+            .waitingForConnectionId,
+            .connected(connectionId: connectionId),
+            .disconnecting(source: .userInitiated),
+            .notConnected()
+        ]
+        
+        connectionStates.forEach { webSocketClient.simulateConnectionStatus($0) }
+        
+        let expectedEvents = connectionStates.map { ConnectionStatusUpdated(webSocketConnectionState: $0).asEquatable }
+        XCTAssertEqual(eventLogger.equatableEvents, expectedEvents)
+    }
+    
     // MARK: - Background task tests
     
     func test_backgroundTaskIsCreated_whenWebSocketIsConnected_andAppGoesToBackground() {
@@ -640,10 +659,10 @@ class MockBackgroundTaskScheduler: BackgroundTaskScheduler {
 }
 
 class WebSocketPingControllerMock: WebSocketPingController {
-    var connectionStateDidChange_connectionStates: [ConnectionState] = []
+    var connectionStateDidChange_connectionStates: [WebSocketConnectionState] = []
     var pongRecievedCount = 0
     
-    override func connectionStateDidChange(_ connectionState: ConnectionState) {
+    override func connectionStateDidChange(_ connectionState: WebSocketConnectionState) {
         connectionStateDidChange_connectionStates.append(connectionState)
         super.connectionStateDidChange(connectionState)
     }
