@@ -58,11 +58,27 @@ class MessageDTO: NSManagedObject {
         return request
     }
     
+    /// Returns a fetch request for messages pending sync.
+    static func messagesPendingSyncFetchRequest() -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: true)]
+        request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.pendingSync.rawValue)
+        return request
+    }
+    
     /// Returns a fetch request for messages from the channel with the provided `cid`.
     static func messagesFetchRequest(for cid: ChannelId, sortAscending: Bool = false) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
         request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
+        return request
+    }
+    
+    /// Returns a fetch request for the dto with a specific `messageId`.
+    static func message(withID messageId: MessageId) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
+        request.predicate = NSPredicate(format: "id == %@", messageId)
         return request
     }
     
