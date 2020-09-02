@@ -59,9 +59,9 @@ class MessageDTO: NSManagedObject {
     }
     
     /// Returns a fetch request for messages from the channel with the provided `cid`.
-    static func messagesFetchRequest(for cid: ChannelId) -> NSFetchRequest<MessageDTO> {
+    static func messagesFetchRequest(for cid: ChannelId, sortAscending: Bool = false) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
         request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
         return request
     }

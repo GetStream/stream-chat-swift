@@ -86,7 +86,7 @@ class ChannelController_Tests: StressTestCase {
     func test_noChangesAreReported_beforeCallingStartUpdating() throws {
         // Save a new channel to DB
         client.databaseContainer.write { session in
-            try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
         }
         
         // Assert the channel is not loaded
@@ -271,7 +271,7 @@ class ChannelController_Tests: StressTestCase {
         }
         
         // Set top-to-bottom ordering
-        controller.messageSorting = .topToBottom
+        controller.listOrdering = .topToBottom
         
         // Simulate `startUpdating` call
         controller.startUpdating()
@@ -280,8 +280,8 @@ class ChannelController_Tests: StressTestCase {
         let topToBotttomIds = [message1, message2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), topToBotttomIds)
         
-        // Set bottom-to=top ordering
-        controller.messageSorting = .bottomToTop
+        // Set bottom-to-top ordering
+        controller.listOrdering = .bottomToTop
         
         // Simulate `startUpdating` call to apply changes
         controller.startUpdating()
