@@ -53,6 +53,10 @@ protocol MessageDatabaseSession {
     
     /// Fetchtes `MessageDTO` with the given `id` from the DB. Returns `nil` if no `MessageDTO` matching the `id` exists.
     func message(id: MessageId) -> MessageDTO?
+    
+    /// Deletes the provided dto from a database
+    /// - Parameter message: The DTO to be deleted
+    func delete(message: MessageDTO)
 }
 
 extension MessageDatabaseSession {
