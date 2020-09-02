@@ -66,6 +66,10 @@ class WebSocketClient {
     /// The session config used for the web socket engine
     private let sessionConfiguration: URLSessionConfiguration
     
+    /// The Internet Connection for notifications.
+    private let internetConnection: InternetConnection
+    private var internetConnectionNotificationToken: NSObjectProtocol?
+    
     /// An object describing reconnection behavior after the web socket is disconnected.
     private var reconnectionStrategy: WebSocketClientReconnectionStrategy
     
@@ -105,19 +109,32 @@ class WebSocketClient {
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
         eventNotificationCenter: EventNotificationCenter,
-        reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
+        internetConnection: InternetConnection,
+        reconnectionStrategy: WebSocketClientReconnectionStrategy,
         environment: Environment = .init()
     ) {
         self.environment = environment
         self.connectEndpoint = connectEndpoint
         self.requestEncoder = requestEncoder
         self.sessionConfiguration = sessionConfiguration
+        self.internetConnection = internetConnection
         self.reconnectionStrategy = reconnectionStrategy
         self.eventDecoder = eventDecoder
         self.eventNotificationCenter = eventNotificationCenter
         self.eventNotificationCenter.add(middleware: HealthCheckMiddleware(webSocketClient: self))
         
         startListeningForAppStateUpdates()
+        startListeningForInternetConnectionStatusUpdates()
+    }
+    
+    deinit {
+        // Unsubscribe from App State updates notifications.
+        NotificationCenter.default.removeObserver(self)
+        
+        // Unsubscribe from Internet connection updates notifications.
+        if let notificationToken = internetConnectionNotificationToken {
+            NotificationCenter.default.removeObserver(notificationToken)
+        }
     }
     
     /// Connects the web connect.
@@ -126,8 +143,7 @@ class WebSocketClient {
     func connect() {
         switch connectionState {
         // Calling connect in the following states has no effect
-        case .connecting, .waitingForConnectionId, .connected(connectionId: _):
-            return
+        case .connecting, .waitingForConnectionId, .connected(connectionId: _): return
         default: break
         }
         
@@ -153,11 +169,15 @@ class WebSocketClient {
     /// Calling this function has no effect, if the connection is in an inactive state.
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
     func disconnect(source: ConnectionState.DisconnectionSource = .userInitiated) {
+        guard connectionState.isActive else { return }
+        
         connectionState = .disconnecting(source: source)
         engineQueue.async { [engine] in
             engine.disconnect()
         }
     }
+    
+    // MARK: App State
     
     private func startListeningForAppStateUpdates() {
         NotificationCenter.default.addObserver(
@@ -176,7 +196,13 @@ class WebSocketClient {
     }
     
     @objc private func handleAppDidEnterBackground() {
-        guard options.contains(.staysConnectedInBackground), connectionState.isActive else { return }
+        guard options.contains(.staysConnectedInBackground), connectionState.isActive else {
+            if connectionState.isActive {
+                disconnect(source: .systemInitiated)
+            }
+            
+            return
+        }
         
         let backgroundTask = backgroundTaskScheduler.beginBackgroundTask { [weak self] in
             self?.disconnect(source: .systemInitiated)
@@ -200,11 +226,50 @@ class WebSocketClient {
             activeBackgroundTask = nil
         }
     }
+    
+    // MARK: Internet Connection
+    
+    private func startListeningForInternetConnectionStatusUpdates() {
+        internetConnectionNotificationToken = NotificationCenter.default.addObserver(
+            forName: .internetConnectionStatusDidChange,
+            object: internetConnection,
+            queue: .main, // we should handle it on the main thread, because it uses `UIApplication.shared.appState`,
+            using: { [weak self] in self?.handleInternetConnectionStatus($0) }
+        )
+    }
+    
+    private func handleInternetConnectionStatus(_ notification: Notification) {
+        guard let status = notification.internetConnectionStatus else { return }
+        
+        let appState = UIApplication.shared.applicationState
+        
+        switch status {
+        case .available:
+            if case .background = appState {
+                return
+            }
+            
+            if !connectionState.isConnected {
+                connect()
+            }
+            
+        case .unknown, .unavailable:
+            cancelBackgroundTaskIfNeeded()
+            
+            if connectionState.isActive {
+                disconnect(source: .internetConnectionUnavailable)
+            }
+        }
+    }
 }
+
+// MARK: Connection State Delegate
 
 protocol ConnectionStateDelegate: AnyObject {
     func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: ConnectionState)
 }
+
+// MARK: - Environment
 
 extension WebSocketClient {
     /// An object encapsulating all dependencies of `WebSocketClient`.

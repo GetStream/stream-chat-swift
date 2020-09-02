@@ -19,23 +19,31 @@ class DefaultReconnectionStrategy: WebSocketClientReconnectionStrategy {
     static let maximumReconnectionDelay: TimeInterval = 25
     
     private var consecutiveFailures = 0
+    private let inernetConnection: InternetConnection
+    
+    init(inernetConnection: InternetConnection) {
+        self.inernetConnection = inernetConnection
+    }
     
     func sucessfullyConnected() {
         consecutiveFailures = 0
     }
     
     func reconnectionDelay(forConnectionError error: Error?) -> TimeInterval? {
-        if
-            let engineError = error as? WebSocketEngineError,
+        if let engineError = error as? WebSocketEngineError,
             engineError.code == WebSocketEngineError.stopErrorCode {
-            // Don't reconnect on `stop` errors
+            // Don't reconnect on `stop` errors.
             return nil
         }
         
-        if
-            let serverInitiatedError = error as? ErrorPayload,
+        if let serverInitiatedError = error as? ErrorPayload,
             ErrorPayload.tokenInvadlidErrorCodes ~= serverInitiatedError.code {
-            // Don't reconnect on invalid token errors
+            // Don't reconnect on invalid token errors.
+            return nil
+        }
+        
+        if case .unavailable = inernetConnection.status {
+            // Don't reconnect on Internet connection unavailable.
             return nil
         }
         

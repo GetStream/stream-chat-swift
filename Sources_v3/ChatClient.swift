@@ -88,7 +88,9 @@ public class Client<ExtraData: ExtraDataTypes> {
             urlSessionConfiguration,
             encoder,
             EventDecoder<ExtraData>(),
-            eventNotificationCenter
+            eventNotificationCenter,
+            internetConnection,
+            DefaultReconnectionStrategy(inernetConnection: internetConnection)
         )
         
         webSocketClient.connectionStateDelegate = self
@@ -338,10 +340,14 @@ public class Client<ExtraData: ExtraDataTypes> {
         }
         
         webSocketClient.connect()
+        internetConnection.start()
     }
     
     /// Disconnects `Client` from the chat servers. No further updates from the servers are received.
     public func disconnect() {
+        // Stop recieving Internet connection status updates.
+        internetConnection.stop()
+        
         // Disconnect the web socket
         webSocketClient.disconnect(source: .userInitiated)
         
@@ -419,14 +425,18 @@ extension Client {
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ eventDecoder: AnyEventDecoder,
-            _ notificationCenter: EventNotificationCenter
+            _ notificationCenter: EventNotificationCenter,
+            _ internetConnection: InternetConnection,
+            _ reconnectionStrategy: WebSocketClientReconnectionStrategy
         ) -> WebSocketClient = {
             WebSocketClient(
                 connectEndpoint: $0,
                 sessionConfiguration: $1,
                 requestEncoder: $2,
                 eventDecoder: $3,
-                eventNotificationCenter: $4
+                eventNotificationCenter: $4,
+                internetConnection: $5,
+                reconnectionStrategy: $6
             )
         }
         

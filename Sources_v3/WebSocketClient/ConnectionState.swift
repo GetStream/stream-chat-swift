@@ -21,6 +21,9 @@ public enum ConnectionState: Equatable {
         
         /// `WebSocketPingController` didn't get a pong response.
         case noPongReceived
+        
+        /// The Internet connection is unavailable.
+        case internetConnectionUnavailable
     }
     
     /// The web socket is not connected. Optionally contains an error, if the connection was disconnected due to an error.
