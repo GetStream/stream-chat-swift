@@ -17,7 +17,7 @@ public extension Client {
 public typealias CurrentUserController = CurrentUserControllerGeneric<DefaultDataTypes>
 
 /// `CurrentUserControllerGeneric` allows to observer current user updates
-public final class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable {
+public final class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: Client<ExtraData>
     
