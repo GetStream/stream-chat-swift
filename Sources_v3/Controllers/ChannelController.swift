@@ -123,6 +123,18 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
         return messagesObserver.items
     }
     
+    /// Describes the ordering the messages are presented in the channel.
+    public var listOrdering: ListOrdering = .topToBottom {
+        didSet {
+            if state != .inactive {
+                log.warning(
+                    "Changing `listOrdering` parameter after calling `startUpdating` has no effect."
+                        + "Call `startUpdating` again and reload all data in your UI to apply the change."
+                )
+            }
+        }
+    }
+
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var worker: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(
         client.databaseContainer,
@@ -197,9 +209,10 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
 
     private func setMessagesObserver() {
         _messagesObserver.computeValue = { [unowned self] in
+            let sortAscending = self.listOrdering == .topToBottom ? false : true
             let observer = ListDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
-                fetchRequest: MessageDTO.messagesFetchRequest(for: self.channelQuery.cid),
+                fetchRequest: MessageDTO.messagesFetchRequest(for: self.channelQuery.cid, sortAscending: sortAscending),
                 itemCreator: { $0.asModel() as MessageModel<ExtraData> }
             )
             observer.onChange = { changes in
