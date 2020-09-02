@@ -66,10 +66,16 @@ extension DatabaseContainer {
         }
     }
     
-    /// Synchronously creates a new ChannelDTO in the DB with the given cid.
-    func createChannel(cid: ChannelId = .unique) throws {
+    /// Synchrnously creates a new ChannelDTO in the DB with the given cid.
+    func createChannel(cid: ChannelId = .unique, withMessages: Bool = true) throws {
         try writeSynchronously { session in
-            try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
+            
+            // Delete possible messages from the payload if `withMessages` is false
+            if !withMessages {
+                let context = session as! NSManagedObjectContext
+                dto.messages.forEach { context.delete($0) }
+            }
         }
     }
     

@@ -256,7 +256,41 @@ class ChannelController_Tests: StressTestCase {
         // Assert the new message is presented
         AssertAsync.willBeTrue(controller.messages.contains { $0.id == newMesageId })
     }
-    
+
+    func test_messagesHaveCorrectOrder() throws {
+        // Create a channel
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
+        
+        // Insert two messages
+        let message1: MessagePayload<DefaultDataTypes> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: MessagePayload<DefaultDataTypes> = .dummy(messageId: .unique, authorUserId: .unique)
+        
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: message1, for: self.channelId)
+            try $0.saveMessage(payload: message2, for: self.channelId)
+        }
+        
+        // Set top-to-bottom ordering
+        controller.messageSorting = .topToBottom
+        
+        // Simulate `startUpdating` call
+        controller.startUpdating()
+        
+        // Check the order of messages is correct
+        let topToBotttomIds = [message1, message2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
+        XCTAssertEqual(controller.messages.map(\.id), topToBotttomIds)
+        
+        // Set bottom-to=top ordering
+        controller.messageSorting = .bottomToTop
+        
+        // Simulate `startUpdating` call to apply changes
+        controller.startUpdating()
+        
+        // Check the order of messages is correct
+        let bottomToTopIds = [message1, message2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
+        XCTAssertEqual(controller.messages.map(\.id), bottomToTopIds)
+    }
+
     // MARK: - Delegate tests
 
     func test_delegateContinueToReceiveEvents_afterObserversReset() throws {
