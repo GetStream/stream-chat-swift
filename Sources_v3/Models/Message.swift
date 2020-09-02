@@ -33,6 +33,13 @@ public enum MessageType: String, Codable {
 
 /// A possible additional local state of the message. Applies only for the messages of the current user.
 public enum LocalMessageState: String {
+    /// The message is waiting to be synced.
+    case pendingSync
+    /// The message is currently being synced
+    case syncing
+    /// Syncing of the message failed after multiple of tries. The system is not trying to sync this message anymore.
+    case syncingFailed
+    
     /// The message is waiting to be sent.
     case pendingSend
     /// The message is currently being sent to the servers.
