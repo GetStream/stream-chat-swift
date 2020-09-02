@@ -142,6 +142,22 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(webSocket?.init_requestEncoder.connectionDetailsProviderDelegate === client)
     }
     
+    func test_connectionStatus_isExposed() {
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
+
+        // Simulate connection state change of WSClient
+        let error = ClientError(with: TestError())
+        testEnv.webSocketClient?.simulateConnectionStatus(.notConnected(error: error))
+        
+        // Assert the WSConnectionState is exposed as ChatClientConnectionStatus
+        XCTAssertEqual(client.connectionStatus, .disconnected(error: error))
+    }
+    
     // MARK: - ConnectionDetailsProvider tests
     
     func test_clientProvidesConnectionId() throws {
@@ -741,7 +757,7 @@ class WebSocketClientMock: WebSocketClient {
         _connect_calledCounter { $0 += 1 }
     }
     
-    override func disconnect(source: ConnectionState.DisconnectionSource = .userInitiated) {
+    override func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         _disconnect_calledCounter { $0 += 1 }
     }
 }

@@ -468,7 +468,7 @@ extension ClientError {
 /// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
 /// its `RequestEncoder`.
 extension Client: ConnectionStateDelegate {
-    func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: ConnectionState) {
+    func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: WebSocketConnectionState) {
         if case let .connected(connectionId) = state {
             self.connectionId = connectionId
             connectionIdWaiters.forEach { $0(connectionId) }
