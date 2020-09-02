@@ -82,7 +82,7 @@ public typealias ChannelController = ChannelControllerGeneric<DefaultDataTypes>
 ///
 ///  ... you can do this and that
 ///
-public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable {
+public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider {
     /// The ChannelQuery this controller observes.
     @Atomic public private(set) var channelQuery: ChannelQuery<ExtraData>
 
