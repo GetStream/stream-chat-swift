@@ -4,12 +4,49 @@
 
 import Foundation
 
-public typealias ConnectionId = String
+// `ConnectionStatus` is just a simplified and friendlier wrapper around `WebSocketConnectionState`.
+
+/// Describes the possible states of the client connection to the servers.
+public enum ConnectionStatus: Equatable {
+    /// The client is disconnected. This is an initial state. Optionally contains an error, if the connection was disconnected
+    /// due to an error.
+    case disconnected(error: ClientError? = nil)
+    
+    /// The client is in the process of connecting to the remote servers.
+    case connecting
+    
+    /// The client is connected to the remote server.
+    case connected
+    
+    /// The web socket is disconnecting.
+    case disconnecting
+}
+
+extension ConnectionStatus {
+    // In internal initializer used for convering internal `WebSocketConnectionState` to `ChatClientConnectionStatus`.
+    init(webSocketConnectionState: WebSocketConnectionState) {
+        switch webSocketConnectionState {
+        case let .notConnected(error: error):
+            self = .disconnected(error: error)
+            
+        case .connecting, .waitingForConnectionId, .waitingForReconnect:
+            self = .connecting
+            
+        case .connected:
+            self = .connected
+            
+        case .disconnecting:
+            self = .disconnecting
+        }
+    }
+}
+
+typealias ConnectionId = String
 
 /// A web socket connection state.
-public enum ConnectionState: Equatable {
+enum WebSocketConnectionState: Equatable {
     /// Provides additional information about the source of disconnecting.
-    public enum DisconnectionSource: Equatable {
+    enum DisconnectionSource: Equatable {
         /// A user initiated web socket disconnecting.
         case userInitiated
         
@@ -42,7 +79,7 @@ public enum ConnectionState: Equatable {
     case waitingForReconnect(error: ClientError? = nil)
     
     /// Checks if the connection state is connected.
-    public var isConnected: Bool {
+    var isConnected: Bool {
         if case .connected = self {
             return true
         }
@@ -50,7 +87,7 @@ public enum ConnectionState: Equatable {
     }
     
     /// Returns false if the connection state is in the `notConnected` state.
-    public var isActive: Bool {
+    var isActive: Bool {
         if case .notConnected = self {
             return false
         }

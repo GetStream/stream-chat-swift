@@ -45,6 +45,11 @@ public class Client<ExtraData: ExtraDataTypes> {
     /// The id of the currently logged in user.
     @Atomic public var currentUserId: UserId = .anonymous
     
+    /// The current connection status of the client.
+    public var connectionStatus: ConnectionStatus {
+        ConnectionStatus(webSocketConnectionState: webSocketClient.connectionState)
+    }
+    
     /// The config object of the `Client` instance. This can't be mutated and can only be set when initializing a `Client` instance.
     public let config: ChatClientConfig
     
