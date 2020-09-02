@@ -15,36 +15,39 @@ class InternetConnection_Tests: XCTestCase {
         internetConnection = InternetConnection(monitor: monitor)
     }
 
-    func test_internetConnection_start() throws {
-        let notificationExpectation = expectation(forNotification: .internetConnectionStatusDidChange, object: nil) {
-            $0.userInfo?[InternetConnection.statusUserInfoKey] as? InternetConnection.Status == .available(.great)
+    func test_internetConnection_startsMonitoringAutomatically() throws {
+        XCTAssertTrue(monitor.isStarted)
+        
+        // Set up expectation for a notification
+        let notificationExpectation = expectation(
+            forNotification: .internetConnectionStatusDidChange,
+            object: internetConnection
+        ) {
+            $0.internetConnectionStatus == .available(.great)
         }
         
-        XCTAssertEqual(internetConnection.status, .unknown)
-        internetConnection.start()
-        XCTAssertTrue(monitor.isStarted)
+        // Simulate status update
+        monitor.status = .available(.great)
+        
         XCTAssertEqual(internetConnection.status, .available(.great))
-        wait(for: [notificationExpectation], timeout: 5)
+        wait(for: [notificationExpectation], timeout: 1)
     }
 
-    func test_internetConnection_stop() throws {
-        var notificationStatuses = [InternetConnection.Status]()
+    func test_internetConnection_stopsMonitorWhenDeinited() throws {
+        assert(monitor.isStarted)
         
-        let notificationExpectation = expectation(forNotification: .internetConnectionStatusDidChange, object: nil) {
-            if let status = $0.userInfo?[InternetConnection.statusUserInfoKey] as? InternetConnection.Status {
-                notificationStatuses.append(status)
-            }
-            
-            return true
-        }
-        
-        internetConnection.start()
-        XCTAssertTrue(monitor.isStarted)
-        internetConnection.stop()
+        internetConnection = nil
         XCTAssertFalse(monitor.isStarted)
-        XCTAssertEqual(internetConnection.status, .unknown)
-        wait(for: [notificationExpectation], timeout: 5)
-        XCTAssertEqual(notificationStatuses, [.available(.great), .unknown])
+    }
+}
+
+class InternetConnectionMock: InternetConnection {
+    private(set) var monitorMock: InternetConnectionMonitorMock!
+    
+    init(notificationCenter: NotificationCenter = .default) {
+        let monitor = InternetConnectionMonitorMock()
+        super.init(notificationCenter: notificationCenter, monitor: monitor)
+        monitorMock = monitor
     }
 }
 

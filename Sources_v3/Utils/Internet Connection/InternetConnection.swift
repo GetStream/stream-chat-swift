@@ -9,8 +9,12 @@ extension Notification.Name {
     static let internetConnectionStatusDidChange = Notification.Name("io.getstream.StreamChatClient.internetConnectionStatus")
 }
 
-extension InternetConnection {
-    static let statusUserInfoKey = "statusUserInfoKey"
+extension Notification {
+    static let internetConnectionStatusUserInfoKey = "internetConnectionStatus"
+    
+    var internetConnectionStatus: InternetConnection.Status? {
+        userInfo?[Self.internetConnectionStatusUserInfoKey] as? InternetConnection.Status
+    }
 }
 
 /// An Internet Connection monitor.
@@ -43,23 +47,22 @@ class InternetConnection {
         }
         
         self.monitor.delegate = self
+        self.monitor.start()
     }
     
-    func start() {
-        monitor.start()
-    }
-    
-    func stop() {
+    deinit {
         monitor.stop()
     }
 }
 
 extension InternetConnection: InternetConnectionDelegate {
     func internetConnectionStatusDidChange(status: Status) {
+        log.info("Internet Connection: \(status)")
+        
         notificationCenter.post(
             name: .internetConnectionStatusDidChange,
             object: self,
-            userInfo: [InternetConnection.statusUserInfoKey: status]
+            userInfo: [Notification.internetConnectionStatusUserInfoKey: status]
         )
     }
 }
@@ -146,12 +149,16 @@ private extension InternetConnection {
         func stop() {
             monitor?.cancel()
             monitor = nil
-            delegate?.internetConnectionStatusDidChange(status: .unknown)
         }
         
         private func createMonitor() -> NWPathMonitor {
             let monitor = NWPathMonitor()
-            monitor.pathUpdateHandler = { [unowned self] in self.updateStatus(with: $0) }
+            
+            // We should be able to do `[unowned self]` here, but it seems `NWPathMonitor` sometimes calls the handler
+            // event after `cancel()` has been called on it.
+            monitor.pathUpdateHandler = { [weak self] in
+                self?.updateStatus(with: $0)
+            }
             return monitor
         }
         
@@ -175,6 +182,10 @@ private extension InternetConnection {
             
             return .available(quality)
         }
+        
+        deinit {
+            stop()
+        }
     }
 }
 
@@ -196,24 +207,15 @@ private extension InternetConnection {
         }
         
         func start() {
-            DispatchQueue.main.async {
-                guard let reachability = self.reachability else {
-                    return
-                }
-                
-                do {
-                    try reachability.startNotifier()
-                } catch {
-                    log.error(error)
-                }
+            do {
+                try reachability?.startNotifier()
+            } catch {
+                log.error(error)
             }
         }
         
         func stop() {
-            DispatchQueue.main.async {
-                self.reachability?.stopNotifier()
-                self.delegate?.internetConnectionStatusDidChange(status: .unknown)
-            }
+            reachability?.stopNotifier()
         }
         
         private func createReachability() -> Reachability? {
