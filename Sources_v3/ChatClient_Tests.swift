@@ -584,7 +584,9 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                     sessionConfiguration: $1,
                     requestEncoder: $2,
                     eventDecoder: $3,
-                    eventNotificationCenter: $4
+                    eventNotificationCenter: $4,
+                    internetConnection: $5,
+                    reconnectionStrategy: $6
                 )
                 return self.webSocketClient!
             },
@@ -703,6 +705,7 @@ class WebSocketClientMock: WebSocketClient {
     let init_requestEncoder: RequestEncoder
     let init_eventDecoder: AnyEventDecoder
     let init_eventNotificationCenter: EventNotificationCenter
+    let init_internetConnection: InternetConnection
     let init_reconnectionStrategy: WebSocketClientReconnectionStrategy
     let init_environment: WebSocketClient.Environment
     
@@ -715,7 +718,8 @@ class WebSocketClientMock: WebSocketClient {
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
         eventNotificationCenter: EventNotificationCenter,
-        reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
+        internetConnection: InternetConnection,
+        reconnectionStrategy: WebSocketClientReconnectionStrategy,
         environment: WebSocketClient.Environment = .init()
     ) {
         init_connectEndpoint = connectEndpoint
@@ -723,6 +727,7 @@ class WebSocketClientMock: WebSocketClient {
         init_requestEncoder = requestEncoder
         init_eventDecoder = eventDecoder
         init_eventNotificationCenter = eventNotificationCenter
+        init_internetConnection = internetConnection
         init_reconnectionStrategy = reconnectionStrategy
         init_environment = environment
         
@@ -732,6 +737,7 @@ class WebSocketClientMock: WebSocketClient {
             requestEncoder: requestEncoder,
             eventDecoder: eventDecoder,
             eventNotificationCenter: eventNotificationCenter,
+            internetConnection: internetConnection,
             reconnectionStrategy: reconnectionStrategy,
             environment: environment
         )
@@ -748,12 +754,16 @@ class WebSocketClientMock: WebSocketClient {
 
 extension WebSocketClientMock {
     convenience init() {
+        let internetConnection = InternetConnectionMock()
+        
         self.init(
             connectEndpoint: .init(path: "", method: .get, queryItems: nil, requiresConnectionId: false, body: nil),
             sessionConfiguration: .default,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             eventDecoder: EventDecoder<DefaultDataTypes>(),
-            eventNotificationCenter: .init()
+            eventNotificationCenter: .init(),
+            internetConnection: internetConnection,
+            reconnectionStrategy: DefaultReconnectionStrategy(inernetConnection: internetConnection)
         )
     }
 }

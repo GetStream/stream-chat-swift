@@ -18,7 +18,8 @@ class WebSocketClient_Tests: StressTestCase {
     var time: VirtualTime!
     var endpoint: Endpoint<EmptyResponse>!
     private var decoder: EventDecoderMock!
-    private var reconnectionStrategy: MockReconnectionStrategy!
+    private var internetConnection: InternetConnectionMock!
+    private var reconnectionStrategy: ReconnectionStrategyMock!
     var engine: WebSocketEngineMock { webSocketClient.engine as! WebSocketEngineMock }
     var connectionId: String!
     var user: User!
@@ -46,7 +47,8 @@ class WebSocketClient_Tests: StressTestCase {
         decoder = EventDecoderMock()
         backgroundTaskScheduler = MockBackgroundTaskScheduler()
         
-        reconnectionStrategy = MockReconnectionStrategy()
+        internetConnection = InternetConnectionMock()
+        reconnectionStrategy = ReconnectionStrategyMock()
         
         requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
         eventNotificationCenter = EventNotificationCenter()
@@ -65,6 +67,7 @@ class WebSocketClient_Tests: StressTestCase {
             requestEncoder: requestEncoder,
             eventDecoder: decoder,
             eventNotificationCenter: eventNotificationCenter,
+            internetConnection: internetConnection,
             reconnectionStrategy: reconnectionStrategy,
             environment: environment
         )
@@ -170,6 +173,21 @@ class WebSocketClient_Tests: StressTestCase {
         // Simulate the engine is disconnected and check the connection state is updated
         engine.simulateDisconnect()
         AssertAsync.willBeEqual(webSocketClient.connectionState, .notConnected())
+    }
+    
+    func test_internetConnection_available() {
+        assert(webSocketClient.connectionState == .notConnected())
+        
+        internetConnection.monitorMock.status = .available(.great)
+        XCTAssertEqual(webSocketClient.connectionState, .connecting)
+    }
+    
+    func test_internetConnection_unavailable() {
+        test_connectionFlow()
+        assert(webSocketClient.connectionState == .connected(connectionId: connectionId))
+        
+        internetConnection.monitorMock.status = .unavailable
+        XCTAssertEqual(webSocketClient.connectionState, .disconnecting(source: .internetConnectionUnavailable))
     }
     
     func test_reconnectionStrategy_successfullyConnectedIsCalled() {
@@ -286,6 +304,7 @@ class WebSocketClient_Tests: StressTestCase {
     }
     
     func test_webSocketPingController_disconnectOnNoPongReceived_disconnectsEngine() {
+        test_connectionFlow()
         assert(engine.disconnect_calledCount == 0)
         
         pingController.delegate?.disconnectOnNoPongReceived()
@@ -528,7 +547,7 @@ private class EventDecoderMock: AnyEventDecoder {
     }
 }
 
-private class MockReconnectionStrategy: WebSocketClientReconnectionStrategy {
+private class ReconnectionStrategyMock: WebSocketClientReconnectionStrategy {
     var sucessfullyConnected_calledCount: Int = 0
     var reconnectionDelay_calledWithError: Error?
     

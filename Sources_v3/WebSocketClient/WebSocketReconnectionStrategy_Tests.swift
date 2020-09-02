@@ -7,10 +7,12 @@ import XCTest
 
 class DefaultReconnectionStrategy_Tests: XCTestCase {
     var strategy: DefaultReconnectionStrategy!
+    var internetConnection: InternetConnectionMock!
     
     override func setUp() {
         super.setUp()
-        strategy = DefaultReconnectionStrategy()
+        internetConnection = InternetConnectionMock()
+        strategy = DefaultReconnectionStrategy(inernetConnection: internetConnection)
     }
     
     func test_delaysAreIncreasing() throws {
