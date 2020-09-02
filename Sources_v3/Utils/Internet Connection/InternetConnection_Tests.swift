@@ -17,7 +17,7 @@ class InternetConnection_Tests: XCTestCase {
 
     func test_internetConnection_start() throws {
         let notificationExpectation = expectation(forNotification: .internetConnectionStatusDidChange, object: nil) {
-            $0.userInfo?[InternetConnection.statusUserInfoKey] as? InternetConnection.Status == .available(.great)
+            $0.internetConnectionStatus == .available(.great)
         }
         
         XCTAssertEqual(internetConnection.status, .unknown)
@@ -31,7 +31,7 @@ class InternetConnection_Tests: XCTestCase {
         var notificationStatuses = [InternetConnection.Status]()
         
         let notificationExpectation = expectation(forNotification: .internetConnectionStatusDidChange, object: nil) {
-            if let status = $0.userInfo?[InternetConnection.statusUserInfoKey] as? InternetConnection.Status {
+            if let status = $0.internetConnectionStatus {
                 notificationStatuses.append(status)
             }
             
@@ -45,6 +45,16 @@ class InternetConnection_Tests: XCTestCase {
         XCTAssertEqual(internetConnection.status, .unknown)
         wait(for: [notificationExpectation], timeout: 5)
         XCTAssertEqual(notificationStatuses, [.available(.great), .unknown])
+    }
+}
+
+class InternetConnectionMock: InternetConnection {
+    private(set) var monitorMock: InternetConnectionMonitorMock!
+    
+    init(notificationCenter: NotificationCenter = .default) {
+        let monitor = InternetConnectionMonitorMock()
+        super.init(notificationCenter: notificationCenter, monitor: monitor)
+        monitorMock = monitor
     }
 }
 

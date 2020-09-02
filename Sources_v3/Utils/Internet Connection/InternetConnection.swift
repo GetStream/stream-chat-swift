@@ -9,8 +9,12 @@ extension Notification.Name {
     static let internetConnectionStatusDidChange = Notification.Name("io.getstream.StreamChatClient.internetConnectionStatus")
 }
 
-extension InternetConnection {
-    static let statusUserInfoKey = "statusUserInfoKey"
+extension Notification {
+    static let internetConnectionStatusUserInfoKey = "internetConnectionStatus"
+    
+    var internetConnectionStatus: InternetConnection.Status? {
+        userInfo?[Self.internetConnectionStatusUserInfoKey] as? InternetConnection.Status
+    }
 }
 
 /// An Internet Connection monitor.
@@ -45,6 +49,10 @@ class InternetConnection {
         self.monitor.delegate = self
     }
     
+    deinit {
+        stop()
+    }
+    
     func start() {
         monitor.start()
     }
@@ -56,10 +64,12 @@ class InternetConnection {
 
 extension InternetConnection: InternetConnectionDelegate {
     func internetConnectionStatusDidChange(status: Status) {
+        log.info("Internet Connection: \(status)")
+        
         notificationCenter.post(
             name: .internetConnectionStatusDidChange,
             object: self,
-            userInfo: [InternetConnection.statusUserInfoKey: status]
+            userInfo: [Notification.internetConnectionStatusUserInfoKey: status]
         )
     }
 }
@@ -146,12 +156,11 @@ private extension InternetConnection {
         func stop() {
             monitor?.cancel()
             monitor = nil
-            delegate?.internetConnectionStatusDidChange(status: .unknown)
         }
         
         private func createMonitor() -> NWPathMonitor {
             let monitor = NWPathMonitor()
-            monitor.pathUpdateHandler = { [unowned self] in self.updateStatus(with: $0) }
+            monitor.pathUpdateHandler = { [weak self] in self?.updateStatus(with: $0) }
             return monitor
         }
         
