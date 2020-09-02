@@ -129,6 +129,29 @@ class DatabaseSession_Tests: StressTestCase {
         XCTAssert(loadedChannel.latestMessages.contains(message))
     }
     
+    func test_deleteMessage() throws {
+        let channelId: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create current user in the DB
+        try database.createCurrentUser()
+        
+        // Create channel in the DB
+        try database.createChannel(cid: channelId)
+        
+        // Save the message to the DB and remember the messageId
+        try database.createMessage(id: messageId, cid: channelId)
+        
+        // Delete the message from the DB
+        try database.writeSynchronously { session in
+            let dto = try XCTUnwrap(session.message(id: messageId))
+            session.delete(message: dto)
+        }
+        
+        // Assert message is deleted
+        XCTAssertNil(database.viewContext.message(id: messageId))
+    }
+    
     func test_saveEvent_unreadCountFromEventPayloadIsApplied() throws {
         let eventPayload = EventPayload<DefaultDataTypes>(
             eventType: .messageNew,

@@ -171,6 +171,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     }
     
     func message(id: MessageId) -> MessageDTO? { .load(id: id, context: self) }
+    
+    func delete(message: MessageDTO) {
+        delete(message)
+    }
 }
 
 extension MessageDTO {
