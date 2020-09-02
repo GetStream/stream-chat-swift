@@ -46,7 +46,7 @@ class WebSocketPingController {
     }
     
     /// `WebSocketClient` should call this when the connection state did change.
-    func connectionStateDidChange(_ connectionState: ConnectionState) {
+    func connectionStateDidChange(_ connectionState: WebSocketConnectionState) {
         guard delegate != nil else { return }
         
         cancelPongTimeoutTimer()
