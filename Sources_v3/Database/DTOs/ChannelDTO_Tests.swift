@@ -237,9 +237,17 @@ class ChannelDTO_Tests: XCTestCase {
     }
     
     private func encodedChannelListSortingKey(_ sortingKey: ChannelListSortingKey) -> String {
-        let encodedData = try! JSONEncoder.stream.encode(sortingKey)
-        return String(data: encodedData, encoding: .utf8)!
-            .trimmingCharacters(in: .init(charactersIn: "\""))
+        if #available(iOS 13, *) {
+            let encodedData = try! JSONEncoder.stream.encode(sortingKey)
+            return String(data: encodedData, encoding: .utf8)!.trimmingCharacters(in: .init(charactersIn: "\""))
+        
+        } else {
+            @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
+            // Workaround for a bug https://bugs.swift.org/browse/SR-6163 fixed in iOS 13
+            let data = try! JSONEncoder.stream.encode(["key": sortingKey])
+            let json = try! JSONSerialization.jsonObject(with: data) as! [String: Any]
+            return json["key"] as! String
+        }
     }
     
     func test_channelPayload_withNoExtraData_isStoredAndLoadedFromDB() {
