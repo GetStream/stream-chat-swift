@@ -24,35 +24,50 @@ class ChannelId_Tests: XCTestCase {
         XCTAssertTrue(channelId.isAny)
     }
     
-    func test_channelId_coding() throws {
-        try encode(channelId: try ChannelId(cid: "*"), value: "\"*\"")
-        try decode(channelId: try ChannelId(cid: "*"), value: "\"*\"")
-        try encode(channelId: ChannelId(type: .messaging, id: "123"), value: "\"messaging:123\"")
-        try decode(channelId: ChannelId(type: .messaging, id: "123"), value: "\"messaging:123\"")
-        try encode(channelId: ChannelId(type: .custom("asd"), id: "123"), value: "\"asd:123\"")
-        try decode(channelId: ChannelId(type: .custom("asd"), id: "123"), value: "\"asd:123\"")
+    func test_channelId_encoding() throws {
+        XCTAssertEqual(encode(channelId: try ChannelId(cid: "*")), "*")
+        XCTAssertEqual(encode(channelId: ChannelId(type: .messaging, id: "123")), "messaging:123")
+        XCTAssertEqual(encode(channelId: ChannelId(type: .custom("asd"), id: "123")), "asd:123")
     }
-    
+
+    func test_channelId_decoding() throws {
+        XCTAssertEqual(decode(value: "*"), try! ChannelId(cid: "*"))
+        XCTAssertEqual(decode(value: "messaging:123"), ChannelId(type: .messaging, id: "123"))
+        XCTAssertEqual(decode(value: "asd:123"), ChannelId(type: .custom("asd"), id: "123"))
+    }
+
     func test_channelId_edgeCases() throws {
+        // Channel with empty string
         XCTAssertThrowsError(try ChannelId(cid: ""))
+        
+        // Channel with invalid cid format
         XCTAssertThrowsError(try ChannelId(cid: "asd123"))
         
+        // Unknown channel type
         let channelId = ChannelId(type: .unknown, id: "")
         XCTAssertEqual(channelId.type, ChannelType.unknown)
         XCTAssertEqual(channelId.id, "*")
-        try encode(channelId: channelId, value: "\"*\"")
-        try decode(channelId: channelId, value: "\"*\"")
     }
     
-    private func encode(channelId: ChannelId, value: String) throws {
-        let data = try JSONEncoder.stream.encode(channelId)
-        let string = String(data: data, encoding: .utf8)
-        XCTAssertEqual(string, value)
+    @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
+    private func encode(channelId: ChannelId) -> String? {
+        // We must encode it as a part of JSON because older iOS version don't support JSON fragments
+        let key = String.unique
+        guard
+            let data = try? JSONEncoder.stream.encode([key: channelId]),
+            let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
+        else { return nil }
+        
+        return json[key] as? String
     }
     
-    private func decode(channelId: ChannelId, value: String) throws {
-        let data = value.data(using: .utf8)!
-        let decodedChannelId = try JSONDecoder.stream.decode(ChannelId.self, from: data)
-        XCTAssertEqual(channelId, decodedChannelId)
+    @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
+    private func decode(value: String) -> ChannelId? {
+        // We must decode it as a part of JSON because older iOS version don't support JSON fragments
+        let key = String.unique
+        let jsonString = #"{ "\#(key)" : "\#(value)"}"#
+        let data = jsonString.data(using: .utf8)!
+        let serializedJSON = try? JSONDecoder.stream.decode([String: ChannelId].self, from: data)
+        return serializedJSON?[key]
     }
 }
