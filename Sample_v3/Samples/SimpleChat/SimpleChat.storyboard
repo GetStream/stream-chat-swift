@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LxB-C7-hWF">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="LxB-C7-hWF">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
@@ -104,7 +104,7 @@
             </objects>
             <point key="canvasLocation" x="826" y="88"/>
         </scene>
-        <!--Simple Chat View Controller-->
+        <!--Cool Channel-->
         <scene sceneID="0dN-EP-EqE">
             <objects>
                 <tableViewController id="47C-ND-0Qu" customClass="SimpleChatViewController" customModule="Sample" customModuleProvider="target" sceneMemberID="viewController">
@@ -136,7 +136,7 @@
                             <outlet property="delegate" destination="47C-ND-0Qu" id="cBb-vf-uaj"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" id="LjT-p3-dpY"/>
+                    <navigationItem key="navigationItem" title="Cool Channel" prompt="99 members, 99 online" id="LjT-p3-dpY"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="n7B-tZ-qeH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
