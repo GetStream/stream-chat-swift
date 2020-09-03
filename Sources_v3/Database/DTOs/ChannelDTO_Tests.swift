@@ -413,7 +413,7 @@ extension XCTestCase {
                     typeRawValue: channelId.type.rawValue,
                     lastMessageAt: lastMessageAt,
                     createdAt: channelCreatedDate,
-                    deletedAt: .unique,
+                    deletedAt: nil,
                     updatedAt: .unique,
                     createdBy: dummyUser,
                     config: .init(

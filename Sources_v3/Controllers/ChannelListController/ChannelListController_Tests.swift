@@ -93,17 +93,23 @@ class ChannelListController_Tests: StressTestCase {
     }
     
     func test_startUpdating_fetchesExistingChannels() throws {
-        // Save two channels to DB (only one matching the query) and wait for completion
+        // Save three channels to DB
         let cidMatchingQuery = ChannelId.unique
+        let cidMatchingQueryDeleted = ChannelId.unique
         let cidNotMatchingQuery = ChannelId.unique
         
-        _ = try await {
-            client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQuery), query: self.query)
-                try session.saveChannel(payload: self.dummyPayload(with: cidNotMatchingQuery), query: nil)
-            }, completion: $0)
+        try client.databaseContainer.writeSynchronously { session in
+            // Insert a channel matching the query
+            try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQuery), query: self.query)
+            
+            // Insert a deleted channel matching the query
+            let dto = try session.saveChannel(payload: self.dummyPayload(with: cidMatchingQueryDeleted), query: self.query)
+            dto.deletedAt = .unique
+            
+            // Insert a channel not matching the query
+            try session.saveChannel(payload: self.dummyPayload(with: cidNotMatchingQuery), query: nil)
         }
-        
+
         // Start updating
         controller.startUpdating()
         
