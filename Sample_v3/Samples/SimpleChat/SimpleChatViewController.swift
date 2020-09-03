@@ -161,6 +161,58 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
         }
     }
     
+    ///
+    /// # canEditRowAt
+    ///
+    /// The method below returns a bool indicating whether the message can be edited.
+    /// The editing is allowed for non-deleted messages
+    ///
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        channelController.messages[indexPath.row].deletedAt == nil
+    }
+    
+    ///
+    /// # willBeginEditingRowAt
+    ///
+    /// In this method we get a swipe container and apply the same transform as the tableView has.
+    /// It fixes the bug when the list is in `listOrdering == .bottomToTop` but the swipe actions are
+    /// upside-down
+    ///
+    override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+        tableView.cellForRow(at: indexPath)?.swipeActionsContainer?.transform = tableView.transform
+    }
+    
+    ///
+    /// # trailingSwipeActionsConfigurationForRowAt
+    ///
+    /// The method below returns a list of swipe actions available on the message
+    ///
+    override func tableView(
+        _ tableView: UITableView,
+        trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        let message = channelController.messages[indexPath.row]
+        
+        let messageController = chatClient.messageController(
+            cid: channelController.channelQuery.cid,
+            messageId: message.id
+        )
+        
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
+            messageController.deleteMessage()
+        }
+        
+        let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, _ in
+            self?.showTextEditingAlert(for: message.text) {
+                messageController.editMessage(text: $0)
+            }
+        }
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction, editAction])
+        configuration.performsFirstActionWithFullSwipe = true
+        return configuration
+    }
+    
     // MARK: - Button Actions
 
     ///
@@ -241,6 +293,20 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
         composerView.layoutMargins = view.layoutMargins
         composerView.directionalLayoutMargins = systemMinimumLayoutMargins
         return composerView
+    }
+    
+    private func showTextEditingAlert(for text: String, completion: @escaping (_ editedText: String) -> Void) {
+        let alert = UIAlertController(title: "Edit message text", message: nil, preferredStyle: .alert)
+
+        alert.addTextField { textField in
+            textField.text = text
+        }
+
+        alert.addAction(UIAlertAction(title: "Save", style: .default, handler: { [weak alert] _ in
+            completion(alert?.textFields?.first?.text ?? "")
+        }))
+
+        present(alert, animated: true)
     }
 }
 
@@ -332,5 +398,20 @@ extension SimpleChatViewController {
         tableView.contentInsetAdjustmentBehavior = .never
         tableView.separatorColor = .clear
         tableView.transform = CGAffineTransform(scaleX: 1, y: -1)
+    }
+}
+
+// MARK: - Private
+
+private extension UITableViewCell {
+    var swipeActionsContainer: UIView? {
+        guard
+            let superview = superview,
+            let swipeContainerViewType = NSClassFromString("_UITableViewCellSwipeContainerView"),
+            let swipeViewType = NSClassFromString("UISwipeActionPullView"),
+            superview.isKind(of: swipeContainerViewType)
+        else { return nil }
+        
+        return superview.subviews.first { $0.isKind(of: swipeViewType) }
     }
 }
