@@ -6,7 +6,7 @@ import Foundation
 
 /// Event type.
 /// Creates an `Event` from a given response with the appropriate event type.
-enum EventType: String, Decodable {
+enum EventType: String, Codable {
     case healthCheck = "health.check"
     
     // MARK: User Events

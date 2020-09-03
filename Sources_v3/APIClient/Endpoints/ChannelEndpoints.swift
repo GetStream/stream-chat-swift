@@ -107,4 +107,14 @@ extension Endpoint {
             body: ["remove_members": userIds]
         )
     }
+    
+    static func event<ExtraData: ExtraDataTypes>(cid: ChannelId, eventType: EventType) -> Endpoint<EventPayload<ExtraData>> {
+        .init(
+            path: "channels/\(cid.type)/\(cid.id)",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["event": ["type": eventType]]
+        )
+    }
 }
