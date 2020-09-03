@@ -289,6 +289,7 @@
 		F63CC37124E591990052844D /* EventObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37024E591990052844D /* EventObserver_Tests.swift */; };
 		F63CC37324E592D30052844D /* MemberEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37224E592D30052844D /* MemberEventObserver.swift */; };
 		F63CC37524E592DD0052844D /* MemberEventObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */; };
+		F649B2392500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F649B2382500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift */; };
 		F670B50F24FE6EA900003B1A /* MessageEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F670B50E24FE6EA900003B1A /* MessageEditor.swift */; };
 		F67415C024F0129800C3222F /* UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = F67415BF24F0129800C3222F /* UnreadCount.swift */; };
 		F6778F9A24F5144F005E7D22 /* EventNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6778F9924F5144F005E7D22 /* EventNotificationCenter.swift */; };
@@ -629,6 +630,7 @@
 		F63CC37024E591990052844D /* EventObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventObserver_Tests.swift; sourceTree = "<group>"; };
 		F63CC37224E592D30052844D /* MemberEventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventObserver.swift; sourceTree = "<group>"; };
 		F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventObserver_Tests.swift; sourceTree = "<group>"; };
+		F649B2382500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityDatabaseObserver_Mock.swift; sourceTree = "<group>"; };
 		F670B50E24FE6EA900003B1A /* MessageEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEditor.swift; sourceTree = "<group>"; };
 		F67415BF24F0129800C3222F /* UnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCount.swift; sourceTree = "<group>"; };
 		F6778F9924F5144F005E7D22 /* EventNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventNotificationCenter.swift; sourceTree = "<group>"; };
@@ -1052,6 +1054,7 @@
 				793C14DB24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift */,
 				792AF91524D812440010097B /* EntityDatabaseObserver.swift */,
 				7922F30924DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift */,
+				F649B2382500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -1822,6 +1825,7 @@
 				8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */,
 				79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */,
 				799C9476247D7E94001F1104 /* TemporaryData.swift in Sources */,
+				F649B2392500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift in Sources */,
 				79CD959424F9381700E87377 /* MulticastDelegateTests.swift in Sources */,
 				792921C724C047DD00116BBB /* APIClient_Mock.swift in Sources */,
 				DAD5C836250278AD0045117A /* ChannelController+Combine_Tests.swift in Sources */,
