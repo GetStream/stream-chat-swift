@@ -92,12 +92,20 @@ extension DatabaseContainer {
     }
     
     /// Synchronously creates a new MessageDTO in the DB with the given id.
-    func createMessage(id: MessageId = .unique, authorId: UserId = .unique, cid: ChannelId = .unique) throws {
+    func createMessage(
+        id: MessageId = .unique,
+        authorId: UserId = .unique,
+        cid: ChannelId = .unique,
+        text: String = .unique,
+        localState: LocalMessageState? = nil
+    ) throws {
         try writeSynchronously { session in
             try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
             
-            let message: MessagePayload<DefaultDataTypes> = .dummy(messageId: id, authorUserId: authorId)
-            try session.saveMessage(payload: message, for: cid)
+            let message: MessagePayload<DefaultDataTypes> = .dummy(messageId: id, authorUserId: authorId, text: text)
+            
+            let messageDTO = try session.saveMessage(payload: message, for: cid)
+            messageDTO.localMessageState = localState
         }
     }
 }
