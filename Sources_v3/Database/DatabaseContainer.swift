@@ -55,7 +55,15 @@ class DatabaseContainer: NSPersistentContainer {
         
         switch kind {
         case .inMemory:
-            description.url = URL(fileURLWithPath: "/dev/null")
+            // So, it seems that on iOS 13, we have to use SQLite store with /dev/null URL, but on iOS 11 & 12
+            // we have to use `NSInMemoryStoreType`. This is not, of course, documented anywhere because no one in
+            // Apple is obviously that crazy, to write tests with CoreData stack.
+            if #available(iOS 13, *) {
+                description.url = URL(fileURLWithPath: "/dev/null")
+            } else {
+                description.type = NSInMemoryStoreType
+            }
+            
         case let .onDisk(databaseFileURL: databaseFileURL):
             description.url = databaseFileURL
         }
@@ -137,14 +145,25 @@ class DatabaseContainer: NSPersistentContainer {
             fatalError("Non-force flush is not implemented.")
         }
         
-        write({ session in
+        write({ [persistentStoreDescriptions] session in
             let session = session as! NSManagedObjectContext
             
             try self.managedObjectModel.entities.forEach { entityDescription in
                 guard let entityName = entityDescription.name else { return }
                 let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
-                let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-                try session.execute(deleteRequest)
+                
+                if persistentStoreDescriptions.contains(where: { $0.type == NSInMemoryStoreType }) {
+                    // If we use `NSInMemoryStoreType` we can't use `NSBatchDeleteRequest` and we have to delete
+                    // the objects one by one.
+                    let objects = try session.fetch(fetchRequest) as? [NSManagedObject]
+                    objects?.forEach {
+                        session.delete($0)
+                    }
+                    
+                } else {
+                    let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+                    try session.execute(deleteRequest)
+                }
             }
             
         }, completion: { completion?($0) })
