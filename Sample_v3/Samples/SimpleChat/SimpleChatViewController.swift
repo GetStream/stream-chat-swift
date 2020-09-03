@@ -13,10 +13,6 @@ import UIKit
 ///
 final class SimpleChatViewController: UITableViewController, ChannelControllerDelegate {
     // MARK: - Properties
-
-    ///
-    /// The properties below hold references to objects
-    ///
     
     ///
     /// # channelController
