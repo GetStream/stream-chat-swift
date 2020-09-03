@@ -27,6 +27,10 @@ struct VirtualTimeTimer: StreamChatClient.Timer {
             callback: { _ in onFire() }
         )
     }
+    
+    static func currentTime() -> Date {
+        Date(timeIntervalSinceReferenceDate: time.currentTime)
+    }
 }
 
 extension VirtualTime.TimerControl: TimerControl, RepeatingTimerControl {}
