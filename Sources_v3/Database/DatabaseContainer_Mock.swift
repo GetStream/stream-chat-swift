@@ -38,6 +38,13 @@ class DatabaseContainerMock: DatabaseContainer {
 }
 
 extension DatabaseContainer {
+    /// Deletes all data synchronously
+    func flush() throws {
+        if let error = try await({ self.removeAllData(force: true, completion: $0) }) {
+            throw error
+        }
+    }
+    
     /// Writes changes to the DB synchronously. Only for test purposes!
     func writeSynchronously(_ actions: @escaping (DatabaseSession) throws -> Void) throws {
         let error = try await { completion in
