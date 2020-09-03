@@ -17,7 +17,7 @@ public extension Client {
 public typealias CurrentUserController = CurrentUserControllerGeneric<DefaultDataTypes>
 
 /// `CurrentUserControllerGeneric` allows to observer current user updates
-public final class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider {
+public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: Client<ExtraData>
     
@@ -37,7 +37,7 @@ public final class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Cont
         }
 
     /// A type-erased delegate.
-    private(set) var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate<ExtraData>> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -67,7 +67,7 @@ public final class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Cont
     /// - Parameters:
     ///   - client: The `Client` instance this controller belongs to.
     ///   - environment: The source of internal dependencies
-    init(client: Client<ExtraData>, environment: Environment) {
+    init(client: Client<ExtraData>, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
     }
