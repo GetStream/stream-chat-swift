@@ -10,7 +10,6 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
     var currentUser: User!
     
     var time: VirtualTime!
-    var typingStartTimeout: TimeInterval { type(of: middleware).incomingTypingStartEventTimeout }
     
     override func setUp() {
         super.setUp()
@@ -32,7 +31,7 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
         }
         
         // Simulate time passed for the `typingStartTimeout` period
-        time.run(numberOfSeconds: typingStartTimeout + 1)
+        time.run(numberOfSeconds: .incomingTypingStartEventTimeout + 1)
         
         XCTAssertEqual(result, [typingStartEvent].asEquatable())
     }
@@ -50,7 +49,7 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
         }
         
         // Wait for some timeout shorter than `typingStartTimeout` and assert only `TypingStart` event is sent
-        time.run(numberOfSeconds: typingStartTimeout - 1)
+        time.run(numberOfSeconds: .incomingTypingStartEventTimeout - 1)
         XCTAssertEqual(result, [startTyping.asEquatable])
         
         // Wait for more time and expect a `typingStop` event.
@@ -59,7 +58,7 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
         XCTAssertEqual(result, [startTyping.asEquatable, stopTyping.asEquatable])
         
         // Wait much longer and assert no more `typingStop` events.
-        time.run(numberOfSeconds: 5 + typingStartTimeout)
+        time.run(numberOfSeconds: 5 + .incomingTypingStartEventTimeout)
         XCTAssertEqual(result, [startTyping.asEquatable, stopTyping.asEquatable])
     }
 }
