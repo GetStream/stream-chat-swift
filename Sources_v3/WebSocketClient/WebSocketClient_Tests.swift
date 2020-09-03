@@ -94,7 +94,7 @@ class WebSocketClient_Tests: StressTestCase {
     }
     
     func test_connectionFlow() {
-        assert(webSocketClient.connectionState == .notConnected())
+        assert(webSocketClient.connectionState == .disconnected())
         
         // Simulate response from the encoder
         let request = URLRequest(url: .unique())
@@ -169,7 +169,7 @@ class WebSocketClient_Tests: StressTestCase {
         
         // Simulate the engine is disconnected and check the connection state is updated
         engine.simulateDisconnect()
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .notConnected())
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected())
     }
     
     func test_reconnectionStrategy_successfullyConnectedIsCalled() {
@@ -234,7 +234,7 @@ class WebSocketClient_Tests: StressTestCase {
         
         // Simulate the engine disconnects and check `connectionState` is updated
         engine.simulateDisconnect()
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .notConnected())
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .disconnected())
         
         // Simulate time passed and make sure `connect` is not called
         time.run(numberOfSeconds: 60)
@@ -395,7 +395,7 @@ class WebSocketClient_Tests: StressTestCase {
             .waitingForConnectionId,
             .connected(connectionId: connectionId),
             .disconnecting(source: .userInitiated),
-            .notConnected()
+            .disconnected()
         ]
         
         connectionStates.forEach { webSocketClient.simulateConnectionStatus($0) }
