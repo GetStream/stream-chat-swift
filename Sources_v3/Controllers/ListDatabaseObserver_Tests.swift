@@ -166,12 +166,9 @@ class ListChangeAggregator_Tests: XCTestCase {
         // Simulate FRC finishes updating
         aggregator.controllerDidChangeContent(fakeController)
         
-        // Move should also produce "update" change
         XCTAssertEqual(result, [
             .move(movedObject1.uniqueValue, fromIndex: [5, 0], toIndex: [0, 0]),
-            .update(movedObject1.uniqueValue, index: [0, 0]),
-            .move(movedObject2.uniqueValue, fromIndex: [4, 0], toIndex: [1, 0]),
-            .update(movedObject2.uniqueValue, index: [1, 0])
+            .move(movedObject2.uniqueValue, fromIndex: [4, 0], toIndex: [1, 0])
         ])
     }
     
@@ -300,7 +297,6 @@ class ListChangeAggregator_Tests: XCTestCase {
         XCTAssertEqual(result, [
             .insert(addedObject.uniqueValue, index: [1, 0]),
             .move(movedObject.uniqueValue, fromIndex: [4, 0], toIndex: [0, 0]),
-            .update(movedObject.uniqueValue, index: [0, 0]),
             .remove(removedObject.uniqueValue, index: [4, 0]),
             .update(updatedObject.uniqueValue, index: [2, 0])
         ])
