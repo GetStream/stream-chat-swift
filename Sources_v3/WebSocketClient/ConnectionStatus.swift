@@ -26,7 +26,7 @@ extension ConnectionStatus {
     // In internal initializer used for convering internal `WebSocketConnectionState` to `ChatClientConnectionStatus`.
     init(webSocketConnectionState: WebSocketConnectionState) {
         switch webSocketConnectionState {
-        case let .notConnected(error: error):
+        case let .disconnected(error: error):
             self = .disconnected(error: error)
             
         case .connecting, .waitingForConnectionId, .waitingForReconnect:
@@ -61,7 +61,7 @@ enum WebSocketConnectionState: Equatable {
     }
     
     /// The web socket is not connected. Optionally contains an error, if the connection was disconnected due to an error.
-    case notConnected(error: ClientError? = nil)
+    case disconnected(error: ClientError? = nil)
     
     /// The web socket is connecting
     case connecting
@@ -88,7 +88,7 @@ enum WebSocketConnectionState: Equatable {
     
     /// Returns false if the connection state is in the `notConnected` state.
     var isActive: Bool {
-        if case .notConnected = self {
+        if case .disconnected = self {
             return false
         }
         return true

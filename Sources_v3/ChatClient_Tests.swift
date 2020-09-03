@@ -152,7 +152,7 @@ class ChatClient_Tests: StressTestCase {
 
         // Simulate connection state change of WSClient
         let error = ClientError(with: TestError())
-        testEnv.webSocketClient?.simulateConnectionStatus(.notConnected(error: error))
+        testEnv.webSocketClient?.simulateConnectionStatus(.disconnected(error: error))
         
         // Assert the WSConnectionState is exposed as ChatClientConnectionStatus
         XCTAssertEqual(client.connectionStatus, .disconnected(error: error))
@@ -557,7 +557,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Simulate WS disconnecting
         testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .notConnected(error: nil))
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .disconnected(error: nil))
         
         // Call connect again and assert WS connect is called
         var connectCompletionCalled = false

@@ -16,7 +16,7 @@ class WebSocketClient {
     let eventNotificationCenter: EventNotificationCenter
     
     /// The current state the web socket connection.
-    @Atomic fileprivate(set) var connectionState: WebSocketConnectionState = .notConnected() {
+    @Atomic fileprivate(set) var connectionState: WebSocketConnectionState = .disconnected() {
         didSet {
             log.info("Web socket connection state changed: \(connectionState)")
             connectionStateDelegate?.webSocketClient(self, didUpdateConectionState: connectionState)
@@ -27,7 +27,7 @@ class WebSocketClient {
             
             pingController.connectionStateDidChange(connectionState)
             
-            if case .notConnected = connectionState {
+            if case .disconnected = connectionState {
                 // No reconnection attempts are scheduled
                 cancelBackgroundTaskIfNeeded()
             }
@@ -286,7 +286,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
                 .schedule(timeInterval: reconnectionDelay, queue: engineQueue) { [weak self] in self?.connect() }
             
         } else {
-            connectionState = .notConnected(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
+            connectionState = .disconnected(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
         }
     }
 }
