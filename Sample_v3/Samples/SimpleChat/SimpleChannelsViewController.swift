@@ -87,7 +87,7 @@ class SimpleChannelsViewController: UITableViewController {
             if let indexPath = tableView.indexPathForSelectedRow {
                 let channel = channelListController.channels[indexPath.row]
                 let controller = (segue.destination as! UINavigationController).topViewController as! SimpleChatViewController
-                controller.channelId = channel.cid
+                controller.channelController = chatClient.channelController(for: channel.cid)
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
                 detailViewController = controller
