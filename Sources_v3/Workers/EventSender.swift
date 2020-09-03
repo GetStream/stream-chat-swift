@@ -30,6 +30,8 @@ class EventSender<ExtraData: ExtraDataTypes>: Worker {
             self?.stopTyping(in: cid)
         }
         
+        print("🐷", currentUserTypingLastDate, timer.currentTime().timeIntervalSince(currentUserTypingLastDate ?? Date()))
+        
         // The user is typing too long, we should resend `.typingStart` event.
         if let lastDate = currentUserTypingLastDate,
             timer.currentTime().timeIntervalSince(lastDate) < .startTypingResendInterval {
