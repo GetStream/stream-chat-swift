@@ -10,6 +10,7 @@ extension MessagePayload {
     static func dummy<T: ExtraDataTypes>(
         messageId: MessageId,
         authorUserId: UserId,
+        text: String = .unique,
         extraData: T.Message = .defaultValue
     ) -> MessagePayload<T> where T.User == NameAndImageExtraData {
         .init(
@@ -19,7 +20,7 @@ extension MessagePayload {
             createdAt: .unique,
             updatedAt: .unique,
             deletedAt: .unique,
-            text: .unique,
+            text: text,
             command: .unique,
             args: .unique,
             parentId: .unique,
