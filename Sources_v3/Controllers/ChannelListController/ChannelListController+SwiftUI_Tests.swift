@@ -6,7 +6,7 @@
 import XCTest
 
 @available(iOS 13, *)
-class ChannelListController_SwiftUI_Tests: XCTestCase {
+class ChannelListController_SwiftUI_Tests: iOS13TestCase {
     var channelListController: ChannelListControllerMock!
     
     override func setUp() {

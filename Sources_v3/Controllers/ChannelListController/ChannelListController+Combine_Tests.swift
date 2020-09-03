@@ -8,7 +8,7 @@ import CoreData
 import XCTest
 
 @available(iOS 13, *)
-class ChannelListController_Combine_Tests: XCTestCase {
+class ChannelListController_Combine_Tests: iOS13TestCase {
     var channelListController: ChannelListControllerMock!
     var cancellables: Set<AnyCancellable>!
 

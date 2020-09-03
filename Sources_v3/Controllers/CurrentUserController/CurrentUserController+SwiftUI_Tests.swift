@@ -6,7 +6,7 @@
 import XCTest
 
 @available(iOS 13, *)
-class CurrentUserController_SwiftUI_Tests: XCTestCase {
+class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
     var currentUserController: CurrentUserControllerMock!
     
     override func setUp() {
