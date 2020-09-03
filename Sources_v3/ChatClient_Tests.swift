@@ -32,7 +32,8 @@ class ChatClient_Tests: StressTestCase {
     
     var workerBuilders: [WorkerBuilder] = [
         MessageSender<DefaultDataTypes>.init,
-        NewChannelQueryUpdater<DefaultDataTypes>.init
+        NewChannelQueryUpdater<DefaultDataTypes>.init,
+        ChannelWatchStateUpdater<DefaultDataTypes>.init
     ]
     
     // MARK: - Database stack tests

@@ -264,6 +264,8 @@
 		DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE566EA24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift */; };
 		DAE566F02500140300E39431 /* ChannelController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE566E824FFD24000E39431 /* ChannelController+SwiftUI_Tests.swift */; };
 		DAE566F12500F3C800E39431 /* CurrentUserController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE566EC24FFD27500E39431 /* CurrentUserController+SwiftUI_Tests.swift */; };
+		DAE566F725010CA100E39431 /* ChannelWatchStateUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE566F625010CA100E39431 /* ChannelWatchStateUpdater.swift */; };
+		DAE566FA25011A4E00E39431 /* ChannelWatchStateUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE566F8250119E800E39431 /* ChannelWatchStateUpdater_Tests.swift */; };
 		DAEAF4B324DAD99E0015FB28 /* HideChannelRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */; };
 		DAEAF4B824DC026C0015FB28 /* ChannelEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */; };
 		DAF8359924F8042D00392699 /* TypingEventObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF8359824F8042D00392699 /* TypingEventObserver.swift */; };
@@ -589,6 +591,8 @@
 		DAE566E824FFD24000E39431 /* ChannelController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		DAE566EA24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentUserController+SwiftUI.swift"; sourceTree = "<group>"; };
 		DAE566EC24FFD27500E39431 /* CurrentUserController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentUserController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
+		DAE566F625010CA100E39431 /* ChannelWatchStateUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWatchStateUpdater.swift; sourceTree = "<group>"; };
+		DAE566F8250119E800E39431 /* ChannelWatchStateUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWatchStateUpdater_Tests.swift; sourceTree = "<group>"; };
 		DAEAF4B224DAD99E0015FB28 /* HideChannelRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HideChannelRequest.swift; sourceTree = "<group>"; };
 		DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEndpoints_Tests.swift; sourceTree = "<group>"; };
 		DAF8359824F8042D00392699 /* TypingEventObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingEventObserver.swift; sourceTree = "<group>"; };
@@ -694,6 +698,8 @@
 				791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */,
 				DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */,
 				DAFC1D4524F50C2C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift */,
+				DAE566F625010CA100E39431 /* ChannelWatchStateUpdater.swift */,
+				DAE566F8250119E800E39431 /* ChannelWatchStateUpdater_Tests.swift */,
 			);
 			path = Background;
 			sourceTree = "<group>";
@@ -1651,6 +1657,7 @@
 				79BF83F2248F8F60007611A1 /* Logger.swift in Sources */,
 				799C943B247D2FB9001F1104 /* MessageDTO.swift in Sources */,
 				79877A0D2498E4BC00015F8B /* CurrentUser.swift in Sources */,
+				DAE566F725010CA100E39431 /* ChannelWatchStateUpdater.swift in Sources */,
 				792A4F462480107A00EAF71D /* ChannelQuery.swift in Sources */,
 				799C9447247D50F3001F1104 /* Worker.swift in Sources */,
 				79280F782489181200CDEB89 /* URLSessionWebSocketEngine.swift in Sources */,
@@ -1746,6 +1753,7 @@
 				79280F732487CD3100CDEB89 /* Atomic_Tests.swift in Sources */,
 				7964F3BE249A5E6E002A09EC /* RequestEncoder_Tests.swift in Sources */,
 				79DDF810249CB92E002F4412 /* RequestDecoder_Tests.swift in Sources */,
+				DAE566FA25011A4E00E39431 /* ChannelWatchStateUpdater_Tests.swift in Sources */,
 				8A62706A24BF02D80040BFD6 /* XCTAssertEqual+Difference.swift in Sources */,
 				7931818E24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift in Sources */,
 				79877A292498E51500015F8B /* ChannelDTO_Tests.swift in Sources */,

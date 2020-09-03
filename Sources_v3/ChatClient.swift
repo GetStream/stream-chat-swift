@@ -173,7 +173,8 @@ public class Client<ExtraData: ExtraDataTypes> {
         // All production workers
         let workerBuilders: [WorkerBuilder] = [
             MessageSender<ExtraData>.init,
-            NewChannelQueryUpdater<ExtraData>.init
+            NewChannelQueryUpdater<ExtraData>.init,
+            ChannelWatchStateUpdater<ExtraData>.init
         ]
         
         self.init(
