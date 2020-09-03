@@ -136,7 +136,13 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     }
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(
+    private lazy var updater: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(
+        client.databaseContainer,
+        client.webSocketClient,
+        client.apiClient
+    )
+    
+    private lazy var eventSender: EventSender<ExtraData> = self.environment.eventSenderBuilder(
         client.databaseContainer,
         client.webSocketClient,
         client.apiClient
@@ -251,7 +257,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
         state = .localDataFetched
 
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(completion: completion)
-        worker.update(
+        updater.update(
             channelQuery: channelQuery,
             channelCreatedCallback: channelCreatedCallback
         ) { [weak self] error in
@@ -345,7 +351,8 @@ public extension ChannelControllerGeneric {
             invites: invites,
             extraData: extraData
         )
-        worker.updateChannel(channelPayload: payload) { [weak self] error in
+        
+        updater.updateChannel(channelPayload: payload) { [weak self] error in
             self?.callback {
                 completion?(error)
             }
@@ -360,7 +367,8 @@ public extension ChannelControllerGeneric {
             channelModificationFailed(completion)
             return
         }
-        worker.muteChannel(cid: channelId, mute: true) { [weak self] error in
+        
+        updater.muteChannel(cid: channelId, mute: true) { [weak self] error in
             self?.callback {
                 completion?(error)
             }
@@ -376,7 +384,8 @@ public extension ChannelControllerGeneric {
             channelModificationFailed(completion)
             return
         }
-        worker.muteChannel(cid: channelId, mute: false) { [weak self] error in
+        
+        updater.muteChannel(cid: channelId, mute: false) { [weak self] error in
             self?.callback {
                 completion?(error)
             }
@@ -392,7 +401,8 @@ public extension ChannelControllerGeneric {
             channelModificationFailed(completion)
             return
         }
-        worker.deleteChannel(cid: channelId) { [weak self] error in
+        
+        updater.deleteChannel(cid: channelId) { [weak self] error in
             self?.callback {
                 completion?(error)
             }
@@ -409,7 +419,8 @@ public extension ChannelControllerGeneric {
             channelModificationFailed(completion)
             return
         }
-        worker.hideChannel(cid: channelId, userId: client.currentUserId, clearHistory: clearHistory) { [weak self] error in
+        
+        updater.hideChannel(cid: channelId, userId: client.currentUserId, clearHistory: clearHistory) { [weak self] error in
             self?.callback {
                 completion?(error)
             }
@@ -424,7 +435,8 @@ public extension ChannelControllerGeneric {
             channelModificationFailed(completion)
             return
         }
-        worker.showChannel(cid: channelId, userId: client.currentUserId) { [weak self] error in
+        
+        updater.showChannel(cid: channelId, userId: client.currentUserId) { [weak self] error in
             self?.callback {
                 completion?(error)
             }
@@ -455,7 +467,7 @@ public extension ChannelControllerGeneric {
         
         channelQuery.messagesPagination = [.limit(limit), .lessThan(messageId)]
     
-        worker.update(channelQuery: channelQuery) { [weak self] error in
+        updater.update(channelQuery: channelQuery) { [weak self] error in
             self?.callback { completion?(error) }
         }
     }
@@ -484,9 +496,27 @@ public extension ChannelControllerGeneric {
         
         channelQuery.messagesPagination = [.limit(limit), .greaterThan(messageId)]
         
-        worker.update(channelQuery: channelQuery) { [weak self] error in
+        updater.update(channelQuery: channelQuery) { [weak self] error in
             self?.callback { completion?(error) }
         }
+    }
+    
+    func keystroke(completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed { completion?($0) }
+            return
+        }
+        
+        eventSender.keystroke(in: channelId, completion: completion)
+    }
+    
+    func stopTyping(completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed { completion?($0) }
+            return
+        }
+        
+        eventSender.stopTyping(in: channelId, completion: completion)
     }
     
     /// Creates a new message in the local DB.
@@ -516,8 +546,11 @@ public extension ChannelControllerGeneric {
             }
             return
         }
-
-        worker.createNewMessage(
+        
+        // Send stop typing event.
+        eventSender.stopTyping(in: channelId)
+        
+        updater.createNewMessage(
             in: channelId,
             text: text,
             command: command,
@@ -552,7 +585,8 @@ public extension ChannelControllerGeneric {
             channelModificationFailed(completion)
             return
         }
-        worker.addMembers(cid: channelId, userIds: userIds) { [weak self] error in
+        
+        updater.addMembers(cid: channelId, userIds: userIds) { [weak self] error in
             self?.callback {
                 completion?(error)
             }
@@ -569,7 +603,8 @@ public extension ChannelControllerGeneric {
             channelModificationFailed(completion)
             return
         }
-        worker.removeMembers(cid: channelId, userIds: userIds) { [weak self] error in
+        
+        updater.removeMembers(cid: channelId, userIds: userIds) { [weak self] error in
             self?.callback {
                 completion?(error)
             }
@@ -584,6 +619,12 @@ extension ChannelControllerGeneric {
             _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
         ) -> ChannelUpdater<ExtraData> = ChannelUpdater.init
+        
+        var eventSenderBuilder: (
+            _ database: DatabaseContainer,
+            _ webSocketClient: WebSocketClient,
+            _ apiClient: APIClient
+        ) -> EventSender<ExtraData> = EventSender.init
     }
 }
 
