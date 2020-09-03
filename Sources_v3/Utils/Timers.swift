@@ -27,6 +27,15 @@ protocol Timer {
         queue: DispatchQueue,
         onFire: @escaping () -> Void
     ) -> RepeatingTimerControl
+    
+    /// Returns the current date and time.
+    static func currentTime() -> Date
+}
+
+extension Timer {
+    static func currentTime() -> Date {
+        Date()
+    }
 }
 
 /// Allows resuming and suspending of a timer.
