@@ -123,7 +123,10 @@ extension ChannelDTO {
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
         
-        request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        let notDeleted = NSPredicate(format: "deletedAt == nil")
+        
+        request.predicate = NSCompoundPredicate(type: .and, subpredicates: [matchingQuery, notDeleted])
         return request
     }
 
