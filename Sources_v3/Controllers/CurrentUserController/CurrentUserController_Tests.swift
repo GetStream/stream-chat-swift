@@ -311,7 +311,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, CurrentUserControllerDele
 }
 
 private class TestEnvironment {
-    var currentUserObserver: MockEntityObserver<CurrentUser, CurrentUserDTO>!
+    var currentUserObserver: EntityDatabaseObserverMock<CurrentUser, CurrentUserDTO>!
     var currentUserObserverStartUpdatingError: Error?
 
     lazy var currentUserControllerEnvironment: CurrentUserController
@@ -327,16 +327,4 @@ private class TestEnvironment {
         self.databaseContainer = try! DatabaseContainerMock(kind: $0)
         return self.databaseContainer
     })
-}
-
-private class MockEntityObserver<Item, DTO: NSManagedObject>: EntityDatabaseObserver<Item, DTO> {
-    var startUpdatingError: Error?
-    
-    override func startObserving() throws {
-        if let error = startUpdatingError {
-            throw error
-        } else {
-            try super.startObserving()
-        }
-    }
 }
