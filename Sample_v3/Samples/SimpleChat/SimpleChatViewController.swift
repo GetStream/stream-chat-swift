@@ -8,7 +8,7 @@ import UIKit
 ///
 /// # SimpleChatViewController
 ///
-/// A `UITableViewController` superclass that displays and manages a channel.  It uses the `ChannelController`  class to make calls to the Stream Chat API and listens to
+/// A `UITableViewController` subclass that displays and manages a channel.  It uses the `ChannelController`  class to make calls to the Stream Chat API and listens to
 /// events by conforming to `ChannelControllerDelegate`.
 ///
 final class SimpleChatViewController: UITableViewController, ChannelControllerDelegate {
