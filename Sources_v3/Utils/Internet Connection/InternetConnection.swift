@@ -67,6 +67,26 @@ extension InternetConnection: InternetConnectionDelegate {
     }
 }
 
+extension InternetConnection {
+    /// Sets up a one-time observer which is called when the status chnages to the desired status.
+    func notifyOnce(when: @escaping (Status) -> Bool, callback: @escaping () -> Void) {
+        var token: NSObjectProtocol?
+        token = notificationCenter.addObserver(
+            forName: .internetConnectionStatusDidChange,
+            object: self,
+            queue: nil,
+            using: { [weak notificationCenter] in
+                if let status = $0.internetConnectionStatus, when(status) {
+                    callback()
+                    if let token = token {
+                        notificationCenter?.removeObserver(token)
+                    }
+                }
+            }
+        )
+    }
+}
+
 // MARK: - Internet Connection Monitors
 
 /// A delegate to receive Internet connection events.
@@ -117,6 +137,17 @@ extension InternetConnection {
         /// Recommendations for Low Data Mode: don't autoplay video, music (high-quality) or gifs (big files).
         /// Supports only by iOS 13+
         case constrained
+    }
+}
+
+extension InternetConnection.Status {
+    /// Returns `true` if the internet connection is available, ignoring the quality of the connection.
+    var isAvailable: Bool {
+        if case .available = self {
+            return true
+        } else {
+            return false
+        }
     }
 }
 
