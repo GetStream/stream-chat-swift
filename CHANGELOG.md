@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.3.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.3.2)
+_September 04, 2020_
+
 ### ✅ Added
 - A a new method for `ChatViewController` to customize behaviour for a tap on an attachment:
 `tapOnAttachment(_ attachment: Attachment, at index: Int, in cell: MessageTableViewCell, message: Message)` [#466](https://github.com/GetStream/stream-chat-swift/pull/466)
