@@ -65,11 +65,9 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
     }
     
     func test_apiClient_called_on_websocket_connected() throws {
-        let cid1: ChannelId = .unique
-        let cid2: ChannelId = .unique
+        let cid: ChannelId = .unique
         
-        try database.createChannel(cid: cid1, withMessages: false)
-        try database.createChannel(cid: cid2, withMessages: false)
+        try database.createChannel(cid: cid, withMessages: false)
         
         XCTAssertNil(apiClient.request_endpoint)
         
@@ -77,7 +75,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
         simulateWebSocket(state: .connected(connectionId: .unique))
         
         let query: ChannelListQuery = .init(
-            filter: .in("cid", [cid1, cid2].map(\.rawValue)),
+            filter: .in("cid", [cid].map(\.rawValue)),
             pagination: [.limit(1)],
             options: [.watch]
         )
