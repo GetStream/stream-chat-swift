@@ -169,6 +169,12 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
             self.set(channelQuery: ChannelQuery(cid: cid, channelQuery: self.channelQuery), completion: completion)
         }
     }
+    
+    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
+    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
+    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
+    @available(iOS 13, *)
+    lazy var basePublishers: BasePublishers = .init(controller: self)
 
     /// Creates a new `ChannelController`
     /// - Parameters:
@@ -681,7 +687,7 @@ public extension ChannelControllerDelegateGeneric {
 
 // MARK: Type erased Delegate
 
-class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListControllerDelegateGeneric {
+class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelControllerDelegateGeneric {
     private var _controllerdidUpdateMessages: (
         ChannelControllerGeneric<ExtraData>,
         [ListChange<MessageModel<ExtraData>>]

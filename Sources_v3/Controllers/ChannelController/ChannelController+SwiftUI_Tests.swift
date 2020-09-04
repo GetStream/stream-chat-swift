@@ -109,7 +109,7 @@ class ChannelControllerMock: ChannelController {
     }
 }
 
-private extension MessageModel {
+extension MessageModel {
     static var unique: Message {
         .init(
             id: .unique,

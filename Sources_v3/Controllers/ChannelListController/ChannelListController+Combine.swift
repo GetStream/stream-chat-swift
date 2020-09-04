@@ -12,7 +12,7 @@ extension ChannelListControllerGeneric {
         basePublishers.state.keepAlive(self)
     }
     
-    /// A publisher emitting a new value every time the list of the channels mathicn the query changes.
+    /// A publisher emitting a new value every time the list of the channels matching the query changes.
     public var channelsChangesPublisher: AnyPublisher<[ListChange<ChannelModel<ExtraData>>], Never> {
         basePublishers.channelsChanges.keepAlive(self)
     }
@@ -24,10 +24,10 @@ extension ChannelListControllerGeneric {
         /// The wrapper controller
         unowned let controller: ChannelListControllerGeneric
         
-        /// A backing subject for `remoteActivityPublisher`.
+        /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<Controller.State, Never>
         
-        /// A backing subject for `channelChangesPublisher`.
+        /// A backing subject for `channelsChangesPublisher`.
         let channelsChanges: PassthroughSubject<[ListChange<ChannelModel<ExtraData>>], Never> = .init()
                 
         init(controller: ChannelListControllerGeneric<ExtraData>) {
@@ -55,17 +55,5 @@ extension ChannelListControllerGeneric.BasePublishers: ChannelListControllerDele
         didChangeChannels changes: [ListChange<ChannelModel<ExtraData>>]
     ) {
         channelsChanges.send(changes)
-    }
-}
-
-@available(iOS 13.0, *)
-extension Publisher {
-    /// A helper function which attaches the provided object to the publisher chain and keeps it alive as long
-    /// as the publisher chain is alive.
-    func keepAlive(_ object: AnyObject) -> AnyPublisher<Output, Failure> {
-        map {
-            _ = object
-            return $0
-        }.eraseToAnyPublisher()
     }
 }
