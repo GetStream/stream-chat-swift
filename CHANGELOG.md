@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- A a new method for `ChatViewController` to customize behaviour for a tap on an attachment:
+`tapOnAttachment(_ attachment: Attachment, at index: Int, in cell: MessageTableViewCell, message: Message)` [#466](https://github.com/GetStream/stream-chat-swift/pull/466)
+
 ### 🐞 Fixed
 - Carthage building incorrect (v3-alpha) version instead of 2.3.0 and 2.3.1. If you're using Carthage, please skip these versions. [#468](https://github.com/GetStream/stream-chat-swift/issues/468)
 

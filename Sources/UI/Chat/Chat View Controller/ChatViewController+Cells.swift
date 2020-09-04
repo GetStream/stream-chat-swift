@@ -122,16 +122,22 @@ extension ChatViewController {
         // Show attachments.
         if !message.attachments.isEmpty {
             message.attachments.enumerated().forEach { index, attachment in
-                cell.addAttachment(attachment,
-                                   at: index,
-                                   from: message,
-                                   tap: { [weak self] in self?.show(attachment: $0, at: $1, from: $2) },
-                                   actionTap: { [weak self] in self?.sendActionForEphemeralMessage($0, button: $1) },
-                                   reload: { [weak self] in
-                                    if let self = self {
-                                        self.tableView.reloadRows(at: [indexPath], with: .none)
-                                    }
-                })
+                cell.addAttachment(
+                    attachment,
+                    at: index,
+                    from: message,
+                    tap: { [weak self, weak cell] in
+                        if let self = self, let cell = cell {
+                            self.tapOnAttachment($0, at: $1, in: cell, message: $2)
+                        }
+                    },
+                    actionTap: { [weak self] in self?.sendActionForEphemeralMessage($0, button: $1) },
+                    reload: { [weak self] in
+                        if let self = self {
+                            self.tableView.reloadRows(at: [indexPath], with: .none)
+                        }
+                    }
+                )
             }
             
             cell.isContinueMessage = !message.isEphemeral
@@ -208,19 +214,6 @@ extension ChatViewController {
         if let presenter = presenter, presenter.channel.config.reactionsEnabled {
             showReactions(from: cell, in: message, locationInView: tapGesture.location(in: cell))
         }
-    }
-    
-    private func show(attachment: Attachment, at index: Int, from attachments: [Attachment]) {
-        if attachment.isImage {
-            showMediaGallery(with: attachments.compactMap {
-                let logoImage = $0.type == .giphy ? UIImage.Logo.giphy : nil
-                return MediaGalleryItem(title: $0.title, url: $0.imageURL, logoImage: logoImage)
-            }, selectedIndex: index)
-            
-            return
-        }
-        
-        showWebView(url: attachment.url, title: attachment.title)
     }
     
     func showReplies(parentMessage: Message) {

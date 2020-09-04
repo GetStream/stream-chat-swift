@@ -34,7 +34,7 @@ extension MessageTableViewCell {
             }
             
             (preview as UIView).rx.anyGesture(TapControlEvent.default)
-                .subscribe(onNext: { _ in tap(attachment, index, message.attachments) })
+                .subscribe(onNext: { _ in tap(attachment, index, message) })
                 .disposed(by: disposeBag)
         }
         
