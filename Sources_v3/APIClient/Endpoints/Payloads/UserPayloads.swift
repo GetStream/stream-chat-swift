@@ -7,7 +7,7 @@ import Foundation
 enum UserPayloadsCodingKeys: String, CodingKey {
     case id
     case role
-    case name
+    case name // TODO: remove name and avatarURL below, since they're parsed as extraData
     case avatarURL = "image"
     case isOnline = "online"
     case isBanned = "banned"

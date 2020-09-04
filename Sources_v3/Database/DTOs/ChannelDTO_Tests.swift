@@ -112,6 +112,11 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].user.role, loadedChannel?.latestMessages.first?.author.userRole)
             Assert.willBeEqual(payload.messages[0].user.extraData, loadedChannel?.latestMessages.first?.author.extraData)
             Assert.willBeEqual(payload.messages[0].user.teams, loadedChannel?.latestMessages.first?.author.teams)
+            
+            // Read
+            Assert.willBeEqual(payload.channelReads[0].lastReadAt, loadedChannel?.reads.first?.lastReadAt)
+            Assert.willBeEqual(payload.channelReads[0].unreadMessagesCount, loadedChannel?.reads.first?.unreadMessagesCount)
+            Assert.willBeEqual(payload.channelReads[0].user.id, loadedChannel?.reads.first?.user.id)
         }
     }
     
@@ -345,6 +350,11 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].user.isBanned, loadedChannel?.latestMessages.first?.author.isBanned)
             Assert.willBeEqual(payload.messages[0].user.role, loadedChannel?.latestMessages.first?.author.userRole)
             Assert.willBeEqual(payload.messages[0].user.teams, loadedChannel?.latestMessages.first?.author.teams)
+            
+            // Read
+            Assert.willBeEqual(payload.channelReads[0].lastReadAt, loadedChannel?.reads.first?.lastReadAt)
+            Assert.willBeEqual(payload.channelReads[0].unreadMessagesCount, loadedChannel?.reads.first?.unreadMessagesCount)
+            Assert.willBeEqual(payload.channelReads[0].user.id, loadedChannel?.reads.first?.user.id)
         }
     }
 }
@@ -386,6 +396,10 @@ extension XCTestCase {
             reactionScores: ["like": 1],
             isSilent: false
         )
+    }
+    
+    var dummyChannelRead: ChannelReadPayload<DefaultDataTypes> {
+        ChannelReadPayload(user: dummyUser, lastReadAt: .unique, unreadMessagesCount: .random(in: 0...10))
     }
     
     func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {
@@ -454,7 +468,8 @@ extension XCTestCase {
                 ),
                 watcherCount: 10,
                 members: [member],
-                messages: [dummyMessage]
+                messages: [dummyMessage],
+                channelReads: [dummyChannelRead]
             )
         
         return payload
@@ -500,6 +515,10 @@ extension XCTestCase {
             reactionScores: [:],
             isSilent: false
         )
+    }
+    
+    var dummyChannelReadWithNoExtraData: ChannelReadPayload<NoExtraDataTypes> {
+        ChannelReadPayload(user: dummyUserWithNoExtraData, lastReadAt: .unique, unreadMessagesCount: .random(in: 0...10))
     }
     
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload<NoExtraDataTypes> {
@@ -563,7 +582,8 @@ extension XCTestCase {
                 ),
                 watcherCount: 10,
                 members: [member],
-                messages: [dummyMessageWithNoExtraData]
+                messages: [dummyMessageWithNoExtraData],
+                channelReads: [dummyChannelReadWithNoExtraData]
             )
         
         return payload

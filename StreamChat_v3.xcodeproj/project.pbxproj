@@ -119,6 +119,8 @@
 		79877A2B2498E51500015F8B /* UserDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A202498E50D00015F8B /* UserDTO_Tests.swift */; };
 		7988F6B124D010890004219B /* TestRunnerEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7988F6B024D010890004219B /* TestRunnerEnvironment.swift */; };
 		7988F6B724D15F100004219B /* StressTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7988F6B624D15F100004219B /* StressTestCase.swift */; };
+		79896D5C2506593E00BA8F1C /* ChannelReadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796FD215250654940076C99B /* ChannelReadDTO.swift */; };
+		79896D5E25065ECD00BA8F1C /* ChannelReadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79896D5D25065E6900BA8F1C /* ChannelReadModel.swift */; };
 		7990503224CEEAA600689CDC /* MessageDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7990503124CEEAA600689CDC /* MessageDTO_Tests.swift */; };
 		7991D83B24F5427E00D21BA3 /* EphemeralValuesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */; };
 		7991D83D24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83C24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift */; };
@@ -443,6 +445,7 @@
 		79682C4524BC9DAF0071578E /* ChannelUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUpdater.swift; sourceTree = "<group>"; };
 		79682C4824BF37650071578E /* MessagePayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayloads.swift; sourceTree = "<group>"; };
 		79682C4924BF37970071578E /* ChannelListPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListPayload.swift; sourceTree = "<group>"; };
+		796FD215250654940076C99B /* ChannelReadDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadDTO.swift; sourceTree = "<group>"; };
 		797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload.swift; sourceTree = "<group>"; };
 		797A756524814EF8003CF16D /* SystemEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment.swift; sourceTree = "<group>"; };
 		797A756724814F0D003CF16D /* BundleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtensions.swift; sourceTree = "<group>"; };
@@ -472,6 +475,7 @@
 		79877A222498E50D00015F8B /* UserDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserDTO.swift; sourceTree = "<group>"; };
 		7988F6B024D010890004219B /* TestRunnerEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRunnerEnvironment.swift; sourceTree = "<group>"; };
 		7988F6B624D15F100004219B /* StressTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressTestCase.swift; sourceTree = "<group>"; };
+		79896D5D25065E6900BA8F1C /* ChannelReadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadModel.swift; sourceTree = "<group>"; };
 		7990503124CEEAA600689CDC /* MessageDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDTO_Tests.swift; sourceTree = "<group>"; };
 		7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EphemeralValuesContainer.swift; sourceTree = "<group>"; };
 		7991D83C24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListController+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -822,6 +826,7 @@
 				79877A212498E50D00015F8B /* MemberModelDTO.swift */,
 				79877A1D2498E50D00015F8B /* MemberModelDTO_Tests.swift */,
 				799C942A247D2FB9001F1104 /* ChannelDTO.swift */,
+				796FD215250654940076C99B /* ChannelReadDTO.swift */,
 				79877A1E2498E50D00015F8B /* ChannelDTO_Tests.swift */,
 				7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */,
 				7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */,
@@ -1073,6 +1078,7 @@
 			isa = PBXGroup;
 			children = (
 				79877A072498E4BC00015F8B /* ChannelId.swift */,
+				79896D5D25065E6900BA8F1C /* ChannelReadModel.swift */,
 				8A5D3EF824AF749200E2FE35 /* ChannelId_Tests.swift */,
 				79877A062498E4BC00015F8B /* ChannelModel.swift */,
 				8A62706D24BF45360040BFD6 /* BanEnabling.swift */,
@@ -1714,6 +1720,7 @@
 			files = (
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
 				792CA62624CEE93700D70A5E /* ChannelListQueryUpdater.swift in Sources */,
+				79896D5E25065ECD00BA8F1C /* ChannelReadModel.swift in Sources */,
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
 				DAF1BED1250660F8003CEDC0 /* MessageController+SwiftUI.swift in Sources */,
 				8AC9CBD624C73689006E236C /* NotificationEvents.swift in Sources */,
@@ -1830,6 +1837,7 @@
 				8A0D64A724E57A520017A3C0 /* GuestUserTokenRequestPayload.swift in Sources */,
 				792FCB4524A33B5B000290C7 /* EventDataProcessorMiddleware.swift in Sources */,
 				79A0E9BE2498C33100E9BD50 /* TypingEvent.swift in Sources */,
+				79896D5C2506593E00BA8F1C /* ChannelReadDTO.swift in Sources */,
 				8A618E4524D19D510003D83C /* WebSocketPingController.swift in Sources */,
 				8A62704E24B8660A0040BFD6 /* EventType.swift in Sources */,
 				DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */,

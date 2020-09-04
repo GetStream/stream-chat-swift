@@ -62,6 +62,11 @@ class ChannelPayload_Tests: XCTestCase {
             "https://images.unsplash.com/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80"
         )
         
+        let firstChannelRead = payload.channelReads.first!
+        XCTAssertEqual(firstChannelRead.lastReadAt, "2020-06-10T07:43:11.812841984Z".toDate())
+        XCTAssertEqual(firstChannelRead.unreadMessagesCount, 0)
+        XCTAssertEqual(firstChannelRead.user.id, "broken-waterfall-5")
+        
         let config = channel.config
         XCTAssertEqual(config.reactionsEnabled, true)
         XCTAssertEqual(config.typingEventsEnabled, true)
