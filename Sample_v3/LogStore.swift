@@ -6,7 +6,7 @@ import Foundation
 import StreamChatClient
 
 class LogStore: BaseLogDestination {
-    var logs = ""
+    @Atomic var logs = ""
     
     static let shared = LogStore()
     
@@ -15,6 +15,6 @@ class LogStore: BaseLogDestination {
     }
     
     override func write(message: String) {
-        logs += message
+        _logs { $0 += message }
     }
 }
