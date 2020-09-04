@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Carthage building incorrect (v3-alpha) version instead of 2.3.0 and 2.3.1. If you're using Carthage, please skip these versions. [#468](https://github.com/GetStream/stream-chat-swift/issues/468)
 
 # [2.3.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.3.1)
 _August 31, 2020_
