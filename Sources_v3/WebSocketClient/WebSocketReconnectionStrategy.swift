@@ -25,11 +25,16 @@ class DefaultReconnectionStrategy: WebSocketClientReconnectionStrategy {
     }
     
     func reconnectionDelay(forConnectionError error: Error?) -> TimeInterval? {
-        if
-            let engineError = error as? WebSocketEngineError,
-            engineError.code == WebSocketEngineError.stopErrorCode {
-            // Don't reconnect on `stop` errors
-            return nil
+        if let wsEngineError = error as? WebSocketEngineError {
+            if wsEngineError.code == WebSocketEngineError.stopErrorCode {
+                // Don't reconnect on `stop` errors
+                return nil
+            }
+            
+            if wsEngineError.engineError?.isInternetOfflineError == true {
+                // Don't try to reconnect when internet is not available
+                return nil
+            }
         }
         
         if
