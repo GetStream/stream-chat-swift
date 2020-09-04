@@ -246,11 +246,11 @@ extension WebSocketClient {
 // MARK: - Web Socket Delegate
 
 extension WebSocketClient: WebSocketEngineDelegate {
-    func websocketDidConnect() {
+    func webSocketDidConnect() {
         connectionState = .waitingForConnectionId
     }
     
-    func websocketDidReceiveMessage(_ message: String) {
+    func webSocketDidReceiveMessage(_ message: String) {
         do {
             let messageData = Data(message.utf8)
             let event = try eventDecoder.decode(from: messageData)
@@ -272,7 +272,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
         }
     }
     
-    func websocketDidDisconnect(error engineError: WebSocketEngineError?) {
+    func webSocketDidDisconnect(error engineError: WebSocketEngineError?) {
         // Reconnection shouldn't happen for manually initiated disconnect
         let shouldReconnect = connectionState != .disconnecting(source: .userInitiated)
         

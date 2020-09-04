@@ -47,7 +47,7 @@ class WebSocketEngineMock: WebSocketEngine {
     
     func simulateConnectionSuccess() {
         isConnected = true
-        delegate?.websocketDidConnect()
+        delegate?.webSocketDidConnect()
     }
     
     func simulateMessageReceived(_ json: [String: Any] = [:]) {
@@ -56,7 +56,7 @@ class WebSocketEngineMock: WebSocketEngine {
     }
     
     func simulateMessageReceived(_ data: Data) {
-        delegate?.websocketDidReceiveMessage(String(data: data, encoding: .utf8)!)
+        delegate?.webSocketDidReceiveMessage(String(data: data, encoding: .utf8)!)
     }
     
     func simulatePong() {
@@ -65,7 +65,7 @@ class WebSocketEngineMock: WebSocketEngine {
     
     func simulateDisconnect(_ error: WebSocketEngineError? = nil) {
         isConnected = false
-        delegate?.websocketDidDisconnect(error: error)
+        delegate?.webSocketDidDisconnect(error: error)
     }
 }
 
