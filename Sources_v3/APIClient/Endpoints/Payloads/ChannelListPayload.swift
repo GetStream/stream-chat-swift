@@ -18,15 +18,12 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     let messages: [MessagePayload<ExtraData>]
     
-    // TODO:
-    /*
-     message reads
-     
-     */
+    let channelReads: [ChannelReadPayload<ExtraData>]
+    
     private enum CodingKeys: String, CodingKey {
         case channel
         case messages
-//    case messageReads = "read"
+        case channelReads = "read"
         case members
 //    case watchers
         case watcherCount = "watcher_count"
@@ -38,6 +35,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         members = try container.decode([MemberPayload<ExtraData.User>].self, forKey: .members)
         messages = try container.decode([MessagePayload<ExtraData>].self, forKey: .messages)
+        channelReads = try container.decodeIfPresent([ChannelReadPayload<ExtraData>].self, forKey: .channelReads) ?? []
     }
     
     // MARK: - For testing
@@ -46,12 +44,14 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
         channel: ChannelDetailPayload<ExtraData>,
         watcherCount: Int,
         members: [MemberPayload<ExtraData.User>],
-        messages: [MessagePayload<ExtraData>]
+        messages: [MessagePayload<ExtraData>],
+        channelReads: [ChannelReadPayload<ExtraData>]
     ) {
         self.channel = channel
         self.watcherCount = watcherCount
         self.members = members
         self.messages = messages
+        self.channelReads = channelReads
     }
 }
 
@@ -141,6 +141,33 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.team = team
         self.members = members
     }
+}
+
+public struct ChannelReadPayload<ExtraData: ExtraDataTypes>: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case user
+        case lastReadAt = "last_read"
+        case unreadMessagesCount = "unread_messages"
+    }
+    
+    /// A user (see `User`).
+    let user: UserPayload<ExtraData.User>
+    /// A last read date by the user.
+    public let lastReadAt: Date
+    /// Unread message count for the user.
+    public let unreadMessagesCount: Int
+    
+//    /// Init a message read.
+//    ///
+//    /// - Parameters:
+//    ///   - user: a user.
+//    ///   - lastReadDate: the last read date.
+//    ///   - unreadMessages: Unread message count
+//    init(user: UserPayload<ExtraData.User>, lastReadDate: Date, unreadMessagesCount: Int) {
+//        self.user = user
+//        self.lastReadDate = lastReadDate
+//        self.unreadMessagesCount = unreadMessagesCount
+//    }
 }
 
 /// A channel config.

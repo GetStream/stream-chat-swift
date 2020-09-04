@@ -46,7 +46,7 @@ extension UserDTO {
     ///   - id: The id of the user to fetch
     ///   - context: The context used to fetch/create `UserDTO`
     ///
-    fileprivate static func loadOrCreate(id: String, context: NSManagedObjectContext) -> UserDTO {
+    static func loadOrCreate(id: String, context: NSManagedObjectContext) -> UserDTO {
         if let existing = Self.load(id: id, context: context) {
             return existing
         }

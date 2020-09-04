@@ -28,6 +28,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var team: TeamDTO?
     @NSManaged var members: Set<MemberDTO>
     @NSManaged var messages: Set<MessageDTO>
+    @NSManaged var reads: Set<ChannelReadDTO>
     
     /// The fetch request that returns all existed channels from the database
     static var allChannelsFetchRequest: NSFetchRequest<ChannelDTO> {
@@ -106,6 +107,8 @@ extension NSManagedObjectContext {
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, for: payload.channel.cid) }
         
+        try payload.channelReads.forEach { _ = try saveChannelRead(payload: $0, for: payload.channel.cid) }
+        
         // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
         try payload.members.forEach {
             let member = try saveMember(payload: $0, channelId: payload.channel.cid)
@@ -160,6 +163,8 @@ extension ChannelModel {
             .load(for: dto.cid, limit: 25, context: dto.managedObjectContext!)
             .map { $0.asModel() }
         
+        let reads: [ChannelReadModel<ExtraData>] = dto.reads.map { $0.asModel() }
+        
         return ChannelModel(
             cid: cid,
             lastMessageAt: dto.lastMessageAt,
@@ -176,6 +181,7 @@ extension ChannelModel {
             watcherCount: 0,
             banEnabling: .disabled,
             isWatched: true,
+            reads: reads,
             extraData: extraData,
             invitedMembers: [],
             latestMessages: latestMessages
