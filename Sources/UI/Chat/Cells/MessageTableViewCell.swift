@@ -18,7 +18,7 @@ open class MessageTableViewCell: UITableViewCell, Reusable {
     
     typealias ReactionAction = (_ cell: UITableViewCell, _ locationInView: CGPoint) -> Void
     typealias TapAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
-    typealias AttachmentTapAction = (_ attachment: Attachment, _ at: Int, _ attachments: [Attachment]) -> Void
+    typealias AttachmentTapAction = (_ attachment: Attachment, _ at: Int, _ message: Message) -> Void
     typealias LongPressAction = (_ cell: MessageTableViewCell, _ message: Message) -> Void
     typealias AttachmentActionTapAction = (_ message: Message, _ button: UIButton) -> Void
     

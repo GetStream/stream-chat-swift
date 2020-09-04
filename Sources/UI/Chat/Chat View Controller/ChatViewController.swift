@@ -269,6 +269,30 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         cell.avatarView.update(with: message.user.avatarURL, name: message.user.name)
     }
     
+    /// Handles a tap on the attachment.
+    /// - Parameters:
+    ///   - attachment: an attachment.
+    ///   - index: an index of the attachment in a list of message attachments.
+    ///   - attachments: a list of message attachments.
+    ///   - cell: a message cell with attachments.
+    ///   - message: a message with attachments.
+    open func tapOnAttachment(_ attachment: Attachment,
+                              at index: Int,
+                              in cell: MessageTableViewCell,
+                              message: Message) {
+        guard attachment.isImage else {
+            showWebView(url: attachment.url, title: attachment.title)
+            return
+        }
+        
+        let items: [MediaGalleryItem] = message.attachments.compactMap {
+            let logoImage = $0.type == .giphy ? UIImage.Logo.giphy : nil
+            return MediaGalleryItem(title: $0.title, url: $0.imageURL, logoImage: logoImage)
+        }
+        
+        showMediaGallery(with: items, selectedIndex: index)
+    }
+    
     /// Updates typing user avatar in the footer view.
     /// - Parameters:
     ///   - footerView: a footer view.
