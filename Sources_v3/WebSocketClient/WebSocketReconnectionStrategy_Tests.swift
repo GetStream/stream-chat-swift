@@ -65,4 +65,17 @@ class DefaultReconnectionStrategy_Tests: XCTestCase {
         let delay = strategy.reconnectionDelay(forConnectionError: error)
         XCTAssertNotNil(delay)
     }
+    
+    func test_returnsNilForInternetIsOfflineError() {
+        let error = WebSocketEngineError(
+            error:
+            NSError(
+                domain: NSURLErrorDomain,
+                code: NSURLErrorNotConnectedToInternet,
+                userInfo: nil
+            )
+        )
+        let delay = strategy.reconnectionDelay(forConnectionError: error)
+        XCTAssertNil(delay)
+    }
 }
