@@ -10,7 +10,6 @@ import Foundation
     class StarscreamWebSocketProvider: WebSocketEngine {
         private let webSocket: Starscream.WebSocket
         var request: URLRequest { webSocket.request }
-        var isConnected: Bool { webSocket.isConnected }
         var callbackQueue: DispatchQueue { webSocket.callbackQueue }
         weak var delegate: WebSocketEngineDelegate?
         
@@ -48,25 +47,15 @@ import Foundation
     
     extension StarscreamWebSocketProvider: Starscream.WebSocketDelegate {
         func websocketDidConnect(socket: Starscream.WebSocketClient) {
-            delegate?.websocketDidConnect()
+            delegate?.webSocketDidConnect()
         }
         
         func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
-            var engineError: WebSocketEngineError?
-            
-            if let error = error {
-                engineError = .init(
-                    reason: error.localizedDescription,
-                    code: (error as? WSError)?.code ?? 0,
-                    engineError: error
-                )
-            }
-            
-            delegate?.websocketDidDisconnect(error: engineError)
+            delegate?.webSocketDidDisconnect(error: error.map(WebSocketEngineError.init))
         }
         
         func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
-            delegate?.websocketDidReceiveMessage(text)
+            delegate?.webSocketDidReceiveMessage(text)
         }
         
         func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}

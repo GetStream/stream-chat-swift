@@ -7,28 +7,38 @@ import Foundation
 @available(iOS 13, *)
 class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelegate, URLSessionWebSocketDelegate {
     private var task: URLSessionWebSocketTask?
+    
     let request: URLRequest
-    let sessionConfiguration: URLSessionConfiguration
-    var isConnected = false
-    let callbackQueue: DispatchQueue
+    private var session: URLSession!
+    let delegateOperationQueue: OperationQueue
+    
+    var callbackQueue: DispatchQueue { delegateOperationQueue.underlyingQueue! }
+    
     weak var delegate: WebSocketEngineDelegate?
     
     required init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {
         self.request = request
-        self.sessionConfiguration = sessionConfiguration
-        self.callbackQueue = callbackQueue
+        
+        delegateOperationQueue = OperationQueue()
+        delegateOperationQueue.underlyingQueue = callbackQueue
+        
+        super.init()
+        
+        session = URLSession(
+            configuration: sessionConfiguration,
+            delegate: self,
+            delegateQueue: delegateOperationQueue
+        )
     }
     
     func connect() {
-        let session = URLSession(configuration: sessionConfiguration, delegate: self, delegateQueue: nil)
         task = session.webSocketTask(with: request)
         doRead()
         task?.resume()
     }
     
     func disconnect() {
-        isConnected = false
-        task?.cancel(with: .abnormalClosure, reason: nil)
+        task?.cancel(with: .normalClosure, reason: nil)
     }
     
     func sendPing() {
@@ -44,16 +54,12 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
             switch result {
             case let .success(message):
                 if case let .string(string) = message {
-                    self.callDelegateInCallbackQueue { $0?.websocketDidReceiveMessage(string) }
+                    self.delegate?.webSocketDidReceiveMessage(string)
                 }
                 self.doRead()
                 
             case let .failure(error):
-                self.disconnect(with: WebSocketEngineError(
-                    reason: error.localizedDescription,
-                    code: (error as NSError).code,
-                    engineError: error
-                ))
+                log.error("Failed receiving Web Socket Message with error: \(error)")
             }
         }
     }
@@ -63,8 +69,7 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
         webSocketTask: URLSessionWebSocketTask,
         didOpenWithProtocol protocol: String?
     ) {
-        isConnected = true
-        callDelegateInCallbackQueue { $0?.websocketDidConnect() }
+        delegate?.webSocketDidConnect()
     }
     
     func urlSession(
@@ -83,17 +88,10 @@ class URLSessionWebSocketEngine: NSObject, WebSocketEngine, URLSessionDataDelega
             )
         }
         
-        disconnect(with: error)
+        delegate?.webSocketDidDisconnect(error: error)
     }
     
-    private func disconnect(with error: WebSocketEngineError?) {
-        isConnected = false
-        callDelegateInCallbackQueue { $0?.websocketDidDisconnect(error: error) }
-    }
-    
-    private func callDelegateInCallbackQueue(execute block: @escaping (WebSocketEngineDelegate?) -> Void) {
-        callbackQueue.async { [weak self] in
-            block(self?.delegate)
-        }
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        delegate?.webSocketDidDisconnect(error: WebSocketEngineError(error: error))
     }
 }

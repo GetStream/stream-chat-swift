@@ -407,7 +407,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Simulate a health check event with the current user data
         // This should trigger the middlewares and save the current user data to DB
-        testEnv.webSocketClient?.websocketDidReceiveMessage(healthCheckEventJSON(userId: newUserId))
+        testEnv.webSocketClient?.webSocketDidReceiveMessage(healthCheckEventJSON(userId: newUserId))
         
         // Simulate successful connection
         testEnv.webSocketClient!.connectionStateDelegate?
@@ -504,7 +504,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Simulate a health check event with the current user data
         // This should trigger the middlewares and save the current user data to DB
-        testEnv.webSocketClient?.websocketDidReceiveMessage(healthCheckEventJSON(userId: newUser.userId))
+        testEnv.webSocketClient?.webSocketDidReceiveMessage(healthCheckEventJSON(userId: newUser.userId))
         
         // Simulate successful connection
         testEnv.webSocketClient!.connectionStateDelegate?
