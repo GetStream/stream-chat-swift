@@ -25,6 +25,7 @@ class WebSocketClient_Tests: StressTestCase {
     var backgroundTaskScheduler: MockBackgroundTaskScheduler!
     var requestEncoder: TestRequestEncoder!
     var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
+    var internetConnectionMonitor: InternetConnectionMonitorMock!
     
     var eventNotificationCenter: EventNotificationCenter!
     private var eventNotificationCenterMiddleware: EventMiddlewareMock!
@@ -53,6 +54,8 @@ class WebSocketClient_Tests: StressTestCase {
         eventNotificationCenterMiddleware = EventMiddlewareMock()
         eventNotificationCenter.add(middleware: eventNotificationCenterMiddleware)
         
+        internetConnectionMonitor = InternetConnectionMonitorMock()
+        
         var environment = WebSocketClient.Environment()
         environment.timerType = VirtualTimeTimer.self
         environment.createPingController = WebSocketPingControllerMock.init
@@ -65,6 +68,7 @@ class WebSocketClient_Tests: StressTestCase {
             requestEncoder: requestEncoder,
             eventDecoder: decoder,
             eventNotificationCenter: eventNotificationCenter,
+            internetConnection: InternetConnection(monitor: internetConnectionMonitor),
             reconnectionStrategy: reconnectionStrategy,
             environment: environment
         )

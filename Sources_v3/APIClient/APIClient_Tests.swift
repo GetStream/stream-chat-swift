@@ -267,6 +267,7 @@ private class TestWebSocketClient: WebSocketClient {
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             eventDecoder: EventDecoder<DefaultDataTypes>(),
             eventNotificationCenter: EventNotificationCenter(),
+            internetConnection: InternetConnection(),
             reconnectionStrategy: DefaultReconnectionStrategy()
         )
     }

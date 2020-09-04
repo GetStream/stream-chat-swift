@@ -93,7 +93,8 @@ public class Client<ExtraData: ExtraDataTypes> {
             urlSessionConfiguration,
             encoder,
             EventDecoder<ExtraData>(),
-            eventNotificationCenter
+            eventNotificationCenter,
+            internetConnection
         )
         
         webSocketClient.connectionStateDelegate = self
@@ -426,14 +427,16 @@ extension Client {
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ eventDecoder: AnyEventDecoder,
-            _ notificationCenter: EventNotificationCenter
+            _ notificationCenter: EventNotificationCenter,
+            _ internetConnection: InternetConnection
         ) -> WebSocketClient = {
             WebSocketClient(
                 connectEndpoint: $0,
                 sessionConfiguration: $1,
                 requestEncoder: $2,
                 eventDecoder: $3,
-                eventNotificationCenter: $4
+                eventNotificationCenter: $4,
+                internetConnection: $5
             )
         }
         
