@@ -80,6 +80,9 @@ class WebSocketClient {
     /// The identifier of the currently running background task. `nil` of no background task is running.
     private var activeBackgroundTask: UIBackgroundTaskIdentifier?
     
+    /// The internet connection observer we use for recovering when the connection was offline for some time.
+    private let internetConnection: InternetConnection
+    
     /// An object containing external dependencies of `WebSocketClient`
     private let environment: Environment
     
@@ -109,6 +112,7 @@ class WebSocketClient {
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
         eventNotificationCenter: EventNotificationCenter,
+        internetConnection: InternetConnection,
         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
         environment: Environment = .init()
     ) {
@@ -118,6 +122,8 @@ class WebSocketClient {
         self.sessionConfiguration = sessionConfiguration
         self.reconnectionStrategy = reconnectionStrategy
         self.eventDecoder = eventDecoder
+        self.internetConnection = internetConnection
+
         self.eventNotificationCenter = eventNotificationCenter
         self.eventNotificationCenter.add(middleware: HealthCheckMiddleware(webSocketClient: self))
         
