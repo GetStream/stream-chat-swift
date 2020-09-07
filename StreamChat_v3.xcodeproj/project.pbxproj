@@ -246,7 +246,6 @@
 		8A62706A24BF02D80040BFD6 /* XCTAssertEqual+Difference.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A62706924BF02D80040BFD6 /* XCTAssertEqual+Difference.swift */; };
 		8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A62706B24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift */; };
 		8A62706E24BF45360040BFD6 /* BanEnabling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A62706D24BF45360040BFD6 /* BanEnabling.swift */; };
-		8A62707024BF456B0040BFD6 /* MessageRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A62706F24BF456B0040BFD6 /* MessageRead.swift */; };
 		8AAB1C6624CB39F2009B783F /* UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAB1C6524CB39F2009B783F /* UnreadCount.swift */; };
 		8AC9CBD424C7351D006E236C /* ReactionEvents_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC9CBD324C734E3006E236C /* ReactionEvents_Tests.swift */; };
 		8AC9CBD624C73689006E236C /* NotificationEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC9CBD524C73689006E236C /* NotificationEvents.swift */; };
@@ -603,7 +602,6 @@
 		8A62706924BF02D80040BFD6 /* XCTAssertEqual+Difference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTAssertEqual+Difference.swift"; sourceTree = "<group>"; };
 		8A62706B24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEvents_Tests.swift; sourceTree = "<group>"; };
 		8A62706D24BF45360040BFD6 /* BanEnabling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BanEnabling.swift; sourceTree = "<group>"; };
-		8A62706F24BF456B0040BFD6 /* MessageRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageRead.swift; sourceTree = "<group>"; };
 		8A6428A724E3F39000DA8BEC /* StreamChatClientTestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = StreamChatClientTestPlan.xctestplan; path = Tests_v3/StreamChatClientTestPlan.xctestplan; sourceTree = "<group>"; };
 		8A6428A824E3F3BE00DA8BEC /* StreamChatClientStressTestPlan.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = StreamChatClientStressTestPlan.xctestplan; path = Tests_v3/StreamChatClientStressTestPlan.xctestplan; sourceTree = "<group>"; };
 		8A8BB2A32384573400C2F9DE /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
@@ -1085,7 +1083,6 @@
 				79877A012498E4BB00015F8B /* UserModel.swift */,
 				799C9431247D2FB9001F1104 /* Message.swift */,
 				794927EC249E0BE2009D7EB7 /* ExtraData.swift */,
-				8A62706F24BF456B0040BFD6 /* MessageRead.swift */,
 				8AAB1C6524CB39F2009B783F /* UnreadCount.swift */,
 			);
 			path = Models;
@@ -1750,7 +1747,6 @@
 				8A0D649B24E579E90017A3C0 /* GuestUserTokenPayload.swift in Sources */,
 				799C9449247D5211001F1104 /* MessageSender.swift in Sources */,
 				792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */,
-				8A62707024BF456B0040BFD6 /* MessageRead.swift in Sources */,
 				7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */,
 				799C9445247D3DD2001F1104 /* WebSocketClient.swift in Sources */,
 				797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */,

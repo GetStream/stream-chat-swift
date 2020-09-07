@@ -174,7 +174,6 @@ extension ChannelModel {
             team: "",
             unreadCount: .noUnread,
             watcherCount: 0,
-            unreadMessageRead: nil,
             banEnabling: .disabled,
             isWatched: true,
             extraData: extraData,

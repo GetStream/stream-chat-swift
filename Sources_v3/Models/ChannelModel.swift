@@ -45,9 +45,6 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     /// Online watchers in the channel.
     public let watcherCount: Int
     
-    /// Unread message state for the current user.
-    public let unreadMessageRead: MessageRead<ExtraData.User>?
-    
     /// An option to enable ban users.
     public let banEnabling: BanEnabling
     
@@ -82,7 +79,6 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
         team: String = "",
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
-        unreadMessageRead: MessageRead<ExtraData.User>? = nil,
         banEnabling: BanEnabling = .disabled,
         isWatched: Bool = false,
         extraData: ExtraData.Channel,
@@ -102,7 +98,6 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
         self.team = team
         self.unreadCount = unreadCount
         self.watcherCount = watcherCount
-        self.unreadMessageRead = unreadMessageRead
         self.banEnabling = banEnabling
         self.isWatched = isWatched
         self.extraData = extraData
