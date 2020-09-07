@@ -19,7 +19,7 @@ public extension Client {
 public typealias MessageController = MessageControllerGeneric<DefaultDataTypes>
 
 /// The `MessageControllerGeneric` is designed to edit the message it was created with.
-public final class MessageControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable {
+public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: Client<ExtraData>
     
