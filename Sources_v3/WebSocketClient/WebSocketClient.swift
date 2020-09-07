@@ -293,6 +293,19 @@ extension WebSocketClient: WebSocketEngineDelegate {
             
         } else {
             connectionState = .disconnected(error: disconnectionError.map { ClientError.WebSocket(with: $0) })
+
+            // If the disconnection error was one of the internet-is-down error, schedule reconnecting once the
+            // connection is back online.
+            guard disconnectionError?.isInternetOfflineError == true else { return }
+            
+            internetConnection.notifyOnce(when: { $0.isAvailable }) { [weak self] in
+                // Check the current state is still "disconnected" with an internet-down error. If not, it means
+                // the state was changed manually and we don't want to reconnect automatically.
+                if case let .disconnected(error) = self?.connectionState,
+                    error?.underlyingError?.isInternetOfflineError == true {
+                    self?.connect()
+                }
+            }
         }
     }
 }
