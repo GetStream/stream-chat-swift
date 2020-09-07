@@ -1344,6 +1344,73 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - Mark read
+    
+    func test_markRead_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+        
+        // Simulate `markRead` call and assert error is returned
+        var error: Error? = try await { [callbackQueueID] completion in
+            controller.markRead { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+        
+        // Simulate succsesfull backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+        
+        // Simulate `markRead` call and assert no error is returned
+        error = try await { [callbackQueueID] completion in
+            controller.markRead { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.markRead_completion?(nil)
+        }
+        
+        XCTAssertNil(error)
+    }
+    
+    func test_markRead_callsChannelUpdater() {
+        // Simulate `markRead` call and catch the completion
+        var completionCalled = false
+        controller.markRead { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Assert cid is passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.markRead_cid, channelId)
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successfull udpate
+        env.channelUpdater!.markRead_completion?(nil)
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_markRead_propagesErrorFromUpdater() {
+        // Simulate `markRead` call and catch the completion
+        var completionCalledError: Error?
+        controller.markRead { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelUpdater!.markRead_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
 }
 
 private class TestEnvironment {

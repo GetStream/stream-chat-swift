@@ -232,6 +232,22 @@ final class ChannelEndpoints_Tests: XCTestCase {
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+    
+    func test_markRead_buildsCorrectly() {
+        let cid = ChannelId.unique
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type)/\(cid.id)/read",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+        
+        let endpoint = Endpoint<EmptyResponse>.markRead(cid: cid)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
 
 extension ChannelEditDetailPayload where ExtraData == DefaultDataTypes {

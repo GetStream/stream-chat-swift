@@ -626,6 +626,21 @@ public extension ChannelControllerGeneric {
             }
         }
     }
+    
+    /// Marks the channel as read.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                         If request fails, the completion will be called with an error.
+    func markRead(completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        updater.markRead(cid: channelId) { [weak self] error in
+            self?.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 extension ChannelControllerGeneric {

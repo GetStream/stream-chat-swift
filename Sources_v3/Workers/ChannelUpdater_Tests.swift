@@ -30,6 +30,8 @@ class ChannelUpdater_Tests: StressTestCase {
         super.tearDown()
     }
     
+    // MARK: - UpdateChannelQuery
+    
     func test_updateChannelQuery_makesCorrectAPICall() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery<ExtraData>(cid: .unique)
@@ -527,6 +529,41 @@ class ChannelUpdater_Tests: StressTestCase {
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Mark channel as read
+    
+    func test_markRead_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        
+        channelUpdater.markRead(cid: cid)
+        
+        let referenceEndpoint = Endpoint<EmptyResponse>.markRead(cid: cid)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_markRead_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        channelUpdater.markRead(cid: .unique) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_markRead_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        channelUpdater.markRead(cid: .unique) { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 }
