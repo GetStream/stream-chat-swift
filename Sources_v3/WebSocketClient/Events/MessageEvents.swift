@@ -9,8 +9,8 @@ public struct MessageNewEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, 
     public let cid: ChannelId
     public let messageId: MessageId
     public let createdAt: Date
-    public let watcherCount: Int
-    public let unreadCount: UnreadCount
+    public let watcherCount: Int?
+    public let unreadCount: UnreadCount?
     
     let payload: Any
     
@@ -19,8 +19,8 @@ public struct MessageNewEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, 
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.message?.id)
         createdAt = try response.value(at: \.message?.createdAt)
-        watcherCount = try response.value(at: \.watcherCount)
-        unreadCount = try response.value(at: \.unreadCount)
+        watcherCount = try? response.value(at: \.watcherCount)
+        unreadCount = try? response.value(at: \.unreadCount)
         payload = response
     }
 }
