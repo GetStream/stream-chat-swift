@@ -302,6 +302,7 @@
 		F63CC37524E592DD0052844D /* MemberEventObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */; };
 		F649B2372500F785008F98C8 /* MessageController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F649B2362500F785008F98C8 /* MessageController_Tests.swift */; };
 		F649B2392500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F649B2382500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift */; };
+		F64F9B6225077CF600834F55 /* MessageNew+MissingFields.json in Resources */ = {isa = PBXBuildFile; fileRef = F64F9B6125077CF600834F55 /* MessageNew+MissingFields.json */; };
 		F670B50F24FE6EA900003B1A /* MessageEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F670B50E24FE6EA900003B1A /* MessageEditor.swift */; };
 		F67415C024F0129800C3222F /* UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = F67415BF24F0129800C3222F /* UnreadCount.swift */; };
 		F6778F9A24F5144F005E7D22 /* EventNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6778F9924F5144F005E7D22 /* EventNotificationCenter.swift */; };
@@ -670,6 +671,7 @@
 		F63CC37424E592DD0052844D /* MemberEventObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventObserver_Tests.swift; sourceTree = "<group>"; };
 		F649B2362500F785008F98C8 /* MessageController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageController_Tests.swift; sourceTree = "<group>"; };
 		F649B2382500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityDatabaseObserver_Mock.swift; sourceTree = "<group>"; };
+		F64F9B6125077CF600834F55 /* MessageNew+MissingFields.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "MessageNew+MissingFields.json"; sourceTree = "<group>"; };
 		F670B50E24FE6EA900003B1A /* MessageEditor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEditor.swift; sourceTree = "<group>"; };
 		F67415BF24F0129800C3222F /* UnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCount.swift; sourceTree = "<group>"; };
 		F6778F9924F5144F005E7D22 /* EventNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventNotificationCenter.swift; sourceTree = "<group>"; };
@@ -1255,6 +1257,7 @@
 			isa = PBXGroup;
 			children = (
 				8A0C3BD724C1E26C00CAFD19 /* MessageNew.json */,
+				F64F9B6125077CF600834F55 /* MessageNew+MissingFields.json */,
 				8A0C3BD824C1E33100CAFD19 /* MessageUpdated.json */,
 				8A0C3BDB24C1E5AE00CAFD19 /* MessageDeleted.json */,
 				8A0C3BD924C1E40E00CAFD19 /* MessageRead.json */,
@@ -1616,6 +1619,7 @@
 				8AC9CBE124C74DD0006E236C /* NotificationInviteAccepted.json in Resources */,
 				8A0C3BCC24C1CA9900CAFD19 /* ChannelUpdated.json in Resources */,
 				798779FD2498E47700015F8B /* OtherUser.json in Resources */,
+				F64F9B6225077CF600834F55 /* MessageNew+MissingFields.json in Resources */,
 				8A0C3BE024C1F18700CAFD19 /* NotificationMarkRead.json in Resources */,
 				8A0CC9EF24C604E000705CF9 /* MemberUpdated.json in Resources */,
 				8A0C3BCE24C1CB0500CAFD19 /* ChannelDeleted.json in Resources */,
