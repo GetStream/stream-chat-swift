@@ -57,7 +57,9 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
         let wasEmpty = pendingMessageIDs.isEmpty
         changes.pendingEditMessageIDs.forEach { pendingMessageIDs.insert($0) }
         if wasEmpty {
-            processNextMessage()
+            database.backgroundReadOnlyContext.perform { [weak self] in
+                self?.processNextMessage()
+            }
         }
     }
 
@@ -103,7 +105,9 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
             if let error = $0 {
                 log.error("Error changing localMessageState for message with id \(id) to `\(String(describing: state))`: \(error)")
             }
-            completion()
+            self.database.backgroundReadOnlyContext.perform {
+                completion()
+            }
         })
     }
 }
