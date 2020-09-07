@@ -12,6 +12,11 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var unreadChannelsCount: Int16
     @NSManaged var unreadMessagesCount: Int16
     
+    /// Into this field the creation date of last locally received event is saved.
+    /// The date later serves as reference date for `/sync` endpoint
+    /// that returns all events that happen after the given date
+    @NSManaged var lastReceivedEventDate: Date?
+
     @NSManaged var mutedUsers: Set<UserDTO>
     @NSManaged var user: UserDTO
     
