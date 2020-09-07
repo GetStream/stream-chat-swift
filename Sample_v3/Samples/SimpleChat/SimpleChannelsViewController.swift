@@ -17,7 +17,7 @@ class SimpleChannelsViewController: UITableViewController {
 
     lazy var channelListController: ChannelListController = chatClient
         .channelListController(query: ChannelListQuery(
-            filter: .in("members", ["broken-waterfall-5"]),
+            filter: .in("members", [chatClient.currentUserId]),
             pagination: [.limit(25)],
             options: [.watch]
         ))
@@ -107,8 +107,27 @@ class SimpleChannelsViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        let object = channelListController.channels[indexPath.row]
-        cell.textLabel?.text = object.extraData.name ?? object.cid.description
+        let channel = channelListController.channels[indexPath.row]
+        cell.textLabel?.text = channel.extraData.name ?? channel.cid.description
+        
+        // set channel cell subtitle to latest message
+        if let latestMessage = channel.latestMessages.first {
+            let author = latestMessage.author.name ?? latestMessage.author.id.description
+            cell.detailTextLabel?.text = "\(author): \(latestMessage.text)"
+        } else {
+            cell.detailTextLabel?.text = "No messages"
+        }
+        
+        if channel.isUnread {
+            // set channel name font to bold
+            cell.textLabel?.font = UIFont.boldSystemFont(ofSize: cell.textLabel?.font.pointSize ?? UIFont.labelFontSize)
+            
+            // set accessory view to number of unread messages
+            let unreadLabel = UILabel()
+            unreadLabel.text = "\(channel.unreadCount.messages)"
+            cell.accessoryView = unreadLabel
+        }
+        
         return cell
     }
 

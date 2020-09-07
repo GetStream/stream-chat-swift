@@ -118,9 +118,9 @@ extension LoginViewController {
         case 0:
             return jwtTextField.text ?? ""
         case 1:
-            return .development
-        case 2:
             return nil
+        case 2:
+            return .development
         default:
             return jwtTextField.text ?? ""
         }
