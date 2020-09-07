@@ -147,4 +147,14 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
+    
+    /// Marks a channel as read
+    /// - Parameters:
+    ///   - cid: Channel id of the channel to be marked as read
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func markRead(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .markRead(cid: cid)) {
+            completion?($0.error)
+        }
+    }
 }

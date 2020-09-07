@@ -47,6 +47,9 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var createNewMessage_extraData: ExtraData.Message?
     @Atomic var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
     
+    @Atomic var markRead_cid: ChannelId?
+    @Atomic var markRead_completion: ((Error?) -> Void)?
+    
     override func update(
         channelQuery: ChannelQuery<ExtraData>,
         channelCreatedCallback: ((ChannelId) -> Void)?,
@@ -116,5 +119,10 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         removeMembers_cid = cid
         removeMembers_userIds = userIds
         removeMembers_completion = completion
+    }
+    
+    override func markRead(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        markRead_cid = cid
+        markRead_completion = completion
     }
 }
