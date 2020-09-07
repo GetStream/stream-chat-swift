@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E266" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19C57" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
         <attribute name="cid" attributeType="String"/>
         <attribute name="config" attributeType="Binary"/>
@@ -49,6 +49,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="CurrentUserDTO" representedClassName="CurrentUserDTO" syncable="YES">
+        <attribute name="lastReceivedEventDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uniquenessKey" attributeType="String" defaultValueString="this is an immmutable arbitrary key which makes sure we have only once instance of CurrentUserDTO in the db"/>
         <attribute name="unreadChannelsCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="unreadMessagesCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
@@ -151,7 +152,7 @@
     <elements>
         <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="283"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
-        <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="118"/>
+        <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="133"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="178"/>
         <element name="MessageDTO" positionX="0" positionY="0" width="128" height="343"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
