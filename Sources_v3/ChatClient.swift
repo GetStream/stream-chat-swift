@@ -390,8 +390,13 @@ public class Client<ExtraData: ExtraDataTypes> {
         // Set a new WebSocketClient connect endpoint
         webSocketClient.connectEndpoint = webSocketConnectEndpoint(userId: userId, role: role, extraData: extraData)
         
-        // Reset all existing data
-        databaseContainer.removeAllData(force: true) { completion($0) }
+        // Reset all existing data if the new user is not the same as the last logged-in one
+        if databaseContainer.viewContext.currentUser()?.user.id != userId {
+            databaseContainer.removeAllData(force: true) { completion($0) }
+        } else {
+            // Otherwise we're done
+            completion(nil)
+        }
     }
     
     private func webSocketConnectEndpoint(

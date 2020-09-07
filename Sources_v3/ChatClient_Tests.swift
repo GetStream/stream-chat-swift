@@ -433,6 +433,35 @@ class ChatClient_Tests: StressTestCase {
         }
     }
     
+    func test_settingUser_shouldNotDeleteDB_whenUserIsTheSame() throws {
+        let client = Client(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
+        
+        let newUserId: UserId = .unique
+        let newUserToken: Token = .unique
+
+        // Set a new user
+        client.setUser(userId: newUserId, token: newUserToken)
+
+        // Assert flush was called initially
+        XCTAssert(testEnv.databaseContainer?.flush_called == true)
+        
+        // Reset the DB flush_called flag
+        testEnv.databaseContainer?.flush_called = false
+       
+        // Disconnect
+        client.disconnect()
+
+        // Set the same user again
+        client.setUser(userId: newUserId, token: newUserToken)
+
+        // Assert DB flush wasn't called
+        XCTAssert(testEnv.databaseContainer?.flush_called == false)
+    }
+    
     func test_settingGuestUser() {
         let client = Client(
             config: inMemoryStorageConfig,
