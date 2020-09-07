@@ -273,6 +273,9 @@ class ChatClient_Tests: StressTestCase {
         // Check all the mandatory background workers are initialized
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender<DefaultDataTypes> })
         XCTAssert(client.backgroundWorkers.contains { $0 is NewChannelQueryUpdater<DefaultDataTypes> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is ChannelWatchStateUpdater<DefaultDataTypes> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor<DefaultDataTypes> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is MissingEventsPublisher<DefaultDataTypes> })
     }
     
     func test_backgroundWorkersAreInitialized() {

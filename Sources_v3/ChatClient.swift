@@ -176,7 +176,8 @@ public class Client<ExtraData: ExtraDataTypes> {
             MessageSender<ExtraData>.init,
             NewChannelQueryUpdater<ExtraData>.init,
             ChannelWatchStateUpdater<ExtraData>.init,
-            MessageEditor<ExtraData>.init
+            MessageEditor<ExtraData>.init,
+            MissingEventsPublisher<ExtraData>.init
         ]
         
         self.init(
