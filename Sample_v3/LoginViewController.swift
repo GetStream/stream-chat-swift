@@ -55,34 +55,31 @@ extension LoginViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch indexPath {
         case .simpleChatIndexPath:
-            logIn(apiKey: apiKey, userId: userId, userName: userName, token: token) {
-                DispatchQueue.main.async {
-                    let storyboard = UIStoryboard(name: "SimpleChat", bundle: nil)
-                    let initial = storyboard.instantiateInitialViewController()
-                    UIView.transition(with: self.view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
-                        self.view.window?.rootViewController = initial
-                    })
-                }
-            }
+            logIn(apiKey: apiKey, userId: userId, userName: userName, token: token)
+            
+            let storyboard = UIStoryboard(name: "SimpleChat", bundle: nil)
+            let initial = storyboard.instantiateInitialViewController()
+            UIView.transition(with: view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
+                self.view.window?.rootViewController = initial
+            })
+            
         case .swiftUISimpleChatIndexPath:
             if #available(iOS 13, *) {
-                logIn(apiKey: apiKey, userId: userId, userName: userName, token: token) {
-                    // Ideally, we'd pass the `Client` instance as the environment object and create the list controller later.
-                    let listController = chatClient.channelListController(
-                        query: .init(filter: .in("members", ["broken-waterfall-5"]))
-                    )
+                logIn(apiKey: apiKey, userId: userId, userName: userName, token: token)
+                
+                // Ideally, we'd pass the `Client` instance as the environment object and create the list controller later.
+                let listController = chatClient.channelListController(
+                    query: .init(filter: .in("members", ["broken-waterfall-5"]))
+                )
                     
-                    DispatchQueue.main.async {
-                        UIView.transition(with: self.view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
-                            self.view.window?.rootViewController = UIHostingController(
-                                rootView:
-                                NavigationView {
-                                    ChannelListView(channelList: listController.observableObject)
-                                }
-                            )
-                        })
-                    }
-                }
+                UIView.transition(with: self.view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
+                    self.view.window?.rootViewController = UIHostingController(
+                        rootView:
+                        NavigationView {
+                            ChannelListView(channelList: listController.observableObject)
+                        }
+                    )
+                })
             }
         default:
             return

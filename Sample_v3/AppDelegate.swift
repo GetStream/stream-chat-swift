@@ -7,25 +7,16 @@ import UIKit
 
 var chatClient: ChatClient = {
     var config = ChatClientConfig(apiKey: APIKey("qk4nn7rpcn75"))
-    config.isLocalStorageEnabled = false
     return ChatClient(config: config)
 }()
 
-func logIn(apiKey: String, userId: String, userName: String, token: Token?, completion: @escaping () -> Void) {
-    var config = ChatClientConfig(apiKey: APIKey("qk4nn7rpcn75"))
-    config.isLocalStorageEnabled = false
-    chatClient = ChatClient(config: config)
-    
+func logIn(apiKey: String, userId: String, userName: String, token: Token?) {
     let extraData = NameAndImageExtraData(name: userName, imageURL: nil)
     
     if let token = token {
-        chatClient.setUser(userId: userId, userExtraData: extraData, token: token) { _ in
-            completion()
-        }
+        chatClient.setUser(userId: userId, userExtraData: extraData, token: token)
     } else {
-        chatClient.setGuestUser(userId: userId, extraData: extraData) { _ in
-            completion()
-        }
+        chatClient.setGuestUser(userId: userId, extraData: extraData)
     }
 }
 
