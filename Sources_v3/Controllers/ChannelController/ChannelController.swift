@@ -501,6 +501,9 @@ public extension ChannelControllerGeneric {
         }
     }
     
+    /// Sends the start typing event and schedule a timer to send the stop typing event. You should call this method every time
+    /// the user presses a key. The method will manage requests and timer as needed.
+    /// - Parameter completion: a completion block with an error if the request was failed.
     func keystroke(completion: ((Error?) -> Void)? = nil) {
         guard isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
@@ -510,6 +513,19 @@ public extension ChannelControllerGeneric {
         eventSender.keystroke(in: channelId, completion: completion)
     }
     
+    /// Sends the start typing event. It's recommended to use `keystroke()` instead.
+    /// - Parameter completion: a completion block with an error if the request was failed.
+    func startTyping(completion: ((Error?) -> Void)? = nil) {
+        guard isChannelAlreadyCreated else {
+            channelModificationFailed { completion?($0) }
+            return
+        }
+        
+        eventSender.startTyping(in: channelId, completion: completion)
+    }
+    
+    /// Sends the stop typing event. It's recommended to use `keystroke()` instead.
+    /// - Parameter completion: a completion block with an error if the request was failed.
     func stopTyping(completion: ((Error?) -> Void)? = nil) {
         guard isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
