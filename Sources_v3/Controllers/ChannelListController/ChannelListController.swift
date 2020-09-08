@@ -41,7 +41,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     }
     
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: ChannelListQueryUpdater<ExtraData> = self.environment
+    private lazy var worker: ChannelListUpdater<ExtraData> = self.environment
         .channelQueryUpdaterBuilder(
             client.databaseContainer,
             client.webSocketClient,
@@ -165,7 +165,7 @@ extension ChannelListControllerGeneric {
             _ database: DatabaseContainer,
             _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
-        ) -> ChannelListQueryUpdater<ExtraData> = ChannelListQueryUpdater.init
+        ) -> ChannelListUpdater<ExtraData> = ChannelListUpdater.init
 
         var createChannelListDabaseObserver: (
             _ context: NSManagedObjectContext,

@@ -10,13 +10,13 @@ import CoreData
 ///     1. This worker observers DB for the insertations of the new `ChannelDTO`s without any linked queries.
 ///     2. When new channel is found, all exsisting queries are fetched from DB and we modify exsiting queries filters so
 ///     in response for `update(channelListQuery` request new channel will be returned if it is part of the original query filter.
-///     3. After sending `update(channelListQuery` for all queries `ChannelListQueryUpdater` does the job of linking
+///     3. After sending `update(channelListQuery` for all queries `ChannelListUpdater` does the job of linking
 ///     corresponding queries to the channel.
 final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     private let environment: Environment
         
-    private lazy var channelListQueryUpdater: ChannelListQueryUpdater<ExtraData> = self.environment
-        .createChannelListQueryUpdater(
+    private lazy var channelListUpdater: ChannelListUpdater<ExtraData> = self.environment
+        .createChannelListUpdater(
             database,
             webSocketClient,
             apiClient
@@ -51,7 +51,7 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     
     private func startObserving() {
         // We have to initialize the lazy variables synchronously
-        _ = channelListQueryUpdater
+        _ = channelListUpdater
         _ = channelsObserver
         
         // But the observing can be started on a background queue
@@ -94,7 +94,7 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
         
         // Send `update(channelListQuery:` requests so corresponding queries will be linked to the channel
         updatedQueries.forEach {
-            channelListQueryUpdater.update(channelListQuery: $0) { error in
+            channelListUpdater.update(channelListQuery: $0) { error in
                 if let error = error {
                     log
                         .error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
@@ -106,11 +106,11 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
 
 extension NewChannelQueryUpdater {
     struct Environment {
-        var createChannelListQueryUpdater: (
+        var createChannelListUpdater: (
             _ database: DatabaseContainer,
             _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
-        ) -> ChannelListQueryUpdater<ExtraData> = ChannelListQueryUpdater.init
+        ) -> ChannelListUpdater<ExtraData> = ChannelListUpdater.init
     }
 }
 

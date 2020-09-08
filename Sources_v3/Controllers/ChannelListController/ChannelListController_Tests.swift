@@ -235,7 +235,7 @@ class ChannelListController_Tests: StressTestCase {
     
     // MARK: - Channels pagination
     
-    func test_loadNextChannels_callsChannelListQueryUpdater() {
+    func test_loadNextChannels_callsChannelListUpdater() {
         var completionCalled = false
         let limit = 42
         controller.loadNextChannels(limit: limit) { [callbackQueueID] error in
@@ -288,7 +288,7 @@ private class TestEnvironment {
         })
 }
 
-private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListQueryUpdater<ExtraData> {
+private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListUpdater<ExtraData> {
     @Atomic var update_query: ChannelListQuery?
     @Atomic var update_completion: ((Error?) -> Void)?
     
