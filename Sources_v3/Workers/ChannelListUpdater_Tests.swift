@@ -10,7 +10,7 @@ class ChannelListUpdater_Tests: StressTestCase {
     var apiClient: APIClientMock!
     var database: DatabaseContainer!
     
-    var queryUpdater: ChannelListUpdater<DefaultDataTypes>!
+    var listUpdater: ChannelListUpdater<DefaultDataTypes>!
     
     override func setUp() {
         super.setUp()
@@ -19,7 +19,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         apiClient = APIClientMock()
         database = try! DatabaseContainer(kind: .inMemory)
         
-        queryUpdater = ChannelListUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        listUpdater = ChannelListUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
     }
     
     override func tearDown() {
@@ -28,20 +28,22 @@ class ChannelListUpdater_Tests: StressTestCase {
         super.tearDown()
     }
     
-    func test_makesCorrectAPICall() {
+    // MARK: - Update
+    
+    func test_update_makesCorrectAPICall() {
         // Simulate `update` call
         let query = ChannelListQuery(filter: .in("member", ["Luke"]))
-        queryUpdater.update(channelListQuery: query)
+        listUpdater.update(channelListQuery: query)
         
         let referenceEndpoint: Endpoint<ChannelListPayload<DefaultDataTypes>> = .channels(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
-    func test_successfullReponseData_areSavedToDB() {
+    func test_update_successfullReponseData_areSavedToDB() {
         // Simulate `update` call
         let query = ChannelListQuery(filter: .in("member", ["Luke"]))
         var completionCalled = false
-        queryUpdater.update(channelListQuery: query, completion: { error in
+        listUpdater.update(channelListQuery: query, completion: { error in
             XCTAssertNil(error)
             completionCalled = true
         })
@@ -61,17 +63,50 @@ class ChannelListUpdater_Tests: StressTestCase {
         }
     }
     
-    func test_errorReponse_isPropagatedToCompletion() {
+    func test_update_errorReponse_isPropagatedToCompletion() {
         // Simulate `update` call
         let query = ChannelListQuery(filter: .in("member", ["Luke"]))
         var completionCalledError: Error?
-        queryUpdater.update(channelListQuery: query, completion: { completionCalledError = $0 })
+        listUpdater.update(channelListQuery: query, completion: { completionCalledError = $0 })
         
         // Simualte API response with failure
         let error = TestError()
         apiClient.test_simulateResponse(Result<ChannelListPayload<DefaultDataTypes>, Error>.failure(error))
         
         // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Mark all read
+    
+    func test_markAllRead_makesCorrectAPICall() {
+        listUpdater.markAllRead()
+        
+        let referenceEndpoint = Endpoint<EmptyResponse>.markAllRead()
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_markAllRead_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        listUpdater.markAllRead { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_markAllRead_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        listUpdater.markAllRead { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 }

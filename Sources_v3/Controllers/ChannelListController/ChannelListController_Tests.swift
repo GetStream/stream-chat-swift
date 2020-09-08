@@ -58,7 +58,7 @@ class ChannelListController_Tests: StressTestCase {
         XCTAssertEqual(controller.state, .localDataFetched)
         
         // Simulate successfull network call.
-        env.channelQueryUpdater?.update_completion?(nil)
+        env.channelListUpdater?.update_completion?(nil)
         
         // Check if state changed after successful network call.
         XCTAssertEqual(controller.state, .remoteDataFetched)
@@ -76,7 +76,7 @@ class ChannelListController_Tests: StressTestCase {
         
         // Simulate failed network call.
         let error = TestError()
-        env.channelQueryUpdater?.update_completion?(error)
+        env.channelListUpdater?.update_completion?(error)
         
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
@@ -130,12 +130,12 @@ class ChannelListController_Tests: StressTestCase {
         }
         
         // Assert the updater is called with the query
-        XCTAssertEqual(env.channelQueryUpdater!.update_query?.filter.filterHash, query.filter.filterHash)
+        XCTAssertEqual(env.channelListUpdater!.update_query?.filter.filterHash, query.filter.filterHash)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
         // Simulate successfull udpate
-        env.channelQueryUpdater!.update_completion?(nil)
+        env.channelListUpdater!.update_completion?(nil)
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
@@ -153,7 +153,7 @@ class ChannelListController_Tests: StressTestCase {
         
         // Simulate failed udpate
         let testError = TestError()
-        env.channelQueryUpdater!.update_completion?(testError)
+        env.channelListUpdater!.update_completion?(testError)
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -248,13 +248,13 @@ class ChannelListController_Tests: StressTestCase {
         XCTAssertFalse(completionCalled)
         
         // Simulate successfull udpate
-        env!.channelQueryUpdater?.update_completion?(nil)
+        env!.channelListUpdater?.update_completion?(nil)
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         
         // Assert correct `Pagination` is created
-        XCTAssertEqual(env!.channelQueryUpdater?.update_query?.pagination, [.limit(limit), .offset(controller.channels.count)])
+        XCTAssertEqual(env!.channelListUpdater?.update_query?.pagination, [.limit(limit), .offset(controller.channels.count)])
     }
     
     func test_loadNextChannels_callsChannelUpdaterWithError() {
@@ -267,7 +267,43 @@ class ChannelListController_Tests: StressTestCase {
         
         // Simulate failed udpate
         let testError = TestError()
-        env.channelQueryUpdater!.update_completion?(testError)
+        env.channelListUpdater!.update_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    // MARK: - Mark all read
+    
+    func test_markAllRead_callsChannelListUpdater() {
+        // Simulate `markRead` call and catch the completion
+        var completionCalled = false
+        controller.markAllRead { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successfull udpate
+        env.channelListUpdater!.markAllRead_completion?(nil)
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_markAllRead_propagesErrorFromUpdater() {
+        // Simulate `markRead` call and catch the completion
+        var completionCalledError: Error?
+        controller.markAllRead { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed udpate
+        let testError = TestError()
+        env.channelListUpdater!.markAllRead_completion?(testError)
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -275,27 +311,17 @@ class ChannelListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var channelQueryUpdater: ChannelQueryUpdaterMock<DefaultDataTypes>?
+    @Atomic var channelListUpdater: ChannelListUpdaterMock<DefaultDataTypes>?
     
     lazy var environment: ChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
-            self.channelQueryUpdater = ChannelQueryUpdaterMock(
+            self.channelListUpdater = ChannelListUpdaterMock(
                 database: $0,
                 webSocketClient: $1,
                 apiClient: $2
             )
-            return self.channelQueryUpdater!
+            return self.channelListUpdater!
         })
-}
-
-private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListUpdater<ExtraData> {
-    @Atomic var update_query: ChannelListQuery?
-    @Atomic var update_completion: ((Error?) -> Void)?
-    
-    override func update(channelListQuery: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
-        update_query = channelListQuery
-        update_completion = completion
-    }
 }
 
 // A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls

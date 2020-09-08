@@ -121,6 +121,7 @@
 		7988F6B724D15F100004219B /* StressTestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7988F6B624D15F100004219B /* StressTestCase.swift */; };
 		79896D5C2506593E00BA8F1C /* ChannelReadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796FD215250654940076C99B /* ChannelReadDTO.swift */; };
 		79896D5E25065ECD00BA8F1C /* ChannelReadModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79896D5D25065E6900BA8F1C /* ChannelReadModel.swift */; };
+		79896D622507B16000BA8F1C /* ChannelListUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79896D602507B0DD00BA8F1C /* ChannelListUpdater_Mock.swift */; };
 		7990503224CEEAA600689CDC /* MessageDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7990503124CEEAA600689CDC /* MessageDTO_Tests.swift */; };
 		7991D83B24F5427E00D21BA3 /* EphemeralValuesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */; };
 		7991D83D24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83C24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift */; };
@@ -476,6 +477,7 @@
 		7988F6B024D010890004219B /* TestRunnerEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRunnerEnvironment.swift; sourceTree = "<group>"; };
 		7988F6B624D15F100004219B /* StressTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StressTestCase.swift; sourceTree = "<group>"; };
 		79896D5D25065E6900BA8F1C /* ChannelReadModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadModel.swift; sourceTree = "<group>"; };
+		79896D602507B0DD00BA8F1C /* ChannelListUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListUpdater_Mock.swift; sourceTree = "<group>"; };
 		7990503124CEEAA600689CDC /* MessageDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDTO_Tests.swift; sourceTree = "<group>"; };
 		7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EphemeralValuesContainer.swift; sourceTree = "<group>"; };
 		7991D83C24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListController+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -1040,6 +1042,7 @@
 			children = (
 				799C9446247D50F3001F1104 /* Worker.swift */,
 				792A4F1A247FE84900EAF71D /* ChannelListUpdater.swift */,
+				79896D602507B0DD00BA8F1C /* ChannelListUpdater_Mock.swift */,
 				792921C424C0479700116BBB /* ChannelListUpdater_Tests.swift */,
 				79682C4524BC9DAF0071578E /* ChannelUpdater.swift */,
 				F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */,
@@ -1873,6 +1876,7 @@
 				79DDF81B249CE38B002F4412 /* AssertNetworkRequest.swift in Sources */,
 				791C0B6324EEBDF40013CA2F /* MessageSender_Tests.swift in Sources */,
 				797EEA4824FFB4C200C81203 /* DataStore_Tests.swift in Sources */,
+				79896D622507B16000BA8F1C /* ChannelListUpdater_Mock.swift in Sources */,
 				79877A2A2498E51500015F8B /* MemberModelDTO_Tests.swift in Sources */,
 				F649B2372500F785008F98C8 /* MessageController_Tests.swift in Sources */,
 				799C947D247E6114001F1104 /* TestError.swift in Sources */,

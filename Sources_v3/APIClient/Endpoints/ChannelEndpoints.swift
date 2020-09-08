@@ -118,6 +118,16 @@ extension Endpoint {
         )
     }
     
+    static func markAllRead() -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/read",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+    
     static func sendEvent<ExtraData: ExtraDataTypes>(cid: ChannelId, eventType: EventType) -> Endpoint<EventPayload<ExtraData>> {
         .init(
             path: "channels/\(cid.type)/\(cid.id)",
