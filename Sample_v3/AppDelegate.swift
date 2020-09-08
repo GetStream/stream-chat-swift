@@ -12,6 +12,7 @@ var chatClient: ChatClient = {
 
 func logIn(apiKey: String, userId: String, userName: String, token: Token?) {
     let extraData = NameAndImageExtraData(name: userName, imageURL: nil)
+    chatClient = ChatClient(config: ChatClientConfig(apiKey: APIKey(apiKey)))
     
     if let token = token {
         chatClient.setUser(userId: userId, userExtraData: extraData, token: token)

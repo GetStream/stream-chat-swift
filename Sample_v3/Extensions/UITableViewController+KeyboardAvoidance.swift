@@ -23,6 +23,10 @@ extension UITableViewController {
     }
     
     func adjustContentInsetsIfNeeded() {
+        guard presentedViewController == nil else {
+            return
+        }
+        
         var contentInset = tableView.contentInset
         contentInset.bottom = topHeight
         contentInset.top = bottomHeight
@@ -68,7 +72,7 @@ extension UITableViewController {
 
     @objc private func _onKeyboardFrameWillChangeNotificationReceived(_ notification: Notification) {
         guard
-            presentedViewController?.isBeingDismissed != false,
+            presentedViewController == nil,
             let userInfo = notification.userInfo,
             let keyboardFrame = (userInfo[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue
         else {

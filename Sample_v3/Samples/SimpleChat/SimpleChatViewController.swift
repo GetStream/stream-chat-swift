@@ -243,23 +243,29 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     @objc func showChannelActionsAlert() {
         let alert = UIAlertController(title: "Member Actions", message: "", preferredStyle: .actionSheet)
         
-        let userIds = Set(["steep-moon-9"])
+        let defaultUserId = "steep-moon-9"
         
-        alert.addAction(.init(title: "Add a member", style: .default, handler: { [unowned self] _ in
-            self.channelController?.addMembers(userIds: userIds) {
-                guard let error = $0 else {
-                    return print("Members \(userIds) added successfully")
+        alert.addAction(.init(title: "Add a member", style: .default, handler: { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.alertTextField(title: "Add member", placeholder: defaultUserId) { userId in
+                self.channelController?.addMembers(userIds: [userId]) {
+                    guard let error = $0 else {
+                        return print("Members \(userId) added successfully")
+                    }
+                    self.alert(title: "Error", message: "Error adding member \(userId): \(error)")
                 }
-                print("Error adding members \(userIds): \(error)")
             }
         }))
         
         alert.addAction(.init(title: "Remove a member", style: .default, handler: { [unowned self] _ in
-            self.channelController?.removeMembers(userIds: userIds) {
-                guard let error = $0 else {
-                    return print("Members \(userIds) removed successfully")
+            self.alertTextField(title: "Remove member", placeholder: defaultUserId) { userId in
+                self.channelController?.removeMembers(userIds: [userId]) {
+                    guard let error = $0 else {
+                        return print("Member \(userId) removed successfully")
+                    }
+                    self.alert(title: "Error", message: "Error removing member \(userId): \(error)")
                 }
-                print("Error removing members \(userIds): \(error)")
             }
         }))
         
@@ -268,7 +274,7 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
                 guard let error = $0 else {
                     return print("Channel deleted successfully")
                 }
-                print("Error deleting channel: \(error)")
+                self.alert(title: "Error", message: "Error deleting channel: \(error)")
             }
         }))
         
