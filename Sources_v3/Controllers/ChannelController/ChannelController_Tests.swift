@@ -310,6 +310,9 @@ class ChannelController_Tests: StressTestCase {
 
         // Simulate `startUpdating` call
         controller.startUpdating()
+        
+        // Simulate updater's channelCreatedCallback call
+        env.channelUpdater!.update_channelCreatedCallback!(channelId)
 
         // Simulate DB update
         var error = try await {

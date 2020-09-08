@@ -12,6 +12,8 @@ public class Controller {
         case inactive
         /// The controllers already fetched local data if any. Remote data fetch is in progress.
         case localDataFetched
+        /// The controller failed to fetch local data.
+        case localDataFetchFailed(ClientError)
         /// The controller fetched remote data.
         case remoteDataFetched
         /// The controller failed to fetch remote data.
