@@ -67,7 +67,7 @@ class EventSender<ExtraData: ExtraDataTypes>: Worker {
         }
     }
     
-    func cancelScheduledTypingTimerControl() {
+    private func cancelScheduledTypingTimerControl() {
         currentUserTypingTimerControl?.cancel()
         currentUserTypingTimerControl = nil
     }

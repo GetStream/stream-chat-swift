@@ -1064,6 +1064,68 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
+    // MARK: - Keystroke
+    
+    func test_keystroke() {
+        controller.keystroke {
+            XCTAssertNil($0)
+        }
+        
+        // Simulate `keystroke` call and catch the completion
+        var completionCalledError: Error?
+        controller.keystroke { completionCalledError = $0 }
+        
+        // Check keystroke cid.
+        XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
+        
+        // Simulate failed udpate
+        let testError = TestError()
+        env.eventSender!.keystroke_completion!(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_startTyping() {
+        controller.startTyping {
+            XCTAssertNil($0)
+        }
+        
+        // Simulate `startTyping` call and catch the completion
+        var completionCalledError: Error?
+        controller.startTyping { completionCalledError = $0 }
+        
+        // Check `startTyping` cid.
+        XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
+        
+        // Simulate failed udpate
+        let testError = TestError()
+        env.eventSender!.startTyping_completion!(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_stopTyping() {
+        controller.stopTyping {
+            XCTAssertNil($0)
+        }
+        
+        // Simulate `stopTyping` call and catch the completion
+        var completionCalledError: Error?
+        controller.stopTyping { completionCalledError = $0 }
+        
+        // Check `stopTyping` cid.
+        XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
+        
+        // Simulate failed udpate
+        let testError = TestError()
+        env.eventSender!.stopTyping_completion!(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
     // MARK: - Message sending
     
     func test_createNewMessage_callsChannelUpdater() {
@@ -1286,11 +1348,18 @@ class ChannelController_Tests: StressTestCase {
 
 private class TestEnvironment {
     var channelUpdater: ChannelUpdaterMock<DefaultDataTypes>?
+    var eventSender: EventSenderMock<DefaultDataTypes>?
     
-    lazy var environment: ChannelController.Environment = .init(channelUpdaterBuilder: { [unowned self] in
-        self.channelUpdater = ChannelUpdaterMock(database: $0, webSocketClient: $1, apiClient: $2)
-        return self.channelUpdater!
-    })
+    lazy var environment: ChannelController.Environment = .init(
+        channelUpdaterBuilder: { [unowned self] in
+            self.channelUpdater = ChannelUpdaterMock(database: $0, webSocketClient: $1, apiClient: $2)
+            return self.channelUpdater!
+        },
+        eventSenderBuilder: { [unowned self] in
+            self.eventSender = EventSenderMock(database: $0, webSocketClient: $1, apiClient: $2)
+            return self.eventSender!
+        }
+    )
 }
 
 /// A concrete `ChanneControllerDelegate` implementation allowing capturing the delegate calls
