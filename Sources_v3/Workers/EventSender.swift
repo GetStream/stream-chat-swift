@@ -8,8 +8,9 @@ extension TimeInterval {
     /// The number of seconds from the last `typingStart` event until the `typingStop` event is automatically sent.
     static let startTypingEventTimeout: TimeInterval = 5
     
-    /// If user is still typing, resend the `typingStart` event after this time interval.
-    static let startTypingResendInterval: TimeInterval = 20
+    /// If the user is typing too long, `EventSender` should resend the `.typingStart` event.
+    /// It should be before `.startTypingEventTimeout` and after `.startTypingEventTimeout` will be sent the stop typing event.
+    static let startTypingResendInterval: TimeInterval = .incomingTypingStartEventTimeout - .startTypingEventTimeout
 }
 
 /// Sends events.
@@ -18,7 +19,7 @@ class EventSender<ExtraData: ExtraDataTypes>: Worker {
     var timer: Timer.Type = DefaultTimer.self
     
     @Atomic private var currentUserTypingTimerControl: TimerControl?
-    @Atomic private var currentUserTypingLastDate: Date?
+    @Atomic private var currentUserLastTypingDate: Date?
     
     // MARK: Typing events
     
@@ -30,35 +31,37 @@ class EventSender<ExtraData: ExtraDataTypes>: Worker {
             self?.stopTyping(in: cid)
         }
         
-        print("🐷", currentUserTypingLastDate, timer.currentTime().timeIntervalSince(currentUserTypingLastDate ?? Date()))
-        
-        // The user is typing too long, we should resend `.typingStart` event.
-        if let lastDate = currentUserTypingLastDate,
-            timer.currentTime().timeIntervalSince(lastDate) < .startTypingResendInterval {
+        // If the user is typing too long, it should resend `.typingStart` event.
+        // Checks the last typing time and returns if it was less then `.startTypingResendInterval`.
+        if let lastTypingDate = currentUserLastTypingDate,
+            timer.currentTime().timeIntervalSince(lastTypingDate) < .startTypingResendInterval {
             completion?(nil)
             return
         }
         
-        currentUserTypingLastDate = timer.currentTime()
-        
+        currentUserLastTypingDate = timer.currentTime()
+        startTyping(in: cid)
+    }
+    
+    func startTyping(in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(
-            endpoint: .event(cid: cid, eventType: .userStartTyping)
+            endpoint: .sendEvent(cid: cid, eventType: .userStartTyping)
         ) { (result: Result<EventPayload<ExtraData>, Error>) in
             completion?(result.error)
         }
     }
     
     func stopTyping(in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
-        guard currentUserTypingLastDate != nil else {
+        guard currentUserLastTypingDate != nil else {
             completion?(nil)
             return
         }
         
         cancelScheduledTypingTimerControl()
-        currentUserTypingLastDate = nil
+        currentUserLastTypingDate = nil
         
         apiClient.request(
-            endpoint: .event(cid: cid, eventType: .userStopTyping)
+            endpoint: .sendEvent(cid: cid, eventType: .userStopTyping)
         ) { (result: Result<EventPayload<ExtraData>, Error>) in
             completion?(result.error)
         }
