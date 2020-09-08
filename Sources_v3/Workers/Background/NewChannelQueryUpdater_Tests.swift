@@ -111,13 +111,3 @@ private class TestEnvironment {
         return self.channelQueryUpdater!
     })
 }
-
-private class ChannelListUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListUpdater<ExtraData> {
-    @Atomic var update_query: ChannelListQuery?
-    @Atomic var update_calls_counter = 0
-    
-    override func update(channelListQuery: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
-        update_query = channelListQuery
-        _update_calls_counter.mutate { $0 += 1 }
-    }
-}

@@ -157,6 +157,16 @@ public extension ChannelListControllerGeneric {
             self?.callback { completion?(error) }
         }
     }
+    
+    /// Marks all channels for a user as read.
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func markAllRead(completion: ((Error?) -> Void)? = nil) {
+        worker.markAllRead { [weak self] error in
+            self?.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 extension ChannelListControllerGeneric {
