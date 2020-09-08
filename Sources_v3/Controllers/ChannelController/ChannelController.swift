@@ -168,11 +168,11 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     // This callback is called after channel is created on backend but before channel is saved to DB. When channel is created
     // we receive backend generated cid and setting up current `ChannelController` to observe this channel DB changes.
     // Completion will be called if DB fetch will fail after setting new `ChannelQuery`.
-    private func channelCreated(completion: ((_ error: Error?) -> Void)?) -> ((ChannelId) -> Void) {
+    private func channelCreated(forwardErrorTo completion: ((_ error: Error?) -> Void)?) -> ((ChannelId) -> Void) {
         return { [weak self] cid in
             guard let self = self else { return }
             self.isChannelAlreadyCreated = true
-            self.set(channelQuery: ChannelQuery(cid: cid, channelQuery: self.channelQuery), completion: completion)
+            completion?(self.set(cid: cid))
         }
     }
     
@@ -250,13 +250,16 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
     /// - Parameter completion: Called when the controller has finished fetching remote data.
     ///                         If the data fetching fails, the `error` variable contains more details about the problem.
     public func startUpdating(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        eventObservers.removeAll()
-        startDatabaseObservers(completion)
-
-        // Update observing state
-        state = .localDataFetched
-
-        let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(completion: completion)
+        let setStateBasedOnError: ((_ error: Error?) -> Void) = { [weak self] error in
+            // Update observing state
+            self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
+        }
+        
+        if isChannelAlreadyCreated {
+            setStateBasedOnError(startDatabaseObservers())
+        }
+        
+        let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setStateBasedOnError)
         updater.update(
             channelQuery: channelQuery,
             channelCreatedCallback: channelCreatedCallback
@@ -266,32 +269,46 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, De
             self.callback { completion?(error) }
         }
         
+        if isChannelAlreadyCreated {
+            setupEventObservers()
+        }
+    }
+
+    /// Sets new cid of the query if necessary, and resets event and database observers.
+    ///
+    /// This should only be called when the controller is initialized with a new channel
+    /// (which doesn't exsit on backend), and after that channel is created on backend.
+    /// If the newly created channel has a different cid than initially thought
+    /// (such is the case for direct messages - backend generates custom cid),
+    /// this function will set the new cid and reset observers.
+    /// If the cid is still the same, this function will only reset the observers
+    /// - since we don't need to set a new query in that case.
+    /// - Parameter cid: New cid for the channel
+    /// - Returns: Erorr if it occurs while setting up database observers.
+    private func set(cid: ChannelId) -> Error? {
+        if channelQuery.cid != cid {
+            channelQuery = ChannelQuery(cid: cid, channelQuery: channelQuery)
+        }
         setupEventObservers()
+        return startDatabaseObservers()
     }
 
-    // After setting new channelQuery we need to reset current DB observers to observe new channel.
-    // Completion will be called if observers will fail to fetch data for the new channel.
-    private func set(channelQuery: ChannelQuery<ExtraData>, completion: ((_ error: Error?) -> Void)?) {
-        guard self.channelQuery.cid != channelQuery.cid else { return }
-        self.channelQuery = channelQuery
-        startDatabaseObservers(completion)
-    }
-
-    private func startDatabaseObservers(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    private func startDatabaseObservers() -> Error? {
         _channelObserver.reset()
         _messagesObserver.reset()
 
         do {
             try channelObserver.startObserving()
             try messagesObserver.startObserving()
+            return nil
         } catch {
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
-            callback { completion?(ClientError.FetchFailed()) }
-            return
+            return ClientError.FetchFailed()
         }
     }
 
     private func setupEventObservers() {
+        eventObservers.removeAll()
         let center = client.webSocketClient.eventNotificationCenter
         eventObservers = [
             MemberEventObserver(notificationCenter: center, cid: channelId) { [unowned self] event in
