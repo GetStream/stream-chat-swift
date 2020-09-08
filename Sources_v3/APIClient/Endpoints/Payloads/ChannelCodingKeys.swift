@@ -10,10 +10,6 @@ public enum ChannelCodingKeys: String, CodingKey {
     case cid
     /// A type.
     case typeRawValue = "type"
-    /// A channel name.
-    case name
-    /// An image URL.
-    case imageURL = "image"
     /// A last message date.
     case lastMessageAt = "last_message_at"
     /// A user created by.
