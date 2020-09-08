@@ -100,10 +100,10 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    var channelQueryUpdater: ChannelQueryUpdaterMock<DefaultDataTypes>?
+    var channelQueryUpdater: ChannelListUpdaterMock<DefaultDataTypes>?
     
-    lazy var environment = NewChannelQueryUpdater<DefaultDataTypes>.Environment(createChannelListQueryUpdater: { [unowned self] in
-        self.channelQueryUpdater = ChannelQueryUpdaterMock(
+    lazy var environment = NewChannelQueryUpdater<DefaultDataTypes>.Environment(createChannelListUpdater: { [unowned self] in
+        self.channelQueryUpdater = ChannelListUpdaterMock(
             database: $0,
             webSocketClient: $1,
             apiClient: $2
@@ -112,7 +112,7 @@ private class TestEnvironment {
     })
 }
 
-private class ChannelQueryUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListQueryUpdater<ExtraData> {
+private class ChannelListUpdaterMock<ExtraData: ExtraDataTypes>: ChannelListUpdater<ExtraData> {
     @Atomic var update_query: ChannelListQuery?
     @Atomic var update_calls_counter = 0
     

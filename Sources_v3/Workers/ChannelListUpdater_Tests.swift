@@ -5,12 +5,12 @@
 @testable import StreamChatClient
 import XCTest
 
-class ChannelListQueryUpdater_Tests: StressTestCase {
+class ChannelListUpdater_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainer!
     
-    var queryUpdater: ChannelListQueryUpdater<DefaultDataTypes>!
+    var queryUpdater: ChannelListUpdater<DefaultDataTypes>!
     
     override func setUp() {
         super.setUp()
@@ -19,7 +19,7 @@ class ChannelListQueryUpdater_Tests: StressTestCase {
         apiClient = APIClientMock()
         database = try! DatabaseContainer(kind: .inMemory)
         
-        queryUpdater = ChannelListQueryUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        queryUpdater = ChannelListUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
     }
     
     override func tearDown() {

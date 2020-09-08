@@ -33,7 +33,7 @@
 		79280F8224891C6A00CDEB89 /* VirtualTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F7F24891C6A00CDEB89 /* VirtualTimer.swift */; };
 		79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F8024891C6A00CDEB89 /* VirtualTime_Tests.swift */; };
 		79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79280F8124891C6A00CDEB89 /* VirtualTime.swift */; };
-		792921C524C0479700116BBB /* ChannelListQueryUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921C424C0479700116BBB /* ChannelListQueryUpdater_Tests.swift */; };
+		792921C524C0479700116BBB /* ChannelListUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921C424C0479700116BBB /* ChannelListUpdater_Tests.swift */; };
 		792921C724C047DD00116BBB /* APIClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921C624C047DD00116BBB /* APIClient_Mock.swift */; };
 		792921C924C056F400116BBB /* ChannelListController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921C824C056F400116BBB /* ChannelListController_Tests.swift */; };
 		792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792921CA24C077B400116BBB /* TestDispatchQueue.swift */; };
@@ -58,7 +58,7 @@
 		792B805024D95B5D00C2963E /* Cached.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792B804F24D95B5D00C2963E /* Cached.swift */; };
 		792B805224D95D4300C2963E /* Cached_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792B805124D95D4300C2963E /* Cached_Tests.swift */; };
 		792B805424D95FC700C2963E /* RandomDispatchQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792B805324D95FC700C2963E /* RandomDispatchQueue.swift */; };
-		792CA62624CEE93700D70A5E /* ChannelListQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F1A247FE84900EAF71D /* ChannelListQueryUpdater.swift */; };
+		792CA62624CEE93700D70A5E /* ChannelListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F1A247FE84900EAF71D /* ChannelListUpdater.swift */; };
 		792FCB4524A33B5B000290C7 /* EventDataProcessorMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792FCB4424A33B5B000290C7 /* EventDataProcessorMiddleware.swift */; };
 		792FCB4724A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792FCB4624A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift */; };
 		792FCB4924A3BF38000290C7 /* OptionSet+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792FCB4824A3BF38000290C7 /* OptionSet+Extensions.swift */; };
@@ -385,12 +385,12 @@
 		79280F7F24891C6A00CDEB89 /* VirtualTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTimer.swift; sourceTree = "<group>"; };
 		79280F8024891C6A00CDEB89 /* VirtualTime_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTime_Tests.swift; sourceTree = "<group>"; };
 		79280F8124891C6A00CDEB89 /* VirtualTime.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VirtualTime.swift; sourceTree = "<group>"; };
-		792921C424C0479700116BBB /* ChannelListQueryUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListQueryUpdater_Tests.swift; sourceTree = "<group>"; };
+		792921C424C0479700116BBB /* ChannelListUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListUpdater_Tests.swift; sourceTree = "<group>"; };
 		792921C624C047DD00116BBB /* APIClient_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient_Mock.swift; sourceTree = "<group>"; };
 		792921C824C056F400116BBB /* ChannelListController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListController_Tests.swift; sourceTree = "<group>"; };
 		792921CA24C077B400116BBB /* TestDispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDispatchQueue.swift; sourceTree = "<group>"; };
 		792921CC24C07A9000116BBB /* QueueAwareDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueueAwareDelegate.swift; sourceTree = "<group>"; };
-		792A4F1A247FE84900EAF71D /* ChannelListQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListQueryUpdater.swift; sourceTree = "<group>"; };
+		792A4F1A247FE84900EAF71D /* ChannelListUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListUpdater.swift; sourceTree = "<group>"; };
 		792A4F1C247FEA2200EAF71D /* ChannelListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListController.swift; sourceTree = "<group>"; };
 		792A4F22247FF01800EAF71D /* Sample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		792A4F24247FF01800EAF71D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -1039,8 +1039,8 @@
 			isa = PBXGroup;
 			children = (
 				799C9446247D50F3001F1104 /* Worker.swift */,
-				792A4F1A247FE84900EAF71D /* ChannelListQueryUpdater.swift */,
-				792921C424C0479700116BBB /* ChannelListQueryUpdater_Tests.swift */,
+				792A4F1A247FE84900EAF71D /* ChannelListUpdater.swift */,
+				792921C424C0479700116BBB /* ChannelListUpdater_Tests.swift */,
 				79682C4524BC9DAF0071578E /* ChannelUpdater.swift */,
 				F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */,
 				7952B3B424D45D9400AC53D4 /* ChannelUpdater_Tests.swift */,
@@ -1719,7 +1719,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
-				792CA62624CEE93700D70A5E /* ChannelListQueryUpdater.swift in Sources */,
+				792CA62624CEE93700D70A5E /* ChannelListUpdater.swift in Sources */,
 				79896D5E25065ECD00BA8F1C /* ChannelReadModel.swift in Sources */,
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
 				DAF1BED1250660F8003CEDC0 /* MessageController+SwiftUI.swift in Sources */,
@@ -1893,7 +1893,7 @@
 				792FCB4724A33CC2000290C7 /* EventDataProcessorMiddleware_Tests.swift in Sources */,
 				797EEA4A24FFC37600C81203 /* ConnectionStatus_Tests.swift in Sources */,
 				79877A2B2498E51500015F8B /* UserDTO_Tests.swift in Sources */,
-				792921C524C0479700116BBB /* ChannelListQueryUpdater_Tests.swift in Sources */,
+				792921C524C0479700116BBB /* ChannelListUpdater_Tests.swift in Sources */,
 				79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */,
 				F6C56D1424F7B89D0012BB1F /* EventMiddleware_Mock.swift in Sources */,
 				F61D7C3524FFA6FD00188A0E /* MessageUpdater_Tests.swift in Sources */,
