@@ -29,6 +29,13 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var members: Set<MemberDTO>
     @NSManaged var messages: Set<MessageDTO>
     
+    /// The fetch request that returns all existed channels from the database
+    static var allChannelsFetchRequest: NSFetchRequest<ChannelDTO> {
+        let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.updatedAt, ascending: false)]
+        return request
+    }
+    
     static func fetchRequest(for cid: ChannelId) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \ChannelDTO.updatedAt, ascending: false)]
