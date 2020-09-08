@@ -17,7 +17,7 @@ class TypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
     var timer: Timer.Type = DefaultTimer.self
     
     /// A list of timers per user id.
-    private var typingEventTimeoutTimerControls = [UserId: TimerControl]()
+    @Atomic private var typingEventTimeoutTimerControls: [UserId: TimerControl] = [:]
     
     /// Creates a new `TypingStartCleanupMiddleware`
     ///
@@ -36,14 +36,16 @@ class TypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
         
         guard typingEvent.isTyping else {
             // User stops typing.
-            typingEventTimeoutTimerControls[typingEvent.userId]?.cancel()
-            typingEventTimeoutTimerControls[typingEvent.userId] = nil
+            _typingEventTimeoutTimerControls {
+                $0[typingEvent.userId]?.cancel()
+                $0[typingEvent.userId] = nil
+            }
             return
         }
         
         // User is typing.
         let userId = typingEvent.userId
-        typingEventTimeoutTimerControls[userId]?.cancel()
+        _typingEventTimeoutTimerControls { $0[userId]?.cancel() }
         
         let stopTypingEventTimerControl =
             timer.schedule(timeInterval: .incomingTypingStartEventTimeout, queue: .global()) {
@@ -51,6 +53,6 @@ class TypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
                 completion(typingStopEvent)
             }
         
-        typingEventTimeoutTimerControls[userId] = stopTypingEventTimerControl
+        _typingEventTimeoutTimerControls { $0[userId] = stopTypingEventTimerControl }
     }
 }
