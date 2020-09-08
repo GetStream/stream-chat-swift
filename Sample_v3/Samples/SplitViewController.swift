@@ -8,7 +8,6 @@ class SplitViewController: UISplitViewController, UISplitViewControllerDelegate 
     override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
-        preferredDisplayMode = .allVisible
     }
 
     func splitViewController(
