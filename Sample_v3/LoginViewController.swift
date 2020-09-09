@@ -15,6 +15,23 @@ class LoginViewController: UITableViewController {
     @IBOutlet var userNameTextField: UITextField!
     @IBOutlet var jwtTextField: UITextField!
     
+    func logIn() {
+        let extraData = NameAndImageExtraData(name: userName, imageURL: nil)
+        chatClient = ChatClient(config: ChatClientConfig(apiKey: APIKey(apiKey)))
+        
+        func setUserCompletion(_ error: Error?) {
+            guard let error = error else { return }
+            alert(title: "Error", message: "Error logging in: \(error)")
+            navigationController?.popToRootViewController(animated: true)
+        }
+        
+        if let token = token {
+            chatClient.setUser(userId: userId, userExtraData: extraData, token: token, completion: setUserCompletion)
+        } else {
+            chatClient.setGuestUser(userId: userId, extraData: extraData, completion: setUserCompletion)
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -53,20 +70,17 @@ extension LoginViewController {
 
 extension LoginViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        logIn()
+        
         switch indexPath {
         case .simpleChatIndexPath:
-            logIn(apiKey: apiKey, userId: userId, userName: userName, token: token)
-            
             let storyboard = UIStoryboard(name: "SimpleChat", bundle: nil)
             let initial = storyboard.instantiateInitialViewController()
             UIView.transition(with: view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
                 self.view.window?.rootViewController = initial
             })
-            
         case .swiftUISimpleChatIndexPath:
             if #available(iOS 13, *) {
-                logIn(apiKey: apiKey, userId: userId, userName: userName, token: token)
-                
                 // Ideally, we'd pass the `Client` instance as the environment object and create the list controller later.
                 let listController = chatClient.channelListController(
                     query: .init(filter: .in("members", ["broken-waterfall-5"]))
