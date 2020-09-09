@@ -25,10 +25,25 @@ public class ConnectionControllerGeneric<ExtraData: ExtraDataTypes> {
     public var connectionStatus: ConnectionStatus { .init(webSocketConnectionState: client.webSocketClient.connectionState) }
     
     /// A delegate to get connection status updates.
-    public weak var delegate: ConnectionControllerDelegate?
+    public weak var delegate: ConnectionControllerDelegate? {
+        get { multicastDelegate.mainDelegate ?? nil }
+        set {
+            weak var weakValue = newValue
+            multicastDelegate.mainDelegate = weakValue
+        }
+    }
     
     /// A callback queue in which the delegate will be called.
     public let callbackQueue: DispatchQueue?
+    
+    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
+    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
+    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
+    @available(iOS 13, *)
+    lazy var basePublisher: BasePublisher = .init(controller: self)
+    
+    /// A multicast delegate.
+    var multicastDelegate = MulticastDelegate<ConnectionControllerDelegate?>() // swiftlint:disable:this weak_delegate
     
     /// The connection event observer for the connection status updates.
     private lazy var connectionEventObserver: ConnectionEventObserver = {
@@ -36,10 +51,14 @@ public class ConnectionControllerGeneric<ExtraData: ExtraDataTypes> {
             guard let self = self else { return }
             let connectionStatus = $0.connectionStatus
             
+            func notify() {
+                self.multicastDelegate.invoke { $0?.controller(self, didUpdateConnectionStatus: connectionStatus) }
+            }
+            
             if let callbackQueue = self.callbackQueue {
-                callbackQueue.async { self.delegate?.controller(self, didUpdateConnectionStatus: connectionStatus) }
+                callbackQueue.async(execute: notify)
             } else {
-                self.delegate?.controller(self, didUpdateConnectionStatus: connectionStatus)
+                notify()
             }
         }
     }()

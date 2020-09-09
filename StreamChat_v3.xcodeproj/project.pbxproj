@@ -195,9 +195,9 @@
 		804B127324E712FA002B00EA /* SimpleChat.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 804B126B24E712C2002B00EA /* SimpleChat.storyboard */; };
 		804B127524ED596C002B00EA /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804B127424ED596C002B00EA /* SettingsViewController.swift */; };
 		804B127724ED59FE002B00EA /* Settings.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 804B127624ED59FE002B00EA /* Settings.storyboard */; };
+		805A11492506FBBD0089DFC4 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */; };
 		8A0175F02501174000570345 /* EventSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175EF2501174000570345 /* EventSender.swift */; };
 		8A0175F425013B6400570345 /* EventSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175F325013B6400570345 /* EventSender_Tests.swift */; };
-		805A11492506FBBD0089DFC4 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */; };
 		8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A08C6A524D437DF00DEF995 /* WebSocketPingController_Tests.swift */; };
 		8A0C3BBC24C0947400CAFD19 /* UserEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0C3BBB24C0947400CAFD19 /* UserEvents.swift */; };
 		8A0C3BBF24C0ACAB00CAFD19 /* UserPresence.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A0C3BBD24C0AC6400CAFD19 /* UserPresence.json */; };
@@ -250,6 +250,10 @@
 		8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A62706B24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift */; };
 		8A62706E24BF45360040BFD6 /* BanEnabling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A62706D24BF45360040BFD6 /* BanEnabling.swift */; };
 		8AAB1C6624CB39F2009B783F /* UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAB1C6524CB39F2009B783F /* UnreadCount.swift */; };
+		8AB215A825090FED007A5211 /* ConnectionController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB215A725090FED007A5211 /* ConnectionController+Combine.swift */; };
+		8AB215AA25091366007A5211 /* ConnectionController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB215A925091366007A5211 /* ConnectionController+SwiftUI.swift */; };
+		8AB215AC25091617007A5211 /* ConnectionController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB215AB25091617007A5211 /* ConnectionController+SwiftUI_Tests.swift */; };
+		8AB215AE2509192B007A5211 /* ConnectionController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AB215AD2509192B007A5211 /* ConnectionController+Combine_Tests.swift */; };
 		8AC9CBD424C7351D006E236C /* ReactionEvents_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC9CBD324C734E3006E236C /* ReactionEvents_Tests.swift */; };
 		8AC9CBD624C73689006E236C /* NotificationEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC9CBD524C73689006E236C /* NotificationEvents.swift */; };
 		8AC9CBDD24C74DD0006E236C /* NotificationMessageNew.json in Resources */ = {isa = PBXBuildFile; fileRef = 8AC9CBD724C737AF006E236C /* NotificationMessageNew.json */; };
@@ -554,9 +558,9 @@
 		804B126B24E712C2002B00EA /* SimpleChat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SimpleChat.storyboard; sourceTree = "<group>"; };
 		804B127424ED596C002B00EA /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		804B127624ED59FE002B00EA /* Settings.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Settings.storyboard; sourceTree = "<group>"; };
+		805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		8A0175EF2501174000570345 /* EventSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender.swift; sourceTree = "<group>"; };
 		8A0175F325013B6400570345 /* EventSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender_Tests.swift; sourceTree = "<group>"; };
-		805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		8A08C6A524D437DF00DEF995 /* WebSocketPingController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketPingController_Tests.swift; sourceTree = "<group>"; };
 		8A0C3BBB24C0947400CAFD19 /* UserEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEvents.swift; sourceTree = "<group>"; };
 		8A0C3BBD24C0AC6400CAFD19 /* UserPresence.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserPresence.json; sourceTree = "<group>"; };
@@ -615,6 +619,10 @@
 		8A8BB2A32384573400C2F9DE /* Realm.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Realm.framework; path = Carthage/Build/iOS/Realm.framework; sourceTree = "<group>"; };
 		8A8BB2A42384573400C2F9DE /* RealmSwift.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = RealmSwift.framework; path = Carthage/Build/iOS/RealmSwift.framework; sourceTree = "<group>"; };
 		8AAB1C6524CB39F2009B783F /* UnreadCount.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadCount.swift; sourceTree = "<group>"; };
+		8AB215A725090FED007A5211 /* ConnectionController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+Combine.swift"; sourceTree = "<group>"; };
+		8AB215A925091366007A5211 /* ConnectionController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+SwiftUI.swift"; sourceTree = "<group>"; };
+		8AB215AB25091617007A5211 /* ConnectionController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
+		8AB215AD2509192B007A5211 /* ConnectionController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectionController+Combine_Tests.swift"; sourceTree = "<group>"; };
 		8AC9CBD324C734E3006E236C /* ReactionEvents_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionEvents_Tests.swift; sourceTree = "<group>"; };
 		8AC9CBD524C73689006E236C /* NotificationEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationEvents.swift; sourceTree = "<group>"; };
 		8AC9CBD724C737AF006E236C /* NotificationMessageNew.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = NotificationMessageNew.json; sourceTree = "<group>"; };
@@ -1352,6 +1360,10 @@
 			children = (
 				8ACFBF6B2507E14C0093C6FD /* ConnectionController.swift */,
 				8ACFBF6D2507E5BB0093C6FD /* ConnectionController_Tests.swift */,
+				8AB215A925091366007A5211 /* ConnectionController+SwiftUI.swift */,
+				8AB215AB25091617007A5211 /* ConnectionController+SwiftUI_Tests.swift */,
+				8AB215A725090FED007A5211 /* ConnectionController+Combine.swift */,
+				8AB215AD2509192B007A5211 /* ConnectionController+Combine_Tests.swift */,
 			);
 			path = ConnectionController;
 			sourceTree = "<group>";
@@ -1790,6 +1802,7 @@
 				799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */,
 				79877A272498E50D00015F8B /* MemberModelDTO.swift in Sources */,
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
+				8AB215A825090FED007A5211 /* ConnectionController+Combine.swift in Sources */,
 				8A0C3BD424C1DF2100CAFD19 /* MessageEvents.swift in Sources */,
 				79CD959224F9380B00E87377 /* MulticastDelegate.swift in Sources */,
 				7964F3BC249A5E60002A09EC /* RequestEncoder.swift in Sources */,
@@ -1825,6 +1838,7 @@
 				DAE566F725010CA100E39431 /* ChannelWatchStateUpdater.swift in Sources */,
 				792A4F462480107A00EAF71D /* ChannelQuery.swift in Sources */,
 				799C9447247D50F3001F1104 /* Worker.swift in Sources */,
+				8AB215AA25091366007A5211 /* ConnectionController+SwiftUI.swift in Sources */,
 				79280F782489181200CDEB89 /* URLSessionWebSocketEngine.swift in Sources */,
 				792A4F3C247FFBB400EAF71D /* Timers.swift in Sources */,
 				79682C4624BC9DAF0071578E /* ChannelUpdater.swift in Sources */,
@@ -1949,6 +1963,7 @@
 				F62BE7852506309B00D13B86 /* MissingEventsPayload_Tests.swift in Sources */,
 				7922F30824DACF1F00C364BC /* TestManagedObject.swift in Sources */,
 				792B805424D95FC700C2963E /* RandomDispatchQueue.swift in Sources */,
+				8AB215AC25091617007A5211 /* ConnectionController+SwiftUI_Tests.swift in Sources */,
 				7952B3B324D4560E00AC53D4 /* ChannelController_Tests.swift in Sources */,
 				7922F30624DACEF100C364BC /* TestDataModel.xcdatamodeld in Sources */,
 				8A0CC9EB24C601F600705CF9 /* MemberEvents_Tests.swift in Sources */,
@@ -1960,6 +1975,7 @@
 				8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */,
 				8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */,
 				79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */,
+				8AB215AE2509192B007A5211 /* ConnectionController+Combine_Tests.swift in Sources */,
 				799C9476247D7E94001F1104 /* TemporaryData.swift in Sources */,
 				F649B2392500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift in Sources */,
 				79CD959424F9381700E87377 /* MulticastDelegateTests.swift in Sources */,
