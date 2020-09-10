@@ -344,6 +344,30 @@ class ChannelDTO_Tests: XCTestCase {
         )
     }
     
+    func test_channelUreadCount_calculatedCorrectly() {
+        // Create and save a current user, to be used for channel unread calculations
+        try! database.createCurrentUser(id: "dummyCurrentUser")
+        
+        let channelId: ChannelId = .unique
+        
+        let payload = dummyPayload(with: channelId)
+        
+        // Asynchronously save the payload to the db
+        database.write { session in
+            try! session.saveChannel(payload: payload)
+        }
+        
+        // Load the channel from the db and check the if fields are correct
+        var loadedChannel: ChannelModel<DefaultDataTypes>? {
+            database.viewContext.loadChannel(cid: channelId)
+        }
+        
+        AssertAsync {
+            Assert.willBeEqual(loadedChannel?.unreadCount.messages, self.dummyChannelRead.unreadMessagesCount)
+            Assert.willBeEqual(loadedChannel?.unreadCount.mentionedMessages, 1)
+        }
+    }
+    
     private func encodedChannelListSortingKey(_ sortingKey: ChannelListSortingKey) -> String {
         if #available(iOS 13, *) {
             let encodedData = try! JSONEncoder.stream.encode(sortingKey)
@@ -363,6 +387,20 @@ extension XCTestCase {
     // MARK: - Dummy data with extra data
     
     var lukeExtraData: NameAndImageExtraData { NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString)) }
+    
+    var dummyCurrentUser: CurrentUserPayload<NameAndImageExtraData> {
+        CurrentUserPayload(
+            id: "dummyCurrentUser",
+            role: .user,
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: .unique,
+            isOnline: true,
+            isInvisible: false,
+            isBanned: false,
+            extraData: lukeExtraData
+        )
+    }
     
     var dummyUser: UserPayload<NameAndImageExtraData> {
         UserPayload(
@@ -384,7 +422,7 @@ extension XCTestCase {
             id: .unique,
             type: .regular,
             user: dummyUser,
-            createdAt: .unique,
+            createdAt: Date(timeIntervalSince1970: 2), // See dummyChannelRead.lastReadAt below for reason
             updatedAt: .unique,
             deletedAt: nil,
             text: .unique,
@@ -392,7 +430,7 @@ extension XCTestCase {
             args: nil,
             parentId: nil,
             showReplyInChannel: false,
-            mentionedUsers: [],
+            mentionedUsers: [dummyCurrentUser],
             replyCount: 0,
             extraData: NoExtraData(),
             reactionScores: ["like": 1],
@@ -401,7 +439,7 @@ extension XCTestCase {
     }
     
     var dummyChannelRead: ChannelReadPayload<DefaultDataTypes> {
-        ChannelReadPayload(user: dummyUser, lastReadAt: .unique, unreadMessagesCount: .random(in: 0...10))
+        ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), unreadMessagesCount: 10)
     }
     
     func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {

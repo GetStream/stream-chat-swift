@@ -158,12 +158,33 @@ extension ChannelModel {
         let extraData = try! JSONDecoder.default.decode(ExtraData.Channel.self, from: dto.extraData)
         let cid = try! ChannelId(cid: dto.cid)
         
+        let context = dto.managedObjectContext!
+        
         // TODO: make messagesLimit a param
         let latestMessages: [MessageModel<ExtraData>] = MessageDTO
-            .load(for: dto.cid, limit: 25, context: dto.managedObjectContext!)
+            .load(for: dto.cid, limit: 25, context: context)
             .map { $0.asModel() }
         
         let reads: [ChannelReadModel<ExtraData>] = dto.reads.map { $0.asModel() }
+        
+        var unreadCount = ChannelUnreadCount.noUnread
+        if let currentUser = context.currentUser(),
+            let currentUserChannelRead = reads.first(where: { $0.user.id == currentUser.user.id }) {
+            // Fetch count of all mentioned messages after last read
+            let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+            request.predicate = NSPredicate(
+                format: "(channel.cid == %@) AND (createdAt > %@) AND (%@ IN mentionedUsers)",
+                dto.cid,
+                currentUserChannelRead.lastReadAt as NSDate,
+                currentUser.user
+            )
+            let mentionedMessagesCount = try! context.count(for: request)
+            
+            unreadCount = ChannelUnreadCount(
+                messages: currentUserChannelRead.unreadMessagesCount,
+                mentionedMessages: mentionedMessagesCount
+            )
+        }
         
         return ChannelModel(
             cid: cid,
@@ -177,7 +198,7 @@ extension ChannelModel {
             members: Set(members),
             watchers: [],
             team: "",
-            unreadCount: .noUnread,
+            unreadCount: unreadCount,
             watcherCount: 0,
             banEnabling: .disabled,
             isWatched: true,
