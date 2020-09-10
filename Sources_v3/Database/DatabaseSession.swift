@@ -79,7 +79,23 @@ extension MessageDatabaseSession {
     }
 }
 
-protocol DatabaseSession: UserDatabaseSession, CurrentUserDatabaseSession, MessageDatabaseSession {
+protocol ChannelReadDatabaseSession {
+    /// Creates a new `ChannelReadDTO` object in the database. Throws an error if the ChannelRead fails to be created.
+    @discardableResult
+    func saveChannelRead<ExtraData: ExtraDataTypes>(
+        payload: ChannelReadPayload<ExtraData>,
+        for cid: ChannelId
+    ) throws -> ChannelReadDTO
+    
+    /// Fetchtes `ChannelReadDTO` with the given `cid` and `userId` from the DB.
+    /// Returns `nil` if no `ChannelReadDTO` matching the `cid` and `userId`  exists.
+    func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO?
+    
+    /// Fetchtes `ChannelReadDTO`entities for the given `userId` from the DB.
+    func loadChannelReads(for userId: UserId) -> [ChannelReadDTO]
+}
+
+protocol DatabaseSession: UserDatabaseSession, CurrentUserDatabaseSession, MessageDatabaseSession, ChannelReadDatabaseSession {
     // MARK: - Member
     
     @discardableResult

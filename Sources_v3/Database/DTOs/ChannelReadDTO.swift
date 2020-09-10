@@ -17,10 +17,21 @@ class ChannelReadDTO: NSManagedObject {
     @NSManaged var channel: ChannelDTO
     @NSManaged var user: UserDTO
     
+    static func fetchRequest(userId: String) -> NSFetchRequest<ChannelReadDTO> {
+        let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
+        request.predicate = NSPredicate(format: "user.id == %@", userId)
+        return request
+    }
+    
     static func fetchRequest(for cid: ChannelId, userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)
         request.predicate = NSPredicate(format: "channel.cid == %@ && user.id == %@", cid.rawValue, userId)
         return request
+    }
+    
+    static func load(userId: String, context: NSManagedObjectContext) -> [ChannelReadDTO] {
+        let request = fetchRequest(userId: userId)
+        return try! context.fetch(request)
     }
     
     static func load(cid: ChannelId, userId: String, context: NSManagedObjectContext) -> ChannelReadDTO? {
@@ -58,6 +69,14 @@ extension NSManagedObjectContext {
         dto.unreadMessageCount = payload.unreadMessagesCount
         
         return dto
+    }
+    
+    func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO? {
+        ChannelReadDTO.load(cid: cid, userId: userId, context: self)
+    }
+    
+    func loadChannelReads(for userId: UserId) -> [ChannelReadDTO] {
+        ChannelReadDTO.load(userId: userId, context: self)
     }
 }
 
