@@ -7,7 +7,7 @@ import Combine
 import XCTest
 
 @available(iOS 13, *)
-class ConnectionController_Combine_Tests: XCTestCase {
+class ConnectionController_Combine_Tests: iOS13TestCase {
     var controller: ConnectionController!
     var cancellables: Set<AnyCancellable>!
     

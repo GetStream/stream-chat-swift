@@ -6,7 +6,7 @@
 import XCTest
 
 @available(iOS 13, *)
-class ConnectionController_SwiftUI_Tests: XCTestCase {
+class ConnectionController_SwiftUI_Tests: iOS13TestCase {
     var controller: ConnectionController!
     
     override func setUp() {
