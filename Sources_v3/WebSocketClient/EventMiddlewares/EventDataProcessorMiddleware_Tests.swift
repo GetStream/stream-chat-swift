@@ -5,7 +5,7 @@
 @testable import StreamChatClient
 import XCTest
 
-class EventDataProcessorMiddlewaree_Tests: XCTestCase {
+class EventDataProcessorMiddleware_Tests: XCTestCase {
     var middleware: EventDataProcessorMiddleware<DefaultDataTypes>!
     fileprivate var database: DatabaseContainerMock!
     
