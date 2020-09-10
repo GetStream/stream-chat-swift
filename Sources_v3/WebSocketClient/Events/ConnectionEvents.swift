@@ -37,10 +37,13 @@ public struct HealthCheckEvent: ConnectionEvent, EventWithPayload {
 /// states in the UI (banners like "Offline", "Reconnecting"", etc.).
 public struct ConnectionStatusUpdated: Event {
     /// The current connection status of `Client`
-    public var connectionStatus: ConnectionStatus {
-        .init(webSocketConnectionState: webSocketConnectionState)
-    }
+    public let connectionStatus: ConnectionStatus
     
     // Underlying WebSocketConnectionState
     let webSocketConnectionState: WebSocketConnectionState
+    
+    init(webSocketConnectionState: WebSocketConnectionState) {
+        connectionStatus = .init(webSocketConnectionState: webSocketConnectionState)
+        self.webSocketConnectionState = webSocketConnectionState
+    }
 }
