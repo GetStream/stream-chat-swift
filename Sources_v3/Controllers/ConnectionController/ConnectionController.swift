@@ -26,10 +26,13 @@ public class ConnectionControllerGeneric<ExtraData: ExtraDataTypes> {
     
     /// A delegate to get connection status updates.
     public weak var delegate: ConnectionControllerDelegate? {
-        get { multicastDelegate.mainDelegate ?? nil }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate }
         set {
-            weak var weakValue = newValue
-            multicastDelegate.mainDelegate = weakValue
+            if let newValue = newValue {
+                multicastDelegate.mainDelegate = .init(newValue)
+            } else {
+                multicastDelegate.mainDelegate = nil
+            }
         }
     }
     
@@ -43,7 +46,7 @@ public class ConnectionControllerGeneric<ExtraData: ExtraDataTypes> {
     lazy var basePublisher: BasePublisher = .init(controller: self)
     
     /// A multicast delegate.
-    var multicastDelegate = MulticastDelegate<ConnectionControllerDelegate?>() // swiftlint:disable:this weak_delegate
+    var multicastDelegate = MulticastDelegate<ConnectionControllerWeakDelegate>() // swiftlint:disable:this weak_delegate
     
     /// The connection event observer for the connection status updates.
     private lazy var connectionEventObserver: ConnectionEventObserver = {
@@ -52,7 +55,9 @@ public class ConnectionControllerGeneric<ExtraData: ExtraDataTypes> {
             let connectionStatus = $0.connectionStatus
             
             func notify() {
-                self.multicastDelegate.invoke { $0?.controller(self, didUpdateConnectionStatus: connectionStatus) }
+                self.multicastDelegate.invoke {
+                    $0.wrappedDelegate?.controller(self, didUpdateConnectionStatus: connectionStatus)
+                }
             }
             
             if let callbackQueue = self.callbackQueue {
@@ -93,5 +98,14 @@ class ConnectionEventObserver: EventObserver {
             guard filter == nil || filter?($0) == true else { return }
             callback($0)
         }
+    }
+}
+
+/// A wrapper over `ConnectionControllerDelegate` for `MulticastDelegate` to make it weak.
+struct ConnectionControllerWeakDelegate {
+    weak var wrappedDelegate: ConnectionControllerDelegate?
+    
+    init(_ delegate: ConnectionControllerDelegate) {
+        wrappedDelegate = delegate
     }
 }

@@ -24,8 +24,7 @@ extension ConnectionControllerGeneric {
         init(controller: ConnectionControllerGeneric<ExtraData>) {
             self.controller = controller
             connectionStatus = .init(controller.connectionStatus)
-            weak var weakSelf = self
-            controller.multicastDelegate.additionalDelegates.append(weakSelf)
+            controller.multicastDelegate.additionalDelegates.append(.init(self))
         }
     }
 }

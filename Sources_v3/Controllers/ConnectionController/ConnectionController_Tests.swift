@@ -72,6 +72,14 @@ class ConnectionController_Tests: StressTestCase {
         client.webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         AssertAsync.willBeEqual(delegateMock.statuses, [.connecting, .connecting, .connected])
     }
+    
+    func test_weakDelegate() {
+        delegateMock = .init()
+        controller = client.connectionController()
+        controller.delegate = delegateMock
+        delegateMock = nil
+        XCTAssertNil(controller.delegate)
+    }
 }
 
 private class ConnectionControllerDelegateMock: QueueAwareDelegate, ConnectionControllerDelegate {
