@@ -5,11 +5,6 @@
 @testable import StreamChatClient
 import UIKit
 
-var chatClient: ChatClient = {
-    var config = ChatClientConfig(apiKey: APIKey("qk4nn7rpcn75"))
-    return ChatClient(config: config)
-}()
-
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     var window: UIWindow?

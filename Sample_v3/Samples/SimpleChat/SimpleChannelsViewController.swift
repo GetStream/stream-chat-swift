@@ -15,12 +15,7 @@ class SimpleChannelsViewController: UITableViewController {
         action: #selector(handleLongPress)
     )
 
-    lazy var channelListController: ChannelListController = chatClient
-        .channelListController(query: ChannelListQuery(
-            filter: .in("members", [chatClient.currentUserId]),
-            pagination: [.limit(25)],
-            options: [.watch]
-        ))
+    var channelListController: ChannelListController!
     
     var detailViewController: SimpleChatViewController?
 
@@ -62,19 +57,23 @@ class SimpleChannelsViewController: UITableViewController {
     
     @objc
     func handleSettingsButton(_ sender: Any) {
-        guard let settingsViewController = UIStoryboard.settings.instantiateInitialViewController() else {
+        guard
+            let navigationViewController = UIStoryboard.settings.instantiateInitialViewController(),
+            let settingsViewController = navigationViewController.children.first as? SettingsViewController
+        else {
             return
         }
         
-        present(settingsViewController, animated: true)
+        settingsViewController.currentUserController = channelListController.client.currentUserController()
+        present(navigationViewController, animated: true)
     }
 
     @objc
     func insertNewObject(_ sender: Any) {
         let id = UUID().uuidString
-        let controller = chatClient.channelController(
+        let controller = channelListController.client.channelController(
             createChannelWithId: .init(type: .messaging, id: id),
-            members: [chatClient.currentUserId],
+            members: [channelListController.client.currentUserId],
             extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
         )
         controller.startUpdating()
@@ -87,7 +86,7 @@ class SimpleChannelsViewController: UITableViewController {
             if let indexPath = tableView.indexPathForSelectedRow {
                 let channel = channelListController.channels[indexPath.row]
                 let controller = (segue.destination as! UINavigationController).topViewController as! SimpleChatViewController
-                controller.channelController = chatClient.channelController(for: channel.cid)
+                controller.channelController = channelListController.client.channelController(for: channel.cid)
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
                 controller.navigationItem.leftItemsSupplementBackButton = true
                 detailViewController = controller
@@ -144,7 +143,7 @@ class SimpleChannelsViewController: UITableViewController {
         switch editingStyle {
         case .delete:
             let channelId = channelListController.channels[indexPath.row].cid
-            chatClient.channelController(for: channelId).deleteChannel()
+            channelListController.client.channelController(for: channelId).deleteChannel()
         default: return
         }
     }
@@ -167,7 +166,8 @@ private extension SimpleChannelsViewController {
             gestureRecognizer.state == .began
         else { return }
 
-        let channelController = chatClient.channelController(for: channelListController.channels[indexPath.row].cid)
+        let channelController = channelListController.client
+            .channelController(for: channelListController.channels[indexPath.row].cid)
 
         let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let actions = [
