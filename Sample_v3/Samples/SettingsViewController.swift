@@ -3,6 +3,7 @@
 //
 
 import StreamChatClient
+import SwiftUI
 import UIKit
 import UserNotifications
 
@@ -100,4 +101,15 @@ extension SettingsViewController: CurrentUserControllerDelegate {
     func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentUser>) {
         updateUserCell(with: change.item)
     }
+}
+
+@available(iOS 13.0, *)
+struct SettingsView: UIViewControllerRepresentable {
+    typealias UIViewControllerType = SettingsViewController
+    
+    func makeUIViewController(context: Context) -> SettingsViewController {
+        UIStoryboard.settings.instantiateInitialViewController()?.children.first as! SettingsViewController
+    }
+    
+    func updateUIViewController(_ uiViewController: SettingsViewController, context: Context) {}
 }

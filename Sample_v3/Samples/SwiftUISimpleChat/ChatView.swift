@@ -7,7 +7,7 @@ import SwiftUI
 
 @available(iOS 13, *)
 struct ChatView: View {
-    @State var channelId: String
+    @State var channelId: ChannelId
     @State var text: String = ""
     @State var messages: [String] = []
     
@@ -27,7 +27,7 @@ struct ChatView: View {
                 }
             }.padding()
         }
-        .navigationBarTitle(Text(channelId), displayMode: .inline)
+        .navigationBarTitle(Text(channelId.id), displayMode: .inline)
         .onAppear(perform: onAppear)
     }
     
