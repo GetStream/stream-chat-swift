@@ -38,7 +38,7 @@ class EventSender_Tests: StressTestCase {
         let cid = ChannelId.unique
         eventSender.keystroke(in: cid)
         
-        let startTypingEndpoint: Endpoint<EventPayload<ExtraData>> = .sendEvent(cid: cid, eventType: .userStartTyping)
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStartTyping)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
         apiClient.request_endpoint = nil
         
@@ -46,7 +46,7 @@ class EventSender_Tests: StressTestCase {
         time.run(numberOfSeconds: .startTypingEventTimeout)
         
         // Make sure the stop typing event has been sent.
-        let stopTypingEndpoint: Endpoint<EventPayload<ExtraData>> = .sendEvent(cid: cid, eventType: .userStopTyping)
+        let stopTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStopTyping)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
     }
     
@@ -55,7 +55,7 @@ class EventSender_Tests: StressTestCase {
         let cid = ChannelId.unique
         eventSender.keystroke(in: cid)
         
-        let startTypingEndpoint: Endpoint<EventPayload<ExtraData>> = .sendEvent(cid: cid, eventType: .userStartTyping)
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStartTyping)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
         
         // Before typing timeout send keystroke after `.startTypingEventTimeout` - 1 to avoid sending the stop typing event.
@@ -84,7 +84,7 @@ class EventSender_Tests: StressTestCase {
         } while time.currentTime < .startTypingResendInterval
         
         // Another start typing event should be sent.
-        let startTypingEndpoint: Endpoint<EventPayload<ExtraData>> = .sendEvent(cid: cid, eventType: .userStartTyping)
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStartTyping)
         let calls: [AnyEndpoint] = apiClient.request_allRecordedCalls.map(\.endpoint)
         XCTAssertEqual(calls, [AnyEndpoint(startTypingEndpoint), AnyEndpoint(startTypingEndpoint)])
     }
@@ -95,14 +95,14 @@ class EventSender_Tests: StressTestCase {
         eventSender.keystroke(in: cid)
         
         // Check the start typing event has been sent.
-        let startTypingEndpoint: Endpoint<EventPayload<ExtraData>> = .sendEvent(cid: cid, eventType: .userStartTyping)
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStartTyping)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
         
         time.run(numberOfSeconds: .startTypingEventTimeout - 1)
         
         // Force to stop typing and it should reset scheduled stop typing timer.
         eventSender.stopTyping(in: cid)
-        let stopTypingEndpoint: Endpoint<EventPayload<ExtraData>> = .sendEvent(cid: cid, eventType: .userStopTyping)
+        let stopTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStopTyping)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
         
         // Check the scheduled stop typing timer was cancelled.

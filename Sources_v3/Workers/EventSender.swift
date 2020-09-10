@@ -46,8 +46,8 @@ class EventSender<ExtraData: ExtraDataTypes>: Worker {
     func startTyping(in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(
             endpoint: .sendEvent(cid: cid, eventType: .userStartTyping)
-        ) { (result: Result<EventPayload<ExtraData>, Error>) in
-            completion?(result.error)
+        ) {
+            completion?($0.error)
         }
     }
     
@@ -62,8 +62,8 @@ class EventSender<ExtraData: ExtraDataTypes>: Worker {
         
         apiClient.request(
             endpoint: .sendEvent(cid: cid, eventType: .userStopTyping)
-        ) { (result: Result<EventPayload<ExtraData>, Error>) in
-            completion?(result.error)
+        ) {
+            completion?($0.error)
         }
     }
     
