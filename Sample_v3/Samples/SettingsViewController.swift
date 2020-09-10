@@ -57,7 +57,7 @@ extension SettingsViewController {
     }
     
     func logout() {
-        currentUserController.client.disconnect()
+        currentUserController.client.connectionController().disconnect()
         moveToStoryboard(.main, options: .transitionFlipFromRight)
     }
 }
@@ -74,14 +74,14 @@ extension SettingsViewController {
     func webSocketsConnectionSwitchValueChanged(_ sender: Any) {
         if webSocketsConnectionSwitch.isOn {
             webSocketsConnectionSwitch.isEnabled = false
-            currentUserController.client.connect { [weak self] error in
+            currentUserController.client.connectionController().connect { [weak self] error in
                 DispatchQueue.main.async {
                     self?.webSocketsConnectionSwitch.isEnabled = true
                     self?.webSocketsConnectionSwitch.setOn(error == nil, animated: true)
                 }
             }
         } else {
-            currentUserController.client.disconnect()
+            currentUserController.client.connectionController().disconnect()
         }
     }
 }

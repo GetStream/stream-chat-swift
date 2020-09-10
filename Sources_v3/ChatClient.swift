@@ -158,7 +158,7 @@ public class Client<ExtraData: ExtraDataTypes> {
     ]
     
     /// The current connection id
-    @Atomic private var connectionId: String?
+    @Atomic var connectionId: String?
     
     /// An array of requests waiting for the connection id
     @Atomic private var connectionIdWaiters: [(String?) -> Void] = []
@@ -212,6 +212,16 @@ public class Client<ExtraData: ExtraDataTypes> {
         connectionIdWaiters.removeAll()
     }
     
+    // Resets `connectionId` and `connectionIdWaiters`.
+    func resetConnectionId() {
+        // Reset `connectionId`. This would happen asynchronously by the callback from WebSocketClient anyway, but it's
+        // safer to do it here synchronously to immediately stop all API calls.
+        connectionId = nil
+        
+        // Remove all waiters for connectionId
+        connectionIdWaiters.removeAll()
+    }
+    
     /// Sets a new anonymous current user of the ChatClient.
     ///
     /// Anonymous users have limited set of permissions. A typical use case for anonymous users are livestream channels,
@@ -221,14 +231,15 @@ public class Client<ExtraData: ExtraDataTypes> {
     ///   - completion: Called when the new anonymous user is set. If setting up the new user fails, the completion
     /// is called with an error.
     public func setAnonymousUser(completion: ((Error?) -> Void)? = nil) {
-        disconnect()
+        connectionController().disconnect()
+        
         prepareEnvironmentForNewUser(userId: .anonymous, role: .anonymous, extraData: nil) { error in
             guard error == nil else {
                 completion?(error)
                 return
             }
             
-            self.connect(completion: completion)
+            self.connectionController().connect(completion: completion)
         }
     }
     
@@ -243,7 +254,8 @@ public class Client<ExtraData: ExtraDataTypes> {
     ///   - completion: The completion. Will be called when the new guest user is set.
     ///                 If setting up the new user fails the completion will be called with an error.
     public func setGuestUser(userId: UserId, extraData: ExtraData.User, completion: ((Error?) -> Void)? = nil) {
-        disconnect()
+        connectionController().disconnect()
+        
         prepareEnvironmentForNewUser(userId: userId, role: .guest, extraData: extraData) { error in
             guard error == nil else {
                 completion?(error)
@@ -256,7 +268,7 @@ public class Client<ExtraData: ExtraDataTypes> {
                 switch $0 {
                 case let .success(payload):
                     self.currentToken = payload.token
-                    self.connect(completion: completion)
+                    self.connectionController().connect(completion: completion)
                 case let .failure(error):
                     completion?(error)
                 }
@@ -300,7 +312,7 @@ public class Client<ExtraData: ExtraDataTypes> {
             return
         }
         
-        disconnect()
+        connectionController().disconnect()
         
         prepareEnvironmentForNewUser(userId: userId, role: .user, extraData: userExtraData) { error in
             guard error == nil else {
@@ -310,7 +322,7 @@ public class Client<ExtraData: ExtraDataTypes> {
             
             if let token = token {
                 self.currentToken = token
-                self.connect(completion: completion)
+                self.connectionController().connect(completion: completion)
                 
             } else {
                 // Use `tokenProvider` to get the token
@@ -320,46 +332,10 @@ public class Client<ExtraData: ExtraDataTypes> {
                         return
                     }
                     
-                    self?.connect(completion: completion)
+                    self?.connectionController().connect(completion: completion)
                 }
             }
         }
-    }
-    
-    /// Connects `Client` to the chat servers. When the connection is established, `Client` starts receiving chat updates.
-    ///
-    /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
-    /// called with an error.
-    public func connect(completion: ((Error?) -> Void)? = nil) {
-        guard connectionId == nil else {
-            log.warning("The client is already connected. Skipping the `connect` call.")
-            completion?(nil)
-            return
-        }
-        
-        // Set up a waiter for the new connection id to know when the connection process is finished
-        provideConnectionId { connectionId in
-            if connectionId != nil {
-                completion?(nil)
-            } else {
-                completion?(ClientError.ConnectionNotSuccessfull())
-            }
-        }
-        
-        webSocketClient.connect()
-    }
-    
-    /// Disconnects `Client` from the chat servers. No further updates from the servers are received.
-    public func disconnect() {
-        // Disconnect the web socket
-        webSocketClient.disconnect(source: .userInitiated)
-        
-        // Reset `connectionId`. This would happen asynchronously by the callback from WebSocketClient anyway, but it's
-        // safer to do it here synchronously to immediately stop all API calls.
-        connectionId = nil
-        
-        // Remove all waiters for connectionId
-        connectionIdWaiters.removeAll()
     }
     
     // TODO: Not used & tested yet -> CIS-224

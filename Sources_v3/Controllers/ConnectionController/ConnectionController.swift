@@ -73,7 +73,41 @@ public class ConnectionControllerGeneric<ExtraData: ExtraDataTypes> {
         self.callbackQueue = callbackQueue
         _ = connectionEventObserver
     }
+    
+    /// Connects `Client` to the chat servers. When the connection is established, `Client` starts receiving chat updates.
+    ///
+    /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
+    /// called with an error.
+    public func connect(completion: ((Error?) -> Void)? = nil) {
+        guard client.connectionId == nil else {
+            log.warning("The client is already connected. Skipping the `connect` call.")
+            completion?(nil)
+            return
+        }
+        
+        // Set up a waiter for the new connection id to know when the connection process is finished
+        client.provideConnectionId { connectionId in
+            if connectionId != nil {
+                completion?(nil)
+            } else {
+                completion?(ClientError.ConnectionNotSuccessfull())
+            }
+        }
+        
+        client.webSocketClient.connect()
+    }
+    
+    /// Disconnects `Client` from the chat servers. No further updates from the servers are received.
+    public func disconnect() {
+        // Disconnect the web socket
+        client.webSocketClient.disconnect(source: .userInitiated)
+        
+        // Reset `connectionId` and `connectionIdWaiters`.
+        client.resetConnectionId()
+    }
 }
+
+// MARK: - Connection Controller Delegate
 
 /// A connection controller delegate to get connection status updates.
 public protocol ConnectionControllerDelegate: class {

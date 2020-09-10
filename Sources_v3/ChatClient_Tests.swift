@@ -456,7 +456,7 @@ class ChatClient_Tests: StressTestCase {
         testEnv.databaseContainer?.flush_called = false
        
         // Disconnect
-        client.disconnect()
+        client.connectionController().disconnect()
 
         // Set the same user again
         client.setUser(userId: newUserId, token: newUserToken)
@@ -585,7 +585,7 @@ class ChatClient_Tests: StressTestCase {
         testEnv.webSocketClient?.disconnect_calledCounter = 0
         
         // Disconnect and assert WS is disconnected
-        client.disconnect()
+        client.connectionController().disconnect()
         XCTAssertEqual(testEnv.webSocketClient?.disconnect_calledCounter, 1)
         
         // Simulate WS disconnecting
@@ -594,7 +594,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Call connect again and assert WS connect is called
         var connectCompletionCalled = false
-        client.connect(completion: { _ in connectCompletionCalled = true })
+        client.connectionController().connect(completion: { _ in connectCompletionCalled = true })
         XCTAssertEqual(testEnv.webSocketClient!.connect_calledCounter, 1)
         
         // Simulate successful connection
