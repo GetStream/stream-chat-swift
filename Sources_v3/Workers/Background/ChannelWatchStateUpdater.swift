@@ -30,7 +30,7 @@ final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: Worker {
         webSocketConnectedObserver = WebSocketConnectedObserver(
             notificationCenter: webSocketClient.eventNotificationCenter,
             filter: { $0.connectionStatus == .connected },
-            callback: { [weak self] in self?.watchChannels() }
+            callback: { [unowned self] in self.watchChannels() }
         )
     }
     
