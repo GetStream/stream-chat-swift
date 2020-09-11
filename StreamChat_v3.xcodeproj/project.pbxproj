@@ -280,6 +280,9 @@
 		DA99D0D024ED63C600AD5354 /* NewChannelQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */; };
 		DAD5C836250278AD0045117A /* ChannelController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B32502719700FAAF6E /* ChannelController+Combine_Tests.swift */; };
 		DAD5C8372502842C0045117A /* CurrentUserController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B5250271B100FAAF6E /* CurrentUserController+Combine_Tests.swift */; };
+		DAD8A8A42507E1C400D05282 /* CombineSimpleChannelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD8A89E2507E1A900D05282 /* CombineSimpleChannelsViewController.swift */; };
+		DAD8A8A52507E1C800D05282 /* CombineSimpleChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD8A8A02507E1A900D05282 /* CombineSimpleChatViewController.swift */; };
+		DAD8A8A62507E1CC00D05282 /* CombineSimpleChat.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DAD8A89F2507E1A900D05282 /* CombineSimpleChat.storyboard */; };
 		DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE566E624FFD22300E39431 /* ChannelController+SwiftUI.swift */; };
 		DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE566EA24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift */; };
 		DAE566F02500140300E39431 /* ChannelController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAE566E824FFD24000E39431 /* ChannelController+SwiftUI_Tests.swift */; };
@@ -661,6 +664,9 @@
 		DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload_Tests.swift; sourceTree = "<group>"; };
 		DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCodingKeys.swift; sourceTree = "<group>"; };
 		DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChannelQueryUpdater.swift; sourceTree = "<group>"; };
+		DAD8A89E2507E1A900D05282 /* CombineSimpleChannelsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombineSimpleChannelsViewController.swift; sourceTree = "<group>"; };
+		DAD8A89F2507E1A900D05282 /* CombineSimpleChat.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = CombineSimpleChat.storyboard; sourceTree = "<group>"; };
+		DAD8A8A02507E1A900D05282 /* CombineSimpleChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CombineSimpleChatViewController.swift; sourceTree = "<group>"; };
 		DAE566E624FFD22300E39431 /* ChannelController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelController+SwiftUI.swift"; sourceTree = "<group>"; };
 		DAE566E824FFD24000E39431 /* ChannelController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		DAE566EA24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentUserController+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -1242,6 +1248,7 @@
 				804B127424ED596C002B00EA /* SettingsViewController.swift */,
 				8008C18524EDBCF500F5BCCE /* LogsViewController.swift */,
 				8040BC5F24FDD58700DE369F /* SplitViewController.swift */,
+				DAD8A89D2507E1A900D05282 /* CombineSimpleChat */,
 				8008C19724F7EE0300F5BCCE /* SwiftUISimpleChat */,
 				804B126E24E712D0002B00EA /* SimpleChat */,
 			);
@@ -1425,6 +1432,16 @@
 				79200D4B25025B81002F4EB1 /* Error+InternetNotAvailable.swift */,
 			);
 			path = "Internet Connection";
+			sourceTree = "<group>";
+		};
+		DAD8A89D2507E1A900D05282 /* CombineSimpleChat */ = {
+			isa = PBXGroup;
+			children = (
+				DAD8A89E2507E1A900D05282 /* CombineSimpleChannelsViewController.swift */,
+				DAD8A8A02507E1A900D05282 /* CombineSimpleChatViewController.swift */,
+				DAD8A89F2507E1A900D05282 /* CombineSimpleChat.storyboard */,
+			);
+			path = CombineSimpleChat;
 			sourceTree = "<group>";
 		};
 		DAE566F22500F97E00E39431 /* ChannelController */ = {
@@ -1631,6 +1648,7 @@
 			files = (
 				792A4F33247FF01900EAF71D /* LaunchScreen.storyboard in Resources */,
 				792A4F30247FF01900EAF71D /* Assets.xcassets in Resources */,
+				DAD8A8A62507E1CC00D05282 /* CombineSimpleChat.storyboard in Resources */,
 				804B127324E712FA002B00EA /* SimpleChat.storyboard in Resources */,
 				792A4F2E247FF01800EAF71D /* Main.storyboard in Resources */,
 				8008C19624F456C300F5BCCE /* ComposerView.xib in Resources */,
@@ -1722,6 +1740,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				804B127124E712F1002B00EA /* SimpleChannelsViewController.swift in Sources */,
+				DAD8A8A42507E1C400D05282 /* CombineSimpleChannelsViewController.swift in Sources */,
 				804B126924E6C820002B00EA /* LoginViewController.swift in Sources */,
 				8008C19D24F7EF2400F5BCCE /* ChannelListView.swift in Sources */,
 				8008C1A024F8517000F5BCCE /* UITableViewController+KeyboardAvoidance.swift in Sources */,
@@ -1734,6 +1753,7 @@
 				8008C18724EDBCFF00F5BCCE /* LogsViewController.swift in Sources */,
 				8008C19524F456BF00F5BCCE /* ComposerView.swift in Sources */,
 				804B127224E712F5002B00EA /* SimpleChatViewController.swift in Sources */,
+				DAD8A8A52507E1C800D05282 /* CombineSimpleChatViewController.swift in Sources */,
 				8008C19224F44DF900F5BCCE /* UIView+InstantiateFromNib.swift in Sources */,
 				8040BC5E24FDAB1E00DE369F /* UIColor+ForUsername.swift in Sources */,
 				8008C18124ED64D300F5BCCE /* UIViewController+MoveToStoryboard.swift in Sources */,

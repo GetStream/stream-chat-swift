@@ -111,6 +111,24 @@ extension LoginViewController {
                     )
                 })
             }
+        case .combineUIKitSimpleChatIndexPath:
+            if #available(iOS 13, *) {
+                let storyboard = UIStoryboard(name: "CombineSimpleChat", bundle: nil)
+                
+                guard
+                    let initial = storyboard.instantiateInitialViewController() as? SplitViewController,
+                    let navigation = initial.viewControllers.first as? UINavigationController,
+                    let channels = navigation.children.first as? CombineSimpleChannelsViewController
+                else {
+                    return
+                }
+                
+                channels.channelListController = channelListController
+
+                UIView.transition(with: view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
+                    self.view.window?.rootViewController = initial
+                })
+            }
         default:
             return
         }
@@ -123,6 +141,7 @@ private extension IndexPath {
     static let jwtIndexPath = IndexPath(row: 4, section: 0)
     static let simpleChatIndexPath = IndexPath(row: 0, section: 1)
     static let swiftUISimpleChatIndexPath = IndexPath(row: 1, section: 1)
+    static let combineUIKitSimpleChatIndexPath = IndexPath(row: 2, section: 1)
 }
 
 // MARK: - Inputs
