@@ -57,6 +57,9 @@ public class Client<ExtraData: ExtraDataTypes> {
     /// observing the current state of the system and perform work if needed (i.e. when a new message pending sent appears in the
     /// database, a worker tries to send it.)
     private(set) var backgroundWorkers: [Worker]!
+    
+    /// Builder blocks used for creating `backgroundWorker`s when needed.
+    private let workerBuilders: [WorkerBuilder]
             
     /// The notification center used to send and receive notifications about incoming events.
     private(set) lazy var eventNotificationCenter = environment.notificationCenterBuilder([
@@ -201,10 +204,9 @@ public class Client<ExtraData: ExtraDataTypes> {
     ) {
         self.config = config
         self.environment = environment
+        self.workerBuilders = workerBuilders
         
-        backgroundWorkers = workerBuilders.map { builder in
-            builder(self.databaseContainer, self.webSocketClient, self.apiClient)
-        }
+        createBackgroundWorkers()
     }
     
     deinit {
@@ -376,6 +378,12 @@ public class Client<ExtraData: ExtraDataTypes> {
         })
     }
     
+    private func createBackgroundWorkers() {
+        backgroundWorkers = workerBuilders.map { builder in
+            builder(self.databaseContainer, self.webSocketClient, self.apiClient)
+        }
+    }
+    
     private func prepareEnvironmentForNewUser(
         userId: UserId,
         role: UserRole,
@@ -390,6 +398,9 @@ public class Client<ExtraData: ExtraDataTypes> {
         
         // Set a new WebSocketClient connect endpoint
         webSocketClient.connectEndpoint = webSocketConnectEndpoint(userId: userId, role: role, extraData: extraData)
+        
+        // Re-create backgroundWorker's so their ongoing requests won't affect database state
+        createBackgroundWorkers()
         
         // Reset all existing data if the new user is not the same as the last logged-in one
         if databaseContainer.viewContext.currentUser()?.user.id != userId {
