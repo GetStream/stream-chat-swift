@@ -30,16 +30,8 @@ public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     public let messageId: MessageId
     
     /// The message data
-    /// Always returns `nil` if `startUpdating` was not called
-    /// To observe the updates of this value, set your class as a delegate of this controller and call `startUpdating`.
-    public var message: MessageModel<ExtraData>? {
-        guard state != .inactive else {
-            log.warning("Accessing `message` before calling `startUpdating()` always results in `nil`.")
-            return nil
-        }
-        
-        return messageObserver.item
-    }
+    /// To observe the updates of this value, set your class as a delegate of this controller or use `Combine` wrapper.
+    public var message: MessageModel<ExtraData>? { messageObserver.item }
     
     private let environment: Environment
     
@@ -54,6 +46,7 @@ public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: DataController
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            startMessageObserver()
         }
     }
     
@@ -85,11 +78,10 @@ public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: DataController
         self.environment = environment
     }
     
-    /// Starts updating the results.
+    /// Synchronize local data with remote.
     ///
-    /// 1. **Synchronously** loads the data for the referenced objects from the local cache. These data are immediately available in
-    /// the `message` property of the controller once this method returns. Any further changes to the data are communicated
-    /// using `delegate`.
+    /// 1. **Synchronously** loads the data for the referenced objects from the local cache if it is not loaded yet.
+    /// Any further changes to the data are communicated using `delegate`.
     ///
     /// 2. It also **asynchronously** fetches the latest version of the data from the servers. Once the remote fetch is completed,
     /// the completion block is called. If the updated data differ from the locally cached ones, the controller uses the `delegate`
@@ -97,21 +89,21 @@ public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     ///
     /// - Parameter completion: Called when the controller has finished fetching remote data.
     ///                         If the data fetching fails, the `error` variable contains more details about the problem.
-    public func startUpdating(_ completion: ((Error?) -> Void)? = nil) {
-        do {
-            try messageObserver.startObserving()
-        } catch {
-            callback { completion?(ClientError(with: error)) }
-            return
-        }
-        
-        state = .localDataFetched
+    public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+        startMessageObserver()
         
         messageUpdater.getMessage(cid: cid, messageId: messageId) { [weak self] error in
             guard let self = self else { return }
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
+    }
+    
+    /// Initializing of `messageObserver` will start local data observing.
+    /// In most cases it will be done by accesing `messages` but it's possible that only
+    /// changes will be observed.
+    private func startMessageObserver() {
+        _ = messageObserver
     }
 }
 
@@ -167,12 +159,22 @@ extension MessageControllerGeneric {
 
 private extension MessageControllerGeneric {
     func createMessageObserver() -> EntityDatabaseObserver<MessageModel<ExtraData>, MessageDTO> {
-        environment.messageObserverBuilder(
+        let observer = environment.messageObserverBuilder(
             client.databaseContainer.viewContext,
             MessageDTO.message(withID: messageId),
             { $0.asModel() }, // swiftlint:disable:this opening_brace
             NSFetchedResultsController<MessageDTO>.self
         )
+        
+        do {
+            try observer.startObserving()
+            state = .localDataFetched
+        } catch {
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+            state = .localDataFetchFailed(ClientError(with: error))
+        }
+        
+        return observer
     }
 }
 

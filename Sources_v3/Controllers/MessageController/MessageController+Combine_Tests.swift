@@ -25,12 +25,6 @@ class MessageController_Combine_Tests: iOS13TestCase {
         super.tearDown()
     }
     
-    func test_startUpdatingIsCalled_whenPublisherIsAccessed() {
-        assert(messageController.startUpdating_called == false)
-        _ = messageController.statePublisher
-        XCTAssertTrue(messageController.startUpdating_called)
-    }
-    
     func test_statePublisher() {
         // Setup Recording publishers
         var recording = Record<DataController.State, Never>.Recording()
@@ -45,10 +39,9 @@ class MessageController_Combine_Tests: iOS13TestCase {
         weak var controller: MessageControllerMock? = messageController
         messageController = nil
         
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .localDataFetched) }
         controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
         
-        XCTAssertEqual(recording.output, [.inactive, .localDataFetched, .remoteDataFetched])
+        AssertAsync.willBeEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
 
     func test_messageChangePublisher() {
