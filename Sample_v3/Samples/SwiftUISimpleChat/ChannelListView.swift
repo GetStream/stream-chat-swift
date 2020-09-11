@@ -134,7 +134,7 @@ struct ChannelListView: View {
                     members: [self.channelList.controller.client.currentUserId],
                     extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
                 )
-                controller.startUpdating()
+                controller.synchronize()
             }) {
                 Image(systemName: "plus.bubble").imageScale(.large)
             }

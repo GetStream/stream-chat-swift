@@ -46,17 +46,32 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(controller.channelQuery.cid, channelId)
     }
     
-    // MARK: - Start updating tests
+    // MARK: - Channel
     
-    func test_startUpdating_changesControllerState() {
-        // Check if controller is inactive initially.
-        assert(controller.state == .inactive)
+    func test_channel_accessible_initially() throws {
+        let payload = dummyPayload(with: channelId)
         
-        // Simulate `startUpdating` call
-        controller.startUpdating()
+        // Save two channels to DB (only one matching the query) and wait for completion
+        try client.databaseContainer.writeSynchronously { session in
+            // Channel with the id matching the query
+            try session.saveChannel(payload: payload)
+            // Other channel
+            try session.saveChannel(payload: self.dummyPayload(with: .unique))
+        }
         
-        // Check if state changed after `startUpdating` call
-        XCTAssertEqual(controller.state, .localDataFetched)
+        // Assert the channel and messages are loaded
+        XCTAssertEqual(controller.channel?.cid, channelId)
+        XCTAssertEqual(Set(controller.messages.map(\.id)), Set(payload.messages.map(\.id)))
+    }
+
+    // MARK: - Synchronize tests
+    
+    func test_synchronize_changesControllerState() {
+        // Check if controller has initialized state initially.
+        XCTAssertEqual(controller.state, .initialized)
+        
+        // Simulate `synchronize` call.
+        controller.synchronize()
         
         // Simulate successfull network call.
         env.channelUpdater?.update_completion?(nil)
@@ -65,16 +80,13 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetched)
     }
     
-    func test_startUpdating_changesControllerStateOnError() {
-        // Check if controller is inactive initially.
-        assert(controller.state == .inactive)
+    func test_synchronize_changesControllerStateOnError() {
+        // Check if controller has `initialized` state initially.
+        assert(controller.state == .initialized)
         
-        // Simulate `startUpdating` call
-        controller.startUpdating()
-        
-        // Check if state changed after `startUpdating` call
-        XCTAssertEqual(controller.state, .localDataFetched)
-        
+        // Simulate `synchronize` call
+        controller.synchronize()
+
         // Simulate failed network call.
         let error = TestError()
         env.channelUpdater?.update_completion?(error)
@@ -83,41 +95,10 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
     }
     
-    func test_noChangesAreReported_beforeCallingStartUpdating() throws {
-        // Save a new channel to DB
-        client.databaseContainer.write { session in
-            try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
-        }
-        
-        // Assert the channel is not loaded
-        AssertAsync.staysTrue(controller.channel == nil)
-        AssertAsync.staysTrue(controller.messages.isEmpty)
-    }
-    
-    func test_startUpdating_fetchesExistingChannel() throws {
-        let payload = dummyPayload(with: channelId)
-        // Save two channels to DB (only one matching the query) and wait for completion
-        _ = try await {
-            client.databaseContainer.write({ session in
-                // Channel with the id matching the query
-                try session.saveChannel(payload: payload)
-                // Other channel
-                try session.saveChannel(payload: self.dummyPayload(with: .unique))
-            }, completion: $0)
-        }
-        
-        // Start updating
-        controller.startUpdating()
-        
-        // Assert the channel and messages are loaded
-        XCTAssertEqual(controller.channel?.cid, channelId)
-        XCTAssertEqual(Set(controller.messages.map(\.id)), Set(payload.messages.map(\.id)))
-    }
-    
-    func test_startUpdating_callsChannelUpdater() {
-        // Simulate `startUpdating` calls and catch the completion
+    func test_synchronize_callsChannelUpdater() {
+        // Simulate `synchronize` calls and catch the completion
         var completionCalled = false
-        controller.startUpdating { [callbackQueueID] error in
+        controller.synchronize { [callbackQueueID] error in
             XCTAssertNil(error)
             AssertTestQueue(withId: callbackQueueID)
             completionCalled = true
@@ -135,10 +116,10 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeTrue(completionCalled)
     }
     
-    func test_startUpdating_propagesErrorFromUpdater() {
-        // Simulate `startUpdating` call and catch the completion
+    func test_synchronize_propagesErrorFromUpdater() {
+        // Simulate `synchronize` call and catch the completion
         var completionCalledError: Error?
-        controller.startUpdating { [callbackQueueID] in
+        controller.synchronize { [callbackQueueID] in
             completionCalledError = $0
             AssertTestQueue(withId: callbackQueueID)
         }
@@ -205,9 +186,6 @@ class ChannelController_Tests: StressTestCase {
     // MARK: - Channel change propagation tests
     
     func test_channelChanges_arePropagated() throws {
-        // Simulate `startUpdating` call
-        controller.startUpdating()
-        
         // Simulate changes in the DB:
         _ = try await {
             client.databaseContainer.write({ session in
@@ -217,8 +195,8 @@ class ChannelController_Tests: StressTestCase {
         
         // Assert the resulting value is updated
         AssertAsync.willBeEqual(controller.channel?.cid, channelId)
+        AssertAsync.willBeTrue(controller.channel?.isFrozen)
         
-        assert(controller.channel?.isFrozen == true)
         // Simulate channel changes
         _ = try await {
             client.databaseContainer.write({ session in
@@ -241,8 +219,8 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         
-        // Simulate `startUpdating` call
-        controller.startUpdating()
+        // Simulate `synchronize` call
+        controller.synchronize()
         
         // Simulate an incoming message
         let newMesageId: MessageId = .unique
@@ -273,9 +251,6 @@ class ChannelController_Tests: StressTestCase {
         // Set top-to-bottom ordering
         controller.listOrdering = .topToBottom
         
-        // Simulate `startUpdating` call
-        controller.startUpdating()
-        
         // Check the order of messages is correct
         let topToBotttomIds = [message1, message2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), topToBotttomIds)
@@ -283,8 +258,8 @@ class ChannelController_Tests: StressTestCase {
         // Set bottom-to-top ordering
         controller.listOrdering = .bottomToTop
         
-        // Simulate `startUpdating` call to apply changes
-        controller.startUpdating()
+        // Simulate `synchronize` call to apply changes
+        controller.synchronize()
         
         // Check the order of messages is correct
         let bottomToTopIds = [message1, message2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
@@ -292,6 +267,58 @@ class ChannelController_Tests: StressTestCase {
     }
 
     // MARK: - Delegate tests
+    
+    func test_settingDelegate_leads_to_FetchingLocalData() {
+        let delegate = TestDelegate()
+        delegate.expectedQueueId = controllerCallbackQueueID
+           
+        // Check initial state
+        XCTAssertEqual(controller.state, .initialized)
+           
+        controller.delegate = delegate
+           
+        // Assert state changed
+        AssertAsync.willBeEqual(controller.state, .localDataFetched)
+    }
+    
+    func test_delegate_isNotifiedAboutStateChanges() throws {
+        // Set the delegate
+        let delegate = TestDelegate()
+        delegate.expectedQueueId = controllerCallbackQueueID
+        controller.delegate = delegate
+        
+        // Assert delegate is notified about state changes
+        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
+
+        // Synchronize
+        controller.synchronize()
+            
+        // Simulate network call response
+        env.channelUpdater?.update_completion?(nil)
+        
+        // Assert delegate is notified about state changes
+        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
+    }
+
+    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
+        // Set the generic delegate
+        let delegate = TestDelegateGeneric()
+        delegate.expectedQueueId = controllerCallbackQueueID
+        controller.setDelegate(delegate)
+        
+        // Assert delegate is notified about state changes
+        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
+
+        // Synchronize
+        controller.synchronize()
+        
+        // Simulate network call response
+        env.channelUpdater?.update_completion?(nil)
+        //   env.messageUpdater.getMessage_completion?(nil)
+        
+        // Assert delegate is notified about state changes
+        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
+    }
 
     func test_delegateContinueToReceiveEvents_afterObserversReset() throws {
         // Assign `ChannelController` that creates new channel
@@ -308,8 +335,8 @@ class ChannelController_Tests: StressTestCase {
         delegate.expectedQueueId = controllerCallbackQueueID
         controller.delegate = delegate
 
-        // Simulate `startUpdating` call
-        controller.startUpdating()
+        // Simulate `synchronize` call
+        controller.synchronize()
         
         // Simulate updater's channelCreatedCallback call
         env.channelUpdater!.update_channelCreatedCallback!(channelId)
@@ -361,8 +388,8 @@ class ChannelController_Tests: StressTestCase {
         // Set the queue for delegate calls
         delegate.expectedQueueId = controllerCallbackQueueID
         
-        // Simulate `startUpdating()` call
-        controller.startUpdating()
+        // Simulate `synchronize()` call
+        controller.synchronize()
         
         // Send notification with event happened in the observed channel
         let event = TestMemberEvent(cid: controller.channelQuery.cid, userId: .unique)
@@ -380,8 +407,8 @@ class ChannelController_Tests: StressTestCase {
         // Set the queue for delegate calls
         delegate.expectedQueueId = controllerCallbackQueueID
         
-        // Simulate `startUpdating()` call
-        controller.startUpdating()
+        // Simulate `synchronize()` call
+        controller.synchronize()
         
         // Send notification with event happened in the observed channel
         let event = TestMemberEvent(cid: controller.channelQuery.cid, userId: .unique)
@@ -399,8 +426,8 @@ class ChannelController_Tests: StressTestCase {
         // Set the queue for delegate calls
         delegate.expectedQueueId = controllerCallbackQueueID
         
-        // Simulate `startUpdating()` call
-        controller.startUpdating()
+        // Simulate `synchronize()` call
+        controller.synchronize()
         
         // Send notification with event happened in the observed channel
         let event = TypingEvent(isTyping: true, cid: channelId, userId: .unique)
@@ -418,8 +445,8 @@ class ChannelController_Tests: StressTestCase {
         // Set the queue for delegate calls
         delegate.expectedQueueId = controllerCallbackQueueID
         
-        // Simulate `startUpdating()` call
-        controller.startUpdating()
+        // Simulate `synchronize()` call
+        controller.synchronize()
         
         // Send notification with event happened in the observed channel
         let event = TypingEvent(isTyping: true, cid: channelId, userId: .unique)
@@ -441,8 +468,8 @@ class ChannelController_Tests: StressTestCase {
         // Set the queue for delegate calls
         delegate.expectedQueueId = controllerCallbackQueueID
         
-        // Simulate `startUpdating()` call
-        controller.startUpdating()
+        // Simulate `synchronize()` call
+        controller.synchronize()
         
         // Simulate DB update
         let error = try await {
@@ -468,8 +495,8 @@ class ChannelController_Tests: StressTestCase {
         // Set the queue for delegate calls
         delegate.expectedQueueId = controllerCallbackQueueID
         
-        // Simulate `startUpdating()` call
-        controller.startUpdating()
+        // Simulate `synchronize()` call
+        controller.synchronize()
         
         // Simulate DB update
         _ = try await {
@@ -497,7 +524,7 @@ class ChannelController_Tests: StressTestCase {
             isChannelAlreadyCreated: false
         )
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
-        controller.startUpdating()
+        controller.synchronize()
     }
     
     // MARK: - Updating channel
@@ -1434,12 +1461,18 @@ private class TestEnvironment {
 
 /// A concrete `ChanneControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
+    @Atomic var state: DataController.State?
     @Atomic var willStartFetchingRemoteDataCalledCounter = 0
     @Atomic var didStopFetchingRemoteDataCalledCounter = 0
     @Atomic var didUpdateChannel_channel: EntityChange<Channel>?
     @Atomic var didUpdateMessages_messages: [ListChange<Message>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
     @Atomic var didReceiveTypingEvent_event: TypingEvent?
+    
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        self.state = state
+        validateQueue()
+    }
     
     func controllerWillStartFetchingRemoteData(_ controller: Controller) {
         willStartFetchingRemoteDataCalledCounter += 1
@@ -1474,10 +1507,16 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
 
 /// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegateGeneric {
+    @Atomic var state: DataController.State?
     @Atomic var didUpdateChannel_channel: EntityChange<Channel>?
     @Atomic var didUpdateMessages_messages: [ListChange<Message>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
     @Atomic var didReceiveTypingEvent_event: TypingEvent?
+    
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        self.state = state
+        validateQueue()
+    }
     
     func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<Message>]) {
         didUpdateMessages_messages = changes

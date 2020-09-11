@@ -91,7 +91,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
             members: [chatClient.currentUserId],
             extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
         )
-        controller.startUpdating()
+        controller.synchronize()
     }
 
     // MARK: - Segues
