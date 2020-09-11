@@ -102,34 +102,30 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     public let client: Client<ExtraData>
     
     /// The channel matching the channelId. To observe updates to the channel,
-    /// set your class as a delegate of this controller and call `startUpdating`.
+    /// set your class as a delegate of this controller or use `Combine` wrapper.
     public var channel: ChannelModel<ExtraData>? {
-        guard state != .inactive else {
-            log.warning("Accessing `channel` before calling `startUpdating()` always results in `nil`.")
-            return nil
+        if state == .initialized {
+            setLocalStateBasedOnError(startDatabaseObservers())
         }
-        
         return channelObserver.item
     }
     
     /// The messages related to the channel. To observe updates to the channel,
-    /// set your class as a delegate of this controller and call `startUpdating`.
+    /// set your class as a delegate of this controller or use `Combine` wrapper.
     public var messages: [MessageModel<ExtraData>] {
-        guard state != .inactive else {
-            log.warning("Accessing `messages` before calling `startUpdating()` always results in an empty array.")
-            return []
+        if state == .initialized {
+            setLocalStateBasedOnError(startDatabaseObservers())
         }
-        
         return messagesObserver.items
     }
     
     /// Describes the ordering the messages are presented in the channel.
     public var listOrdering: ListOrdering = .topToBottom {
         didSet {
-            if state != .inactive {
+            if state != .initialized {
+                setLocalStateBasedOnError(startMessagesObserver())
                 log.warning(
-                    "Changing `listOrdering` parameter after calling `startUpdating` has no effect."
-                        + "Call `startUpdating` again and reload all data in your UI to apply the change."
+                    "Changing `listOrdering` will update data inside controller, but you have to update your UI manually to see changes."
                 )
             }
         }
@@ -153,6 +149,9 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            
+            // After setting delegate local changes will be fetched and observed.
+            setLocalStateBasedOnError(startDatabaseObservers())
         }
     }
 
@@ -162,17 +161,25 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     private var eventObservers: [EventObserver] = []
     private let environment: Environment
 
-    // Flag indicating whether channel is created on backend. We need this flag to restrict channel modification requests
-    // before channel is created on backend.
+    /// Flag indicating whether channel is created on backend. We need this flag to restrict channel modification requests
+    /// before channel is created on backend.
     private var isChannelAlreadyCreated: Bool
-    // This callback is called after channel is created on backend but before channel is saved to DB. When channel is created
-    // we receive backend generated cid and setting up current `ChannelController` to observe this channel DB changes.
-    // Completion will be called if DB fetch will fail after setting new `ChannelQuery`.
+    /// This callback is called after channel is created on backend but before channel is saved to DB. When channel is created
+    /// we receive backend generated cid and setting up current `ChannelController` to observe this channel DB changes.
+    /// Completion will be called if DB fetch will fail after setting new `ChannelQuery`.
     private func channelCreated(forwardErrorTo completion: ((_ error: Error?) -> Void)?) -> ((ChannelId) -> Void) {
         return { [weak self] cid in
             guard let self = self else { return }
             self.isChannelAlreadyCreated = true
             completion?(self.set(cid: cid))
+        }
+    }
+    
+    /// Hepler for updating state after fetching local data.
+    private var setLocalStateBasedOnError: ((_ error: Error?) -> Void) {
+        return { [weak self] error in
+            // Update observing state
+            self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
         }
     }
     
@@ -237,29 +244,16 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
         }
     }
     
-    /// Starts updating the results.
+    /// Synchronize local data with remote.
     ///
-    /// 1. **Synchronously** loads the data for the referenced objects from the local cache. These data are immediately available in
-    /// the `channel` property of the controller once this method returns. Any further changes to the data are communicated
-    /// using `delegate`.
-    ///
-    /// 2. It also **asynchronously** fetches the latest version of the data from the servers. Once the remote fetch is completed,
+    /// **Asynchronously** fetches the latest version of the data from the servers. Once the remote fetch is completed,
     /// the completion block is called. If the updated data differ from the locally cached ones, the controller uses the `delegate`
     /// methods to inform about the changes.
     ///
     /// - Parameter completion: Called when the controller has finished fetching remote data.
     ///                         If the data fetching fails, the `error` variable contains more details about the problem.
-    public func startUpdating(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        let setStateBasedOnError: ((_ error: Error?) -> Void) = { [weak self] error in
-            // Update observing state
-            self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
-        }
-        
-        if isChannelAlreadyCreated {
-            setStateBasedOnError(startDatabaseObservers())
-        }
-        
-        let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setStateBasedOnError)
+    public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
             channelQuery: channelQuery,
             channelCreatedCallback: channelCreatedCallback
@@ -294,11 +288,25 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     }
 
     private func startDatabaseObservers() -> Error? {
+        startChannelObserver() ?? startMessagesObserver()
+    }
+    
+    private func startChannelObserver() -> Error? {
         _channelObserver.reset()
-        _messagesObserver.reset()
-
+        
         do {
             try channelObserver.startObserving()
+            return nil
+        } catch {
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+            return ClientError.FetchFailed()
+        }
+    }
+    
+    private func startMessagesObserver() -> Error? {
+        _messagesObserver.reset()
+        
+        do {
             try messagesObserver.startObserving()
             return nil
         } catch {
@@ -900,7 +908,7 @@ extension ClientError {
     class ChannelNotCreatedYet: ClientError {
         override public var localizedDescription: String {
             // swiftlint:disable:next line_length
-            "You can't modify the channel because the channel hasn't been created yet. Call `startUpdating()` to create the channel and wait for the completion block to finish. Alternatively, you can observe the `state` changes of the controller and wait for the `remoteDataFetched` state."
+            "You can't modify the channel because the channel hasn't been created yet. Call `synchronize()` to create the channel and wait for the completion block to finish. Alternatively, you can observe the `state` changes of the controller and wait for the `remoteDataFetched` state."
         }
     }
 

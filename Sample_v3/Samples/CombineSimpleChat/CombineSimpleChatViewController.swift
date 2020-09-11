@@ -24,6 +24,7 @@ final class CombineSimpleChatViewController: UITableViewController {
     ///  While using Combine we should subscribe to `Publishers` events.
     var channelController: ChannelController! {
         didSet {
+            channelController.synchronize()
             subscribeToCombinePublishers()
         }
     }

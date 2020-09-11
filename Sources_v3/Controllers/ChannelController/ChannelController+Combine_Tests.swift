@@ -25,16 +25,10 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         super.tearDown()
     }
     
-    func test_startUpdatingIsCalled_whenPublisherIsAccessed() {
-        assert(channelController.startUpdating_called == false)
-        _ = channelController.statePublisher
-        XCTAssertTrue(channelController.startUpdating_called)
-    }
-    
     func test_statePublisher() {
         // Setup Recording publishers
         var recording = Record<DataController.State, Never>.Recording()
-        
+                
         // Setup the chain
         channelController
             .statePublisher
@@ -45,10 +39,9 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
         
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .localDataFetched) }
         controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
         
-        XCTAssertEqual(recording.output, [.inactive, .localDataFetched, .remoteDataFetched])
+        XCTAssertEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
 
     func test_channelChangePublisher() {

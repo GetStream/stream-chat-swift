@@ -59,11 +59,6 @@ extension ChannelControllerGeneric {
             state = .init(controller.state)
             
             controller.multicastDelegate.additionalDelegates.append(AnyChannelControllerDelegate(self))
-            
-            if controller.state == .inactive {
-                // Start updating and load the current data
-                controller.startUpdating()
-            }
         }
     }
 }

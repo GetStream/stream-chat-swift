@@ -25,7 +25,7 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     var channelController: ChannelController! {
         didSet {
             channelController.delegate = self
-            channelController.startUpdating()
+            channelController.synchronize()
             
             if let channel = channelController?.channel {
                 channelController(channelController, didUpdateChannel: .update(channel))

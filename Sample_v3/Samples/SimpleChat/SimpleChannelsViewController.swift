@@ -179,7 +179,7 @@ class SimpleChannelsViewController: UITableViewController, ChannelListController
             members: [channelListController.client.currentUserId],
             extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
         )
-        controller.startUpdating()
+        controller.synchronize()
     }
     
     ///
