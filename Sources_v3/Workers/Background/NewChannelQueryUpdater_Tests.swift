@@ -97,6 +97,18 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
             Assert.willBeEqual(self.env!.channelQueryUpdater?.update_query?.filter.description, expectedFilter.description)
         }
     }
+    
+    func test_newChannelQueryUpdater_doesNotRetainItself() throws {
+        let filter: Filter = .contains(.unique, String.unique)
+        try database.createChannelListQuery(filter: filter)
+        try database.createChannel()
+        
+        // Assert `update(channelListQuery` is called
+        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_calls_counter, 1)
+        
+        // Assert `newChannelQueryUpdater` can be released even though network response hasn't come yet
+        AssertAsync.canBeReleased(&newChannelQueryUpdater)
+    }
 }
 
 private class TestEnvironment {
