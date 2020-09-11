@@ -128,9 +128,9 @@ extension Endpoint {
         )
     }
     
-    static func sendEvent<ExtraData: ExtraDataTypes>(cid: ChannelId, eventType: EventType) -> Endpoint<EventPayload<ExtraData>> {
+    static func sendEvent(cid: ChannelId, eventType: EventType) -> Endpoint<EmptyResponse> {
         .init(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/\(cid.type)/\(cid.id)/event",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,

@@ -11,15 +11,14 @@ class SettingsViewController: UITableViewController {
     @IBOutlet var clearLocalDatabaseCell: UITableViewCell!
     @IBOutlet var enablePushNotificationsSwitch: UISwitch!
     @IBOutlet var webSocketsConnectionSwitch: UISwitch!
-    
     @IBOutlet var userNameLabel: UILabel!
     @IBOutlet var userSecondaryLabel: UILabel!
     
-    private lazy var currentUserController: CurrentUserController = {
-        let controller = chatClient.currentUserController()
-        controller.delegate = self
-        return controller
-    }()
+    var currentUserController: CurrentUserController! {
+        didSet {
+            currentUserController.delegate = self
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,7 +57,7 @@ extension SettingsViewController {
     }
     
     func logout() {
-        chatClient.disconnect()
+        currentUserController.client.disconnect()
         moveToStoryboard(.main, options: .transitionFlipFromRight)
     }
 }
@@ -75,14 +74,14 @@ extension SettingsViewController {
     func webSocketsConnectionSwitchValueChanged(_ sender: Any) {
         if webSocketsConnectionSwitch.isOn {
             webSocketsConnectionSwitch.isEnabled = false
-            chatClient.connect { [weak self] error in
+            currentUserController.client.connect { [weak self] error in
                 DispatchQueue.main.async {
                     self?.webSocketsConnectionSwitch.isEnabled = true
                     self?.webSocketsConnectionSwitch.setOn(error == nil, animated: true)
                 }
             }
         } else {
-            chatClient.disconnect()
+            currentUserController.client.disconnect()
         }
     }
 }

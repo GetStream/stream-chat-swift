@@ -11,7 +11,7 @@ import UIKit
 /// A `UITableViewController` subclass that displays and manages a channel.  It uses the `ChannelController`  class to make calls to the Stream Chat API and listens to
 /// events by conforming to `ChannelControllerDelegate`.
 ///
-final class SimpleChatViewController: UITableViewController, ChannelControllerDelegate {
+final class SimpleChatViewController: UITableViewController, ChannelControllerDelegate, UITextViewDelegate {
     // MARK: - Properties
     
     ///
@@ -19,7 +19,8 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     ///
     ///  The property below holds the `ChannelController` object.  It is used to make calls to the Stream Chat API and to listen to the events. After it is set,
     ///  `channelController.delegate` needs to receive a reference to a `ChannelControllerDelegate`, which, in this case, is `self`. After the delegate is set,
-    ///  `channelController.startUpdating()` must be called to start listening to events related to the channel.
+    ///  `channelController.startUpdating()` must be called to start listening to events related to the channel. Additionally, `channelController.client` holds a
+    ///  reference to the `ChatClient` which created this instance. It can be used to create other controllers.
     ///
     var channelController: ChannelController! {
         didSet {
@@ -193,7 +194,7 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     ) -> UISwipeActionsConfiguration? {
         let message = channelController.messages[indexPath.row]
         
-        let messageController = chatClient.messageController(
+        let messageController = channelController.client.messageController(
             cid: channelController.channelQuery.cid,
             messageId: message.id
         )
@@ -283,7 +284,32 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
         present(alert, animated: true)
     }
     
-    //
+    // MARK: - UITextViewDelegate
+
+    ///
+    /// The methods below are part of the `UITextViewDelegate` protocol and will be called when some event happened in the  `ComposerView`'s `UITextView`  which will
+    /// cause some action done by the `channelController` object.
+    ///
+    
+    ///
+    /// # textViewDidChange
+    ///
+    /// The method below handles changes to the `ComposerView`'s `UITextView` by calling `channelController.keystroke()` to send typing events to the channel so
+    /// other users will know the current user is typing.
+    ///
+    func textViewDidChange(_ textView: UITextView) {
+        channelController.keystroke()
+    }
+    
+    ///
+    /// # textViewDidChange
+    ///
+    /// The method below handles the end of `ComposerView`'s `UITextView` editing by calling `channelController.stopTyping()` to immediately stop the typing
+    /// events so other users will know the current user stopped typing.
+    ///
+    func textViewDidEndEditing(_ textView: UITextView) {
+        channelController.stopTyping()
+    }
 
     // MARK: - UI code
 
@@ -298,6 +324,7 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
         
         composerView.layoutMargins = view.layoutMargins
         composerView.directionalLayoutMargins = systemMinimumLayoutMargins
+        composerView.textView.delegate = self
         return composerView
     }
     

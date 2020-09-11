@@ -14,10 +14,10 @@ class LoginViewController: UITableViewController {
     @IBOutlet var userIdTextField: UITextField!
     @IBOutlet var userNameTextField: UITextField!
     @IBOutlet var jwtTextField: UITextField!
-    
-    func logIn() {
+
+    func logIn() -> ChatClient {
         let extraData = NameAndImageExtraData(name: userName, imageURL: nil)
-        chatClient = ChatClient(config: ChatClientConfig(apiKey: APIKey(apiKey)))
+        let chatClient = ChatClient(config: ChatClientConfig(apiKey: APIKey(apiKey)))
         
         func setUserCompletion(_ error: Error?) {
             guard let error = error else { return }
@@ -30,6 +30,8 @@ class LoginViewController: UITableViewController {
         } else {
             chatClient.setGuestUser(userId: userId, extraData: extraData, completion: setUserCompletion)
         }
+        
+        return chatClient
     }
     
     override func viewDidLoad() {
@@ -70,27 +72,41 @@ extension LoginViewController {
 
 extension LoginViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        logIn()
+        let chatClient = logIn()
+        
+        let channelListController = chatClient.channelListController(
+            query: ChannelListQuery(
+                filter: .in("members", [chatClient.currentUserId]),
+                pagination: [.limit(25)],
+                options: [.watch]
+            )
+        )
         
         switch indexPath {
         case .simpleChatIndexPath:
             let storyboard = UIStoryboard(name: "SimpleChat", bundle: nil)
-            let initial = storyboard.instantiateInitialViewController()
+            
+            guard
+                let initial = storyboard.instantiateInitialViewController() as? SplitViewController,
+                let navigation = initial.viewControllers.first as? UINavigationController,
+                let channels = navigation.children.first as? SimpleChannelsViewController
+            else {
+                return
+            }
+            
+            channels.channelListController = channelListController
+
             UIView.transition(with: view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
                 self.view.window?.rootViewController = initial
             })
         case .swiftUISimpleChatIndexPath:
             if #available(iOS 13, *) {
                 // Ideally, we'd pass the `Client` instance as the environment object and create the list controller later.
-                let listController = chatClient.channelListController(
-                    query: .init(filter: .in("members", ["broken-waterfall-5"]))
-                )
-                    
                 UIView.transition(with: self.view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
                     self.view.window?.rootViewController = UIHostingController(
                         rootView:
                         NavigationView {
-                            ChannelListView(channelList: listController.observableObject)
+                            ChannelListView(channelList: channelListController.observableObject)
                         }
                     )
                 })
