@@ -14,12 +14,6 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
         channelListController = ChannelListControllerMock()
     }
     
-    func test_startUpdatingIsCalled_whenObservableObjectCreated() {
-        assert(channelListController.startUpdating_called == false)
-        _ = channelListController.observableObject
-        XCTAssertTrue(channelListController.startUpdating_called)
-    }
-    
     func test_controllerInitialValuesAreLoaded() {
         channelListController.state_simulated = .localDataFetched
         channelListController.channels_simulated = [.init(cid: .unique, extraData: .defaultValue)]
@@ -64,7 +58,7 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
 }
 
 class ChannelListControllerMock: ChannelListController {
-    @Atomic var startUpdating_called = false
+    @Atomic var synchronize_called = false
     
     var channels_simulated: [ChannelModel<DefaultDataTypes>]?
     override var channels: [ChannelModel<DefaultDataTypes>] {
@@ -81,7 +75,7 @@ class ChannelListControllerMock: ChannelListController {
         super.init(query: .init(filter: .none), client: .mock)
     }
 
-    override func startUpdating(_ completion: ((Error?) -> Void)? = nil) {
-        startUpdating_called = true
+    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+        synchronize_called = true
     }
 }

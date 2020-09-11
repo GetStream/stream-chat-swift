@@ -72,6 +72,8 @@ struct ChannelListView: View {
         .sheet(isPresented: $showSettings, content: {
             SettingsView(currentUserController: self.channelList.controller.client.currentUserController())
         })
+        /// Synchronize local data with remote.
+        .onAppear(perform: channelList.controller.synchronize)
     }
     
     // MARK: - Views

@@ -31,14 +31,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
     public let client: Client<ExtraData>
     
     /// The channels matching the query. To observe updates in the list, set your class as a delegate of this controller.
-    public var channels: [ChannelModel<ExtraData>] {
-        guard state != .inactive else {
-            log.warning("Accessing `channels` before calling `startUpdating()` always results in an empty array.")
-            return []
-        }
-        
-        return channelListObserver.items
-    }
+    public var channels: [ChannelModel<ExtraData>] { channelListObserver.items }
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var worker: ChannelListUpdater<ExtraData> = self.environment
@@ -53,6 +46,9 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
+            
+            // After setting delegate local changes will be fetched and observed.
+            startChannelListObserver()
         }
     }
     
@@ -70,6 +66,14 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
             self.delegateCallback {
                 $0.controller(self, didChangeChannels: changes)
             }
+        }
+        
+        do {
+            try observer.startObserving()
+            state = .localDataFetched
+        } catch {
+            state = .localDataFetchFailed(ClientError(with: error))
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
         
         return observer
@@ -94,35 +98,27 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
         self.environment = environment
     }
     
-    /// Starts updating the results.
+    /// Synchronize local data with remote.
     ///
-    /// 1. **Synchronously** loads the data for the referenced objects from the local cache. These data are immediately available in
-    /// the `channels` property of the controller once this method returns. Any further changes to the data are communicated
-    /// using `delegate`.
-    ///
-    /// 2. It also **asynchronously** fetches the latest version of the data from the servers. Once the remote fetch is completed,
+    /// **Asynchronously** fetches the latest version of the data from the servers. Once the remote fetch is completed,
     /// the completion block is called. If the updated data differ from the locally cached ones, the controller uses the `delegate`
     /// methods to inform about the changes.
     ///
     /// - Parameter completion: Called when the controller has finished fetching remote data.
     ///                         If the data fetching fails, the `error` variable contains more details about the problem.
-    public func startUpdating(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        do {
-            try channelListObserver.startObserving()
-        } catch {
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
-            callback { completion?(ClientError.FetchFailed()) }
-            return
-        }
-
-        // Update observing state
-        state = .localDataFetched
-        
+    public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         worker.update(channelListQuery: query) { [weak self] error in
             guard let self = self else { return }
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
+    }
+    
+    /// Initializing of `channelListObserver` will start local data observing.
+    /// In most cases it will be done by accesing `channels` but it's possible that only
+    /// changes will be observed.
+    private func startChannelListObserver() {
+        _ = channelListObserver
     }
     
     /// Sets the provided object as a delegate of this controller.
