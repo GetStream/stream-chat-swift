@@ -5,7 +5,7 @@
 @testable import StreamChatClient
 import XCTest
 
-final class MissingEventsReplayer_Tests: StressTestCase {
+final class MissingEventsPublisher_Tests: StressTestCase {
     typealias ExtraData = DefaultDataTypes
     
     var database: DatabaseContainerMock!
