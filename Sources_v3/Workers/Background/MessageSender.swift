@@ -96,10 +96,16 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
 }
 
 /// This objects takes care of sending messages to the server in the order they have been enqued.
-private struct MessageSendingQueue<ExtraData: ExtraDataTypes> {
-    let apiClient: APIClient
-    let database: DatabaseContainer
+private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
+    unowned var apiClient: APIClient
+    unowned var database: DatabaseContainer
     let dispatchQueue: DispatchQueue
+        
+    init(apiClient: APIClient, database: DatabaseContainer, dispatchQueue: DispatchQueue) {
+        self.apiClient = apiClient
+        self.database = database
+        self.dispatchQueue = dispatchQueue
+    }
     
     /// We use Set becase the message Id is the main identifier. Thanks to this, it's possible to schedule message for sending
     /// multiple times without having to worry about that.
@@ -117,63 +123,64 @@ private struct MessageSendingQueue<ExtraData: ExtraDataTypes> {
     
     /// Gets the oldes message from the qeue and tries to send it.
     private func sendNextMessage() {
-        // Sort the messages and send the oldest one
-        guard let request = requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt }).first else { return }
-        
-        // Check the message with the given id is still in the DB.
-        guard let dto = database.backgroundReadOnlyContext.message(id: request.messageId) else {
-            log.error("Trying to send a message with id \(request.messageId) but the message was deleted.")
-            removeRequestAndContinue(request)
-            return
-        }
-        
-        // Check the message still have `pendingSend` state.
-        guard dto.localMessageState == .pendingSend else {
-            log.info("Skipping sending message with id \(dto.id) because it doesn't have `pendingSend` local state.")
-            removeRequestAndContinue(request)
-            return
-        }
-        
-        let cid = try! ChannelId(cid: dto.channel.cid)
-        let requestBody = dto.asRequestBody() as MessageRequestBody<ExtraData>
-        
-        // Change the message state to `.sending` and the proceed with the actual sending
-        database.write({
-            let messageDTO = $0.message(id: request.messageId)
-            messageDTO?.localMessageState = .sending
+        dispatchQueue.async { [weak self] in
+            // Sort the messages and send the oldest one
+            guard let request = self?.requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt }).first else { return }
             
-        }, completion: { error in
-            if let error = error {
-                log.error("Error changin localMessageState message with id \(request.messageId) to `sending`: \(error)")
-                self.markMessageAsFailedToSend(id: request.messageId) {
-                    self.removeRequestAndContinue(request)
-                }
-                
+            // Check the message with the given id is still in the DB.
+            guard let dto = self?.database.backgroundReadOnlyContext.message(id: request.messageId) else {
+                log.error("Trying to send a message with id \(request.messageId) but the message was deleted.")
+                self?.removeRequestAndContinue(request)
                 return
             }
-    
-            let endpoint: Endpoint<EmptyResponse> = .sendMessage(cid: cid, messagePayload: requestBody)
             
-            self.apiClient.request(endpoint: endpoint) { (result) in
-                switch result {
-                case .success:
-                    self.markMessageAsSent(id: request.messageId) {
-                        self.removeRequestAndContinue(request)
+            // Check the message still have `pendingSend` state.
+            guard dto.localMessageState == .pendingSend else {
+                log.info("Skipping sending message with id \(dto.id) because it doesn't have `pendingSend` local state.")
+                self?.removeRequestAndContinue(request)
+                return
+            }
+            
+            let cid = try! ChannelId(cid: dto.channel.cid)
+            let requestBody = dto.asRequestBody() as MessageRequestBody<ExtraData>
+            
+            // Change the message state to `.sending` and the proceed with the actual sending
+            self?.database.write({
+                let messageDTO = $0.message(id: request.messageId)
+                messageDTO?.localMessageState = .sending
+                
+            }, completion: { error in
+                if let error = error {
+                    log.error("Error changin localMessageState message with id \(request.messageId) to `sending`: \(error)")
+                    self?.markMessageAsFailedToSend(id: request.messageId) {
+                        self?.removeRequestAndContinue(request)
                     }
                     
-                case let .failure(error):
-                    log.error("Sending the message with id \(request.messageId) failed with error: \(error)")
-                    self.markMessageAsFailedToSend(id: request.messageId) {
-                        self.removeRequestAndContinue(request)
+                    return
+                }
+                
+                let endpoint: Endpoint<EmptyResponse> = .sendMessage(cid: cid, messagePayload: requestBody)
+                self?.apiClient.request(endpoint: endpoint) {
+                    switch $0 {
+                    case .success:
+                        self?.markMessageAsSent(id: request.messageId) {
+                            self?.removeRequestAndContinue(request)
+                        }
+                        
+                    case let .failure(error):
+                        log.error("Sending the message with id \(request.messageId) failed with error: \(error)")
+                        self?.markMessageAsFailedToSend(id: request.messageId) {
+                            self?.removeRequestAndContinue(request)
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
     }
     
     private func removeRequestAndContinue(_ request: SendRequest) {
         requests.remove(request)
-        dispatchQueue.async { self.sendNextMessage() }
+        sendNextMessage()
     }
     
     private func markMessageAsSent(id: MessageId, completion: @escaping () -> Void) {
