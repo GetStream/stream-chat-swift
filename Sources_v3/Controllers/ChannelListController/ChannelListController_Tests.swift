@@ -45,17 +45,14 @@ class ChannelListController_Tests: StressTestCase {
         XCTAssertEqual(controller.query.filter.filterHash, query.filter.filterHash)
     }
     
-    // MARK: - Start updating tests
+    // MARK: - Synchronize tests
     
-    func test_startUpdating_changesControllerState() {
+    func test_synchronize_changesControllerState() {
         // Check if controller is inactive initially.
-        assert(controller.state == .inactive)
+        assert(controller.state == .initialized)
         
-        // Simulate `startUpdating` call
-        controller.startUpdating()
-        
-        // Check if state changed after `startUpdating` call
-        XCTAssertEqual(controller.state, .localDataFetched)
+        // Simulate `synchronize` call
+        controller.synchronize()
         
         // Simulate successfull network call.
         env.channelListUpdater?.update_completion?(nil)
@@ -64,15 +61,23 @@ class ChannelListController_Tests: StressTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetched)
     }
     
-    func test_startUpdating_changesControllerStateOnError() {
+    func test_channelsAccess_changesControllerState() {
         // Check if controller is inactive initially.
-        assert(controller.state == .inactive)
+        assert(controller.state == .initialized)
         
-        // Simulate `startUpdating` call
-        controller.startUpdating()
+        // Start DB observing
+        _ = controller.channels
         
-        // Check if state changed after `startUpdating` call
+        // Check if state changed after channels access
         XCTAssertEqual(controller.state, .localDataFetched)
+    }
+    
+    func test_synchronize_changesControllerStateOnError() {
+        // Check if controller is inactive initially.
+        assert(controller.state == .initialized)
+        
+        // Simulate `synchronize` call
+        controller.synchronize()
         
         // Simulate failed network call.
         let error = TestError()
@@ -82,17 +87,17 @@ class ChannelListController_Tests: StressTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
     }
     
-    func test_noChangesAreReported_beforeCallingStartUpdating() throws {
+    func test_changesAreReported_beforeCallingsynchronize() throws {
         // Save a new channel to DB
         client.databaseContainer.write { session in
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
         }
         
-        // Assert the channel is not loaded
-        AssertAsync.staysTrue(controller.channels.isEmpty)
+        // Assert the channel is loaded
+        AssertAsync.willBeTrue(!controller.channels.isEmpty)
     }
     
-    func test_startUpdating_fetchesExistingChannels() throws {
+    func test_channels_are_fetched_beforeCallingsynchronize() throws {
         // Save three channels to DB
         let cidMatchingQuery = ChannelId.unique
         let cidMatchingQueryDeleted = ChannelId.unique
@@ -109,21 +114,18 @@ class ChannelListController_Tests: StressTestCase {
             // Insert a channel not matching the query
             try session.saveChannel(payload: self.dummyPayload(with: cidNotMatchingQuery), query: nil)
         }
-
-        // Start updating
-        controller.startUpdating()
         
         // Assert the existing channel is loaded
         XCTAssertEqual(controller.channels.map(\.cid), [cidMatchingQuery])
     }
     
-    func test_startUpdating_callsChannelQueryUpdater() {
+    func test_synchronize_callsChannelQueryUpdater() {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
         
-        // Simulate `startUpdating` calls and catch the completion
+        // Simulate `synchronize` calls and catch the completion
         var completionCalled = false
-        controller.startUpdating { error in
+        controller.synchronize { error in
             XCTAssertNil(error)
             AssertTestQueue(withId: queueId)
             completionCalled = true
@@ -141,12 +143,12 @@ class ChannelListController_Tests: StressTestCase {
         AssertAsync.willBeTrue(completionCalled)
     }
     
-    func test_startUpdating_propagesErrorFromUpdater() {
+    func test_synchronize_propagesErrorFromUpdater() {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
-        // Simulate `startUpdating` call and catch the completion
+        // Simulate `synchronize` call and catch the completion
         var completionCalledError: Error?
-        controller.startUpdating {
+        controller.synchronize {
             completionCalledError = $0
             AssertTestQueue(withId: queueId)
         }
@@ -162,8 +164,8 @@ class ChannelListController_Tests: StressTestCase {
     // MARK: - Change propagation tests
     
     func test_changesInTheDatabase_arePropagated() throws {
-        // Simulate `startUpdating` call
-        controller.startUpdating()
+        // Simulate `synchronize` call
+        controller.synchronize()
         
         // Simulate changes in the DB:
         // 1. Add the channel to the DB
@@ -180,22 +182,70 @@ class ChannelListController_Tests: StressTestCase {
     
     // MARK: - Delegate tests
     
-    func test_delegateMethodsAreCalled() throws {
+    func test_settingDelegate_leads_to_FetchingLocalData() {
         let delegate = TestDelegate()
+        delegate.expectedQueueId = controllerCallbackQueueID
+           
+        // Check initial state
+        XCTAssertEqual(controller.state, .initialized)
+           
+        controller.delegate = delegate
+           
+        // Assert state changed
+        AssertAsync.willBeEqual(controller.state, .localDataFetched)
+    }
+    
+    func test_delegate_isNotifiedAboutStateChanges() throws {
+        // Set the delegate
+        let delegate = TestDelegate()
+        delegate.expectedQueueId = controllerCallbackQueueID
         controller.delegate = delegate
         
-        // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
-        // do in the controller.
-        XCTAssert(controller.delegate === delegate)
+        // Assert delegate is notified about state changes
+        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
+
+        // Synchronize
+        controller.synchronize()
+            
+        // Simulate network call response
+        env.channelListUpdater?.update_completion?(nil)
+        
+        // Assert delegate is notified about state changes
+        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
+    }
+
+    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
+        // Set the generic delegate
+        let delegate = TestDelegateGeneric()
+        delegate.expectedQueueId = controllerCallbackQueueID
+        controller.setDelegate(delegate)
+        
+        // Assert delegate is notified about state changes
+        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
+
+        // Synchronize
+        controller.synchronize()
+        
+        // Simulate network call response
+        env.channelListUpdater?.update_completion?(nil)
+        
+        // Assert delegate is notified about state changes
+        AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
+    }
+    
+    func test_delegateMethodsAreCalled() throws {
+        let delegate = TestDelegate()
         
         // Set the queue for delegate calls
         let delegateQueueId = UUID()
         delegate.expectedQueueId = delegateQueueId
         controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
+        controller.delegate = delegate
         
-        // Simulate `startUpdating()` call
-        controller.startUpdating()
-        
+        // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
+        // do in the controller.
+        XCTAssert(controller.delegate === delegate)
+  
         // Simulate DB update
         let cid: ChannelId = .unique
         let error = try await {
@@ -211,15 +261,14 @@ class ChannelListController_Tests: StressTestCase {
     
     func test_genericDelegate() throws {
         let delegate = TestDelegateGeneric()
-        controller.setDelegate(delegate)
         
         // Set the queue for delegate calls
         let delegateQueueId = UUID()
         delegate.expectedQueueId = delegateQueueId
-        controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
+        controller.callbackQueue = .testQueue(withId: delegateQueueId)
         
-        // Simulate `startUpdating()` call
-        controller.startUpdating()
+        // Set delegate
+        controller.setDelegate(delegate)
         
         // Simulate DB update
         let cid: ChannelId = .unique
@@ -326,7 +375,13 @@ private class TestEnvironment {
 
 // A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
+    @Atomic var state: DataController.State?
     @Atomic var didChangeChannels_changes: [ListChange<Channel>]?
+    
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        self.state = state
+        validateQueue()
+    }
     
     func controller(
         _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
@@ -339,7 +394,13 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
 
 // A concrete `ChannelListControllerDelegateGeneric` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDelegateGeneric {
+    @Atomic var state: DataController.State?
     @Atomic var didChangeChannels_changes: [ListChange<Channel>]?
+    
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        self.state = state
+        validateQueue()
+    }
     
     func controller(
         _ controller: ChannelListControllerGeneric<DefaultDataTypes>,

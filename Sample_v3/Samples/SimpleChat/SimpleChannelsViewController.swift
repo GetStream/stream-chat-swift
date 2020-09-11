@@ -26,7 +26,7 @@ class SimpleChannelsViewController: UITableViewController, ChannelListController
     var channelListController: ChannelListController! {
         didSet {
             channelListController.delegate = self
-            channelListController.startUpdating()
+            channelListController.synchronize()
         }
     }
     

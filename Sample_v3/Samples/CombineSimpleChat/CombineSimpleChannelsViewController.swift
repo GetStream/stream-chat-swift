@@ -26,6 +26,9 @@ class CombineSimpleChannelsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // Synchronize local data with remote.
+        channelListController.synchronize()
+        
         subscribeToCombinePublishers()
         
         // Do any additional setup after loading the view.
