@@ -399,11 +399,12 @@ public class Client<ExtraData: ExtraDataTypes> {
         // Set a new WebSocketClient connect endpoint
         webSocketClient.connectEndpoint = webSocketConnectEndpoint(userId: userId, role: role, extraData: extraData)
         
-        // Re-create backgroundWorker's so their ongoing requests won't affect database state
-        createBackgroundWorkers()
-        
-        // Reset all existing data if the new user is not the same as the last logged-in one
+        // If the new user is not the same as the last logged-in one....
         if databaseContainer.viewContext.currentUser()?.user.id != userId {
+            // Re-create backgroundWorker's so their ongoing requests won't affect database state
+            createBackgroundWorkers()
+            
+            // Reset all existing local data
             databaseContainer.removeAllData(force: true) { completion($0) }
         } else {
             // Otherwise we're done

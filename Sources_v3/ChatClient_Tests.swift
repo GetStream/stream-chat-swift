@@ -436,6 +436,49 @@ class ChatClient_Tests: StressTestCase {
         }
     }
     
+    func test_settingUser_resetsBackgroundWorkers() {
+        // TestWorker to be used for checking if workers are re-created
+        class TestWorker: Worker {
+            let id: UUID = UUID()
+        }
+        
+        // Custom workerBuilders for ChatClient, including only TestWorker
+        let workerBuilders: [WorkerBuilder] = [TestWorker.init]
+        
+        // Create ChatClient
+        let client = Client(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
+        
+        // Generate userIds for first user
+        let oldUserId: UserId = .unique
+        let oldUserToken: Token = .unique
+        
+        // Set a user
+        client.setUser(userId: oldUserId, token: oldUserToken)
+        
+        // Save worker's UUID
+        let oldWorkerUUID = (client.backgroundWorkers.first as! TestWorker).id
+        
+        // Set the same user again
+        client.setUser(userId: oldUserId, token: oldUserToken)
+        
+        // .. to make sure worker's are not re-created for the same user
+        XCTAssertEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)
+        
+        // Generate userIds for second user
+        let newUserId: UserId = .unique
+        let newUserToken: Token = .unique
+        
+        // Set a user
+        client.setUser(userId: newUserId, token: newUserToken)
+        
+        // Check if the worker is re-created
+        XCTAssertNotEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)
+    }
+    
     func test_settingUser_shouldNotDeleteDB_whenUserIsTheSame() throws {
         let client = Client(
             config: inMemoryStorageConfig,
