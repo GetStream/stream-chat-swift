@@ -144,4 +144,30 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         // Assert events from payload are published
         AssertAsync.willBeEqual(eventLogger.equatableEvents, events.map(\.asEquatable))
     }
+    
+    func test_eventPublisher_doesNotRetainItself() throws {
+        // Create current user in the database
+        try database.createCurrentUser()
+        
+        // Create channel in the database
+        try database.createChannel()
+        
+        // Set `lastReceivedEventDate`
+        try database.writeSynchronously { session in
+            let currentUser = try XCTUnwrap(session.currentUser())
+            currentUser.lastReceivedEventDate = Date()
+        }
+        
+        // Simulate `.connecting` connection state of a web-socket
+        webSocketClient.simulateConnectionStatus(.connecting)
+        
+        // Simulate `.connected` connection state of a web-socket
+        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Assert apiClient is called
+        XCTAssertNotNil(apiClient.request_endpoint)
+        
+        // Assert
+        AssertAsync.canBeReleased(&publisher)
+    }
 }
