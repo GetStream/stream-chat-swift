@@ -107,8 +107,8 @@ struct ChatView: View {
             let messageController = channel?.controller.client.messageController(cid: channel!.channel!.cid, messageId: message.id)
             return ActionSheet(title: Text("Message Actions"), message: Text(""), buttons: [
                 .default(Text("Edit"), action: { self.editingMessage = message; self.text = message.text }),
-                .destructive(Text("Delete")) { messageController?.deleteMessage() },
-                .cancel()
+                .destructive(Text("Delete")) { messageController?.deleteMessage(); self.editingMessage = nil },
+                .cancel { self.editingMessage = nil }
             ])
         } else {
             let userIds = Set(["steep-moon-9"])
