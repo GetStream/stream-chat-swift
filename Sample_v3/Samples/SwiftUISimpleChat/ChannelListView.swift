@@ -189,7 +189,9 @@ struct ChannelListView: View {
     }
     
     private func chatView(for index: Int) -> ChatView {
-        ChatView(channelId: channelList.channels[index].cid)
+        ChatView(
+            channel: self.channelList.controller.client.channelController(for: self.channelList.channels[index].cid).observableObject
+        )
     }
 }
 

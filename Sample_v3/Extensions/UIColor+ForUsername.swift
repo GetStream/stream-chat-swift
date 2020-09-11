@@ -2,6 +2,7 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import SwiftUI
 import UIKit
 
 extension UIColor {
@@ -15,5 +16,12 @@ extension UIColor {
     ]
     static func forUsername(_ name: String) -> UIColor {
         usernameColors[abs(name.hashValue) % usernameColors.count]
+    }
+}
+
+@available(iOS 13, *)
+extension Color {
+    static func forUsername(_ name: String) -> Color {
+        Color(UIColor.forUsername(name))
     }
 }

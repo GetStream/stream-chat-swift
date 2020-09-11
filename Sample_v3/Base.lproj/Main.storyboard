@@ -317,7 +317,13 @@
                             <outlet property="delegate" destination="dqB-UX-E5D" id="Lkv-5b-Swj"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Login" largeTitleDisplayMode="always" id="Ba1-TA-K7f"/>
+                    <navigationItem key="navigationItem" title="Login" largeTitleDisplayMode="always" id="Ba1-TA-K7f">
+                        <barButtonItem key="rightBarButtonItem" systemItem="refresh" id="7V9-hH-avZ">
+                            <connections>
+                                <action selector="randomUserPressed:" destination="dqB-UX-E5D" id="DsR-Ga-XVo"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="apiKeyTextField" destination="1zn-J3-bHH" id="8CD-yJ-FV0"/>
                         <outlet property="jwtCell" destination="tLc-Jq-1jE" id="SUa-Og-FT3"/>
