@@ -85,4 +85,18 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
         // Assert APIClient is called with the correct endpoint
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
     }
+    
+    func test_channelWatchStateUpdater_doesNotRetainItself() throws {
+        // Create channel in the database
+        try database.createChannel()
+        
+        // Simulate `.connected` connection state of a web-socket
+        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Assert api-client is called
+        XCTAssertNotNil(apiClient.request_endpoint)
+        
+        // Assert `channelWatchStateUpdater` can be released before network response comes
+        AssertAsync.canBeReleased(&channelWatchStateUpdater)
+    }
 }
