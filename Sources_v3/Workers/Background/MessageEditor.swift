@@ -21,18 +21,15 @@ import Foundation
 class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
-    private let sendingQueue: DispatchQueue
+    private let backgroundContext: NSManagedObjectContext
 
     override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
+        backgroundContext = database.backgroundReadOnlyContext
+        
         observer = .init(
-            context: database.backgroundReadOnlyContext,
+            context: backgroundContext,
             fetchRequest: MessageDTO.messagesPendingSyncFetchRequest(),
             itemCreator: { $0 }
-        )
-        
-        sendingQueue = .init(
-            label: "co.getStream.ChatClient.MessageEditorQueue",
-            qos: .userInitiated
         )
         
         super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
@@ -57,36 +54,28 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
         let wasEmpty = pendingMessageIDs.isEmpty
         changes.pendingEditMessageIDs.forEach { pendingMessageIDs.insert($0) }
         if wasEmpty {
-            database.backgroundReadOnlyContext.perform { [weak self] in
-                self?.processNextMessage()
-            }
+            processNextMessage()
         }
     }
 
     private func processNextMessage() {
-        guard let messageId = pendingMessageIDs.first else { return }
-        
-        guard let dto = database.backgroundReadOnlyContext.message(id: messageId) else {
-            removeMessageIDAndContinue(messageId)
-            return
-        }
-        
-        guard dto.localMessageState == .pendingSync else {
-            removeMessageIDAndContinue(messageId)
-            return
-        }
-        
-        markMessage(withID: messageId, as: .syncing) {
+        backgroundContext.perform { [weak self] in
+            guard let messageId = self?.pendingMessageIDs.first else { return }
+            
+            guard
+                let dto = self?.backgroundContext.message(id: messageId),
+                dto.localMessageState == .pendingSync
+            else {
+                self?.removeMessageIDAndContinue(messageId)
+                return
+            }
+            
             let requestBody = dto.asRequestBody() as MessageRequestBody<ExtraData>
-            self.apiClient.request(endpoint: .editMessage(payload: requestBody)) {
-                switch $0 {
-                case .success:
-                    self.markMessage(withID: messageId, as: nil) {
-                        self.removeMessageIDAndContinue(messageId)
-                    }
-                case .failure:
-                    self.markMessage(withID: messageId, as: .syncingFailed) {
-                        self.removeMessageIDAndContinue(messageId)
+            self?.markMessage(withID: messageId, as: .syncing) {
+                self?.apiClient.request(endpoint: .editMessage(payload: requestBody)) {
+                    let newMessageState: LocalMessageState? = $0.error == nil ? nil : .syncingFailed
+                    self?.markMessage(withID: messageId, as: newMessageState) {
+                        self?.removeMessageIDAndContinue(messageId)
                     }
                 }
             }
@@ -95,7 +84,7 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
     
     private func removeMessageIDAndContinue(_ messageId: MessageId) {
         pendingMessageIDs.remove(messageId)
-        sendingQueue.async { self.processNextMessage() }
+        processNextMessage()
     }
     
     private func markMessage(withID id: MessageId, as state: LocalMessageState?, completion: @escaping () -> Void) {
@@ -105,9 +94,7 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
             if let error = $0 {
                 log.error("Error changing localMessageState for message with id \(id) to `\(String(describing: state))`: \(error)")
             }
-            self.database.backgroundReadOnlyContext.perform {
-                completion()
-            }
+            completion()
         })
     }
 }
