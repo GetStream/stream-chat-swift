@@ -307,4 +307,19 @@ class MessageSender_Tests: StressTestCase {
             $0.endpoint == AnyEndpoint(.sendMessage(cid: cidB, messagePayload: channelB_message2Payload))
         }))
     }
+    
+    // MARK: - Life cycle tests
+    
+    func test_sender_doesNotRetainItself() throws {
+        let messageId: MessageId = .unique
+        
+        // Create a message with pending state
+        try database.createMessage(id: messageId, cid: cid, text: "Message pending send", localState: .pendingSend)
+        
+        // Wait for the API call to be initiated
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
+        
+        // Assert sender can be released even though network response hasn't come yet
+        AssertAsync.canBeReleased(&sender)
+    }
 }
