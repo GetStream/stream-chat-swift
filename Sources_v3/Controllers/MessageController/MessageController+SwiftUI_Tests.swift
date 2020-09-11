@@ -14,12 +14,6 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
         messageController = MessageControllerMock()
     }
     
-    func test_startUpdatingIsCalled_whenObservableObjectCreated() {
-        assert(messageController.startUpdating_called == false)
-        _ = messageController.observableObject
-        XCTAssertTrue(messageController.startUpdating_called)
-    }
-    
     func test_controllerInitialValuesAreLoaded() {
         messageController.state_simulated = .localDataFetched
         messageController.message_simulated = .unique
@@ -63,7 +57,7 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
 }
 
 class MessageControllerMock: MessageController {
-    @Atomic var startUpdating_called = false
+    @Atomic var synchronize_called = false
     
     var message_simulated: Message?
     override var message: Message? {
@@ -80,7 +74,7 @@ class MessageControllerMock: MessageController {
         super.init(client: .mock, cid: .unique, messageId: .unique)
     }
 
-    override func startUpdating(_ completion: ((Error?) -> Void)? = nil) {
-        startUpdating_called = true
+    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+        synchronize_called = true
     }
 }

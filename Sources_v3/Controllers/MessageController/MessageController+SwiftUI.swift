@@ -28,11 +28,6 @@ extension MessageControllerGeneric {
             
             controller.multicastDelegate.additionalDelegates.append(AnyMessageControllerDelegate(self))
             
-            if controller.state == .inactive {
-                // Start updating and load the current data
-                controller.startUpdating()
-            }
-            
             message = controller.message
         }
     }

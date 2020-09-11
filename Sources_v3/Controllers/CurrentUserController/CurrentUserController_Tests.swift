@@ -696,7 +696,7 @@ private class TestEnvironment {
     lazy var currentUserControllerEnvironment: CurrentUserController
         .Environment = .init(currentUserObserverBuilder: { [unowned self] in
             self.currentUserObserver = .init(context: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)
-            self.currentUserObserver.startUpdatingError = self.currentUserObserverStartUpdatingError
+            self.currentUserObserver.synchronizeError = self.currentUserObserverStartUpdatingError
             return self.currentUserObserver!
         })
 }
