@@ -127,4 +127,30 @@ final class MessageEditor_Tests: StressTestCase {
         // Check the state is eventually changed to `syncingFailed`
         AssertAsync.willBeEqual(message?.localMessageState, .syncingFailed)
     }
+    
+    func test_editor_doesNotRetainItself() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create a messages in the DB in `.pendingSync` state
+        try database.createMessage(id: messageId, authorId: currentUserId, localState: .pendingSync)
+        
+        // Load the message
+        var message: MessageDTO? {
+            database.viewContext.message(id: messageId)
+        }
+        
+        AssertAsync {
+            // Check the state is eventually changed to `syncing`
+            Assert.willBeEqual(message?.localMessageState, .syncing)
+            // API call is initiated
+            Assert.willBeTrue(self.apiClient.request_endpoint != nil)
+        }
+        
+        // Assert editor can be released even though response hasn't come yet
+        AssertAsync.canBeReleased(&editor)
+    }
 }
