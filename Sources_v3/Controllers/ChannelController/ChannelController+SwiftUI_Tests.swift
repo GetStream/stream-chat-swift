@@ -68,7 +68,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = channelController.observableObject
         
         // Simulate state change
-        let newState: Controller.State = .remoteDataFetchFailed(ClientError(with: TestError()))
+        let newState: DataController.State = .remoteDataFetchFailed(ClientError(with: TestError()))
         channelController.state_simulated = newState
         channelController.delegateCallback {
             $0.controller(
@@ -94,8 +94,8 @@ class ChannelControllerMock: ChannelController {
         messages_simulated ?? super.messages
     }
 
-    var state_simulated: Controller.State?
-    override var state: Controller.State {
+    var state_simulated: DataController.State?
+    override var state: DataController.State {
         get { state_simulated ?? super.state }
         set { super.state = newValue }
     }

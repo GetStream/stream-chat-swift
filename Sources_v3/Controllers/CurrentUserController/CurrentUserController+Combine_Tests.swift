@@ -33,7 +33,7 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
     
     func test_statePublisher() {
         // Setup Recording publishers
-        var recording = Record<Controller.State, Never>.Recording()
+        var recording = Record<DataController.State, Never>.Recording()
         
         // Setup the chain
         currentUserController
@@ -48,7 +48,7 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
         controller?.delegateCallback { $0.controller(controller!, didChangeState: .localDataFetched) }
         controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
         
-        XCTAssertEqual(recording.output, [.inactive, .localDataFetched, .remoteDataFetched])
+        XCTAssertEqual(recording.output, [.initialized, .localDataFetched, .remoteDataFetched])
     }
 
     func test_currentUserChangePublisher() {

@@ -394,10 +394,10 @@ final class MessageController_Tests: StressTestCase {
 }
 
 private class TestDelegate: QueueAwareDelegate, MessageControllerDelegate {
-    @Atomic var state: Controller.State?
+    @Atomic var state: DataController.State?
     @Atomic var didChangeMessage_change: EntityChange<Message>?
     
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
     }
@@ -409,10 +409,10 @@ private class TestDelegate: QueueAwareDelegate, MessageControllerDelegate {
 }
 
 private class TestDelegateGeneric: QueueAwareDelegate, MessageControllerDelegateGeneric {
-    @Atomic var state: Controller.State?
+    @Atomic var state: DataController.State?
     @Atomic var didChangeMessage_change: EntityChange<Message>?
    
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
     }

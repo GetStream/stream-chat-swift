@@ -45,7 +45,7 @@ final class CurrentUserController_Tests: StressTestCase {
         XCTAssertTrue(controller.client === client)
         
         // Assert initial state is correct
-        XCTAssertEqual(controller.state, .inactive)
+        XCTAssertEqual(controller.state, .initialized)
         
         // Assert user is nil
         XCTAssertNil(controller.currentUser)
@@ -73,7 +73,7 @@ final class CurrentUserController_Tests: StressTestCase {
         _ = try await(controller.startUpdating)
         
         // Assert state stays inative
-        XCTAssertEqual(controller.state, .inactive)
+        XCTAssertEqual(controller.state, .initialized)
     }
     
     func test_startUpdating_propogatesError() throws {
@@ -636,12 +636,12 @@ final class CurrentUserController_Tests: StressTestCase {
 }
 
 private class TestDelegate: QueueAwareDelegate, CurrentUserControllerDelegate {
-    @Atomic var state: Controller.State?
+    @Atomic var state: DataController.State?
     @Atomic var didChangeCurrentUser_change: EntityChange<CurrentUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
     @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
     
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
     }
@@ -663,12 +663,12 @@ private class TestDelegate: QueueAwareDelegate, CurrentUserControllerDelegate {
 }
 
 private class TestDelegateGeneric: QueueAwareDelegate, CurrentUserControllerDelegateGeneric {
-    @Atomic var state: Controller.State?
+    @Atomic var state: DataController.State?
     @Atomic var didChangeCurrentUser_change: EntityChange<CurrentUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
     @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
     
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
     }

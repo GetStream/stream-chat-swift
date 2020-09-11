@@ -91,7 +91,7 @@ public enum ListOrdering {
 ///
 ///  ... you can do this and that
 ///
-public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider {
+public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The ChannelQuery this controller observes.
     @Atomic public private(set) var channelQuery: ChannelQuery<ExtraData>
 
@@ -694,7 +694,7 @@ public extension ChannelControllerGeneric where ExtraData == DefaultDataTypes {
 ///
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
 /// please use `ChannelControllerDelegateGeneric` instead.
-public protocol ChannelControllerDelegate: ControllerStateDelegate {
+public protocol ChannelControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `Channel` entity.
     func channelController(
         _ channelController: ChannelController,
@@ -736,7 +736,7 @@ public extension ChannelControllerDelegate {
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `ChannelControllerDelegate`, which hides the generic types, and make the usage easier.
-public protocol ChannelControllerDelegateGeneric: ControllerStateDelegate {
+public protocol ChannelControllerDelegateGeneric: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
     /// The controller observed a change in the `Channel` entity.
@@ -787,7 +787,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
         EntityChange<ChannelModel<ExtraData>>
     ) -> Void
 
-    private var _controllerDidChangeState: (Controller, Controller.State) -> Void
+    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
     private var _controllerDidReceiveMemberEvent: (
         ChannelControllerGeneric<ExtraData>,
@@ -803,7 +803,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
     
     init(
         wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (Controller, Controller.State) -> Void,
+        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidUpdateChannel: @escaping (
             ChannelControllerGeneric<ExtraData>,
             EntityChange<ChannelModel<ExtraData>>
@@ -829,7 +829,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
         _controllerDidReceiveTypingEvent = controllerDidReceiveTypingEvent
     }
     
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
         _controllerDidChangeState(controller, state)
     }
     

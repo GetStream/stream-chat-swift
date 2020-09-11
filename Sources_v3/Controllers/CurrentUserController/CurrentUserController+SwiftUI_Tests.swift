@@ -66,7 +66,7 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = currentUserController.observableObject
         
         // Simulate state change
-        let newState: Controller.State = .remoteDataFetchFailed(ClientError(with: TestError()))
+        let newState: DataController.State = .remoteDataFetchFailed(ClientError(with: TestError()))
         currentUserController.state_simulated = newState
         currentUserController.delegateCallback {
             $0.controller(
@@ -107,8 +107,8 @@ class CurrentUserControllerMock: CurrentUserController {
         unreadCount_simulated ?? super.unreadCount
     }
 
-    var state_simulated: Controller.State?
-    override var state: Controller.State {
+    var state_simulated: DataController.State?
+    override var state: DataController.State {
         get { state_simulated ?? super.state }
         set { super.state = newValue }
     }

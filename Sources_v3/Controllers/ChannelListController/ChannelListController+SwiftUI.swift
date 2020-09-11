@@ -19,7 +19,7 @@ extension ChannelListControllerGeneric {
         @Published public private(set) var channels: [ChannelModel<ExtraData>] = []
         
         /// The current state of the Controller.
-        @Published public private(set) var state: Controller.State
+        @Published public private(set) var state: DataController.State
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
         init(controller: ChannelListControllerGeneric<ExtraData>) {
@@ -49,7 +49,7 @@ extension ChannelListControllerGeneric.ObservableObject: ChannelListControllerDe
         channels = controller.channels
     }
     
-    public func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
     }
 }

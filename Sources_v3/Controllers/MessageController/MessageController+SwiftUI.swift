@@ -19,7 +19,7 @@ extension MessageControllerGeneric {
         @Published public private(set) var message: MessageModel<ExtraData>?
         
         /// The current state of the Controller.
-        @Published public private(set) var state: Controller.State
+        @Published public private(set) var state: DataController.State
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
         init(controller: MessageControllerGeneric<ExtraData>) {
@@ -47,7 +47,7 @@ extension MessageControllerGeneric.ObservableObject: MessageControllerDelegateGe
         message = controller.message
     }
     
-    public func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
     }
 }

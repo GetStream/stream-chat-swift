@@ -33,7 +33,7 @@ class ChannelListController_Combine_Tests: iOS13TestCase {
     
     func test_statePublisher() {
         // Setup Recording publishers
-        var recording = Record<Controller.State, Never>.Recording()
+        var recording = Record<DataController.State, Never>.Recording()
         
         // Setup the chain
         channelListController

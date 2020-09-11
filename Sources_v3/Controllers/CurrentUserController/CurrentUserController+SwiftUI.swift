@@ -22,7 +22,7 @@ extension CurrentUserControllerGeneric {
         @Published public private(set) var unreadCount: UnreadCount = .noUnread
         
         /// The current state of the Controller.
-        @Published public private(set) var state: Controller.State
+        @Published public private(set) var state: DataController.State
         
         /// The connection status.
         @Published public private(set) var connectionStatus: ConnectionStatus
@@ -35,7 +35,7 @@ extension CurrentUserControllerGeneric {
             
             controller.multicastDelegate.additionalDelegates.append(AnyCurrentUserControllerDelegate(self))
             
-            if controller.state == .inactive {
+            if controller.state == .initialized {
                 // Start updating and load the current data
                 controller.startUpdating()
             }
@@ -62,7 +62,7 @@ extension CurrentUserControllerGeneric.ObservableObject: CurrentUserControllerDe
         self.currentUser = controller.currentUser
     }
     
-    public func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
     }
     

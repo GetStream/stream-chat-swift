@@ -17,7 +17,7 @@ public extension Client {
 public typealias CurrentUserController = CurrentUserControllerGeneric<DefaultDataTypes>
 
 /// `CurrentUserControllerGeneric` allows to observer current user updates
-public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider {
+public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: Client<ExtraData>
     
@@ -68,7 +68,7 @@ public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     /// Always returns `nil` if `startUpdating` was not called
     /// To observe the updates of this value, set your class as a delegate of this controller and call `startUpdating`.
     public var currentUser: CurrentUserModel<ExtraData.User>? {
-        guard state != .inactive else {
+        guard state != .initialized else {
             log.warning("Accessing `currentUser` fields before calling `startUpdating()` always results in `nil`.")
             return nil
         }
@@ -343,7 +343,7 @@ private extension CurrentUserControllerGeneric {
 ///
 /// This protocol can be used only when no custom extra data are specified.
 /// If you're using custom extra data types, please use `CurrentUserControllerDelegateGeneric` instead.
-public protocol CurrentUserControllerDelegate: ControllerStateDelegate {
+public protocol CurrentUserControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `UnreadCount`.
     func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount: UnreadCount)
     
@@ -366,7 +366,7 @@ public extension CurrentUserControllerDelegate {
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `CurrentUserControllerDelegate`, which hides the generic types, and make the usage easier.
-public protocol CurrentUserControllerDelegateGeneric: ControllerStateDelegate {
+public protocol CurrentUserControllerDelegateGeneric: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
     /// The controller observed a change in the `UnreadCount`.
@@ -406,8 +406,8 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: Current
     weak var wrappedDelegate: AnyObject?
     
     private var _controllerDidChangeState: (
-        Controller,
-        Controller.State
+        DataController,
+        DataController.State
     ) -> Void
     
     private var _controllerDidChangeCurrentUserUnreadCount: (
@@ -428,8 +428,8 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: Current
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (
-            Controller,
-            Controller.State
+            DataController,
+            DataController.State
         ) -> Void,
         controllerDidChangeCurrentUserUnreadCount: @escaping (
             CurrentUserControllerGeneric<ExtraData>,
@@ -451,7 +451,7 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: Current
         _controllerDidChangeConnectionStatus = controllerDidChangeConnectionStatus
     }
 
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
         _controllerDidChangeState(controller, state)
     }
 

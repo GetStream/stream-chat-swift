@@ -5,9 +5,9 @@
 @testable import StreamChatClient
 import XCTest
 
-class Controller_Tests: XCTestCase {
+class DataController_Tests: XCTestCase {
     func test_delegateMethodIsCalled() {
-        let controller = Controller()
+        let controller = DataController()
         let delegateQueueId = UUID()
         let delegate = TestDelegate()
         
@@ -15,8 +15,8 @@ class Controller_Tests: XCTestCase {
         controller.stateMulticastDelegate.mainDelegate = delegate
         controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
         
-        // Check if state is `inactive` initially.
-        XCTAssertEqual(delegate.state, .inactive)
+        // Check if state is `initialized` initially.
+        XCTAssertEqual(delegate.state, .initialized)
         
         // Simulate state change.
         controller.state = .localDataFetched
@@ -26,10 +26,10 @@ class Controller_Tests: XCTestCase {
     }
 }
 
-private class TestDelegate: QueueAwareDelegate, ControllerStateDelegate {
-    var state: Controller.State = .inactive
+private class TestDelegate: QueueAwareDelegate, DataControllerStateDelegate {
+    var state: DataController.State = .initialized
     
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
     }
