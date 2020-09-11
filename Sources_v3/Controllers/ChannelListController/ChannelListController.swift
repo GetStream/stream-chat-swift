@@ -23,7 +23,7 @@ public typealias ChannelListController = ChannelListControllerGeneric<DefaultDat
 ///
 ///  ... you can do this and that
 ///
-public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider {
+public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of channels.
     public let query: ChannelListQuery
     
@@ -204,7 +204,7 @@ extension ChannelListControllerGeneric where ExtraData == DefaultDataTypes {
 ///
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
 /// please use `GenericChannelListController` instead.
-public protocol ChannelListControllerDelegate: ControllerStateDelegate {
+public protocol ChannelListControllerDelegate: DataControllerStateDelegate {
     func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [ListChange<Channel>])
 }
 
@@ -219,7 +219,7 @@ public extension ChannelListControllerDelegate {
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `ChannelListControllerDelegate`, which hides the generic types, and make the usage easier.
-public protocol ChannelListControllerDelegateGeneric: ControllerStateDelegate {
+public protocol ChannelListControllerDelegateGeneric: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     func controller(
         _ controller: ChannelListControllerGeneric<ExtraData>,
@@ -245,13 +245,13 @@ extension ClientError {
 class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListControllerDelegateGeneric {
     private var _controllerDidChangeChannels: (ChannelListControllerGeneric<ExtraData>, [ListChange<ChannelModel<ExtraData>>])
         -> Void
-    private var _controllerDidChangeState: (Controller, Controller.State) -> Void
+    private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
     weak var wrappedDelegate: AnyObject?
     
     init(
         wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (Controller, Controller.State) -> Void,
+        controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidChangeChannels: @escaping (ChannelListControllerGeneric<ExtraData>, [ListChange<ChannelModel<ExtraData>>])
             -> Void
     ) {
@@ -260,7 +260,7 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListCo
         _controllerDidChangeChannels = controllerDidChangeChannels
     }
 
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
         _controllerDidChangeState(controller, state)
     }
 

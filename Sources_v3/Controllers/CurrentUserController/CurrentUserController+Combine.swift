@@ -8,7 +8,7 @@ import UIKit
 @available(iOS 13, *)
 extension CurrentUserControllerGeneric {
     /// A publisher emitting a new value every time the state of the controller changes.
-    public var statePublisher: AnyPublisher<Controller.State, Never> {
+    public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
     }
     
@@ -35,7 +35,7 @@ extension CurrentUserControllerGeneric {
         unowned let controller: CurrentUserControllerGeneric
         
         /// A backing subject for `statePublisher`.
-        let state: CurrentValueSubject<Controller.State, Never>
+        let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `currentUserChangePublisher`.
         let currentUserChange: PassthroughSubject<EntityChange<CurrentUserModel<ExtraData.User>>, Never> = .init()
@@ -54,7 +54,7 @@ extension CurrentUserControllerGeneric {
             
             controller.multicastDelegate.additionalDelegates.append(AnyCurrentUserControllerDelegate(self))
             
-            if controller.state == .inactive {
+            if controller.state == .initialized {
                 // Start updating and load the current data
                 controller.startUpdating()
             }
@@ -64,7 +64,7 @@ extension CurrentUserControllerGeneric {
 
 @available(iOS 13, *)
 extension CurrentUserControllerGeneric.BasePublishers: CurrentUserControllerDelegateGeneric {
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
     

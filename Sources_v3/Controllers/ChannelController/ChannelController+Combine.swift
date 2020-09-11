@@ -8,7 +8,7 @@ import UIKit
 @available(iOS 13, *)
 extension ChannelControllerGeneric {
     /// A publisher emitting a new value every time the state of the controller changes.
-    public var statePublisher: AnyPublisher<Controller.State, Never> {
+    public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
     }
     
@@ -40,7 +40,7 @@ extension ChannelControllerGeneric {
         unowned let controller: ChannelControllerGeneric
         
         /// A backing subject for `statePublisher`.
-        let state: CurrentValueSubject<Controller.State, Never>
+        let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `channelChangePublisher`.
         let channelChange: PassthroughSubject<EntityChange<ChannelModel<ExtraData>>, Never> = .init()
@@ -70,7 +70,7 @@ extension ChannelControllerGeneric {
 
 @available(iOS 13, *)
 extension ChannelControllerGeneric.BasePublishers: ChannelControllerDelegateGeneric {
-    func controller(_ controller: Controller, didChangeState state: Controller.State) {
+    func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
 
