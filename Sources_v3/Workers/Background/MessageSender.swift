@@ -111,70 +111,74 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
     /// multiple times without having to worry about that.
     @Atomic private(set) var requests: Set<SendRequest> = []
     
-    /// Schedules sending of the message. All already scheduled messages with `createdLocallyAt` older that this one will
+    /// Schedules sending of the message. All already scheduled messages with `createdLocallyAt` older than these ones will
     /// be sent first.
     func scheduleSend(requests: [SendRequest]) {
         let wasEmpty = self.requests.isEmpty
-        requests.forEach { self.requests.insert($0) }
+        self.requests.formUnion(requests)
         if wasEmpty {
             sendNextMessage()
         }
     }
     
-    /// Gets the oldes message from the qeue and tries to send it.
+    /// Gets the oldest message from the qeue and tries to send it.
     private func sendNextMessage() {
         dispatchQueue.async { [weak self] in
             // Sort the messages and send the oldest one
+            // If this proves to be a bottleneck in the future, we might
+            // switch to using a custom `OrderedSet`
             guard let request = self?.requests.sorted(by: { $0.createdLocallyAt < $1.createdLocallyAt }).first else { return }
             
             // Check the message with the given id is still in the DB.
-            guard let dto = self?.database.backgroundReadOnlyContext.message(id: request.messageId) else {
-                log.error("Trying to send a message with id \(request.messageId) but the message was deleted.")
-                self?.removeRequestAndContinue(request)
-                return
-            }
-            
-            // Check the message still have `pendingSend` state.
-            guard dto.localMessageState == .pendingSend else {
-                log.info("Skipping sending message with id \(dto.id) because it doesn't have `pendingSend` local state.")
-                self?.removeRequestAndContinue(request)
-                return
-            }
-            
-            let cid = try! ChannelId(cid: dto.channel.cid)
-            let requestBody = dto.asRequestBody() as MessageRequestBody<ExtraData>
-            
-            // Change the message state to `.sending` and the proceed with the actual sending
-            self?.database.write({
-                let messageDTO = $0.message(id: request.messageId)
-                messageDTO?.localMessageState = .sending
-                
-            }, completion: { error in
-                if let error = error {
-                    log.error("Error changin localMessageState message with id \(request.messageId) to `sending`: \(error)")
-                    self?.markMessageAsFailedToSend(id: request.messageId) {
-                        self?.removeRequestAndContinue(request)
-                    }
-                    
+            self?.database.backgroundReadOnlyContext.perform {
+                guard let dto = self?.database.backgroundReadOnlyContext.message(id: request.messageId) else {
+                    log.error("Trying to send a message with id \(request.messageId) but the message was deleted.")
+                    self?.removeRequestAndContinue(request)
                     return
                 }
                 
-                let endpoint: Endpoint<EmptyResponse> = .sendMessage(cid: cid, messagePayload: requestBody)
-                self?.apiClient.request(endpoint: endpoint) {
-                    switch $0 {
-                    case .success:
-                        self?.markMessageAsSent(id: request.messageId) {
-                            self?.removeRequestAndContinue(request)
-                        }
-                        
-                    case let .failure(error):
-                        log.error("Sending the message with id \(request.messageId) failed with error: \(error)")
+                // Check the message still have `pendingSend` state.
+                guard dto.localMessageState == .pendingSend else {
+                    log.info("Skipping sending message with id \(dto.id) because it doesn't have `pendingSend` local state.")
+                    self?.removeRequestAndContinue(request)
+                    return
+                }
+                
+                let cid = try! ChannelId(cid: dto.channel.cid)
+                let requestBody = dto.asRequestBody() as MessageRequestBody<ExtraData>
+                
+                // Change the message state to `.sending` and the proceed with the actual sending
+                self?.database.write({
+                    let messageDTO = $0.message(id: request.messageId)
+                    messageDTO?.localMessageState = .sending
+                    
+                }, completion: { error in
+                    if let error = error {
+                        log.error("Error changin localMessageState message with id \(request.messageId) to `sending`: \(error)")
                         self?.markMessageAsFailedToSend(id: request.messageId) {
                             self?.removeRequestAndContinue(request)
                         }
+                        
+                        return
                     }
-                }
-            })
+                    
+                    let endpoint: Endpoint<EmptyResponse> = .sendMessage(cid: cid, messagePayload: requestBody)
+                    self?.apiClient.request(endpoint: endpoint) {
+                        switch $0 {
+                        case .success:
+                            self?.markMessageAsSent(id: request.messageId) {
+                                self?.removeRequestAndContinue(request)
+                            }
+                            
+                        case let .failure(error):
+                            log.error("Sending the message with id \(request.messageId) failed with error: \(error)")
+                            self?.markMessageAsFailedToSend(id: request.messageId) {
+                                self?.removeRequestAndContinue(request)
+                            }
+                        }
+                    }
+                })
+            }
         }
     }
     
