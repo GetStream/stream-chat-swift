@@ -143,6 +143,26 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(webSocket?.init_requestEncoder.connectionDetailsProviderDelegate === client)
     }
     
+    func test_webSocketClient_hasAllMandatoryMiddlewares() throws {
+        // Use in-memory store
+        // Create a new chat client, which in turn creates a webSocketClient
+        _ = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
+        
+        // Assert that mandatory middlewares exists
+        let middlewares = try XCTUnwrap(testEnv.webSocketClient?.init_eventNotificationCenter.middlewares)
+        
+        // Assert `EventDataProcessorMiddleware` exists
+        XCTAssert(middlewares.contains(where: { $0 is EventDataProcessorMiddleware<DefaultDataTypes> }))
+        // Assert `TypingStartCleanupMiddleware` exists
+        XCTAssert(middlewares.contains(where: { $0 is TypingStartCleanupMiddleware<DefaultDataTypes> }))
+        // Assert `ChannelReadUpdaterMiddleware` exists
+        XCTAssert(middlewares.contains(where: { $0 is ChannelReadUpdaterMiddleware<DefaultDataTypes> }))
+    }
+    
     func test_connectionStatus_isExposed() {
         // Create a new chat client
         let client = ChatClient(
