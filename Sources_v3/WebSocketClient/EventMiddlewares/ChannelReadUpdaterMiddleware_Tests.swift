@@ -52,10 +52,13 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Middleware should mutate the loadedChannel's read
         let handledEvent = try await { middleware.handle(event: messageReadEvent, completion: $0) }
         
-        // Assert that the read event entity is updated
         XCTAssertEqual(handledEvent?.asEquatable, messageReadEvent.asEquatable)
-        XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 0)
-        XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, newReadDate)
+        
+        // Assert that the read event entity is updated
+        AssertAsync {
+            Assert.willBeEqual(loadedChannel?.reads.first?.unreadMessagesCount, 0)
+            Assert.willBeEqual(loadedChannel?.reads.first?.lastReadAt, newReadDate)
+        }
     }
     
     func test_notificationMarkReadEvent_handledCorrectly() throws {
@@ -110,10 +113,13 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Let the middleware handle the event
         let handledEvent = try await { middleware.handle(event: notificationMarkReadEvent, completion: $0) }
         
-        // Assert that the read event entity is updated
         XCTAssertEqual(handledEvent?.asEquatable, notificationMarkReadEvent.asEquatable)
-        XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 0)
-        XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, newReadDate)
+        
+        // Assert that the read event entity is updated
+        AssertAsync {
+            Assert.willBeEqual(loadedChannel?.reads.first?.unreadMessagesCount, 0)
+            Assert.willBeEqual(loadedChannel?.reads.first?.lastReadAt, newReadDate)
+        }
     }
     
     func test_notificationMarkAllReadEvent_handledCorrectly() throws {
@@ -151,9 +157,12 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Let the middleware handle the event
         let handledEvent = try await { middleware.handle(event: notificationMarkAllReadEvent, completion: $0) }
         
-        // Assert that the read event entity is updated
         XCTAssertEqual(handledEvent?.asEquatable, notificationMarkAllReadEvent.asEquatable)
-        XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 0)
-        XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, newReadDate)
+        
+        // Assert that the read event entity is updated
+        AssertAsync {
+            Assert.willBeEqual(loadedChannel?.reads.first?.unreadMessagesCount, 0)
+            Assert.willBeEqual(loadedChannel?.reads.first?.lastReadAt, newReadDate)
+        }
     }
 }

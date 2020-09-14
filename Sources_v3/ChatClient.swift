@@ -66,7 +66,8 @@ public class Client<ExtraData: ExtraDataTypes> {
         EventDataProcessorMiddleware<ExtraData>(database: databaseContainer),
         TypingStartCleanupMiddleware<ExtraData>(
             excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) }
-        )
+        ),
+        ChannelReadUpdaterMiddleware<ExtraData>(database: databaseContainer)
     ])
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
