@@ -96,4 +96,25 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
         
         XCTAssertEqual(recording.output, [.noUnread, .dummy])
     }
+    
+    func test_connectionStatusPublisher() throws {
+        // Setup Recording publishers
+        var recording = Record<ConnectionStatus, Never>.Recording()
+        
+        // Setup the chain
+        currentUserController.connectionStatusPublisher
+            .sink(receiveValue: { recording.receive($0) })
+            .store(in: &cancellables)
+        
+        // Keep only the weak reference to the controller. The existing publisher should keep it alive.
+        weak var controller: CurrentUserControllerMock? = currentUserController
+        currentUserController = nil
+        
+        // Simulate connection status update
+        let newStatus: ConnectionStatus = .connected
+        controller?.delegateCallback { $0.currentUserController(controller!, didUpdateConnectionStatus: newStatus) }
+        
+        // Assert initial value as well as the update are received
+        AssertAsync.willBeEqual(recording.output, [.disconnected(error: nil), newStatus])
+    }
 }

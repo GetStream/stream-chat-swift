@@ -21,6 +21,11 @@ extension CurrentUserControllerGeneric {
     public var unreadCountPublisher: AnyPublisher<UnreadCount, Never> {
         basePublishers.unreadCount.keepAlive(self)
     }
+    
+    /// A publisher emitting a new value every time the connection status changes.
+    public var connectionStatusPublisher: AnyPublisher<ConnectionStatus, Never> {
+        basePublishers.connectionStatus.keepAlive(self)
+    }
 
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -37,11 +42,15 @@ extension CurrentUserControllerGeneric {
         
         /// A backing subject for `unreadCountPublisher`.
         let unreadCount: CurrentValueSubject<UnreadCount, Never>
+        
+        /// A backing subject for `connectionStatusPublisher`.
+        let connectionStatus: CurrentValueSubject<ConnectionStatus, Never>
                 
         init(controller: CurrentUserControllerGeneric<ExtraData>) {
             self.controller = controller
             state = .init(controller.state)
             unreadCount = .init(.noUnread)
+            connectionStatus = .init(controller.connectionStatus)
             
             controller.multicastDelegate.additionalDelegates.append(AnyCurrentUserControllerDelegate(self))
             
@@ -71,5 +80,12 @@ extension CurrentUserControllerGeneric.BasePublishers: CurrentUserControllerDele
         didChangeCurrentUser currentUser: EntityChange<CurrentUserModel<ExtraData.User>>
     ) {
         currentUserChange.send(currentUser)
+    }
+    
+    func currentUserController(
+        _ controller: CurrentUserControllerGeneric<ExtraData>,
+        didUpdateConnectionStatus status: ConnectionStatus
+    ) {
+        connectionStatus.send(status)
     }
 }

@@ -24,10 +24,14 @@ extension CurrentUserControllerGeneric {
         /// The current state of the Controller.
         @Published public private(set) var state: Controller.State
         
+        /// The connection status.
+        @Published public private(set) var connectionStatus: ConnectionStatus
+        
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
         init(controller: CurrentUserControllerGeneric<ExtraData>) {
             self.controller = controller
             state = controller.state
+            connectionStatus = controller.connectionStatus
             
             controller.multicastDelegate.additionalDelegates.append(AnyCurrentUserControllerDelegate(self))
             
@@ -60,5 +64,12 @@ extension CurrentUserControllerGeneric.ObservableObject: CurrentUserControllerDe
     
     public func controller(_ controller: Controller, didChangeState state: Controller.State) {
         self.state = state
+    }
+    
+    public func currentUserController(
+        _ controller: CurrentUserControllerGeneric<ExtraData>,
+        didUpdateConnectionStatus status: ConnectionStatus
+    ) {
+        connectionStatus = status
     }
 }

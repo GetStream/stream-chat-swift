@@ -55,6 +55,9 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Assert unread-count is zero
         XCTAssertEqual(controller.unreadCount, .noUnread)
+        
+        // Check the initial connection status.
+        XCTAssertEqual(controller.connectionStatus, .disconnected(error: nil))
     }
     
     func test_startUpdating_changesStateCorrectly_ifCompletesWithAnyError() throws {
@@ -115,7 +118,52 @@ final class CurrentUserController_Tests: StressTestCase {
         // Assert the delegate is assigned correctly
         XCTAssert(controller.delegate === delegate)
     }
-
+    
+    func test_delegate_isReferencedWeakly() {
+        // Create the delegate
+        var delegate: TestDelegate? = TestDelegate()
+        
+        // Set the delegate
+        controller.delegate = delegate
+        
+        // Stop keeping a delegate alive
+        delegate = nil
+        
+        // Assert delegate is deallocated
+        XCTAssertNil(controller.delegate)
+    }
+    
+    func test_genericDelegate_isReferencedWeakly() {
+        // Create the delegate
+        var delegate: TestDelegateGeneric? = TestDelegateGeneric()
+        
+        // Set the delegate
+        controller.setDelegate(delegate)
+        
+        // Stop keeping a delegate alive
+        delegate = nil
+        
+        // Assert delegate is deallocated
+        XCTAssertNil(controller.delegate)
+    }
+    
+    func test_delegate_isNotifiedAboutConnectionStatusChanges() {
+        // Set the delegate
+        let delegate = TestDelegate()
+        delegate.expectedQueueId = controllerCallbackQueueID
+        controller.delegate = delegate
+        
+        // Assert no connection status changes received so far
+        XCTAssertTrue(delegate.didUpdateConnectionStatus_statuses.isEmpty)
+        
+        // Simulate connection status updates.
+        client.webSocketClient.simulateConnectionStatus(.connecting)
+        client.webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Assert updates are received
+        AssertAsync.willBeEqual(delegate.didUpdateConnectionStatus_statuses, [.connecting, .connected])
+    }
+    
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
         let delegate = TestDelegate()
@@ -272,6 +320,7 @@ private class TestDelegate: QueueAwareDelegate, CurrentUserControllerDelegate {
     @Atomic var state: Controller.State?
     @Atomic var didChangeCurrentUser_change: EntityChange<CurrentUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
+    @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
     
     func controller(_ controller: Controller, didChangeState state: Controller.State) {
         self.state = state
@@ -285,6 +334,11 @@ private class TestDelegate: QueueAwareDelegate, CurrentUserControllerDelegate {
     
     func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
         didChangeCurrentUserUnreadCount_count = count
+        validateQueue()
+    }
+    
+    func currentUserController(_ controller: CurrentUserController, didUpdateConnectionStatus status: ConnectionStatus) {
+        _didUpdateConnectionStatus_statuses.mutate { $0.append(status) }
         validateQueue()
     }
 }
@@ -293,7 +347,8 @@ private class TestDelegateGeneric: QueueAwareDelegate, CurrentUserControllerDele
     @Atomic var state: Controller.State?
     @Atomic var didChangeCurrentUser_change: EntityChange<CurrentUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
-   
+    @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
+    
     func controller(_ controller: Controller, didChangeState state: Controller.State) {
         self.state = state
         validateQueue()
@@ -306,6 +361,11 @@ private class TestDelegateGeneric: QueueAwareDelegate, CurrentUserControllerDele
     
     func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
         didChangeCurrentUserUnreadCount_count = count
+        validateQueue()
+    }
+    
+    func currentUserController(_ controller: CurrentUserController, didUpdateConnectionStatus status: ConnectionStatus) {
+        _didUpdateConnectionStatus_statuses.mutate { $0.append(status) }
         validateQueue()
     }
 }
