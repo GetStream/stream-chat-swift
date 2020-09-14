@@ -25,10 +25,20 @@ class LoginViewController: UITableViewController {
             navigationController?.popToRootViewController(animated: true)
         }
         
+        let currentUserController = chatClient.currentUserController()
         if let token = token {
-            chatClient.setUser(userId: userId, userExtraData: extraData, token: token, completion: setUserCompletion)
+            currentUserController.setUser(
+                userId: userId,
+                userExtraData: extraData,
+                token: token,
+                completion: setUserCompletion
+            )
         } else {
-            chatClient.setGuestUser(userId: userId, extraData: extraData, completion: setUserCompletion)
+            currentUserController.setGuestUser(
+                userId: userId,
+                extraData: extraData,
+                completion: setUserCompletion
+            )
         }
         
         return chatClient
