@@ -52,7 +52,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
         // Assert endpoint is not called as `lastSyncAt` is unknown
-        XCTAssertNil(apiClient.request_endpoint)
+        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
     }
     
     func test_endpointIsCalled_whenStatusBecomesConnected() throws {
@@ -82,7 +82,8 @@ final class MissingEventsPublisher_Tests: StressTestCase {
             since: lastReceivedEventDate,
             cids: [cid]
         )
-        XCTAssertEqual(try XCTUnwrap(apiClient.request_endpoint), AnyEndpoint(endpoint))
+        
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
     }
     
     func test_noEventsArePublished_ifErrorResponseComes() throws {
@@ -108,6 +109,9 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         
         // Create event logger to check published events
         let eventLogger = EventLogger(webSocketClient.init_eventNotificationCenter)
+        
+        // Assert a network request is created
+        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
         
         // Simulate error response
         apiClient.test_simulateResponse(Result<MissingEventsPayload<ExtraData>, Error>.failure(TestError()))
@@ -138,6 +142,9 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         // Create event logger to check published events
         let eventLogger = EventLogger(webSocketClient.init_eventNotificationCenter)
         
+        // Assert a network request is created
+        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
+        
         // Simulate successful response
         apiClient.test_simulateResponse(Result<MissingEventsPayload<ExtraData>, Error>.success(payload))
         
@@ -165,7 +172,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
         // Assert apiClient is called
-        XCTAssertNotNil(apiClient.request_endpoint)
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Assert
         AssertAsync.canBeReleased(&publisher)

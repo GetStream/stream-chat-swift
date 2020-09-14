@@ -50,25 +50,30 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
     }
     
     private func obtainLastSyncDate() {
-        lastSyncedAt = database.backgroundReadOnlyContext.currentUser()?.lastReceivedEventDate
+        database.backgroundReadOnlyContext.perform { [weak self] in
+            self?.lastSyncedAt = self?.database.backgroundReadOnlyContext.currentUser()?.lastReceivedEventDate
+        }
     }
     
     private func fetchAndReplayMissingEvents() {
-        guard let lastSyncedAt = lastSyncedAt else { return }
-        
-        let watchedChannelIDs = allChannels.filter { $0.isWatched }.map(\.cid)
-        
-        let endpoint: Endpoint<MissingEventsPayload<ExtraData>> = .missingEvents(
-            since: lastSyncedAt,
-            cids: watchedChannelIDs
-        )
-        
-        apiClient.request(endpoint: endpoint) { [weak self] in
-            switch $0 {
-            case let .success(payload):
-                self?.webSocketClient.eventNotificationCenter.process(payload.eventPayloads)
-            case let .failure(error):
-                log.error("Internal error: Failed to fetch and reply missing events: \(error)")
+        database.backgroundReadOnlyContext.perform { [weak self] in
+            guard let lastSyncedAt = self?.lastSyncedAt,
+                let allChannels = self?.allChannels else { return }
+            
+            let watchedChannelIDs = allChannels.filter { $0.isWatched }.map(\.cid)
+            
+            let endpoint: Endpoint<MissingEventsPayload<ExtraData>> = .missingEvents(
+                since: lastSyncedAt,
+                cids: watchedChannelIDs
+            )
+            
+            self?.apiClient.request(endpoint: endpoint) {
+                switch $0 {
+                case let .success(payload):
+                    self?.webSocketClient.eventNotificationCenter.process(payload.eventPayloads)
+                case let .failure(error):
+                    log.error("Internal error: Failed to fetch and reply missing events: \(error)")
+                }
             }
         }
     }
