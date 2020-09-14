@@ -53,7 +53,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
         webSocketClient.simulateConnectionStatus(.waitingForConnectionId)
         
         // Assert APIClient is not called for other events
-        XCTAssertNil(apiClient.request_endpoint)
+        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
     }
     
     func test_apiClient_is_not_called_on_empty_channels() {
@@ -61,7 +61,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
         // Assert APIClient is not called for empty channels
-        XCTAssertNil(apiClient.request_endpoint)
+        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
     }
     
     func test_apiClient_called_on_websocket_connected() throws {
@@ -83,7 +83,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
         let endpoint: Endpoint<ChannelListPayload<ExtraData>> = .channels(query: query)
         
         // Assert APIClient is called with the correct endpoint
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
     }
     
     func test_channelWatchStateUpdater_doesNotRetainItself() throws {
@@ -94,7 +94,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
         // Assert api-client is called
-        XCTAssertNotNil(apiClient.request_endpoint)
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Assert `channelWatchStateUpdater` can be released before network response comes
         AssertAsync.canBeReleased(&channelWatchStateUpdater)

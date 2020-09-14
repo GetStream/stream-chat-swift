@@ -35,21 +35,25 @@ final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: Worker {
     }
     
     private func watchChannels() {
-        let channelIds = channels.map(\.cid)
-        guard !channelIds.isEmpty else { return }
-        let channelListQuery = ChannelListQuery(
-            filter: .in("cid", channelIds),
-            pagination: [.limit(1)],
-            options: [.watch]
-        )
-        
-        apiClient.request(
-            endpoint: .channels(query: channelListQuery),
-            completion: { (result: Result<ChannelListPayload<ExtraData>, Error>) in
-                guard case let .failure(error) = result else { return }
-                log.error("Internal error: failed to update watching state of existing channels: \(error)")
-            }
-        )
+        database.backgroundReadOnlyContext.perform { [weak self] in
+            guard let channels = self?.channels else { return }
+            
+            let channelIds = channels.map(\.cid)
+            guard !channelIds.isEmpty else { return }
+            let channelListQuery = ChannelListQuery(
+                filter: .in("cid", channelIds),
+                pagination: [.limit(1)],
+                options: [.watch]
+            )
+            
+            self?.apiClient.request(
+                endpoint: .channels(query: channelListQuery),
+                completion: { (result: Result<ChannelListPayload<ExtraData>, Error>) in
+                    guard case let .failure(error) = result else { return }
+                    log.error("Internal error: failed to update watching state of existing channels: \(error)")
+                }
+            )
+        }
     }
     
     private class WebSocketConnectedObserver: EventObserver {
