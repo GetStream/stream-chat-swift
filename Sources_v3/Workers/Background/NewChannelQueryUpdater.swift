@@ -80,24 +80,27 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     }
     
     private func updateChannelListQuery(for channelDTO: ChannelDTO) {
-        var updatedQueries: [ChannelListQuery] = []
-        
-        do {
-            updatedQueries = try queries.map {
-                // Modify original query filter
-                try $0.asChannelListQueryWithUpdatedFilter(filterToAdd: .equal("cid", to: channelDTO.cid))
+        database.backgroundReadOnlyContext.perform { [weak self] in
+            guard let queries = self?.queries else { return }
+            var updatedQueries: [ChannelListQuery] = []
+            
+            do {
+                updatedQueries = try queries.map {
+                    // Modify original query filter
+                    try $0.asChannelListQueryWithUpdatedFilter(filterToAdd: .equal("cid", to: channelDTO.cid))
+                }
+                
+            } catch {
+                log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
             }
             
-        } catch {
-            log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
-        }
-        
-        // Send `update(channelListQuery:` requests so corresponding queries will be linked to the channel
-        updatedQueries.forEach {
-            channelListUpdater.update(channelListQuery: $0) { error in
-                if let error = error {
-                    log
-                        .error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
+            // Send `update(channelListQuery:` requests so corresponding queries will be linked to the channel
+            updatedQueries.forEach {
+                self?.channelListUpdater.update(channelListQuery: $0) { error in
+                    if let error = error {
+                        log
+                            .error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
+                    }
                 }
             }
         }
