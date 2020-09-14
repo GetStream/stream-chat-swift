@@ -35,7 +35,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
     private func startObserving() {
         connectionObserver = EventObserver(
             notificationCenter: webSocketClient.eventNotificationCenter,
-            tranform: { $0 as? ConnectionStatusUpdated },
+            transform: { $0 as? ConnectionStatusUpdated },
             callback: { [unowned self] in
                 switch $0.webSocketConnectionState {
                 case .connecting:
