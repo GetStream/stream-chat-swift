@@ -41,6 +41,20 @@ public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Controller
                 $0.currentUserController(self, didChangeCurrentUserUnreadCount: change.unreadCount)
             }
         }
+    
+    /// The current connection status of the client.
+    public var connectionStatus: ConnectionStatus {
+        .init(webSocketConnectionState: client.webSocketClient.connectionState)
+    }
+    
+    /// The connection event observer for the connection status updates.
+    private lazy var connectionEventObserver = ConnectionEventObserver(
+        notificationCenter: client.webSocketClient.eventNotificationCenter
+    ) { [unowned self] status in
+        self.delegateCallback {
+            $0.currentUserController(self, didUpdateConnectionStatus: status.connectionStatus)
+        }
+    }
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate<ExtraData>> = .init() {
@@ -76,6 +90,10 @@ public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Controller
     init(client: Client<ExtraData>, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
+        
+        super.init()
+        
+        _ = connectionEventObserver
     }
     
     /// Starts updating the results.
@@ -151,12 +169,17 @@ public protocol CurrentUserControllerDelegate: ControllerStateDelegate {
     
     /// The controller observed a change in the `CurrentUser` entity.
     func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser: EntityChange<CurrentUser>)
+    
+    /// The controller observed a change in connection status.
+    func currentUserController(_ controller: CurrentUserController, didUpdateConnectionStatus status: ConnectionStatus)
 }
 
 public extension CurrentUserControllerDelegate {
     func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount: UnreadCount) {}
     
     func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser: EntityChange<CurrentUser>) {}
+    
+    func currentUserController(_ controller: CurrentUserController, didUpdateConnectionStatus status: ConnectionStatus) {}
 }
 
 /// `CurrentUserControllerGeneric` uses this protocol to communicate changes to its delegate.
@@ -174,6 +197,12 @@ public protocol CurrentUserControllerDelegateGeneric: ControllerStateDelegate {
         _ controller: CurrentUserControllerGeneric<ExtraData>,
         didChangeCurrentUser: EntityChange<CurrentUserModel<ExtraData.User>>
     )
+    
+    /// The controller observed a change in connection status.
+    func currentUserController(
+        _ controller: CurrentUserControllerGeneric<ExtraData>,
+        didUpdateConnectionStatus status: ConnectionStatus
+    )
 }
 
 public extension CurrentUserControllerDelegateGeneric {
@@ -185,6 +214,11 @@ public extension CurrentUserControllerDelegateGeneric {
     func currentUserController(
         _ controller: CurrentUserControllerGeneric<ExtraData>,
         didChangeCurrentUser: EntityChange<CurrentUserModel<ExtraData.User>>
+    ) {}
+    
+    func currentUserController(
+        _ controller: CurrentUserControllerGeneric<ExtraData>,
+        didUpdateConnectionStatus status: ConnectionStatus
     ) {}
 }
 
@@ -205,7 +239,12 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: Current
         CurrentUserControllerGeneric<ExtraData>,
         EntityChange<CurrentUserModel<ExtraData.User>>
     ) -> Void
-
+    
+    private var _controllerDidChangeConnectionStatus: (
+        CurrentUserControllerGeneric<ExtraData>,
+        ConnectionStatus
+    ) -> Void
+    
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (
@@ -219,12 +258,17 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: Current
         controllerDidChangeCurrentUser: @escaping (
             CurrentUserControllerGeneric<ExtraData>,
             EntityChange<CurrentUserModel<ExtraData.User>>
+        ) -> Void,
+        controllerDidChangeConnectionStatus: @escaping (
+            CurrentUserControllerGeneric<ExtraData>,
+            ConnectionStatus
         ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
         _controllerDidChangeCurrentUserUnreadCount = controllerDidChangeCurrentUserUnreadCount
         _controllerDidChangeState = controllerDidChangeState
         _controllerDidChangeCurrentUser = controllerDidChangeCurrentUser
+        _controllerDidChangeConnectionStatus = controllerDidChangeConnectionStatus
     }
 
     func controller(_ controller: Controller, didChangeState state: Controller.State) {
@@ -244,6 +288,13 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: Current
     ) {
         _controllerDidChangeCurrentUser(controller, user)
     }
+    
+    func currentUserController(
+        _ controller: CurrentUserControllerGeneric<ExtraData>,
+        didUpdateConnectionStatus status: ConnectionStatus
+    ) {
+        _controllerDidChangeConnectionStatus(controller, status)
+    }
 }
 
 extension AnyCurrentUserControllerDelegate {
@@ -256,6 +307,9 @@ extension AnyCurrentUserControllerDelegate {
             },
             controllerDidChangeCurrentUser: { [weak delegate] in
                 delegate?.currentUserController($0, didChangeCurrentUser: $1)
+            },
+            controllerDidChangeConnectionStatus: { [weak delegate] in
+                delegate?.currentUserController($0, didUpdateConnectionStatus: $1)
             }
         )
     }
@@ -271,6 +325,9 @@ extension AnyCurrentUserControllerDelegate where ExtraData == DefaultDataTypes {
             },
             controllerDidChangeCurrentUser: { [weak delegate] in
                 delegate?.currentUserController($0, didChangeCurrentUser: $1)
+            },
+            controllerDidChangeConnectionStatus: { [weak delegate] in
+                delegate?.currentUserController($0, didUpdateConnectionStatus: $1)
             }
         )
     }
@@ -299,5 +356,19 @@ public extension CurrentUserController {
     var delegate: CurrentUserControllerDelegate? {
         set { multicastDelegate.mainDelegate = AnyCurrentUserControllerDelegate(newValue) }
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? CurrentUserControllerDelegate }
+    }
+}
+
+/// A connection event observer to handle `ConnectionStatusUpdated` events.
+private class ConnectionEventObserver: EventObserver {
+    init(
+        notificationCenter: NotificationCenter,
+        filter: ((ConnectionStatusUpdated) -> Bool)? = nil,
+        callback: @escaping (ConnectionStatusUpdated) -> Void
+    ) {
+        super.init(notificationCenter: notificationCenter, transform: { $0 as? ConnectionStatusUpdated }) {
+            guard filter == nil || filter?($0) == true else { return }
+            callback($0)
+        }
     }
 }
