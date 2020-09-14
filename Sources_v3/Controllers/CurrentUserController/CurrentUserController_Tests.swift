@@ -19,11 +19,7 @@ final class CurrentUserController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = Client(
-            config: ChatClientConfig(apiKey: .init(.unique)),
-            workerBuilders: [Worker.init],
-            environment: env.clientEnvironment
-        )
+        client = Client.mock
         controller = CurrentUserController(client: client, environment: env.currentUserControllerEnvironment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
@@ -31,6 +27,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     override func tearDown() {
         controllerCallbackQueueID = nil
+        client.mockAPIClient.cleanUp()
         
         AssertAsync {
             Assert.canBeReleased(&controller)
@@ -95,7 +92,7 @@ final class CurrentUserController_Tests: StressTestCase {
         let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user, unreadCount: unreadCount)
 
         // Save user to the db
-        try env.databaseContainer.writeSynchronously {
+        try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
         
@@ -222,7 +219,7 @@ final class CurrentUserController_Tests: StressTestCase {
         XCTAssertNil(startUpdatingError)
 
         // Simulate saving current user to a database
-        try env.databaseContainer.writeSynchronously {
+        try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: currentUserPayload)
         }
         
@@ -253,7 +250,7 @@ final class CurrentUserController_Tests: StressTestCase {
         XCTAssertNil(startUpdatingError)
 
         // Simulate saving current user to a database
-        try env.databaseContainer.writeSynchronously {
+        try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: currentUserPayload)
         }
         
@@ -266,7 +263,7 @@ final class CurrentUserController_Tests: StressTestCase {
         )
         
         // Simulate updating current user in a database
-        try env.databaseContainer.writeSynchronously {
+        try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: currentUserPayload)
         }
         
@@ -292,7 +289,7 @@ final class CurrentUserController_Tests: StressTestCase {
         XCTAssertNil(startUpdatingError)
 
         // Simulate saving current user to a database
-        try env.databaseContainer.writeSynchronously {
+        try client.databaseContainer.writeSynchronously {
             let currentUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(
                 userId: .unique,
                 role: .user,
@@ -380,11 +377,4 @@ private class TestEnvironment {
             self.currentUserObserver.startUpdatingError = self.currentUserObserverStartUpdatingError
             return self.currentUserObserver!
         })
-    
-    var databaseContainer: DatabaseContainerMock!
-    
-    lazy var clientEnvironment: ChatClient.Environment = .init(databaseContainerBuilder: { [unowned self] in
-        self.databaseContainer = try! DatabaseContainerMock(kind: $0)
-        return self.databaseContainer
-    })
 }
