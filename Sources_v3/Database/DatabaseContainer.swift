@@ -16,6 +16,9 @@ class DatabaseContainer: NSPersistentContainer {
         case onDisk(databaseFileURL: URL)
     }
     
+    /// We use `writableContext` for having just one place to save changes
+    /// so it’s not possible to have conflicts when saving payloads from various sources.
+    /// All writes are happening serially using this context and its `write { }` methods.
     lazy var writableContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
@@ -23,6 +26,14 @@ class DatabaseContainer: NSPersistentContainer {
         return context
     }()
     
+    /// This is the same thing as `viewContext` only it doesn’t run on main thread.
+    /// It’s just an optimization for removing as much as possible from the main thread.
+    ///
+    /// Updating DTOs from this context will lead to issues.
+    /// Use `writableContext` to mutate database entitites.
+    ///
+    /// Use this context to observe non-time sensitive changes.
+    /// If you need a time sensitive context, use `viewContext` instead.
     lazy var backgroundReadOnlyContext: NSManagedObjectContext = {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
