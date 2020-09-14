@@ -94,7 +94,7 @@ class ConnectionEventObserver: EventObserver {
         filter: ((ConnectionStatusUpdated) -> Bool)? = nil,
         callback: @escaping (ConnectionStatusUpdated) -> Void
     ) {
-        super.init(notificationCenter: notificationCenter, tranform: { $0 as? ConnectionStatusUpdated }) {
+        super.init(notificationCenter: notificationCenter, transform: { $0 as? ConnectionStatusUpdated }) {
             guard filter == nil || filter?($0) == true else { return }
             callback($0)
         }

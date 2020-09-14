@@ -58,7 +58,7 @@ final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: Worker {
             filter: @escaping (ConnectionStatusUpdated) -> Bool,
             callback: @escaping () -> Void
         ) {
-            super.init(notificationCenter: notificationCenter, tranform: { ($0 as? ConnectionStatusUpdated) }) {
+            super.init(notificationCenter: notificationCenter, transform: { ($0 as? ConnectionStatusUpdated) }) {
                 guard filter($0) else { return }
                 callback()
             }

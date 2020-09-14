@@ -10,7 +10,7 @@ final class MemberEventObserver: EventObserver {
         filter: @escaping (MemberEvent) -> Bool,
         callback: @escaping (MemberEvent) -> Void
     ) {
-        super.init(notificationCenter: notificationCenter, tranform: { $0 as? MemberEvent }) {
+        super.init(notificationCenter: notificationCenter, transform: { $0 as? MemberEvent }) {
             guard filter($0) else { return }
             callback($0)
         }

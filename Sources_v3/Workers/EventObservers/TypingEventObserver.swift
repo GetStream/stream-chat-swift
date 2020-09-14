@@ -10,7 +10,7 @@ final class TypingEventObserver: EventObserver {
         filter: @escaping (TypingEvent) -> Bool,
         callback: @escaping (TypingEvent) -> Void
     ) {
-        super.init(notificationCenter: notificationCenter, tranform: { $0 as? TypingEvent }) {
+        super.init(notificationCenter: notificationCenter, transform: { $0 as? TypingEvent }) {
             guard filter($0) else { return }
             callback($0)
         }
