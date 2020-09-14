@@ -84,13 +84,14 @@ public class Client<ExtraData: ExtraDataTypes> {
     /// The `WebSocketClient` instance `Client` uses to communicate with Stream WS servers.
     lazy var webSocketClient: WebSocketClient = {
         // Create a connection request
-        let webSocketEndpoint = webSocketConnectEndpoint(userId: self.currentUserId)
+        let webSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
+            userId: self.currentUserId,
+            extraData: nil as ExtraData.User?
+        )
         
         var encoder = environment.requestEncoderBuilder(config.baseURL.webSocketBaseURL, config.apiKey)
         encoder.connectionDetailsProviderDelegate = self
-        
-        let connectEndpoint = webSocketConnectEndpoint(userId: currentUserId)
-        
+                
         // Create a WebSocketClient.
         let webSocketClient = environment.webSocketClientBuilder(
             webSocketEndpoint,
@@ -162,13 +163,13 @@ public class Client<ExtraData: ExtraDataTypes> {
     ]
     
     /// The current connection id
-    @Atomic private var connectionId: String?
+    @Atomic var connectionId: String?
     
     /// An array of requests waiting for the connection id
-    @Atomic private var connectionIdWaiters: [(String?) -> Void] = []
+    @Atomic var connectionIdWaiters: [(String?) -> Void] = []
     
     /// The token of the current user. If the current user is anonymous, the token is `nil`.
-    @Atomic private var currentToken: Token?
+    @Atomic var currentToken: Token?
     
     /// Creates a new instance of Stream Chat `Client`.
     ///
@@ -215,158 +216,8 @@ public class Client<ExtraData: ExtraDataTypes> {
         connectionIdWaiters.removeAll()
     }
     
-    /// Sets a new anonymous current user of the ChatClient.
-    ///
-    /// Anonymous users have limited set of permissions. A typical use case for anonymous users are livestream channels,
-    /// where they are allowed to read the conversation.
-    ///
-    /// - Parameters:
-    ///   - completion: Called when the new anonymous user is set. If setting up the new user fails, the completion
-    /// is called with an error.
-    public func setAnonymousUser(completion: ((Error?) -> Void)? = nil) {
-        disconnect()
-        prepareEnvironmentForNewUser(userId: .anonymous, role: .anonymous, extraData: nil) { error in
-            guard error == nil else {
-                completion?(error)
-                return
-            }
-            
-            self.connect(completion: completion)
-        }
-    }
-    
-    /// Sets a new **guest** user of the `ChatClient` as a current user.
-    ///
-    /// Guest sessions do not require any server-side authentication.
-    /// Guest users have a limited set of permissions.
-    ///
-    /// - Parameters:
-    ///   - userId: The new guest-user identifier.
-    ///   - extraData: The extra data of the new guest-user.
-    ///   - completion: The completion. Will be called when the new guest user is set.
-    ///                 If setting up the new user fails the completion will be called with an error.
-    public func setGuestUser(userId: UserId, extraData: ExtraData.User, completion: ((Error?) -> Void)? = nil) {
-        disconnect()
-        prepareEnvironmentForNewUser(userId: userId, role: .guest, extraData: extraData) { error in
-            guard error == nil else {
-                completion?(error)
-                return
-            }
-            
-            self.apiClient.request(endpoint: .guestUserToken(userId: userId, extraData: extraData)) { [weak self] in
-                guard let self = self else { return }
-                
-                switch $0 {
-                case let .success(payload):
-                    self.currentToken = payload.token
-                    self.connect(completion: completion)
-                case let .failure(error):
-                    completion?(error)
-                }
-            }
-        }
-    }
-    
-    /// Sets a new current user of the ChatClient.
-    ///
-    /// - Important: Setting a new user disconnects all the existing controllers. You should create new controllers
-    /// if you want to keep receiving updates about the newly set user.
-    ///
-    /// - Parameters:
-    ///   - userId: The id of the new current user.
-    ///   - userExtraData: You can optionally provide additional data to be set for the user. This is an equivalent of
-    ///   setting the current user detail data manually using `CurrentUserController`.
-    ///   - token: You can provide a token which is used for user authentication. If the `token` is not explicitly provided,
-    ///   the client uses `ChatClientConfig.tokenProvider` to obtain a token. If you haven't specified the token provider,
-    ///   providing a token explicitly is required. In case both the `token` and `ChatClientConfig.tokenProvider` is specified,
-    ///   the `token` value is used.
-    ///   - completion: Called when the new user is successfully set.
-    public func setUser(
-        userId: UserId,
-        userExtraData: ExtraData.User? = nil,
-        token: Token? = nil,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        guard token != nil || config.tokenProvider != nil else {
-            log.assert(
-                false,
-                "The provided token is `nil` and `ChatClientConfig.tokenProvider` is also `nil`. You must either provide " +
-                    "a token explicitly or set `TokenProvider` in `ChatClientConfig`."
-            )
-            completion?(ClientError.MissingToken())
-            return
-        }
-        
-        guard userId != currentUserId else {
-            log.warning("New user with id:<\(userId)> is not set because it's similar to the already logged-in user.")
-            completion?(nil)
-            return
-        }
-        
-        disconnect()
-        
-        prepareEnvironmentForNewUser(userId: userId, role: .user, extraData: userExtraData) { error in
-            guard error == nil else {
-                completion?(error)
-                return
-            }
-            
-            if let token = token {
-                self.currentToken = token
-                self.connect(completion: completion)
-                
-            } else {
-                // Use `tokenProvider` to get the token
-                self.refreshToken { [weak self] (error) in
-                    guard error != nil else {
-                        completion?(error)
-                        return
-                    }
-                    
-                    self?.connect(completion: completion)
-                }
-            }
-        }
-    }
-    
-    /// Connects `Client` to the chat servers. When the connection is established, `Client` starts receiving chat updates.
-    ///
-    /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
-    /// called with an error.
-    public func connect(completion: ((Error?) -> Void)? = nil) {
-        guard connectionId == nil else {
-            log.warning("The client is already connected. Skipping the `connect` call.")
-            completion?(nil)
-            return
-        }
-        
-        // Set up a waiter for the new connection id to know when the connection process is finished
-        provideConnectionId { connectionId in
-            if connectionId != nil {
-                completion?(nil)
-            } else {
-                completion?(ClientError.ConnectionNotSuccessfull())
-            }
-        }
-        
-        webSocketClient.connect()
-    }
-    
-    /// Disconnects `Client` from the chat servers. No further updates from the servers are received.
-    public func disconnect() {
-        // Disconnect the web socket
-        webSocketClient.disconnect(source: .userInitiated)
-        
-        // Reset `connectionId`. This would happen asynchronously by the callback from WebSocketClient anyway, but it's
-        // safer to do it here synchronously to immediately stop all API calls.
-        connectionId = nil
-        
-        // Remove all waiters for connectionId
-        connectionIdWaiters.removeAll()
-    }
-    
     // TODO: Not used & tested yet -> CIS-224
-    private func refreshToken(completion: @escaping (Error?) -> Void) {
+    func refreshToken(completion: @escaping (Error?) -> Void) {
         log.assert(config.tokenProvider != nil, "You can't call `refreshToken` when `Config.tokenProvider` is nil.")
         
         config.tokenProvider?(config.apiKey, currentUserId, { [weak self] (token) in
@@ -379,56 +230,10 @@ public class Client<ExtraData: ExtraDataTypes> {
         })
     }
     
-    private func createBackgroundWorkers() {
+    func createBackgroundWorkers() {
         backgroundWorkers = workerBuilders.map { builder in
             builder(self.databaseContainer, self.webSocketClient, self.apiClient)
         }
-    }
-    
-    private func prepareEnvironmentForNewUser(
-        userId: UserId,
-        role: UserRole,
-        extraData: ExtraData.User? = nil,
-        completion: @escaping (Error?) -> Void
-    ) {
-        // Reset the current token
-        currentToken = nil
-        
-        // Set up a new user id
-        currentUserId = userId
-        
-        // Set a new WebSocketClient connect endpoint
-        webSocketClient.connectEndpoint = webSocketConnectEndpoint(userId: userId, role: role, extraData: extraData)
-        
-        // If the new user is not the same as the last logged-in one....
-        if databaseContainer.viewContext.currentUser()?.user.id != userId {
-            // Re-create backgroundWorker's so their ongoing requests won't affect database state
-            createBackgroundWorkers()
-            
-            // Reset all existing local data
-            databaseContainer.removeAllData(force: true) { completion($0) }
-        } else {
-            // Otherwise we're done
-            completion(nil)
-        }
-    }
-    
-    private func webSocketConnectEndpoint(
-        userId: UserId,
-        role: UserRole = .user,
-        extraData: ExtraData.User? = nil
-    ) -> Endpoint<EmptyResponse> {
-        // Create a connection request
-        let socketPayload = WebSocketConnectPayload<ExtraData.User>(userId: currentUserId, userRole: role, extraData: extraData)
-        let webSocketEndpoint = Endpoint<EmptyResponse>(
-            path: "connect",
-            method: .get,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["json": socketPayload]
-        )
-        
-        return webSocketEndpoint
     }
 }
 
