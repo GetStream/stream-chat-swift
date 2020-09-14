@@ -320,6 +320,18 @@ final class CurrentUserController_Tests: StressTestCase {
         AssertAsync.willBeEqual(client.provideToken(), newToken)
     }
     
+    func test_setAnonymousUser_forwardsDatabaseError() throws {
+        // Set the error to be thrown on database write
+        let databaseError = TestError()
+        client.mockDatabaseContainer.write_errorResponse = databaseError
+        
+        // Set up a new anonymous user and wait for the completion
+        let completionError = try await(controller.setAnonymousUser)
+        
+        // Assert error is forwarded
+        AssertAsync.willBeEqual(completionError as? TestError, databaseError)
+    }
+    
     func test_setAnonymousUser() {
         let oldUserId = client.currentUserId
         let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
@@ -355,6 +367,44 @@ final class CurrentUserController_Tests: StressTestCase {
 
         // Check the completion is called
         AssertAsync.willBeTrue(setUserCompletionCalled)
+    }
+    
+    func test_setUser_forwardsDatabaseError() throws {
+        // Set the error to be thrown on database write
+        let databaseError = TestError()
+        client.mockDatabaseContainer.write_errorResponse = databaseError
+        
+        // Set up a new anonymous user and wait for the completion
+        let completionError = try await {
+            controller.setUser(userId: .unique, token: .unique, completion: $0)
+        }
+        
+        // Assert error is forwarded
+        AssertAsync.willBeEqual(completionError as? TestError, databaseError)
+    }
+    
+    func test_setUser_forwardsTokenProviderError() throws {
+        var tokenCompletion: ((Token?) -> Void)!
+        
+        // Create client with token provider that saves a completion
+        var config = ChatClientConfig(apiKey: .init(.unique))
+        config.tokenProvider = { tokenCompletion = $2 }
+        let client = ChatClient(config: config)
+        
+        // Set a new user without a token and capture the error
+        var completionError: Error?
+        client.currentUserController().setUser(userId: .unique, token: nil) {
+            completionError = $0
+        }
+        
+        // Assert token provider is invoked
+        AssertAsync.willBeTrue(tokenCompletion != nil)
+        
+        // Simulate failed attempt to fetch a token
+        tokenCompletion(nil)
+                
+        // Make sure the completion is not called yet
+        AssertAsync.willBeTrue(completionError is ClientError.MissingToken)
     }
 
     func test_setUser() {
@@ -434,6 +484,38 @@ final class CurrentUserController_Tests: StressTestCase {
 
         // Assert DB flush wasn't called
         XCTAssert(client.mockDatabaseContainer.flush_called == false)
+    }
+    
+    func test_setGuestUser_forwardsDatabaseError() throws {
+        // Set the error to be thrown on database write
+        let databaseError = TestError()
+        client.mockDatabaseContainer.write_errorResponse = databaseError
+        
+        // Set up a new guest user and wait for the completion
+        let completionError = try await {
+            controller.setGuestUser(userId: .unique, extraData: .defaultValue, completion: $0)
+        }
+        
+        // Assert error is forwarded
+        AssertAsync.willBeEqual(completionError as? TestError, databaseError)
+    }
+    
+    func test_setGuestUser_forwardsNetworkError() throws {
+        // Set up a new anonymous user and wait for the completion
+        var completionError: Error?
+        controller.setGuestUser(userId: .unique, extraData: .defaultValue) {
+            completionError = $0
+        }
+        
+        AssertAsync.willBeTrue(client.mockAPIClient.request_endpoint != nil)
+        
+        // Set the error to be thrown on database write
+        let networkError = TestError()
+        let networkResponse: Result<GuestUserTokenPayload<NameAndImageExtraData>, Error> = .failure(networkError)
+        client.mockAPIClient.test_simulateResponse(networkResponse)
+        
+        // Assert error is forwarded
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
     func test_setGuestUser() {

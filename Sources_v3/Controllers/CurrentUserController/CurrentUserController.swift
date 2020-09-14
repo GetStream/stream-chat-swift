@@ -286,7 +286,7 @@ public extension CurrentUserControllerGeneric {
             } else {
                 // Use `tokenProvider` to get the token
                 self.client.refreshToken { error in
-                    guard error != nil else {
+                    guard error == nil else {
                         completion?(error)
                         return
                     }
