@@ -69,7 +69,9 @@ struct ChannelListView: View {
         /// Settings and create channel buttons.
         .navigationBarItems(leading: showSettingsButton, trailing: addChannelButton)
         /// Settings presenter.
-        .sheet(isPresented: $showSettings, content: { SettingsView() })
+        .sheet(isPresented: $showSettings, content: {
+            SettingsView(currentUserController: self.channelList.controller.client.currentUserController())
+        })
     }
     
     // MARK: - Views
