@@ -116,6 +116,186 @@ public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: Controller
 
         callback { completion?(nil) }
     }
+    
+    private func prepareEnvironmentForNewUser(
+        userId: UserId,
+        role: UserRole,
+        extraData: ExtraData.User? = nil,
+        completion: @escaping (Error?) -> Void
+    ) {
+        // Reset the current token
+        client.currentToken = nil
+        
+        // Set up a new user id
+        client.currentUserId = userId
+        
+        // Set a new WebSocketClient connect endpoint
+        client.webSocketClient.connectEndpoint = .webSocketConnect(userId: userId, role: role, extraData: extraData)
+        
+        // Reset all existing data if the new user is not the same as the last logged-in one
+        if client.databaseContainer.viewContext.currentUser()?.user.id != userId {
+            // Re-create backgroundWorker's so their ongoing requests won't affect database state
+            client.createBackgroundWorkers()
+
+            // Reset all existing local data
+            client.databaseContainer.removeAllData(force: true) { completion($0) }
+        } else {
+            // Otherwise we're done
+            completion(nil)
+        }
+    }
+}
+
+// MARK: - Set current user
+
+public extension CurrentUserControllerGeneric {
+    /// Connects a client the controller owns to the chat servers.
+    /// When the connection is established, `Client` starts receiving chat updates.
+    ///
+    /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
+    /// called with an error.
+    func connect(completion: ((Error?) -> Void)? = nil) {
+        guard client.connectionId == nil else {
+            log.warning("The client is already connected. Skipping the `connect` call.")
+            completion?(nil)
+            return
+        }
+        
+        // Set up a waiter for the new connection id to know when the connection process is finished
+        client.provideConnectionId { connectionId in
+            if connectionId != nil {
+                completion?(nil)
+            } else {
+                completion?(ClientError.ConnectionNotSuccessfull())
+            }
+        }
+        
+        client.webSocketClient.connect()
+    }
+    
+    /// Disconnects a client the controller owns from the chat servers. No further updates from the servers are received.
+    func disconnect() {
+        // Disconnect the web socket
+        client.webSocketClient.disconnect(source: .userInitiated)
+        
+        // Reset `connectionId`. This would happen asynchronously by the callback from WebSocketClient anyway, but it's
+        // safer to do it here synchronously to immediately stop all API calls.
+        client.connectionId = nil
+        
+        // Remove all waiters for connectionId
+        client.connectionIdWaiters.removeAll()
+    }
+    
+    /// Sets a new anonymous as a current user.
+    ///
+    /// Anonymous users have limited set of permissions. A typical use case for anonymous users are livestream channels,
+    /// where they are allowed to read the conversation.
+    ///
+    /// - Parameters:
+    ///   - completion: Called when the new anonymous user is set. If setting up the new user fails, the completion
+    /// is called with an error.
+    func setAnonymousUser(completion: ((Error?) -> Void)? = nil) {
+        disconnect()
+        prepareEnvironmentForNewUser(userId: .anonymous, role: .anonymous, extraData: nil) { error in
+            guard error == nil else {
+                completion?(error)
+                return
+            }
+            
+            self.connect(completion: completion)
+        }
+    }
+    
+    /// Sets a new **guest** user as a current user.
+    ///
+    /// Guest sessions do not require any server-side authentication.
+    /// Guest users have a limited set of permissions.
+    ///
+    /// - Parameters:
+    ///   - userId: The new guest-user identifier.
+    ///   - extraData: The extra data of the new guest-user.
+    ///   - completion: The completion. Will be called when the new guest user is set.
+    ///                 If setting up the new user fails the completion will be called with an error.
+    func setGuestUser(userId: UserId, extraData: ExtraData.User, completion: ((Error?) -> Void)? = nil) {
+        disconnect()
+        prepareEnvironmentForNewUser(userId: userId, role: .guest, extraData: extraData) { error in
+            guard error == nil else {
+                completion?(error)
+                return
+            }
+            
+            self.client.apiClient.request(endpoint: .guestUserToken(userId: userId, extraData: extraData)) {
+                switch $0 {
+                case let .success(payload):
+                    self.client.currentToken = payload.token
+                    self.connect(completion: completion)
+                case let .failure(error):
+                    completion?(error)
+                }
+            }
+        }
+    }
+    
+    /// Sets a new current user.
+    ///
+    /// - Important: Setting a new user disconnects all the existing controllers. You should create new controllers
+    /// if you want to keep receiving updates about the newly set user.
+    ///
+    /// - Parameters:
+    ///   - userId: The id of the new current user.
+    ///   - userExtraData: You can optionally provide additional data to be set for the user. This is an equivalent of
+    ///   setting the current user detail data manually using `CurrentUserController`.
+    ///   - token: You can provide a token which is used for user authentication. If the `token` is not explicitly provided,
+    ///   the client uses `ChatClientConfig.tokenProvider` to obtain a token. If you haven't specified the token provider,
+    ///   providing a token explicitly is required. In case both the `token` and `ChatClientConfig.tokenProvider` is specified,
+    ///   the `token` value is used.
+    ///   - completion: Called when the new user is successfully set.
+    func setUser(
+        userId: UserId,
+        userExtraData: ExtraData.User? = nil,
+        token: Token? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard token != nil || client.config.tokenProvider != nil else {
+            log.assert(
+                false,
+                "The provided token is `nil` and `ChatClientConfig.tokenProvider` is also `nil`. You must either provide " +
+                    "a token explicitly or set `TokenProvider` in `ChatClientConfig`."
+            )
+            completion?(ClientError.MissingToken())
+            return
+        }
+        
+        guard userId != client.currentUserId else {
+            log.warning("New user with id:<\(userId)> is not set because it's similar to the already logged-in user.")
+            completion?(nil)
+            return
+        }
+        
+        disconnect()
+        
+        prepareEnvironmentForNewUser(userId: userId, role: .user, extraData: userExtraData) { error in
+            guard error == nil else {
+                completion?(error)
+                return
+            }
+            
+            if let token = token {
+                self.client.currentToken = token
+                self.connect(completion: completion)
+            } else {
+                // Use `tokenProvider` to get the token
+                self.client.refreshToken { error in
+                    guard error != nil else {
+                        completion?(error)
+                        return
+                    }
+                    
+                    self.connect(completion: completion)
+                }
+            }
+        }
+    }
 }
 
 // MARK: - Environment

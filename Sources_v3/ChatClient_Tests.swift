@@ -223,24 +223,6 @@ class ChatClient_Tests: StressTestCase {
         AssertAsync.staysTrue(providedConnectionId == nil)
     }
     
-    func test_clientProvidesToken() throws {
-        // Create a new chat client
-        let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            environment: testEnv.environment
-        )
-        
-        // Assert the token of anonymous user is `nil`
-        XCTAssertNil(client.provideToken())
-        
-        // Set a new user
-        let newToken: Token = .unique
-        client.setUser(userId: .unique, token: newToken)
-        
-        AssertAsync.willBeEqual(client.provideToken(), newToken)
-    }
-    
     func test_clientProvidesToken_fromTokenProvider() throws {
         let newUserId: UserId = .unique
         let newToken: Token = .unique
@@ -263,7 +245,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNil(client.provideToken())
         
         // Set a new user without an explicit token
-        client.setUser(userId: newUserId)
+        client.currentUserController().setUser(userId: newUserId)
         
         AssertAsync.willBeEqual(client.provideToken(), newToken)
     }
@@ -340,122 +322,6 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNil(testEnv.databaseContainer?.viewContext.currentUser())
     }
     
-    func test_settingAnonymousUser() {
-        let client = Client(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            environment: testEnv.environment
-        )
-        assert(testEnv.webSocketClient!.connect_calledCounter == 0)
-        
-        let oldUserId = client.currentUserId
-        let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
-        
-        // Set up a new anonymous user
-        var setUserCompletionCalled = false
-        client.setAnonymousUser(completion: { _ in setUserCompletionCalled = true })
-        
-        AssertAsync {
-            // New user id is set
-            Assert.willBeTrue(client.currentUserId != oldUserId)
-            
-            // Database should be flushed
-            Assert.willBeTrue(self.testEnv.databaseContainer?.flush_called == true)
-            
-            // WebSocketClient connect endpoint is updated
-            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(client.webSocketClient.connectEndpoint))
-            
-            // New user id is used in `TypingStartCleanupMiddleware`
-            Assert.willBeTrue(
-                client.webSocketClient.typingMiddleware?.excludedUserIds().contains(client.currentUserId) == true
-            )
-            
-            // WebSocketClient connect is called
-            Assert.willBeEqual(self.testEnv.webSocketClient?.connect_calledCounter, 1)
-        }
-        
-        // Make sure the completion is not called yet
-        XCTAssertFalse(setUserCompletionCalled)
-        
-        // Simulate successful connection
-        testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(
-                testEnv.webSocketClient!,
-                didUpdateConectionState: .connected(connectionId: .unique)
-            )
-        
-        // Check the completion is called
-        AssertAsync.willBeTrue(setUserCompletionCalled)
-    }
-    
-    func test_settingUser() {
-        let client = Client(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            environment: testEnv.environment
-        )
-        
-        assert(testEnv.webSocketClient!.connect_calledCounter == 0)
-        
-        let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
-        
-        let newUserId: UserId = .unique
-        let newUserToken: Token = .unique
-        
-        // Set up a new user
-        var setUserCompletionCalled = false
-        client.setUser(userId: newUserId, token: newUserToken, completion: { _ in setUserCompletionCalled = true })
-        
-        AssertAsync {
-            // New user id is set
-            Assert.willBeEqual(client.currentUserId, newUserId)
-            
-            // Database should be flushed
-            Assert.willBeTrue(self.testEnv.databaseContainer?.flush_called == true)
-            
-            // WebSocketClient connect endpoint is updated
-            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(client.webSocketClient.connectEndpoint))
-            
-            // New user id is used in `TypingStartCleanupMiddleware`
-            Assert.willBeTrue(
-                client.webSocketClient.typingMiddleware?.excludedUserIds().contains(newUserId) == true
-            )
-            
-            // WebSocketClient connect is called
-            Assert.willBeEqual(self.testEnv.webSocketClient?.connect_calledCounter, 1)
-        }
-        
-        // Make sure the completion is not called yet
-        XCTAssertFalse(setUserCompletionCalled)
-        
-        // Simulate a health check event with the current user data
-        // This should trigger the middlewares and save the current user data to DB
-        testEnv.webSocketClient?.webSocketDidReceiveMessage(healthCheckEventJSON(userId: newUserId))
-        
-        // Simulate successful connection
-        testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(
-                testEnv.webSocketClient!,
-                didUpdateConectionState: .connected(connectionId: .unique)
-            )
-        
-        var currentUser: CurrentUserDTO? {
-            testEnv.databaseContainer?.viewContext.currentUser()
-        }
-        
-        // Check the completion is called and the current user model is available
-        AssertAsync {
-            // Completion is called
-            Assert.willBeTrue(setUserCompletionCalled)
-            
-            // Current user is available
-            Assert.willBeEqual(currentUser?.user.id, newUserId)
-            
-            // The token is updated
-            Assert.willBeEqual(client.provideToken(), newUserToken)
-        }
-    }
-    
     func test_settingUser_resetsBackgroundWorkers() {
         // TestWorker to be used for checking if workers are re-created
         class TestWorker: Worker {
@@ -472,19 +338,21 @@ class ChatClient_Tests: StressTestCase {
             environment: testEnv.environment
         )
         
+        let currentUserController = client.currentUserController()
+
         // Generate userIds for first user
         let oldUserId: UserId = .unique
         let oldUserToken: Token = .unique
         
         // Set a user
-        client.setUser(userId: oldUserId, token: oldUserToken)
-        
+        currentUserController.setUser(userId: oldUserId, token: oldUserToken)
+
         // Save worker's UUID
         let oldWorkerUUID = (client.backgroundWorkers.first as! TestWorker).id
         
         // Set the same user again
-        client.setUser(userId: oldUserId, token: oldUserToken)
-        
+        currentUserController.setUser(userId: oldUserId, token: oldUserToken)
+
         // .. to make sure worker's are not re-created for the same user
         XCTAssertEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)
         
@@ -493,183 +361,10 @@ class ChatClient_Tests: StressTestCase {
         let newUserToken: Token = .unique
         
         // Set a user
-        client.setUser(userId: newUserId, token: newUserToken)
-        
+        currentUserController.setUser(userId: newUserId, token: newUserToken)
+
         // Check if the worker is re-created
         XCTAssertNotEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)
-    }
-    
-    func test_settingUser_shouldNotDeleteDB_whenUserIsTheSame() throws {
-        let client = Client(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            environment: testEnv.environment
-        )
-        
-        let newUserId: UserId = .unique
-        let newUserToken: Token = .unique
-
-        // Set a new user
-        client.setUser(userId: newUserId, token: newUserToken)
-
-        // Assert flush was called initially
-        XCTAssert(testEnv.databaseContainer?.flush_called == true)
-        
-        // Reset the DB flush_called flag
-        testEnv.databaseContainer?.flush_called = false
-       
-        // Disconnect
-        client.disconnect()
-
-        // Set the same user again
-        client.setUser(userId: newUserId, token: newUserToken)
-
-        // Assert DB flush wasn't called
-        XCTAssert(testEnv.databaseContainer?.flush_called == false)
-    }
-    
-    func test_settingGuestUser() {
-        let client = Client(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            environment: testEnv.environment
-        )
-        
-        assert(testEnv.webSocketClient!.connect_calledCounter == 0)
-        
-        let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
-        
-        let newUserToken: Token = .unique
-        let newUserExtraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
-        let newUser = GuestUserTokenRequestPayload(userId: .unique, extraData: newUserExtraData)
-        
-        // Set up a new guest user
-        var setUserCompletionCalled = false
-        client.setGuestUser(
-            userId: newUser.userId,
-            extraData: newUserExtraData,
-            completion: { _ in setUserCompletionCalled = true }
-        )
-        
-        AssertAsync {
-            // `WebSocketClient.disconnect(source:)` should be called once
-            Assert.willBeEqual(self.testEnv.webSocketClient?.disconnect_calledCounter, 1)
-            
-            // Token should be flushed
-            Assert.willBeNil(client.provideToken())
-            
-            // Database should be flushed
-            Assert.willBeTrue(self.testEnv.databaseContainer?.flush_called == true)
-            
-            // New user id is set
-            Assert.willBeEqual(client.currentUserId, newUser.userId)
-            
-            // New user id is used in `TypingStartCleanupMiddleware`
-            Assert.willBeTrue(
-                client.webSocketClient.typingMiddleware?.excludedUserIds().contains(newUser.userId) == true
-            )
-            
-            // Make sure `guest` endpoint is called
-            Assert.willBeEqual(
-                self.testEnv.apiClient!.request_endpoint,
-                AnyEndpoint(.guestUserToken(userId: newUser.userId, extraData: newUserExtraData))
-            )
-        }
-        
-        // Make sure the completion is not called yet
-        XCTAssertFalse(setUserCompletionCalled)
-        
-        // Simulate a successful response from `guest` endpoint with a token
-        let payload = GuestUserTokenPayload(
-            user: .dummy(userId: newUser.userId, role: .guest, extraData: newUserExtraData),
-            token: newUserToken
-        )
-        testEnv.apiClient!.test_simulateResponse(.success(payload))
-        
-        AssertAsync {
-            // The token from `guest` endpoint payload is set
-            Assert.willBeEqual(client.provideToken(), newUserToken)
-            
-            // WebSocketClient connect endpoint is updated
-            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(client.webSocketClient.connectEndpoint))
-            
-            // WebSocketClient connect is called
-            Assert.willBeEqual(self.testEnv.webSocketClient?.connect_calledCounter, 1)
-        }
-        
-        // Simulate a health check event with the current user data
-        // This should trigger the middlewares and save the current user data to DB
-        testEnv.webSocketClient?.webSocketDidReceiveMessage(healthCheckEventJSON(userId: newUser.userId))
-        
-        // Simulate successful connection
-        testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(
-                testEnv.webSocketClient!,
-                didUpdateConectionState: .connected(connectionId: .unique)
-            )
-        
-        var currentUser: CurrentUserDTO? {
-            testEnv.databaseContainer?.viewContext.currentUser()
-        }
-        
-        // Check the completion is called and the current user model is available
-        AssertAsync {
-            // Completion is called
-            Assert.willBeTrue(setUserCompletionCalled)
-            // Current user is available
-            Assert.willBeEqual(currentUser?.user.id, newUser.userId)
-        }
-    }
-    
-    func test_disconnectAndConnect() {
-        // Set up a new anonymous user
-        let client = Client(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
-            environment: testEnv.environment
-        )
-        
-        // Set up a new anonymous user and wait for completion
-        var setUserCompletionCalled = false
-        client.setAnonymousUser(completion: { _ in setUserCompletionCalled = true })
-        
-        // Simulate successful connection
-        testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(
-                testEnv.webSocketClient!,
-                didUpdateConectionState: .connected(connectionId: .unique)
-            )
-        
-        // Wait for the connection to succeed
-        AssertAsync.willBeTrue(setUserCompletionCalled)
-        
-        // Reset the call counters
-        testEnv.webSocketClient?.connect_calledCounter = 0
-        testEnv.webSocketClient?.disconnect_calledCounter = 0
-        
-        // Disconnect and assert WS is disconnected
-        client.disconnect()
-        XCTAssertEqual(testEnv.webSocketClient?.disconnect_calledCounter, 1)
-        
-        // Simulate WS disconnecting
-        testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .disconnected(error: nil))
-        
-        // Call connect again and assert WS connect is called
-        var connectCompletionCalled = false
-        client.connect(completion: { _ in connectCompletionCalled = true })
-        XCTAssertEqual(testEnv.webSocketClient!.connect_calledCounter, 1)
-        
-        // Simulate successful connection
-        testEnv.webSocketClient!.connectionStateDelegate?
-            .webSocketClient(
-                testEnv.webSocketClient!,
-                didUpdateConectionState: .connected(connectionId: .unique)
-            )
-        
-        AssertAsync {
-            Assert.willBeTrue(connectCompletionCalled)
-        }
     }
 }
 
@@ -722,44 +417,6 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
             }
         )
     }()
-}
-
-// MARK: - Local helpers
-
-private func healthCheckEventJSON(userId: UserId) -> String {
-    """
-    {
-        "created_at" : "2020-07-10T11:44:29.190502105Z",
-        "me" : {
-            "language" : "",
-            "totalUnreadCount" : 0,
-            "unread_count" : 0,
-            "image" : "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall",
-            "updated_at" : "2020-07-10T11:44:29.179977Z",
-            "unreadChannels" : 0,
-            "total_unread_count" : 0,
-            "mutes" : [],
-            "unread_channels" : 0,
-            "devices" : [],
-            "name" : "broken-waterfall-5",
-            "last_active" : "2020-07-10T11:44:29.185810874Z",
-            "banned" : false,
-            "id" : "\(userId)",
-            "roles" : [],
-            "extraData" : {
-                "name" : "Tester"
-            },
-            "role" : "user",
-            "created_at" : "2019-12-12T15:33:46.488935Z",
-            "channel_mutes" : [],
-            "online" : true,
-            "invisible" : false
-        },
-        "type" : "health.check",
-        "connection_id" : "d94b53fa-ddd4-4413-8dda-8da33cabedd9",
-        "cid" : "*"
-    }
-    """
 }
 
 extension ChatClient_Tests {
@@ -873,11 +530,5 @@ extension WebSocketClientMock {
             eventNotificationCenter: .init(),
             internetConnection: InternetConnection()
         )
-    }
-}
-
-private extension WebSocketClient {
-    var typingMiddleware: TypingStartCleanupMiddleware<DefaultDataTypes>? {
-        eventNotificationCenter.middlewares.compactMap { $0 as? TypingStartCleanupMiddleware<DefaultDataTypes> }.first
     }
 }
