@@ -11,15 +11,9 @@ struct ChannelReadUpdaterMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware 
     func handle(event: Event, completion: @escaping (Event?) -> Void) {
         if let event = event as? MessageReadEvent<ExtraData> {
             updateReadEvent(for: event.cid, userId: event.userId, lastReadAt: event.readAt) { completion(event) }
-            return
-        }
-        
-        if let event = event as? NotificationMarkReadEvent<ExtraData> {
+        } else if let event = event as? NotificationMarkReadEvent<ExtraData> {
             updateReadEvent(for: event.cid, userId: event.userId, lastReadAt: event.readAt) { completion(event) }
-            return
-        }
-        
-        if let event = event as? NotificationMarkAllReadEvent<ExtraData> {
+        } else if let event = event as? NotificationMarkAllReadEvent<ExtraData> {
             database.write({ session in
                 session.loadChannelReads(for: event.userId).forEach { read in
                     read.lastReadAt = event.readAt
@@ -31,7 +25,8 @@ struct ChannelReadUpdaterMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware 
                 }
                 completion(event)
             })
-            return
+        } else {
+            completion(event)
         }
     }
     
