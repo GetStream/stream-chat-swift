@@ -21,13 +21,10 @@ import Foundation
 class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
-    private let backgroundContext: NSManagedObjectContext
 
     override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
-        backgroundContext = database.backgroundReadOnlyContext
-        
         observer = .init(
-            context: backgroundContext,
+            context: database.backgroundReadOnlyContext,
             fetchRequest: MessageDTO.messagesPendingSyncFetchRequest(),
             itemCreator: { $0 }
         )
@@ -59,11 +56,11 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
     }
 
     private func processNextMessage() {
-        backgroundContext.perform { [weak self] in
+        database.write { [weak self] session in
             guard let messageId = self?.pendingMessageIDs.first else { return }
             
             guard
-                let dto = self?.backgroundContext.message(id: messageId),
+                let dto = session.message(id: messageId),
                 dto.localMessageState == .pendingSync
             else {
                 self?.removeMessageIDAndContinue(messageId)
