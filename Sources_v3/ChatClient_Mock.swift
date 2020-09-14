@@ -13,18 +13,39 @@ extension ChatClient {
             environment: .mock
         )
     }
+    
+    var mockAPIClient: APIClientMock {
+        apiClient as! APIClientMock
+    }
+    
+    var mockWebSocketClient: WebSocketClientMock {
+        webSocketClient as! WebSocketClientMock
+    }
+    
+    var mockDatabaseContainer: DatabaseContainerMock {
+        databaseContainer as! DatabaseContainerMock
+    }
 }
 
 extension Client.Environment where ExtraData == DefaultDataTypes {
     static var mock: ChatClient.Environment {
         .init(
-            apiClientBuilder: { _, _, _ in APIClientMock() },
-            webSocketClientBuilder: { _, _, _, _, _, _ in WebSocketClientMock() },
-            databaseContainerBuilder: { _ in DatabaseContainerMock() },
-            requestEncoderBuilder: { _, _ in DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)) },
-            requestDecoderBuilder: { DefaultRequestDecoder() },
-            eventDecoderBuilder: { EventDecoder() },
-            notificationCenterBuilder: { _ in EventNotificationCenter() }
+            apiClientBuilder: APIClientMock.init,
+            webSocketClientBuilder: {
+                WebSocketClientMock(
+                    connectEndpoint: $0,
+                    sessionConfiguration: $1,
+                    requestEncoder: $2,
+                    eventDecoder: $3,
+                    eventNotificationCenter: $4,
+                    internetConnection: $5
+                )
+            },
+            databaseContainerBuilder: { try! DatabaseContainerMock(kind: $0) },
+            requestEncoderBuilder: DefaultRequestEncoder.init,
+            requestDecoderBuilder: DefaultRequestDecoder.init,
+            eventDecoderBuilder: EventDecoder.init,
+            notificationCenterBuilder: EventNotificationCenter.init
         )
     }
 }
