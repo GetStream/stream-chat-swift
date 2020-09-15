@@ -7,8 +7,6 @@ import Foundation
 
 @objc(UserDTO)
 class UserDTO: NSManagedObject {
-    static let entityName: String = "UserDTO"
-    
     @NSManaged var extraData: Data
     @NSManaged var id: String
     @NSManaged var isBanned: Bool

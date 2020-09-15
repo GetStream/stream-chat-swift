@@ -7,8 +7,6 @@ import Foundation
 
 @objc(MessageDTO)
 class MessageDTO: NSManagedObject {
-    static let entityName = "MessageDTO"
-    
     @NSManaged fileprivate var localMessageStateRaw: String?
     
     @NSManaged var id: String

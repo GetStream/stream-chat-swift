@@ -7,8 +7,6 @@ import Foundation
 
 @objc(CurrentUserDTO)
 class CurrentUserDTO: NSManagedObject {
-    static let entityName: String = "CurrentUserDTO"
-    
     @NSManaged var unreadChannelsCount: Int16
     @NSManaged var unreadMessagesCount: Int16
     

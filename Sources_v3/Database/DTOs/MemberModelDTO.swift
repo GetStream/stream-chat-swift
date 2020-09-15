@@ -6,8 +6,6 @@ import CoreData
 
 @objc(MemberDTO)
 class MemberDTO: NSManagedObject {
-    static let entityName: String = "MemberDTO"
-    
     // Because we need to have a unique identifier of a member in the db, we use the combination of the related
     // user' id and the channel the member belongs to.
     @NSManaged fileprivate var id: String
