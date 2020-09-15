@@ -106,9 +106,15 @@ extension SettingsViewController: CurrentUserControllerDelegate {
 @available(iOS 13.0, *)
 struct SettingsView: UIViewControllerRepresentable {
     typealias UIViewControllerType = SettingsViewController
+    let currentUserController: CurrentUserController
     
     func makeUIViewController(context: Context) -> SettingsViewController {
-        UIStoryboard.settings.instantiateInitialViewController()?.children.first as! SettingsViewController
+        let navigationViewController = UIStoryboard.settings.instantiateInitialViewController()!
+        let settingsViewController = navigationViewController.children.first as! SettingsViewController
+        
+        settingsViewController.currentUserController = currentUserController
+        
+        return settingsViewController
     }
     
     func updateUIViewController(_ uiViewController: SettingsViewController, context: Context) {}

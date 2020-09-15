@@ -69,11 +69,15 @@ class CombineSimpleChannelsViewController: UITableViewController {
     
     @objc
     func handleSettingsButton(_ sender: Any) {
-        guard let settingsViewController = UIStoryboard.settings.instantiateInitialViewController() else {
+        guard
+            let navigationViewController = UIStoryboard.settings.instantiateInitialViewController(),
+            let settingsViewController = navigationViewController.children.first as? SettingsViewController
+        else {
             return
         }
         
-        present(settingsViewController, animated: true)
+        settingsViewController.currentUserController = channelListController.client.currentUserController()
+        present(navigationViewController, animated: true)
     }
 
     @objc
