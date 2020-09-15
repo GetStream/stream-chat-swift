@@ -322,30 +322,64 @@ struct AssertionBuilder {
 }
 
 extension AssertAsync {
-    /// Blocks the current test execution and periodically checks for the equality of the provided expressions. Fails if
-    /// the expression results are not equal within the `timeout` period.
+    /// Periodically checks if the expression evaluates to `TRUE`. Fails if the expression result is not `TRUE` within
+    /// the `timeout` period.
     ///
     /// - Parameters:
-    ///   - expression1: The expression to evaluate.
+    ///   - expression: The expression to evaluate.
     ///   - timeout: The maximum time the function waits for the expression results to equal.
     ///   - message: The message to print when the assertion fails.
     ///
     /// - Warning: ⚠️ Both expressions are evaluated repeatedly during the function execution. The expressions should not have
     ///   any side effects which can affect their results.
     static func willBeTrue(
-        _ expression1: @autoclosure () -> Bool?,
+        _ expression: @autoclosure () -> Bool?,
         timeout: TimeInterval = defaultTimeout,
         message: @autoclosure () -> String = "Failed to become `TRUE`",
         file: StaticString = #file,
         line: UInt = #line
     ) {
-        _ = withoutActuallyEscaping(expression1) { expression1 in
+        _ = withoutActuallyEscaping(expression) { expression in
             withoutActuallyEscaping(message) { message in
                 
                 AssertAsync {
                     Assert.willBeEqual(
-                        expression1(),
+                        expression(),
                         true,
+                        timeout: timeout,
+                        message: message(),
+                        file: file,
+                        line: line
+                    )
+                }
+            }
+        }
+    }
+    
+    /// Periodically checks if the expression evaluates to `FALSE`. Fails if the expression result is not `FALSE` within
+    /// the `timeout` period.
+    ///
+    /// - Parameters:
+    ///   - expression: The expression to evaluate.
+    ///   - timeout: The maximum time the function waits for the expression results to equal.
+    ///   - message: The message to print when the assertion fails.
+    ///
+    /// - Warning: ⚠️ Both expressions are evaluated repeatedly during the function execution. The expressions should not have
+    ///   any side effects which can affect their results.
+    static func willBeFalse(
+        _ expression: @autoclosure () -> Bool?,
+        timeout: TimeInterval = defaultTimeout,
+        message: @autoclosure () -> String = "Failed to become `TRUE`",
+        file: StaticString = #file,
+        line: UInt = #line
+    ) {
+        _ = withoutActuallyEscaping(expression) { expression in
+            withoutActuallyEscaping(message) { message in
+                
+                AssertAsync {
+                    Assert.willBeEqual(
+                        expression(),
+                        false,
                         timeout: timeout,
                         message: message(),
                         file: file,
@@ -405,18 +439,18 @@ extension AssertAsync {
     /// - Warning: ⚠️ The expression is evaluated repeatedly during the function execution. It should not have
     ///   any side effects which can affect its result.
     static func willBeNil<T>(
-        _ expression1: @autoclosure () -> T?,
+        _ expression: @autoclosure () -> T?,
         timeout: TimeInterval = defaultTimeout,
         message: @autoclosure () -> String = "Failed to become `nil`",
         file: StaticString = #file,
         line: UInt = #line
     ) {
-        _ = withoutActuallyEscaping(expression1) { expression1 in
+        _ = withoutActuallyEscaping(expression) { expression in
             withoutActuallyEscaping(message) { message in
                 
                 AssertAsync {
                     Assert.willBeTrue(
-                        expression1() == nil,
+                        expression() == nil,
                         timeout: timeout,
                         message: message(),
                         file: file,

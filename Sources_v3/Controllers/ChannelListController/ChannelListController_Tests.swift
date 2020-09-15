@@ -94,7 +94,7 @@ class ChannelListController_Tests: StressTestCase {
         }
         
         // Assert the channel is loaded
-        AssertAsync.willBeTrue(!controller.channels.isEmpty)
+        AssertAsync.willBeFalse(controller.channels.isEmpty)
     }
     
     func test_channels_are_fetched_beforeCallingsynchronize() throws {
