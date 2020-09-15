@@ -7,21 +7,15 @@ import SwiftUI
 
 @available(iOS 13, *)
 struct ChatView: View {
-    /// SwiftUI expects view initialization to be cheap, so we hold the a `ChannelController` builder to be called in `onAppear`.
-    let channelBuilder: () -> ChannelController.ObservableObject
-    /// The `ChannelController` used to interact with this channel. Will be set in `onAppear`.
-    @State var channel: ChannelController.ObservableObject?
+    /// The `ChannelController` used to interact with this channel. Will be synchornized in `onAppear`.
+    @State var channel: ChannelController.ObservableObject
     /// The `text` written in the message composer
     @State var text: String = ""
     /// Binding for message actions ActionSheet
     @State var actionSheetTrigger: Bool = false
     /// Message being edited
     @State var editingMessage: Message?
-    
-    init(channel channelBuilder: @autoclosure @escaping () -> ChannelController.ObservableObject) {
-        self.channelBuilder = channelBuilder
-    }
-    
+
     var body: some View {
         VStack {
             self.messageList()
@@ -30,7 +24,7 @@ struct ChatView: View {
         /// Channel ActionSheet presenter.
         .actionSheet(isPresented: $actionSheetTrigger, content: self.actionSheet)
         /// Set title to channel's name
-        .navigationBarTitle(Text(channel?.channel?.extraData.name ?? "Unnamed Channel"), displayMode: .inline)
+        .navigationBarTitle(Text(channel.channel?.extraData.name ?? "Unnamed Channel"), displayMode: .inline)
         /// Channel actions button
         .navigationBarItems(
             trailing: Button(action: { self.actionSheetTrigger = true }) {
@@ -38,13 +32,11 @@ struct ChatView: View {
             }
         )
         /// Initialize the `ChannelController`
-        .onAppear {
-            self.channel = self.channelBuilder()
-        }
+        .onAppear(perform: { self.channel.controller.synchronize() })
     }
     
     func messageList() -> some View {
-        List(channel?.messages ?? [], id: \.self) { message in
+        List(channel.messages, id: \.self) { message in
             self.messageView(for: message)
                 .onLongPressGesture { self.actionSheetTrigger = true; self.editingMessage = message }
         }
@@ -70,8 +62,8 @@ struct ChatView: View {
             .scaleEffect(x: 1, y: -1, anchor: .center)
             /// Load next more messages when the last is shown
             .onAppear {
-                if (self.channel?.messages.last == message) {
-                    self.channel?.controller.loadPreviousMessages()
+                if (self.channel.messages.last == message) {
+                    self.channel.controller.loadPreviousMessages()
                 }
             }
     }
@@ -86,7 +78,7 @@ struct ChatView: View {
     }
     
     func send() {
-        guard let channel = channel, let channelId = channel.channel?.cid else {
+        guard let channelId = channel.channel?.cid else {
             return
         }
         
@@ -104,17 +96,17 @@ struct ChatView: View {
     /// Action sheet with channel actions
     func actionSheet() -> ActionSheet {
         if let message = editingMessage {
-            let messageController = channel?.controller.client.messageController(cid: channel!.channel!.cid, messageId: message.id)
+            let messageController = channel.controller.client.messageController(cid: channel.channel!.cid, messageId: message.id)
             return ActionSheet(title: Text("Message Actions"), message: Text(""), buttons: [
                 .default(Text("Edit"), action: { self.editingMessage = message; self.text = message.text }),
-                .destructive(Text("Delete")) { messageController?.deleteMessage(); self.editingMessage = nil },
+                .destructive(Text("Delete")) { messageController.deleteMessage(); self.editingMessage = nil },
                 .cancel { self.editingMessage = nil }
             ])
         } else {
             let userIds = Set(["steep-moon-9"])
             return ActionSheet(title: Text("Channel Actions"), message: Text(""), buttons: [
-                .default(Text("Add Member"), action: { self.channel?.controller.addMembers(userIds: userIds) }),
-                .default(Text("Remove Member"), action: { self.channel?.controller.removeMembers(userIds: userIds) }),
+                .default(Text("Add Member"), action: { self.channel.controller.addMembers(userIds: userIds) }),
+                .default(Text("Remove Member"), action: { self.channel.controller.removeMembers(userIds: userIds) }),
                 .cancel()
             ])
         }
