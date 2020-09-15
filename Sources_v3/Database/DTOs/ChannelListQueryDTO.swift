@@ -6,8 +6,6 @@ import CoreData
 
 @objc(ChannelListQueryDTO)
 class ChannelListQueryDTO: NSManagedObject {
-    static let entityName = "ChannelListQueryDTO"
-    
     /// Unique identifier of the query/
     @NSManaged var filterHash: String
     

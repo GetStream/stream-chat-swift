@@ -7,8 +7,6 @@ import Foundation
 
 @objc(ChannelDTO)
 class ChannelDTO: NSManagedObject {
-    static let entityName = "ChannelDTO"
-    
     @NSManaged var cid: String
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data

@@ -7,8 +7,6 @@ import Foundation
 
 @objc(ChannelReadDTO)
 class ChannelReadDTO: NSManagedObject {
-    static let entityName = "ChannelReadDTO"
-    
     @NSManaged var lastReadAt: Date
     @NSManaged var unreadMessageCount: Int
     
