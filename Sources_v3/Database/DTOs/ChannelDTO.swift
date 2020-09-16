@@ -25,6 +25,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var createdBy: UserDTO
     @NSManaged var team: TeamDTO?
     @NSManaged var members: Set<MemberDTO>
+    @NSManaged var currentlyTypingMembers: Set<MemberDTO>
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
     
@@ -55,6 +56,14 @@ class ChannelDTO: NSManagedObject {
         let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelDTO
         new.cid = cid.rawValue
         return new
+    }
+}
+
+// MARK: - EphemeralValuesContainer
+
+extension ChannelDTO: EphemeralValuesContainer {
+    func resetEphemeralValues() {
+        currentlyTypingMembers.removeAll()
     }
 }
 
@@ -150,7 +159,8 @@ extension ChannelModel {
     /// Create a ChannelModel struct from its DTO
     static func create(fromDTO dto: ChannelDTO) -> ChannelModel {
         let members = dto.members.map { MemberModel<ExtraData.User>.create(fromDTO: $0) }
-        
+        let typingMembers = dto.currentlyTypingMembers.map { MemberModel<ExtraData.User>.create(fromDTO: $0) }
+
         // It's safe to use `try!` here, because the extra data payload comes from the DB, so we know it must
         // be a valid JSON payload, otherwise it wouldn't be possible to save it there.
         let extraData = try! JSONDecoder.default.decode(ExtraData.Channel.self, from: dto.extraData)
@@ -194,6 +204,7 @@ extension ChannelModel {
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
             isFrozen: dto.isFrozen,
             members: Set(members),
+            currentlyTypingMembers: Set(typingMembers),
             watchers: [],
             team: "",
             unreadCount: unreadCount,

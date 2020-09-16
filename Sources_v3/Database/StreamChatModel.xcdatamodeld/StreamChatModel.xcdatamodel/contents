@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19C57" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19G2021" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
         <attribute name="cid" attributeType="String"/>
         <attribute name="config" attributeType="Binary"/>
@@ -12,6 +12,7 @@
         <attribute name="typeRawValue" optional="YES" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="createdChannels" inverseEntity="UserDTO"/>
+        <relationship name="currentlyTypingMembers" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="typingIn" inverseEntity="MemberDTO"/>
         <relationship name="members" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="channel" inverseEntity="MemberDTO"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="channel" inverseEntity="MessageDTO"/>
         <relationship name="queries" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelListQueryDTO" inverseName="channels" inverseEntity="ChannelListQueryDTO"/>
@@ -77,6 +78,7 @@
         <attribute name="memberCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="memberUpdatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="members" inverseEntity="ChannelDTO"/>
+        <relationship name="typingIn" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="currentlyTypingMembers" inverseEntity="ChannelDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="members" inverseEntity="UserDTO"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
@@ -158,11 +160,11 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="298"/>
+        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="313"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelReadDTO" positionX="9" positionY="153" width="128" height="103"/>
         <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="118"/>
-        <element name="MemberDTO" positionX="0" positionY="0" width="128" height="178"/>
+        <element name="MemberDTO" positionX="0" positionY="0" width="128" height="193"/>
         <element name="MessageDTO" positionX="0" positionY="0" width="128" height="343"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="UserDTO" positionX="0" positionY="0" width="128" height="298"/>
