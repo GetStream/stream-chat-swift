@@ -254,7 +254,7 @@ class ChannelListController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel: Channel = client.databaseContainer.viewContext.loadChannel(cid: cid)!
+        let channel: Channel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
         
         AssertAsync.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
     }
@@ -277,7 +277,7 @@ class ChannelListController_Tests: StressTestCase {
                 try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
             }, completion: $0)
         }
-        let channel: Channel = client.databaseContainer.viewContext.loadChannel(cid: cid)!
+        let channel: Channel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
         
         AssertAsync.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
     }

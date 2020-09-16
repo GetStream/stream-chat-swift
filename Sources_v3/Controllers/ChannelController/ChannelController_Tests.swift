@@ -348,7 +348,7 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel: Channel = client.databaseContainer.viewContext.loadChannel(cid: channelId)!
+        let channel: Channel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
         assert(channel.latestMessages.count == 1)
         let message: Message = channel.latestMessages.first!
 
@@ -370,7 +370,7 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let newChannel: Channel = client.databaseContainer.viewContext.loadChannel(cid: newCid)!
+        let newChannel: Channel = client.databaseContainer.viewContext.channel(cid: newCid)!.asModel()
         assert(channel.latestMessages.count == 1)
         let newMessage: Message = newChannel.latestMessages.first!
 
@@ -478,7 +478,7 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel: Channel = client.databaseContainer.viewContext.loadChannel(cid: channelId)!
+        let channel: Channel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
         assert(channel.latestMessages.count == 1)
         let message: Message = channel.latestMessages.first!
         
@@ -504,7 +504,7 @@ class ChannelController_Tests: StressTestCase {
                 try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
             }, completion: $0)
         }
-        let channel: Channel = client.databaseContainer.viewContext.loadChannel(cid: channelId)!
+        let channel: Channel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
         assert(channel.latestMessages.count == 1)
         let message: Message = channel.latestMessages.first!
         

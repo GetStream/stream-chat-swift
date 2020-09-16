@@ -29,7 +29,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel from the db and check the if fields are correct
         var loadedChannel: ChannelModel<DefaultDataTypes>? {
-            database.viewContext.loadChannel(cid: channelId)
+            database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
@@ -75,7 +75,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // Load the channel from the db and check the if fields are correct
         var loadedChannel: ChannelModel<DefaultDataTypes>? {
-            database.viewContext.loadChannel(cid: channelId)
+            database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
@@ -136,7 +136,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         
         // Load the channel from the db and check the if fields are correct
         var loadedChannel: ChannelModel<DefaultDataTypes>? {
-            database.viewContext.loadChannel(cid: channelId)
+            database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         // Assert that the read event entity is updated

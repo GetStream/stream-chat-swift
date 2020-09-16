@@ -55,7 +55,7 @@ public struct DataStore<ExtraData: ExtraDataTypes> {
     ///
     /// - Parameter cid: An cid of a channel.
     public func channel(cid: ChannelId) -> ChannelModel<ExtraData>? {
-        database.viewContext.loadChannel(cid: cid)
+        database.viewContext.channel(cid: cid)?.asModel()
     }
     
     /// Loads a message model with a matching `id` from the **local data store**.

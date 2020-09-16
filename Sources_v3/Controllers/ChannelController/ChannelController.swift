@@ -216,7 +216,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
             let observer = EntityDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
                 fetchRequest: ChannelDTO.fetchRequest(for: self.channelQuery.cid),
-                itemCreator: ChannelModel<ExtraData>.create
+                itemCreator: { $0.asModel() as ChannelModel<ExtraData> }
             )
             observer.onChange { change in
                 self.delegateCallback { $0.channelController(self, didUpdateChannel: change) }

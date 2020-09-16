@@ -38,7 +38,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
         
         // Assert the channel data is saved and the event is forwarded
         var loadedChannel: ChannelModel<DefaultDataTypes>? {
-            database.viewContext.loadChannel(cid: channelId)
+            database.viewContext.channel(cid: channelId)!.asModel()
         }
         XCTAssertEqual(loadedChannel?.cid, channelId)
         XCTAssertEqual(completion?.asEquatable, testEvent.asEquatable)

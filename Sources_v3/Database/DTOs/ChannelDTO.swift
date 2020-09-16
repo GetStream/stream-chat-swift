@@ -125,8 +125,8 @@ extension NSManagedObjectContext {
         return dto
     }
     
-    func loadChannel<ExtraData: ExtraDataTypes>(cid: ChannelId) -> ChannelModel<ExtraData>? {
-        ChannelDTO.load(cid: cid, context: self).map(ChannelModel.create(fromDTO:))
+    func channel(cid: ChannelId) -> ChannelDTO? {
+        ChannelDTO.load(cid: cid, context: self)
     }
 }
 
@@ -155,11 +155,16 @@ extension ChannelDTO {
     }
 }
 
+extension ChannelDTO {
+    /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
+    func asModel<ExtraData: ExtraDataTypes>() -> ChannelModel<ExtraData> { .create(fromDTO: self) }
+}
+
 extension ChannelModel {
     /// Create a ChannelModel struct from its DTO
-    static func create(fromDTO dto: ChannelDTO) -> ChannelModel {
-        let members = dto.members.map { MemberModel<ExtraData.User>.create(fromDTO: $0) }
-        let typingMembers = dto.currentlyTypingMembers.map { MemberModel<ExtraData.User>.create(fromDTO: $0) }
+    fileprivate static func create(fromDTO dto: ChannelDTO) -> ChannelModel {
+        let members: [MemberModel<ExtraData.User>] = dto.members.map { $0.asModel() }
+        let typingMembers: [MemberModel<ExtraData.User>] = dto.currentlyTypingMembers.map { $0.asModel() }
 
         // It's safe to use `try!` here, because the extra data payload comes from the DB, so we know it must
         // be a valid JSON payload, otherwise it wouldn't be possible to save it there.
