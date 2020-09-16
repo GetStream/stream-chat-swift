@@ -59,7 +59,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
         let observer = self.environment.createChannelListDabaseObserver(
             client.databaseContainer.viewContext,
             request,
-            ChannelModel<ExtraData>.create
+            { $0.asModel() }
         )
         
         observer.onChange = { [unowned self] changes in

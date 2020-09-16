@@ -55,7 +55,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         
         // Assert the data is stored in the DB
         var channel: Channel? {
-            database.viewContext.loadChannel(cid: cid)
+            database.viewContext.channel(cid: cid)?.asModel()
         }
         AssertAsync {
             Assert.willBeTrue(channel != nil)

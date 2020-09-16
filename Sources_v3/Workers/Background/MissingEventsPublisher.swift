@@ -80,7 +80,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
     
     private var allChannels: [ChannelModel<ExtraData>] {
         do {
-            return try database.backgroundReadOnlyContext.fetch(ChannelDTO.allChannelsFetchRequest).map(ChannelModel.create)
+            return try database.backgroundReadOnlyContext.fetch(ChannelDTO.allChannelsFetchRequest).map { $0.asModel() }
         } catch {
             log.error("Internal error: Failed to fetch [ChannelDTO]: \(error)")
             return []

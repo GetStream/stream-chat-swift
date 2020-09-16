@@ -25,7 +25,7 @@ class ChannelDTO_Tests: XCTestCase {
         
         // Load the channel from the db and check the fields are correct
         var loadedChannel: ChannelModel<DefaultDataTypes>? {
-            database.viewContext.loadChannel(cid: channelId)
+            database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         AssertAsync {
@@ -132,7 +132,7 @@ class ChannelDTO_Tests: XCTestCase {
         
         // Load the channel from the db and check the fields are correct
         var loadedChannel: ChannelModel<DefaultDataTypes>? {
-            database.viewContext.loadChannel(cid: channelId)
+            database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         AssertAsync {
@@ -359,7 +359,7 @@ class ChannelDTO_Tests: XCTestCase {
         
         // Load the channel from the db and check the if fields are correct
         var loadedChannel: ChannelModel<DefaultDataTypes>? {
-            database.viewContext.loadChannel(cid: channelId)
+            database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         AssertAsync {
