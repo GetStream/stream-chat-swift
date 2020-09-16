@@ -72,14 +72,17 @@ extension NSManagedObjectContext {
         return dto
     }
     
-    func loadMember<ExtraData: UserExtraData>(id: String, channelId: ChannelId) -> MemberModel<ExtraData>? {
-        guard let dto = MemberDTO.load(id: id, channelId: channelId, context: self) else { return nil }
-        return MemberModel.create(fromDTO: dto)
+    func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
+        MemberDTO.load(id: userId, channelId: cid, context: self)
     }
 }
 
+extension MemberDTO {
+    func asModel<ExtraData: UserExtraData>() -> MemberModel<ExtraData> { .create(fromDTO: self) }
+}
+
 extension MemberModel {
-    static func create(fromDTO dto: MemberDTO) -> MemberModel {
+    fileprivate static func create(fromDTO dto: MemberDTO) -> MemberModel {
         let extraData: ExtraData
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.user.extraData)

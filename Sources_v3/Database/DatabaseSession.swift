@@ -111,14 +111,21 @@ protocol ChannelReadDatabaseSession {
     func loadChannelReads(for userId: UserId) -> [ChannelReadDTO]
 }
 
-protocol DatabaseSession: UserDatabaseSession, CurrentUserDatabaseSession, MessageDatabaseSession, ChannelReadDatabaseSession, ChannelDatabaseSession {
-    // MARK: - Member
-    
+protocol MemberDatabaseSession {
+    /// Creates a new `MemberDTO` object in the database with the given `payload` in the channel with `channelId`.
     @discardableResult
     func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId) throws -> MemberDTO
     
-    func loadMember<ExtraData: UserExtraData>(id: UserId, channelId: ChannelId) -> MemberModel<ExtraData>?
+    /// Fetchtes `MemberDTO`entity for the given `userId` and `cid`.
+    func member(userId: UserId, cid: ChannelId) -> MemberDTO?
 }
+
+protocol DatabaseSession: UserDatabaseSession,
+    CurrentUserDatabaseSession,
+    MessageDatabaseSession,
+    ChannelReadDatabaseSession,
+    ChannelDatabaseSession,
+    MemberDatabaseSession {}
 
 extension DatabaseSession {
     @discardableResult

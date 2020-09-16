@@ -49,7 +49,7 @@ class DatabaseSession_Tests: StressTestCase {
         // Try to load the saved member from DB
         if let member = channelPayload.channel.members?.first {
             var loadedMember: UserModel<DefaultDataTypes.User>? {
-                database.viewContext.loadMember(id: member.user.id, channelId: channelId)
+                database.viewContext.member(userId: member.user.id, cid: channelId)?.asModel()
             }
             
             AssertAsync.willBeEqual(loadedMember?.id, member.user.id)
