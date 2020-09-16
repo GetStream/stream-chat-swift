@@ -112,6 +112,3 @@ struct ChatView: View {
         }
     }
 }
-
-/// Need to conform to Indentifiable for action sheet
-extension Message: Identifiable {}
