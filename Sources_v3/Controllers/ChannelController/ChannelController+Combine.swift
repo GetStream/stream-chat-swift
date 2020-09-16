@@ -27,9 +27,9 @@ extension ChannelControllerGeneric {
         basePublishers.memberEvent.keepAlive(self)
     }
     
-    /// A publisher emitting a new value every time typing event received.
-    public var typingEventPublisher: AnyPublisher<TypingEvent, Never> {
-        basePublishers.typingEvent.keepAlive(self)
+    /// A publisher emitting a new value every time typing members change.
+    public var typingMembersPublisher: AnyPublisher<Set<MemberModel<ExtraData.User>>, Never> {
+        basePublishers.typingMembers.keepAlive(self)
     }
 
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -51,8 +51,8 @@ extension ChannelControllerGeneric {
         /// A backing subject for `memberEventPublisher`.
         let memberEvent: PassthroughSubject<MemberEvent, Never> = .init()
         
-        /// A backing subject for `typingEventPublisher`.
-        let typingEvent: PassthroughSubject<TypingEvent, Never> = .init()
+        /// A backing subject for `typingMembersPublisher`.
+        let typingMembers: PassthroughSubject<Set<MemberModel<ExtraData.User>>, Never> = .init()
                 
         init(controller: ChannelControllerGeneric<ExtraData>) {
             self.controller = controller
@@ -86,8 +86,11 @@ extension ChannelControllerGeneric.BasePublishers: ChannelControllerDelegateGene
     func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent event: MemberEvent) {
         memberEvent.send(event)
     }
-
-    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveTypingEvent event: TypingEvent) {
-        typingEvent.send(event)
+    
+    func channelController(
+        _ channelController: ChannelControllerGeneric<ExtraData>,
+        didChangeTypingMembers typingMembers: Set<MemberModel<ExtraData.User>>
+    ) {
+        self.typingMembers.send(typingMembers)
     }
 }

@@ -73,6 +73,37 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         
         AssertAsync.willBeEqual(observableObject.state, newState)
     }
+    
+    func test_observableObject_reactsToDelegateTypingMembersChangeCallback() {
+        let observableObject = channelController.observableObject
+        
+        let typingMember = Member(
+            id: .unique,
+            isOnline: true,
+            isBanned: false,
+            userRole: .user,
+            userCreatedAt: .unique,
+            userUpdatedAt: .unique,
+            lastActiveAt: .unique,
+            extraData: .defaultValue,
+            memberRole: .member,
+            memberCreatedAt: .unique,
+            memberUpdatedAt: .unique,
+            isInvited: false,
+            inviteAcceptedAt: nil,
+            inviteRejectedAt: nil
+        )
+        
+        // Simulate typing members change
+        channelController.delegateCallback {
+            $0.channelController(
+                self.channelController,
+                didChangeTypingMembers: [typingMember]
+            )
+        }
+        
+        AssertAsync.willBeEqual(observableObject.typingMembers, [typingMember])
+    }
 }
 
 class ChannelControllerMock: ChannelController {

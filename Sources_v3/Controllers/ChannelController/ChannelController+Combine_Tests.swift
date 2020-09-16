@@ -112,13 +112,13 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         XCTAssertEqual(recording.output as! [TestMemberEvent], [memberEvent])
     }
     
-    func test_typingEventPublisher() {
+    func test_typingMembersPublisher() {
         // Setup Recording publishers
-        var recording = Record<TypingEvent, Never>.Recording()
+        var recording = Record<Set<Member>, Never>.Recording()
         
         // Setup the chain
         channelController
-            .typingEventPublisher
+            .typingMembersPublisher
             .sink(receiveValue: { recording.receive($0) })
             .store(in: &cancellables)
         
@@ -126,11 +126,27 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
 
-        let typingEvent: TypingEvent = .unique
+        let typingMember = Member(
+            id: .unique,
+            isOnline: true,
+            isBanned: false,
+            userRole: .user,
+            userCreatedAt: .unique,
+            userUpdatedAt: .unique,
+            lastActiveAt: .unique,
+            extraData: .defaultValue,
+            memberRole: .member,
+            memberCreatedAt: .unique,
+            memberUpdatedAt: .unique,
+            isInvited: false,
+            inviteAcceptedAt: nil,
+            inviteRejectedAt: nil
+        )
+        
         controller?.delegateCallback {
-            $0.channelController(controller!, didReceiveTypingEvent: typingEvent)
+            $0.channelController(controller!, didChangeTypingMembers: [typingMember])
         }
         
-        XCTAssertEqual(recording.output, [typingEvent])
+        XCTAssertEqual(recording.output, [[typingMember]])
     }
 }

@@ -420,41 +420,65 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_channelTypingEvents_areForwaredToDelegate() throws {
-        let delegate = TestDelegate()
-        controller.delegate = delegate
+        let memberId: UserId = .unique
+        // Create channel in the database
+        try client.databaseContainer.createChannel(cid: channelId)
+        // Create member in the database
+        try client.databaseContainer.createMember(userId: memberId, cid: channelId)
         
         // Set the queue for delegate calls
+        let delegate = TestDelegate()
+        controller.delegate = delegate
         delegate.expectedQueueId = controllerCallbackQueueID
         
         // Simulate `synchronize()` call
         controller.synchronize()
+
+        // Save member as a typing member
+        try client.databaseContainer.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: self.channelId))
+            let member = try XCTUnwrap(session.member(userId: memberId, cid: self.channelId))
+            channel.currentlyTypingMembers.insert(member)
+        }
         
-        // Send notification with event happened in the observed channel
-        let event = TypingEvent(isTyping: true, cid: channelId, userId: .unique)
-        let notification = Notification(newEventReceived: event, sender: self)
-        client.webSocketClient.eventNotificationCenter.post(notification)
+        // Load the channel member
+        var typingMember: Member {
+            client.databaseContainer.viewContext.member(userId: memberId, cid: channelId)!.asModel()
+        }
         
-        // Assert the event is received
-        AssertAsync.willBeEqual(delegate.didReceiveTypingEvent_event, event)
+        // Assert the delegate receives typing memeber
+        AssertAsync.willBeEqual(delegate.didChangeTypingMembers_typingMembers, [typingMember])
     }
     
     func test_channelTypingEvents_areForwaredToGenericDelegate() throws {
-        let delegate = TestDelegateGeneric()
-        controller.setDelegate(delegate)
+        let memberId: UserId = .unique
+        // Create channel in the database
+        try client.databaseContainer.createChannel(cid: channelId)
+        // Create member in the database
+        try client.databaseContainer.createMember(userId: memberId, cid: channelId)
         
         // Set the queue for delegate calls
+        let delegate = TestDelegateGeneric()
+        controller.setDelegate(delegate)
         delegate.expectedQueueId = controllerCallbackQueueID
         
         // Simulate `synchronize()` call
         controller.synchronize()
+
+        // Set created member as a typing member
+        try client.databaseContainer.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: self.channelId))
+            let member = try XCTUnwrap(session.member(userId: memberId, cid: self.channelId))
+            channel.currentlyTypingMembers.insert(member)
+        }
         
-        // Send notification with event happened in the observed channel
-        let event = TypingEvent(isTyping: true, cid: channelId, userId: .unique)
-        let notification = Notification(newEventReceived: event, sender: self)
-        client.webSocketClient.eventNotificationCenter.post(notification)
+        // Load the channel member
+        var typingMember: Member {
+            client.databaseContainer.viewContext.member(userId: memberId, cid: channelId)!.asModel()
+        }
         
-        // Assert the event is received
-        AssertAsync.willBeEqual(delegate.didReceiveTypingEvent_event, event)
+        // Assert the delegate receives typing memeber
+        AssertAsync.willBeEqual(delegate.didChangeTypingMembers_typingMembers, [typingMember])
     }
     
     func test_delegateMethodsAreCalled() throws {
@@ -1467,7 +1491,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
     @Atomic var didUpdateChannel_channel: EntityChange<Channel>?
     @Atomic var didUpdateMessages_messages: [ListChange<Message>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didReceiveTypingEvent_event: TypingEvent?
+    @Atomic var didChangeTypingMembers_typingMembers: Set<Member>?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -1499,8 +1523,8 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didReceiveTypingEvent event: TypingEvent) {
-        didReceiveTypingEvent_event = event
+    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<Member>) {
+        didChangeTypingMembers_typingMembers = typingMembers
         validateQueue()
     }
 }
@@ -1511,7 +1535,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
     @Atomic var didUpdateChannel_channel: EntityChange<Channel>?
     @Atomic var didUpdateMessages_messages: [ListChange<Message>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didReceiveTypingEvent_event: TypingEvent?
+    @Atomic var didChangeTypingMembers_typingMembers: Set<Member>?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -1533,8 +1557,8 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didReceiveTypingEvent event: TypingEvent) {
-        didReceiveTypingEvent_event = event
+    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<Member>) {
+        didChangeTypingMembers_typingMembers = typingMembers
         validateQueue()
     }
 }

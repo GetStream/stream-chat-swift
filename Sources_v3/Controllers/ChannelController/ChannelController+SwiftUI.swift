@@ -24,6 +24,9 @@ extension ChannelControllerGeneric {
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
         
+        /// The typing members related to the channel.
+        @Published public private(set) var typingMembers: Set<MemberModel<ExtraData.User>> = []
+        
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
         init(controller: ChannelControllerGeneric<ExtraData>) {
             self.controller = controller
@@ -33,6 +36,7 @@ extension ChannelControllerGeneric {
             
             channel = controller.channel
             messages = controller.messages
+            typingMembers = controller.channel?.currentlyTypingMembers ?? []
         }
     }
 }
@@ -55,5 +59,12 @@ extension ChannelControllerGeneric.ObservableObject: ChannelControllerDelegateGe
     
     public func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
+    }
+    
+    public func channelController(
+        _ channelController: ChannelControllerGeneric<ExtraData>,
+        didChangeTypingMembers typingMembers: Set<MemberModel<ExtraData.User>>
+    ) {
+        self.typingMembers = typingMembers
     }
 }
