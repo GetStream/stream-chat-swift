@@ -73,7 +73,7 @@ struct ChannelListView: View {
             SettingsView(currentUserController: self.channelList.controller.client.currentUserController())
         })
         /// Synchronize local data with remote.
-        .onAppear(perform: channelList.controller.synchronize)
+        .onAppear(perform: { self.channelList.controller.synchronize() })
     }
     
     // MARK: - Views
@@ -189,7 +189,11 @@ struct ChannelListView: View {
     }
     
     private func chatView(for index: Int) -> ChatView {
-        ChatView(channelId: channelList.channels[index].cid)
+        ChatView(
+            channel: channelList.controller.client.channelController(
+                for: channelList.channels[index].cid
+            ).observableObject
+        )
     }
 }
 
