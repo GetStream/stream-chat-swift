@@ -115,4 +115,10 @@ extension DatabaseContainer {
             messageDTO.localMessageState = localState
         }
     }
+    
+    func createMember(userId: UserId = .unique, role: MemberRole = .member, cid: ChannelId) throws {
+        try writeSynchronously { session in
+            try session.saveMember(payload: .dummy(userId: userId, role: role), channelId: cid)
+        }
+    }
 }
