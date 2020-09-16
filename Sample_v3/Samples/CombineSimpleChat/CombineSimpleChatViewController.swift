@@ -86,13 +86,13 @@ final class CombineSimpleChatViewController: UITableViewController {
         
         /// The subscription  below receives a `TypingEvent` and updates the view controller's `navigationItem.prompt` to show that an user is currently typing.
         channelController
-            .typingEventPublisher
-            /// Map user with the typing event.
-            .map { [weak self] in (self?.channelController.dataStore.user(id: $0.userId), $0) }
-            /// Skip if user was not fetched succesfully from DB.
-            .filter { $0.0 != nil }
+            .typingMembersPublisher
             /// Create or reset prompt depending on `isTyping` event type.
-            .map { $0.1.isTyping ? "\($0.0?.name ?? $0.1.userId) is typing..." : "" }
+            .map { typingMembers in
+                guard !typingMembers.isEmpty else { return "" }
+                let names = typingMembers.map { $0.name ?? $0.id }.sorted()
+                return names.joined(separator: ",") + " \(names.count == 1 ? "is" : "are") typing..."
+            }
             .receive(on: RunLoop.main)
             /// Assign it to `navigationItem.prompt`.
             .assign(to: \.navigationItem.prompt, on: self)

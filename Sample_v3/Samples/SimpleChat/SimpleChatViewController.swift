@@ -68,15 +68,14 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     }
     
     ///
-    /// # didReceiveTypingEvent
+    /// # didChangeTypingMembers
     ///
-    /// The method below receives a `TypingEvent` and updates the view controller's `navigationItem.prompt` to show that an user is currently typing.
+    /// The method below receives a set of `Member` that are currently typing.
     ///
-    func channelController(_ channelController: ChannelController, didReceiveTypingEvent event: TypingEvent) {
-        guard let user = channelController.dataStore.user(id: event.userId) else { return }
-        
-        if event.isTyping {
-            navigationItem.prompt = "\(user.name ?? event.userId) is typing..."
+    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<Member>) {
+        if !typingMembers.isEmpty {
+            let names = typingMembers.map { $0.name ?? $0.id }.sorted()
+            navigationItem.prompt = names.joined(separator: ",") + " \(names.count == 1 ? "is" : "are") typing..."
         } else {
             navigationItem.prompt = ""
         }
