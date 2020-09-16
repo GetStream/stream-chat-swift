@@ -49,7 +49,7 @@ class MemberModelDTO_Tests: XCTestCase {
         
         // Load the member from the db and check it's the same member
         var loadedMember: MemberModel<NameAndImageExtraData>? {
-            database.viewContext.loadMember(id: userId, channelId: channelId)
+            database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
         
         AssertAsync {
@@ -97,7 +97,7 @@ class MemberModelDTO_Tests: XCTestCase {
         
         // Load the member from the db and check it's the same member
         var loadedMember: MemberModel<NameAndImageExtraData>? {
-            database.viewContext.loadMember(id: userId, channelId: channelId)
+            database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
         
         AssertAsync {
