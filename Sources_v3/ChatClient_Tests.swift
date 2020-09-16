@@ -158,9 +158,16 @@ class ChatClient_Tests: StressTestCase {
         // Assert `EventDataProcessorMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is EventDataProcessorMiddleware<DefaultDataTypes> }))
         // Assert `TypingStartCleanupMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is TypingStartCleanupMiddleware<DefaultDataTypes> }))
+        let typingStartCleanupMiddlewareIndex = middlewares.firstIndex { $0 is TypingStartCleanupMiddleware<DefaultDataTypes> }
+        XCTAssertNotNil(typingStartCleanupMiddlewareIndex)
         // Assert `ChannelReadUpdaterMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is ChannelReadUpdaterMiddleware<DefaultDataTypes> }))
+        // Assert `ChannelMemberTypingStateUpdaterMiddleware` exists
+        let typingStateUpdaterMiddlewareIndex = middlewares
+            .firstIndex { $0 is ChannelMemberTypingStateUpdaterMiddleware<DefaultDataTypes> }
+        XCTAssertNotNil(typingStateUpdaterMiddlewareIndex)
+        // Assert `ChannelMemberTypingStateUpdaterMiddleware` goes after `TypingStartCleanupMiddleware`
+        XCTAssertTrue(typingStateUpdaterMiddlewareIndex! > typingStartCleanupMiddlewareIndex!)
     }
     
     func test_connectionStatus_isExposed() {
