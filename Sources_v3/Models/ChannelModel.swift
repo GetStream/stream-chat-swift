@@ -32,6 +32,9 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     /// A list of channel members.
     public let members: Set<MemberModel<ExtraData.User>>
     
+    /// A list of typing channel members.
+    public let currentlyTypingMembers: Set<MemberModel<ExtraData.User>>
+    
     /// A list of channel watchers.
     public let watchers: Set<UserModel<ExtraData.User>>
     
@@ -78,6 +81,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
         config: ChannelConfig = .init(),
         isFrozen: Bool = false,
         members: Set<MemberModel<ExtraData.User>> = [],
+        currentlyTypingMembers: Set<MemberModel<ExtraData.User>> = [],
         watchers: Set<UserModel<ExtraData.User>> = [],
         team: String = "",
         unreadCount: ChannelUnreadCount = .noUnread,
@@ -98,6 +102,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
         self.config = config
         self.isFrozen = isFrozen
         self.members = members
+        self.currentlyTypingMembers = currentlyTypingMembers
         self.watchers = watchers
         self.team = team
         self.unreadCount = unreadCount

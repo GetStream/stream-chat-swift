@@ -368,6 +368,36 @@ class ChannelDTO_Tests: XCTestCase {
         }
     }
     
+    func test_typingMembers_areCleared_onResetEphemeralValues() throws {
+        let cid: ChannelId = .unique
+        let memberId: UserId = .unique
+        
+        // Create channel in the database
+        try database.createChannel(cid: cid)
+        // Create member in the database
+        try database.createMember(userId: memberId, cid: cid)
+        // Set created member as a typing member
+        try database.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: cid))
+            let member = try XCTUnwrap(session.member(userId: memberId, cid: cid))
+            channel.currentlyTypingMembers.insert(member)
+        }
+        
+        // Load the channel
+        var channel: Channel {
+            database.viewContext.channel(cid: cid)!.asModel()
+        }
+        
+        // Assert channel's currentlyTypingMembers are not empty
+        XCTAssertFalse(channel.currentlyTypingMembers.isEmpty)
+        
+        // Simulate `resetEphemeralValues`
+        database.resetEphemeralValues()
+        
+        // Assert channel's currentlyTypingMembers are cleared
+        AssertAsync.willBeTrue(channel.currentlyTypingMembers.isEmpty)
+    }
+    
     private func encodedChannelListSortingKey(_ sortingKey: ChannelListSortingKey) -> String {
         if #available(iOS 13, *) {
             let encodedData = try! JSONEncoder.stream.encode(sortingKey)
