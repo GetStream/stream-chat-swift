@@ -223,4 +223,19 @@ public class Logger {
         Swift.assert(condition(), String(describing: message()), file: fileName, line: lineNumber)
         log(.error, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: "Assert failed: \(message())")
     }
+    
+    /// Stops program execution with `Swift.assertationFailure`. In RELEASE builds only
+    /// logs the failure.
+    ///
+    /// - Parameters:
+    ///   - message: A custom message to log if `condition` is evaluated to false.
+    public func assertationFailure(
+        _ message: @autoclosure () -> Any,
+        functionName: StaticString = #function,
+        fileName: StaticString = #file,
+        lineNumber: UInt = #line
+    ) {
+        Swift.assertionFailure(String(describing: message()), file: fileName, line: lineNumber)
+        log(.error, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: "Assert failed: \(message())")
+    }
 }

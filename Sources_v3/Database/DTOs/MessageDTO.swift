@@ -201,8 +201,7 @@ extension MessageDTO {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.Message.self, from: self.extraData)
         } catch {
-            log.assert(
-                false,
+            log.assertationFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
                     + "the extra data must be a valid JSON to be saved."
             )

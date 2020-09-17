@@ -15,7 +15,7 @@ struct EventDataProcessorMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware 
         }
         
         guard let payload = eventWithPayload.payload as? EventPayload<ExtraData> else {
-            log.assert(false, """
+            log.assertationFailure("""
             Type mismatch between `EventPayload.ExtraData` and `EventDataProcessorMiddleware.ExtraData`."
                 EventPayload type: \(type(of: eventWithPayload.payload))
                 EventDataProcessorMiddleware type: \(type(of: self))
