@@ -13,7 +13,7 @@ import UIKit
 /// events by conforming to `ChannelControllerDelegate`.
 ///
 @available(iOS 13, *)
-final class CombineSimpleChatViewController: UITableViewController {
+final class CombineSimpleChatViewController: UITableViewController, UITextViewDelegate {
     // MARK: - Properties
     
     ///
@@ -72,7 +72,7 @@ final class CombineSimpleChatViewController: UITableViewController {
             .store(in: &cancellables)
         
         updatedChannel
-            .map { "\($0.members.count) members, \($0.members.filter(\.isOnline).count) online" }
+            .map { createTypingMemberString(for: $0) ?? createMemberInfoString(for: $0) }
             .assign(to: \.navigationItem.prompt, on: self)
             .store(in: &cancellables)
         
@@ -84,18 +84,12 @@ final class CombineSimpleChatViewController: UITableViewController {
             .sink { [weak self] in self?.tableView.applyListChanges(changes: $0) }
             .store(in: &cancellables)
         
-        /// The subscription  below receives a `TypingEvent` and updates the view controller's `navigationItem.prompt` to show that an user is currently typing.
+        /// This dummy subscription prints received typing members event.
         channelController
             .typingMembersPublisher
-            /// Create or reset prompt depending on `isTyping` event type.
-            .map { typingMembers in
-                guard !typingMembers.isEmpty else { return "" }
-                let names = typingMembers.map { $0.name ?? $0.id }.sorted()
-                return names.joined(separator: ",") + " \(names.count == 1 ? "is" : "are") typing..."
+            .sink { event in
+                debugPrint("Typing members: \(event)")
             }
-            .receive(on: RunLoop.main)
-            /// Assign it to `navigationItem.prompt`.
-            .assign(to: \.navigationItem.prompt, on: self)
             .store(in: &cancellables)
         
         /// This dummy subscription prints received member events.
@@ -302,7 +296,32 @@ final class CombineSimpleChatViewController: UITableViewController {
         present(alert, animated: true)
     }
     
-    //
+    // MARK: - UITextViewDelegate
+
+    ///
+    /// The methods below are part of the `UITextViewDelegate` protocol and will be called when some event happened in the  `ComposerView`'s `UITextView`  which will
+    /// cause some action done by the `channelController` object.
+    ///
+    
+    ///
+    /// # textViewDidChange
+    ///
+    /// The method below handles changes to the `ComposerView`'s `UITextView` by calling `channelController.keystroke()` to send typing events to the channel so
+    /// other users will know the current user is typing.
+    ///
+    func textViewDidChange(_ textView: UITextView) {
+        channelController.keystroke()
+    }
+    
+    ///
+    /// # textViewDidChange
+    ///
+    /// The method below handles the end of `ComposerView`'s `UITextView` editing by calling `channelController.stopTyping()` to immediately stop the typing
+    /// events so other users will know the current user stopped typing.
+    ///
+    func textViewDidEndEditing(_ textView: UITextView) {
+        channelController.stopTyping()
+    }
 
     // MARK: - UI code
 
@@ -317,6 +336,8 @@ final class CombineSimpleChatViewController: UITableViewController {
         
         composerView.layoutMargins = view.layoutMargins
         composerView.directionalLayoutMargins = systemMinimumLayoutMargins
+        composerView.textView.delegate = self
+        
         return composerView
     }
     
