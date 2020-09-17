@@ -59,9 +59,8 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
         switch channel {
         case .create:
             break
-        case let .update(channel):
-            title = channel.extraData.name ?? channel.cid.description
-            navigationItem.prompt = "\(channel.members.count) members, \(channel.members.filter(\.isOnline).count) online"
+        case .update:
+            updateNavigationTitleAndPrompt()
         case .remove:
             dismiss(animated: true)
         }
@@ -72,13 +71,8 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     ///
     /// The method below receives a set of `Member` that are currently typing.
     ///
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<Member>) {
-        if !typingMembers.isEmpty {
-            let names = typingMembers.map { $0.name ?? $0.id }.sorted()
-            navigationItem.prompt = names.joined(separator: ",") + " \(names.count == 1 ? "is" : "are") typing..."
-        } else {
-            navigationItem.prompt = ""
-        }
+    func channelController(_ channelController: ChannelController, didChangeTypingMembers: Set<Member>) {
+        updateNavigationTitleAndPrompt()
     }
     
     // MARK: - UITableViewDataSource
@@ -328,6 +322,13 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
 }
 
 extension SimpleChatViewController {
+    func updateNavigationTitleAndPrompt() {
+        title = channelController.channel.flatMap { $0.extraData.name ?? $0.cid.description }
+        navigationItem.prompt = channelController.channel.flatMap {
+            createTypingMemberString(for: $0) ?? createMemberInfoString(for: $0)
+        }
+    }
+    
     func cellWithAuthor(_ author: String?, messageText: String) -> UITableViewCell {
         let cell: UITableViewCell!
         if let _cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell") {
