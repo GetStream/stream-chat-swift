@@ -139,11 +139,11 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         
         switch message.type {
         case .deleted:
-            cell = cellWithAuthor(nil, messageText: "❌ the message was deleted")
+            cell = messageCellWithAuthor(nil, messageText: "❌ the message was deleted")
         case .error:
-            cell = cellWithAuthor(nil, messageText: "⚠️ something wrong happened")
+            cell = messageCellWithAuthor(nil, messageText: "⚠️ something wrong happened")
         default:
-            cell = cellWithAuthor(message.author.name ?? message.author.id, messageText: message.text)
+            cell = messageCellWithAuthor(message.author.name ?? message.author.id, messageText: message.text)
         }
         
         cell.backgroundColor = message.localState == nil ? .white : .lightGray
@@ -353,44 +353,6 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         }))
 
         present(alert, animated: true)
-    }
-
-    func cellWithAuthor(_ author: String?, messageText: String) -> UITableViewCell {
-        let cell: UITableViewCell!
-        if let _cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell") {
-            cell = _cell
-        } else {
-            cell = UITableViewCell(style: .default, reuseIdentifier: "MessageCell")
-        }
-        
-        cell.textLabel?.numberOfLines = 0
-        cell.transform = CGAffineTransform(scaleX: 1, y: -1)
-        
-        if let author = author {
-            let font = cell.textLabel?.font ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
-            let boldFont = UIFont(
-                descriptor: font.fontDescriptor.withSymbolicTraits([.traitBold]) ?? font.fontDescriptor,
-                size: font.pointSize
-            )
-            
-            let attributedString = NSMutableAttributedString()
-            attributedString.append(
-                .init(
-                    string: "\(author) ",
-                    attributes: [
-                        NSAttributedString.Key.font: boldFont,
-                        NSAttributedString.Key.foregroundColor: UIColor.forUsername(author)
-                    ]
-                )
-            )
-            attributedString.append(.init(string: messageText))
-            
-            cell.textLabel?.attributedText = attributedString
-        } else {
-            cell?.textLabel?.text = messageText
-        }
-        
-        return cell
     }
     
     // MARK: - UIViewController
