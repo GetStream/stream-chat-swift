@@ -38,7 +38,7 @@ open class BaseLogDestination: LogDestination {
     ///   - showFunctionName: Toggle for showing function name in logs
     public required init(
         identifier: String = "",
-        level: LogLevel = .info,
+        level: LogLevel = .debug,
         showDate: Bool = true,
         dateFormatter: DateFormatter = {
             let df = DateFormatter()
