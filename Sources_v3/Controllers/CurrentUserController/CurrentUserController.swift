@@ -257,8 +257,7 @@ public extension CurrentUserControllerGeneric {
         completion: ((Error?) -> Void)? = nil
     ) {
         guard token != nil || client.config.tokenProvider != nil else {
-            log.assert(
-                false,
+            log.assertationFailure(
                 "The provided token is `nil` and `ChatClientConfig.tokenProvider` is also `nil`. You must either provide " +
                     "a token explicitly or set `TokenProvider` in `ChatClientConfig`."
             )
