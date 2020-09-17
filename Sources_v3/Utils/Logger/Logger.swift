@@ -84,6 +84,8 @@ public class Logger {
     /// See `LogDestination` protocol for details.
     public var destinations: [LogDestination]
     
+    private let loggerQueue = DispatchQueue(label: "LoggerQueue \(UUID())")
+    
     /// Init a logger with a given identifier and destinations.
     public init(identifier: String = "", destinations: [LogDestination] = []) {
         self.identifier = identifier
@@ -133,12 +135,15 @@ public class Logger {
             level: level,
             date: Date(),
             message: String(describing: message()),
+            threadName: threadName,
             functionName: functionName,
             fileName: fileName,
             lineNumber: lineNumber
         )
         for destination in enabledDestinations {
-            destination.process(logDetails: logDetails)
+            loggerQueue.async {
+                destination.process(logDetails: logDetails)
+            }
         }
     }
     
@@ -237,5 +242,21 @@ public class Logger {
     ) {
         Swift.assertionFailure(String(describing: message()), file: fileName, line: lineNumber)
         log(.error, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: "Assert failed: \(message())")
+    }
+}
+
+private extension Logger {
+    var threadName: String {
+        if Thread.isMainThread {
+            return "[main] "
+        } else {
+            if let threadName = Thread.current.name, !threadName.isEmpty {
+                return "[\(threadName)] "
+            } else if let queueName = String(validatingUTF8: __dispatch_queue_get_label(nil)), !queueName.isEmpty {
+                return "[\(queueName)] "
+            } else {
+                return String(format: "[%p] ", Thread.current)
+            }
+        }
     }
 }

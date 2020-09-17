@@ -24,6 +24,7 @@ public struct LogDetails {
     let level: LogLevel
     let date: Date
     let message: String
+    let threadName: String
     
     let functionName: StaticString
     let fileName: StaticString
