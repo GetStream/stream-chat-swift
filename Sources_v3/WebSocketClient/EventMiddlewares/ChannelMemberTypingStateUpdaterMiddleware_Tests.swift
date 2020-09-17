@@ -19,9 +19,9 @@ final class ChannelMemberTypingStateUpdaterMiddleware_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        database = nil
         middleware = nil
-        
+        AssertAsync.canBeReleased(&database)
+
         super.tearDown()
     }
     
