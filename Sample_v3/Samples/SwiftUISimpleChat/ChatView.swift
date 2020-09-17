@@ -24,7 +24,10 @@ struct ChatView: View {
         /// Channel ActionSheet presenter.
         .actionSheet(isPresented: $actionSheetTrigger, content: self.actionSheet)
         /// Set title to channel's name
-        .navigationBarTitle(Text(channel.channel?.extraData.name ?? "Unnamed Channel"), displayMode: .inline)
+        .navigationBarTitle(
+            Text(channel.channel.flatMap(createTypingMemberString) ?? channel.channel?.extraData.name ?? "Unnamed Channel"),
+            displayMode: .inline
+        )
         /// Channel actions button
         .navigationBarItems(
             trailing: Button(action: { self.actionSheetTrigger = true }) {
@@ -69,8 +72,13 @@ struct ChatView: View {
     }
     
     func composerView() -> some View {
-        HStack {
-            TextField("Type a message", text: $text)
+        let textBinding = Binding(
+            get: { self.text },
+            set: { self.text = $0; self.didKeystroke() }
+        )
+        
+        return HStack {
+            TextField("Type a message", text: textBinding, onCommit: didStopTyping)
             Button(action: self.send) {
                 Image(systemName: "arrow.up.circle.fill")
             }
@@ -110,5 +118,13 @@ struct ChatView: View {
                 .cancel()
             ])
         }
+    }
+    
+    private func didKeystroke() {
+        channel.controller.keystroke()
+    }
+    
+    private func didStopTyping() {
+        channel.controller.stopTyping()
     }
 }

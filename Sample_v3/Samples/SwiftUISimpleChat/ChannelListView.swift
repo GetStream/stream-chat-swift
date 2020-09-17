@@ -91,7 +91,7 @@ struct ChannelListView: View {
                             design: .default
                         ))
                     /// Latest message subtitle.
-                    self.latestMessage(for: index)
+                    self.channelDetails(for: index)
                         .lineLimit(1)
                         .font(.footnote)
                         .foregroundColor(.accentColor)
@@ -158,13 +158,17 @@ struct ChannelListView: View {
         }
     }
     
-    private func latestMessage(for index: Int) -> Text {
-        guard let latestMessage = channel(index).latestMessages.first else {
+    private func channelDetails(for index: Int) -> Text {
+        let channel = self.channel(index)
+        
+        if let typingMembersInfo = createTypingMemberString(for: channel) {
+            return Text(typingMembersInfo)
+        } else if let latestMessage = channel.latestMessages.first {
+            let author = latestMessage.author.name ?? latestMessage.author.id.description
+            return Text("\(author): \(latestMessage.text)")
+        } else {
             return Text("No messages")
         }
-        
-        let author = latestMessage.author.name ?? latestMessage.author.id.description
-        return Text("\(author): \(latestMessage.text)")
     }
     
     // MARK: - Actions
