@@ -13,7 +13,7 @@ extension ChannelListControllerGeneric {
     }
     
     /// A publisher emitting a new value every time the list of the channels matching the query changes.
-    public var channelsChangesPublisher: AnyPublisher<[ListChange<ChannelModel<ExtraData>>], Never> {
+    public var channelsChangesPublisher: AnyPublisher<[ListChange<_ChatChannel<ExtraData>>], Never> {
         basePublishers.channelsChanges.keepAlive(self)
     }
 
@@ -28,7 +28,7 @@ extension ChannelListControllerGeneric {
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `channelsChangesPublisher`.
-        let channelsChanges: PassthroughSubject<[ListChange<ChannelModel<ExtraData>>], Never> = .init()
+        let channelsChanges: PassthroughSubject<[ListChange<_ChatChannel<ExtraData>>], Never> = .init()
                 
         init(controller: ChannelListControllerGeneric<ExtraData>) {
             self.controller = controller
@@ -47,7 +47,7 @@ extension ChannelListControllerGeneric.BasePublishers: ChannelListControllerDele
     
     func controller(
         _ controller: ChannelListControllerGeneric<ExtraData>,
-        didChangeChannels changes: [ListChange<ChannelModel<ExtraData>>]
+        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
         channelsChanges.send(changes)
     }

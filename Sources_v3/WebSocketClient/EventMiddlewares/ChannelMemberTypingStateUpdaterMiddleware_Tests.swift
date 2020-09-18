@@ -74,7 +74,7 @@ final class ChannelMemberTypingStateUpdaterMiddleware_Tests: XCTestCase {
         try database.createMember(userId: memberId, cid: cid)
         
         // Load the channel
-        var channel: Channel {
+        var channel: ChatChannel {
             database.viewContext.channel(cid: cid)!.asModel()
         }
         
@@ -110,7 +110,7 @@ final class ChannelMemberTypingStateUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel
-        var channel: Channel {
+        var channel: ChatChannel {
             database.viewContext.channel(cid: cid)!.asModel()
         }
         

@@ -16,7 +16,7 @@ extension ChannelControllerGeneric {
         public let controller: ChannelControllerGeneric
         
         /// The channel matching the ChannelId.
-        @Published public private(set) var channel: ChannelModel<ExtraData>?
+        @Published public private(set) var channel: _ChatChannel<ExtraData>?
         
         /// The messages related to the channel.
         @Published public private(set) var messages: [MessageModel<ExtraData>] = []
@@ -45,7 +45,7 @@ extension ChannelControllerGeneric {
 extension ChannelControllerGeneric.ObservableObject: ChannelControllerDelegateGeneric {
     public func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didUpdateChannel channel: EntityChange<ChannelModel<ExtraData>>
+        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
         self.channel = channelController.channel
     }

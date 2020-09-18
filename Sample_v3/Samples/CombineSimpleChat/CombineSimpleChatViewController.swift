@@ -53,7 +53,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         ///
         let initialChannel = Just(channelController.channel)
             .compactMap { $0 }
-            .map { EntityChange<Channel>.update($0) }
+            .map { EntityChange<ChatChannel>.update($0) }
         
         ///
         /// This subscription updates the view controller's `title` and its `navigationItem.prompt` to display the count of channel
@@ -65,7 +65,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             .prepend(initialChannel)
             /// Dismiss VC and break the sequence if channel got deleted.
             /// Map `EntityChange` to `Channel` and continue executing sequence if it is `update` change.
-            .compactMap { [weak self] change -> Channel? in
+            .compactMap { [weak self] change -> ChatChannel? in
                 switch change {
                 case .create:
                     return nil

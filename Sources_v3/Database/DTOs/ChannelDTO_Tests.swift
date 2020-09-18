@@ -24,7 +24,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the fields are correct
-        var loadedChannel: ChannelModel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -131,7 +131,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the fields are correct
-        var loadedChannel: ChannelModel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -358,7 +358,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: ChannelModel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -384,7 +384,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel
-        var channel: Channel {
+        var channel: ChatChannel {
             database.viewContext.channel(cid: cid)!.asModel()
         }
         

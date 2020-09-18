@@ -43,7 +43,7 @@ public enum BanEnabling {
     
     /// Returns true is the ban is enabled for the channel.
     /// - Parameter channel: a channel.
-    public func isEnabled(for channel: Channel) -> Bool {
+    public func isEnabled(for channel: ChatChannel) -> Bool {
         switch self {
         case .disabled:
             return false

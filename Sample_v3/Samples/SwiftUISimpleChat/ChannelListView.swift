@@ -142,7 +142,7 @@ struct ChannelListView: View {
     }
     
     /// Unread count number in circle.
-    func unreadCountCircle(for channel: Channel) -> AnyView {
+    func unreadCountCircle(for channel: ChatChannel) -> AnyView {
         if channel.isUnread {
             return AnyView(
                 Text("\(channel.unreadCount.messages)")
@@ -188,7 +188,7 @@ struct ChannelListView: View {
     
     // MARK: - Helpers
     
-    private func channel(_ index: Int) -> Channel {
+    private func channel(_ index: Int) -> ChatChannel {
         channelList.channels[index]
     }
     
@@ -205,6 +205,6 @@ struct ChannelListView: View {
 /// ChannelId already conforms to protocol cause it has `id` property.
 extension ChannelId: Identifiable {}
 
-private extension Channel {
+private extension ChatChannel {
     var name: String { extraData.name ?? cid.description }
 }

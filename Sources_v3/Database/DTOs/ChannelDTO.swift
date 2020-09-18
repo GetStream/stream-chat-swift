@@ -157,12 +157,12 @@ extension ChannelDTO {
 
 extension ChannelDTO {
     /// Snapshots the current state of `ChannelDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: ExtraDataTypes>() -> ChannelModel<ExtraData> { .create(fromDTO: self) }
+    func asModel<ExtraData: ExtraDataTypes>() -> _ChatChannel<ExtraData> { .create(fromDTO: self) }
 }
 
-extension ChannelModel {
+extension _ChatChannel {
     /// Create a ChannelModel struct from its DTO
-    fileprivate static func create(fromDTO dto: ChannelDTO) -> ChannelModel {
+    fileprivate static func create(fromDTO dto: ChannelDTO) -> _ChatChannel {
         let members: [MemberModel<ExtraData.User>] = dto.members.map { $0.asModel() }
         let typingMembers: [MemberModel<ExtraData.User>] = dto.currentlyTypingMembers.map { $0.asModel() }
 
@@ -199,7 +199,7 @@ extension ChannelModel {
             )
         }
         
-        return ChannelModel(
+        return _ChatChannel(
             cid: cid,
             lastMessageAt: dto.lastMessageAt,
             createdAt: dto.createdAt,

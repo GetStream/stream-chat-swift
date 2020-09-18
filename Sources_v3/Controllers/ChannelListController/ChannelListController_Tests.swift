@@ -254,7 +254,7 @@ class ChannelListController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel: Channel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
+        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
         
         AssertAsync.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
     }
@@ -277,7 +277,7 @@ class ChannelListController_Tests: StressTestCase {
                 try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
             }, completion: $0)
         }
-        let channel: Channel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
+        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
         
         AssertAsync.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
     }
@@ -376,7 +376,7 @@ private class TestEnvironment {
 // A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
     @Atomic var state: DataController.State?
-    @Atomic var didChangeChannels_changes: [ListChange<Channel>]?
+    @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -385,7 +385,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
     
     func controller(
         _ controller: ChannelListControllerGeneric<DefaultExtraData>,
-        didChangeChannels changes: [ListChange<Channel>]
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         didChangeChannels_changes = changes
         validateQueue()
@@ -395,7 +395,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
 // A concrete `ChannelListControllerDelegateGeneric` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDelegateGeneric {
     @Atomic var state: DataController.State?
-    @Atomic var didChangeChannels_changes: [ListChange<Channel>]?
+    @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -404,7 +404,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDele
     
     func controller(
         _ controller: ChannelListControllerGeneric<DefaultExtraData>,
-        didChangeChannels changes: [ListChange<Channel>]
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         didChangeChannels_changes = changes
         validateQueue()

@@ -53,7 +53,7 @@ class SimpleChannelsViewController: UITableViewController, ChannelListController
     ///
     func controller(
         _ controller: ChannelListControllerGeneric<DefaultExtraData>,
-        didChangeChannels changes: [ListChange<Channel>]
+        didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         tableView.beginUpdates()
         

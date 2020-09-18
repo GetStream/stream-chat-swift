@@ -28,7 +28,7 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = channelListController.observableObject
         
         // Simulate channel change
-        let newChannel: Channel = .init(cid: .unique, extraData: .defaultValue)
+        let newChannel: ChatChannel = .init(cid: .unique, extraData: .defaultValue)
         channelListController.channels_simulated = [newChannel]
         channelListController.delegateCallback {
             $0.controller(
@@ -60,8 +60,8 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
 class ChannelListControllerMock: ChannelListController {
     @Atomic var synchronize_called = false
     
-    var channels_simulated: [ChannelModel<DefaultExtraData>]?
-    override var channels: [ChannelModel<DefaultExtraData>] {
+    var channels_simulated: [_ChatChannel<DefaultExtraData>]?
+    override var channels: [_ChatChannel<DefaultExtraData>] {
         channels_simulated ?? super.channels
     }
 

@@ -348,7 +348,7 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel: Channel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
+        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
         assert(channel.latestMessages.count == 1)
         let message: Message = channel.latestMessages.first!
 
@@ -370,7 +370,7 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let newChannel: Channel = client.databaseContainer.viewContext.channel(cid: newCid)!.asModel()
+        let newChannel: ChatChannel = client.databaseContainer.viewContext.channel(cid: newCid)!.asModel()
         assert(channel.latestMessages.count == 1)
         let newMessage: Message = newChannel.latestMessages.first!
 
@@ -502,7 +502,7 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         XCTAssertNil(error)
-        let channel: Channel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
+        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
         assert(channel.latestMessages.count == 1)
         let message: Message = channel.latestMessages.first!
         
@@ -528,7 +528,7 @@ class ChannelController_Tests: StressTestCase {
                 try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
             }, completion: $0)
         }
-        let channel: Channel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
+        let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
         assert(channel.latestMessages.count == 1)
         let message: Message = channel.latestMessages.first!
         
@@ -1488,7 +1488,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var willStartFetchingRemoteDataCalledCounter = 0
     @Atomic var didStopFetchingRemoteDataCalledCounter = 0
-    @Atomic var didUpdateChannel_channel: EntityChange<Channel>?
+    @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
     @Atomic var didUpdateMessages_messages: [ListChange<Message>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
     @Atomic var didChangeTypingMembers_typingMembers: Set<Member>?
@@ -1513,7 +1513,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<Channel>) {
+    func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
         didUpdateChannel_channel = channel
         validateQueue()
     }
@@ -1532,7 +1532,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
 /// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegateGeneric {
     @Atomic var state: DataController.State?
-    @Atomic var didUpdateChannel_channel: EntityChange<Channel>?
+    @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
     @Atomic var didUpdateMessages_messages: [ListChange<Message>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
     @Atomic var didChangeTypingMembers_typingMembers: Set<Member>?
@@ -1547,7 +1547,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<Channel>) {
+    func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
         didUpdateChannel_channel = channel
         validateQueue()
     }
