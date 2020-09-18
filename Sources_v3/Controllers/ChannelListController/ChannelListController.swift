@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-extension Client {
+extension _ChatClient {
     /// Creates a new `ChannelListController` with the provided channel query.
     ///
     /// - Parameter query: The query specify the filter and sorting of the channels the controller should fetch.
@@ -28,7 +28,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
     public let query: ChannelListQuery
     
     /// The `ChatClient` instance this controller belongs to.
-    public let client: Client<ExtraData>
+    public let client: _ChatClient<ExtraData>
     
     /// The channels matching the query. To observe updates in the list, set your class as a delegate of this controller.
     public var channels: [ChannelModel<ExtraData>] { channelListObserver.items }
@@ -92,7 +92,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
     /// - Parameters:
     ///   - query: The query used for filtering the channels.
     ///   - client: The `Client` instance this controller belongs to.
-    init(query: ChannelListQuery, client: Client<ExtraData>, environment: Environment = .init()) {
+    init(query: ChannelListQuery, client: _ChatClient<ExtraData>, environment: Environment = .init()) {
         self.client = client
         self.query = query
         self.environment = environment

@@ -24,7 +24,7 @@ final class MessageController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = Client.mock
+        client = _ChatClient.mock
         
         currentUserId = .unique
         messageId = .unique

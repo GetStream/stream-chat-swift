@@ -19,7 +19,7 @@ final class CurrentUserController_Tests: StressTestCase {
         super.setUp()
         
         env = TestEnvironment()
-        client = Client.mock
+        client = _ChatClient.mock
         controller = CurrentUserController(client: client, environment: env.currentUserControllerEnvironment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)

@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-public extension Client {
+public extension _ChatClient {
     /// Creates a new `MessageController` for the message with the provided id.
     /// - Parameter cid: The channel identifer the message relates to.
     /// - Parameter messageId: The message identifier.
@@ -21,7 +21,7 @@ public typealias MessageController = MessageControllerGeneric<DefaultExtraData>
 /// The `MessageControllerGeneric` is designed to edit the message it was created with.
 public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: DataController, DelegateCallable {
     /// The `ChatClient` instance this controller belongs to.
-    public let client: Client<ExtraData>
+    public let client: _ChatClient<ExtraData>
     
     /// The channel identifier the message is related to.
     public let cid: ChannelId
@@ -71,7 +71,7 @@ public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     ///   - cid: The channel identifier the message belongs to.
     ///   - messageId: The message identifier.
     ///   - environment: The source of internal dependencies.
-    init(client: Client<ExtraData>, cid: ChannelId, messageId: MessageId, environment: Environment = .init()) {
+    init(client: _ChatClient<ExtraData>, cid: ChannelId, messageId: MessageId, environment: Environment = .init()) {
         self.client = client
         self.cid = cid
         self.messageId = messageId
