@@ -156,25 +156,13 @@ class DatabaseContainer: NSPersistentContainer {
             fatalError("Non-force flush is not implemented.")
         }
         
-        write({ [persistentStoreDescriptions] session in
+        write({ session in
             let session = session as! NSManagedObjectContext
             
             try self.managedObjectModel.entities.forEach { entityDescription in
                 guard let entityName = entityDescription.name else { return }
-                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
-                
-                if persistentStoreDescriptions.contains(where: { $0.type == NSInMemoryStoreType }) {
-                    // If we use `NSInMemoryStoreType` we can't use `NSBatchDeleteRequest` and we have to delete
-                    // the objects one by one.
-                    let objects = try session.fetch(fetchRequest) as? [NSManagedObject]
-                    objects?.forEach {
-                        session.delete($0)
-                    }
-                    
-                } else {
-                    let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-                    try session.execute(deleteRequest)
-                }
+                let fetchRequest: NSFetchRequest<NSManagedObject> = .init(entityName: entityName)
+                try session.fetch(fetchRequest).forEach(session.delete)
             }
             
         }, completion: { completion?($0) })

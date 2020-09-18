@@ -71,7 +71,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     private var listeners: [(EntityChange<Item>) -> Void] = []
     
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
-    private(set) lazy var changeAggregator = ListChangeAggregator<DTO, Item>(itemCreator: itemCreator)
+    private(set) lazy var changeAggregator = ListChangeAggregator<DTO, Item>(itemCreator: itemCreator, frc: frc)
         .onChange { [unowned self] listChanges in
             log.assert(listChanges.count <= 1, "EntityDatabaseObserver predicate shouldn't produce more than one change")
             if let entityChange = listChanges.first.map(EntityChange.init) {

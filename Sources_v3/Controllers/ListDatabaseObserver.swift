@@ -43,7 +43,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
     private(set) lazy var changeAggregator: ListChangeAggregator<DTO, Item> =
-        ListChangeAggregator<DTO, Item>(itemCreator: self.itemCreator)
+        ListChangeAggregator<DTO, Item>(itemCreator: self.itemCreator, frc: frc)
     
     /// Used for observing the changes in the DB.
     private(set) lazy var frc: NSFetchedResultsController<DTO> = self.fetchedResultsControllerType
@@ -114,21 +114,34 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
     /// Used for converting the `DTO`s provided by `FetchResultsController` to the resulting `Item`.
     let itemCreator: (DTO) -> Item?
     
+    /// The `FetchResultsController` for which the current object serves as a delegate.
+    let frc: NSFetchedResultsController<DTO>
+    
     /// Called with the aggregated changes after `FetchResultsController` calls controllerDidChangeContent` on its delegate.
     var onChange: (([ListChange<Item>]) -> Void)?
     
     /// An array of changes in the current update. It gets reset every time `controllerWillChangeContent` is called, and
     /// published to the observer when `controllerDidChangeContent` is called.
     private var currentChanges: [ListChange<Item>] = []
-    
+    private var deletedItems: [NSManagedObjectID: Item] = [:]
+
     /// Creates a new `ChangeAggregator`.
     ///
     /// - Parameter itemCreator: Used for converting the `NSManagedObject`s provided by `FetchResultsController`
     /// to the resulting `Item`.
-    init(itemCreator: @escaping (DTO) -> Item?) {
+    init(itemCreator: @escaping (DTO) -> Item?, frc: NSFetchedResultsController<DTO>) {
         self.itemCreator = itemCreator
+        self.frc = frc
+        
+        super.init()
+        
+        subscribeToNotifications()
     }
     
+    deinit {
+        unsubscribeFromNotifications()
+    }
+
     // MARK: - NSFetchedResultsControllerDelegate
     
     // This should ideally be in the extensions but it's not possible to implement @objc methods in extensions of generic types.
@@ -144,35 +157,35 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
         for type: NSFetchedResultsChangeType,
         newIndexPath: IndexPath?
     ) {
-        guard let dto = anObject as? DTO, let item = itemCreator(dto) else {
+        guard let dto = anObject as? DTO else {
             log.warning("Skipping the update from DB because the DTO can't be converted to the model object.")
             return
         }
         
         switch type {
         case .insert:
-            guard let index = newIndexPath else {
+            guard let index = newIndexPath, let item = itemCreator(dto) else {
                 log.warning("Skipping the update from DB because `newIndexPath` is missing for `.insert` change.")
                 return
             }
             currentChanges.append(.insert(item, index: index))
             
         case .move:
-            guard let fromIndex = indexPath, let toIndex = newIndexPath else {
+            guard let fromIndex = indexPath, let toIndex = newIndexPath, let item = itemCreator(dto) else {
                 log.warning("Skipping the update from DB because `indexPath` or `newIndexPath` are missing for `.move` change.")
                 return
             }
             currentChanges.append(.move(item, fromIndex: fromIndex, toIndex: toIndex))
             
         case .update:
-            guard let index = indexPath else {
+            guard let index = indexPath, let item = itemCreator(dto) else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.update` change.")
                 return
             }
             currentChanges.append(.update(item, index: index))
             
         case .delete:
-            guard let index = indexPath else {
+            guard let index = indexPath, let item = deletedItems.removeValue(forKey: dto.objectID) else {
                 log.warning("Skipping the update from DB because `indexPath` is missing for `.delete` change.")
                 return
             }
@@ -185,6 +198,50 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         onChange?(currentChanges)
+    }
+    
+    // MARK: - Private
+    
+    private func subscribeToNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(willSaveContext),
+            name: .NSManagedObjectContextWillSave,
+            object: nil
+        )
+    }
+    
+    private func unsubscribeFromNotifications() {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    @objc private func willSaveContext(_ notification: Notification) {
+        guard let context = notification.object as? NSManagedObjectContext else { return }
+    
+        // Get `DTO` ids the FRC is observing
+        let fetchedDTOs = frc.fetchedObjects ?? []
+        
+        // Get `DTO` ids that are gonna be deleted
+        let deletedDTOs = context
+            .deletedObjects
+            .compactMap { $0 as? DTO }
+        
+        // Get `DTO` ids that that no longer match the fetch request predicate
+        let missmatchingDTOs = context
+            .updatedObjects
+            .compactMap { $0 as? DTO }
+            .filter { frc.fetchRequest.predicate?.evaluate(with: $0) == false }
+        
+        // Perform `DTO -> Item` transformation in advance
+        deletedItems.removeAll()
+        (deletedDTOs + missmatchingDTOs).forEach { dtoToDelete in
+            guard let trackedDTO = fetchedDTOs.first(where: { $0.objectID == dtoToDelete.objectID }) else { return }
+            
+            // Create item from DTO in advance before the actual deletion happen.
+            // This is required because after the deletion, entity relations become invalid
+            // and lossless `DTO -> Item` converion become impossible
+            deletedItems[trackedDTO.objectID] = itemCreator(trackedDTO)
+        }
     }
 }
 
