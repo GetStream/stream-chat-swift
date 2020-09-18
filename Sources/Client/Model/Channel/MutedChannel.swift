@@ -12,27 +12,19 @@ import Foundation
 public struct MutedChannel: Decodable {
     private enum CodingKeys: String, CodingKey {
         case channel
+        case user
         case created = "created_at"
         case updated = "updated_at"
     }
     
     /// A channel.
     public let channel: Channel
+    /// User who muted the channel.
+    public let user: User
     /// A created date.
     public let created: Date
     /// A updated date.
     public let updated: Date
-    
-    /// Creates a muted channel.
-    /// - Parameters:
-    ///   - user: a user.
-    ///   - created: a created date.
-    ///   - updated: an updated date.
-    init(channel: Channel, created: Date, updated: Date) {
-        self.channel = channel
-        self.created = created
-        self.updated = updated
-    }
 }
 
 /// A response for the muted channel.
@@ -45,5 +37,5 @@ public struct MutedChannelResponse: Decodable {
     /// An own user.
     public let currentUser: User
     /// A muted channel.
-    public let mutedChannel: Channel
+    public let mutedChannel: MutedChannel
 }
