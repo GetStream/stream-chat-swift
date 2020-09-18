@@ -9,7 +9,7 @@ class MessagePayload_Tests: XCTestCase {
     let messageJSON = XCTestCase.mockData(fromFile: "Message")
     
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(MessagePayload<DefaultDataTypes>.self, from: messageJSON)
+        let payload = try JSONDecoder.default.decode(MessagePayload<DefaultExtraData>.self, from: messageJSON)
         
         XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
         XCTAssertEqual(payload.type.rawValue, "regular")

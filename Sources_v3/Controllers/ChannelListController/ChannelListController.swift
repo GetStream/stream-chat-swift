@@ -16,8 +16,8 @@ extension Client {
     }
 }
 
-/// A convenience typealias for `ChannelListControllerGeneric` with `DefaultDataTypes`
-public typealias ChannelListController = ChannelListControllerGeneric<DefaultDataTypes>
+/// A convenience typealias for `ChannelListControllerGeneric` with `DefaultExtraData`
+public typealias ChannelListController = ChannelListControllerGeneric<DefaultExtraData>
 
 /// `ChannelListController` allows observing and mutating the list of channels specified by a channel query.
 ///
@@ -184,7 +184,7 @@ extension ChannelListControllerGeneric {
     }
 }
 
-extension ChannelListControllerGeneric where ExtraData == DefaultDataTypes {
+extension ChannelListControllerGeneric where ExtraData == DefaultExtraData {
     /// Set the delegate of `ChannelListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -201,12 +201,12 @@ extension ChannelListControllerGeneric where ExtraData == DefaultDataTypes {
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
 /// please use `GenericChannelListController` instead.
 public protocol ChannelListControllerDelegate: DataControllerStateDelegate {
-    func controller(_ controller: ChannelListControllerGeneric<DefaultDataTypes>, didChangeChannels changes: [ListChange<Channel>])
+    func controller(_ controller: ChannelListControllerGeneric<DefaultExtraData>, didChangeChannels changes: [ListChange<Channel>])
 }
 
 public extension ChannelListControllerDelegate {
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
         didChangeChannels changes: [ListChange<Channel>]
     ) {}
 }
@@ -225,7 +225,7 @@ public protocol ChannelListControllerDelegateGeneric: DataControllerStateDelegat
 
 public extension ChannelListControllerDelegateGeneric {
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
         didChangeChannels changes: [ListChange<ChannelModel<ExtraData>>]
     ) {}
 }
@@ -278,7 +278,7 @@ extension AnyChannelListControllerDelegate {
     }
 }
 
-extension AnyChannelListControllerDelegate where ExtraData == DefaultDataTypes {
+extension AnyChannelListControllerDelegate where ExtraData == DefaultExtraData {
     convenience init(_ delegate: ChannelListControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

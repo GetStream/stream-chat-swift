@@ -6,7 +6,7 @@
 import XCTest
 
 class EventDataProcessorMiddleware_Tests: XCTestCase {
-    var middleware: EventDataProcessorMiddleware<DefaultDataTypes>!
+    var middleware: EventDataProcessorMiddleware<DefaultExtraData>!
     fileprivate var database: DatabaseContainerMock!
     
     override func setUp() {
@@ -37,7 +37,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
         let completion = try await { middleware.handle(event: testEvent, completion: $0) }
         
         // Assert the channel data is saved and the event is forwarded
-        var loadedChannel: ChannelModel<DefaultDataTypes>? {
+        var loadedChannel: ChannelModel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)!.asModel()
         }
         XCTAssertEqual(loadedChannel?.cid, channelId)
@@ -51,7 +51,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
         }
         
         // This is not really used, we just need to have something to create the event with
-        let somePayload = EventPayload<DefaultDataTypes>(eventType: .healthCheck)
+        let somePayload = EventPayload<DefaultExtraData>(eventType: .healthCheck)
         
         let testEvent = TestEvent(payload: somePayload)
         

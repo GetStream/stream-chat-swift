@@ -7,7 +7,7 @@ import XCTest
 
 final class ChannelMemberTypingStateUpdaterMiddleware_Tests: XCTestCase {
     var database: DatabaseContainerMock!
-    var middleware: ChannelMemberTypingStateUpdaterMiddleware<DefaultDataTypes>!
+    var middleware: ChannelMemberTypingStateUpdaterMiddleware<DefaultExtraData>!
     
     // MARK: - Set up
     

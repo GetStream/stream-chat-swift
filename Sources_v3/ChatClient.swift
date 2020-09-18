@@ -32,10 +32,10 @@ public protocol ExtraDataTypes {
 }
 
 /// A concrete implementation of `ExtraDataTypes` with the default values.
-public struct DefaultDataTypes: ExtraDataTypes {}
+public struct DefaultExtraData: ExtraDataTypes {}
 
 /// A convenience typealias for `Client` with the default data types.
-public typealias ChatClient = Client<DefaultDataTypes>
+public typealias ChatClient = Client<DefaultExtraData>
 
 /// The root object representing a Stream Chat.
 ///

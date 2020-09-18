@@ -24,7 +24,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the fields are correct
-        var loadedChannel: ChannelModel<DefaultDataTypes>? {
+        var loadedChannel: ChannelModel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -131,7 +131,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the fields are correct
-        var loadedChannel: ChannelModel<DefaultDataTypes>? {
+        var loadedChannel: ChannelModel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -358,7 +358,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: ChannelModel<DefaultDataTypes>? {
+        var loadedChannel: ChannelModel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -447,7 +447,7 @@ extension XCTestCase {
         )
     }
     
-    var dummyMessage: MessagePayload<DefaultDataTypes> {
+    var dummyMessage: MessagePayload<DefaultExtraData> {
         MessagePayload(
             id: .unique,
             type: .regular,
@@ -468,11 +468,11 @@ extension XCTestCase {
         )
     }
     
-    var dummyChannelRead: ChannelReadPayload<DefaultDataTypes> {
+    var dummyChannelRead: ChannelReadPayload<DefaultExtraData> {
         ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), unreadMessagesCount: 10)
     }
     
-    func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultDataTypes> {
+    func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultExtraData> {
         let member: MemberPayload<NameAndImageExtraData> =
             .init(
                 user: .init(
@@ -495,7 +495,7 @@ extension XCTestCase {
         let channelCreatedDate = Date.unique
         let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
         
-        let payload: ChannelPayload<DefaultDataTypes> =
+        let payload: ChannelPayload<DefaultExtraData> =
             .init(
                 channel: .init(
                     cid: channelId,

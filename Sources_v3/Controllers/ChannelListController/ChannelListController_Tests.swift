@@ -360,7 +360,7 @@ class ChannelListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var channelListUpdater: ChannelListUpdaterMock<DefaultDataTypes>?
+    @Atomic var channelListUpdater: ChannelListUpdaterMock<DefaultExtraData>?
     
     lazy var environment: ChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
@@ -384,7 +384,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
     }
     
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
         didChangeChannels changes: [ListChange<Channel>]
     ) {
         didChangeChannels_changes = changes
@@ -403,7 +403,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDele
     }
     
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
         didChangeChannels changes: [ListChange<Channel>]
     ) {
         didChangeChannels_changes = changes

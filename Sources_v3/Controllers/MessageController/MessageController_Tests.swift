@@ -139,7 +139,7 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(message.text, messageLocalText)
         
         // Simulate response from the backend with updated `text`, update the local message in the databse
-        let messagePayload: MessagePayload<DefaultDataTypes> = .dummy(
+        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
             messageId: messageId,
             authorUserId: currentUserId,
             text: .unique
@@ -233,7 +233,7 @@ final class MessageController_Tests: StressTestCase {
         controller.synchronize()
 
         // Simulate response from a backend with a message that doesn't exist locally
-        let messagePayload: MessagePayload<DefaultDataTypes> = .dummy(
+        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
             messageId: messageId,
             authorUserId: currentUserId
         )
@@ -270,7 +270,7 @@ final class MessageController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate response from a backend with a message that exists locally but has out-dated text
-        let messagePayload: MessagePayload<DefaultDataTypes> = .dummy(
+        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
             messageId: messageId,
             authorUserId: currentUserId,
             text: "new text"
@@ -406,8 +406,8 @@ private class TestDelegateGeneric: QueueAwareDelegate, MessageControllerDelegate
 }
 
 private class TestEnvironment {
-    var messageUpdater: MessageUpdaterMock<DefaultDataTypes>!
-    var messageObserver: EntityDatabaseObserverMock<MessageModel<DefaultDataTypes>, MessageDTO>!
+    var messageUpdater: MessageUpdaterMock<DefaultExtraData>!
+    var messageObserver: EntityDatabaseObserverMock<MessageModel<DefaultExtraData>, MessageDTO>!
     var messageObserver_synchronizeError: Error?
     
     lazy var controllerEnvironment: MessageController

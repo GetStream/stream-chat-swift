@@ -60,8 +60,8 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
 class ChannelListControllerMock: ChannelListController {
     @Atomic var synchronize_called = false
     
-    var channels_simulated: [ChannelModel<DefaultDataTypes>]?
-    override var channels: [ChannelModel<DefaultDataTypes>] {
+    var channels_simulated: [ChannelModel<DefaultExtraData>]?
+    override var channels: [ChannelModel<DefaultExtraData>] {
         channels_simulated ?? super.channels
     }
 

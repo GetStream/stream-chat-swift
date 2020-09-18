@@ -26,4 +26,4 @@ public struct ChannelReadModel<ExtraData: ExtraDataTypes> {
     }
 }
 
-public typealias ChannelRead = ChannelReadModel<DefaultDataTypes>
+public typealias ChannelRead = ChannelReadModel<DefaultExtraData>

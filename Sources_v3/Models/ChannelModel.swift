@@ -137,7 +137,7 @@ extension ChannelModel {
 }
 
 /// A convenience `ChannelModel` typealias with no additional channel data.
-public typealias Channel = ChannelModel<DefaultDataTypes>
+public typealias Channel = ChannelModel<DefaultExtraData>
 
 /// Additional data fields `ChannelModel` can be extended with. You can use it to store your custom data related to a channel.
 public protocol ChannelExtraData: ExtraData {}

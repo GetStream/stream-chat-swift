@@ -69,7 +69,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
     
     func test_messagesChangesPublisher() {
         // Setup Recording publishers
-        var recording = Record<[ListChange<MessageModel<DefaultDataTypes>>], Never>.Recording()
+        var recording = Record<[ListChange<MessageModel<DefaultExtraData>>], Never>.Recording()
         
         // Setup the chain
         channelController

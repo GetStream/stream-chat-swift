@@ -6,7 +6,7 @@
 import XCTest
 
 class ChannelWatchStateUpdater_Tests: StressTestCase {
-    typealias ExtraData = DefaultDataTypes
+    typealias ExtraData = DefaultExtraData
     
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!

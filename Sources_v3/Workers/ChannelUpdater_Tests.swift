@@ -6,7 +6,7 @@
 import XCTest
 
 class ChannelUpdater_Tests: StressTestCase {
-    typealias ExtraData = DefaultDataTypes
+    typealias ExtraData = DefaultExtraData
     
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
@@ -133,7 +133,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let arguments: String = .unique
         let parentMessageId: MessageId = .unique
         let showReplyInChannel = true
-        let extraData: DefaultDataTypes.Message = .defaultValue
+        let extraData: DefaultExtraData.Message = .defaultValue
         
         // Create new message
         let newMesageId: MessageId = try await { completion in
@@ -209,7 +209,7 @@ class ChannelUpdater_Tests: StressTestCase {
     // MARK: - Update channel
 
     func test_updateChannel_makesCorrectAPICall() {
-        let channelPayload: ChannelEditDetailPayload<DefaultDataTypes> = .unique
+        let channelPayload: ChannelEditDetailPayload<DefaultExtraData> = .unique
 
         // Simulate `updateChannel(channelPayload:, completion:)` call
         channelUpdater.updateChannel(channelPayload: channelPayload)
