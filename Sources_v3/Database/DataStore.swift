@@ -54,7 +54,7 @@ public struct DataStore<ExtraData: ExtraDataTypes> {
     /// model object. If a channel object doesn't exist locally, returns `nil`.
     ///
     /// - Parameter cid: An cid of a channel.
-    public func channel(cid: ChannelId) -> ChannelModel<ExtraData>? {
+    public func channel(cid: ChannelId) -> _ChatChannel<ExtraData>? {
         database.viewContext.channel(cid: cid)?.asModel()
     }
     

@@ -46,7 +46,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
 
     func test_channelChangePublisher() {
         // Setup Recording publishers
-        var recording = Record<EntityChange<Channel>, Never>.Recording()
+        var recording = Record<EntityChange<ChatChannel>, Never>.Recording()
         
         // Setup the chain
         channelController
@@ -58,7 +58,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
 
-        let newChannel: Channel = .init(cid: .unique, extraData: .defaultValue)
+        let newChannel: ChatChannel = .init(cid: .unique, extraData: .defaultValue)
         controller?.channel_simulated = newChannel
         controller?.delegateCallback {
             $0.channelController(controller!, didUpdateChannel: .create(newChannel))

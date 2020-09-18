@@ -56,7 +56,7 @@ class ChannelUpdater_Tests: StressTestCase {
         apiClient.test_simulateResponse(.success(payload))
         
         // Assert the data is stored in the DB
-        var channel: Channel? {
+        var channel: ChatChannel? {
             database.viewContext.channel(cid: cid)?.asModel()
         }
         AssertAsync {
@@ -84,7 +84,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let query = ChannelQuery(channelPayload: .unique)
         var cid: ChannelId = .unique
 
-        var channel: Channel? {
+        var channel: ChatChannel? {
             database.viewContext.channel(cid: cid)?.asModel()
         }
 

@@ -31,7 +31,7 @@ class DatabaseSession_Tests: StressTestCase {
         }
         
         // Try to load the saved channel from DB
-        var loadedChannel: ChannelModel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -124,7 +124,7 @@ class DatabaseSession_Tests: StressTestCase {
         AssertAsync.willBeTrue(loadedMessage != nil)
         
         // Verify the channel has the message
-        let loadedChannel: ChannelModel<DefaultExtraData> = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
+        let loadedChannel: _ChatChannel<DefaultExtraData> = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
         let message = try XCTUnwrap(loadedMessage)
         XCTAssert(loadedChannel.latestMessages.contains(message))
     }

@@ -70,7 +70,7 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     /// The method below reacts to changes in the `Channel` entity. It updates the view controller's `title` and its `navigationItem.prompt` to display the count of channel
     /// members and the count of online members. When the channel is deleted, this view controller is dismissed.
     ///
-    func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<Channel>) {
+    func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
         switch channel {
         case .create:
             break

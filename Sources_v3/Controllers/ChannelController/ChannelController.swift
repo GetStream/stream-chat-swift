@@ -103,7 +103,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     
     /// The channel matching the channelId. To observe updates to the channel,
     /// set your class as a delegate of this controller or use `Combine` wrapper.
-    public var channel: ChannelModel<ExtraData>? {
+    public var channel: _ChatChannel<ExtraData>? {
         if state == .initialized {
             setLocalStateBasedOnError(startDatabaseObservers())
         }
@@ -155,7 +155,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
         }
     }
 
-    @Cached private var channelObserver: EntityDatabaseObserver<ChannelModel<ExtraData>, ChannelDTO>
+    @Cached private var channelObserver: EntityDatabaseObserver<_ChatChannel<ExtraData>, ChannelDTO>
     @Cached private var messagesObserver: ListDatabaseObserver<MessageModel<ExtraData>, MessageDTO>
     
     private var eventObservers: [EventObserver] = []
@@ -216,7 +216,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
             let observer = EntityDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
                 fetchRequest: ChannelDTO.fetchRequest(for: self.channelQuery.cid),
-                itemCreator: { $0.asModel() as ChannelModel<ExtraData> }
+                itemCreator: { $0.asModel() as _ChatChannel<ExtraData> }
             ).onChange { change in
                 self.delegateCallback { $0.channelController(self, didUpdateChannel: change) }
             }
@@ -705,7 +705,7 @@ public protocol ChannelControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `Channel` entity.
     func channelController(
         _ channelController: ChannelController,
-        didUpdateChannel channel: EntityChange<Channel>
+        didUpdateChannel channel: EntityChange<ChatChannel>
     )
     
     /// The controller observed changes in the `Messages` of the observed channel.
@@ -724,7 +724,7 @@ public protocol ChannelControllerDelegate: DataControllerStateDelegate {
 public extension ChannelControllerDelegate {
     func channelController(
         _ channelController: ChannelController,
-        didUpdateChannel channel: EntityChange<Channel>
+        didUpdateChannel channel: EntityChange<ChatChannel>
     ) {}
     
     func channelController(
@@ -749,7 +749,7 @@ public protocol ChannelControllerDelegateGeneric: DataControllerStateDelegate {
     /// The controller observed a change in the `Channel` entity.
     func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didUpdateChannel channel: EntityChange<ChannelModel<ExtraData>>
+        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     )
     
     /// The controller observed changes in the `Messages` of the observed channel.
@@ -771,7 +771,7 @@ public protocol ChannelControllerDelegateGeneric: DataControllerStateDelegate {
 public extension ChannelControllerDelegateGeneric {
     func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didUpdateChannel channel: EntityChange<ChannelModel<ExtraData>>
+        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {}
     
     func channelController(
@@ -797,7 +797,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
     
     private var _controllerDidUpdateChannel: (
         ChannelControllerGeneric<ExtraData>,
-        EntityChange<ChannelModel<ExtraData>>
+        EntityChange<_ChatChannel<ExtraData>>
     ) -> Void
 
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
@@ -819,7 +819,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidUpdateChannel: @escaping (
             ChannelControllerGeneric<ExtraData>,
-            EntityChange<ChannelModel<ExtraData>>
+            EntityChange<_ChatChannel<ExtraData>>
         ) -> Void,
         controllerdidUpdateMessages: @escaping (
             ChannelControllerGeneric<ExtraData>,
@@ -848,7 +848,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
     
     func channelController(
         _ controller: ChannelControllerGeneric<ExtraData>,
-        didUpdateChannel channel: EntityChange<ChannelModel<ExtraData>>
+        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
         _controllerDidUpdateChannel(controller, channel)
     }

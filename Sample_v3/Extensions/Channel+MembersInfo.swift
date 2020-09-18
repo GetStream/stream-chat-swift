@@ -4,11 +4,11 @@
 
 import StreamChatClient
 
-func createMemberInfoString(for channel: Channel) -> String {
+func createMemberInfoString(for channel: ChatChannel) -> String {
     "\(channel.members.count) members, \(channel.members.filter(\.isOnline).count) online"
 }
 
-func createTypingMemberString(for channel: Channel) -> String? {
+func createTypingMemberString(for channel: ChatChannel) -> String? {
     guard !channel.currentlyTypingMembers.isEmpty else { return nil }
     let names = channel.currentlyTypingMembers.map { $0.name ?? $0.id }.sorted()
     return names.joined(separator: ",") + " \(names.count == 1 ? "is" : "are") typing..."

@@ -4,7 +4,10 @@
 
 import Foundation
 
-public struct ChannelModel<ExtraData: ExtraDataTypes> {
+/// A convenience `_ChatChannel` typealias with no additional channel data.
+public typealias ChatChannel = _ChatChannel<DefaultExtraData>
+
+public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// A channel type + id.
     public let cid: ChannelId
     
@@ -116,7 +119,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     }
 }
 
-extension ChannelModel {
+extension _ChatChannel {
     /// A channel type.
     public var type: ChannelType { cid.type }
     
@@ -136,18 +139,15 @@ extension ChannelModel {
     var isEmpty: Bool { /* extraData == nil && members.isEmpty && invitedMembers.isEmpty */ fatalError() }
 }
 
-/// A convenience `ChannelModel` typealias with no additional channel data.
-public typealias Channel = ChannelModel<DefaultExtraData>
-
 /// Additional data fields `ChannelModel` can be extended with. You can use it to store your custom data related to a channel.
 public protocol ChannelExtraData: ExtraData {}
 
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.
 public protocol AnyChannel {}
-extension ChannelModel: AnyChannel {}
+extension _ChatChannel: AnyChannel {}
 
-extension ChannelModel: Hashable {
-    public static func == (lhs: ChannelModel<ExtraData>, rhs: ChannelModel<ExtraData>) -> Bool {
+extension _ChatChannel: Hashable {
+    public static func == (lhs: _ChatChannel<ExtraData>, rhs: _ChatChannel<ExtraData>) -> Bool {
         lhs.cid == rhs.cid
     }
     

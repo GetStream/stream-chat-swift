@@ -13,7 +13,7 @@ extension ChannelControllerGeneric {
     }
     
     /// A publisher emitting a new value every time the channel changes.
-    public var channelChangePublisher: AnyPublisher<EntityChange<ChannelModel<ExtraData>>, Never> {
+    public var channelChangePublisher: AnyPublisher<EntityChange<_ChatChannel<ExtraData>>, Never> {
         basePublishers.channelChange.keepAlive(self)
     }
     
@@ -43,7 +43,7 @@ extension ChannelControllerGeneric {
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `channelChangePublisher`.
-        let channelChange: PassthroughSubject<EntityChange<ChannelModel<ExtraData>>, Never> = .init()
+        let channelChange: PassthroughSubject<EntityChange<_ChatChannel<ExtraData>>, Never> = .init()
         
         /// A backing subject for `messagesChangesPublisher`.
         let messagesChanges: PassthroughSubject<[ListChange<MessageModel<ExtraData>>], Never> = .init()
@@ -71,7 +71,7 @@ extension ChannelControllerGeneric.BasePublishers: ChannelControllerDelegateGene
 
     func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didUpdateChannel channel: EntityChange<ChannelModel<ExtraData>>
+        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
         channelChange.send(channel)
     }

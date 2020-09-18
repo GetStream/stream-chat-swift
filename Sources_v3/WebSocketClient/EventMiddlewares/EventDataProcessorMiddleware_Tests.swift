@@ -37,7 +37,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
         let completion = try await { middleware.handle(event: testEvent, completion: $0) }
         
         // Assert the channel data is saved and the event is forwarded
-        var loadedChannel: ChannelModel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)!.asModel()
         }
         XCTAssertEqual(loadedChannel?.cid, channelId)

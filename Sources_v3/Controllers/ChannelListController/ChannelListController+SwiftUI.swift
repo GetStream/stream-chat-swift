@@ -16,7 +16,7 @@ extension ChannelListControllerGeneric {
         public let controller: ChannelListControllerGeneric
         
         /// The channels matching the query.
-        @Published public private(set) var channels: [ChannelModel<ExtraData>] = []
+        @Published public private(set) var channels: [_ChatChannel<ExtraData>] = []
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
@@ -36,7 +36,7 @@ extension ChannelListControllerGeneric {
 extension ChannelListControllerGeneric.ObservableObject: ChannelListControllerDelegateGeneric {
     public func controller(
         _ controller: ChannelListControllerGeneric<ExtraData>,
-        didChangeChannels changes: [ListChange<ChannelModel<ExtraData>>]
+        didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
         // We don't care about detailed changes. We just need to update the `channels` property and keep SwiftUI
         // deal with the rest.

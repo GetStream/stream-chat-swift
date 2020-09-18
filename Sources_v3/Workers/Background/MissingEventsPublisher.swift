@@ -78,7 +78,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
         }
     }
     
-    private var allChannels: [ChannelModel<ExtraData>] {
+    private var allChannels: [_ChatChannel<ExtraData>] {
         do {
             return try database.backgroundReadOnlyContext.fetch(ChannelDTO.allChannelsFetchRequest).map { $0.asModel() }
         } catch {
