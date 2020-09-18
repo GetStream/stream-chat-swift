@@ -20,11 +20,17 @@ class CombineSimpleChannelsViewController: UITableViewController {
     /// # channelListController
     ///
     ///  The property below holds the `ChannelListController` object.  It is used to make calls to the Stream Chat API and to listen to the events related to the channels list.
-    ///  After it is set, events in the channel list can be listened to by subscribing to the combine publisher `channelListController.channelsChangesPublisher`. After
-    ///  that,`channelListController.synchronize()` is called in `viewDidLoad` to synchronize the local data and start listening to events related to the channel list. Additionally,
-    ///  `channelListController.client` holds a reference to the `ChatClient` which created this instance. It can be used to create other controllers.
-    ///
-    var channelListController: ChannelListController!
+    ///  After it is set, we are subscribing to `Publishers` from `ChannelController.BasePublisher` to receive updates.
+    ///  `Publishers` functionality is identical to methods from `ChannelControllerDelegate`.
+    ///  Also we need to call `channelController.synchronize()` to update local data with remote one.
+    ///  Additionally, `channelListController.client` holds a reference to the `ChatClient` which created this instance.
+    ///  It can be used to create other controllers.
+    var channelListController: ChannelListController! {
+        didSet {
+            subscribeToCombinePublishers()
+            channelListController.synchronize()
+        }
+    }
     
     ///
     /// # chatClient
@@ -47,17 +53,28 @@ class CombineSimpleChannelsViewController: UITableViewController {
     ///
     /// # subscribeToCombinePublishers
     ///
-    ///  Subscribes to the `statePublisher` to print any chages to the controller state and to the `channelsChangesPublisher` to update the `tableView` with the latest
-    ///  list of channels. `applyListChanges` is a convenient defined at the bottom of this sample code. You must copy its implementation to your codebase.
+    ///  You need to subscribe to `Publishers` to start observing updates from `ChannelListController`.
     ///
     private func subscribeToCombinePublishers() {
+        ///
+        /// `statePublisher` will send changes related to `State` of `ChannelListController`,
+        /// You can use it for presenting some loading indicator.
+        /// While using `Combine` publishers, the initial `state` of the contraller will be `.localDataFetched`
+        /// (or `localDataFetchFailed` in case of some internal error with DB, it should be very rare case).
+        /// It means that if there is some local data is stored in DB related to this controller, it will be available from the start. After calling `channelListController.synchronize()`
+        /// the controller will try to update local data with remote one and change it's state to `.remoteDataFetched` (or `.remoteDataFetchFailed` in case of failed API request).
+        ///
         channelListController
             .statePublisher
             .sink { (state) in
                 print("State changed: \(state)")
             }
             .store(in: &cancellables)
-            
+        
+        ///
+        /// `channelsChangesPublisher` will send changes related to `channels` changes.
+        /// This subscription will update `tableView` with received changes.
+        ///
         channelListController
             .channelsChangesPublisher
             .receive(on: RunLoop.main)
@@ -160,6 +177,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
         switch editingStyle {
         case .delete:
             let channelId = channelListController.channels[indexPath.row].cid
+            /// After successful channel deletion you will receive updates from `channelsChangesPublisher` and channel will be removed from `tableView`.
             chatClient.channelController(for: channelId).deleteChannel()
         default: return
         }
@@ -211,6 +229,8 @@ class CombineSimpleChannelsViewController: UITableViewController {
     ///
     /// The method below handles long press on channel cells by displaying a `UIAlertController` with many actions that can be taken on the `channelController` such
     /// as `updateChannel`, `muteChannel`, `unmuteChannel`, ``showChannel`, and `hideChannel`.
+    /// After succesfull channel modifcation you will receive updates from `channelsChangesPublisher` so you will be able to update your UI.
+    /// (e.g. show "mute" icon in `UITableViewCell`)
     ///
     @objc
     func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
@@ -267,7 +287,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
                 let controller = (segue.destination as! UINavigationController)
                     .topViewController as! CombineSimpleChatViewController
                 
-                /// pass down reference to `ChannelController`.
+                /// Pass down reference to `ChannelController`.
                 controller.channelController = chatClient.channelController(for: channel.cid)
                 
                 controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
@@ -292,12 +312,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // Synchronize local data with remote.
-        channelListController.synchronize()
-        
-        subscribeToCombinePublishers()
-        
-        // Do any additional setup after loading the view.
+        /// Do any additional setup after loading the view.
         navigationItem.leftBarButtonItem = UIBarButtonItem(
             title: "Settings",
             style: .plain,
@@ -324,7 +339,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
     // MARK: - Table View
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
+        /// Return false if you do not want the specified item to be editable.
         true
     }
 }
