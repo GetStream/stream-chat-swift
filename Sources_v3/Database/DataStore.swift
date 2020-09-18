@@ -7,7 +7,7 @@ import Foundation
 /// Types conforming to this protocol automatically exposes public `dataStore` variable.
 public protocol DataStoreProvider {
     associatedtype ExtraData: ExtraDataTypes
-    var client: Client<ExtraData> { get }
+    var client: _ChatClient<ExtraData> { get }
 }
 
 extension DataStoreProvider {
@@ -20,7 +20,7 @@ public struct DataStore<ExtraData: ExtraDataTypes> {
     let database: DatabaseContainer
     
     // Technically, we need only `database` but we use a `Client` instance to get the extra data types from it.
-    init(client: Client<ExtraData>) {
+    init(client: _ChatClient<ExtraData>) {
         database = client.databaseContainer
     }
     

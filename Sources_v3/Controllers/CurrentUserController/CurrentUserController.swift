@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-public extension Client {
+public extension _ChatClient {
     /// Creates a new `CurrentUserControllerGeneric`
     /// - Returns: A new instance of `ChannelController`.
     func currentUserController() -> CurrentUserControllerGeneric<ExtraData> {
@@ -19,7 +19,7 @@ public typealias CurrentUserController = CurrentUserControllerGeneric<DefaultExt
 /// `CurrentUserControllerGeneric` allows to observer current user updates
 public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
-    public let client: Client<ExtraData>
+    public let client: _ChatClient<ExtraData>
     
     private let environment: Environment
     
@@ -87,7 +87,7 @@ public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
     /// - Parameters:
     ///   - client: The `Client` instance this controller belongs to.
     ///   - environment: The source of internal dependencies
-    init(client: Client<ExtraData>, environment: Environment = .init()) {
+    init(client: _ChatClient<ExtraData>, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
         

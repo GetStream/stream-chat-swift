@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-extension Client {
+extension _ChatClient {
     /// Creates a new `ChannelController` for the channel with the provided id and options.
     ///
     /// - Parameter channelId: The id of the channel this controller represents.
@@ -99,7 +99,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     private var channelId: ChannelId { channelQuery.cid }
     
     /// The `ChatClient` instance this controller belongs to.
-    public let client: Client<ExtraData>
+    public let client: _ChatClient<ExtraData>
     
     /// The channel matching the channelId. To observe updates to the channel,
     /// set your class as a delegate of this controller or use `Combine` wrapper.
@@ -197,7 +197,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     ///   - isChannelAlreadyCreated: Flag indicating whether channel is created on backend.
     init(
         channelQuery: ChannelQuery<ExtraData>,
-        client: Client<ExtraData>,
+        client: _ChatClient<ExtraData>,
         environment: Environment = .init(),
         isChannelAlreadyCreated: Bool = true
     ) {

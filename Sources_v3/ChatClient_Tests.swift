@@ -277,7 +277,7 @@ class ChatClient_Tests: StressTestCase {
     func test_productionClientIsInitalizedWithAllMandatoryBackgroundWorkers() {
         // Create a new Client with production configuration
         let config = ChatClientConfig(apiKey: .init(.unique))
-        let client = Client<DefaultExtraData>(config: config)
+        let client = _ChatClient<DefaultExtraData>(config: config)
         
         // Check all the mandatory background workers are initialized
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender<DefaultExtraData> })
@@ -307,7 +307,7 @@ class ChatClient_Tests: StressTestCase {
         }
         
         // Create a Client instance and check the TestWorker is initialized properly
-        let client = Client(
+        let client = _ChatClient(
             config: config,
             workerBuilders: [TestWorker.init],
             environment: testEnv.environment
@@ -339,7 +339,7 @@ class ChatClient_Tests: StressTestCase {
         let workerBuilders: [WorkerBuilder] = [TestWorker.init]
         
         // Create ChatClient
-        let client = Client(
+        let client = _ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
             environment: testEnv.environment
@@ -386,7 +386,7 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
     
     @Atomic var eventDecoder: EventDecoder<ExtraData>?
     
-    lazy var environment: Client<ExtraData>.Environment = { [unowned self] in
+    lazy var environment: _ChatClient<ExtraData>.Environment = { [unowned self] in
         .init(
             apiClientBuilder: {
                 self.apiClient = APIClientMock(sessionConfiguration: $0, requestEncoder: $1, requestDecoder: $2)

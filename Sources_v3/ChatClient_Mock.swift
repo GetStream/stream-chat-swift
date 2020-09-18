@@ -27,7 +27,7 @@ extension ChatClient {
     }
 }
 
-extension Client.Environment where ExtraData == DefaultExtraData {
+extension _ChatClient.Environment where ExtraData == DefaultExtraData {
     static var mock: ChatClient.Environment {
         .init(
             apiClientBuilder: APIClientMock.init,

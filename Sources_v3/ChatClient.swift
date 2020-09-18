@@ -34,14 +34,14 @@ public protocol ExtraDataTypes {
 /// A concrete implementation of `ExtraDataTypes` with the default values.
 public struct DefaultExtraData: ExtraDataTypes {}
 
-/// A convenience typealias for `Client` with the default data types.
-public typealias ChatClient = Client<DefaultExtraData>
+/// A convenience typealias for `_ChatClient` with the default data types.
+public typealias ChatClient = _ChatClient<DefaultExtraData>
 
 /// The root object representing a Stream Chat.
 ///
 /// If you don't need to specify your custom extra data types for `User`, `Channel`, or `Message`, use the convenient non-generic
 /// typealias `ChatClient` which specifies the default extra data types.
-public class Client<ExtraData: ExtraDataTypes> {
+public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// The id of the currently logged in user.
     @Atomic public var currentUserId: UserId = .anonymous
     
@@ -238,7 +238,7 @@ public class Client<ExtraData: ExtraDataTypes> {
     }
 }
 
-extension Client {
+extension _ChatClient {
     /// An object containing all dependencies of `Client`
     struct Environment {
         var apiClientBuilder: (
@@ -297,7 +297,7 @@ extension ClientError {
 
 /// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
 /// its `RequestEncoder`.
-extension Client: ConnectionStateDelegate {
+extension _ChatClient: ConnectionStateDelegate {
     func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: WebSocketConnectionState) {
         if case let .connected(connectionId) = state {
             self.connectionId = connectionId
@@ -310,7 +310,7 @@ extension Client: ConnectionStateDelegate {
 }
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
-extension Client: ConnectionDetailsProviderDelegate {
+extension _ChatClient: ConnectionDetailsProviderDelegate {
     func provideToken() -> Token? {
         currentToken
     }
