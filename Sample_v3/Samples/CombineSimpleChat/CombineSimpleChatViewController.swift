@@ -81,7 +81,27 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             .messagesChangesPublisher
             /// Apply changes to tableView.
             .receive(on: RunLoop.main)
-            .sink { [weak self] in self?.tableView.applyListChanges(changes: $0) }
+            /// Apply changes to tableView.
+            .sink { [weak self] changes in
+                let tableView = self?.tableView
+                
+                tableView?.beginUpdates()
+                
+                for change in changes {
+                    switch change {
+                    case let .insert(_, index: index):
+                        tableView?.insertRows(at: [index], with: .automatic)
+                    case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
+                        tableView?.moveRow(at: fromIndex, to: toIndex)
+                    case let .update(_, index: index):
+                        tableView?.reloadRows(at: [index], with: .automatic)
+                    case let .remove(_, index: index):
+                        tableView?.deleteRows(at: [index], with: .automatic)
+                    }
+                }
+                
+                tableView?.endUpdates()
+            }
             .store(in: &cancellables)
         
         /// This dummy subscription prints received typing members event.

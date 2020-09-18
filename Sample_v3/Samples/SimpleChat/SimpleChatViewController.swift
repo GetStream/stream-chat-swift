@@ -46,7 +46,22 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     /// The method below receives the `changes` that happen in the list of messages and updates the `UITableView` accordingly.
     ///
     func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<Message>]) {
-        tableView.applyListChanges(changes: changes)
+        tableView.beginUpdates()
+        
+        for change in changes {
+            switch change {
+            case let .insert(_, index: index):
+                tableView.insertRows(at: [index], with: .automatic)
+            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
+                tableView.moveRow(at: fromIndex, to: toIndex)
+            case let .update(_, index: index):
+                tableView.reloadRows(at: [index], with: .automatic)
+            case let .remove(_, index: index):
+                tableView.deleteRows(at: [index], with: .automatic)
+            }
+        }
+        
+        tableView.endUpdates()
     }
     
     ///

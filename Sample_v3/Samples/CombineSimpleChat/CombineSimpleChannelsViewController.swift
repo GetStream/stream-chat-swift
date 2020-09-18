@@ -61,7 +61,27 @@ class CombineSimpleChannelsViewController: UITableViewController {
         channelListController
             .channelsChangesPublisher
             .receive(on: RunLoop.main)
-            .sink { [weak self] in self?.tableView.applyListChanges(changes: $0) }
+            /// Apply changes to tableView.
+            .sink { [weak self] changes in
+                let tableView = self?.tableView
+                
+                tableView?.beginUpdates()
+                
+                for change in changes {
+                    switch change {
+                    case let .insert(_, index: index):
+                        tableView?.insertRows(at: [index], with: .automatic)
+                    case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
+                        tableView?.moveRow(at: fromIndex, to: toIndex)
+                    case let .update(_, index: index):
+                        tableView?.reloadRows(at: [index], with: .automatic)
+                    case let .remove(_, index: index):
+                        tableView?.deleteRows(at: [index], with: .automatic)
+                    }
+                }
+                
+                tableView?.endUpdates()
+            }
             .store(in: &cancellables)
     }
     
@@ -306,28 +326,5 @@ class CombineSimpleChannelsViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         // Return false if you do not want the specified item to be editable.
         true
-    }
-}
-
-// MARK: - Private
-
-extension UITableView {
-    func applyListChanges<T: Equatable>(changes: [ListChange<T>]) {
-        beginUpdates()
-        
-        for change in changes {
-            switch change {
-            case let .insert(_, index: index):
-                insertRows(at: [index], with: .automatic)
-            case let .move(_, fromIndex: fromIndex, toIndex: toIndex):
-                moveRow(at: fromIndex, to: toIndex)
-            case let .update(_, index: index):
-                reloadRows(at: [index], with: .automatic)
-            case let .remove(_, index: index):
-                deleteRows(at: [index], with: .automatic)
-            }
-        }
-        
-        endUpdates()
     }
 }
