@@ -19,9 +19,12 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     ///
     /// # channelController
     ///
-    ///  The property below holds the `ChannelController` object.  It is used to make calls to the Stream Chat API and to listen to the events. After it is set,
-    ///  we need to start observing `ChannelController` event.
-    ///  While using Combine we should subscribe to `Publishers` events.
+    ///
+    ///  The property below holds the `ChannelController` object.  It is used to make calls to the Stream Chat API and to listen to the events.
+    ///  After it is set, we are subscribing to `Publishers` from `ChannelController.BasePublisher` to receive updates.
+    ///  `Publishers` functionality is identical to methods of `ChannelControllerDelegate`.
+    ///  Also we need to call `channelController.synchronize()` to update local data with remote one.
+    ///
     var channelController: ChannelController! {
         didSet {
             channelController.synchronize()
@@ -31,21 +34,31 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     
     // MARK: - Combine
 
+    ///
+    /// # cancellables
+    ///
+    ///  Holds the cancellable objects created from subscribing to the combine publishers inside `channelController`.
+    ///
     private lazy var cancellables: Set<AnyCancellable> = []
     
     ///
     /// # subscribeToCombinePublishers
     ///
     /// Here we bind `channelControllers` publishers so we can observe the changes.
+    ///
     private func subscribeToCombinePublishers() {
+        ///
         /// `ChannelController` will not trigger the `channelChangePublisher` on the initial channel set so
         /// we can` prepend` our `channelChangePublisher` sequence with the initial channel manually.
+        ///
         let initialChannel = Just(channelController.channel)
             .compactMap { $0 }
             .map { EntityChange<Channel>.update($0) }
         
+        ///
         /// This subscription updates the view controller's `title` and its `navigationItem.prompt` to display the count of channel
-        /// members and the count of online members. When the channel is deleted, this view controller is dismissed.
+        /// members and the count of online members or typing members if any. When the channel is deleted, this view controller is dismissed.
+        ///
         let updatedChannel = channelController
             .channelChangePublisher
             /// Update UI for initial channel.
@@ -76,10 +89,12 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             .assign(to: \.navigationItem.prompt, on: self)
             .store(in: &cancellables)
         
-        /// This subscription applies message changes to tableView using custom `Combine` operator.
+        ///
+        /// `messagesChangesPublisher` will send updates related to `messages` changes.
+        /// This subscription will update `tableView` with received changes.
+        ///
         channelController
             .messagesChangesPublisher
-            /// Apply changes to tableView.
             .receive(on: RunLoop.main)
             /// Apply changes to tableView.
             .sink { [weak self] changes in
@@ -104,15 +119,22 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             }
             .store(in: &cancellables)
         
-        /// This dummy subscription prints received typing members event.
+        ///
+        /// This subscription updates UI with typing members after receiving changes from `typingMembersPublisher`.
+        ///
         channelController
             .typingMembersPublisher
-            .sink { event in
-                debugPrint("Typing members: \(event)")
+            .sink { [weak self] _ in
+                self?.title = self?.channelController.channel.flatMap { $0.extraData.name ?? $0.cid.description }
+                self?.navigationItem.prompt = self?.channelController.channel.flatMap {
+                    createTypingMemberString(for: $0) ?? createMemberInfoString(for: $0)
+                }
             }
             .store(in: &cancellables)
         
-        /// This dummy subscription prints received member events.
+        ///
+        /// This dummy subscription prints received member events from `memberEventPublisher`.
+        ///
         channelController
             .memberEventPublisher
             .sink { event in
@@ -120,7 +142,14 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             }
             .store(in: &cancellables)
         
-        /// This dummy subscription prints controllers state updates.
+        ///
+        /// `statePublisher` will send changes related to `State` of `ChannelController`,
+        /// You can use it for presenting some loading indicator.
+        /// While using `Combine` publishers, the initial `state` of the contraller will be `.localDataFetched`
+        /// (or `localDataFetchFailed` in case of some internal error with DB, it should be very rare case).
+        /// It means that if there is some local data stored in DB related to this controller, it will be available from the start. After calling `channelController.synchronize()`
+        /// the controller will try to update local data with remote one and change it's state to `.remoteDataFetched` (or `.remoteDataFetchFailed` in case of failed API request).
+        ///
         channelController
             .statePublisher
             .sink { (state) in
@@ -345,9 +374,9 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
 
     // MARK: - UI code
 
-    //
-    // From here on, you'll see mostly UI code that's not related to the ChannelController usage.
-    //
+    ///
+    /// From here on, you'll see mostly UI code that's not related to the ChannelController usage.
+    ///
     var composerView = ComposerView.instantiateFromNib()!
     override var inputAccessoryView: UIView? {
         guard presentedViewController?.isBeingDismissed != false else {
