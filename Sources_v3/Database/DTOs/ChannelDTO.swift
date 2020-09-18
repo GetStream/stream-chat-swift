@@ -178,7 +178,7 @@ extension ChannelModel {
             .load(for: dto.cid, limit: 25, context: context)
             .map { $0.asModel() }
         
-        let reads: [ChannelReadModel<ExtraData>] = dto.reads.map { $0.asModel() }
+        let reads: [_ChatChannelRead<ExtraData>] = dto.reads.map { $0.asModel() }
         
         var unreadCount = ChannelUnreadCount.noUnread
         if let currentUser = context.currentUser(),

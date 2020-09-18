@@ -59,7 +59,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
     public let latestMessages: [MessageModel<ExtraData>]
     
     /// Read states of the users for this channel.
-    public let reads: [ChannelReadModel<ExtraData>]
+    public let reads: [_ChatChannelRead<ExtraData>]
     
     public let extraData: ExtraData.Channel
     
@@ -88,7 +88,7 @@ public struct ChannelModel<ExtraData: ExtraDataTypes> {
         watcherCount: Int = 0,
         banEnabling: BanEnabling = .disabled,
         isWatched: Bool = false,
-        reads: [ChannelReadModel<ExtraData>] = [],
+        reads: [_ChatChannelRead<ExtraData>] = [],
         extraData: ExtraData.Channel,
         invitedMembers: Set<MemberModel<ExtraData.User>> = [],
         latestMessages: [MessageModel<ExtraData>] = []

@@ -4,8 +4,10 @@
 
 import Foundation
 
-/// A type reprsenting a user's last read action on a channel.
-public struct ChannelReadModel<ExtraData: ExtraDataTypes> {
+public typealias ChatChannelRead = _ChatChannelRead<DefaultExtraData>
+
+/// A type represnting a user's last read action on a channel.
+public struct _ChatChannelRead<ExtraData: ExtraDataTypes> {
     /// The last time the user has read the channel.
     public let lastReadAt: Date
     
@@ -25,5 +27,3 @@ public struct ChannelReadModel<ExtraData: ExtraDataTypes> {
         self.user = user
     }
 }
-
-public typealias ChannelRead = ChannelReadModel<DefaultExtraData>
