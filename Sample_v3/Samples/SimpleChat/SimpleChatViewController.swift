@@ -19,7 +19,7 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     ///
     ///  The property below holds the `ChannelController` object.  It is used to make calls to the Stream Chat API and to listen to the events. After it is set,
     ///  `channelController.delegate` needs to receive a reference to a `ChannelControllerDelegate`, which, in this case, is `self`. After the delegate is set,
-    ///  `channelController.startUpdating()` must be called to start listening to events related to the channel. Additionally, `channelController.client` holds a
+    ///  `channelController.synchronize()` must be called to start listening to events related to the channel. Additionally, `channelController.client` holds a
     ///  reference to the `ChatClient` which created this instance. It can be used to create other controllers.
     ///
     var channelController: ChannelController! {
@@ -37,7 +37,7 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
 
     ///
     /// The methods below are part of the `ChannelControllerDelegate` protocol and will be called when events happen in the channel. In order for these updates to happen,
-    /// `channelController.delegate` must be equal `self` and `channelController.startUpdating()` must be called.
+    /// `channelController.delegate` must be equal `self` and `channelController.synchronize()` must be called.
     ///
     
     ///
@@ -105,11 +105,11 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
         
         switch message.type {
         case .deleted:
-            cell = cellWithAuthor(nil, messageText: "❌ the message was deleted")
+            cell = messageCellWithAuthor(nil, messageText: "❌ the message was deleted")
         case .error:
-            cell = cellWithAuthor(nil, messageText: "⚠️ something wrong happened")
+            cell = messageCellWithAuthor(nil, messageText: "⚠️ something wrong happened")
         default:
-            cell = cellWithAuthor(message.author.name ?? message.author.id, messageText: message.text)
+            cell = messageCellWithAuthor(message.author.name ?? message.author.id, messageText: message.text)
         }
         
         cell.backgroundColor = message.localState == nil ? .white : .lightGray
@@ -329,44 +329,6 @@ extension SimpleChatViewController {
         }
     }
     
-    func cellWithAuthor(_ author: String?, messageText: String) -> UITableViewCell {
-        let cell: UITableViewCell!
-        if let _cell = tableView.dequeueReusableCell(withIdentifier: "MessageCell") {
-            cell = _cell
-        } else {
-            cell = UITableViewCell(style: .default, reuseIdentifier: "MessageCell")
-        }
-        
-        cell.textLabel?.numberOfLines = 0
-        cell.transform = CGAffineTransform(scaleX: 1, y: -1)
-        
-        if let author = author {
-            let font = cell.textLabel?.font ?? UIFont.systemFont(ofSize: UIFont.systemFontSize)
-            let boldFont = UIFont(
-                descriptor: font.fontDescriptor.withSymbolicTraits([.traitBold]) ?? font.fontDescriptor,
-                size: font.pointSize
-            )
-            
-            let attributedString = NSMutableAttributedString()
-            attributedString.append(
-                .init(
-                    string: "\(author) ",
-                    attributes: [
-                        NSAttributedString.Key.font: boldFont,
-                        NSAttributedString.Key.foregroundColor: UIColor.forUsername(author)
-                    ]
-                )
-            )
-            attributedString.append(.init(string: messageText))
-            
-            cell.textLabel?.attributedText = attributedString
-        } else {
-            cell?.textLabel?.text = messageText
-        }
-        
-        return cell
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
         
