@@ -75,8 +75,8 @@ extension Client {
     }
 }
 
-/// A convenience typealias for `ChannelControllerGeneric` with `DefaultDataTypes`
-public typealias ChannelController = ChannelControllerGeneric<DefaultDataTypes>
+/// A convenience typealias for `ChannelControllerGeneric` with `DefaultExtraData`
+public typealias ChannelController = ChannelControllerGeneric<DefaultExtraData>
 
 /// Describes the flow of the items in the list
 public enum ListOrdering {
@@ -683,7 +683,7 @@ extension ChannelControllerGeneric {
     }
 }
 
-public extension ChannelControllerGeneric where ExtraData == DefaultDataTypes {
+public extension ChannelControllerGeneric where ExtraData == DefaultExtraData {
     /// Set the delegate of `ChannelController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -892,7 +892,7 @@ extension AnyChannelControllerDelegate {
     }
 }
 
-extension AnyChannelControllerDelegate where ExtraData == DefaultDataTypes {
+extension AnyChannelControllerDelegate where ExtraData == DefaultExtraData {
     convenience init(_ delegate: ChannelControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

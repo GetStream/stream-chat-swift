@@ -18,7 +18,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         ]
         
         for (query, requiresConnectionId) in testCases {
-            let expectedEndpoint = Endpoint<ChannelListPayload<DefaultDataTypes>>(
+            let expectedEndpoint = Endpoint<ChannelListPayload<DefaultExtraData>>(
                 path: "channels",
                 method: .get,
                 queryItems: nil,
@@ -27,7 +27,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
             )
             
             // Build endpoint
-            let endpoint: Endpoint<ChannelListPayload<DefaultDataTypes>> = .channels(query: query)
+            let endpoint: Endpoint<ChannelListPayload<DefaultExtraData>> = .channels(query: query)
             
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -37,7 +37,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_channel_buildsCorrectly() {
         let channelID = ChannelId(type: .livestream, id: "qwerty")
         
-        let testCases: [(ChannelQuery<DefaultDataTypes>, Bool)] = [
+        let testCases: [(ChannelQuery<DefaultExtraData>, Bool)] = [
             (.init(cid: channelID, options: .state), true),
             (.init(cid: channelID, options: .presence), true),
             (.init(cid: channelID, options: .watch), true),
@@ -47,7 +47,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         for (query, requiresConnectionId) in testCases {
             let expectedEndpoint =
-                Endpoint<ChannelPayload<DefaultDataTypes>>(
+                Endpoint<ChannelPayload<DefaultExtraData>>(
                     path: "channels/\(query.cid.type.rawValue)/\(query.cid.id)/query",
                     method: .post,
                     queryItems: nil,
@@ -56,7 +56,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
                 )
             
             // Build endpoint
-            let endpoint: Endpoint<ChannelPayload<DefaultDataTypes>> = .channel(query: query)
+            let endpoint: Endpoint<ChannelPayload<DefaultExtraData>> = .channel(query: query)
             
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -64,7 +64,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
     }
     
     func test_updateChannel_buildsCorrectly() {
-        let channelPayload: ChannelEditDetailPayload<DefaultDataTypes> = .unique
+        let channelPayload: ChannelEditDetailPayload<DefaultExtraData> = .unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: "channels/\(channelPayload.cid.type)/\(channelPayload.cid.id)",
@@ -169,7 +169,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_sendMessage_buildsCorrectly() {
         let cid = ChannelId.unique
         
-        let messageBody = MessageRequestBody<DefaultDataTypes>(
+        let messageBody = MessageRequestBody<DefaultExtraData>(
             id: .unique,
             user: .dummy(userId: .unique),
             text: .unique,
@@ -281,7 +281,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
     }
 }
 
-extension ChannelEditDetailPayload where ExtraData == DefaultDataTypes {
+extension ChannelEditDetailPayload where ExtraData == DefaultExtraData {
     static var unique: Self {
         Self(
             cid: .unique,

@@ -224,7 +224,7 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate an incoming message
         let newMesageId: MessageId = .unique
-        let newMessagePayload: MessagePayload<DefaultDataTypes> = .dummy(messageId: newMesageId, authorUserId: .unique)
+        let newMessagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: newMesageId, authorUserId: .unique)
         _ = try await {
             client.databaseContainer.write({ session in
                 try session.saveMessage(payload: newMessagePayload, for: self.channelId)
@@ -240,8 +240,8 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
         
         // Insert two messages
-        let message1: MessagePayload<DefaultDataTypes> = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload<DefaultDataTypes> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload<DefaultExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: MessagePayload<DefaultExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
         
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: message1, for: self.channelId)
@@ -540,7 +540,7 @@ class ChannelController_Tests: StressTestCase {
     
     // MARK: - Channel actions propagation tests
 
-    func setupControllerForNewChannel(query: ChannelQuery<DefaultDataTypes>) {
+    func setupControllerForNewChannel(query: ChannelQuery<DefaultExtraData>) {
         controller = ChannelController(
             channelQuery: query,
             client: client,
@@ -963,13 +963,13 @@ class ChannelController_Tests: StressTestCase {
     
     // Helper function that creates channel with message
     func setupChannelWithMessage(_ session: DatabaseSession) throws -> MessageId {
-        let dummyUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(userId: .unique, role: .user)
+        let dummyUserPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         try session.saveCurrentUser(payload: dummyUserPayload)
         try session.saveChannel(payload: dummyPayload(with: channelId))
         let message = try session.createNewMessage(
             in: channelId,
             text: "Message",
-            extraData: DefaultDataTypes.Message.defaultValue
+            extraData: DefaultExtraData.Message.defaultValue
         )
         return message.id
     }
@@ -1191,7 +1191,7 @@ class ChannelController_Tests: StressTestCase {
         let arguments: String = .unique
         let parentMessageId: MessageId = .unique
         let showReplyInChannel = true
-        let extraData: DefaultDataTypes.Message = .defaultValue
+        let extraData: DefaultExtraData.Message = .defaultValue
         
         // Simulate `createNewMessage` calls and catch the completion
         var completionCalled = false
@@ -1468,8 +1468,8 @@ class ChannelController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    var channelUpdater: ChannelUpdaterMock<DefaultDataTypes>?
-    var eventSender: EventSenderMock<DefaultDataTypes>?
+    var channelUpdater: ChannelUpdaterMock<DefaultExtraData>?
+    var eventSender: EventSenderMock<DefaultExtraData>?
     
     lazy var environment: ChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in

@@ -201,7 +201,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_delegate_isNotifiedAboutCreatedUser() throws {
         let extraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
-        let currentUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(
+        let currentUserPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -232,7 +232,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_delegate_isNotifiedAboutUpdatedUser() throws {
         var extraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
-        var currentUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(
+        var currentUserPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -290,7 +290,7 @@ final class CurrentUserController_Tests: StressTestCase {
 
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {
-            let currentUserPayload: CurrentUserPayload<DefaultDataTypes.User> = .dummy(
+            let currentUserPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(
                 userId: .unique,
                 role: .user,
                 unreadCount: unreadCount
@@ -702,8 +702,8 @@ private class TestEnvironment {
 }
 
 private extension WebSocketClient {
-    var typingMiddleware: TypingStartCleanupMiddleware<DefaultDataTypes>? {
-        eventNotificationCenter.middlewares.compactMap { $0 as? TypingStartCleanupMiddleware<DefaultDataTypes> }.first
+    var typingMiddleware: TypingStartCleanupMiddleware<DefaultExtraData>? {
+        eventNotificationCenter.middlewares.compactMap { $0 as? TypingStartCleanupMiddleware<DefaultExtraData> }.first
     }
 }
 

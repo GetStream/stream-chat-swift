@@ -7,7 +7,7 @@ import XCTest
 
 class TypingEvent_Tests: XCTestCase {
     func test_Typing() throws {
-        let eventDecoder = EventDecoder<DefaultDataTypes>()
+        let eventDecoder = EventDecoder<DefaultExtraData>()
         let cid = ChannelId(type: .messaging, id: "general")
         
         // User Started Typing Event.

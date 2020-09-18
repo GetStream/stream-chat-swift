@@ -109,7 +109,7 @@ extension DatabaseContainer {
         try writeSynchronously { session in
             try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
             
-            let message: MessagePayload<DefaultDataTypes> = .dummy(messageId: id, authorUserId: authorId, text: text)
+            let message: MessagePayload<DefaultExtraData> = .dummy(messageId: id, authorUserId: authorId, text: text)
             
             let messageDTO = try session.saveMessage(payload: message, for: cid)
             messageDTO.localMessageState = localState

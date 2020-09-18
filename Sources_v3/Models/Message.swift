@@ -54,7 +54,7 @@ public enum LocalMessageState: String {
 }
 
 /// A convenient type alias for `MessageModel` with `DefaultExtraData`.
-public typealias Message = MessageModel<DefaultDataTypes>
+public typealias Message = MessageModel<DefaultExtraData>
 
 /// Additional data fields `MessageModel` can be extended with. You can use it to store your custom data related to a message.
 public protocol MessageExtraData: ExtraData {}

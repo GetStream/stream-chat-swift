@@ -265,7 +265,7 @@ private class TestWebSocketClient: WebSocketClient {
             connectEndpoint: .init(path: "", method: .get, queryItems: nil, requiresConnectionId: false, body: nil),
             sessionConfiguration: .default,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
-            eventDecoder: EventDecoder<DefaultDataTypes>(),
+            eventDecoder: EventDecoder<DefaultExtraData>(),
             eventNotificationCenter: EventNotificationCenter(),
             internetConnection: InternetConnection(),
             reconnectionStrategy: DefaultReconnectionStrategy()

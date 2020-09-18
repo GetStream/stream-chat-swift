@@ -15,8 +15,8 @@ public extension Client {
     }
 }
 
-/// A convenience typealias for `MessageControllerGeneric` with `DefaultDataTypes`.
-public typealias MessageController = MessageControllerGeneric<DefaultDataTypes>
+/// A convenience typealias for `MessageControllerGeneric` with `DefaultExtraData`.
+public typealias MessageController = MessageControllerGeneric<DefaultExtraData>
 
 /// The `MessageControllerGeneric` is designed to edit the message it was created with.
 public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: DataController, DelegateCallable {
@@ -253,7 +253,7 @@ extension AnyMessageControllerDelegate {
     }
 }
 
-extension AnyMessageControllerDelegate where ExtraData == DefaultDataTypes {
+extension AnyMessageControllerDelegate where ExtraData == DefaultExtraData {
     convenience init(_ delegate: MessageControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

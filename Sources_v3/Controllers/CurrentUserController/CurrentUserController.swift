@@ -13,8 +13,8 @@ public extension Client {
     }
 }
 
-/// A convenience typealias for `CurrentUserControllerGeneric` with `DefaultDataTypes`
-public typealias CurrentUserController = CurrentUserControllerGeneric<DefaultDataTypes>
+/// A convenience typealias for `CurrentUserControllerGeneric` with `DefaultExtraData`
+public typealias CurrentUserController = CurrentUserControllerGeneric<DefaultExtraData>
 
 /// `CurrentUserControllerGeneric` allows to observer current user updates
 public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
@@ -494,7 +494,7 @@ extension AnyCurrentUserControllerDelegate {
     }
 }
 
-extension AnyCurrentUserControllerDelegate where ExtraData == DefaultDataTypes {
+extension AnyCurrentUserControllerDelegate where ExtraData == DefaultExtraData {
     convenience init(_ delegate: CurrentUserControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

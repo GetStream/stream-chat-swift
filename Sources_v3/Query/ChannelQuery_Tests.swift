@@ -15,7 +15,7 @@ class ChannelQuery_Tests: XCTestCase {
         let options: QueryOptions = .all
 
         // Create ChannelQuery
-        let query = ChannelQuery<DefaultDataTypes>(
+        let query = ChannelQuery<DefaultExtraData>(
             cid: cid,
             messagesPagination: messagesPagination,
             membersPagination: membersPagination,

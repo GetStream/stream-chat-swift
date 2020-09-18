@@ -5,11 +5,11 @@
 @testable import StreamChatClient
 import XCTest
 
-typealias DefaultEventPayload = EventPayload<DefaultDataTypes>
+typealias DefaultEventPayload = EventPayload<DefaultExtraData>
 
 class EventPayload_Tests: XCTestCase {
     let eventJSON = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
-    let eventDecoder = EventDecoder<DefaultDataTypes>()
+    let eventDecoder = EventDecoder<DefaultExtraData>()
     
     func test_eventJSON_isSerialized_withDefaultExtraData() throws {
         let payload = try JSONDecoder.default.decode(DefaultEventPayload.self, from: eventJSON)

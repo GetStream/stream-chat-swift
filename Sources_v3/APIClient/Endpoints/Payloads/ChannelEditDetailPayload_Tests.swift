@@ -16,7 +16,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         let extraData: NameAndImageExtraData = .init(name: name, imageURL: imageURL)
 
         // Create ChannelEditDetailPayload
-        let payload = ChannelEditDetailPayload<DefaultDataTypes>(
+        let payload = ChannelEditDetailPayload<DefaultExtraData>(
             cid: cid,
             team: team,
             members: [invite],

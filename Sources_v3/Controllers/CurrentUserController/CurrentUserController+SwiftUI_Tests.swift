@@ -97,8 +97,8 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
 class CurrentUserControllerMock: CurrentUserController {
     @Atomic var startUpdating_called = false
     
-    var currentUser_simulated: CurrentUserModel<DefaultDataTypes.User>?
-    override var currentUser: CurrentUserModel<DefaultDataTypes.User>? {
+    var currentUser_simulated: CurrentUserModel<DefaultExtraData.User>?
+    override var currentUser: CurrentUserModel<DefaultExtraData.User>? {
         currentUser_simulated ?? super.currentUser
     }
     

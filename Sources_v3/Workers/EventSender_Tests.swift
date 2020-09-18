@@ -6,7 +6,7 @@
 import XCTest
 
 class EventSender_Tests: StressTestCase {
-    typealias ExtraData = DefaultDataTypes
+    typealias ExtraData = DefaultExtraData
     
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!

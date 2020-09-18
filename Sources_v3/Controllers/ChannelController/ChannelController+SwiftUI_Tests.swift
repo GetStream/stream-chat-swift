@@ -109,13 +109,13 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
 class ChannelControllerMock: ChannelController {
     @Atomic var synchronize_called = false
     
-    var channel_simulated: ChannelModel<DefaultDataTypes>?
-    override var channel: ChannelModel<DefaultDataTypes>? {
+    var channel_simulated: ChannelModel<DefaultExtraData>?
+    override var channel: ChannelModel<DefaultExtraData>? {
         channel_simulated
     }
     
-    var messages_simulated: [MessageModel<DefaultDataTypes>]?
-    override var messages: [MessageModel<DefaultDataTypes>] {
+    var messages_simulated: [MessageModel<DefaultExtraData>]?
+    override var messages: [MessageModel<DefaultExtraData>] {
         messages_simulated ?? super.messages
     }
 

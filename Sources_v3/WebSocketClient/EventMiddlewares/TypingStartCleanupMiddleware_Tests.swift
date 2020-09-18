@@ -6,7 +6,7 @@
 import XCTest
 
 class TypingStartCleanupMiddleware_Tests: XCTestCase {
-    var middleware: TypingStartCleanupMiddleware<DefaultDataTypes>!
+    var middleware: TypingStartCleanupMiddleware<DefaultExtraData>!
     var currentUser: User!
     
     var time: VirtualTime!

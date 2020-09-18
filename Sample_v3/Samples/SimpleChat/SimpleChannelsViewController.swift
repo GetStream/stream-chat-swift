@@ -52,7 +52,7 @@ class SimpleChannelsViewController: UITableViewController, ChannelListController
     /// The method below receives the `changes` that happen in the list of messages and updates the `UITableView` accordingly.
     ///
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultDataTypes>,
+        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
         didChangeChannels changes: [ListChange<Channel>]
     ) {
         tableView.beginUpdates()

@@ -6,7 +6,7 @@
 import XCTest
 
 class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
-    var middleware: ChannelReadUpdaterMiddleware<DefaultDataTypes>!
+    var middleware: ChannelReadUpdaterMiddleware<DefaultExtraData>!
     fileprivate var database: DatabaseContainerMock!
     
     override func setUp() {
@@ -28,7 +28,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: ChannelModel<DefaultDataTypes>? {
+        var loadedChannel: ChannelModel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -39,14 +39,14 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Create EventPayload for MessageReadEvent
-        let eventPayload = EventPayload<DefaultDataTypes>(
+        let eventPayload = EventPayload<DefaultExtraData>(
             eventType: .messageRead,
             cid: channelId,
             user: dummyCurrentUser,
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let messageReadEvent = try MessageReadEvent<DefaultDataTypes>(from: eventPayload)
+        let messageReadEvent = try MessageReadEvent<DefaultExtraData>(from: eventPayload)
         
         // Let the middleware handle the event
         // Middleware should mutate the loadedChannel's read
@@ -74,7 +74,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
 
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: ChannelModel<DefaultDataTypes>? {
+        var loadedChannel: ChannelModel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -85,7 +85,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Unfortunately, ChannelDetailPayload is needed for NotificationMarkReadEvent...
-        let channelDetailPayload = ChannelDetailPayload<DefaultDataTypes>(
+        let channelDetailPayload = ChannelDetailPayload<DefaultExtraData>(
             cid: channelId,
             extraData: lukeExtraData,
             typeRawValue: "",
@@ -101,14 +101,14 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             members: nil
         )
         // Create EventPayload for NotificationMarkReadEvent
-        let eventPayload = EventPayload<DefaultDataTypes>(
+        let eventPayload = EventPayload<DefaultExtraData>(
             eventType: .notificationMarkRead,
             user: dummyCurrentUser,
             channel: channelDetailPayload,
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let notificationMarkReadEvent = try NotificationMarkReadEvent<DefaultDataTypes>(from: eventPayload)
+        let notificationMarkReadEvent = try NotificationMarkReadEvent<DefaultExtraData>(from: eventPayload)
         
         // Let the middleware handle the event
         let handledEvent = try await { middleware.handle(event: notificationMarkReadEvent, completion: $0) }
@@ -135,7 +135,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: ChannelModel<DefaultDataTypes>? {
+        var loadedChannel: ChannelModel<DefaultExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -147,7 +147,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Create EventPayload for NotificationMarkAllReadEvent
-        let eventPayload = EventPayload<DefaultDataTypes>(
+        let eventPayload = EventPayload<DefaultExtraData>(
             eventType: .notificationMarkRead,
             user: dummyCurrentUser,
             createdAt: newReadDate

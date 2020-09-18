@@ -12,7 +12,7 @@ class ChannelListPayload_Tests: XCTestCase {
     }()
     
     func test_channelQueryJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(ChannelListPayload<DefaultDataTypes>.self, from: channelJSON)
+        let payload = try JSONDecoder.default.decode(ChannelListPayload<DefaultExtraData>.self, from: channelJSON)
         XCTAssertEqual(payload.channels.count, 20)
     }
 }
@@ -24,7 +24,7 @@ class ChannelPayload_Tests: XCTestCase {
     }()
     
     func test_channelJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(ChannelPayload<DefaultDataTypes>.self, from: channelJSON)
+        let payload = try JSONDecoder.default.decode(ChannelPayload<DefaultExtraData>.self, from: channelJSON)
         
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.members.count, 4)

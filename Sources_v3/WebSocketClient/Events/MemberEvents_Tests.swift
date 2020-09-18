@@ -6,7 +6,7 @@
 import XCTest
 
 class MemberEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder<DefaultDataTypes>()
+    let eventDecoder = EventDecoder<DefaultExtraData>()
     
     func test_added() throws {
         let json = XCTestCase.mockData(fromFile: "MemberAdded")

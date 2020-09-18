@@ -23,7 +23,7 @@ public struct HealthCheckEvent: ConnectionEvent, EventWithPayload {
     
     init(connectionId: String) {
         self.connectionId = connectionId
-        payload = EventPayload<DefaultDataTypes>(
+        payload = EventPayload<DefaultExtraData>(
             eventType: .healthCheck,
             connectionId: connectionId,
             cid: nil,

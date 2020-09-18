@@ -6,7 +6,7 @@
 import XCTest
 
 class NewChannelQueryUpdater_Tests: StressTestCase {
-    typealias ExtraData = DefaultDataTypes
+    typealias ExtraData = DefaultExtraData
     
     private var env: TestEnvironment!
     
@@ -112,9 +112,9 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    var channelQueryUpdater: ChannelListUpdaterMock<DefaultDataTypes>?
+    var channelQueryUpdater: ChannelListUpdaterMock<DefaultExtraData>?
     
-    lazy var environment = NewChannelQueryUpdater<DefaultDataTypes>.Environment(createChannelListUpdater: { [unowned self] in
+    lazy var environment = NewChannelQueryUpdater<DefaultExtraData>.Environment(createChannelListUpdater: { [unowned self] in
         self.channelQueryUpdater = ChannelListUpdaterMock(
             database: $0,
             webSocketClient: $1,

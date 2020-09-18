@@ -18,9 +18,9 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<DefaultDataTypes> = dummyPayload(with: channelId)
+        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
         
-        let messagePayload: MessagePayload<DefaultDataTypes> = .dummy(messageId: messageId, authorUserId: userId)
+        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: messageId, authorUserId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -76,7 +76,7 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<DefaultDataTypes> = dummyPayload(with: channelId)
+        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
         
         let messagePayload: MessagePayload<SecretExtraData> = .dummy(
             messageId: messageId,
@@ -128,9 +128,9 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<DefaultDataTypes> = dummyPayload(with: channelId)
+        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
         
-        let messagePayload: MessagePayload<DefaultDataTypes> = .dummy(messageId: messageId, authorUserId: userId)
+        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: messageId, authorUserId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -142,7 +142,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         // Load the message from the db and check the fields are correct
-        var loadedMessage: MessageModel<DefaultDataTypes>? {
+        var loadedMessage: MessageModel<DefaultExtraData>? {
             database.viewContext.message(id: messageId)?.asModel()
         }
         
@@ -171,9 +171,9 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<DefaultDataTypes> = dummyPayload(with: channelId)
+        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
         
-        let messagePayload: MessagePayload<DefaultDataTypes> = .dummy(messageId: messageId, authorUserId: userId)
+        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: messageId, authorUserId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -185,7 +185,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         // Load the message from the db and check the fields are correct
-        var loadedMessage: MessageRequestBody<DefaultDataTypes>? {
+        var loadedMessage: MessageRequestBody<DefaultExtraData>? {
             database.viewContext.message(id: messageId)?.asRequestBody()
         }
         
@@ -207,8 +207,8 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<DefaultDataTypes> = dummyPayload(with: channelId)
-        let messagePayload: MessagePayload<DefaultDataTypes> = .dummy(messageId: messageId, authorUserId: userId)
+        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
+        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: messageId, authorUserId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -225,7 +225,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         // Load the message from the db
-        var loadedMessage: MessageModel<DefaultDataTypes>? {
+        var loadedMessage: MessageModel<DefaultExtraData>? {
             database.viewContext.message(id: messageId)?.asModel()
         }
         
@@ -359,7 +359,7 @@ class MessageDTO_Tests: XCTestCase {
             }, completion: completion)
         }
         
-        let loadedMessage: MessageModel<DefaultDataTypes> = try unwrapAsync(
+        let loadedMessage: MessageModel<DefaultExtraData> = try unwrapAsync(
             database.viewContext.message(id: newMessageId)?
                 .asModel()
         )
