@@ -53,7 +53,7 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
 
     func test_currentUserChangePublisher() {
         // Setup Recording publishers
-        var recording = Record<EntityChange<CurrentUser>, Never>.Recording()
+        var recording = Record<EntityChange<CurrentChatUser>, Never>.Recording()
         
         // Setup the chain
         currentUserController
@@ -65,7 +65,7 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
         weak var controller: CurrentUserControllerMock? = currentUserController
         currentUserController = nil
 
-        let newCurrentUser: CurrentUser = .init(id: .unique)
+        let newCurrentUser: CurrentChatUser = .init(id: .unique)
         controller?.currentUser_simulated = newCurrentUser
         controller?.delegateCallback {
             $0.currentUserController(controller!, didChangeCurrentUser: .create(newCurrentUser))

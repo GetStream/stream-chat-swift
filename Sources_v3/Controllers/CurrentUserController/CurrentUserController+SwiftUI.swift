@@ -16,7 +16,7 @@ extension CurrentUserControllerGeneric {
         public let controller: CurrentUserControllerGeneric
         
         /// The currently logged-in user.
-        @Published public private(set) var currentUser: CurrentUserModel<ExtraData.User>?
+        @Published public private(set) var currentUser: _CurrentChatUser<ExtraData.User>?
         
         /// The unread messages and channels count for the current user.
         @Published public private(set) var unreadCount: UnreadCount = .noUnread
@@ -57,7 +57,7 @@ extension CurrentUserControllerGeneric.ObservableObject: CurrentUserControllerDe
     
     public func currentUserController(
         _ controller: CurrentUserControllerGeneric<ExtraData>,
-        didChangeCurrentUser currentUser: EntityChange<CurrentUserModel<ExtraData.User>>
+        didChangeCurrentUser currentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
     ) {
         self.currentUser = controller.currentUser
     }

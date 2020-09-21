@@ -637,7 +637,7 @@ final class CurrentUserController_Tests: StressTestCase {
 
 private class TestDelegate: QueueAwareDelegate, CurrentUserControllerDelegate {
     @Atomic var state: DataController.State?
-    @Atomic var didChangeCurrentUser_change: EntityChange<CurrentUser>?
+    @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
     @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
     
@@ -646,7 +646,7 @@ private class TestDelegate: QueueAwareDelegate, CurrentUserControllerDelegate {
         validateQueue()
     }
 
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentUser>) {
+    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentChatUser>) {
         didChangeCurrentUser_change = change
         validateQueue()
     }
@@ -664,7 +664,7 @@ private class TestDelegate: QueueAwareDelegate, CurrentUserControllerDelegate {
 
 private class TestDelegateGeneric: QueueAwareDelegate, CurrentUserControllerDelegateGeneric {
     @Atomic var state: DataController.State?
-    @Atomic var didChangeCurrentUser_change: EntityChange<CurrentUser>?
+    @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
     @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
     
@@ -673,7 +673,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, CurrentUserControllerDele
         validateQueue()
     }
     
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentUser>) {
+    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentChatUser>) {
         didChangeCurrentUser_change = change
         validateQueue()
     }
@@ -690,7 +690,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, CurrentUserControllerDele
 }
 
 private class TestEnvironment {
-    var currentUserObserver: EntityDatabaseObserverMock<CurrentUser, CurrentUserDTO>!
+    var currentUserObserver: EntityDatabaseObserverMock<CurrentChatUser, CurrentUserDTO>!
     var currentUserObserverStartUpdatingError: Error?
 
     lazy var currentUserControllerEnvironment: CurrentUserController

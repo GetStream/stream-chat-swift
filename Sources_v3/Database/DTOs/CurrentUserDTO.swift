@@ -86,7 +86,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
 extension CurrentUserDTO {
     /// Snapshots the current state of `CurrentUserDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: UserExtraData>() -> CurrentUserModel<ExtraData> { .create(fromDTO: self) }
+    func asModel<ExtraData: UserExtraData>() -> _CurrentChatUser<ExtraData> { .create(fromDTO: self) }
     
     /// Snapshots the current state of `CurrentUserDTO` and returns its representation for used in API calls.
     func asRequestBody<ExtraData: UserExtraData>() -> CurrentUserRequestBody<ExtraData> {
@@ -95,8 +95,8 @@ extension CurrentUserDTO {
     }
 }
 
-extension CurrentUserModel {
-    fileprivate static func create(fromDTO dto: CurrentUserDTO) -> CurrentUserModel {
+extension _CurrentChatUser {
+    fileprivate static func create(fromDTO dto: CurrentUserDTO) -> _CurrentChatUser {
         let user = dto.user
         
         let extraData: ExtraData
@@ -111,7 +111,7 @@ extension CurrentUserModel {
         
         let mutedUsers: [_ChatUser<ExtraData>] = dto.mutedUsers.map { $0.asModel() }
         
-        return CurrentUserModel(
+        return _CurrentChatUser(
             id: user.id,
             isOnline: user.isOnline,
             isBanned: user.isBanned,

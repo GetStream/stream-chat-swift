@@ -13,7 +13,7 @@ extension CurrentUserControllerGeneric {
     }
     
     /// A publisher emitting a new value every time the current user changes.
-    public var currentUserChangePublisher: AnyPublisher<EntityChange<CurrentUserModel<ExtraData.User>>, Never> {
+    public var currentUserChangePublisher: AnyPublisher<EntityChange<_CurrentChatUser<ExtraData.User>>, Never> {
         basePublishers.currentUserChange.keepAlive(self)
     }
     
@@ -38,7 +38,7 @@ extension CurrentUserControllerGeneric {
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `currentUserChangePublisher`.
-        let currentUserChange: PassthroughSubject<EntityChange<CurrentUserModel<ExtraData.User>>, Never> = .init()
+        let currentUserChange: PassthroughSubject<EntityChange<_CurrentChatUser<ExtraData.User>>, Never> = .init()
         
         /// A backing subject for `unreadCountPublisher`.
         let unreadCount: CurrentValueSubject<UnreadCount, Never>
@@ -77,7 +77,7 @@ extension CurrentUserControllerGeneric.BasePublishers: CurrentUserControllerDele
     
     func currentUserController(
         _ controller: CurrentUserControllerGeneric<ExtraData>,
-        didChangeCurrentUser currentUser: EntityChange<CurrentUserModel<ExtraData.User>>
+        didChangeCurrentUser currentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
     ) {
         currentUserChange.send(currentUser)
     }

@@ -19,9 +19,9 @@ extension UserId {
 }
 
 /// A convenience typealias for `CurrentUserModel` with the default data type.
-public typealias CurrentUser = CurrentUserModel<DefaultExtraData.User>
+public typealias CurrentChatUser = _CurrentChatUser<DefaultExtraData.User>
 
-public class CurrentUserModel<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
+public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
     // MARK: - Public
     
     /// A list of devices.
