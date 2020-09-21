@@ -17,6 +17,20 @@ public enum EntityChange<Item> {
     case remove(_ item: Item)
 }
 
+extension EntityChange: CustomStringConvertible {
+    /// Returns pretty `EntityChange` description
+    public var description: String {
+        switch self {
+        case let .create(item):
+            return "Create: \(item)"
+        case let .update(item):
+            return "Update: \(item)"
+        case let .remove(item):
+            return "Remove: \(item)"
+        }
+    }
+}
+
 extension EntityChange {
     /// Returns the underlaying item that was changed
     public var item: Item {

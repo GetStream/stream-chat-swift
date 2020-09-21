@@ -19,6 +19,22 @@ public enum ListChange<Item> {
     case remove(_ item: Item, index: IndexPath)
 }
 
+extension ListChange: CustomStringConvertible {
+    /// Returns pretty `ListChange` description
+    public var description: String {
+        switch self {
+        case let .insert(item, indexPath):
+            return "Insert at \(indexPath): \(item)"
+        case let .move(item, from, to):
+            return "Move from \(from) to \(to): \(item)"
+        case let .update(item, indexPath):
+            return "Update at \(indexPath): \(item)"
+        case let .remove(item, indexPath):
+            return "Remove at \(indexPath): \(item)"
+        }
+    }
+}
+
 extension ListChange: Equatable where Item: Equatable {}
 
 /// Observes changes of the list of items specified using an `NSFetchRequest`in the provided `NSManagedObjectContext`.
