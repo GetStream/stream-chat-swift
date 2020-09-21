@@ -8,8 +8,7 @@ import SwiftUI
 @available(iOS 14, *)
 struct ChatView: View {
     /// The `ChannelController` used to interact with this channel. Will be synchornized in `onAppear`.
-    @State var channel: ChannelController.ObservableObject
-    
+    @State var channel: ChatChannelController.ObservableObject
     /// The `text` written in the message composer
     @State var text: String = ""
     /// Binding for message actions ActionSheet

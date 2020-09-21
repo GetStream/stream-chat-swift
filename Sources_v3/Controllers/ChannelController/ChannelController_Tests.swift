@@ -13,7 +13,7 @@ class ChannelController_Tests: StressTestCase {
     
     var channelId: ChannelId!
     
-    var controller: ChannelController!
+    var controller: ChatChannelController!
     var controllerCallbackQueueID: UUID!
     /// Workaround for uwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
@@ -24,7 +24,7 @@ class ChannelController_Tests: StressTestCase {
         env = TestEnvironment()
         client = _ChatClient.mock
         channelId = ChannelId.unique
-        controller = ChannelController(channelQuery: .init(cid: channelId), client: client, environment: env.environment)
+        controller = ChatChannelController(channelQuery: .init(cid: channelId), client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
@@ -322,7 +322,7 @@ class ChannelController_Tests: StressTestCase {
 
     func test_delegateContinueToReceiveEvents_afterObserversReset() throws {
         // Assign `ChannelController` that creates new channel
-        controller = ChannelController(
+        controller = ChatChannelController(
             channelQuery: ChannelQuery(cid: channelId),
             client: client,
             environment: env.environment,
@@ -541,7 +541,7 @@ class ChannelController_Tests: StressTestCase {
     // MARK: - Channel actions propagation tests
 
     func setupControllerForNewChannel(query: ChannelQuery<DefaultExtraData>) {
-        controller = ChannelController(
+        controller = ChatChannelController(
             channelQuery: query,
             client: client,
             environment: env.environment,
@@ -1471,7 +1471,7 @@ private class TestEnvironment {
     var channelUpdater: ChannelUpdaterMock<DefaultExtraData>?
     var eventSender: EventSenderMock<DefaultExtraData>?
     
-    lazy var environment: ChannelController.Environment = .init(
+    lazy var environment: ChatChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
             self.channelUpdater = ChannelUpdaterMock(database: $0, webSocketClient: $1, apiClient: $2)
             return self.channelUpdater!
@@ -1484,7 +1484,7 @@ private class TestEnvironment {
 }
 
 /// A concrete `ChanneControllerDelegate` implementation allowing capturing the delegate calls
-private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
+private class TestDelegate: QueueAwareDelegate, ChatChannelControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var willStartFetchingRemoteDataCalledCounter = 0
     @Atomic var didStopFetchingRemoteDataCalledCounter = 0
@@ -1508,29 +1508,32 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
+    func channelController(_ channelController: ChatChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
         didUpdateMessages_messages = changes
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
+    func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
         didUpdateChannel_channel = channel
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didReceiveMemberEvent event: MemberEvent) {
+    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
         didReceiveMemberEvent_event = event
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>) {
+    func channelController(
+        _ channelController: ChatChannelController,
+        didChangeTypingMembers typingMembers: Set<ChatChannelMember>
+    ) {
         didChangeTypingMembers_typingMembers = typingMembers
         validateQueue()
     }
 }
 
 /// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegateGeneric {
+private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
     @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
@@ -1542,22 +1545,25 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
+    func channelController(_ channelController: ChatChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
         didUpdateMessages_messages = changes
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
+    func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
         didUpdateChannel_channel = channel
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didReceiveMemberEvent event: MemberEvent) {
+    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
         didReceiveMemberEvent_event = event
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>) {
+    func channelController(
+        _ channelController: ChatChannelController,
+        didChangeTypingMembers typingMembers: Set<ChatChannelMember>
+    ) {
         didChangeTypingMembers_typingMembers = typingMembers
         validateQueue()
     }

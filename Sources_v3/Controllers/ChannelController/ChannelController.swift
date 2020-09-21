@@ -12,7 +12,7 @@ extension _ChatClient {
     /// - Parameter options: Query options (See `QueryOptions`)
     /// - Returns: A new instance of `ChannelController`.
     ///
-    public func channelController(for cid: ChannelId, options: QueryOptions = .all) -> ChannelControllerGeneric<ExtraData> {
+    public func channelController(for cid: ChannelId, options: QueryOptions = .all) -> _ChatChannelController<ExtraData> {
         .init(channelQuery: .init(cid: cid, options: options), client: self)
     }
     
@@ -21,7 +21,7 @@ extension _ChatClient {
     /// - Parameter channelQuery: The ChannelQuery this controller represents
     /// - Returns: A new instance of `ChannelController`.
     ///
-    public func channelController(for channelQuery: ChannelQuery<ExtraData>) -> ChannelControllerGeneric<ExtraData> {
+    public func channelController(for channelQuery: ChannelQuery<ExtraData>) -> _ChatChannelController<ExtraData> {
         .init(channelQuery: channelQuery, client: self)
     }
     
@@ -40,7 +40,7 @@ extension _ChatClient {
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
         extraData: ExtraData.Channel
-    ) -> ChannelControllerGeneric<ExtraData> {
+    ) -> _ChatChannelController<ExtraData> {
         let payload = ChannelEditDetailPayload<ExtraData>(
             cid: cid,
             team: team,
@@ -62,7 +62,7 @@ extension _ChatClient {
         createDirectMessageChannelWith members: Set<UserId>,
         team: String? = nil,
         extraData: ExtraData.Channel
-    ) throws -> ChannelControllerGeneric<ExtraData> {
+    ) throws -> _ChatChannelController<ExtraData> {
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
         let payload = ChannelEditDetailPayload<ExtraData>(
             cid: .init(type: .messaging, id: ""),
@@ -76,7 +76,7 @@ extension _ChatClient {
 }
 
 /// A convenience typealias for `ChannelControllerGeneric` with `DefaultExtraData`
-public typealias ChannelController = ChannelControllerGeneric<DefaultExtraData>
+public typealias ChatChannelController = _ChatChannelController<DefaultExtraData>
 
 /// Describes the flow of the items in the list
 public enum ListOrdering {
@@ -91,7 +91,7 @@ public enum ListOrdering {
 ///
 ///  ... you can do this and that
 ///
-public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The ChannelQuery this controller observes.
     @Atomic public private(set) var channelQuery: ChannelQuery<ExtraData>
 
@@ -339,7 +339,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
-    public func setDelegate<Delegate: ChannelControllerDelegateGeneric>(_ delegate: Delegate)
+    public func setDelegate<Delegate: _ChatChannelControllerDelegate>(_ delegate: Delegate)
         where Delegate.ExtraData == ExtraData {
         multicastDelegate.mainDelegate = AnyChannelControllerDelegate(delegate)
     }
@@ -347,7 +347,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
 
 // MARK: - Channel actions
 
-public extension ChannelControllerGeneric {
+public extension _ChatChannelController {
     /// Updated channel with new data
     /// - Parameters:
     ///   - team: New team.
@@ -667,7 +667,7 @@ public extension ChannelControllerGeneric {
     }
 }
 
-extension ChannelControllerGeneric {
+extension _ChatChannelController {
     struct Environment {
         var channelUpdaterBuilder: (
             _ database: DatabaseContainer,
@@ -683,15 +683,15 @@ extension ChannelControllerGeneric {
     }
 }
 
-public extension ChannelControllerGeneric where ExtraData == DefaultExtraData {
+public extension _ChatChannelController where ExtraData == DefaultExtraData {
     /// Set the delegate of `ChannelController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
     /// instead to set the delegate, if you're using custom extra data types.
-    var delegate: ChannelControllerDelegate? {
+    var delegate: ChatChannelControllerDelegate? {
         set { multicastDelegate.mainDelegate = AnyChannelControllerDelegate(newValue) }
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChannelControllerDelegate }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelControllerDelegate }
     }
 }
 
@@ -701,40 +701,43 @@ public extension ChannelControllerGeneric where ExtraData == DefaultExtraData {
 ///
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
 /// please use `ChannelControllerDelegateGeneric` instead.
-public protocol ChannelControllerDelegate: DataControllerStateDelegate {
+public protocol ChatChannelControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `Channel` entity.
     func channelController(
-        _ channelController: ChannelController,
+        _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     )
     
     /// The controller observed changes in the `Messages` of the observed channel.
     func channelController(
-        _ channelController: ChannelController,
+        _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     )
 
     /// The controller received a `MemberEvent` related to the channel it observes.
-    func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent)
+    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent: MemberEvent)
     
     /// The controller received a change related to memebers typing in the channel it observes.
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>)
+    func channelController(_ channelController: ChatChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>)
 }
 
-public extension ChannelControllerDelegate {
+public extension ChatChannelControllerDelegate {
     func channelController(
-        _ channelController: ChannelController,
+        _ channelController: ChatChannelController,
         didUpdateChannel channel: EntityChange<ChatChannel>
     ) {}
     
     func channelController(
-        _ channelController: ChannelController,
+        _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {}
 
-    func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent) {}
+    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent: MemberEvent) {}
     
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>) {}
+    func channelController(
+        _ channelController: ChatChannelController,
+        didChangeTypingMembers typingMembers: Set<ChatChannelMember>
+    ) {}
 }
 
 // MARK: Generic Delegates
@@ -743,72 +746,72 @@ public extension ChannelControllerDelegate {
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `ChannelControllerDelegate`, which hides the generic types, and make the usage easier.
-public protocol ChannelControllerDelegateGeneric: DataControllerStateDelegate {
+public protocol _ChatChannelControllerDelegate: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
     /// The controller observed a change in the `Channel` entity.
     func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     )
     
     /// The controller observed changes in the `Messages` of the observed channel.
     func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     )
 
     /// The controller received a `MemberEvent` related to the channel it observes.
-    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent: MemberEvent)
+    func channelController(_ channelController: _ChatChannelController<ExtraData>, didReceiveMemberEvent: MemberEvent)
     
     /// The controller received a change related to memebers typing in the channel it observes.
     func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     )
 }
 
-public extension ChannelControllerDelegateGeneric {
+public extension _ChatChannelControllerDelegate {
     func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {}
     
     func channelController(
-        _ channelController: ChannelController,
+        _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {}
 
-    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent: MemberEvent) {}
+    func channelController(_ channelController: _ChatChannelController<ExtraData>, didReceiveMemberEvent: MemberEvent) {}
     
     func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didChangeTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {}
 }
 
 // MARK: Type erased Delegate
 
-class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelControllerDelegateGeneric {
+class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelControllerDelegate {
     private var _controllerdidUpdateMessages: (
-        ChannelControllerGeneric<ExtraData>,
+        _ChatChannelController<ExtraData>,
         [ListChange<_ChatMessage<ExtraData>>]
     ) -> Void
     
     private var _controllerDidUpdateChannel: (
-        ChannelControllerGeneric<ExtraData>,
+        _ChatChannelController<ExtraData>,
         EntityChange<_ChatChannel<ExtraData>>
     ) -> Void
 
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
     private var _controllerDidReceiveMemberEvent: (
-        ChannelControllerGeneric<ExtraData>,
+        _ChatChannelController<ExtraData>,
         MemberEvent
     ) -> Void
     
     private var _controllerDidChangeTypingMembers: (
-        ChannelControllerGeneric<ExtraData>,
+        _ChatChannelController<ExtraData>,
         Set<_ChatChannelMember<ExtraData.User>>
     ) -> Void
 
@@ -818,19 +821,19 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         controllerDidUpdateChannel: @escaping (
-            ChannelControllerGeneric<ExtraData>,
+            _ChatChannelController<ExtraData>,
             EntityChange<_ChatChannel<ExtraData>>
         ) -> Void,
         controllerdidUpdateMessages: @escaping (
-            ChannelControllerGeneric<ExtraData>,
+            _ChatChannelController<ExtraData>,
             [ListChange<_ChatMessage<ExtraData>>]
         ) -> Void,
         controllerDidReceiveMemberEvent: @escaping (
-            ChannelControllerGeneric<ExtraData>,
+            _ChatChannelController<ExtraData>,
             MemberEvent
         ) -> Void,
         controllerDidChangeTypingMembers: @escaping (
-            ChannelControllerGeneric<ExtraData>,
+            _ChatChannelController<ExtraData>,
             Set<_ChatChannelMember<ExtraData.User>>
         ) -> Void
     ) {
@@ -847,28 +850,28 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
     }
     
     func channelController(
-        _ controller: ChannelControllerGeneric<ExtraData>,
+        _ controller: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
         _controllerDidUpdateChannel(controller, channel)
     }
     
     func channelController(
-        _ controller: ChannelControllerGeneric<ExtraData>,
+        _ controller: _ChatChannelController<ExtraData>,
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         _controllerdidUpdateMessages(controller, changes)
     }
     
     func channelController(
-        _ controller: ChannelControllerGeneric<ExtraData>,
+        _ controller: _ChatChannelController<ExtraData>,
         didReceiveMemberEvent event: MemberEvent
     ) {
         _controllerDidReceiveMemberEvent(controller, event)
     }
     
     func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {
         _controllerDidChangeTypingMembers(channelController, typingMembers)
@@ -876,7 +879,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
 }
 
 extension AnyChannelControllerDelegate {
-    convenience init<Delegate: ChannelControllerDelegateGeneric>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: _ChatChannelControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -893,7 +896,7 @@ extension AnyChannelControllerDelegate {
 }
 
 extension AnyChannelControllerDelegate where ExtraData == DefaultExtraData {
-    convenience init(_ delegate: ChannelControllerDelegate?) {
+    convenience init(_ delegate: ChatChannelControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },

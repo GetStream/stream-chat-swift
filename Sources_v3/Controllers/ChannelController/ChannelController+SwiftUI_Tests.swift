@@ -106,7 +106,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
     }
 }
 
-class ChannelControllerMock: ChannelController {
+class ChannelControllerMock: ChatChannelController {
     @Atomic var synchronize_called = false
     
     var channel_simulated: _ChatChannel<DefaultExtraData>?
