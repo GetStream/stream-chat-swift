@@ -85,7 +85,7 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     ///
     /// The method below receives a set of `Member` that are currently typing.
     ///
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers: Set<Member>) {
+    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>) {
         updateNavigationTitleAndPrompt()
     }
     

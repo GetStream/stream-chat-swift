@@ -163,8 +163,8 @@ extension ChannelDTO {
 extension _ChatChannel {
     /// Create a ChannelModel struct from its DTO
     fileprivate static func create(fromDTO dto: ChannelDTO) -> _ChatChannel {
-        let members: [MemberModel<ExtraData.User>] = dto.members.map { $0.asModel() }
-        let typingMembers: [MemberModel<ExtraData.User>] = dto.currentlyTypingMembers.map { $0.asModel() }
+        let members: [_ChatChannelMember<ExtraData.User>] = dto.members.map { $0.asModel() }
+        let typingMembers: [_ChatChannelMember<ExtraData.User>] = dto.currentlyTypingMembers.map { $0.asModel() }
 
         // It's safe to use `try!` here, because the extra data payload comes from the DB, so we know it must
         // be a valid JSON payload, otherwise it wouldn't be possible to save it there.

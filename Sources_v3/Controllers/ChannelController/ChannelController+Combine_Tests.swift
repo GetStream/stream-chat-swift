@@ -114,7 +114,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
     
     func test_typingMembersPublisher() {
         // Setup Recording publishers
-        var recording = Record<Set<Member>, Never>.Recording()
+        var recording = Record<Set<ChatChannelMember>, Never>.Recording()
         
         // Setup the chain
         channelController
@@ -126,7 +126,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
 
-        let typingMember = Member(
+        let typingMember = ChatChannelMember(
             id: .unique,
             isOnline: true,
             isBanned: false,

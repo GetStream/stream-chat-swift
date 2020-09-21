@@ -25,7 +25,7 @@ extension ChannelControllerGeneric {
         @Published public private(set) var state: DataController.State
         
         /// The typing members related to the channel.
-        @Published public private(set) var typingMembers: Set<MemberModel<ExtraData.User>> = []
+        @Published public private(set) var typingMembers: Set<_ChatChannelMember<ExtraData.User>> = []
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
         init(controller: ChannelControllerGeneric<ExtraData>) {
@@ -63,7 +63,7 @@ extension ChannelControllerGeneric.ObservableObject: ChannelControllerDelegateGe
     
     public func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<MemberModel<ExtraData.User>>
+        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {
         self.typingMembers = typingMembers
     }

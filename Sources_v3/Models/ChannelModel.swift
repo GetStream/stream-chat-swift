@@ -33,10 +33,10 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     public let isFrozen: Bool
     
     /// A list of channel members.
-    public let members: Set<MemberModel<ExtraData.User>>
+    public let members: Set<_ChatChannelMember<ExtraData.User>>
     
     /// A list of typing channel members.
-    public let currentlyTypingMembers: Set<MemberModel<ExtraData.User>>
+    public let currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
     
     /// A list of channel watchers.
     public let watchers: Set<_ChatUser<ExtraData.User>>
@@ -69,10 +69,10 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     // MARK: - Internal
     
     /// A helper variable to cache the result of the filter for only banned members.
-    //  lazy var bannedMembers: Set<MemberModel<ExtraData.User>> = Set(self.members.filter { $0.isBanned })
+    //  lazy var bannedMembers: Set<_ChatChannelMember<ExtraData.User>> = Set(self.members.filter { $0.isBanned })
     
     /// A list of users to invite in the channel.
-    let invitedMembers: Set<MemberModel<ExtraData.User>> // TODO: Why is this not public?
+    let invitedMembers: Set<_ChatChannelMember<ExtraData.User>> // TODO: Why is this not public?
     
     init(
         cid: ChannelId,
@@ -83,8 +83,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         createdBy: _ChatUser<ExtraData.User>? = nil,
         config: ChannelConfig = .init(),
         isFrozen: Bool = false,
-        members: Set<MemberModel<ExtraData.User>> = [],
-        currentlyTypingMembers: Set<MemberModel<ExtraData.User>> = [],
+        members: Set<_ChatChannelMember<ExtraData.User>> = [],
+        currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         watchers: Set<_ChatUser<ExtraData.User>> = [],
         team: String = "",
         unreadCount: ChannelUnreadCount = .noUnread,
@@ -93,7 +93,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         isWatched: Bool = false,
         reads: [_ChatChannelRead<ExtraData>] = [],
         extraData: ExtraData.Channel,
-        invitedMembers: Set<MemberModel<ExtraData.User>> = [],
+        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         latestMessages: [_ChatMessage<ExtraData>] = []
     ) {
         self.cid = cid

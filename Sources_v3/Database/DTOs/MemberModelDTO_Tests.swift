@@ -48,7 +48,7 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         // Load the member from the db and check it's the same member
-        var loadedMember: MemberModel<NameAndImageExtraData>? {
+        var loadedMember: _ChatChannelMember<NameAndImageExtraData>? {
             database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
         
@@ -96,7 +96,7 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         // Load the member from the db and check it's the same member
-        var loadedMember: MemberModel<NameAndImageExtraData>? {
+        var loadedMember: _ChatChannelMember<NameAndImageExtraData>? {
             database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
         
