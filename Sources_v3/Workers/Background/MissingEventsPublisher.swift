@@ -62,6 +62,11 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
             
             let watchedChannelIDs = allChannels.filter { $0.isWatched }.map(\.cid)
             
+            guard !watchedChannelIDs.isEmpty else {
+                log.info("Skipping `/sync` endpoint call as there are no channels to watch.")
+                return
+            }
+            
             let endpoint: Endpoint<MissingEventsPayload<ExtraData>> = .missingEvents(
                 since: lastSyncedAt,
                 cids: watchedChannelIDs

@@ -55,6 +55,26 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         AssertAsync.staysTrue(apiClient.request_endpoint == nil)
     }
     
+    func test_endpointIsNotCalled_ifThereAreNoWatchedChannels() throws {
+        // Create current user in the database
+        try database.createCurrentUser()
+        
+        // Set `lastReceivedEventDate` field
+        try database.writeSynchronously {
+            let dto = try XCTUnwrap($0.currentUser())
+            dto.lastReceivedEventDate = Date()
+        }
+        
+        // Simulate `.connecting` connection state of a web-socket
+        webSocketClient.simulateConnectionStatus(.connecting)
+        
+        // Simulate `.connected` connection state of a web-socket
+        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        
+        // Assert endpoint is not called as there are no watched channels
+        AssertAsync.staysTrue(apiClient.request_endpoint == nil)
+    }
+    
     func test_endpointIsCalled_whenStatusBecomesConnected() throws {
         let cid: ChannelId = .unique
         let lastReceivedEventDate: Date = .unique
