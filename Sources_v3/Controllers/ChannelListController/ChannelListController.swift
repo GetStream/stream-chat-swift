@@ -202,7 +202,7 @@ extension _ChatChannelListController where ExtraData == DefaultExtraData {
 /// please use `GenericChannelListController` instead.
 public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
     func controller(
-        _ controller: _ChatChannelListController<DefaultExtraData>,
+        _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
     )
 }
