@@ -93,10 +93,24 @@ struct ChatView: View {
         )
         
         return HStack {
-            // ZStack TextEditor with Text for autoexpanding behavior
             ZStack {
-                TextEditor(text: textBinding)
-                Text(text).fixedSize(horizontal: false, vertical: true).padding(.all, 8)
+                if text.isEmpty {
+                    Text("Type a message")
+                        .foregroundColor(.secondary)
+                        .padding(.all, 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .allowsHitTesting(false)
+                } else {
+                    Text(text) // hack to auto expand the composer (TextEditor alone won't do it)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.all, 8)
+                        .opacity(0)
+                        .allowsHitTesting(false)
+                }
+                
+                TextEditor(text: textBinding).background(Color.clear).onAppear {
+                    UITextView.appearance().backgroundColor = .clear
+                }
             }
             Button(action: self.send) {
                 Image(systemName: "arrow.up.circle.fill")
