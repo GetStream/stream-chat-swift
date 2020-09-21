@@ -15,7 +15,7 @@ class SettingsViewController: UITableViewController {
     @IBOutlet var userNameLabel: UILabel!
     @IBOutlet var userSecondaryLabel: UILabel!
     
-    var currentUserController: CurrentUserController! {
+    var currentUserController: CurrentChatUserController! {
         didSet {
             currentUserController.delegate = self
         }
@@ -97,8 +97,11 @@ extension SettingsViewController {
 
 // MARK: - CurrentUserControllerDelegate
 
-extension SettingsViewController: CurrentUserControllerDelegate {
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentChatUser>) {
+extension SettingsViewController: CurrentChatUserControllerDelegate {
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser change: EntityChange<CurrentChatUser>
+    ) {
         updateUserCell(with: change.item)
     }
 }
@@ -106,7 +109,7 @@ extension SettingsViewController: CurrentUserControllerDelegate {
 @available(iOS 13.0, *)
 struct SettingsView: UIViewControllerRepresentable {
     typealias UIViewControllerType = SettingsViewController
-    let currentUserController: CurrentUserController
+    let currentUserController: CurrentChatUserController
     
     func makeUIViewController(context: Context) -> SettingsViewController {
         let navigationViewController = UIStoryboard.settings.instantiateInitialViewController()!

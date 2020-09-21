@@ -94,7 +94,7 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
     }
 }
 
-class CurrentUserControllerMock: CurrentUserController {
+class CurrentUserControllerMock: CurrentChatUserController {
     @Atomic var startUpdating_called = false
     
     var currentUser_simulated: _CurrentChatUser<DefaultExtraData.User>?
