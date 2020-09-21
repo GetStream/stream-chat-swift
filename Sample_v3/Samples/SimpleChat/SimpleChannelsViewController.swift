@@ -12,7 +12,7 @@ import UIKit
 /// A `UITableViewController` subclass that displays and manages the list of channels.  It uses the `ChannelListController`  class to make calls to the Stream Chat API
 /// and listens to events by conforming to `ChannelListControllerDelegate`.
 ///
-class SimpleChannelsViewController: UITableViewController, ChannelListControllerDelegate {
+class SimpleChannelsViewController: UITableViewController, ChatChannelListControllerDelegate {
     // MARK: - Properties
     
     ///
@@ -23,7 +23,7 @@ class SimpleChannelsViewController: UITableViewController, ChannelListController
     ///  delegate is set,`channelListController.synchronize()` must be called to start listening to events related to the channel list. Additionally,
     ///  `channelListController.client` holds a reference to the `ChatClient` which created this instance. It can be used to create other controllers.
     ///
-    var channelListController: ChannelListController! {
+    var channelListController: ChatChannelListController! {
         didSet {
             channelListController.delegate = self
             channelListController.synchronize()
@@ -52,7 +52,7 @@ class SimpleChannelsViewController: UITableViewController, ChannelListController
     /// The method below receives the `changes` that happen in the list of messages and updates the `UITableView` accordingly.
     ///
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
+        _ controller: _ChannelListController<DefaultExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         tableView.beginUpdates()

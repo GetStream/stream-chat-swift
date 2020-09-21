@@ -10,7 +10,7 @@ import SwiftUI
 struct ChannelListView: View {
     // TODO: It's safer to use `@StateObject` here because `@ObservedObject` can sometimes release the
     // reference and this will crash.
-    @ObservedObject var channelList: ChannelListController.ObservableObject
+    @ObservedObject var channelList: ChatChannelListController.ObservableObject
     /// Binding for channel actions ActionSheet
     @State private var showActionSheet: ChannelId?
     /// Binding for ChatView navigation
@@ -20,7 +20,7 @@ struct ChannelListView: View {
         
     private lazy var cancellables: Set<AnyCancellable> = []
     
-    init(channelList: ChannelListController.ObservableObject) {
+    init(channelList: ChatChannelListController.ObservableObject) {
         self.channelList = channelList
         
         /// Dummy binding for State changes.

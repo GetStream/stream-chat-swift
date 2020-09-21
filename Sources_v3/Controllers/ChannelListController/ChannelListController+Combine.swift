@@ -6,7 +6,7 @@ import Combine
 import UIKit
 
 @available(iOS 13, *)
-extension ChannelListControllerGeneric {
+extension _ChatChannelListController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
@@ -22,7 +22,7 @@ extension ChannelListControllerGeneric {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapper controller
-        unowned let controller: ChannelListControllerGeneric
+        unowned let controller: _ChatChannelListController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
@@ -30,7 +30,7 @@ extension ChannelListControllerGeneric {
         /// A backing subject for `channelsChangesPublisher`.
         let channelsChanges: PassthroughSubject<[ListChange<_ChatChannel<ExtraData>>], Never> = .init()
                 
-        init(controller: ChannelListControllerGeneric<ExtraData>) {
+        init(controller: _ChatChannelListController<ExtraData>) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -40,13 +40,13 @@ extension ChannelListControllerGeneric {
 }
 
 @available(iOS 13, *)
-extension ChannelListControllerGeneric.BasePublishers: ChannelListControllerDelegateGeneric {
+extension _ChatChannelListController.BasePublishers: _ChatChannelListControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
     
     func controller(
-        _ controller: ChannelListControllerGeneric<ExtraData>,
+        _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
         channelsChanges.send(changes)

@@ -13,7 +13,7 @@ class ChannelListController_Tests: StressTestCase {
     
     var query: ChannelListQuery!
     
-    var controller: ChannelListController!
+    var controller: ChatChannelListController!
     var controllerCallbackQueueID: UUID!
     /// Workaround for uwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
@@ -24,7 +24,7 @@ class ChannelListController_Tests: StressTestCase {
         env = TestEnvironment()
         client = _ChatClient.mock
         query = .init(filter: .in("members", ["Luke"]))
-        controller = ChannelListController(query: query, client: client, environment: env.environment)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
@@ -362,7 +362,7 @@ class ChannelListController_Tests: StressTestCase {
 private class TestEnvironment {
     @Atomic var channelListUpdater: ChannelListUpdaterMock<DefaultExtraData>?
     
-    lazy var environment: ChannelListController.Environment =
+    lazy var environment: ChatChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
             self.channelListUpdater = ChannelListUpdaterMock(
                 database: $0,
@@ -374,7 +374,7 @@ private class TestEnvironment {
 }
 
 // A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls
-private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
+private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
     
@@ -384,7 +384,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
     }
     
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
+        _ controller: _ChatChannelListController<DefaultExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         didChangeChannels_changes = changes
@@ -392,8 +392,8 @@ private class TestDelegate: QueueAwareDelegate, ChannelListControllerDelegate {
     }
 }
 
-// A concrete `ChannelListControllerDelegateGeneric` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDelegateGeneric {
+// A concrete `_ChatChannelListControllerDelegate` implementation allowing capturing the delegate calls.
+private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelListControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
     
@@ -403,7 +403,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelListControllerDele
     }
     
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
+        _ controller: _ChatChannelListController<DefaultExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         didChangeChannels_changes = changes

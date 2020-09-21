@@ -11,19 +11,19 @@ extension _ChatClient {
     /// - Parameter query: The query specify the filter and sorting of the channels the controller should fetch.
     /// - Returns: A new instance of `ChannelController`.
     ///
-    public func channelListController(query: ChannelListQuery) -> ChannelListControllerGeneric<ExtraData> {
+    public func channelListController(query: ChannelListQuery) -> _ChatChannelListController<ExtraData> {
         .init(query: query, client: self)
     }
 }
 
 /// A convenience typealias for `ChannelListControllerGeneric` with `DefaultExtraData`
-public typealias ChannelListController = ChannelListControllerGeneric<DefaultExtraData>
+public typealias ChatChannelListController = _ChatChannelListController<DefaultExtraData>
 
 /// `ChannelListController` allows observing and mutating the list of channels specified by a channel query.
 ///
 ///  ... you can do this and that
 ///
-public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of channels.
     public let query: ChannelListQuery
     
@@ -129,7 +129,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
     ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
-    public func setDelegate<Delegate: ChannelListControllerDelegateGeneric>(_ delegate: Delegate)
+    public func setDelegate<Delegate: _ChatChannelListControllerDelegate>(_ delegate: Delegate)
         where Delegate.ExtraData == ExtraData {
         multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(delegate)
     }
@@ -137,7 +137,7 @@ public class ChannelListControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
 
 // MARK: - Actions
 
-public extension ChannelListControllerGeneric {
+public extension _ChatChannelListController {
     /// Loads next channels from backend.
     /// - Parameters:
     ///   - limit: Limit for page size.
@@ -165,7 +165,7 @@ public extension ChannelListControllerGeneric {
     }
 }
 
-extension ChannelListControllerGeneric {
+extension _ChatChannelListController {
     struct Environment {
         var channelQueryUpdaterBuilder: (
             _ database: DatabaseContainer,
@@ -184,15 +184,15 @@ extension ChannelListControllerGeneric {
     }
 }
 
-extension ChannelListControllerGeneric where ExtraData == DefaultExtraData {
+extension _ChatChannelListController where ExtraData == DefaultExtraData {
     /// Set the delegate of `ChannelListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
     /// instead to set the delegate, if you're using custom extra data types.
-    public weak var delegate: ChannelListControllerDelegate? {
+    public weak var delegate: ChatChannelListControllerDelegate? {
         set { multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(newValue) }
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChannelListControllerDelegate }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelListControllerDelegate }
     }
 }
 
@@ -200,16 +200,16 @@ extension ChannelListControllerGeneric where ExtraData == DefaultExtraData {
 ///
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
 /// please use `GenericChannelListController` instead.
-public protocol ChannelListControllerDelegate: DataControllerStateDelegate {
+public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
+        _ controller: _ChatChannelListController<DefaultExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
     )
 }
 
-public extension ChannelListControllerDelegate {
+public extension ChatChannelListControllerDelegate {
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
+        _ controller: _ChatChannelListController<DefaultExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {}
 }
@@ -218,17 +218,17 @@ public extension ChannelListControllerDelegate {
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `ChannelListControllerDelegate`, which hides the generic types, and make the usage easier.
-public protocol ChannelListControllerDelegateGeneric: DataControllerStateDelegate {
+public protocol _ChatChannelListControllerDelegate: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     func controller(
-        _ controller: ChannelListControllerGeneric<ExtraData>,
+        _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     )
 }
 
-public extension ChannelListControllerDelegateGeneric {
+public extension _ChatChannelListControllerDelegate {
     func controller(
-        _ controller: ChannelListControllerGeneric<DefaultExtraData>,
+        _ controller: _ChatChannelListController<DefaultExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {}
 }
@@ -241,8 +241,8 @@ extension ClientError {
 
 // MARK: - Delegate type eraser
 
-class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListControllerDelegateGeneric {
-    private var _controllerDidChangeChannels: (ChannelListControllerGeneric<ExtraData>, [ListChange<_ChatChannel<ExtraData>>])
+class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelListControllerDelegate {
+    private var _controllerDidChangeChannels: (_ChatChannelListController<ExtraData>, [ListChange<_ChatChannel<ExtraData>>])
         -> Void
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
@@ -251,7 +251,7 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListCo
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        controllerDidChangeChannels: @escaping (ChannelListControllerGeneric<ExtraData>, [ListChange<_ChatChannel<ExtraData>>])
+        controllerDidChangeChannels: @escaping (_ChatChannelListController<ExtraData>, [ListChange<_ChatChannel<ExtraData>>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -264,7 +264,7 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListCo
     }
 
     func controller(
-        _ controller: ChannelListControllerGeneric<ExtraData>,
+        _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
         _controllerDidChangeChannels(controller, changes)
@@ -272,7 +272,7 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: ChannelListCo
 }
 
 extension AnyChannelListControllerDelegate {
-    convenience init<Delegate: ChannelListControllerDelegateGeneric>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: _ChatChannelListControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -282,7 +282,7 @@ extension AnyChannelListControllerDelegate {
 }
 
 extension AnyChannelListControllerDelegate where ExtraData == DefaultExtraData {
-    convenience init(_ delegate: ChannelListControllerDelegate?) {
+    convenience init(_ delegate: ChatChannelListControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
