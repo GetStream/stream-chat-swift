@@ -11,7 +11,7 @@ import UIKit
 /// A `UITableViewController` subclass that displays and manages a channel.  It uses the `ChannelController`  class to make calls to the Stream Chat API and listens to
 /// events by conforming to `ChannelControllerDelegate`.
 ///
-final class SimpleChatViewController: UITableViewController, ChannelControllerDelegate, UITextViewDelegate {
+final class SimpleChatViewController: UITableViewController, ChatChannelControllerDelegate, UITextViewDelegate {
     // MARK: - Properties
     
     ///
@@ -22,7 +22,7 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     ///  `channelController.synchronize()` must be called to start listening to events related to the channel. Additionally, `channelController.client` holds a
     ///  reference to the `ChatClient` which created this instance. It can be used to create other controllers.
     ///
-    var channelController: ChannelController! {
+    var channelController: ChatChannelController! {
         didSet {
             channelController.delegate = self
             channelController.synchronize()
@@ -45,7 +45,8 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     ///
     /// The method below receives the `changes` that happen in the list of messages and updates the `UITableView` accordingly.
     ///
-    func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
+    func channelController(_ channelController: ChatChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
+        tableView.beginUpdates()
         
         for change in changes {
             switch change {
@@ -69,7 +70,7 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     /// The method below reacts to changes in the `Channel` entity. It updates the view controller's `title` and its `navigationItem.prompt` to display the count of channel
     /// members and the count of online members. When the channel is deleted, this view controller is dismissed.
     ///
-    func channelController(_ channelController: ChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
+    func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
         switch channel {
         case .create:
             break
@@ -85,7 +86,10 @@ final class SimpleChatViewController: UITableViewController, ChannelControllerDe
     ///
     /// The method below receives a set of `Member` that are currently typing.
     ///
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>) {
+    func channelController(
+        _ channelController: ChatChannelController,
+        didChangeTypingMembers typingMembers: Set<ChatChannelMember>
+    ) {
         updateNavigationTitleAndPrompt()
     }
     

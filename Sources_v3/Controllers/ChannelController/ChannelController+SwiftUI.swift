@@ -6,14 +6,14 @@ import Foundation
 import SwiftUI
 
 @available(iOS 13, *)
-extension ChannelControllerGeneric {
+extension _ChatChannelController {
     /// A wrapper object that exposes the controller variables in the form of `ObservableObject` to be used in SwiftUI.
     public var observableObject: ObservableObject { .init(controller: self) }
     
     /// A wrapper object for `ChannelListController` type which makes it possible to use the controller comfortably in SwiftUI.
     public class ObservableObject: SwiftUI.ObservableObject {
         /// The underlying controller. You can still access it and call methods on it.
-        public let controller: ChannelControllerGeneric
+        public let controller: _ChatChannelController
         
         /// The channel matching the ChannelId.
         @Published public private(set) var channel: _ChatChannel<ExtraData>?
@@ -28,7 +28,7 @@ extension ChannelControllerGeneric {
         @Published public private(set) var typingMembers: Set<_ChatChannelMember<ExtraData.User>> = []
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
-        init(controller: ChannelControllerGeneric<ExtraData>) {
+        init(controller: _ChatChannelController<ExtraData>) {
             self.controller = controller
             state = controller.state
             
@@ -42,16 +42,16 @@ extension ChannelControllerGeneric {
 }
 
 @available(iOS 13, *)
-extension ChannelControllerGeneric.ObservableObject: ChannelControllerDelegateGeneric {
+extension _ChatChannelController.ObservableObject: _ChatChannelControllerDelegate {
     public func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
         self.channel = channelController.channel
     }
    
     public func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         messages = channelController.messages
@@ -62,7 +62,7 @@ extension ChannelControllerGeneric.ObservableObject: ChannelControllerDelegateGe
     }
     
     public func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {
         self.typingMembers = typingMembers

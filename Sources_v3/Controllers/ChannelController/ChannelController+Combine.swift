@@ -6,7 +6,7 @@ import Combine
 import UIKit
 
 @available(iOS 13, *)
-extension ChannelControllerGeneric {
+extension _ChatChannelController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
@@ -37,7 +37,7 @@ extension ChannelControllerGeneric {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapper controller
-        unowned let controller: ChannelControllerGeneric
+        unowned let controller: _ChatChannelController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
@@ -54,7 +54,7 @@ extension ChannelControllerGeneric {
         /// A backing subject for `typingMembersPublisher`.
         let typingMembers: PassthroughSubject<Set<_ChatChannelMember<ExtraData.User>>, Never> = .init()
                 
-        init(controller: ChannelControllerGeneric<ExtraData>) {
+        init(controller: _ChatChannelController<ExtraData>) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -64,31 +64,31 @@ extension ChannelControllerGeneric {
 }
 
 @available(iOS 13, *)
-extension ChannelControllerGeneric.BasePublishers: ChannelControllerDelegateGeneric {
+extension _ChatChannelController.BasePublishers: _ChatChannelControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
 
     func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
         channelChange.send(channel)
     }
 
     func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         messagesChanges.send(changes)
     }
 
-    func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent event: MemberEvent) {
+    func channelController(_ channelController: _ChatChannelController<ExtraData>, didReceiveMemberEvent event: MemberEvent) {
         memberEvent.send(event)
     }
     
     func channelController(
-        _ channelController: ChannelControllerGeneric<ExtraData>,
+        _ channelController: _ChatChannelController<ExtraData>,
         didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {
         self.typingMembers.send(typingMembers)

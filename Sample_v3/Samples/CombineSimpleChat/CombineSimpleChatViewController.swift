@@ -25,7 +25,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     ///  `Publishers` functionality is identical to methods of `ChannelControllerDelegate`.
     ///  Also we need to call `channelController.synchronize()` to update local data with remote one.
     ///
-    var channelController: ChannelController! {
+    var channelController: ChatChannelController! {
         didSet {
             channelController.synchronize()
             subscribeToCombinePublishers()
