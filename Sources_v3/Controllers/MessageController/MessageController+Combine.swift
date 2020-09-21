@@ -6,7 +6,7 @@ import Combine
 import UIKit
 
 @available(iOS 13, *)
-extension MessageControllerGeneric {
+extension _ChatMessageController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
@@ -22,7 +22,7 @@ extension MessageControllerGeneric {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapper controller
-        unowned let controller: MessageControllerGeneric
+        unowned let controller: _ChatMessageController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
@@ -30,7 +30,7 @@ extension MessageControllerGeneric {
         /// A backing subject for `messageChangePublisher`.
         let messageChange: PassthroughSubject<EntityChange<_ChatMessage<ExtraData>>, Never> = .init()
         
-        init(controller: MessageControllerGeneric<ExtraData>) {
+        init(controller: _ChatMessageController<ExtraData>) {
             self.controller = controller
             state = .init(controller.state)
             
@@ -40,13 +40,13 @@ extension MessageControllerGeneric {
 }
 
 @available(iOS 13, *)
-extension MessageControllerGeneric.BasePublishers: MessageControllerDelegateGeneric {
+extension _ChatMessageController.BasePublishers: _MessageControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
     
     func messageController(
-        _ controller: MessageControllerGeneric<ExtraData>,
+        _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) {
         messageChange.send(change)

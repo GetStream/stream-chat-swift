@@ -14,7 +14,7 @@ final class MessageController_Tests: StressTestCase {
     private var messageId: MessageId!
     private var cid: ChannelId!
     
-    private var controller: MessageController!
+    private var controller: ChatMessageController!
     private var controllerCallbackQueueID: UUID!
     private var callbackQueueID: UUID { controllerCallbackQueueID }
     
@@ -31,7 +31,7 @@ final class MessageController_Tests: StressTestCase {
         cid = .unique
         
         controllerCallbackQueueID = UUID()
-        controller = MessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
+        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, environment: env.controllerEnvironment)
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
     
@@ -375,7 +375,7 @@ final class MessageController_Tests: StressTestCase {
     }
 }
 
-private class TestDelegate: QueueAwareDelegate, MessageControllerDelegate {
+private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeMessage_change: EntityChange<ChatMessage>?
     
@@ -384,13 +384,13 @@ private class TestDelegate: QueueAwareDelegate, MessageControllerDelegate {
         validateQueue()
     }
     
-    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<ChatMessage>) {
+    func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {
         didChangeMessage_change = change
         validateQueue()
     }
 }
 
-private class TestDelegateGeneric: QueueAwareDelegate, MessageControllerDelegateGeneric {
+private class TestDelegateGeneric: QueueAwareDelegate, _MessageControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeMessage_change: EntityChange<ChatMessage>?
    
@@ -399,7 +399,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, MessageControllerDelegate
         validateQueue()
     }
     
-    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<ChatMessage>) {
+    func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {
         didChangeMessage_change = change
         validateQueue()
     }
@@ -410,7 +410,7 @@ private class TestEnvironment {
     var messageObserver: EntityDatabaseObserverMock<_ChatMessage<DefaultExtraData>, MessageDTO>!
     var messageObserver_synchronizeError: Error?
     
-    lazy var controllerEnvironment: MessageController
+    lazy var controllerEnvironment: ChatMessageController
         .Environment = .init(
             messageObserverBuilder: { [unowned self] in
                 self.messageObserver = .init(context: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)

@@ -56,7 +56,7 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
     }
 }
 
-class MessageControllerMock: MessageController {
+class MessageControllerMock: ChatMessageController {
     @Atomic var synchronize_called = false
     
     var message_simulated: ChatMessage?

@@ -10,16 +10,16 @@ public extension _ChatClient {
     /// - Parameter cid: The channel identifer the message relates to.
     /// - Parameter messageId: The message identifier.
     /// - Returns: A new instance of `MessageController`.
-    func messageController(cid: ChannelId, messageId: MessageId) -> MessageControllerGeneric<ExtraData> {
+    func messageController(cid: ChannelId, messageId: MessageId) -> _ChatMessageController<ExtraData> {
         .init(client: self, cid: cid, messageId: messageId)
     }
 }
 
 /// A convenience typealias for `MessageControllerGeneric` with `DefaultExtraData`.
-public typealias MessageController = MessageControllerGeneric<DefaultExtraData>
+public typealias ChatMessageController = _ChatMessageController<DefaultExtraData>
 
 /// The `MessageControllerGeneric` is designed to edit the message it was created with.
-public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: DataController, DelegateCallable {
+public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: _ChatClient<ExtraData>
     
@@ -109,7 +109,7 @@ public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: DataController
 
 // MARK: - Actions
 
-public extension MessageControllerGeneric {
+public extension _ChatMessageController {
     /// Edits the message this controller manages with the provided values.
     /// - Parameters:
     ///   - text: The updated message text.
@@ -138,7 +138,7 @@ public extension MessageControllerGeneric {
 
 // MARK: - Environment
 
-extension MessageControllerGeneric {
+extension _ChatMessageController {
     struct Environment {
         var messageObserverBuilder: (
             _ context: NSManagedObjectContext,
@@ -157,7 +157,7 @@ extension MessageControllerGeneric {
 
 // MARK: - Private
 
-private extension MessageControllerGeneric {
+private extension _ChatMessageController {
     func createMessageObserver() -> EntityDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO> {
         let observer = environment.messageObserverBuilder(
             client.databaseContainer.viewContext,
@@ -184,46 +184,46 @@ private extension MessageControllerGeneric {
 ///
 /// This protocol can be used only when no custom extra data are specified.
 /// If you're using custom extra data types, please use `MessageControllerDelegateGeneric` instead.
-public protocol MessageControllerDelegate: DataControllerStateDelegate {
+public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `Message`.
-    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<ChatMessage>)
+    func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>)
 }
 
-public extension MessageControllerDelegate {
-    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<ChatMessage>) {}
+public extension ChatMessageControllerDelegate {
+    func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {}
 }
 
 /// `MessageControllerDelegateGeneric` uses this protocol to communicate changes to its delegate.
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `MessageControllerDelegate`, which hides the generic types, and make the usage easier.
-public protocol MessageControllerDelegateGeneric: DataControllerStateDelegate {
+public protocol _MessageControllerDelegate: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
     /// The controller observed a change in the `MessageModel<ExtraData>`.
     func messageController(
-        _ controller: MessageControllerGeneric<ExtraData>,
+        _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     )
 }
 
-public extension MessageControllerDelegateGeneric {
+public extension _MessageControllerDelegate {
     func messageController(
-        _ controller: MessageControllerGeneric<ExtraData>,
+        _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) {}
 }
 
-final class AnyMessageControllerDelegate<ExtraData: ExtraDataTypes>: MessageControllerDelegateGeneric {
+final class AnyMessageControllerDelegate<ExtraData: ExtraDataTypes>: _MessageControllerDelegate {
     weak var wrappedDelegate: AnyObject?
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
-    private var _messageControllerDidChangeMessage: (MessageControllerGeneric<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
+    private var _messageControllerDidChangeMessage: (_ChatMessageController<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
         -> Void
     
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        messageControllerDidChangeMessage: @escaping (MessageControllerGeneric<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
+        messageControllerDidChangeMessage: @escaping (_ChatMessageController<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -236,7 +236,7 @@ final class AnyMessageControllerDelegate<ExtraData: ExtraDataTypes>: MessageCont
     }
 
     func messageController(
-        _ controller: MessageControllerGeneric<ExtraData>,
+        _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) {
         _messageControllerDidChangeMessage(controller, change)
@@ -244,7 +244,7 @@ final class AnyMessageControllerDelegate<ExtraData: ExtraDataTypes>: MessageCont
 }
 
 extension AnyMessageControllerDelegate {
-    convenience init<Delegate: MessageControllerDelegateGeneric>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+    convenience init<Delegate: _MessageControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -254,7 +254,7 @@ extension AnyMessageControllerDelegate {
 }
 
 extension AnyMessageControllerDelegate where ExtraData == DefaultExtraData {
-    convenience init(_ delegate: MessageControllerDelegate?) {
+    convenience init(_ delegate: ChatMessageControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -263,7 +263,7 @@ extension AnyMessageControllerDelegate where ExtraData == DefaultExtraData {
     }
 }
  
-public extension MessageControllerGeneric {
+public extension _ChatMessageController {
     /// Sets the provided object as a delegate of this controller.
     ///
     /// - Note: If you don't use custom extra data types, you can set the delegate directly using `controller.delegate = self`.
@@ -272,19 +272,19 @@ public extension MessageControllerGeneric {
     ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
-    func setDelegate<Delegate: MessageControllerDelegateGeneric>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData {
+    func setDelegate<Delegate: _MessageControllerDelegate>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData {
         multicastDelegate.mainDelegate = delegate.flatMap(AnyMessageControllerDelegate.init)
     }
 }
 
-public extension MessageController {
+public extension ChatMessageController {
     /// Set the delegate of `MessageController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
     /// instead to set the delegate, if you're using custom extra data types.
-    var delegate: MessageControllerDelegate? {
+    var delegate: ChatMessageControllerDelegate? {
         set { multicastDelegate.mainDelegate = AnyMessageControllerDelegate(newValue) }
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? MessageControllerDelegate }
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatMessageControllerDelegate }
     }
 }
