@@ -4,9 +4,9 @@
 
 import Foundation
 
-public typealias Member = MemberModel<NameAndImageExtraData>
+public typealias ChatChannelMember = _ChatChannelMember<NameAndImageExtraData>
 
-public class MemberModel<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
+public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
     // MARK: - Public
     
     /// The role of the user within the channel.

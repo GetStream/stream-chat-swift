@@ -78,11 +78,11 @@ extension NSManagedObjectContext {
 }
 
 extension MemberDTO {
-    func asModel<ExtraData: UserExtraData>() -> MemberModel<ExtraData> { .create(fromDTO: self) }
+    func asModel<ExtraData: UserExtraData>() -> _ChatChannelMember<ExtraData> { .create(fromDTO: self) }
 }
 
-extension MemberModel {
-    fileprivate static func create(fromDTO dto: MemberDTO) -> MemberModel {
+extension _ChatChannelMember {
+    fileprivate static func create(fromDTO dto: MemberDTO) -> _ChatChannelMember {
         let extraData: ExtraData
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.user.extraData)
@@ -95,7 +95,7 @@ extension MemberModel {
         
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         
-        return MemberModel(
+        return _ChatChannelMember(
             id: dto.user.id,
             isOnline: dto.user.isOnline,
             isBanned: dto.user.isBanned,

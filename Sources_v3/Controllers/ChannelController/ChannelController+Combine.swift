@@ -28,7 +28,7 @@ extension ChannelControllerGeneric {
     }
     
     /// A publisher emitting a new value every time typing members change.
-    public var typingMembersPublisher: AnyPublisher<Set<MemberModel<ExtraData.User>>, Never> {
+    public var typingMembersPublisher: AnyPublisher<Set<_ChatChannelMember<ExtraData.User>>, Never> {
         basePublishers.typingMembers.keepAlive(self)
     }
 
@@ -52,7 +52,7 @@ extension ChannelControllerGeneric {
         let memberEvent: PassthroughSubject<MemberEvent, Never> = .init()
         
         /// A backing subject for `typingMembersPublisher`.
-        let typingMembers: PassthroughSubject<Set<MemberModel<ExtraData.User>>, Never> = .init()
+        let typingMembers: PassthroughSubject<Set<_ChatChannelMember<ExtraData.User>>, Never> = .init()
                 
         init(controller: ChannelControllerGeneric<ExtraData>) {
             self.controller = controller
@@ -89,7 +89,7 @@ extension ChannelControllerGeneric.BasePublishers: ChannelControllerDelegateGene
     
     func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<MemberModel<ExtraData.User>>
+        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {
         self.typingMembers.send(typingMembers)
     }

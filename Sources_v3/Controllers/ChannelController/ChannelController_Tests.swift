@@ -442,7 +442,7 @@ class ChannelController_Tests: StressTestCase {
         }
         
         // Load the channel member
-        var typingMember: Member {
+        var typingMember: ChatChannelMember {
             client.databaseContainer.viewContext.member(userId: memberId, cid: channelId)!.asModel()
         }
         
@@ -473,7 +473,7 @@ class ChannelController_Tests: StressTestCase {
         }
         
         // Load the channel member
-        var typingMember: Member {
+        var typingMember: ChatChannelMember {
             client.databaseContainer.viewContext.member(userId: memberId, cid: channelId)!.asModel()
         }
         
@@ -1491,7 +1491,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
     @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
     @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didChangeTypingMembers_typingMembers: Set<Member>?
+    @Atomic var didChangeTypingMembers_typingMembers: Set<ChatChannelMember>?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -1523,7 +1523,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<Member>) {
+    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>) {
         didChangeTypingMembers_typingMembers = typingMembers
         validateQueue()
     }
@@ -1535,7 +1535,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
     @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
     @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didChangeTypingMembers_typingMembers: Set<Member>?
+    @Atomic var didChangeTypingMembers_typingMembers: Set<ChatChannelMember>?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -1557,7 +1557,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<Member>) {
+    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>) {
         didChangeTypingMembers_typingMembers = typingMembers
         validateQueue()
     }

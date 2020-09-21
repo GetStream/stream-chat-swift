@@ -718,7 +718,7 @@ public protocol ChannelControllerDelegate: DataControllerStateDelegate {
     func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent)
     
     /// The controller received a change related to memebers typing in the channel it observes.
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<Member>)
+    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>)
 }
 
 public extension ChannelControllerDelegate {
@@ -734,7 +734,7 @@ public extension ChannelControllerDelegate {
 
     func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent) {}
     
-    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<Member>) {}
+    func channelController(_ channelController: ChannelController, didChangeTypingMembers typingMembers: Set<ChatChannelMember>) {}
 }
 
 // MARK: Generic Delegates
@@ -764,7 +764,7 @@ public protocol ChannelControllerDelegateGeneric: DataControllerStateDelegate {
     /// The controller received a change related to memebers typing in the channel it observes.
     func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<MemberModel<ExtraData.User>>
+        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     )
 }
 
@@ -783,7 +783,7 @@ public extension ChannelControllerDelegateGeneric {
     
     func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didChangeTypingMembers: Set<MemberModel<ExtraData.User>>
+        didChangeTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {}
 }
 
@@ -809,7 +809,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
     
     private var _controllerDidChangeTypingMembers: (
         ChannelControllerGeneric<ExtraData>,
-        Set<MemberModel<ExtraData.User>>
+        Set<_ChatChannelMember<ExtraData.User>>
     ) -> Void
 
     weak var wrappedDelegate: AnyObject?
@@ -831,7 +831,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
         ) -> Void,
         controllerDidChangeTypingMembers: @escaping (
             ChannelControllerGeneric<ExtraData>,
-            Set<MemberModel<ExtraData.User>>
+            Set<_ChatChannelMember<ExtraData.User>>
         ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -869,7 +869,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
     
     func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didChangeTypingMembers typingMembers: Set<MemberModel<ExtraData.User>>
+        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {
         _controllerDidChangeTypingMembers(channelController, typingMembers)
     }

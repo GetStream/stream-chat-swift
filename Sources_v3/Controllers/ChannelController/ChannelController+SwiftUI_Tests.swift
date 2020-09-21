@@ -77,7 +77,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
     func test_observableObject_reactsToDelegateTypingMembersChangeCallback() {
         let observableObject = channelController.observableObject
         
-        let typingMember = Member(
+        let typingMember = ChatChannelMember(
             id: .unique,
             isOnline: true,
             isBanned: false,
