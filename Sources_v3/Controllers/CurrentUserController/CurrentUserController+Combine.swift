@@ -6,7 +6,7 @@ import Combine
 import UIKit
 
 @available(iOS 13, *)
-extension CurrentUserControllerGeneric {
+extension _CurrentChatUserController {
     /// A publisher emitting a new value every time the state of the controller changes.
     public var statePublisher: AnyPublisher<DataController.State, Never> {
         basePublishers.state.keepAlive(self)
@@ -32,7 +32,7 @@ extension CurrentUserControllerGeneric {
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
     class BasePublishers {
         /// The wrapper controller
-        unowned let controller: CurrentUserControllerGeneric
+        unowned let controller: _CurrentChatUserController
         
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
@@ -46,7 +46,7 @@ extension CurrentUserControllerGeneric {
         /// A backing subject for `connectionStatusPublisher`.
         let connectionStatus: CurrentValueSubject<ConnectionStatus, Never>
                 
-        init(controller: CurrentUserControllerGeneric<ExtraData>) {
+        init(controller: _CurrentChatUserController<ExtraData>) {
             self.controller = controller
             state = .init(controller.state)
             unreadCount = .init(.noUnread)
@@ -63,27 +63,27 @@ extension CurrentUserControllerGeneric {
 }
 
 @available(iOS 13, *)
-extension CurrentUserControllerGeneric.BasePublishers: CurrentUserControllerDelegateGeneric {
+extension _CurrentChatUserController.BasePublishers: _CurrentChatUserControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
     
     func currentUserController(
-        _ controller: CurrentUserControllerGeneric<ExtraData>,
+        _ controller: _CurrentChatUserController<ExtraData>,
         didChangeCurrentUserUnreadCount unreadCount: UnreadCount
     ) {
         self.unreadCount.send(unreadCount)
     }
     
     func currentUserController(
-        _ controller: CurrentUserControllerGeneric<ExtraData>,
+        _ controller: _CurrentChatUserController<ExtraData>,
         didChangeCurrentUser currentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
     ) {
         currentUserChange.send(currentUser)
     }
     
     func currentUserController(
-        _ controller: CurrentUserControllerGeneric<ExtraData>,
+        _ controller: _CurrentChatUserController<ExtraData>,
         didUpdateConnectionStatus status: ConnectionStatus
     ) {
         connectionStatus.send(status)

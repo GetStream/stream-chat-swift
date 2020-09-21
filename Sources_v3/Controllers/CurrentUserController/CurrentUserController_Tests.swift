@@ -9,7 +9,7 @@ import XCTest
 final class CurrentUserController_Tests: StressTestCase {
     private var env: TestEnvironment!
     private var client: ChatClient!
-    private var controller: CurrentUserController!
+    private var controller: CurrentChatUserController!
     private var controllerCallbackQueueID: UUID!
     private var callbackQueueID: UUID { controllerCallbackQueueID }
     
@@ -20,7 +20,7 @@ final class CurrentUserController_Tests: StressTestCase {
         
         env = TestEnvironment()
         client = _ChatClient.mock
-        controller = CurrentUserController(client: client, environment: env.currentUserControllerEnvironment)
+        controller = CurrentChatUserController(client: client, environment: env.currentUserControllerEnvironment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
@@ -635,7 +635,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
 }
 
-private class TestDelegate: QueueAwareDelegate, CurrentUserControllerDelegate {
+private class TestDelegate: QueueAwareDelegate, CurrentChatUserControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
@@ -646,23 +646,26 @@ private class TestDelegate: QueueAwareDelegate, CurrentUserControllerDelegate {
         validateQueue()
     }
 
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentChatUser>) {
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser change: EntityChange<CurrentChatUser>
+    ) {
         didChangeCurrentUser_change = change
         validateQueue()
     }
     
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
+    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
         didChangeCurrentUserUnreadCount_count = count
         validateQueue()
     }
     
-    func currentUserController(_ controller: CurrentUserController, didUpdateConnectionStatus status: ConnectionStatus) {
+    func currentUserController(_ controller: CurrentChatUserController, didUpdateConnectionStatus status: ConnectionStatus) {
         _didUpdateConnectionStatus_statuses.mutate { $0.append(status) }
         validateQueue()
     }
 }
 
-private class TestDelegateGeneric: QueueAwareDelegate, CurrentUserControllerDelegateGeneric {
+private class TestDelegateGeneric: QueueAwareDelegate, _CurrentChatUserControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
@@ -673,17 +676,20 @@ private class TestDelegateGeneric: QueueAwareDelegate, CurrentUserControllerDele
         validateQueue()
     }
     
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentChatUser>) {
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser change: EntityChange<CurrentChatUser>
+    ) {
         didChangeCurrentUser_change = change
         validateQueue()
     }
     
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
+    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
         didChangeCurrentUserUnreadCount_count = count
         validateQueue()
     }
     
-    func currentUserController(_ controller: CurrentUserController, didUpdateConnectionStatus status: ConnectionStatus) {
+    func currentUserController(_ controller: CurrentChatUserController, didUpdateConnectionStatus status: ConnectionStatus) {
         _didUpdateConnectionStatus_statuses.mutate { $0.append(status) }
         validateQueue()
     }
@@ -693,7 +699,7 @@ private class TestEnvironment {
     var currentUserObserver: EntityDatabaseObserverMock<CurrentChatUser, CurrentUserDTO>!
     var currentUserObserverStartUpdatingError: Error?
 
-    lazy var currentUserControllerEnvironment: CurrentUserController
+    lazy var currentUserControllerEnvironment: CurrentChatUserController
         .Environment = .init(currentUserObserverBuilder: { [unowned self] in
             self.currentUserObserver = .init(context: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)
             self.currentUserObserver.synchronizeError = self.currentUserObserverStartUpdatingError
