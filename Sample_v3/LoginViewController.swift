@@ -136,7 +136,7 @@ extension LoginViewController {
                 self.view.window?.rootViewController = initial
             })
         case .swiftUISimpleChatIndexPath:
-            if #available(iOS 13, *) {
+            if #available(iOS 14, *) {
                 // Ideally, we'd pass the `Client` instance as the environment object and create the list controller later.
                 UIView.transition(with: self.view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
                     self.view.window?.rootViewController = UIHostingController(
@@ -146,6 +146,8 @@ extension LoginViewController {
                         }
                     )
                 })
+            } else {
+                alert(title: "iOS 14 required", message: "You need iOS 14 to run this sample.")
             }
         case .combineUIKitSimpleChatIndexPath:
             if #available(iOS 13, *) {
@@ -164,10 +166,14 @@ extension LoginViewController {
                 UIView.transition(with: view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
                     self.view.window?.rootViewController = initial
                 })
+            } else {
+                alert(title: "iOS 13 required", message: "You need iOS 13 to run this sample.")
             }
         default:
             return
         }
+        
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
