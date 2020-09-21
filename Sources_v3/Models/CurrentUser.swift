@@ -21,7 +21,7 @@ extension UserId {
 /// A convenience typealias for `CurrentUserModel` with the default data type.
 public typealias CurrentUser = CurrentUserModel<DefaultExtraData.User>
 
-public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
+public class CurrentUserModel<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
     // MARK: - Public
     
     /// A list of devices.
@@ -31,7 +31,7 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
     public let currentDevice: Device?
     
     /// Muted users.
-    public let mutedUsers: Set<UserModel<ExtraData>>
+    public let mutedUsers: Set<_ChatUser<ExtraData>>
     
     /// The counts of unread channels and messages.
     public let unreadCount: UnreadCount
@@ -47,7 +47,7 @@ public class CurrentUserModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
         extraData: ExtraData = .defaultValue,
         devices: [Device] = [],
         currentDevice: Device? = nil,
-        mutedUsers: Set<UserModel<ExtraData>> = [],
+        mutedUsers: Set<_ChatUser<ExtraData>> = [],
         unreadCount: UnreadCount = .noUnread
     ) {
         self.devices = devices

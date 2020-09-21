@@ -6,7 +6,7 @@ import Foundation
 
 public typealias Member = MemberModel<NameAndImageExtraData>
 
-public class MemberModel<ExtraData: UserExtraData>: UserModel<ExtraData> {
+public class MemberModel<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
     // MARK: - Public
     
     /// The role of the user within the channel.

@@ -15,12 +15,12 @@ public struct _ChatChannelRead<ExtraData: ExtraDataTypes> {
     public let unreadMessagesCount: Int
     
     /// The user who read the channel.
-    public let user: UserModel<ExtraData.User>
+    public let user: _ChatUser<ExtraData.User>
     
     init(
         lastReadAt: Date,
         unreadMessagesCount: Int,
-        user: UserModel<ExtraData.User>
+        user: _ChatUser<ExtraData.User>
     ) {
         self.lastReadAt = lastReadAt
         self.unreadMessagesCount = unreadMessagesCount

@@ -109,7 +109,7 @@ extension CurrentUserModel {
             )
         }
         
-        let mutedUsers: [UserModel<ExtraData>] = dto.mutedUsers.map { $0.asModel() }
+        let mutedUsers: [_ChatUser<ExtraData>] = dto.mutedUsers.map { $0.asModel() }
         
         return CurrentUserModel(
             id: user.id,

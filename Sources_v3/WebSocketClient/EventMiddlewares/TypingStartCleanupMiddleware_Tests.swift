@@ -7,14 +7,14 @@ import XCTest
 
 class TypingStartCleanupMiddleware_Tests: XCTestCase {
     var middleware: TypingStartCleanupMiddleware<DefaultExtraData>!
-    var currentUser: User!
+    var currentUser: ChatUser!
     
     var time: VirtualTime!
     
     override func setUp() {
         super.setUp()
         
-        currentUser = User(id: "Luke")
+        currentUser = ChatUser(id: "Luke")
         middleware = TypingStartCleanupMiddleware(excludedUserIds: { [self.currentUser.id] })
         
         time = VirtualTime()
@@ -38,7 +38,7 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
     
     func test_stopTypingEvent_sentAfterTimeout() {
         // Simulate some user started typing
-        let otherUser = User(id: UUID().uuidString)
+        let otherUser = ChatUser(id: UUID().uuidString)
         let cid = ChannelId.unique
         
         var result: [EquatableEvent?] = []

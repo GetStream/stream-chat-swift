@@ -32,7 +32,7 @@ public struct DataStore<ExtraData: ExtraDataTypes> {
     /// model object. If a user object doesn't exist locally, returns `nil`.
     ///
     /// - Parameter id: An id of a user.
-    public func user(id: UserId) -> UserModel<ExtraData.User>? {
+    public func user(id: UserId) -> _ChatUser<ExtraData.User>? {
         database.viewContext.user(id: id)?.asModel()
     }
     

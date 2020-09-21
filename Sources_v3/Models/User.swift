@@ -11,7 +11,7 @@ public typealias UserId = String
 
 /// A type representing user in chat.
 @dynamicMemberLookup
-public class UserModel<ExtraData: UserExtraData> {
+public class _ChatUser<ExtraData: UserExtraData> {
     // MARK: - Public
     
     /// The id of the user.
@@ -70,8 +70,8 @@ public class UserModel<ExtraData: UserExtraData> {
     }
 }
 
-extension UserModel: Hashable {
-    public static func == (lhs: UserModel<ExtraData>, rhs: UserModel<ExtraData>) -> Bool {
+extension _ChatUser: Hashable {
+    public static func == (lhs: _ChatUser<ExtraData>, rhs: _ChatUser<ExtraData>) -> Bool {
         lhs.id == rhs.id
     }
     
@@ -80,7 +80,7 @@ extension UserModel: Hashable {
     }
 }
 
-extension UserModel {
+extension _ChatUser {
     public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData, T>) -> T {
         // TODO: Solve double optional
         extraData[keyPath: keyPath]
@@ -99,9 +99,9 @@ public enum UserRole: String, Codable, Hashable {
 }
 
 /// Convenience `UserModel` typealias with `NameAndImageExtraData`.
-public typealias User = UserModel<NameAndImageExtraData>
+public typealias ChatUser = _ChatUser<NameAndImageExtraData>
 
-public extension User {
+public extension ChatUser {
     /// Creates a new `User` object.
     ///
     /// - Parameters:

@@ -80,7 +80,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
 
 extension UserDTO {
     /// Snapshots the current state of `UserDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: UserExtraData>() -> UserModel<ExtraData> { .create(fromDTO: self) }
+    func asModel<ExtraData: UserExtraData>() -> _ChatUser<ExtraData> { .create(fromDTO: self) }
     
     /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
     func asRequestBody<ExtraData: UserExtraData>() -> UserRequestBody<ExtraData> {
@@ -98,8 +98,8 @@ extension UserDTO {
     }
 }
 
-extension UserModel {
-    fileprivate static func create(fromDTO dto: UserDTO) -> UserModel {
+extension _ChatUser {
+    fileprivate static func create(fromDTO dto: UserDTO) -> _ChatUser {
         let extraData: ExtraData
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.extraData)
@@ -110,7 +110,7 @@ extension UserModel {
             )
         }
         
-        return UserModel(
+        return _ChatUser(
             id: dto.id,
             isOnline: dto.isOnline,
             isBanned: dto.isBanned,
