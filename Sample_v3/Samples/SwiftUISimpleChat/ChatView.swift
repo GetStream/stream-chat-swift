@@ -99,13 +99,11 @@ struct ChatView: View {
                         .foregroundColor(.secondary)
                         .padding(.all, 8)
                         .frame(maxWidth: .infinity, alignment: .leading)
-                        .allowsHitTesting(false)
                 } else {
                     Text(text) // hack to auto expand the composer (TextEditor alone won't do it)
                         .fixedSize(horizontal: false, vertical: true)
                         .padding(.all, 8)
                         .opacity(0)
-                        .allowsHitTesting(false)
                 }
                 
                 TextEditor(text: textBinding).background(Color.clear).onAppear {
