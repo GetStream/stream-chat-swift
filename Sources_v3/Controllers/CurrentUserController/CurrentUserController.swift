@@ -216,7 +216,7 @@ public extension _CurrentChatUserController {
     ///   - extraData: The extra data of the new guest-user.
     ///   - completion: The completion. Will be called when the new guest user is set.
     ///                 If setting up the new user fails the completion will be called with an error.
-    func setGuestUser(userId: UserId, extraData: ExtraData.User, completion: ((Error?) -> Void)? = nil) {
+    func setGuestUser(userId: UserId, extraData: ExtraData.User = .defaultValue, completion: ((Error?) -> Void)? = nil) {
         disconnect()
         prepareEnvironmentForNewUser(userId: userId, role: .guest, extraData: extraData) { error in
             guard error == nil else {
