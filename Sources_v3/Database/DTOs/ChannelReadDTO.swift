@@ -8,7 +8,7 @@ import Foundation
 @objc(ChannelReadDTO)
 class ChannelReadDTO: NSManagedObject {
     @NSManaged var lastReadAt: Date
-    @NSManaged var unreadMessageCount: Int
+    @NSManaged var unreadMessageCount: Int32
     
     // MARK: - Relationships
     
@@ -64,7 +64,7 @@ extension NSManagedObjectContext {
         dto.user = try saveUser(payload: payload.user)
         
         dto.lastReadAt = payload.lastReadAt
-        dto.unreadMessageCount = payload.unreadMessagesCount
+        dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
         
         return dto
     }
@@ -80,6 +80,6 @@ extension NSManagedObjectContext {
 
 extension _ChatChannelRead {
     fileprivate static func create(fromDTO dto: ChannelReadDTO) -> _ChatChannelRead {
-        .init(lastReadAt: dto.lastReadAt, unreadMessagesCount: dto.unreadMessageCount, user: dto.user.asModel())
+        .init(lastReadAt: dto.lastReadAt, unreadMessagesCount: Int(dto.unreadMessageCount), user: dto.user.asModel())
     }
 }
