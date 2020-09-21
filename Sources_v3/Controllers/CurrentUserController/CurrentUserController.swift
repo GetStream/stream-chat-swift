@@ -67,7 +67,7 @@ public class CurrentUserControllerGeneric<ExtraData: ExtraDataTypes>: DataContro
     /// The currently logged-in user.
     /// Always returns `nil` if `startUpdating` was not called
     /// To observe the updates of this value, set your class as a delegate of this controller and call `startUpdating`.
-    public var currentUser: CurrentUserModel<ExtraData.User>? {
+    public var currentUser: _CurrentChatUser<ExtraData.User>? {
         guard state != .initialized else {
             log.warning("Accessing `currentUser` fields before calling `startUpdating()` always results in `nil`.")
             return nil
@@ -304,9 +304,9 @@ extension CurrentUserControllerGeneric {
         var currentUserObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<CurrentUserDTO>,
-            _ itemCreator: @escaping (CurrentUserDTO) -> CurrentUserModel<ExtraData.User>,
+            _ itemCreator: @escaping (CurrentUserDTO) -> _CurrentChatUser<ExtraData.User>,
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
-        ) -> EntityDatabaseObserver<CurrentUserModel<ExtraData.User>, CurrentUserDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserver<_CurrentChatUser<ExtraData.User>, CurrentUserDTO> = EntityDatabaseObserver.init
     }
 }
 
@@ -326,7 +326,7 @@ private extension EntityChange where Item == UnreadCount {
 }
 
 private extension CurrentUserControllerGeneric {
-    func createUserObserver() -> EntityDatabaseObserver<CurrentUserModel<ExtraData.User>, CurrentUserDTO> {
+    func createUserObserver() -> EntityDatabaseObserver<_CurrentChatUser<ExtraData.User>, CurrentUserDTO> {
         environment.currentUserObserverBuilder(
             client.databaseContainer.viewContext,
             CurrentUserDTO.defaultFetchRequest,
@@ -347,7 +347,7 @@ public protocol CurrentUserControllerDelegate: DataControllerStateDelegate {
     func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount: UnreadCount)
     
     /// The controller observed a change in the `CurrentUser` entity.
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser: EntityChange<CurrentUser>)
+    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>)
     
     /// The controller observed a change in connection status.
     func currentUserController(_ controller: CurrentUserController, didUpdateConnectionStatus status: ConnectionStatus)
@@ -356,7 +356,7 @@ public protocol CurrentUserControllerDelegate: DataControllerStateDelegate {
 public extension CurrentUserControllerDelegate {
     func currentUserController(_ controller: CurrentUserController, didChangeCurrentUserUnreadCount: UnreadCount) {}
     
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser: EntityChange<CurrentUser>) {}
+    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>) {}
     
     func currentUserController(_ controller: CurrentUserController, didUpdateConnectionStatus status: ConnectionStatus) {}
 }
@@ -374,7 +374,7 @@ public protocol CurrentUserControllerDelegateGeneric: DataControllerStateDelegat
     /// The controller observed a change in the `CurrentUser` entity.
     func currentUserController(
         _ controller: CurrentUserControllerGeneric<ExtraData>,
-        didChangeCurrentUser: EntityChange<CurrentUserModel<ExtraData.User>>
+        didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
     )
     
     /// The controller observed a change in connection status.
@@ -392,7 +392,7 @@ public extension CurrentUserControllerDelegateGeneric {
     
     func currentUserController(
         _ controller: CurrentUserControllerGeneric<ExtraData>,
-        didChangeCurrentUser: EntityChange<CurrentUserModel<ExtraData.User>>
+        didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
     ) {}
     
     func currentUserController(
@@ -416,7 +416,7 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: Current
     
     private var _controllerDidChangeCurrentUser: (
         CurrentUserControllerGeneric<ExtraData>,
-        EntityChange<CurrentUserModel<ExtraData.User>>
+        EntityChange<_CurrentChatUser<ExtraData.User>>
     ) -> Void
     
     private var _controllerDidChangeConnectionStatus: (
@@ -436,7 +436,7 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: Current
         ) -> Void,
         controllerDidChangeCurrentUser: @escaping (
             CurrentUserControllerGeneric<ExtraData>,
-            EntityChange<CurrentUserModel<ExtraData.User>>
+            EntityChange<_CurrentChatUser<ExtraData.User>>
         ) -> Void,
         controllerDidChangeConnectionStatus: @escaping (
             CurrentUserControllerGeneric<ExtraData>,
@@ -463,7 +463,7 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: Current
     
     func currentUserController(
         _ controller: CurrentUserControllerGeneric<ExtraData>,
-        didChangeCurrentUser user: EntityChange<CurrentUserModel<ExtraData.User>>
+        didChangeCurrentUser user: EntityChange<_CurrentChatUser<ExtraData.User>>
     ) {
         _controllerDidChangeCurrentUser(controller, user)
     }

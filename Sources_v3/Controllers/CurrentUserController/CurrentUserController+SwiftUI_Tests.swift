@@ -34,7 +34,7 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = currentUserController.observableObject
         
         // Simulate current user change
-        let newCurrentUser: CurrentUser = .init(id: .unique)
+        let newCurrentUser: CurrentChatUser = .init(id: .unique)
         currentUserController.currentUser_simulated = newCurrentUser
         currentUserController.delegateCallback {
             $0.currentUserController(
@@ -97,8 +97,8 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
 class CurrentUserControllerMock: CurrentUserController {
     @Atomic var startUpdating_called = false
     
-    var currentUser_simulated: CurrentUserModel<DefaultExtraData.User>?
-    override var currentUser: CurrentUserModel<DefaultExtraData.User>? {
+    var currentUser_simulated: _CurrentChatUser<DefaultExtraData.User>?
+    override var currentUser: _CurrentChatUser<DefaultExtraData.User>? {
         currentUser_simulated ?? super.currentUser
     }
     

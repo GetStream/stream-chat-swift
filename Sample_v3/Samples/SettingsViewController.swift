@@ -47,7 +47,7 @@ class SettingsViewController: UITableViewController {
 // MARK: - Current User
 
 extension SettingsViewController {
-    func updateUserCell(with user: CurrentUser?) {
+    func updateUserCell(with user: CurrentChatUser?) {
         if let user = user {
             userNameLabel.text = user.name ?? ""
             userNameLabel.text! += " (\(user.id))"
@@ -98,7 +98,7 @@ extension SettingsViewController {
 // MARK: - CurrentUserControllerDelegate
 
 extension SettingsViewController: CurrentUserControllerDelegate {
-    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentUser>) {
+    func currentUserController(_ controller: CurrentUserController, didChangeCurrentUser change: EntityChange<CurrentChatUser>) {
         updateUserCell(with: change.item)
     }
 }
