@@ -28,6 +28,22 @@ class EntityChange_Tests: XCTestCase {
         XCTAssertEqual(EntityChange.update(updatedItem).fieldChange(path), .update(updatedItem.value))
         XCTAssertEqual(EntityChange.remove(removedItem).fieldChange(path), .remove(removedItem.value))
     }
+    
+    func test_description() {
+        let createdItem: String = .unique
+        let updatedItem: String = .unique
+        let removedItem: String = .unique
+        
+        let pairs: [(EntityChange<String>, String)] = [
+            (.create(createdItem), "Create: \(createdItem)"),
+            (.update(updatedItem), "Update: \(updatedItem)"),
+            (.remove(removedItem), "Remove: \(removedItem)")
+        ]
+        
+        for (change, description) in pairs {
+            XCTAssertEqual(change.description, description)
+        }
+    }
 }
 
 class EntityDatabaseObserver_Tests: XCTestCase {

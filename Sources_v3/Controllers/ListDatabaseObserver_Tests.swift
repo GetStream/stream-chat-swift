@@ -6,6 +6,34 @@ import CoreData
 @testable import StreamChatClient
 import XCTest
 
+final class ListChange_Tests: XCTestCase {
+    func test_description() {
+        let createdItem: String = .unique
+        let createdAt: IndexPath = [1, 0]
+        
+        let movedItem: String = .unique
+        let movedFrom: IndexPath = [1, 0]
+        let movedTo: IndexPath = [0, 1]
+        
+        let updatedItem: String = .unique
+        let updatedAt: IndexPath = [0, 1]
+        
+        let removedItem: String = .unique
+        let removedAt: IndexPath = [0, 1]
+        
+        let pairs: [(ListChange<String>, String)] = [
+            (.insert(createdItem, index: createdAt), "Insert at \(createdAt): \(createdItem)"),
+            (.move(movedItem, fromIndex: movedFrom, toIndex: movedTo), "Move from \(movedFrom) to \(movedTo): \(movedItem)"),
+            (.update(updatedItem, index: updatedAt), "Update at \(updatedAt): \(updatedItem)"),
+            (.remove(removedItem, index: removedAt), "Remove at \(removedAt): \(removedItem)")
+        ]
+        
+        for (change, description) in pairs {
+            XCTAssertEqual(change.description, description)
+        }
+    }
+}
+
 class ListDatabaseObserver_Tests: XCTestCase {
     var observer: ListDatabaseObserver<String, TestManagedObject>!
     var fetchRequest: NSFetchRequest<TestManagedObject>!
