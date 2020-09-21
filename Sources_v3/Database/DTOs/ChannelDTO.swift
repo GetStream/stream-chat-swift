@@ -174,7 +174,7 @@ extension _ChatChannel {
         let context = dto.managedObjectContext!
         
         // TODO: make messagesLimit a param
-        let latestMessages: [MessageModel<ExtraData>] = MessageDTO
+        let latestMessages: [_ChatMessage<ExtraData>] = MessageDTO
             .load(for: dto.cid, limit: 25, context: context)
             .map { $0.asModel() }
         

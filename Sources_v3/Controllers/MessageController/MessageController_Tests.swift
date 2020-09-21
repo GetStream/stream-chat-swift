@@ -377,14 +377,14 @@ final class MessageController_Tests: StressTestCase {
 
 private class TestDelegate: QueueAwareDelegate, MessageControllerDelegate {
     @Atomic var state: DataController.State?
-    @Atomic var didChangeMessage_change: EntityChange<Message>?
+    @Atomic var didChangeMessage_change: EntityChange<ChatMessage>?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
     }
     
-    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<Message>) {
+    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<ChatMessage>) {
         didChangeMessage_change = change
         validateQueue()
     }
@@ -392,14 +392,14 @@ private class TestDelegate: QueueAwareDelegate, MessageControllerDelegate {
 
 private class TestDelegateGeneric: QueueAwareDelegate, MessageControllerDelegateGeneric {
     @Atomic var state: DataController.State?
-    @Atomic var didChangeMessage_change: EntityChange<Message>?
+    @Atomic var didChangeMessage_change: EntityChange<ChatMessage>?
    
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
     }
     
-    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<Message>) {
+    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<ChatMessage>) {
         didChangeMessage_change = change
         validateQueue()
     }
@@ -407,7 +407,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, MessageControllerDelegate
 
 private class TestEnvironment {
     var messageUpdater: MessageUpdaterMock<DefaultExtraData>!
-    var messageObserver: EntityDatabaseObserverMock<MessageModel<DefaultExtraData>, MessageDTO>!
+    var messageObserver: EntityDatabaseObserverMock<_ChatMessage<DefaultExtraData>, MessageDTO>!
     var messageObserver_synchronizeError: Error?
     
     lazy var controllerEnvironment: MessageController

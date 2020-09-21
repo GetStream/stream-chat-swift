@@ -19,7 +19,7 @@ extension ChannelControllerGeneric {
         @Published public private(set) var channel: _ChatChannel<ExtraData>?
         
         /// The messages related to the channel.
-        @Published public private(set) var messages: [MessageModel<ExtraData>] = []
+        @Published public private(set) var messages: [_ChatMessage<ExtraData>] = []
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
@@ -52,7 +52,7 @@ extension ChannelControllerGeneric.ObservableObject: ChannelControllerDelegateGe
    
     public func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didUpdateMessages changes: [ListChange<MessageModel<ExtraData>>]
+        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         messages = channelController.messages
     }

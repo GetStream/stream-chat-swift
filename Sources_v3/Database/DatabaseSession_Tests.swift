@@ -118,7 +118,7 @@ class DatabaseSession_Tests: StressTestCase {
         }
         
         // Try to load the saved message from DB
-        var loadedMessage: MessageModel<DefaultExtraData>? {
+        var loadedMessage: _ChatMessage<DefaultExtraData>? {
             database.viewContext.message(id: messageId)?.asModel()
         }
         AssertAsync.willBeTrue(loadedMessage != nil)

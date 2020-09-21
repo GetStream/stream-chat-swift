@@ -28,7 +28,7 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = messageController.observableObject
         
         // Simulate message change
-        let newMessage: Message = .unique
+        let newMessage: ChatMessage = .unique
         messageController.message_simulated = newMessage
         messageController.delegateCallback {
             $0.messageController(
@@ -59,8 +59,8 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
 class MessageControllerMock: MessageController {
     @Atomic var synchronize_called = false
     
-    var message_simulated: Message?
-    override var message: Message? {
+    var message_simulated: ChatMessage?
+    override var message: ChatMessage? {
         message_simulated ?? super.message
     }
 

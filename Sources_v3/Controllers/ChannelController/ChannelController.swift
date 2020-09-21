@@ -112,7 +112,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     
     /// The messages related to the channel. To observe updates to the channel,
     /// set your class as a delegate of this controller or use `Combine` wrapper.
-    public var messages: [MessageModel<ExtraData>] {
+    public var messages: [_ChatMessage<ExtraData>] {
         if state == .initialized {
             setLocalStateBasedOnError(startDatabaseObservers())
         }
@@ -156,7 +156,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     }
 
     @Cached private var channelObserver: EntityDatabaseObserver<_ChatChannel<ExtraData>, ChannelDTO>
-    @Cached private var messagesObserver: ListDatabaseObserver<MessageModel<ExtraData>, MessageDTO>
+    @Cached private var messagesObserver: ListDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO>
     
     private var eventObservers: [EventObserver] = []
     private let environment: Environment
@@ -236,7 +236,7 @@ public class ChannelControllerGeneric<ExtraData: ExtraDataTypes>: DataController
             let observer = ListDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
                 fetchRequest: MessageDTO.messagesFetchRequest(for: self.channelQuery.cid, sortAscending: sortAscending),
-                itemCreator: { $0.asModel() as MessageModel<ExtraData> }
+                itemCreator: { $0.asModel() as _ChatMessage<ExtraData> }
             )
             observer.onChange = { changes in
                 self.delegateCallback {
@@ -711,7 +711,7 @@ public protocol ChannelControllerDelegate: DataControllerStateDelegate {
     /// The controller observed changes in the `Messages` of the observed channel.
     func channelController(
         _ channelController: ChannelController,
-        didUpdateMessages changes: [ListChange<Message>]
+        didUpdateMessages changes: [ListChange<ChatMessage>]
     )
 
     /// The controller received a `MemberEvent` related to the channel it observes.
@@ -729,7 +729,7 @@ public extension ChannelControllerDelegate {
     
     func channelController(
         _ channelController: ChannelController,
-        didUpdateMessages changes: [ListChange<Message>]
+        didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {}
 
     func channelController(_ channelController: ChannelController, didReceiveMemberEvent: MemberEvent) {}
@@ -755,7 +755,7 @@ public protocol ChannelControllerDelegateGeneric: DataControllerStateDelegate {
     /// The controller observed changes in the `Messages` of the observed channel.
     func channelController(
         _ channelController: ChannelControllerGeneric<ExtraData>,
-        didUpdateMessages changes: [ListChange<MessageModel<ExtraData>>]
+        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     )
 
     /// The controller received a `MemberEvent` related to the channel it observes.
@@ -776,7 +776,7 @@ public extension ChannelControllerDelegateGeneric {
     
     func channelController(
         _ channelController: ChannelController,
-        didUpdateMessages changes: [ListChange<MessageModel<ExtraData>>]
+        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {}
 
     func channelController(_ channelController: ChannelControllerGeneric<ExtraData>, didReceiveMemberEvent: MemberEvent) {}
@@ -792,7 +792,7 @@ public extension ChannelControllerDelegateGeneric {
 class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelControllerDelegateGeneric {
     private var _controllerdidUpdateMessages: (
         ChannelControllerGeneric<ExtraData>,
-        [ListChange<MessageModel<ExtraData>>]
+        [ListChange<_ChatMessage<ExtraData>>]
     ) -> Void
     
     private var _controllerDidUpdateChannel: (
@@ -823,7 +823,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
         ) -> Void,
         controllerdidUpdateMessages: @escaping (
             ChannelControllerGeneric<ExtraData>,
-            [ListChange<MessageModel<ExtraData>>]
+            [ListChange<_ChatMessage<ExtraData>>]
         ) -> Void,
         controllerDidReceiveMemberEvent: @escaping (
             ChannelControllerGeneric<ExtraData>,
@@ -855,7 +855,7 @@ class AnyChannelControllerDelegate<ExtraData: ExtraDataTypes>: ChannelController
     
     func channelController(
         _ controller: ChannelControllerGeneric<ExtraData>,
-        didUpdateMessages changes: [ListChange<MessageModel<ExtraData>>]
+        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         _controllerdidUpdateMessages(controller, changes)
     }

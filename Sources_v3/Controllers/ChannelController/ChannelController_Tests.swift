@@ -350,7 +350,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertNil(error)
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
         assert(channel.latestMessages.count == 1)
-        let message: Message = channel.latestMessages.first!
+        let message: ChatMessage = channel.latestMessages.first!
 
         // Assert DB observers call delegate updates
         AssertAsync {
@@ -372,7 +372,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertNil(error)
         let newChannel: ChatChannel = client.databaseContainer.viewContext.channel(cid: newCid)!.asModel()
         assert(channel.latestMessages.count == 1)
-        let newMessage: Message = newChannel.latestMessages.first!
+        let newMessage: ChatMessage = newChannel.latestMessages.first!
 
         // Assert DB observers call delegate updates for new `cid`
         AssertAsync {
@@ -504,7 +504,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertNil(error)
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
         assert(channel.latestMessages.count == 1)
-        let message: Message = channel.latestMessages.first!
+        let message: ChatMessage = channel.latestMessages.first!
         
         AssertAsync {
             Assert.willBeEqual(delegate.didUpdateChannel_channel, .create(channel))
@@ -530,7 +530,7 @@ class ChannelController_Tests: StressTestCase {
         }
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
         assert(channel.latestMessages.count == 1)
-        let message: Message = channel.latestMessages.first!
+        let message: ChatMessage = channel.latestMessages.first!
         
         AssertAsync {
             Assert.willBeEqual(delegate.didUpdateChannel_channel, .create(channel))
@@ -1489,7 +1489,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
     @Atomic var willStartFetchingRemoteDataCalledCounter = 0
     @Atomic var didStopFetchingRemoteDataCalledCounter = 0
     @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
-    @Atomic var didUpdateMessages_messages: [ListChange<Message>]?
+    @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
     @Atomic var didChangeTypingMembers_typingMembers: Set<Member>?
     
@@ -1508,7 +1508,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<Message>]) {
+    func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
         didUpdateMessages_messages = changes
         validateQueue()
     }
@@ -1533,7 +1533,7 @@ private class TestDelegate: QueueAwareDelegate, ChannelControllerDelegate {
 private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegateGeneric {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
-    @Atomic var didUpdateMessages_messages: [ListChange<Message>]?
+    @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
     @Atomic var didChangeTypingMembers_typingMembers: Set<Member>?
     
@@ -1542,7 +1542,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, ChannelControllerDelegate
         validateQueue()
     }
     
-    func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<Message>]) {
+    func channelController(_ channelController: ChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
         didUpdateMessages_messages = changes
         validateQueue()
     }

@@ -15,7 +15,7 @@ struct ChatView: View {
     /// Binding for message actions ActionSheet
     @State var actionSheetTrigger: Bool = false
     /// Message being edited
-    @State var editingMessage: Message?
+    @State var editingMessage: ChatMessage?
 
     /// User action
     @State var userActionTrigger: Bool = false
@@ -57,7 +57,7 @@ struct ChatView: View {
         .offset(x: 0, y: 2)
     }
     
-    func messageView(for message: Message) -> some View {
+    func messageView(for message: ChatMessage) -> some View {
         let username = message.author.extraData.name ?? message.author.id
         let text: Text
         
