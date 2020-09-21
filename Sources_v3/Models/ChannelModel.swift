@@ -24,7 +24,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     public let deletedAt: Date?
     
     /// The user which created the channel.
-    public let createdBy: UserModel<ExtraData.User>?
+    public let createdBy: _ChatUser<ExtraData.User>?
     
     /// A config.
     public let config: ChannelConfig
@@ -39,7 +39,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     public let currentlyTypingMembers: Set<MemberModel<ExtraData.User>>
     
     /// A list of channel watchers.
-    public let watchers: Set<UserModel<ExtraData.User>>
+    public let watchers: Set<_ChatUser<ExtraData.User>>
     
     /// The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
@@ -80,12 +80,12 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         deletedAt: Date? = nil,
-        createdBy: UserModel<ExtraData.User>? = nil,
+        createdBy: _ChatUser<ExtraData.User>? = nil,
         config: ChannelConfig = .init(),
         isFrozen: Bool = false,
         members: Set<MemberModel<ExtraData.User>> = [],
         currentlyTypingMembers: Set<MemberModel<ExtraData.User>> = [],
-        watchers: Set<UserModel<ExtraData.User>> = [],
+        watchers: Set<_ChatUser<ExtraData.User>> = [],
         team: String = "",
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,

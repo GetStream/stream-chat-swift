@@ -93,7 +93,7 @@ class UserDTO_Tests: XCTestCase {
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedUserModel: UserModel<NameAndImageExtraData>? {
+        var loadedUserModel: _ChatUser<NameAndImageExtraData>? {
             database.viewContext.user(id: userId)?.asModel()
         }
         

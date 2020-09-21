@@ -21,7 +21,7 @@ class WebSocketClient_Tests: StressTestCase {
     private var reconnectionStrategy: MockReconnectionStrategy!
     var engine: WebSocketEngineMock { webSocketClient.engine as! WebSocketEngineMock }
     var connectionId: String!
-    var user: User!
+    var user: ChatUser!
     var backgroundTaskScheduler: MockBackgroundTaskScheduler!
     var requestEncoder: TestRequestEncoder!
     var pingController: WebSocketPingControllerMock { webSocketClient.pingController as! WebSocketPingControllerMock }
@@ -74,7 +74,7 @@ class WebSocketClient_Tests: StressTestCase {
         )
         
         connectionId = UUID().uuidString
-        user = User(id: "test_user_\(UUID().uuidString)")
+        user = ChatUser(id: "test_user_\(UUID().uuidString)")
     }
     
     override func tearDown() {

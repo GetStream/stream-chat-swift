@@ -78,8 +78,8 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     public let isSilent: Bool
     public let reactionScores: [String: Int]
     
-    public let author: UserModel<ExtraData.User>
-    public let mentionedUsers: Set<UserModel<ExtraData.User>>
+    public let author: _ChatUser<ExtraData.User>
+    public let mentionedUsers: Set<_ChatUser<ExtraData.User>>
     
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     ///
