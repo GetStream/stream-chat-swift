@@ -25,7 +25,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
     ///  Also we need to call `channelController.synchronize()` to update local data with remote one.
     ///  Additionally, `channelListController.client` holds a reference to the `ChatClient` which created this instance.
     ///  It can be used to create other controllers.
-    var channelListController: ChannelListController! {
+    var channelListController: ChatChannelListController! {
         didSet {
             subscribeToCombinePublishers()
             channelListController.synchronize()
