@@ -53,13 +53,13 @@ public enum LocalMessageState: String {
     case deletingFailed
 }
 
-/// A convenient type alias for `MessageModel` with `DefaultExtraData`.
-public typealias Message = MessageModel<DefaultExtraData>
+/// A convenient type alias for `_ChatMessage` with `DefaultExtraData`.
+public typealias ChatMessage = _ChatMessage<DefaultExtraData>
 
 /// Additional data fields `MessageModel` can be extended with. You can use it to store your custom data related to a message.
 public protocol MessageExtraData: ExtraData {}
 
-public struct MessageModel<ExtraData: ExtraDataTypes> {
+public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     public let id: MessageId
     public let text: String
     public let type: MessageType
@@ -88,7 +88,7 @@ public struct MessageModel<ExtraData: ExtraDataTypes> {
     public let localState: LocalMessageState?
 }
 
-extension MessageModel: Hashable {
+extension _ChatMessage: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
     }

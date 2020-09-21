@@ -142,7 +142,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         // Load the message from the db and check the fields are correct
-        var loadedMessage: MessageModel<DefaultExtraData>? {
+        var loadedMessage: _ChatMessage<DefaultExtraData>? {
             database.viewContext.message(id: messageId)?.asModel()
         }
         
@@ -225,7 +225,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         // Load the message from the db
-        var loadedMessage: MessageModel<DefaultExtraData>? {
+        var loadedMessage: _ChatMessage<DefaultExtraData>? {
             database.viewContext.message(id: messageId)?.asModel()
         }
         
@@ -359,7 +359,7 @@ class MessageDTO_Tests: XCTestCase {
             }, completion: completion)
         }
         
-        let loadedMessage: MessageModel<DefaultExtraData> = try unwrapAsync(
+        let loadedMessage: _ChatMessage<DefaultExtraData> = try unwrapAsync(
             database.viewContext.message(id: newMessageId)?
                 .asModel()
         )

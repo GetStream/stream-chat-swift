@@ -46,7 +46,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = channelController.observableObject
         
         // Simulate messages change
-        let newMessage: Message = .unique
+        let newMessage: ChatMessage = .unique
         channelController.messages_simulated = [newMessage]
         channelController.delegateCallback {
             $0.channelController(
@@ -114,8 +114,8 @@ class ChannelControllerMock: ChannelController {
         channel_simulated
     }
     
-    var messages_simulated: [MessageModel<DefaultExtraData>]?
-    override var messages: [MessageModel<DefaultExtraData>] {
+    var messages_simulated: [_ChatMessage<DefaultExtraData>]?
+    override var messages: [_ChatMessage<DefaultExtraData>] {
         messages_simulated ?? super.messages
     }
 
@@ -134,8 +134,8 @@ class ChannelControllerMock: ChannelController {
     }
 }
 
-extension MessageModel {
-    static var unique: Message {
+extension _ChatMessage {
+    static var unique: ChatMessage {
         .init(
             id: .unique,
             text: "",

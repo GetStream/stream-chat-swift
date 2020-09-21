@@ -46,7 +46,7 @@ class MessageController_Combine_Tests: iOS13TestCase {
 
     func test_messageChangePublisher() {
         // Setup Recording publishers
-        var recording = Record<EntityChange<Message>, Never>.Recording()
+        var recording = Record<EntityChange<ChatMessage>, Never>.Recording()
         
         // Setup the chain
         messageController
@@ -58,7 +58,7 @@ class MessageController_Combine_Tests: iOS13TestCase {
         weak var controller: MessageControllerMock? = messageController
         messageController = nil
 
-        let newMessage: Message = .unique
+        let newMessage: ChatMessage = .unique
         controller?.message_simulated = newMessage
         controller?.delegateCallback {
             $0.messageController(controller!, didChangeMessage: .create(newMessage))

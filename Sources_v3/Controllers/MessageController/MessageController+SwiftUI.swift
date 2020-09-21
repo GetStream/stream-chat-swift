@@ -16,7 +16,7 @@ extension MessageControllerGeneric {
         public let controller: MessageControllerGeneric
         
         /// The message that current controller observes.
-        @Published public private(set) var message: MessageModel<ExtraData>?
+        @Published public private(set) var message: _ChatMessage<ExtraData>?
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
@@ -37,7 +37,7 @@ extension MessageControllerGeneric {
 extension MessageControllerGeneric.ObservableObject: MessageControllerDelegateGeneric {
     public func messageController(
         _ controller: MessageControllerGeneric<ExtraData>,
-        didChangeMessage change: EntityChange<MessageModel<ExtraData>>
+        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) {
         message = controller.message
     }

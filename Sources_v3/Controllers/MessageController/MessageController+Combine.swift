@@ -13,7 +13,7 @@ extension MessageControllerGeneric {
     }
     
     /// A publisher emitting a new value every time the message changes.
-    public var messageChangePublisher: AnyPublisher<EntityChange<MessageModel<ExtraData>>, Never> {
+    public var messageChangePublisher: AnyPublisher<EntityChange<_ChatMessage<ExtraData>>, Never> {
         basePublishers.messageChange.keepAlive(self)
     }
     
@@ -28,7 +28,7 @@ extension MessageControllerGeneric {
         let state: CurrentValueSubject<DataController.State, Never>
         
         /// A backing subject for `messageChangePublisher`.
-        let messageChange: PassthroughSubject<EntityChange<MessageModel<ExtraData>>, Never> = .init()
+        let messageChange: PassthroughSubject<EntityChange<_ChatMessage<ExtraData>>, Never> = .init()
         
         init(controller: MessageControllerGeneric<ExtraData>) {
             self.controller = controller
@@ -47,7 +47,7 @@ extension MessageControllerGeneric.BasePublishers: MessageControllerDelegateGene
     
     func messageController(
         _ controller: MessageControllerGeneric<ExtraData>,
-        didChangeMessage change: EntityChange<MessageModel<ExtraData>>
+        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) {
         messageChange.send(change)
     }

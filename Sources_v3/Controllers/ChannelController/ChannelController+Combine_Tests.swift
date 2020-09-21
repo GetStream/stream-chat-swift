@@ -69,7 +69,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
     
     func test_messagesChangesPublisher() {
         // Setup Recording publishers
-        var recording = Record<[ListChange<MessageModel<DefaultExtraData>>], Never>.Recording()
+        var recording = Record<[ListChange<_ChatMessage<DefaultExtraData>>], Never>.Recording()
         
         // Setup the chain
         channelController
@@ -81,7 +81,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
 
-        let newMessage: MessageModel = .unique
+        let newMessage: _ChatMessage = .unique
         controller?.messages_simulated = [newMessage]
         controller?.delegateCallback {
             $0.channelController(controller!, didUpdateMessages: [.insert(newMessage, index: .init())])

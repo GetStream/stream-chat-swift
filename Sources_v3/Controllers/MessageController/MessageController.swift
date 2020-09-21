@@ -31,7 +31,7 @@ public class MessageControllerGeneric<ExtraData: ExtraDataTypes>: DataController
     
     /// The message data
     /// To observe the updates of this value, set your class as a delegate of this controller or use `Combine` wrapper.
-    public var message: MessageModel<ExtraData>? { messageObserver.item }
+    public var message: _ChatMessage<ExtraData>? { messageObserver.item }
     
     private let environment: Environment
     
@@ -143,9 +143,9 @@ extension MessageControllerGeneric {
         var messageObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
-            _ itemCreator: @escaping (MessageDTO) -> MessageModel<ExtraData>,
+            _ itemCreator: @escaping (MessageDTO) -> _ChatMessage<ExtraData>,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> EntityDatabaseObserver<MessageModel<ExtraData>, MessageDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO> = EntityDatabaseObserver.init
         
         var messageUpdaterBuilder: (
             _ database: DatabaseContainer,
@@ -158,7 +158,7 @@ extension MessageControllerGeneric {
 // MARK: - Private
 
 private extension MessageControllerGeneric {
-    func createMessageObserver() -> EntityDatabaseObserver<MessageModel<ExtraData>, MessageDTO> {
+    func createMessageObserver() -> EntityDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO> {
         let observer = environment.messageObserverBuilder(
             client.databaseContainer.viewContext,
             MessageDTO.message(withID: messageId),
@@ -186,11 +186,11 @@ private extension MessageControllerGeneric {
 /// If you're using custom extra data types, please use `MessageControllerDelegateGeneric` instead.
 public protocol MessageControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `Message`.
-    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<Message>)
+    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<ChatMessage>)
 }
 
 public extension MessageControllerDelegate {
-    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<Message>) {}
+    func messageController(_ controller: MessageController, didChangeMessage change: EntityChange<ChatMessage>) {}
 }
 
 /// `MessageControllerDelegateGeneric` uses this protocol to communicate changes to its delegate.
@@ -203,27 +203,27 @@ public protocol MessageControllerDelegateGeneric: DataControllerStateDelegate {
     /// The controller observed a change in the `MessageModel<ExtraData>`.
     func messageController(
         _ controller: MessageControllerGeneric<ExtraData>,
-        didChangeMessage change: EntityChange<MessageModel<ExtraData>>
+        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     )
 }
 
 public extension MessageControllerDelegateGeneric {
     func messageController(
         _ controller: MessageControllerGeneric<ExtraData>,
-        didChangeMessage change: EntityChange<MessageModel<ExtraData>>
+        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) {}
 }
 
 final class AnyMessageControllerDelegate<ExtraData: ExtraDataTypes>: MessageControllerDelegateGeneric {
     weak var wrappedDelegate: AnyObject?
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
-    private var _messageControllerDidChangeMessage: (MessageControllerGeneric<ExtraData>, EntityChange<MessageModel<ExtraData>>)
+    private var _messageControllerDidChangeMessage: (MessageControllerGeneric<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
         -> Void
     
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
-        messageControllerDidChangeMessage: @escaping (MessageControllerGeneric<ExtraData>, EntityChange<MessageModel<ExtraData>>)
+        messageControllerDidChangeMessage: @escaping (MessageControllerGeneric<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
@@ -237,7 +237,7 @@ final class AnyMessageControllerDelegate<ExtraData: ExtraDataTypes>: MessageCont
 
     func messageController(
         _ controller: MessageControllerGeneric<ExtraData>,
-        didChangeMessage change: EntityChange<MessageModel<ExtraData>>
+        didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) {
         _messageControllerDidChangeMessage(controller, change)
     }

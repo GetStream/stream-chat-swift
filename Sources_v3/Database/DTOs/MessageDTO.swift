@@ -193,7 +193,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
 extension MessageDTO {
     /// Snapshots the current state of `MessageDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: ExtraDataTypes>() -> MessageModel<ExtraData> { .init(fromDTO: self) }
+    func asModel<ExtraData: ExtraDataTypes>() -> _ChatMessage<ExtraData> { .init(fromDTO: self) }
     
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
     func asRequestBody<ExtraData: ExtraDataTypes>() -> MessageRequestBody<ExtraData> {
@@ -220,7 +220,7 @@ extension MessageDTO {
     }
 }
 
-extension MessageModel {
+extension _ChatMessage {
     fileprivate init(fromDTO dto: MessageDTO) {
         id = dto.id
         text = dto.text

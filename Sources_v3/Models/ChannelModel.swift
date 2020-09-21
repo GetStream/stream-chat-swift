@@ -59,7 +59,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     
     // TODO: refactor comment and add latestMessages limit mention
     /// Latest messages present on the channel.
-    public let latestMessages: [MessageModel<ExtraData>]
+    public let latestMessages: [_ChatMessage<ExtraData>]
     
     /// Read states of the users for this channel.
     public let reads: [_ChatChannelRead<ExtraData>]
@@ -94,7 +94,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         reads: [_ChatChannelRead<ExtraData>] = [],
         extraData: ExtraData.Channel,
         invitedMembers: Set<MemberModel<ExtraData.User>> = [],
-        latestMessages: [MessageModel<ExtraData>] = []
+        latestMessages: [_ChatMessage<ExtraData>] = []
     ) {
         self.cid = cid
         self.lastMessageAt = lastMessageAt

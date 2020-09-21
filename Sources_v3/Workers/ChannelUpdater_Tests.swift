@@ -154,7 +154,7 @@ class ChannelUpdater_Tests: StressTestCase {
             }
         }
         
-        var message: Message? {
+        var message: ChatMessage? {
             database.viewContext.message(id: newMesageId)?.asModel()
         }
         
