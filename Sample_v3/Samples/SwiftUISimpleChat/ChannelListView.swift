@@ -6,7 +6,7 @@ import Combine
 import StreamChatClient
 import SwiftUI
 
-@available(iOS 13, *)
+@available(iOS 14, *)
 struct ChannelListView: View {
     // TODO: It's safer to use `@StateObject` here because `@ObservedObject` can sometimes release the
     // reference and this will crash.

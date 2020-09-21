@@ -5,10 +5,11 @@
 import StreamChatClient
 import SwiftUI
 
-@available(iOS 13, *)
+@available(iOS 14, *)
 struct ChatView: View {
     /// The `ChannelController` used to interact with this channel. Will be synchornized in `onAppear`.
     @State var channel: ChannelController.ObservableObject
+    
     /// The `text` written in the message composer
     @State var text: String = ""
     /// Binding for message actions ActionSheet
@@ -16,13 +17,22 @@ struct ChatView: View {
     /// Message being edited
     @State var editingMessage: Message?
 
+    /// User action
+    @State var userActionTrigger: Bool = false
+    @State var userAction: ((String) -> Void)?
+
     var body: some View {
         VStack {
-            self.messageList()
+            self.messageList().layoutPriority(1)
             self.composerView()
         }
         /// Channel ActionSheet presenter.
         .actionSheet(isPresented: $actionSheetTrigger, content: self.actionSheet)
+        /// User action alert
+        .alert(isPresented: $userActionTrigger, TextAlert(title: "User Id", placeholder: "steep-moon-9", action: {
+            self.userAction?($0 ?? "steep-moon-9")
+            self.userAction = nil
+        }))
         /// Set title to channel's name
         .navigationBarTitle(
             Text(channel.channel.flatMap(createTypingMemberString) ?? channel.channel?.extraData.name ?? "Unnamed Channel"),
@@ -74,11 +84,32 @@ struct ChatView: View {
     func composerView() -> some View {
         let textBinding = Binding(
             get: { self.text },
-            set: { self.text = $0; self.didKeystroke() }
+            set: { newValue in
+                DispatchQueue.main.async {
+                    self.text = newValue
+                    self.didKeystroke()
+                }
+            }
         )
         
         return HStack {
-            TextField("Type a message", text: textBinding, onCommit: didStopTyping)
+            ZStack {
+                if text.isEmpty {
+                    Text("Type a message")
+                        .foregroundColor(.secondary)
+                        .padding(.all, 8)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    Text(text) // hack to auto expand the composer (TextEditor alone won't do it)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.all, 8)
+                        .opacity(0)
+                }
+                
+                TextEditor(text: textBinding).background(Color.clear).onAppear {
+                    UITextView.appearance().backgroundColor = .clear
+                }
+            }
             Button(action: self.send) {
                 Image(systemName: "arrow.up.circle.fill")
             }
@@ -111,10 +142,19 @@ struct ChatView: View {
                 .cancel { self.editingMessage = nil }
             ])
         } else {
-            let userIds = Set(["steep-moon-9"])
             return ActionSheet(title: Text("Channel Actions"), message: Text(""), buttons: [
-                .default(Text("Add Member"), action: { self.channel.controller.addMembers(userIds: userIds) }),
-                .default(Text("Remove Member"), action: { self.channel.controller.removeMembers(userIds: userIds) }),
+                .default(
+                    Text("Add Member"), action: {
+                        self.userAction = { self.channel.controller.addMembers(userIds: [$0]) }
+                        self.userActionTrigger = true
+                    }
+                ),
+                .default(
+                    Text("Remove Member"), action: {
+                        self.userAction = { self.channel.controller.removeMembers(userIds: [$0]) }
+                        self.userActionTrigger = true
+                    }
+                ),
                 .cancel()
             ])
         }
