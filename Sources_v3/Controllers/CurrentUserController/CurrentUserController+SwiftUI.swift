@@ -21,16 +21,12 @@ extension _CurrentChatUserController {
         /// The unread messages and channels count for the current user.
         @Published public private(set) var unreadCount: UnreadCount = .noUnread
         
-        /// The current state of the Controller.
-        @Published public private(set) var state: DataController.State
-        
         /// The connection status.
         @Published public private(set) var connectionStatus: ConnectionStatus
         
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
         init(controller: _CurrentChatUserController<ExtraData>) {
             self.controller = controller
-            state = controller.state
             connectionStatus = controller.connectionStatus
             
             controller.multicastDelegate.additionalDelegates.append(AnyCurrentUserControllerDelegate(self))
@@ -60,10 +56,6 @@ extension _CurrentChatUserController.ObservableObject: _CurrentChatUserControlle
         didChangeCurrentUser currentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
     ) {
         self.currentUser = controller.currentUser
-    }
-    
-    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state = state
     }
     
     public func currentUserController(
