@@ -24,10 +24,7 @@ class SettingsViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        currentUserController.startUpdating { [weak self] _ in
-            guard let self = self else { return }
-            self.updateUserCell(with: self.currentUserController.currentUser)
-        }
+        updateUserCell(with: currentUserController.currentUser)
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
