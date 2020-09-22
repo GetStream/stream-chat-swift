@@ -9,7 +9,7 @@ public extension _ChatClient {
     /// Creates a new `CurrentUserControllerGeneric`
     /// - Returns: A new instance of `ChannelController`.
     func currentUserController() -> _CurrentChatUserController<ExtraData> {
-        .init(client: self, environment: .init())
+        .init(client: self)
     }
 }
 
