@@ -21,12 +21,10 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
     }
     
     func test_controllerInitialValuesAreLoaded() {
-        currentUserController.state_simulated = .localDataFetched
         currentUserController.currentUser_simulated = .init(id: .unique)
         
         let observableObject = currentUserController.observableObject
         
-        XCTAssertEqual(observableObject.state, currentUserController.state)
         XCTAssertEqual(observableObject.currentUser, currentUserController.currentUser)
     }
     
@@ -62,22 +60,6 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
         AssertAsync.willBeEqual(observableObject.unreadCount, newUnreadCount)
     }
     
-    func test_observableObject_reactsToDelegateStateChangesCallback() {
-        let observableObject = currentUserController.observableObject
-        
-        // Simulate state change
-        let newState: DataController.State = .remoteDataFetchFailed(ClientError(with: TestError()))
-        currentUserController.state_simulated = newState
-        currentUserController.delegateCallback {
-            $0.controller(
-                self.currentUserController,
-                didChangeState: newState
-            )
-        }
-        
-        AssertAsync.willBeEqual(observableObject.state, newState)
-    }
-    
     func test_observableObject_reactsToDelegateConnectionStatusChangesCallback() {
         let observableObject = currentUserController.observableObject
         
@@ -105,12 +87,6 @@ class CurrentUserControllerMock: CurrentChatUserController {
     var unreadCount_simulated: UnreadCount?
     override var unreadCount: UnreadCount {
         unreadCount_simulated ?? super.unreadCount
-    }
-
-    var state_simulated: DataController.State?
-    override var state: DataController.State {
-        get { state_simulated ?? super.state }
-        set { super.state = newValue }
     }
     
     init() {
