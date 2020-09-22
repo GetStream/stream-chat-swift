@@ -43,14 +43,17 @@ class ChatClient_Tests: StressTestCase {
         let storeFolderURL = URL.newTemporaryDirectoryURL()
         var config = ChatClientConfig()
         config.isLocalStorageEnabled = true
+        config.shouldFlushLocalStorageOnStart = true
         config.localStorageFolderURL = storeFolderURL
         
         var usedDatabaseKind: DatabaseContainer.Kind?
+        var shouldFlushDBOnStart: Bool?
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
-        env.databaseContainerBuilder = { kind in
+        env.databaseContainerBuilder = { kind, shouldFlushOnStart in
             usedDatabaseKind = kind
+            shouldFlushDBOnStart = shouldFlushOnStart
             return DatabaseContainerMock()
         }
         
@@ -60,6 +63,7 @@ class ChatClient_Tests: StressTestCase {
             usedDatabaseKind,
             .onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString))
         )
+        XCTAssertEqual(shouldFlushDBOnStart, config.shouldFlushLocalStorageOnStart)
     }
     
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
@@ -71,7 +75,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
-        env.databaseContainerBuilder = { kind in
+        env.databaseContainerBuilder = { kind, _ in
             usedDatabaseKind = kind
             return DatabaseContainerMock()
         }
@@ -100,7 +104,7 @@ class ChatClient_Tests: StressTestCase {
 
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
-        env.databaseContainerBuilder = { kind in
+        env.databaseContainerBuilder = { kind, _ in
             usedDatabaseKinds.append(kind)
             // Return error for the first time
             if let error = errorsToReturn.pop() {
@@ -405,7 +409,7 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                 return self.webSocketClient!
             },
             databaseContainerBuilder: {
-                self.databaseContainer = try! DatabaseContainerMock(kind: $0)
+                self.databaseContainer = try! DatabaseContainerMock(kind: $0, shouldFlushOnStart: $1)
                 return self.databaseContainer!
             },
             requestEncoderBuilder: {

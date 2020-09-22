@@ -17,9 +17,14 @@ class DatabaseContainerMock: DatabaseContainer {
         try! self.init(kind: .inMemory)
     }
     
-    override init(kind: DatabaseContainer.Kind, modelName: String = "StreamChatModel", bundle: Bundle? = nil) throws {
+    override init(
+        kind: DatabaseContainer.Kind,
+        shouldFlushOnStart: Bool = false,
+        modelName: String = "StreamChatModel",
+        bundle: Bundle? = nil
+    ) throws {
         init_kind = kind
-        try super.init(kind: kind, modelName: modelName, bundle: bundle)
+        try super.init(kind: kind, shouldFlushOnStart: shouldFlushOnStart, modelName: modelName, bundle: bundle)
     }
     
     override func removeAllData(force: Bool, completion: ((Error?) -> Void)? = nil) {

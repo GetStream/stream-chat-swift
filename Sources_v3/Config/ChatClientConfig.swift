@@ -26,6 +26,8 @@ public struct ChatClientConfig {
     
     public var isLocalStorageEnabled: Bool = true
     
+    public var shouldFlushLocalStorageOnStart: Bool = false
+    
     public var channel = Channel()
     
     /// You can optionally provide your custom `TokenProvider` here and it will be called every time a new current user is set.

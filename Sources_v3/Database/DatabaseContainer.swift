@@ -50,11 +50,12 @@ class DatabaseContainer: NSPersistentContainer {
     ///
     /// - Parameters:
     ///   - kind: The kind of `DatabaseContainer` that should be created.
+    ///   - shouldFlushOnStart: Flag indicating that all local data should be deleted on `DatabaseContainer` creation. (non-recoverable operation)
     ///   - modelName: The name of the model the container loads.
     ///   - completion: Called when the container finishes its initialization. If the initialization fails, called
     ///   with an error.
     ///
-    init(kind: Kind, modelName: String = "StreamChatModel", bundle: Bundle? = nil) throws {
+    init(kind: Kind, shouldFlushOnStart: Bool = false, modelName: String = "StreamChatModel", bundle: Bundle? = nil) throws {
         // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
         let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
         let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
@@ -80,15 +81,11 @@ class DatabaseContainer: NSPersistentContainer {
         }
         
         persistentStoreDescriptions = [description]
-        
-        var storeLoadingError: Error?
-        
-        loadPersistentStores { _, error in
-            storeLoadingError = error
-        }
-        
-        if let error = storeLoadingError {
-            throw error
+                
+        if shouldFlushOnStart {
+            try recreatePersistentStore()
+        } else {
+            try setupPersistentStore()
         }
         
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
@@ -188,6 +185,38 @@ class DatabaseContainer: NSPersistentContainer {
                 object: writableContext,
                 queue: nil
             ) { log.debug("Data saved to DB: \(String(describing: $0.userInfo))") }
+    }
+    
+    /// Load persistent store and recreate it if failed
+    private func setupPersistentStore() throws {
+        var storeLoadingError: Error?
+        
+        loadPersistentStores { _, error in
+            storeLoadingError = error
+        }
+        
+        if storeLoadingError != nil {
+            try recreatePersistentStore()
+        }
+    }
+    
+    /// Recreate rersistent store
+    private func recreatePersistentStore() throws {
+        guard let url = persistentStoreDescriptions.first!.url
+        else { throw ClientError("Internal Error. Wrong database file url.") }
+        
+        try persistentStoreCoordinator.destroyPersistentStore(at: url, ofType: "sqlite", options: nil)
+        try FileManager.default.removeItem(at: url)
+        
+        var storeLoadingError: Error?
+        
+        loadPersistentStores { _, error in
+            storeLoadingError = error
+        }
+        
+        if let error = storeLoadingError {
+            throw error
+        }
     }
 }
 
