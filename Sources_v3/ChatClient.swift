@@ -124,7 +124,9 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
                 )
                 
                 let dbFileURL = config.localStorageFolderURL!.appendingPathComponent(config.apiKey.apiKeyString)
-                return try environment.databaseContainerBuilder(.onDisk(databaseFileURL: dbFileURL))
+                return try environment.databaseContainerBuilder(
+                    .onDisk(databaseFileURL: dbFileURL), config.shouldFlushLocalStorageOnStart
+                )
             }
             
         } catch is ClientError.MissingLocalStorageURL {
@@ -135,9 +137,9 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         }
         
         do {
-            return try environment.databaseContainerBuilder(.inMemory)
+            return try environment.databaseContainerBuilder(.inMemory, config.shouldFlushLocalStorageOnStart)
         } catch {
-            fatalError("Failed to initialize the in-memory storage with erorr: \(error). This is a non-recoverable error.")
+            fatalError("Failed to initialize the in-memory storage with error: \(error). This is a non-recoverable error.")
         }
     }()
     
@@ -265,8 +267,8 @@ extension _ChatClient {
             )
         }
         
-        var databaseContainerBuilder: (_ kind: DatabaseContainer.Kind) throws -> DatabaseContainer = {
-            try DatabaseContainer(kind: $0)
+        var databaseContainerBuilder: (_ kind: DatabaseContainer.Kind, _ shouldFlushOnStart: Bool) throws -> DatabaseContainer = {
+            try DatabaseContainer(kind: $0, shouldFlushOnStart: $1)
         }
         
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
