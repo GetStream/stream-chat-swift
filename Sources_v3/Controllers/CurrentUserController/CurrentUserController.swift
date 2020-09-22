@@ -57,12 +57,8 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
     }
 
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate<ExtraData>> = .init() {
-        didSet {
-            stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
-            stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
-        }
-    }
+    // swiftlint:disable:next weak_delegate
+    var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate<ExtraData>> = .init()
     
     /// The currently logged-in user.
     /// Always returns `nil` if `startUpdating` was not called
@@ -342,7 +338,7 @@ private extension _CurrentChatUserController {
 ///
 /// This protocol can be used only when no custom extra data are specified.
 /// If you're using custom extra data types, please use `CurrentUserControllerDelegateGeneric` instead.
-public protocol CurrentChatUserControllerDelegate: DataControllerStateDelegate {
+public protocol CurrentChatUserControllerDelegate: AnyObject {
     /// The controller observed a change in the `UnreadCount`.
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount)
     
@@ -365,7 +361,7 @@ public extension CurrentChatUserControllerDelegate {
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `CurrentUserControllerDelegate`, which hides the generic types, and make the usage easier.
-public protocol _CurrentChatUserControllerDelegate: DataControllerStateDelegate {
+public protocol _CurrentChatUserControllerDelegate: AnyObject {
     associatedtype ExtraData: ExtraDataTypes
     
     /// The controller observed a change in the `UnreadCount`.
@@ -404,11 +400,6 @@ public extension _CurrentChatUserControllerDelegate {
 final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _CurrentChatUserControllerDelegate {
     weak var wrappedDelegate: AnyObject?
     
-    private var _controllerDidChangeState: (
-        DataController,
-        DataController.State
-    ) -> Void
-    
     private var _controllerDidChangeCurrentUserUnreadCount: (
         _CurrentChatUserController<ExtraData>,
         UnreadCount
@@ -426,10 +417,6 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _Curren
     
     init(
         wrappedDelegate: AnyObject?,
-        controllerDidChangeState: @escaping (
-            DataController,
-            DataController.State
-        ) -> Void,
         controllerDidChangeCurrentUserUnreadCount: @escaping (
             _CurrentChatUserController<ExtraData>,
             UnreadCount
@@ -445,15 +432,10 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _Curren
     ) {
         self.wrappedDelegate = wrappedDelegate
         _controllerDidChangeCurrentUserUnreadCount = controllerDidChangeCurrentUserUnreadCount
-        _controllerDidChangeState = controllerDidChangeState
         _controllerDidChangeCurrentUser = controllerDidChangeCurrentUser
         _controllerDidChangeConnectionStatus = controllerDidChangeConnectionStatus
     }
-
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        _controllerDidChangeState(controller, state)
-    }
-
+    
     func currentUserController(
         _ controller: _CurrentChatUserController<ExtraData>,
         didChangeCurrentUserUnreadCount unreadCount: UnreadCount
@@ -480,7 +462,6 @@ extension AnyCurrentUserControllerDelegate {
     convenience init<Delegate: _CurrentChatUserControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
         self.init(
             wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
             controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
                 delegate?.currentUserController($0, didChangeCurrentUserUnreadCount: $1)
             },
@@ -498,7 +479,6 @@ extension AnyCurrentUserControllerDelegate where ExtraData == DefaultExtraData {
     convenience init(_ delegate: CurrentChatUserControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,
-            controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
             controllerDidChangeCurrentUserUnreadCount: { [weak delegate] in
                 delegate?.currentUserController($0, didChangeCurrentUserUnreadCount: $1)
             },

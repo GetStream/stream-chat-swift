@@ -161,44 +161,6 @@ final class CurrentUserController_Tests: StressTestCase {
         AssertAsync.willBeEqual(delegate.didUpdateConnectionStatus_statuses, [.connecting, .connected])
     }
     
-    func test_delegate_isNotifiedAboutStateChanges() throws {
-        // Set the delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
-        controller.delegate = delegate
-        
-        // Assert no state changes received so far
-        XCTAssertNil(delegate.state)
-        
-        // Start updating
-        let startUpdatingError = try await(controller.startUpdating)
-        
-        // Assert `startUpdating` finished without any error
-        XCTAssertNil(startUpdatingError)
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-    }
-    
-    func test_genericDelegate_isNotifiedAboutStateChanges() throws {
-        // Set the delegate
-        let delegate = TestDelegateGeneric()
-        delegate.expectedQueueId = controllerCallbackQueueID
-        controller.setDelegate(delegate)
-        
-        // Assert no state changes received so far
-        XCTAssertNil(delegate.state)
-        
-        // Start updating
-        let startUpdatingError = try await(controller.startUpdating)
-        
-        // Assert `startUpdating` finished without any error
-        XCTAssertNil(startUpdatingError)
-        
-        // Assert delegate is notified about state changes
-        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
-    }
-    
     func test_delegate_isNotifiedAboutCreatedUser() throws {
         let extraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
         let currentUserPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(
