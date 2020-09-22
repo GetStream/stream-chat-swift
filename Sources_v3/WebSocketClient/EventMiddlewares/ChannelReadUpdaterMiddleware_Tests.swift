@@ -165,4 +165,40 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             Assert.willBeEqual(loadedChannel?.reads.first?.lastReadAt, newReadDate)
         }
     }
+    
+    func test_unhandledEvents_areForwarded() throws {
+        // Save a channel with a channel read
+        let channelId = ChannelId.unique
+        let payload = dummyPayload(with: channelId)
+        
+        assert(payload.channelReads.count == 1)
+        
+        // Save dummy payload to database
+        try database.writeSynchronously { (session) in
+            try session.saveChannel(payload: payload)
+        }
+        
+        // Load the channel from the db and check the if fields are correct
+        var loadedChannel: ChatChannel? {
+            database.viewContext.channel(cid: channelId)?.asModel()
+        }
+        
+        // Assert that the read event entity is updated
+        XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
+        XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))
+        
+        // Create an event that won't be handled by this middleware
+        let startTypingEvent = TypingEvent(isTyping: true, cid: channelId, userId: payload.members.first!.user.id)
+        
+        // Let the middleware handle the event
+        let handledEvent = try await { middleware.handle(event: startTypingEvent, completion: $0) }
+        
+        XCTAssertEqual(handledEvent?.asEquatable, startTypingEvent.asEquatable)
+        
+        // Assert that the read event entity is not updated
+        AssertAsync {
+            Assert.staysEqual(loadedChannel?.reads.first?.unreadMessagesCount, payload.channelReads.first?.unreadMessagesCount)
+            Assert.staysEqual(loadedChannel?.reads.first?.lastReadAt, payload.channelReads.first?.lastReadAt)
+        }
+    }
 }
