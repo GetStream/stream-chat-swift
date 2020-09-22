@@ -25,12 +25,6 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
         super.tearDown()
     }
     
-    func test_startUpdatingIsCalled_whenPublisherIsAccessed() {
-        assert(currentUserController.startUpdating_called == false)
-        _ = currentUserController.currentUserChangePublisher
-        XCTAssertTrue(currentUserController.startUpdating_called)
-    }
-    
     func test_currentUserChangePublisher() {
         // Setup Recording publishers
         var recording = Record<EntityChange<CurrentChatUser>, Never>.Recording()

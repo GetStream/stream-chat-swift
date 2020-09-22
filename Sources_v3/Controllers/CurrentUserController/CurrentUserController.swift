@@ -17,7 +17,10 @@ public extension _ChatClient {
 public typealias CurrentChatUserController = _CurrentChatUserController<DefaultExtraData>
 
 /// `CurrentUserControllerGeneric` allows to observer current user updates
-public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
+public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider {
+    /// The queue which is used to perform callback calls. The default value is `.main`.
+    public var callbackQueue: DispatchQueue = .main
+    
     /// The `ChatClient` instance this controller belongs to.
     public let client: _ChatClient<ExtraData>
     
@@ -61,20 +64,12 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
     var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate<ExtraData>> = .init()
     
     /// The currently logged-in user.
-    /// Always returns `nil` if `startUpdating` was not called
-    /// To observe the updates of this value, set your class as a delegate of this controller and call `startUpdating`.
     public var currentUser: _CurrentChatUser<ExtraData.User>? {
-        guard state != .initialized else {
-            log.warning("Accessing `currentUser` fields before calling `startUpdating()` always results in `nil`.")
-            return nil
-        }
-
-        return currentUserObserver.item
+        currentUserObserver.item
     }
 
     /// The unread messages and channels count for the current user.
-    /// Always returns `noUnread` if `startUpdating` was not called.
-    /// To observe the updates of this value, set your class as a delegate of this controller and call `startUpdating`.
+    /// Returns `noUnread` if `currentUser` doesn't exist.
     public var unreadCount: UnreadCount {
         currentUser?.unreadCount ?? .noUnread
     }
@@ -86,31 +81,19 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
     init(client: _ChatClient<ExtraData>, environment: Environment = .init()) {
         self.client = client
         self.environment = environment
-        
-        super.init()
-        
+        startObserving()
         _ = connectionEventObserver
     }
     
-    /// Starts updating the results.
-    ///
-    /// It **synchronously** loads the data for the referenced objects from the local cache.
-    /// The `currentUser` and `unreadCount` properties are immediately available once this method returns.
-    /// Any further changes to the data are communicated using `delegate`.
-    ///
-    /// - Parameter completion: Called when the controller has finished fetching data from a database.
-    /// If the data fetching fails, the `error` variable contains more details about the problem.
-    public func startUpdating(_ completion: ((Error?) -> Void)? = nil) {
+    private func startObserving() {
         do {
             try currentUserObserver.startObserving()
         } catch {
-            callback { completion?(ClientError.FetchFailed()) }
-            return
+            log.error("""
+            Observing current user failed: \(error).\n
+            Accessing `currentUser` will always return `nil`, `unreadCount` with `.noUnread`
+            """)
         }
-        
-        state = .localDataFetched
-
-        callback { completion?(nil) }
     }
     
     private func prepareEnvironmentForNewUser(

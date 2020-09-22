@@ -14,12 +14,6 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
         currentUserController = CurrentUserControllerMock()
     }
     
-    func test_startUpdatingIsCalled_whenObservableObjectCreated() {
-        assert(currentUserController.startUpdating_called == false)
-        _ = currentUserController.observableObject
-        XCTAssertTrue(currentUserController.startUpdating_called)
-    }
-    
     func test_controllerInitialValuesAreLoaded() {
         currentUserController.currentUser_simulated = .init(id: .unique)
         
@@ -77,8 +71,6 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
 }
 
 class CurrentUserControllerMock: CurrentChatUserController {
-    @Atomic var startUpdating_called = false
-    
     var currentUser_simulated: _CurrentChatUser<DefaultExtraData.User>?
     override var currentUser: _CurrentChatUser<DefaultExtraData.User>? {
         currentUser_simulated ?? super.currentUser
@@ -91,9 +83,5 @@ class CurrentUserControllerMock: CurrentChatUserController {
     
     init() {
         super.init(client: .mock)
-    }
-
-    override func startUpdating(_ completion: ((Error?) -> Void)? = nil) {
-        startUpdating_called = true
     }
 }

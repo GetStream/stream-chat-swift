@@ -31,11 +31,6 @@ extension _CurrentChatUserController {
             
             controller.multicastDelegate.additionalDelegates.append(AnyCurrentUserControllerDelegate(self))
             
-            if controller.state == .initialized {
-                // Start updating and load the current data
-                controller.startUpdating()
-            }
-            
             currentUser = controller.currentUser
             unreadCount = controller.unreadCount
         }
