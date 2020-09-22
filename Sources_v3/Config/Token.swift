@@ -8,14 +8,24 @@ import Foundation
 public typealias Token = String
 
 /// A token provider is a function in which you send a request to your own backend to get a Stream Chat API token.
-/// Then you send it to the client to complete the setup with a callback function from the token provider.
+///
+/// Set your custom `TokenProvider` in `ChatClientConfig` when creating a `ChatClient` instance. `ChatClient` will use it whenever
+/// it needs to get a new token for the given user.
+///
 public typealias TokenProvider = (_ apiKey: APIKey, _ userId: UserId, _ completion: @escaping (Token?) -> Void) -> Void
 
 extension Token {
-    /// A development token.
+    /// A token which can be used during development.
     public static let development: Token = "development"
     
-    /// Checks if the token is valid.
+    /// Locally checks if the provided token is valid for the given user id.
+    ///
+    /// A token is a string in the JSON Web Token format and one of the parameters it contains is the id of the given user. This
+    /// makes it possible to locally check if the token is valid for the given user.
+    ///
+    /// - Warning: The fact that the token is valid for the given user doesn't mean it can't be rejected by the servers. This is
+    /// a required but not sufficient condition.
+    ///
     public func isValid(for userId: UserId) -> Bool {
         if self == .development {
             return true
@@ -44,16 +54,3 @@ extension Token {
         return Data(base64Encoded: base64)
     }
 }
-
-// MARK: - Token response
-
-//
-// struct TokenResponse: Decodable {
-//    private enum CodingKeys: String, CodingKey {
-//        case user
-//        case token = "access_token"
-//    }
-//
-//    let user: User
-//    let token: Token
-// }
