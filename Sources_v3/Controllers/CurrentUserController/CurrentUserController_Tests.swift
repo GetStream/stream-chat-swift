@@ -40,54 +40,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     // MARK: Controller
 
-    func test_initialState() {
-        // Assert client is assigned correctly
-        XCTAssertTrue(controller.client === client)
-        
-        // Assert initial state is correct
-        XCTAssertEqual(controller.state, .initialized)
-        
-        // Assert user is nil
-        XCTAssertNil(controller.currentUser)
-        
-        // Assert unread-count is zero
-        XCTAssertEqual(controller.unreadCount, .noUnread)
-        
-        // Check the initial connection status.
-        XCTAssertEqual(controller.connectionStatus, .disconnected(error: nil))
-    }
-    
-    func test_startUpdating_changesStateCorrectly_ifCompletesWithAnyError() throws {
-        // Start updating
-        _ = try await(controller.startUpdating)
-        
-        // Assert state changes to `.localDataFetched`
-        XCTAssertEqual(controller.state, .localDataFetched)
-    }
-    
-    func test_startUpdating_stateStaysInactive_ifCompletesWithError() throws {
-        // Update mock observer to throws the error
-        env.currentUserObserverStartUpdatingError = TestError()
-
-        // Start updating
-        _ = try await(controller.startUpdating)
-        
-        // Assert state stays inative
-        XCTAssertEqual(controller.state, .initialized)
-    }
-    
-    func test_startUpdating_propogatesError() throws {
-        // Update mock observer to throws the error
-        env.currentUserObserverStartUpdatingError = TestError()
-        
-        // Start updating and catch the error
-        let startUpdatingError = try await(controller.startUpdating)
-        
-        // Assert error is propogated
-        XCTAssertNotNil(startUpdatingError)
-    }
-    
-    func test_correctDataIsAvailable_whenStartUpdatingCompletes() throws {
+    func test_initialState_whenLocalDataIsFetched() throws {
         let unreadCount = UnreadCount(channels: 10, messages: 212)
         let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user, unreadCount: unreadCount)
 
@@ -96,12 +49,40 @@ final class CurrentUserController_Tests: StressTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
         
-        // Start updating
-        _ = try await(controller.startUpdating)
+        // Assert client is assigned correctly
+        XCTAssertTrue(controller.client === client)
         
-        // Assert user exists
-        XCTAssertEqual(controller.unreadCount, unreadCount)
+        // Assert user is correct
         XCTAssertEqual(controller.currentUser?.id, userPayload.id)
+        
+        // Assert unread-count is correct
+        XCTAssertEqual(controller.unreadCount, unreadCount)
+        
+        // Check the initial connection status.
+        XCTAssertEqual(controller.connectionStatus, .disconnected(error: nil))
+    }
+    
+    func test_initialState_whenLocalDataFetchFailed() throws {
+        let unreadCount = UnreadCount(channels: 10, messages: 212)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user, unreadCount: unreadCount)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Create environenment with observer thowing the error
+        let env = TestEnvironment()
+        env.currentUserObserverStartUpdatingError = TestError()
+        
+        // Create a controller with observer which fails to start observing
+        let controller = CurrentChatUserController(client: client, environment: env.currentUserControllerEnvironment)
+        
+        // Assert user is `nil`
+        XCTAssertNil(controller.currentUser)
+        
+        // Assert unread-count is `.noUnread`
+        XCTAssertEqual(controller.unreadCount, .noUnread)
     }
     
     // MARK: - Delegate
@@ -174,12 +155,6 @@ final class CurrentUserController_Tests: StressTestCase {
         delegate.expectedQueueId = controllerCallbackQueueID
         controller.delegate = delegate
 
-        // Start updating
-        let startUpdatingError = try await(controller.startUpdating)
-        
-        // Assert `startUpdating` finished without any error
-        XCTAssertNil(startUpdatingError)
-
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: currentUserPayload)
@@ -204,12 +179,6 @@ final class CurrentUserController_Tests: StressTestCase {
         let delegate = TestDelegate()
         delegate.expectedQueueId = controllerCallbackQueueID
         controller.delegate = delegate
-
-        // Start updating
-        let startUpdatingError = try await(controller.startUpdating)
-        
-        // Assert `startUpdating` finished without any error
-        XCTAssertNil(startUpdatingError)
 
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {
@@ -243,12 +212,6 @@ final class CurrentUserController_Tests: StressTestCase {
         let delegate = TestDelegate()
         delegate.expectedQueueId = controllerCallbackQueueID
         controller.delegate = delegate
-
-        // Start updating
-        let startUpdatingError = try await(controller.startUpdating)
-        
-        // Assert `startUpdating` finished without any error
-        XCTAssertNil(startUpdatingError)
 
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {

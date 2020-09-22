@@ -44,11 +44,6 @@ extension _CurrentChatUserController {
             connectionStatus = .init(controller.connectionStatus)
             
             controller.multicastDelegate.additionalDelegates.append(AnyCurrentUserControllerDelegate(self))
-            
-            if controller.state == .initialized {
-                // Start updating and load the current data
-                controller.startUpdating()
-            }
         }
     }
 }
