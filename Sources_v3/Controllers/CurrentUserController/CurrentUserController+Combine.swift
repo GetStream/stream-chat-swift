@@ -7,11 +7,6 @@ import UIKit
 
 @available(iOS 13, *)
 extension _CurrentChatUserController {
-    /// A publisher emitting a new value every time the state of the controller changes.
-    public var statePublisher: AnyPublisher<DataController.State, Never> {
-        basePublishers.state.keepAlive(self)
-    }
-    
     /// A publisher emitting a new value every time the current user changes.
     public var currentUserChangePublisher: AnyPublisher<EntityChange<_CurrentChatUser<ExtraData.User>>, Never> {
         basePublishers.currentUserChange.keepAlive(self)
@@ -34,9 +29,6 @@ extension _CurrentChatUserController {
         /// The wrapper controller
         unowned let controller: _CurrentChatUserController
         
-        /// A backing subject for `statePublisher`.
-        let state: CurrentValueSubject<DataController.State, Never>
-        
         /// A backing subject for `currentUserChangePublisher`.
         let currentUserChange: PassthroughSubject<EntityChange<_CurrentChatUser<ExtraData.User>>, Never> = .init()
         
@@ -48,7 +40,6 @@ extension _CurrentChatUserController {
                 
         init(controller: _CurrentChatUserController<ExtraData>) {
             self.controller = controller
-            state = .init(controller.state)
             unreadCount = .init(.noUnread)
             connectionStatus = .init(controller.connectionStatus)
             
@@ -64,10 +55,6 @@ extension _CurrentChatUserController {
 
 @available(iOS 13, *)
 extension _CurrentChatUserController.BasePublishers: _CurrentChatUserControllerDelegate {
-    func controller(_ controller: DataController, didChangeState state: DataController.State) {
-        self.state.send(state)
-    }
-    
     func currentUserController(
         _ controller: _CurrentChatUserController<ExtraData>,
         didChangeCurrentUserUnreadCount unreadCount: UnreadCount

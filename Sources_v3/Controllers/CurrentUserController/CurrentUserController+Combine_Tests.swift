@@ -27,30 +27,10 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
     
     func test_startUpdatingIsCalled_whenPublisherIsAccessed() {
         assert(currentUserController.startUpdating_called == false)
-        _ = currentUserController.statePublisher
+        _ = currentUserController.currentUserChangePublisher
         XCTAssertTrue(currentUserController.startUpdating_called)
     }
     
-    func test_statePublisher() {
-        // Setup Recording publishers
-        var recording = Record<DataController.State, Never>.Recording()
-        
-        // Setup the chain
-        currentUserController
-            .statePublisher
-            .sink(receiveValue: { recording.receive($0) })
-            .store(in: &cancellables)
-        
-        // Keep only the weak reference to the controller. The existing publisher should keep it alive.
-        weak var controller: CurrentUserControllerMock? = currentUserController
-        currentUserController = nil
-        
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .localDataFetched) }
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
-        
-        XCTAssertEqual(recording.output, [.initialized, .localDataFetched, .remoteDataFetched])
-    }
-
     func test_currentUserChangePublisher() {
         // Setup Recording publishers
         var recording = Record<EntityChange<CurrentChatUser>, Never>.Recording()
