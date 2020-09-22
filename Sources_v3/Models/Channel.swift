@@ -4,11 +4,24 @@
 
 import Foundation
 
-/// A convenience `_ChatChannel` typealias with no additional channel data.
+/// A type representing a chat channel. `ChatChannel` is an immutable snapshot of a channel entity at the given time.
+///
+/// - Note: `ChatChannel` is a typealias of `_ChatChannel` with default extra data. If you're using custom extra data, create
+/// your own typealias of `ChatChannel`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
 public typealias ChatChannel = _ChatChannel<DefaultExtraData>
 
+/// A type representing a chat channel. `_ChatChannel` is an immutable snapshot of a channel entity at the given time.
+///
+/// - Note: `_ChatChannel` type is not meant to be used directly. If you're using default extra data, use `ChatChannel`
+/// typealias instead. If you're using custom extra data, create your own typealias of `ChatChannel`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
 public struct _ChatChannel<ExtraData: ExtraDataTypes> {
-    /// A channel type + id.
+    /// The `ChannelId` of the channel.
     public let cid: ChannelId
     
     /// The date of the last message in the channel.
@@ -20,53 +33,70 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// The date when the channel was updated.
     public let updatedAt: Date
     
-    /// If the channel weas deleted, this field contains the date of the deletion.
+    /// If the channel was deleted, this field contains the date of the deletion.
     public let deletedAt: Date?
     
     /// The user which created the channel.
     public let createdBy: _ChatUser<ExtraData.User>?
     
-    /// A config.
+    /// A configuration struct of the channel. It contains additional information about the channel settings.
     public let config: ChannelConfig
     
-    /// Checks if the channel is frozen.
+    /// Returns `true` if the channel is frozen.
+    ///
+    /// It's not possible to send new messages to a frozen channel.
+    ///
     public let isFrozen: Bool
     
-    /// A list of channel members.
+    /// The total number of members in the channel.
+    public let memberCount: Int
+    
+    /// A list of locally cached members objects.
+    ///
+    /// To access the full list of members of the channel, create a `ChatChannelController` for this channel and use it to query
+    /// all channel members.
+    ///
     public let members: Set<_ChatChannelMember<ExtraData.User>>
     
-    /// A list of typing channel members.
+    /// A list of currently typing channel members.
     public let currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
     
-    /// A list of channel watchers.
+    /// A list of channel members currently online actively watching the channel.
     public let watchers: Set<_ChatUser<ExtraData.User>>
-    
-    /// The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
-    /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
-    public let team: String
-    
-    /// Returns the current unread count.
-    public let unreadCount: ChannelUnreadCount
-    
-    /// Online watchers in the channel.
+
+    /// The total number of online members watching this channel.
     public let watcherCount: Int
     
-    /// Members in the channel.
-    public let memberCount: Int
+    /// The team the channel belongs to.
+    ///
+    /// You need to enable multi-tenancy if you want to use this, else it'll be nil.
+    /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
+    ///
+    public let team: String
+    
+    /// The unread counts for the channel.
+    public let unreadCount: ChannelUnreadCount
     
     /// An option to enable ban users.
     public let banEnabling: BanEnabling
     
-    /// Checks if the channel is watching by the client.
-    public let isWatched: Bool
-    
-    // TODO: refactor comment and add latestMessages limit mention
     /// Latest messages present on the channel.
+    ///
+    /// This field contains only the latest messages of the channel. You can get all existing messages in the channel by creating
+    /// and using a `ChatChannelController` for this channel id.
+    ///
     public let latestMessages: [_ChatMessage<ExtraData>]
     
     /// Read states of the users for this channel.
+    ///
+    /// You can use this information to show to your users information about what messages were read by certain users.
+    ///
     public let reads: [_ChatChannelRead<ExtraData>]
     
+    /// Additional data associated with the channel.
+    ///
+    /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+    ///
     public let extraData: ExtraData.Channel
     
     // MARK: - Internal
@@ -125,23 +155,20 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
 }
 
 extension _ChatChannel {
-    /// A channel type.
+    /// The type of the channel.
     public var type: ChannelType { cid.type }
     
-    /// Check if the channel was deleted.
+    /// Returns `true` if the channel was deleted.
     public var isDeleted: Bool { deletedAt != nil }
     
-    /// Checks if read events evalable for the current user.
-    public var readEventsEnabled: Bool { /* config.readEventsEnabled && members.contains(Member.current) */ fatalError() }
+    /// Checks if read events evadable for the current user.
+//    public var readEventsEnabled: Bool { /* config.readEventsEnabled && members.contains(Member.current) */ fatalError() }
     
-    /// Checks if the channel is direct message type between 2 users.
+    /// Returns `true` when the channel is a direct-message channel between 2 users.
     public var isDirectMessage: Bool { cid.id.hasPrefix("!members") && members.count == 2 }
     
-    /// Checks if the current status of the channel is unread.
+    /// returns `true` if the channel has one or more unread messages for the current user.
     public var isUnread: Bool { unreadCount.messages > 0 }
-    
-    /// Checks for the channel data encoding is empty.
-    var isEmpty: Bool { /* extraData == nil && members.isEmpty && invitedMembers.isEmpty */ fatalError() }
 }
 
 /// Additional data fields `ChannelModel` can be extended with. You can use it to store your custom data related to a channel.
@@ -161,9 +188,14 @@ extension _ChatChannel: Hashable {
     }
 }
 
-/// An unread counts for a channel.
+/// A struct describing unread counts for a channel.
 public struct ChannelUnreadCount: Decodable, Equatable {
+    /// The default value representing no unread messages.
     public static let noUnread = ChannelUnreadCount(messages: 0, mentionedMessages: 0)
+    
+    /// The total number of unread messages in the channel.
     public internal(set) var messages: Int
+    
+    /// The number of unread messages that mention the current user.
     public internal(set) var mentionedMessages: Int
 }
