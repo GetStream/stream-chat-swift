@@ -4,18 +4,25 @@
 
 import Foundation
 
-/// A channel type and id.
+/// A type representing a unique identifier of a `ChatChannel`.
+///
+/// It reflects channel's type and a unique id.
+///
 public struct ChannelId: Hashable, CustomStringConvertible {
     private static let any = "*"
     private static let separator: Character = ":"
     
     let rawValue: String
     
+    /// Returns `true` if the channel id matches "all" channels.
     public var isAny: Bool { rawValue == ChannelType.unknown.rawValue + String(Self.separator) + Self.any }
     
-    /// Init a ChannelId.
-    /// - Parameter type: a channel type.
-    /// - Parameter id: a channel id.
+    /// Creates a new `ChannelId` value.
+    ///
+    /// - Parameters:
+    ///     - type: A type of the channel the `ChannelId` represents.
+    ///     - id: An id of the channel the `ChannelId` represents.
+    ///
     public init(type: ChannelType, id: String) {
         rawValue = type.rawValue + "\(Self.separator)" + (id.isEmpty ? ChannelId.any : id)
     }
