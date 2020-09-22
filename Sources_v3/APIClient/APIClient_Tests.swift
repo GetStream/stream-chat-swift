@@ -144,7 +144,8 @@ class APIClient_Tests: StressTestCase {
         let testRequest = URLRequest(url: .unique())
         encoder.encodeRequest = .success(testRequest)
         
-        let networkError = TestError()
+        // We cannot use `TestError` since iOS14 wraps this into another error
+        let networkError = NSError(domain: "TestNetworkError", code: -1, userInfo: nil)
         let encoderError = TestError()
         
         // Set up a mock network response from the request
@@ -160,7 +161,11 @@ class APIClient_Tests: StressTestCase {
         let result = try await { apiClient.request(endpoint: testEndpoint, completion: $0) }
         
         // Check the incoming error to the encoder is the error from the response
-        XCTAssertEqual(decoder.decodeRequestResponse_error as? TestError, networkError)
+        assert(decoder.decodeRequestResponse_error != nil)
+        
+        // We have to compare error codes, since iOS14 wraps network errors into `NSURLError`
+        // in which we cannot retrieve the wrapper error
+        XCTAssertEqual((decoder.decodeRequestResponse_error as NSError?)?.code, networkError.code)
         
         // Check the outgoing error from the encoder is the result data
         AssertResultFailure(result, encoderError)

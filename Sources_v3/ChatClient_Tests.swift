@@ -95,8 +95,9 @@ class ChatClient_Tests: StressTestCase {
         
         // Prepare a queue with errors the db builder should return. We want to return an error only the first time
         // when we expect the DB is created with the local DB option and we want it to fail.
-        var errorsToReturn = Queue(TestError())
-        
+        var errorsToReturn = Queue<Error>()
+        errorsToReturn.push(TestError())
+
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
         env.databaseContainerBuilder = { kind in
@@ -450,10 +451,6 @@ extension ChatClient_Tests {
 }
 
 private struct Queue<Element> {
-    init(_ elements: Element...) {
-        storage = elements
-    }
-    
     @Atomic private var storage = [Element]()
     mutating func push(_ element: Element) {
         storage.append(element)
