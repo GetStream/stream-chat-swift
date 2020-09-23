@@ -4,10 +4,27 @@
 
 import Foundation
 
-/// A channel type.
-public enum ChannelType: Codable, Hashable, ExpressibleByStringLiteral {
-    /// A channel type.
-    case unknown, livestream, messaging, team, gaming, commerce
+/// An enum describing possible types of a channel.
+public enum ChannelType: Codable, Hashable {
+    /// The type of the channel is not specified.
+    case unknown
+    
+    /// Sensible defaults in case you want to build livestream chat like Instagram Livestream or Periscope.
+    case livestream
+    
+    /// Configured for apps such as WhatsApp or Facebook Messenger.
+    case messaging
+    
+    /// If you want to build your own version of Slack or something similar, start here.
+    case team
+    
+    /// Good defaults for building something like your own version of Twitch.
+    case gaming
+    
+    /// Good defaults for building something like your own version of Intercom or Drift.
+    case commerce
+    
+    /// The type of the channel is custom.
     case custom(String)
     
     /// A channel type title.
@@ -27,8 +44,9 @@ public enum ChannelType: Codable, Hashable, ExpressibleByStringLiteral {
     }
     
     /// Init a channel type with a string raw value.
+    ///
     /// - Parameter rawValue: a string raw value of a channel type.
-    public init(rawValue: String) {
+    init(rawValue: String) {
         if rawValue.isEmpty || rawValue.contains(" ") || rawValue == "unknown" {
             self = .unknown
             return
@@ -47,10 +65,6 @@ public enum ChannelType: Codable, Hashable, ExpressibleByStringLiteral {
     public init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(String.self)
-        self.init(rawValue: value)
-    }
-    
-    public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
     
