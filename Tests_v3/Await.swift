@@ -37,9 +37,11 @@ func await<T>(
 ) throws -> T {
     let expecation = XCTestExpectation(description: "Action completed")
     var result: T?
-    action {
-        result = $0
-        expecation.fulfill()
+    action { resultValue in
+        DispatchQueue.main.async {
+            result = resultValue
+            expecation.fulfill()
+        }
     }
     
     let waiterResult = XCTWaiter.wait(for: [expecation], timeout: timeout)
