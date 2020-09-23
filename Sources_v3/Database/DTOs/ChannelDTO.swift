@@ -222,7 +222,6 @@ extension _ChatChannel {
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),
             banEnabling: .disabled,
-            isWatched: true,
             reads: reads,
             extraData: extraData,
             invitedMembers: [],
