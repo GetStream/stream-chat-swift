@@ -60,7 +60,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
             guard let lastSyncedAt = self?.lastSyncedAt,
                 let allChannels = self?.allChannels else { return }
             
-            let watchedChannelIDs = allChannels.filter { $0.isWatched }.map(\.cid)
+            let watchedChannelIDs = allChannels.map(\.cid).compactMap { try? ChannelId(cid: $0) }
             
             guard !watchedChannelIDs.isEmpty else {
                 log.info("Skipping `/sync` endpoint call as there are no channels to watch.")
@@ -83,9 +83,9 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
         }
     }
     
-    private var allChannels: [_ChatChannel<ExtraData>] {
+    private var allChannels: [ChannelDTO] {
         do {
-            return try database.backgroundReadOnlyContext.fetch(ChannelDTO.allChannelsFetchRequest).map { $0.asModel() }
+            return try database.backgroundReadOnlyContext.fetch(ChannelDTO.allChannelsFetchRequest)
         } catch {
             log.error("Internal error: Failed to fetch [ChannelDTO]: \(error)")
             return []

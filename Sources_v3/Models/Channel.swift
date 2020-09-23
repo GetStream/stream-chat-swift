@@ -124,7 +124,6 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         watcherCount: Int = 0,
         memberCount: Int = 0,
         banEnabling: BanEnabling = .disabled,
-        isWatched: Bool = false,
         reads: [_ChatChannelRead<ExtraData>] = [],
         extraData: ExtraData.Channel,
         invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
@@ -146,7 +145,6 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.watcherCount = watcherCount
         self.memberCount = memberCount
         self.banEnabling = banEnabling
-        self.isWatched = isWatched
         self.reads = reads
         self.extraData = extraData
         self.invitedMembers = invitedMembers
