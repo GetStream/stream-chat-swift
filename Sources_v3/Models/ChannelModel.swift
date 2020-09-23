@@ -51,6 +51,9 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// Online watchers in the channel.
     public let watcherCount: Int
     
+    /// Members in the channel.
+    public let memberCount: Int
+    
     /// An option to enable ban users.
     public let banEnabling: BanEnabling
     
@@ -89,6 +92,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         team: String = "",
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
+        memberCount: Int = 0,
         banEnabling: BanEnabling = .disabled,
         isWatched: Bool = false,
         reads: [_ChatChannelRead<ExtraData>] = [],
@@ -110,6 +114,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.team = team
         self.unreadCount = unreadCount
         self.watcherCount = watcherCount
+        self.memberCount = memberCount
         self.banEnabling = banEnabling
         self.isWatched = isWatched
         self.reads = reads

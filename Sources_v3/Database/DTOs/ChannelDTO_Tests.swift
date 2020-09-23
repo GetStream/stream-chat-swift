@@ -32,6 +32,8 @@ class ChannelDTO_Tests: XCTestCase {
             // Channel details
             Assert.willBeEqual(channelId, loadedChannel?.cid)
             
+            Assert.willBeEqual(payload.watcherCount, loadedChannel?.watcherCount)
+            Assert.willBeEqual(payload.channel.memberCount, loadedChannel?.memberCount)
             Assert.willBeEqual(payload.channel.extraData, loadedChannel?.extraData)
             Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel?.type.rawValue)
             Assert.willBeEqual(payload.channel.lastMessageAt, loadedChannel?.lastMessageAt)
@@ -139,6 +141,8 @@ class ChannelDTO_Tests: XCTestCase {
             // Channel details
             Assert.willBeEqual(channelId, loadedChannel?.cid)
             
+            Assert.willBeEqual(payload.watcherCount, loadedChannel?.watcherCount)
+            Assert.willBeEqual(payload.channel.memberCount, loadedChannel?.memberCount)
             Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel?.type.rawValue)
             Assert.willBeEqual(payload.channel.lastMessageAt, loadedChannel?.lastMessageAt)
             Assert.willBeEqual(payload.channel.createdAt, loadedChannel?.createdAt)

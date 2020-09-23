@@ -18,6 +18,9 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var updatedAt: Date
     @NSManaged var lastMessageAt: Date?
     
+    @NSManaged var watcherCount: Int16
+    @NSManaged var memberCount: Int16
+    
     @NSManaged var isFrozen: Bool
     
     // MARK: - Relationships
@@ -83,6 +86,7 @@ extension NSManagedObjectContext {
         dto.updatedAt = payload.updatedAt
         dto.defaultSortingAt = payload.lastMessageAt ?? payload.createdAt
         dto.lastMessageAt = payload.lastMessageAt
+        dto.memberCount = Int16(payload.memberCount)
         
         dto.isFrozen = payload.isFrozen
         
@@ -121,6 +125,8 @@ extension NSManagedObjectContext {
             let member = try saveMember(payload: $0, channelId: payload.channel.cid)
             dto.members.insert(member)
         }
+        
+        dto.watcherCount = Int16(payload.watcherCount ?? 0)
         
         return dto
     }
@@ -213,7 +219,8 @@ extension _ChatChannel {
             watchers: [],
             team: "",
             unreadCount: unreadCount,
-            watcherCount: 0,
+            watcherCount: Int(dto.watcherCount),
+            memberCount: Int(dto.memberCount),
             banEnabling: .disabled,
             isWatched: true,
             reads: reads,
