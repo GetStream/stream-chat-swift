@@ -217,14 +217,14 @@ extension _ChatChannel {
             members: Set(members),
             currentlyTypingMembers: Set(typingMembers),
             watchers: [],
-            team: "",
+//            team: "",
             unreadCount: unreadCount,
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),
-            banEnabling: .disabled,
+//            banEnabling: .disabled,
             reads: reads,
             extraData: extraData,
-            invitedMembers: [],
+//            invitedMembers: [],
             latestMessages: latestMessages
         )
     }

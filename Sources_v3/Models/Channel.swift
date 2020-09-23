@@ -72,13 +72,13 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
     ///
-    public let team: String
+//    public let team: String
     
     /// The unread counts for the channel.
     public let unreadCount: ChannelUnreadCount
     
     /// An option to enable ban users.
-    public let banEnabling: BanEnabling
+//    public let banEnabling: BanEnabling
     
     /// Latest messages present on the channel.
     ///
@@ -105,7 +105,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     //  lazy var bannedMembers: Set<_ChatChannelMember<ExtraData.User>> = Set(self.members.filter { $0.isBanned })
     
     /// A list of users to invite in the channel.
-    let invitedMembers: Set<_ChatChannelMember<ExtraData.User>> // TODO: Why is this not public?
+//    let invitedMembers: Set<_ChatChannelMember<ExtraData.User>> // TODO: Why is this not public?
     
     init(
         cid: ChannelId,
@@ -119,14 +119,14 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         members: Set<_ChatChannelMember<ExtraData.User>> = [],
         currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         watchers: Set<_ChatUser<ExtraData.User>> = [],
-        team: String = "",
+//        team: String = "",
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
         memberCount: Int = 0,
-        banEnabling: BanEnabling = .disabled,
+//        banEnabling: BanEnabling = .disabled,
         reads: [_ChatChannelRead<ExtraData>] = [],
         extraData: ExtraData.Channel,
-        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
+//        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         latestMessages: [_ChatMessage<ExtraData>] = []
     ) {
         self.cid = cid
@@ -140,14 +140,14 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.members = members
         self.currentlyTypingMembers = currentlyTypingMembers
         self.watchers = watchers
-        self.team = team
+//        self.team = team
         self.unreadCount = unreadCount
         self.watcherCount = watcherCount
         self.memberCount = memberCount
-        self.banEnabling = banEnabling
+//        self.banEnabling = banEnabling
         self.reads = reads
         self.extraData = extraData
-        self.invitedMembers = invitedMembers
+//        self.invitedMembers = invitedMembers
         self.latestMessages = latestMessages
     }
 }
