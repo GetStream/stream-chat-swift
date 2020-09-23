@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// Unread Count of channels and messages.
+/// A struct containing information about unread counts of channels and messages.
 public struct UnreadCount: Decodable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case currentUserUnreadCount = "me"
@@ -13,14 +13,16 @@ public struct UnreadCount: Decodable, Equatable {
         case messages = "total_unread_count"
     }
     
+    /// The default value representing no unread channels and messages.
     public static let noUnread = UnreadCount(channels: 0, messages: 0)
     
-    /// The number of unread channels
+    /// The number of channels with unread messages.
     public let channels: Int
-    /// The number of unread messagess accross all channels.
+    
+    /// The number of unread messages across all channels.
     public let messages: Int
     
-    public init(channels: Int, messages: Int) {
+    init(channels: Int, messages: Int) {
         self.channels = channels
         self.messages = messages
     }
