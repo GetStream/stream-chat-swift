@@ -18,13 +18,13 @@ Use StreamChat **to build a fully custom UI on top of the Stream Chat services**
 
 ## Main Features
 
-- Swift native API
-- Fully open source implementation
-- Supports **iOS 11+**, **Swift 5.2**
-- Full offline support, you can browse channels and send messages while offline
-- Uses **UIKit** patterns and paradigms, so it's easy to integrate with your existing code
-- First-class support for **SwiftUI** and **Combine**
-- Built-in support for testing
+- **Swift native API:** Uses Swift's powerful language features to make the SDK usage easy and type-safe.
+- **Fully open source implementation:** You have access to the comple source code of the SDK here on GitHub.
+- **Offline support:** Browse channels and send messages while offline.
+- **Uses `UIKit` patterns and paradigms:** The API follows the design of native system SKDs. It makes integration with your existing code easy and familiar.
+- **First-class support for `SwiftUI` and `Combine`:** Built-it wrappers make using the SDK with the latest Apple frameworks a seamless experience.
+- **Built-in support for testing:** TBD
+- **Supports iOS 11+, Swift 5.2:** We proudly support older versions of iOS, so your app can stay available to almost everyone.
 
 ## **Quick Links** (WIP)
 
