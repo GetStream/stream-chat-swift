@@ -8,41 +8,21 @@ import SwiftUI
 
 @available(iOS 14, *)
 struct ChannelListView: View {
-    // TODO: It's safer to use `@StateObject` here because `@ObservedObject` can sometimes release the
-    // reference and this will crash.
-    @ObservedObject var channelList: ChatChannelListController.ObservableObject
-    /// Binding for channel actions ActionSheet
+    /// The `ChatChannelListController` used to interact with this channel. Will be synchronized in `onAppear`.
+    @StateObject var channelList: ChatChannelListController.ObservableObject
+    /// Binding for channel actions ActionSheet.
     @State private var showActionSheet: ChannelId?
-    /// Binding for ChatView navigation
+    /// Binding for ChatView navigation.
     @State private var showDetails: Int?
-    /// Binding for SettingsView
+    /// Binding for SettingsView.
     @State private var showSettings: Bool = false
-        
-    private lazy var cancellables: Set<AnyCancellable> = []
-    
-    init(channelList: ChatChannelListController.ObservableObject) {
-        self.channelList = channelList
-        
-        /// Dummy binding for State changes.
-        /// You can also observe State on `ChannelListController.ObservableObject`.
-        channelList.controller
-            .statePublisher
-            .sink(receiveValue: {
-                print("State change: \($0)")
-            })
-            .store(in: &cancellables)
-        
-        /// Dummy binding for channels changes.
-        channelList.controller
-            .channelsChangesPublisher
-            .sink(receiveValue: {
-                print("Channels changes: \($0)")
-            })
-            .store(in: &cancellables)
-    }
     
     var body: some View {
         VStack {
+            /// Loading indicator will appear when there is no channels in local storage and `synchronize()` is in progress.
+            if channelList.state != .remoteDataFetched && channelList.channels.isEmpty {
+                ProgressView("Loading channels...")
+            }
             List {
                 /// Range version is used here for pagination.
                 ForEach(0..<channelList.channels.count, id: \.self) { index in
@@ -78,32 +58,9 @@ struct ChannelListView: View {
     
     // MARK: - Views
     
-    private func channelView(for index: Int) -> AnyView {
-        AnyView(
-            HStack {
-                VStack(alignment: .leading) {
-                    Text(self.channel(index).name)
-                        .lineLimit(1)
-                        .font(.system(
-                            size: 19,
-                            /// Highlight channel name on unread messages.
-                            weight: self.channel(index).isUnread ? .medium : .regular,
-                            design: .default
-                        ))
-                    /// Latest message subtitle.
-                    self.channelDetails(for: index)
-                        .lineLimit(1)
-                        .font(.footnote)
-                        .foregroundColor(.accentColor)
-                }
-                Spacer()
-                /// Unread count.
-                unreadCountCircle(for: self.channel(index))
-            }
-        )
-    }
-    
-    /// Action sheet with channel actions.
+    /// `ActionSheet` with many actions that can be taken on the `channelController` such
+    /// as `updateChannel`, `muteChannel`, `unmuteChannel`, ``showChannel`, and `hideChannel`.
+    /// Will appear on long pressing the channel cell.
     private func actionSheet(for cid: ChannelId) -> ActionSheet {
         let channelController = channelList.controller.client.channelController(for: cid)
         return ActionSheet(title: Text(cid.id), message: Text(""), buttons: [
@@ -115,30 +72,53 @@ struct ChannelListView: View {
         ])
     }
     
-    var showSettingsButton: AnyView {
-        AnyView(
-            Button(action: {
-                self.showSettings = true
-            }) {
-                Image(systemName: "gear").imageScale(.large)
-            }
-        )
+    /// Add channel button. To create new channel we need to get a new `ChannelController` with `chatClient.channelController(createChannelWithId: ...)`
+    /// and call `synchronize()` on it.
+    var addChannelButton: some View {
+        Button(action: {
+            let id = UUID().uuidString
+            let controller = self.channelList.controller.client.channelController(
+                createChannelWithId: .init(type: .messaging, id: id),
+                members: [self.channelList.controller.client.currentUserId],
+                extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
+            )
+            controller.synchronize()
+        }) {
+            Image(systemName: "plus.bubble").imageScale(.large)
+        }
     }
     
-    var addChannelButton: AnyView {
-        AnyView(
-            Button(action: {
-                let id = UUID().uuidString
-                let controller = self.channelList.controller.client.channelController(
-                    createChannelWithId: .init(type: .messaging, id: id),
-                    members: [self.channelList.controller.client.currentUserId],
-                    extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
-                )
-                controller.synchronize()
-            }) {
-                Image(systemName: "plus.bubble").imageScale(.large)
+    /// Channel cell containter view.
+    private func channelView(for index: Int) -> some View {
+        HStack {
+            VStack(alignment: .leading) {
+                Text(self.channel(index).name)
+                    .lineLimit(1)
+                    .font(.system(
+                        size: UIFontMetrics.default.scaledValue(for: 19),
+                        /// Highlight channel name on unread messages.
+                        weight: self.channel(index).isUnread ? .medium : .regular,
+                        design: .default
+                    ))
+                /// Latest message subtitle.
+                self.channelDetails(for: index)
+                    .lineLimit(1)
+                    .font(.footnote)
+                    .foregroundColor(.accentColor)
             }
-        )
+            Spacer()
+            /// Unread count.
+            unreadCountCircle(for: self.channel(index))
+        }
+    }
+    
+    /// Button that will open `SettingsView`.
+    var showSettingsButton: some View {
+        Button(action: {
+            self.showSettings = true
+        }) {
+            Image(systemName: "gear").imageScale(.large)
+        }
     }
     
     /// Unread count number in circle.
@@ -152,12 +132,12 @@ struct ChannelListView: View {
                     .padding(6)
                     .background(Circle().foregroundColor(.accentColor))
             )
-            
         } else {
             return AnyView(EmptyView())
         }
     }
     
+    /// Formatted channel details.
     private func channelDetails(for index: Int) -> Text {
         let channel = self.channel(index)
         
