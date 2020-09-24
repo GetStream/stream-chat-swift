@@ -1187,8 +1187,8 @@ class ChannelController_Tests: StressTestCase {
         
         // New message values
         let text: String = .unique
-        let command: String = .unique
-        let arguments: String = .unique
+//        let command: String = .unique
+//        let arguments: String = .unique
         let parentMessageId: MessageId = .unique
         let showReplyInChannel = true
         let extraData: DefaultExtraData.Message = .defaultValue
@@ -1197,8 +1197,8 @@ class ChannelController_Tests: StressTestCase {
         var completionCalled = false
         controller.createNewMessage(
             text: text,
-            command: command,
-            arguments: arguments,
+//            command: command,
+//            arguments: arguments,
             parentMessageId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
             extraData: extraData
@@ -1219,8 +1219,8 @@ class ChannelController_Tests: StressTestCase {
         
         XCTAssertEqual(env.channelUpdater?.createNewMessage_cid, channelId)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_text, text)
-        XCTAssertEqual(env.channelUpdater?.createNewMessage_command, command)
-        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
+//        XCTAssertEqual(env.channelUpdater?.createNewMessage_command, command)
+//        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_parentMessageId, parentMessageId)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_showReplyInChannel, showReplyInChannel)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
@@ -1235,8 +1235,8 @@ class ChannelController_Tests: StressTestCase {
         let result: Result<MessageId, Error> = try await { [callbackQueueID] completion in
             controller.createNewMessage(
                 text: .unique,
-                command: .unique,
-                arguments: .unique,
+//                command: .unique,
+//                arguments: .unique,
                 parentMessageId: .unique,
                 showReplyInChannel: true,
                 extraData: .defaultValue
