@@ -53,10 +53,10 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     
     /// A list of locally cached members objects.
     ///
-    /// To access the full list of members of the channel, create a `ChatChannelController` for this channel and use it to query
-    /// all channel members.
+    /// - Important: This list doesn't have to contain all members of the channel. To access the full list of members, create
+    /// a `ChatChannelController` for this channel and use it to query all channel members.
     ///
-    public let members: Set<_ChatChannelMember<ExtraData.User>>
+    public let cachedMembers: Set<_ChatChannelMember<ExtraData.User>>
     
     /// A list of currently typing channel members.
     public let currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
@@ -137,7 +137,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.createdBy = createdBy
         self.config = config
         self.isFrozen = isFrozen
-        self.members = members
+        cachedMembers = members
         self.currentlyTypingMembers = currentlyTypingMembers
         self.watchers = watchers
 //        self.team = team
@@ -163,7 +163,7 @@ extension _ChatChannel {
 //    public var readEventsEnabled: Bool { /* config.readEventsEnabled && members.contains(Member.current) */ fatalError() }
     
     /// Returns `true` when the channel is a direct-message channel between 2 users.
-    public var isDirectMessage: Bool { cid.id.hasPrefix("!members") && members.count == 2 }
+    public var isDirectMessage: Bool { cid.id.hasPrefix("!members") && cachedMembers.count == 2 }
     
     /// returns `true` if the channel has one or more unread messages for the current user.
     public var isUnread: Bool { unreadCount.messages > 0 }

@@ -5,7 +5,7 @@
 import StreamChatClient
 
 func createMemberInfoString(for channel: ChatChannel) -> String {
-    "\(channel.members.count) members, \(channel.members.filter(\.isOnline).count) online"
+    "\(channel.memberCount) members, \(channel.watcherCount) online"
 }
 
 func createTypingMemberString(for channel: ChatChannel) -> String? {
