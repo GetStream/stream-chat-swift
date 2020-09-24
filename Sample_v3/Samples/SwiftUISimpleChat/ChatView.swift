@@ -2,21 +2,22 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import StreamChatClient
 import SwiftUI
 
 @available(iOS 14, *)
 struct ChatView: View {
-    /// The `ChannelController` used to interact with this channel. Will be synchornized in `onAppear`.
-    @State var channel: ChatChannelController.ObservableObject
-    /// The `text` written in the message composer
+    /// The `ChannelController` used to interact with this channel. Will be synchronized in `onAppear`.
+    @StateObject var channel: ChatChannelController.ObservableObject
+    /// The `text` written in the message composer.
     @State var text: String = ""
-    /// Binding for message actions ActionSheet
+    /// Binding for message actions and channel actions ActionSheet.
     @State var actionSheetTrigger: Bool = false
-    /// Message being edited
+    /// Message being edited.
     @State var editingMessage: ChatMessage?
 
-    /// User action
+    /// User action.
     @State var userActionTrigger: Bool = false
     @State var userAction: ((String) -> Void)?
 
@@ -25,19 +26,19 @@ struct ChatView: View {
             self.messageList().layoutPriority(1)
             self.composerView()
         }
-        /// Channel ActionSheet presenter.
+        /// ActionSheet presenter.
         .actionSheet(isPresented: $actionSheetTrigger, content: self.actionSheet)
         /// User action alert
         .alert(isPresented: $userActionTrigger, TextAlert(title: "User Id", placeholder: "steep-moon-9", action: {
             self.userAction?($0 ?? "steep-moon-9")
             self.userAction = nil
         }))
-        /// Set title to channel's name
+        /// Set title to channel's name.
         .navigationBarTitle(
-            Text(channel.channel.flatMap(createTypingMemberString) ?? channel.channel?.extraData.name ?? "Unnamed Channel"),
+            Text(createTypingMemberString(for: channel.channel) ?? channel.channel?.extraData.name ?? "Unnamed Channel"),
             displayMode: .inline
         )
-        /// Channel actions button
+        /// Channel actions button.
         .navigationBarItems(
             trailing: Button(action: { self.actionSheetTrigger = true }) {
                 Image(systemName: "ellipsis")
@@ -52,6 +53,7 @@ struct ChatView: View {
             self.messageView(for: message)
                 .onLongPressGesture { self.actionSheetTrigger = true; self.editingMessage = message }
         }
+        /// Flipping `List` upside down so messages are displayed from bottom to top.
         .scaleEffect(x: 1, y: -1, anchor: .center)
         .offset(x: 0, y: 2)
     }
@@ -70,9 +72,9 @@ struct ChatView: View {
         }
         
         return text
-            /// Inverted list workaround
+            /// We have flipped `List` with messages upside down so now we need to flip each message view.
             .scaleEffect(x: 1, y: -1, anchor: .center)
-            /// Load next more messages when the last is shown
+            /// Load next more messages when the last is shown.
             .onAppear {
                 if (self.channel.messages.last == message) {
                     self.channel.controller.loadPreviousMessages()
@@ -80,6 +82,7 @@ struct ChatView: View {
             }
     }
     
+    /// New message view with `TextEditor`.
     func composerView() -> some View {
         let textBinding = Binding(
             get: { self.text },
@@ -115,6 +118,7 @@ struct ChatView: View {
         }.padding()
     }
     
+    /// Send new message or edit message request if you are in editing state.
     func send() {
         guard let channelId = channel.channel?.cid else {
             return
@@ -131,9 +135,11 @@ struct ChatView: View {
         text = ""
     }
     
-    /// Action sheet with channel actions
+    /// ActionSheet for channel action or message actions depending on `editingMessage` value.
+    /// This is done due to `SwiftUI` limitations: it's not possible to have multiple `.actionSheet` modifiers.
     func actionSheet() -> ActionSheet {
         if let message = editingMessage {
+            /// Message ActionSheet with actions that can be taken on `MessageController`. (`deleteMessage`, `editMessage`)
             let messageController = channel.controller.client.messageController(cid: channel.channel!.cid, messageId: message.id)
             return ActionSheet(title: Text("Message Actions"), message: Text(""), buttons: [
                 .default(Text("Edit"), action: { self.editingMessage = message; self.text = message.text }),
@@ -141,6 +147,7 @@ struct ChatView: View {
                 .cancel { self.editingMessage = nil }
             ])
         } else {
+            /// Channel ActionSheet with actions that can be taken on `ChannelController`. (`addMembers`,`removeMembers`)
             return ActionSheet(title: Text("Channel Actions"), message: Text(""), buttons: [
                 .default(
                     Text("Add Member"), action: {
