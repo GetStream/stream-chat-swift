@@ -160,10 +160,10 @@ struct ChatView: View {
     }
     
     private func didKeystroke() {
-        channel.controller.keystroke()
+        channel.controller.sendKeystrokeEvent()
     }
     
     private func didStopTyping() {
-        channel.controller.stopTyping()
+        channel.controller.sendStopTypingEvent()
     }
 }

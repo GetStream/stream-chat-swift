@@ -569,7 +569,8 @@ public extension _ChatChannelController {
     /// This method is meant to be called every time the user presses a key. The method will manage requests and timer as needed.
     ///
     /// - Parameter completion: a completion block with an error if the request was failed.
-    func keystroke(completion: ((Error?) -> Void)? = nil) {
+    ///
+    func sendKeystrokeEvent(completion: ((Error?) -> Void)? = nil) {
         guard isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
             return
@@ -585,7 +586,8 @@ public extension _ChatChannelController {
     /// `sendStartTypingEvent`/`sendStopTypingEvent` calls automatically.
     ///
     /// - Parameter completion: a completion block with an error if the request was failed.
-    func startTyping(completion: ((Error?) -> Void)? = nil) {
+    ///
+    func sendStartTypingEvent(completion: ((Error?) -> Void)? = nil) {
         guard isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
             return
@@ -601,7 +603,8 @@ public extension _ChatChannelController {
     /// `sendStartTypingEvent`/`sendStopTypingEvent` calls automatically.
     ///
     /// - Parameter completion: a completion block with an error if the request was failed.
-    func stopTyping(completion: ((Error?) -> Void)? = nil) {
+    ///
+    func sendStopTypingEvent(completion: ((Error?) -> Void)? = nil) {
         guard isChannelAlreadyCreated else {
             channelModificationFailed { completion?($0) }
             return
