@@ -7,7 +7,7 @@ import Foundation
 
 public extension _ChatClient {
     /// Creates a new `MessageController` for the message with the provided id.
-    /// - Parameter cid: The channel identifer the message relates to.
+    /// - Parameter cid: The channel identifier the message relates to.
     /// - Parameter messageId: The message identifier.
     /// - Returns: A new instance of `MessageController`.
     func messageController(cid: ChannelId, messageId: MessageId) -> _ChatMessageController<ExtraData> {
@@ -15,22 +15,42 @@ public extension _ChatClient {
     }
 }
 
-/// A convenience typealias for `MessageControllerGeneric` with `DefaultExtraData`.
+/// `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
+///
+/// Learn more about `ChatMessageController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#messages).
+///
+/// - Note: `ChatMessageController` is a typealias of `_ChatMessageController` with default extra data. If you're using
+/// custom extra data, create your own typealias of `_ChatMessageController`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
 public typealias ChatMessageController = _ChatMessageController<DefaultExtraData>
 
-/// The `MessageControllerGeneric` is designed to edit the message it was created with.
+/// `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
+///
+/// Learn more about `ChatMessageController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#messages).
+///
+/// - Note: `_ChatMessageController` type is not meant to be used directly. If you're using default extra data, use
+/// `ChatMessageController` typealias instead. If you're using custom extra data, create your own typealias
+/// of `_ChatMessageController`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
 public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: _ChatClient<ExtraData>
     
-    /// The channel identifier the message is related to.
+    /// The identified of the channel the message belongs to.
     public let cid: ChannelId
     
-    /// The message identifier this controller manages.
+    /// The identified of the message this controllers represents.
     public let messageId: MessageId
     
-    /// The message data
-    /// To observe the updates of this value, set your class as a delegate of this controller or use `Combine` wrapper.
+    /// The message object this controller represents.
+    ///
+    /// To observe changes of the message, set your class as a delegate of this controller or use the provided
+    /// `Combine` publishers.
+    ///
     public var message: _ChatMessage<ExtraData>? { messageObserver.item }
     
     private let environment: Environment
@@ -77,19 +97,8 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
         self.messageId = messageId
         self.environment = environment
     }
-    
-    /// Synchronize local data with remote.
-    ///
-    /// 1. **Synchronously** loads the data for the referenced objects from the local cache if it is not loaded yet.
-    /// Any further changes to the data are communicated using `delegate`.
-    ///
-    /// 2. It also **asynchronously** fetches the latest version of the data from the servers. Once the remote fetch is completed,
-    /// the completion block is called. If the updated data differ from the locally cached ones, the controller uses the `delegate`
-    /// methods to inform about the changes.
-    ///
-    /// - Parameter completion: Called when the controller has finished fetching remote data.
-    ///                         If the data fetching fails, the `error` variable contains more details about the problem.
-    public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+
+    override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         startMessageObserver()
         
         messageUpdater.getMessage(cid: cid, messageId: messageId) { [weak self] error in
@@ -100,7 +109,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     }
     
     /// Initializing of `messageObserver` will start local data observing.
-    /// In most cases it will be done by accesing `messages` but it's possible that only
+    /// In most cases it will be done by accusing `messages` but it's possible that only
     /// changes will be observed.
     private func startMessageObserver() {
         _ = messageObserver
@@ -111,10 +120,12 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
 
 public extension _ChatMessageController {
     /// Edits the message this controller manages with the provided values.
+    ///
     /// - Parameters:
     ///   - text: The updated message text.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
+    ///
     func editMessage(text: String, completion: ((Error?) -> Void)? = nil) {
         messageUpdater.editMessage(messageId: messageId, text: text) { [weak self] error in
             self?.callback {
@@ -123,10 +134,12 @@ public extension _ChatMessageController {
         }
     }
     
-    /// Delete the message this controller manages.
+    /// Deletes the message this controller manages.
+    ///
     /// - Parameters:
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
+    ///
     func deleteMessage(completion: ((Error?) -> Void)? = nil) {
         messageUpdater.deleteMessage(messageId: messageId) { [weak self] error in
             self?.callback {
@@ -180,12 +193,13 @@ private extension _ChatMessageController {
 
 // MARK: - Delegate
 
-/// `MessageController` uses this protocol to communicate changes to its delegate.
+/// `ChatMessageController` uses this protocol to communicate changes to its delegate.
 ///
 /// This protocol can be used only when no custom extra data are specified.
-/// If you're using custom extra data types, please use `MessageControllerDelegateGeneric` instead.
+/// If you're using custom extra data types, please use `_MessageControllerDelegate` instead.
+///
 public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
-    /// The controller observed a change in the `Message`.
+    /// The controller observed a change in the `ChatMessage` its observes.
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>)
 }
 
@@ -193,14 +207,15 @@ public extension ChatMessageControllerDelegate {
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {}
 }
 
-/// `MessageControllerDelegateGeneric` uses this protocol to communicate changes to its delegate.
+/// `_MessageControllerDelegate` uses this protocol to communicate changes to its delegate.
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
 /// named `MessageControllerDelegate`, which hides the generic types, and make the usage easier.
+///
 public protocol _MessageControllerDelegate: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
-    /// The controller observed a change in the `MessageModel<ExtraData>`.
+    /// The controller observed a change in the `ChatMessage` its observes.
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
@@ -278,7 +293,7 @@ public extension _ChatMessageController {
 }
 
 public extension ChatMessageController {
-    /// Set the delegate of `MessageController` to observe the changes in the system.
+    /// Set the delegate of `ChatMessageController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
