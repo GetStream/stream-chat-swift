@@ -28,6 +28,20 @@ public class DataController: Controller {
             }
         }
     }
+    
+    /// Synchronize local data with remote.
+    ///
+    /// **Asynchronously** fetches the latest version of the data from the servers. Once the remote fetch is completed,
+    /// the completion block is called. If the updated data differ from the locally cached ones, the controller uses the
+    /// callback methods (delegate, `Combine` publishers, etc.) to inform about the changes.
+    ///
+    /// - Parameter completion: Called when the controller has finished fetching remote data. If the data fetching fails,
+    /// the `error` variable contains more details about the problem.
+    ///
+    public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        // swiftlint:disable:previous unavailable_function
+        fatalError("`synchronize` method must be overriden by the subclass.")
+    }
 
     /// The queue which is used to perform callback calls. The default value is `.main`.
     public var callbackQueue: DispatchQueue = .main
