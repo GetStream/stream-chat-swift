@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// The base class for all controllers. Not meant to be used directly.
+/// The base class for controllers which represent and control a data entity. Not meant to be used directly.
 public class DataController: Controller {
     /// Describes the possible states of `DataController`
     public enum State: Equatable {
@@ -20,7 +20,7 @@ public class DataController: Controller {
         case remoteDataFetchFailed(ClientError)
     }
     
-    /// The current state of the `DataController`.
+    /// The current state of the controller.
     public internal(set) var state: State = .initialized {
         didSet {
             callback {
@@ -40,6 +40,11 @@ public class DataController: Controller {
 /// A delegate protocol some Controllers use to propagate the information about controller `state` changes. You can use it to let
 /// users know a certain activity is happening in the background, i.e. using a non-blocking activity indicator.
 public protocol DataControllerStateDelegate: AnyObject {
+    /// Called when the observed controller changed it's state.
+    ///
+    /// - Parameters:
+    ///   - controller: The controller the change is related to.
+    ///   - state: The new state of the controller.
     func controller(_ controller: DataController, didChangeState state: DataController.State)
 }
 
