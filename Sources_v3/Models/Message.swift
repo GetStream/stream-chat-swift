@@ -23,6 +23,7 @@ public typealias ChatMessage = _ChatMessage<DefaultExtraData>
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
+@dynamicMemberLookup
 public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// A unique identifier of the message.
     public let id: MessageId
@@ -97,6 +98,12 @@ extension _ChatMessage: Hashable {
     
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+extension _ChatMessage {
+    public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.Message, T>) -> T {
+        extraData[keyPath: keyPath]
     }
 }
 
