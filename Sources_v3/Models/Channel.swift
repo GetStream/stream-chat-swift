@@ -20,6 +20,7 @@ public typealias ChatChannel = _ChatChannel<DefaultExtraData>
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
+@dynamicMemberLookup
 public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// The `ChannelId` of the channel.
     public let cid: ChannelId
@@ -171,6 +172,12 @@ extension _ChatChannel {
 
 /// Additional data fields `ChannelModel` can be extended with. You can use it to store your custom data related to a channel.
 public protocol ChannelExtraData: ExtraData {}
+
+extension _ChatChannel {
+    public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.Channel, T>) -> T {
+        extraData[keyPath: keyPath]
+    }
+}
 
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.
 public protocol AnyChannel {}
