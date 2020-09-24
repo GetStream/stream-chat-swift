@@ -1,4 +1,4 @@
-github "daltoniam/Starscream" ~> 3.1
+github "daltoniam/Starscream" ~> 4.0
 
 github "ReactiveX/RxSwift" ~> 5.1
 
