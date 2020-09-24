@@ -625,8 +625,8 @@ public extension _ChatChannelController {
     ///
     func createNewMessage(
         text: String,
-        command: String? = nil,
-        arguments: String? = nil,
+//        command: String? = nil,
+//        arguments: String? = nil,
         parentMessageId: MessageId? = nil,
         showReplyInChannel: Bool = false,
         extraData: ExtraData.Message = .defaultValue,
@@ -645,8 +645,8 @@ public extension _ChatChannelController {
         updater.createNewMessage(
             in: channelId,
             text: text,
-            command: command,
-            arguments: arguments,
+            command: nil,
+            arguments: nil,
             parentMessageId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
             extraData: extraData
