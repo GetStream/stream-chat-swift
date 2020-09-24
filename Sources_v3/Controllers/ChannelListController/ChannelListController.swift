@@ -9,6 +9,7 @@ extension _ChatClient {
     /// Creates a new `ChannelListController` with the provided channel query.
     ///
     /// - Parameter query: The query specify the filter and sorting of the channels the controller should fetch.
+    ///
     /// - Returns: A new instance of `ChannelController`.
     ///
     public func channelListController(query: ChannelListQuery) -> _ChatChannelListController<ExtraData> {
@@ -16,12 +17,26 @@ extension _ChatClient {
     }
 }
 
-/// A convenience typealias for `ChannelListControllerGeneric` with `DefaultExtraData`
+/// `_ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
+///
+/// Learn more about `_ChatChannelListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#channel-list).
+///
+/// - Note: `ChatChannelListController` is a typealias of `_ChatChannelListController` with default extra data. If you're using
+/// custom extra data, create your own typealias of `_ChatChannelListController`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
 public typealias ChatChannelListController = _ChatChannelListController<DefaultExtraData>
 
-/// `ChannelListController` allows observing and mutating the list of channels specified by a channel query.
+/// `_ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
 ///
-///  ... you can do this and that
+/// Learn more about `_ChatChannelListController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#channel-list).
+///
+/// - Note: `_ChatChannelListController` type is not meant to be used directly. If you're using default extra data, use
+/// `ChatChannelController` typealias instead. If you're using custom extra data, create your own typealias
+/// of `_ChatChannelListController`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
 public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of channels.
@@ -30,7 +45,11 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     /// The `ChatClient` instance this controller belongs to.
     public let client: _ChatClient<ExtraData>
     
-    /// The channels matching the query. To observe updates in the list, set your class as a delegate of this controller.
+    /// The channels matching the query of this controller.
+    ///
+    /// To observe changes of the channels, set your class as a delegate of this controller or use the provided
+    /// `Combine` publishers.
+    ///
     public var channels: [_ChatChannel<ExtraData>] { channelListObserver.items }
     
     /// The worker used to fetch the remote data and communicate with servers.
@@ -98,15 +117,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
         self.environment = environment
     }
     
-    /// Synchronize local data with remote.
-    ///
-    /// **Asynchronously** fetches the latest version of the data from the servers. Once the remote fetch is completed,
-    /// the completion block is called. If the updated data differ from the locally cached ones, the controller uses the `delegate`
-    /// methods to inform about the changes.
-    ///
-    /// - Parameter completion: Called when the controller has finished fetching remote data.
-    ///                         If the data fetching fails, the `error` variable contains more details about the problem.
-    public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         worker.update(channelListQuery: query) { [weak self] error in
             guard let self = self else { return }
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
@@ -115,7 +126,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     }
     
     /// Initializing of `channelListObserver` will start local data observing.
-    /// In most cases it will be done by accesing `channels` but it's possible that only
+    /// In most cases it will be done by accessing `channels` but it's possible that only
     /// changes will be observed.
     private func startChannelListObserver() {
         _ = channelListObserver
@@ -129,6 +140,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
+    ///
     public func setDelegate<Delegate: _ChatChannelListControllerDelegate>(_ delegate: Delegate)
         where Delegate.ExtraData == ExtraData {
         multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(delegate)
@@ -139,10 +151,12 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
 
 public extension _ChatChannelListController {
     /// Loads next channels from backend.
+    ///
     /// - Parameters:
     ///   - limit: Limit for page size.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
+    ///
     func loadNextChannels(
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
@@ -155,7 +169,9 @@ public extension _ChatChannelListController {
     }
     
     /// Marks all channels for a user as read.
+    ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
     func markAllRead(completion: ((Error?) -> Void)? = nil) {
         worker.markAllRead { [weak self] error in
             self?.callback {
@@ -196,11 +212,18 @@ extension _ChatChannelListController where ExtraData == DefaultExtraData {
     }
 }
 
-/// `ChannelListController` uses this protocol to communicate changes to its delegate.
+/// `ChatChannelListController` uses this protocol to communicate changes to its delegate.
 ///
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
-/// please use `GenericChannelListController` instead.
+/// please use `_ChatChannelListControllerDelegate` instead.
+///
 public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
+    /// The controller changed the list of observed channels.
+    ///
+    /// - Parameters:
+    ///   - controller: The controller emitting the change callback.
+    ///   - changes: The change to the list of channels.\
+    ///
     func controller(
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
@@ -214,12 +237,20 @@ public extension ChatChannelListControllerDelegate {
     ) {}
 }
 
-/// `ChannelListController` uses this protocol to communicate changes to its delegate.
+/// `ChatChannelListController` uses this protocol to communicate changes to its delegate.
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChannelListControllerDelegate`, which hides the generic types, and make the usage easier.
+/// named `ChatChannelListControllerDelegate`, which hides the generic types, and make the usage easier.
+///
 public protocol _ChatChannelListControllerDelegate: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
+    
+    /// The controller changed the list of observed channels.
+    ///
+    /// - Parameters:
+    ///   - controller: The controller emitting the change callback.
+    ///   - changes: The change to the list of channels.\
+    ///
     func controller(
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
