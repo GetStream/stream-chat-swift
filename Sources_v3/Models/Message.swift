@@ -7,6 +7,99 @@ import Foundation
 /// A unique identifier of a message.
 public typealias MessageId = String
 
+/// A type representing a chat message. `ChatMessage` is an immutable snapshot of a chat message entity at the given time.
+///
+/// - Note: `ChatMessage` is a typealias of `_ChatMessage` with default extra data. If you're using custom extra data,
+/// create your own typealias of `_ChatMessage`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public typealias ChatMessage = _ChatMessage<DefaultExtraData>
+
+/// A type representing a chat message. `_ChatMessage` is an immutable snapshot of a chat message entity at the given time.
+///
+/// - Note: `_ChatMessage` type is not meant to be used directly. If you're using default extra data, use `ChatMessage`
+/// typealias instead. If you're using custom extra data, create your own typealias of `_ChatMessage`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public struct _ChatMessage<ExtraData: ExtraDataTypes> {
+    /// A unique identifier of the message.
+    public let id: MessageId
+    
+    /// The text of the message.
+    public let text: String
+    
+    /// A type of the message.
+    public let type: MessageType
+    
+    /// If the message was created by a specific `/` command, the command is saved in this variable.
+    public let command: String?
+    
+    /// Date when the message was created on the server. This date can differ from `locallyCreatedAt`.
+    public let createdAt: Date
+    
+    /// Date when the message was created locally and scheduled to be send. Applies only for the messages of the current user.
+    public let locallyCreatedAt: Date?
+
+    /// A date when the message was updated last time.
+    public let updatedAt: Date
+    
+    /// If the message was deleted, this variable contains a timestamp of that event, otherwise `nil`.
+    public let deletedAt: Date?
+    
+    /// If the message was created by a specific `/` command, the arguments of the command are stored in this variable.
+    public let arguments: String?
+    
+    /// The ID of the parent message, if the message is a reply, otherwise `nil`.
+    public let parentMessageId: MessageId?
+    
+    /// If the message is a reply and this flag is `true`, the message should be also shown in the channel, not only in the
+    /// reply thread.
+    public let showReplyInChannel: Bool
+    
+    /// Contains the number of replies for this message.
+    public let replyCount: Int
+    
+    /// Additional data associated with the message.
+    ///
+    /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+    ///
+    public let extraData: ExtraData.Message
+    
+    /// A flag indicating whether the message is a silent message.
+    ///
+    /// Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
+    ///
+    public let isSilent: Bool
+    
+    /// The reactions to the message created by any user.
+    public let reactionScores: [String: Int]
+    
+    /// The user which is the author of the message.
+    public let author: _ChatUser<ExtraData.User>
+    
+    /// A list of users that are mentioned in this message.
+    public let mentionedUsers: Set<_ChatUser<ExtraData.User>>
+    
+    /// A possible additional local state of the message. Applies only for the messages of the current user.
+    ///
+    /// Most of the time this value is `nil`. This value is always `nil` for messages not from the current user. A typical
+    /// use of this value is to check if a message is pending send/delete, and update the UI accordingly.
+    ///
+    public let localState: LocalMessageState?
+}
+
+extension _ChatMessage: Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
 /// A type of the message.
 public enum MessageType: String, Codable {
     /// A regular message created in the channel.
@@ -46,54 +139,16 @@ public enum LocalMessageState: String {
     case sending
     /// Sending of the message failed after multiple of tries. The system is not trying to send this message anymore.
     case sendingFailed
-
+    
     /// The message is waiting to be deleted.
     case deleting
     /// Deleting of the message failed after multiple of tries. The system is not trying to delete this message anymore.
     case deletingFailed
 }
 
-/// A convenient type alias for `_ChatMessage` with `DefaultExtraData`.
-public typealias ChatMessage = _ChatMessage<DefaultExtraData>
-
-/// Additional data fields `MessageModel` can be extended with. You can use it to store your custom data related to a message.
+/// You need to make your custom type conforming to this protocol if you want to use it for extending `ChatMessage` entity with
+/// your custom additional data.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
 public protocol MessageExtraData: ExtraData {}
-
-public struct _ChatMessage<ExtraData: ExtraDataTypes> {
-    public let id: MessageId
-    public let text: String
-    public let type: MessageType
-    public let command: String?
-    public let createdAt: Date
-    
-    /// Date when the message was created locally and scheduled to be send. Applies only for the messages of the current user.
-    public let locallyCreatedAt: Date?
-    public let updatedAt: Date
-    public let deletedAt: Date?
-    public let arguments: String?
-    public let parentMessageId: MessageId?
-    public let showReplyInChannel: Bool
-    public let replyCount: Int
-    public let extraData: ExtraData.Message
-    public let isSilent: Bool
-    public let reactionScores: [String: Int]
-    
-    public let author: _ChatUser<ExtraData.User>
-    public let mentionedUsers: Set<_ChatUser<ExtraData.User>>
-    
-    /// A possible additional local state of the message. Applies only for the messages of the current user.
-    ///
-    /// Most of the time this value is `nil`. This value is always `nil` for messages not from the current user. A typical
-    /// use of this value is to check if a message is pending send/delete, and update the UI accordingly.
-    public let localState: LocalMessageState?
-}
-
-extension _ChatMessage: Hashable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        lhs.id == rhs.id
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-}
