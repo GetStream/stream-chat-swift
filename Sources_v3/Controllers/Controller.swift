@@ -4,7 +4,11 @@
 
 import Foundation
 
-protocol Controller {
+/// A protocol to which all controllers conform to.
+///
+/// This protocol is not meant to be adopted by your custom types.
+///
+public protocol Controller {
     /// The queue which is used to perform callback calls
     var callbackQueue: DispatchQueue { get set }
 }
