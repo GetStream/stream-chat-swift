@@ -37,7 +37,7 @@ import Foundation
         }
         
         func disconnect() {
-            webSocket.disconnect(forceTimeout: 0)
+            webSocket.disconnect()
         }
         
         func sendPing() {
@@ -46,19 +46,28 @@ import Foundation
     }
     
     extension StarscreamWebSocketProvider: Starscream.WebSocketDelegate {
-        func websocketDidConnect(socket: Starscream.WebSocketClient) {
-            delegate?.webSocketDidConnect()
+        func didReceive(event: WebSocketEvent, client: WebSocket) {
+            switch event {
+            case .connected:
+                delegate?.webSocketDidConnect()
+            case let .text(text):
+                delegate?.webSocketDidReceiveMessage(text)
+            case let .error(error):
+                delegate?.webSocketDidDisconnect(error: error.map(WebSocketEngineError.init))
+            case let .disconnected(reason, code):
+                let error = WebSocketEngineError(reason: reason, code: Int(code), engineError: nil)
+                delegate?.webSocketDidDisconnect(error: error)
+            case .cancelled:
+                let error = WebSocketEngineError(
+                    reason: "Cancelled",
+                    code: -1,
+                    engineError: nil
+                )
+                delegate?.webSocketDidDisconnect(error: error)
+            default:
+                break
+            }
         }
-        
-        func websocketDidDisconnect(socket: Starscream.WebSocketClient, error: Error?) {
-            delegate?.webSocketDidDisconnect(error: error.map(WebSocketEngineError.init))
-        }
-        
-        func websocketDidReceiveMessage(socket: Starscream.WebSocketClient, text: String) {
-            delegate?.webSocketDidReceiveMessage(text)
-        }
-        
-        func websocketDidReceiveData(socket: Starscream.WebSocketClient, data: Data) {}
     }
     
 #endif
