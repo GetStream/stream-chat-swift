@@ -1121,13 +1121,13 @@ class ChannelController_Tests: StressTestCase {
     // MARK: - Keystroke
     
     func test_keystroke() {
-        controller.keystroke {
+        controller.sendKeystrokeEvent {
             XCTAssertNil($0)
         }
         
         // Simulate `keystroke` call and catch the completion
         var completionCalledError: Error?
-        controller.keystroke { completionCalledError = $0 }
+        controller.sendKeystrokeEvent { completionCalledError = $0 }
         
         // Check keystroke cid.
         XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
@@ -1141,13 +1141,13 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_startTyping() {
-        controller.startTyping {
+        controller.sendStartTypingEvent {
             XCTAssertNil($0)
         }
         
         // Simulate `startTyping` call and catch the completion
         var completionCalledError: Error?
-        controller.startTyping { completionCalledError = $0 }
+        controller.sendStartTypingEvent { completionCalledError = $0 }
         
         // Check `startTyping` cid.
         XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
@@ -1161,13 +1161,13 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_stopTyping() {
-        controller.stopTyping {
+        controller.sendStopTypingEvent {
             XCTAssertNil($0)
         }
         
         // Simulate `stopTyping` call and catch the completion
         var completionCalledError: Error?
-        controller.stopTyping { completionCalledError = $0 }
+        controller.sendStopTypingEvent { completionCalledError = $0 }
         
         // Check `stopTyping` cid.
         XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)

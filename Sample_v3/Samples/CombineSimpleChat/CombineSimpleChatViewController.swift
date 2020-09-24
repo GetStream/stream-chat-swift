@@ -359,7 +359,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     /// other users will know the current user is typing.
     ///
     func textViewDidChange(_ textView: UITextView) {
-        channelController.keystroke()
+        channelController.sendKeystrokeEvent()
     }
     
     ///
@@ -369,7 +369,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
     /// events so other users will know the current user stopped typing.
     ///
     func textViewDidEndEditing(_ textView: UITextView) {
-        channelController.stopTyping()
+        channelController.sendStopTypingEvent()
     }
 
     // MARK: - UI code
