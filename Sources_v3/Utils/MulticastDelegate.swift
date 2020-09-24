@@ -18,6 +18,7 @@ struct MulticastDelegate<WrappedDelegate> {
     }
     
     /// The is usually the delegate instance you want to expose to your users as _the_ delegate.
+    // swiftlint:disable:next weak_delegate
     var mainDelegate: WrappedDelegate?
     
     /// Aditional delegates that receive the same callback as the main one. These delegates receive callbacks also when

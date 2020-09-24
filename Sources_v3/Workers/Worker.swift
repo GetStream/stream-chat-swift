@@ -24,26 +24,3 @@ class Worker: NSObject { // TODO: remove NSObject
         super.init()
     }
 }
-
-/// A convenience superclass for all event-based workers. Not meant to be used directly. Override `handleNewEvent(event: Event)`
-/// and provide your custom logic there.
-class EventHandlerWorker<ExtraData: ExtraDataTypes>: Worker {
-    override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
-        super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
-        
-        webSocketClient.eventNotificationCenter
-            .addObserver(self, selector: #selector(handleNewEventNotification), name: .NewEventReceived, object: nil)
-    }
-    
-    @objc private func handleNewEventNotification(_ notification: Notification) {
-        guard let event = notification.event else {
-            log.error("Error: NewEventNotification without an Event.")
-            return
-        }
-        handleNewEvent(event: event)
-    }
-    
-    func handleNewEvent(event: Event) {
-        fatalError("handleNewEvent needs to be overriden")
-    }
-}

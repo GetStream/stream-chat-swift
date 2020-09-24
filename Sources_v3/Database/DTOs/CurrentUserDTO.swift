@@ -90,7 +90,8 @@ extension CurrentUserDTO {
     
     /// Snapshots the current state of `CurrentUserDTO` and returns its representation for used in API calls.
     func asRequestBody<ExtraData: UserExtraData>() -> CurrentUserRequestBody<ExtraData> {
-        fatalError()
+        // swiftlint:disable:previous unavailable_function
+        fatalError("Not implemented yet")
         // TODO: CIS-235
     }
 }

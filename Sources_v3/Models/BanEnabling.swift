@@ -52,7 +52,7 @@ public enum BanEnabling {
             return true
             
         case .enabledForModerators:
-            fatalError()
+            fatalError("Not implementated yet")
             //      let members = Array(channel.members)
             //      return members.first(where: { $0.user.isCurrent && ($0.role == .moderator || $0.role == .admin) }) != nil
         }

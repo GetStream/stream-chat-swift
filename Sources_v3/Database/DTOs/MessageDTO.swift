@@ -109,6 +109,8 @@ class MessageDTO: NSManagedObject {
 extension MessageDTO {
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     var localMessageState: LocalMessageState? {
+        // 👇This shouldn't be needed but there's a bug in SwiftLint. Remove when fixed.
+        // swiftlint:disable:next implicit_getter
         get { localMessageStateRaw.flatMap(LocalMessageState.init(rawValue:)) }
         set { localMessageStateRaw = newValue?.rawValue }
     }

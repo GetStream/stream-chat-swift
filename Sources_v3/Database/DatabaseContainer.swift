@@ -50,7 +50,8 @@ class DatabaseContainer: NSPersistentContainer {
     ///
     /// - Parameters:
     ///   - kind: The kind of `DatabaseContainer` that should be created.
-    ///   - shouldFlushOnStart: Flag indicating that all local data should be deleted on `DatabaseContainer` creation. (non-recoverable operation)
+    ///   - shouldFlushOnStart: Flag indicating that all local data should be deleted on `DatabaseContainer` creation.
+    ///   (non-recoverable operation)
     ///   - modelName: The name of the model the container loads.
     ///   - completion: Called when the container finishes its initialization. If the initialization fails, called
     ///   with an error.
