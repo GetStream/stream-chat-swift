@@ -15,6 +15,15 @@
 
 [stream-chat-swift](https://github.com/GetStream/stream-chat-swift) is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications. This SDK also supports macOS via [Mac Catalyst](#mac-catalyst).
 
+---
+
+## Feeling adventurous?
+
+ 👉 **Check out the [README](https://github.com/GetStream/stream-chat-swift/tree/master_v3) of the new version of the `StreamChat` framework, currently in public beta.**
+
+---
+
+
 <img align="right" src="https://i0.wp.com/apptractor.ru/wp-content/uploads/2019/10/Stream-Chat.jpg" width="50%" />
 
 **Quick Links**
