@@ -165,7 +165,7 @@
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="STREAM CHAT SAMPLES" id="uJ9-GW-DgN">
-                                <string key="footerTitle">These samples are built on top of our low-level client, StreamChat. It provides local database logic and API calls, but no UI components. Use the low-level client if you want to build a completely custom UI from scratch.</string>
+                                <string key="footerTitle">These samples are built on top of StreamChat. It provides local database logic and API calls, but no UI components. Use StreamChat if you want to build a completely custom UI from scratch.</string>
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="Dab-pb-Oad" detailTextLabel="qTp-y1-azq" style="IBUITableViewCellStyleValue1" id="UXl-OF-aT4">
                                         <rect key="frame" x="0.0" y="340.5" width="414" height="43.5"/>
@@ -242,7 +242,7 @@
                                 </cells>
                             </tableViewSection>
                             <tableViewSection headerTitle="STREAM CHAT UI SAMPLES" id="X2b-xv-Xhv">
-                                <string key="footerTitle">These samples are built on top of our high-level client, StreamChatUI. It provides high-level UIKit components that run on top of the low-level client. Use StreamChatUI if you want a ready-made UI with some customizability options.</string>
+                                <string key="footerTitle">These samples are built on top of StreamChatUI. It provides UIKit components that run on top of StreamChat. Use StreamChatUI if you want a ready-made UI with some customizability options.</string>
                                 <cells>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" textLabel="vXx-3A-JmD" detailTextLabel="hXI-Sb-R1n" style="IBUITableViewCellStyleValue1" id="VTJ-un-u6c">
                                         <rect key="frame" x="0.0" y="594.5" width="414" height="43.5"/>
