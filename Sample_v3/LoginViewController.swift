@@ -232,7 +232,7 @@ extension LoginViewController {
         case 2:
             return .development
         default:
-            return jwtTextField.text ?? ""
+            fatalError("Segmented Control out of bounds")
         }
     }
 }
