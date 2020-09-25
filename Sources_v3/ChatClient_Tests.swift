@@ -14,7 +14,7 @@ class ChatClient_Tests: StressTestCase {
     var inMemoryStorageConfig: ChatClientConfig {
         var config = ChatClientConfig()
         config.isLocalStorageEnabled = false
-        config.baseURL = BaseURL(urlString: .unique)
+        config.baseURL = BaseURL(urlString: .unique)!
         return config
     }
     

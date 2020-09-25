@@ -7,16 +7,16 @@ import Foundation
 /// A struct representing base URL for `ChatClient`.
 public struct BaseURL: CustomStringConvertible {
     /// The base url for StreamChat data center located in the US East Cost.
-    public static let usEast = BaseURL(urlString: "https://chat-proxy-us-east.stream-io-api.com/")
+    public static let usEast = BaseURL(urlString: "https://chat-proxy-us-east.stream-io-api.com/")!
     
     /// The base url for StreamChat data center located in Dublin.
-    public static let dublin = BaseURL(urlString: "https://chat-proxy-dublin.stream-io-api.com/")
+    public static let dublin = BaseURL(urlString: "https://chat-proxy-dublin.stream-io-api.com/")!
     
     /// The base url for StreamChat data center located in Singapore.
-    public static let singapore = BaseURL(urlString: "https://chat-proxy-singapore.stream-io-api.com/")
+    public static let singapore = BaseURL(urlString: "https://chat-proxy-singapore.stream-io-api.com/")!
     
     /// The base url for StreamChat data center located in Sydney.
-    public static let sydney = BaseURL(urlString: "https://chat-proxy-sydney.stream-io-api.com/")
+    public static let sydney = BaseURL(urlString: "https://chat-proxy-sydney.stream-io-api.com/")!
     
     let restAPIBaseURL: URL
     let webSocketBaseURL: URL
@@ -26,8 +26,9 @@ public struct BaseURL: CustomStringConvertible {
     /// Create a base URL from an URL string.
     ///
     /// - Parameter urlString: a Stream Chat server location url string.
-    public init(urlString: String) {
-        self.init(url: URL(string: urlString)!)
+    init?(urlString: String) {
+        guard let url = URL(string: urlString) else { return nil }
+        self.init(url: url)
     }
     
     /// Init with a custom server URL.
