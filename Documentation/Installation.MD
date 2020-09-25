@@ -7,15 +7,15 @@ You can use several methods to install the Low Level Client iOS SDK.
 To integrate StreamChat into your Xcode project using CocoaPods, add this entry in your `Podfile`:
 
 ```ruby
-pod 'StreamChatClient' ~> '3.0'
+pod 'StreamChat', '~> 3.0-beta.1'
 
-⚠️ If you want to support iOS versions prior to iOS 13, please also add
-pod 'Starscream' ~> '3.0'
+# ⚠️ If you want to support iOS versions prior to iOS 13, please also add:
+pod 'Starscream', '~> 3.0'
 ```
 
 Then run `pod install`.
 
-## Swift Package Manager
+## Swift Package Manager (WIP)
 
 You can directly add dependency in Xcode 11+ using repo url, or in your `Package.swift` file, add to `dependencies`:
 ```swift
@@ -27,7 +27,7 @@ dependencies: [
 ]
 ```
 
-## Carthage
+## Carthage (WIP)
 
 To integrate `StreamChatClient` into your Xcode project using Carthage, specify it in your `Cartfile`:
 
@@ -40,4 +40,4 @@ github "daltoniam/Starscream" >= 3.0.0
 
 Then run: `carthage update --platform iOS --new-resolver`. It will build the frameworks: `StreamChatClient.framework` and optionally `Starscream.framework` in `<Path to your Project>/Carthage/Build/iOS/` from where you can add them to your project and link them with your app target. 
 
-Please follow the [recomended steps from the official Carthage documentation](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application).
+Please follow the [recommended steps from the official Carthage documentation](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application).
