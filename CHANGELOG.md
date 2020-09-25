@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.3.3](https://github.com/GetStream/stream-chat-swift/releases/tag/2.3.3)
+_September 25, 2020_
+
 ### ✅ Added
 - `enableSlowMode` and `disableSlowMode` for channels, see [docs](https://getstream.io/chat/docs/slow_mode/?language=swift) [#514](https://github.com/GetStream/stream-chat-swift/issues/514)
 

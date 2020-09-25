@@ -38,11 +38,11 @@ lane :release do |options|
   version_bump_podspec(path: "StreamChatCore.podspec", version_number: version_number)
   version_bump_podspec(path: "StreamChat.podspec", version_number: version_number)
   
-  jazzy_command_start = "bundle exec jazzy --xcodebuild-arguments "
-  jazzy_command_end = "-a GetStream.io -u getstream.io -g https://github.com/GetStream/stream-chat-swift"
-  sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChatClient\",\"-sdk\",\"iphonesimulator\" --output \"../docs/client\" " + jazzy_command_end)
-  sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChatCore\",\"-sdk\",\"iphonesimulator\" --output \"../docs/core\" " + jazzy_command_end)
-  sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChat\",\"-sdk\",\"iphonesimulator\" --output \"../docs/ui\" " + jazzy_command_end)
+  #jazzy_command_start = "bundle exec jazzy --xcodebuild-arguments "
+  #jazzy_command_end = "-a GetStream.io -u getstream.io -g https://github.com/GetStream/stream-chat-swift"
+  #sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChatClient\",\"-sdk\",\"iphonesimulator\" --output \"../docs/client\" " + jazzy_command_end)
+  #sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChatCore\",\"-sdk\",\"iphonesimulator\" --output \"../docs/core\" " + jazzy_command_end)
+  #sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChat\",\"-sdk\",\"iphonesimulator\" --output \"../docs/ui\" " + jazzy_command_end)
   
   sh("git add -A")
   sh("git commit -m 'Bump #{version_number}'")
