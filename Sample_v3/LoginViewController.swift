@@ -128,7 +128,7 @@ extension LoginViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        guard indexPath.section == 2 else { return }
+        guard indexPath.section == 1 else { return }
 
         let chatClient = logIn()
         
