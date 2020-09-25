@@ -381,4 +381,27 @@ public extension Reactive where Base == Client {
             base.deleteFile(url: url, channel: channel, completion)
         }))
     }
+    
+    /// Enable slow mode for the given channel
+    /// - Parameters:
+    ///   - channel: a channel.
+    ///   - cooldown: Cooldown duration in seconds. (1-120)
+    ///   - completion: an empty completion block.
+    @discardableResult
+    func enableSlowMode(for channel: Channel, cooldown: Int) -> Observable<EmptyData> {
+        connected(request({ [unowned base] completion in
+            base.enableSlowMode(for: channel, cooldown: cooldown, completion)
+        }))
+    }
+    
+    /// Disables slow mode for the given channel
+    /// - Parameters:
+    ///   - channel: a channel.
+    ///   - completion: an empty completion block.
+    @discardableResult
+    func disableSlowMode(for channel: Channel) -> Observable<EmptyData> {
+        connected(request({ [unowned base] completion in
+            base.disableSlowMode(for: channel, completion)
+        }))
+    }
 }

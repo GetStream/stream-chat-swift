@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- `enableSlowMode` and `disableSlowMode` for channels, see [docs](https://getstream.io/chat/docs/slow_mode/?language=swift) [#514](https://github.com/GetStream/stream-chat-swift/issues/514)
+
 ### 🐞 Fixed
 - Channel mute response is not parsed correctly and a parsing error is logged [#499](https://github.com/GetStream/stream-chat-swift/issues/499)
 

@@ -598,4 +598,27 @@ public extension Client {
     func deleteFile(url: URL, channel: Channel, _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
         request(endpoint: .deleteFile(url, channel), completion)
     }
+    
+    /// Enable slow mode for the given channel
+    /// - Parameters:
+    ///   - channel: a channel.
+    ///   - cooldown: Cooldown duration in seconds. (1-120)
+    ///   - completion: an empty completion block.
+    @discardableResult
+    func enableSlowMode(for channel: Channel,
+                        cooldown: Int,
+                        _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
+        request(endpoint: .enableSlowMode(channel, cooldown), completion)
+    }
+    
+    /// Disables slow mode for the given channel
+    /// - Parameters:
+    ///   - channel: a channel.
+    ///   - completion: an empty completion block.
+    @discardableResult
+    func disableSlowMode(for channel: Channel,
+                         _ completion: @escaping Client.Completion<EmptyData> = { _ in }) -> Cancellable {
+        request(endpoint: .enableSlowMode(channel, 0), completion)
+    }
+    
 } // swiftlint:disable:this file_length
