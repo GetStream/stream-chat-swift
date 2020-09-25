@@ -407,7 +407,6 @@
                     </navigationItem>
                     <connections>
                         <outlet property="apiKeyTextField" destination="1zn-J3-bHH" id="8CD-yJ-FV0"/>
-                        <outlet property="flushLocalDatabaseCell" destination="G6M-FD-pfS" id="3Me-ma-zeN"/>
                         <outlet property="flushLocalStorageSwitch" destination="xNQ-S2-GHG" id="Wub-FF-nVv"/>
                         <outlet property="jwtCell" destination="tLc-Jq-1jE" id="SUa-Og-FT3"/>
                         <outlet property="jwtTextField" destination="UwJ-fM-gmv" id="CSh-S4-QOK"/>
@@ -417,7 +416,6 @@
                         <outlet property="tokenTypeSegmentedControl" destination="OmY-AP-TuN" id="fPj-Q3-NVV"/>
                         <outlet property="uiKitAndCombineCell" destination="ROL-9U-3uT" id="udb-Vo-Cfz"/>
                         <outlet property="uiKitAndDelegatesCell" destination="UXl-OF-aT4" id="59C-FP-kff"/>
-                        <outlet property="useLocalDatabaseCell" destination="O7K-8Y-mj4" id="0u5-Dw-EUI"/>
                         <outlet property="userIdTextField" destination="OME-Hr-SoK" id="9nN-hT-VVp"/>
                         <outlet property="userNameTextField" destination="YFW-le-5LN" id="FFr-qg-rEv"/>
                     </connections>

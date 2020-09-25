@@ -16,8 +16,6 @@ class LoginViewController: UITableViewController {
     @IBOutlet var jwtTextField: UITextField!
     
     @IBOutlet var regionSegmentedControl: UISegmentedControl!
-    @IBOutlet var useLocalDatabaseCell: UITableViewCell!
-    @IBOutlet var flushLocalDatabaseCell: UITableViewCell!
     @IBOutlet var localStorageEnabledSwitch: UISwitch!
     @IBOutlet var flushLocalStorageSwitch: UISwitch!
     
