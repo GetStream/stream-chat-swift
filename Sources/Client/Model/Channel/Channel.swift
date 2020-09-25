@@ -40,6 +40,9 @@ public final class Channel: Codable {
         case team
         /// The total number of members in the channel
         case memberCount = "member_count"
+        /// Cooldown duration for the channel, if it's in slow mode.
+        /// This value will be 0 if the channel is not in slow mode.
+        case cooldownDuration = "cooldown"
     }
     
     /// Coding keys for the encoding.
@@ -102,6 +105,9 @@ public final class Channel: Codable {
     public var readEventsEnabled: Bool { config.readEventsEnabled && membership != nil }
     /// Returns the current unread count.
     public var unreadCount: ChannelUnreadCount { unreadCountAtomic.get() }
+    /// Cooldown duration for the channel, if it's in slow mode.
+    /// This value will be 0 if the channel is not in slow mode.
+    public let cooldownDuration: Int
     
     private(set) lazy var unreadCountAtomic = Atomic<ChannelUnreadCount>(.noUnread, callbackQueue: .main) { [weak self] _, _ in
         if let self = self {
@@ -177,6 +183,7 @@ public final class Channel: Codable {
         self.team = team
         self.namingStrategy = namingStrategy
         self.config = config
+        cooldownDuration = 0
         didLoad = false
         memberCountAtomic.set(members.count)
     }
@@ -198,6 +205,7 @@ public final class Channel: Codable {
         lastMessageDate = try container.decodeIfPresent(Date.self, forKey: .lastMessageDate)
         frozen = try container.decode(Bool.self, forKey: .frozen)
         team = try container.decodeIfPresent(String.self, forKey: .team) ?? ""
+        cooldownDuration = try container.decodeIfPresent(Int.self, forKey: .cooldownDuration) ?? 0
         didLoad = true
         extraData = Channel.decodeChannelExtraData(from: decoder)
         memberCountAtomic.set(try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? members.count)

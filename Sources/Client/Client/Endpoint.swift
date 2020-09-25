@@ -82,6 +82,8 @@ public enum Endpoint {
     case invite(Set<Member>, Channel)
     /// Send an answer for an invite.
     case inviteAnswer(ChannelInviteAnswer)
+    /// Enable slowmode
+    case enableSlowMode(Channel, _ cooldown: Int)
     
     // MARK: - Message Endpoints
     
@@ -173,6 +175,8 @@ extension Endpoint {
             return "moderation/mute/channel"
         case .unmuteChannel:
             return "moderation/unmute/channel"
+        case .enableSlowMode(let channel, _):
+            return path(to: channel)
         case .replies(let message, _):
             return path(to: message.id, "replies")
             
@@ -280,6 +284,9 @@ extension Endpoint {
             
         case .updateChannel(let channelUpdate):
             return channelUpdate
+            
+        case .enableSlowMode(_, let cooldown):
+            return ["cooldown": cooldown]
             
         case .guestToken(let user):
             return ["user": user]
@@ -396,6 +403,7 @@ extension Endpoint {
              .devices,
              .search,
              .updateChannel,
+             .enableSlowMode,
              .showChannel,
              .hideChannel,
              .sendMessage,
