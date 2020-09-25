@@ -31,7 +31,7 @@ Use StreamChat **to build a fully custom UI on top of the Stream Chat services**
 
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat.
 * [Installation](https://github.com/GetStream/stream-chat-swift/blob/master_v3/Documentation/Installation.MD): Learn more about how to install the SDK using CocoaPods, SPM, or Carthage.
-* [Cheat Sheet:](https://github.com/GetStream/stream-chat-swift/wiki/Low-Level-Client-Cheat-Sheet) Learn how to use the SDK by examples.
+* [Cheat Sheet:](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet) Learn how to use the SDK by examples.
 * [Sample app](https://github.com/GetStream/stream-chat-swift/tree/master/Example): This repo includes a fully functional sample app with example usage of the SDK with UIKit, SwiftUI, and Combine.
 
 &nbsp;
