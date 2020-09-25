@@ -528,9 +528,9 @@ public extension _ChatChannelController {
         
         channelQuery.messagesPagination = [.limit(limit), .lessThan(messageId)]
     
-        updater.update(channelQuery: channelQuery) { [weak self] error in
+        updater.update(channelQuery: channelQuery, completion: { [weak self] error in
             self?.callback { completion?(error) }
-        }
+        })
     }
     
     /// Loads previous messages from backend.
@@ -559,9 +559,9 @@ public extension _ChatChannelController {
         
         channelQuery.messagesPagination = [.limit(limit), .greaterThan(messageId)]
         
-        updater.update(channelQuery: channelQuery) { [weak self] error in
+        updater.update(channelQuery: channelQuery, completion: { [weak self] error in
             self?.callback { completion?(error) }
-        }
+        })
     }
     
     /// Sends the start typing event and schedule a timer to send the stop typing event.
