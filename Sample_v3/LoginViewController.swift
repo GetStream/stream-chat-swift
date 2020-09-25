@@ -218,6 +218,10 @@ extension LoginViewController {
             return .usEast
         case 1:
             return .dublin
+        case 2:
+            return .singapore
+        case 3:
+            return .sydney
         default:
             fatalError("Segmented Control out of bounds")
         }

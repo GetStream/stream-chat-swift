@@ -376,10 +376,12 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="bxQ-EB-Eqp">
-                                                    <rect key="frame" x="136.5" y="6" width="141" height="32.5"/>
+                                                    <rect key="frame" x="43.5" y="6" width="327" height="32.5"/>
                                                     <segments>
                                                         <segment title="U.S East"/>
                                                         <segment title="Dublin"/>
+                                                        <segment title="Singapore"/>
+                                                        <segment title="Sydney"/>
                                                     </segments>
                                                 </segmentedControl>
                                             </subviews>
