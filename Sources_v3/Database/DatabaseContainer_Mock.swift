@@ -12,6 +12,7 @@ class DatabaseContainerMock: DatabaseContainer {
     @Atomic var write_errorResponse: Error?
     @Atomic var init_kind: DatabaseContainer.Kind
     @Atomic var flush_called = false
+    @Atomic var recreatePersistentStore_called = false
     
     convenience init() {
         try! self.init(kind: .inMemory)
@@ -30,6 +31,11 @@ class DatabaseContainerMock: DatabaseContainer {
     override func removeAllData(force: Bool, completion: ((Error?) -> Void)? = nil) {
         flush_called = true
         super.removeAllData(force: force, completion: completion)
+    }
+    
+    override func recreatePersistentStore() throws {
+        recreatePersistentStore_called = true
+        try super.recreatePersistentStore()
     }
 
     override func write(_ actions: @escaping (DatabaseSession) throws -> Void, completion: @escaping (Error?) -> Void) {
