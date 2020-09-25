@@ -366,7 +366,7 @@ extension Client {
             }
             do {
                 let podTrunk = try JSONDecoder().decode(PodTrunk.self, from: data)
-                if let latestVersion = podTrunk.versions.last?.name, latestVersion > Environment.version {
+                if let latestVersion = podTrunk.versions.last?.name, latestVersion > Environment.version, latestVersion < "3" {
                     ClientLogger.log("📢",
                                      "",
                                      .info,
