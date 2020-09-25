@@ -59,6 +59,18 @@ public struct ChatClientConfig {
     }
 }
 
+extension ChatClientConfig {
+    /// Creates a new instance of `ChatClientConfig`.
+    ///
+    /// - Warning: ⚠️ The provided `apiKeyString` must be non-empty, otherwise an assertion failure is triggered.
+    ///
+    /// - Parameter apiKeyString: The string with API key of the chat app the `ChatClient` connects to.
+    ///
+    public init(apiKeyString: String) {
+        self.init(apiKey: APIKey(apiKeyString))
+    }
+}
+
 // extension ChatClientConfig {
 //    /// `ChatChannel` specific settings.
 //    public struct Channel {

@@ -17,7 +17,7 @@ class LoginViewController: UITableViewController {
 
     func logIn() -> ChatClient {
         let extraData = NameAndImageExtraData(name: userName, imageURL: nil)
-        let chatClient = ChatClient(config: ChatClientConfig(apiKey: APIKey(apiKey)))
+        let chatClient = ChatClient(config: ChatClientConfig(apiKeyString: apiKey))
         
         func setUserCompletion(_ error: Error?) {
             guard let error = error else { return }
