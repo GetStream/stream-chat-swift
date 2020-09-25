@@ -83,7 +83,7 @@ class DatabaseContainer: NSPersistentContainer {
         
         persistentStoreDescriptions = [description]
                 
-        if shouldFlushOnStart {
+        if shouldFlushOnStart, kind != .inMemory {
             try recreatePersistentStore()
         } else {
             try setupPersistentStore()
@@ -202,7 +202,7 @@ class DatabaseContainer: NSPersistentContainer {
     }
     
     /// Recreate rersistent store
-    private func recreatePersistentStore() throws {
+    func recreatePersistentStore() throws {
         guard let url = persistentStoreDescriptions.first!.url
         else { throw ClientError("Internal Error. Wrong database file url.") }
         

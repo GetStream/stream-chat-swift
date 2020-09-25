@@ -140,6 +140,19 @@ class DatabaseContainer_Tests: StressTestCase {
         testObject = try database!.viewContext.fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject")).first
         XCTAssertNil(testObject)
     }
+    
+    func test_databaseContainer_skipping_flush_for_inMemory_type() throws {
+        // Create a new in-memory database that should flush on start.
+        let database: DatabaseContainerMock? = try DatabaseContainerMock(
+            kind: .inMemory,
+            shouldFlushOnStart: true,
+            modelName: "TestDataModel",
+            bundle: Bundle(for: DatabaseContainer_Tests.self)
+        )
+        
+        // Assert recreatePersistentStore is not called for in-memory DB.
+        XCTAssertFalse(database!.recreatePersistentStore_called)
+    }
 }
 
 extension TestManagedObject: EphemeralValuesContainer {
