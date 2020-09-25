@@ -1,6 +1,6 @@
 # Installation
 
-You can use several methods to install the Low Level Client iOS SDK.
+You can use several methods to install StreamChat iOS SDK.
 
 ## CocoaPods
 
