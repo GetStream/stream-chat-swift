@@ -184,7 +184,8 @@ extension LoginViewController {
                     self.view.window?.rootViewController = UIHostingController(
                         rootView:
                         NavigationView {
-                            ChannelListView(channelList: channelListController.observableObject)
+                            ChannelListView()
+                                .chatClient(chatClient)
                         }
                     )
                 })
@@ -238,5 +239,20 @@ extension LoginViewController {
         default:
             fatalError("Segmented Control out of bounds")
         }
+    }
+}
+
+@available(iOS 13.0, *)
+extension View {
+    func chatClient(_ chatClient: ChatClient) -> some View {
+        environment(\.chatClient, chatClient)
+    }
+}
+
+@available(iOS 13.0, *)
+extension EnvironmentValues {
+    var chatClient: ChatClient {
+        get { self[ChatClientKey.self] }
+        set { self[ChatClientKey.self] = newValue }
     }
 }

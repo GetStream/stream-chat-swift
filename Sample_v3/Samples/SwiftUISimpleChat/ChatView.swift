@@ -8,6 +8,20 @@ import SwiftUI
 
 @available(iOS 14, *)
 struct ChatView: View {
+    @Environment(\.chatClient) private var chatClient
+    var cid: ChannelId
+    
+    init(cid: ChannelId) {
+        self.cid = cid
+    }
+
+    var body: some View {
+        Chat(channel: chatClient.channelController(for: cid).observableObject)
+    }
+}
+
+@available(iOS 14, *)
+struct Chat: View {
     /// The `ChannelController` used to interact with this channel. Will be synchronized in `onAppear`.
     @StateObject var channel: ChatChannelController.ObservableObject
     /// The `text` written in the message composer.

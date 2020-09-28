@@ -8,6 +8,24 @@ import SwiftUI
 
 @available(iOS 14, *)
 struct ChannelListView: View {
+    @Environment(\.chatClient) private var chatClient
+    
+    var body: some View {
+        ChannelList(
+            channelList: chatClient.channelListController(
+                query: ChannelListQuery(
+                    filter: .in("members", [chatClient.currentUserId]),
+                    pagination: [.limit(25)],
+                    options: [.watch]
+                )
+            ).observableObject
+        ).chatClient(chatClient)
+    }
+}
+
+@available(iOS 14, *)
+struct ChannelList: View {
+    @Environment(\.chatClient) private var chatClient
     /// The `ChatChannelListController` used to interact with this channel. Will be synchronized in `onAppear`.
     @StateObject var channelList: ChatChannelListController.ObservableObject
     /// Binding for channel actions ActionSheet.
@@ -172,12 +190,9 @@ struct ChannelListView: View {
         channelList.channels[index]
     }
     
-    private func chatView(for index: Int) -> ChatView {
-        ChatView(
-            channel: channelList.controller.client.channelController(
-                for: channelList.channels[index].cid
-            ).observableObject
-        )
+    private func chatView(for index: Int) -> some View {
+        ChatView(cid: channel(index).cid)
+            .chatClient(chatClient)
     }
 }
 
