@@ -9,7 +9,7 @@ both **StreamChat** and **StreamChatUI** (coming soon).
 
 ### 1. Installation
 
-To use the sample, clone this repository, run `carthage bootstrap` in the terminal, and open `StreamChat_v3.xcodeproj` on Xcode. Select the `Sample` target and run in your preferred device. To access every feature, use Xcode 12 and iOS 14.
+To use the sample, clone this repository, run `carthage bootstrap` in the terminal, and open `StreamChat_v3.xcodeproj` on Xcode. Select the `Sample` target and run in your preferred device. To access every feature, use Xcode 12 and iOS 14. Due to a bug in carthage on Xcode 12, you may need to [use this workaround](https://github.com/Carthage/Carthage/issues/3019#issuecomment-665136323).
 
 ### 2. Login
 
