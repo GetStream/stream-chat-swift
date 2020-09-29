@@ -44,6 +44,8 @@ This sample uses Apple's new Combine framework to process the chat events and up
 
 This sample is built with declarative code by making full use of Apple's SwiftUI framework alongside StreamChat's ObservableObject wrappers.
 
+<br />
+
 #### StreamChatUI Samples (Coming Soon)
 
 These samples are built on top of StreamChatUI. It provides UIKit components that run on top of StreamChat. Use StreamChatUI if you want a ready-made
