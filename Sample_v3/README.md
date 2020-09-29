@@ -15,7 +15,7 @@ both **StreamChat** and **StreamChatUI** (coming soon).
 4. Open `StreamChat_v3.xcodeproj` on Xcode.
 5. Select the `Sample` target and run in your preferred device.
 
-* due to a bug in Carthage on Xcode 12, the script will [use this workaround](https://github.com/Carthage/Carthage/issues/3019#issuecomment-665136323).
+\* due to a bug in Carthage on Xcode 12, the script will [use this workaround](https://github.com/Carthage/Carthage/issues/3019#issuecomment-665136323).
 
 ### 2. Login
 
