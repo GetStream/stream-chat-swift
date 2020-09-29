@@ -53,6 +53,6 @@ fully-featured UI with some customizability options.
 
 ### 4. Additional Options
 
-<img align="left" src="https://i.imgur.com/20Ul3ZM_d.webp?maxwidth=728&fidelity=grand" width="33%" />
+<img align="left" src="https://i.imgur.com/20Ul3ZM.png" width="33%" />
 
 On the bottom of the login screen, you can find additional options to initialize the chat client. You can choose whether to use the local storage, flush it on start, and select which region your app is in.
