@@ -30,6 +30,20 @@ After setting your user details, you can choose any of the listed samples. Each 
 These samples are built on top of StreamChat. It provides local database logic and API calls, but no UI components. Use StreamChat if you want to build a 
 completely custom UI from scratch. We kept the UI simple to focus on the StreamChat usage.
 
+<img align="left" src="https://i.imgur.com/Hczqbu9.png" width="33%" />
+
+##### UIKit & Delegates
+
+This sample uses the traditional delegate pattern to listen to chat events and update the UI, which is built with UIKit.
+
+##### UIKit & Combine
+
+This sample uses Apple's new Combine framework to process the chat events and update the UI, which is also built with UIKit.
+
+##### SwiftUI
+
+This sample is built with declarative code by making full use of Apple's SwiftUI framework alongside StreamChat's ObservableObject wrappers.
+
 #### StreamChatUI Samples (Coming Soon)
 
 These samples are built on top of StreamChatUI. It provides UIKit components that run on top of StreamChat. Use StreamChatUI if you want a ready-made
