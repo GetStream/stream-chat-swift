@@ -235,6 +235,36 @@ class ChatClient_Tests: StressTestCase {
         AssertAsync.staysTrue(providedConnectionId == nil)
     }
     
+    func test_client_failsConnectionIdWaiters_whenWebSocketIsDisconnected() {
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            workerBuilders: workerBuilders,
+            environment: testEnv.environment
+        )
+        
+        // Set a connection Id waiter and set `providedConnectionId` to a non-nil value
+        var providedConnectionId: ConnectionId? = .unique
+        client.provideConnectionId {
+            providedConnectionId = $0
+        }
+        XCTAssertNotNil(providedConnectionId)
+        
+        // Simulate WebSocketConnection change to "disconnected"
+        let error = ClientError(with: TestError())
+        testEnv.webSocketClient?.connectionStateDelegate?
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .disconnected(error: error))
+        
+        // Assert the provided connection id is `nil`
+        XCTAssertNil(providedConnectionId)
+        
+        // Simulate WebSocketConnection change to "connected" and assert `providedConnectionId` is still `nil`
+        testEnv.webSocketClient?.connectionStateDelegate?
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: .unique))
+
+        XCTAssertNil(providedConnectionId)
+    }
+    
     func test_clientProvidesToken_fromTokenProvider() throws {
         let newUserId: UserId = .unique
         let newToken: Token = .unique
