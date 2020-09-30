@@ -324,6 +324,66 @@ public extension Reactive where Base == Client {
         }))
     }
     
+    /// Query a channel's members.
+    /// - Parameters:
+    ///   - channelId: Channel Id for the channel.
+    ///   - filter: Filter conditions for query
+    ///   - sorting: Sorting conditions for query
+    ///   - limit: Limit for number of members to return. Defaults to 100.
+    ///   - offset: Offset of pagination. Defaults to 0.
+    ///  - Returns: Observable with `MembersQueryResponse`
+    func queryMembers(channelId: ChannelId,
+                      filter: Filter,
+                      sorting: [Sorting] = [],
+                      limit: Int = 100,
+                      offset: Int = 0) -> Observable<MembersQueryResponse> {
+        connected(request({ [unowned base] completion in
+            base.queryMembers(channelId: channelId,
+                              filter: filter,
+                              sorting: sorting,
+                              limit: limit,
+                              offset: offset,
+                              completion)
+        }))
+    }
+    
+    /// Query a channel's members.
+    /// - Parameters:
+    ///   - channelTyoe: Channel type for the channel.
+    ///   - members: Members for member-based channels (Direct Message)
+    ///   - filter: Filter conditions for query
+    ///   - sorting: Sorting conditions for query
+    ///   - limit: Limit for number of members to return. Defaults to 100.
+    ///   - offset: Offset of pagination. Defaults to 0.
+    ///  - Returns: Observable with `MembersQueryResponse`
+    func queryMembers(channelType: ChannelType,
+                      members: [Member],
+                      filter: Filter,
+                      sorting: [Sorting] = [],
+                      limit: Int = 100,
+                      offset: Int = 0) -> Observable<MembersQueryResponse> {
+        connected(request({ [unowned base] completion in
+            base.queryMembers(channelType: channelType,
+                              members: members,
+                              filter: filter,
+                              sorting: sorting,
+                              limit: limit,
+                              offset: offset,
+                              completion)
+        }))
+    }
+    
+    /// Query a channel's members.
+    /// - Parameters:
+    ///   - membersQuery: `MembersQuery` object for the query.
+    ///  - Returns: Observable with `MembersQueryResponse`
+    func queryMembers(membersQuery: MembersQuery) -> Observable<MembersQueryResponse> {
+        connected(request({ [unowned base] completion in
+            base.queryMembers(membersQuery: membersQuery,
+                              completion)
+        }))
+    }
+    
     // MARK: - Uploading
     
     /// Upload an image to the channel.

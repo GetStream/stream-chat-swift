@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### ✅ Added
+- `queryMembers` API for queriyng members, see [docs](https://getstream.io/chat/docs/query_members/?language=swift) [#521](https://github.com/GetStream/stream-chat-swift/issues/521)
 
 # [2.3.3](https://github.com/GetStream/stream-chat-swift/releases/tag/2.3.3)
 _September 25, 2020_

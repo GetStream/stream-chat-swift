@@ -78,6 +78,8 @@ public enum Endpoint {
     case addMembers(Set<Member>, Channel)
     /// Remove members to the channel
     case removeMembers(Set<Member>, Channel)
+    /// Query members
+    case queryMembers(MembersQuery)
     /// Invite members.
     case invite(Set<Member>, Channel)
     /// Send an answer for an invite.
@@ -125,7 +127,7 @@ public enum Endpoint {
 extension Endpoint {
     var method: Method {
         switch self {
-        case .search, .channels, .message, .replies, .users, .devices:
+        case .search, .channels, .message, .replies, .users, .devices, .queryMembers:
             return .get
         case .removeDevice, .deleteChannel, .deleteMessage, .deleteReaction, .deleteImage, .deleteFile, .unban:
             return .delete
@@ -175,6 +177,8 @@ extension Endpoint {
             return "moderation/mute/channel"
         case .unmuteChannel:
             return "moderation/unmute/channel"
+        case .queryMembers:
+            return "members"
         case .enableSlowMode(let channel, _):
             return path(to: channel)
         case .replies(let message, _):
@@ -251,6 +255,8 @@ extension Endpoint {
             payload = query
         case .users(let query):
             payload = query
+        case .queryMembers(let membersQuery):
+            payload = membersQuery
         default:
             return nil
         }
@@ -274,7 +280,8 @@ extension Endpoint {
              .deleteImage,
              .deleteFile,
              .users,
-             .unban:
+             .unban,
+             .queryMembers:
             return nil
             
         case .markAllRead,
@@ -403,6 +410,7 @@ extension Endpoint {
              .devices,
              .search,
              .updateChannel,
+             .queryMembers,
              .enableSlowMode,
              .showChannel,
              .hideChannel,
