@@ -5,9 +5,9 @@
 import UIKit
 
 extension UIViewController {
-    func alert(title: String, message: String) {
+    func alert(title: String, message: String, completion: @escaping () -> Void = {}) {
         let controller = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        controller.addAction(.init(title: "OK", style: .default))
+        controller.addAction(.init(title: "OK", style: .default, handler: { _ in completion() }))
         present(controller, animated: true)
     }
     
