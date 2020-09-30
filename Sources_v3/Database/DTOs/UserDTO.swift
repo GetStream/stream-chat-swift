@@ -104,10 +104,8 @@ extension _ChatUser {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.extraData)
         } catch {
-            fatalError(
-                "Failed decoding saved extra data with error: \(error). This should never happen because"
-                    + "the extra data must be a valid JSON to be saved."
-            )
+            log.error("Failed to decode extra data for User with id: <\(dto.id)>, using default value instead. Error: \(error)")
+            extraData = .defaultValue
         }
         
         return _ChatUser(
