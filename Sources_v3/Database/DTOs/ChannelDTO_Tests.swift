@@ -227,6 +227,24 @@ class ChannelDTO_Tests: XCTestCase {
         }
     }
     
+    func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
+        let channelId: ChannelId = .unique
+        
+        let payload = dummyPayloadWithNoExtraData(with: channelId)
+        
+        // Save the payload to the db
+        try database.writeSynchronously { session in
+            let channelDTO = try session.saveChannel(payload: payload)
+            // Make the extra data JSON invalid
+            channelDTO.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+        }
+        
+        // Load the channel from the db and check the fields are correct
+        let loadedChannel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        
+        XCTAssertEqual(loadedChannel?.extraData, .defaultValue)
+    }
+    
     func test_channelWithChannelListQuery_isSavedAndLoaded() {
         let query = ChannelListQuery(filter: .equal("name", to: "Luke Skywalker") & .less("age", than: 50))
         
