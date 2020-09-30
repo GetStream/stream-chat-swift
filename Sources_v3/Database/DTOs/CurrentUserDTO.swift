@@ -104,10 +104,11 @@ extension _CurrentChatUser {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: user.extraData)
         } catch {
-            fatalError(
-                "Failed decoding saved extra data with error: \(error). This should never happen because"
-                    + "the extra data must be a valid JSON to be saved."
+            log.error(
+                "Failed to decode extra data for CurrentUser with id: <\(dto.user.id)>, using default value instead. "
+                    + " Error: \(error)"
             )
+            extraData = .defaultValue
         }
         
         let mutedUsers: [_ChatUser<ExtraData>] = dto.mutedUsers.map { $0.asModel() }
