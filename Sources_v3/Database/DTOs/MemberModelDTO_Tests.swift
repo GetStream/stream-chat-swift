@@ -113,4 +113,38 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
         }
     }
+    
+    func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
+        let userId: UserId = .unique
+        let channelId: ChannelId = .unique
+        
+        let userPayload: UserPayload<DefaultExtraData.User> = .init(
+            id: userId,
+            role: .admin,
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: .unique,
+            isOnline: true,
+            isInvisible: true,
+            isBanned: true,
+            extraData: .init()
+        )
+        
+        let payload: MemberPayload<DefaultExtraData.User> = .init(
+            user: userPayload,
+            role: .moderator,
+            createdAt: .unique,
+            updatedAt: .unique
+        )
+        
+        try database.writeSynchronously { session in
+            // Save the member
+            let memberDTO = try! session.saveMember(payload: payload, channelId: channelId)
+            // Make the extra data JSON invalid
+            memberDTO.user.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+        }
+        
+        let loadedMember: ChatChannelMember? = database.viewContext.member(userId: userId, cid: channelId)?.asModel()
+        XCTAssertEqual(loadedMember?.extraData, .defaultValue)
+    }
 }

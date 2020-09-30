@@ -87,10 +87,11 @@ extension _ChatChannelMember {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.user.extraData)
         } catch {
-            fatalError(
-                "Failed decoding saved extra data with error: \(error). This should never happen because"
-                    + "the extra data must be a valid JSON to be saved."
+            log.error(
+                "Failed to decode extra data for Member with id: <\(dto.user.id)>, using default value instead. "
+                    + "Error: \(error)"
             )
+            extraData = .defaultValue
         }
         
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
