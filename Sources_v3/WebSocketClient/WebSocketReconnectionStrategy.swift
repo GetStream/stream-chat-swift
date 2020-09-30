@@ -37,11 +37,16 @@ class DefaultReconnectionStrategy: WebSocketClientReconnectionStrategy {
             }
         }
         
-        if
-            let serverInitiatedError = error as? ErrorPayload,
-            ErrorPayload.tokenInvadlidErrorCodes ~= serverInitiatedError.code {
-            // Don't reconnect on invalid token errors
-            return nil
+        if let serverInitiatedError = error as? ErrorPayload {
+            if ErrorPayload.tokenInvadlidErrorCodes ~= serverInitiatedError.code {
+                // Don't reconnect on invalid token errors
+                return nil
+            }
+        
+            if 400...499 ~= serverInitiatedError.statusCode {
+                // Don't reconnect on client side errors
+                return nil
+            }
         }
         
         let maxDelay: TimeInterval = min(0.5 + Double(consecutiveFailures * 2), Self.maximumReconnectionDelay)
