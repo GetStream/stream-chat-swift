@@ -39,8 +39,10 @@ class LoginViewController: UITableViewController {
             guard let error = error else { return }
             
             DispatchQueue.main.async {
-                self.alert(title: "Error", message: "Error logging in: \(error)")
-                self.navigationController?.popToRootViewController(animated: true)
+                let viewController = UIApplication.shared.keyWindow?.rootViewController
+                viewController?.alert(title: "Error", message: "Error logging in: \(error)") {
+                    viewController?.moveToStoryboard(.main, options: [.transitionFlipFromRight])
+                }
             }
         }
         
