@@ -236,9 +236,17 @@ extension _ChatMessage {
         parentMessageId = dto.parentMessageId
         showReplyInChannel = dto.showReplyInChannel
         replyCount = Int(dto.replyCount)
-        extraData = try! JSONDecoder.default.decode(ExtraData.Message.self, from: dto.extraData)
         isSilent = dto.isSilent
         reactionScores = dto.reactionScores
+        
+        let extraData: ExtraData.Message
+        do {
+            extraData = try JSONDecoder.default.decode(ExtraData.Message.self, from: dto.extraData)
+        } catch {
+            log.error("Failed to decode extra data for Message with id: <\(dto.id)>, using default value instead. Error: \(error)")
+            extraData = .defaultValue
+        }
+        self.extraData = extraData
         
         author = dto.user.asModel()
         mentionedUsers = Set(dto.mentionedUsers.map { $0.asModel() })

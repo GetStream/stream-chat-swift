@@ -123,6 +123,28 @@ class MessageDTO_Tests: XCTestCase {
         }
     }
     
+    func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = .unique
+        let channelId: ChannelId = .unique
+        
+        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
+        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: messageId, authorUserId: userId)
+        
+        try database.writeSynchronously { session in
+            // Create the channel first
+            try! session.saveChannel(payload: channelPayload, query: nil)
+            
+            // Save the message
+            let messageDTO = try! session.saveMessage(payload: messagePayload, for: channelId)
+            // Make the extra data JSON invalid
+            messageDTO.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+        }
+        
+        let loadedMessage: ChatMessage? = database.viewContext.message(id: messageId)?.asModel()
+        XCTAssertEqual(loadedMessage?.extraData, .defaultValue)
+    }
+    
     func test_messagePayload_asModel() {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
