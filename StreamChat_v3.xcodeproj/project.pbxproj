@@ -863,8 +863,8 @@
 				79877A212498E50D00015F8B /* MemberModelDTO.swift */,
 				79877A1D2498E50D00015F8B /* MemberModelDTO_Tests.swift */,
 				799C942A247D2FB9001F1104 /* ChannelDTO.swift */,
-				796FD215250654940076C99B /* ChannelReadDTO.swift */,
 				79877A1E2498E50D00015F8B /* ChannelDTO_Tests.swift */,
+				796FD215250654940076C99B /* ChannelReadDTO.swift */,
 				7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */,
 				7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */,
 			);

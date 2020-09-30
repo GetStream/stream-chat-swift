@@ -172,9 +172,17 @@ extension _ChatChannel {
         let members: [_ChatChannelMember<ExtraData.User>] = dto.members.map { $0.asModel() }
         let typingMembers: [_ChatChannelMember<ExtraData.User>] = dto.currentlyTypingMembers.map { $0.asModel() }
 
-        // It's safe to use `try!` here, because the extra data payload comes from the DB, so we know it must
-        // be a valid JSON payload, otherwise it wouldn't be possible to save it there.
-        let extraData = try! JSONDecoder.default.decode(ExtraData.Channel.self, from: dto.extraData)
+        let extraData: ExtraData.Channel
+        do {
+            extraData = try JSONDecoder.default.decode(ExtraData.Channel.self, from: dto.extraData)
+        } catch {
+            log.error(
+                "Failed to decode extra data for Channel with cid: <\(dto.cid)>, using default value instead. "
+                    + "Error: \(error)"
+            )
+            extraData = .defaultValue
+        }
+        
         let cid = try! ChannelId(cid: dto.cid)
         
         let context = dto.managedObjectContext!
