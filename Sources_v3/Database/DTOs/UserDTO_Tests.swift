@@ -82,6 +82,33 @@ class UserDTO_Tests: XCTestCase {
         }
     }
     
+    func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
+        let userId: UserId = .unique
+        
+        let payload: UserPayload<DefaultExtraData.User> = .init(
+            id: userId,
+            role: .admin,
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: .unique,
+            isOnline: true,
+            isInvisible: true,
+            isBanned: true,
+            teams: [],
+            extraData: .defaultValue
+        )
+        
+        try database.writeSynchronously { session in
+            // Save the user
+            let userDTO = try! session.saveUser(payload: payload)
+            // Make the extra data JSON invalid
+            userDTO.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+        }
+        
+        let loadedUser: ChatUser? = database.viewContext.user(id: userId)?.asModel()
+        XCTAssertEqual(loadedUser?.extraData, .defaultValue)
+    }
+    
     func test_DTO_asModel() {
         let userId = UUID().uuidString
         
