@@ -78,4 +78,19 @@ class DefaultReconnectionStrategy_Tests: XCTestCase {
         let delay = strategy.reconnectionDelay(forConnectionError: error)
         XCTAssertNil(delay)
     }
+    
+    func test_returnsNil_forClientSideErrorStatusCodes() {
+        let clientSideErrorStatusCodes = 400...499
+        
+        clientSideErrorStatusCodes.forEach { statusCode in
+            let error = ErrorPayload(code: 0, message: "", statusCode: statusCode)
+            let delay = strategy.reconnectionDelay(forConnectionError: error)
+            XCTAssertNil(delay)
+        }
+        
+        // Check server erros return a non-nil delay
+        let error = ErrorPayload(code: 0, message: "", statusCode: 500)
+        let delay = strategy.reconnectionDelay(forConnectionError: error)
+        XCTAssertNotNil(delay)
+    }
 }
