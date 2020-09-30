@@ -19,7 +19,7 @@ struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertible, Equa
     public let code: Int
     /// A message.
     public let message: String
-    /// A status code.
+    /// An HTTP status code.
     public let statusCode: Int
     
     public var errorDescription: String? {
@@ -27,6 +27,6 @@ struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertible, Equa
     }
     
     public var debugDescription: String {
-        "ClientErrorResponse(code: \(code), message: \"\(message)\", statusCode: \(statusCode)))."
+        "ServerErrorPayload(code: \(code), message: \"\(message)\", statusCode: \(statusCode)))."
     }
 }
