@@ -82,4 +82,20 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             // TODO: Teams, Mutes, Devices
         }
     }
+    
+    func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
+        let userId: UserId = .unique
+        
+        let payload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: userId, role: .user)
+        
+        try database.writeSynchronously { session in
+            // Save the user
+            let userDTO = try! session.saveCurrentUser(payload: payload)
+            // Make the extra data JSON invalid
+            userDTO.user.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+        }
+        
+        let loadedUser: CurrentChatUser? = database.viewContext.currentUser()?.asModel()
+        XCTAssertEqual(loadedUser?.extraData, .defaultValue)
+    }
 }
