@@ -117,3 +117,79 @@ public struct ChannelUpdate: Encodable {
     
     let data: ChannelData
 }
+
+public struct MembersQuery: Encodable {
+    private enum CodingKeys: String, CodingKey {
+        case filter = "filter_conditions"
+        case sort
+        case limit
+        case offset
+        case id
+        case type
+        case members
+    }
+    
+    /// Filter conditions.
+    public let filter: Filter
+    /// Sort options, e.g. `[.init("last_active", isAscending: false)]`
+    public let sort: [Sorting]
+    /// Used for paginating response.
+    public let limit: Int
+    /// Offset of pagination.
+    public let offset: Int
+    /// Channel type this query will belong to.
+    public let channelType: ChannelType
+    /// Channel's unique id this query belongs to.
+    public let id: String?
+    /// Channel members for the query.
+    /// This is only used if the channel id is generated from backend.
+    public let members: [Member]?
+    
+    public init(channelId: ChannelId,
+                filter: Filter,
+                sorting: [Sorting],
+                limit: Int = 100,
+                offset: Int = 0) {
+        self.channelType = channelId.type
+        self.id = channelId.id
+        self.members = nil
+        self.filter = filter
+        self.sort = sorting
+        self.limit = limit
+        self.offset = offset
+    }
+    
+    public init(channelType: ChannelType,
+                members: [Member],
+                filter: Filter,
+                sorting: [Sorting],
+                limit: Int = 100,
+                offset: Int = 0) {
+        self.channelType = channelType
+        self.id = nil
+        self.members = members
+        self.filter = filter
+        self.sort = sorting
+        self.limit = limit
+        self.offset = offset
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(filter, forKey: .filter)
+        try container.encode(limit, forKey: .limit)
+        try container.encode(offset, forKey: .offset)
+        
+        if !sort.isEmpty {
+            try container.encode(sort, forKey: .sort)
+        }
+        
+        try container.encode(channelType, forKey: .type)
+        
+        if let id = id {
+            try container.encode(id, forKey: .id)
+        } else if let members = members {
+            try container.encode(members, forKey: .members)
+        }
+    }
+}

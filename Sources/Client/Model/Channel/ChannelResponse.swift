@@ -146,3 +146,7 @@ public enum InviteAnswer: String {
     case accepted
     case rejected
 }
+
+public struct MembersQueryResponse: Decodable {
+    let members: [Member]
+}

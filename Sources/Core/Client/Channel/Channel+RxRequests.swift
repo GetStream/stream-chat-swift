@@ -225,6 +225,34 @@ public extension Reactive where Base == Channel {
         Client.shared.rx.rejectInvite(for: base, with: message)
     }
     
+    /// Query this channel's members.
+    /// - Parameters:
+    ///   - filter: Filter conditions for query
+    ///   - sorting: Sorting conditions for query
+    ///   - limit: Limit for number of members to return. Defaults to 100.
+    ///   - offset: Offset of pagination. Defaults to 0.
+    func queryMembers(filter: Filter,
+                      sorting: [Sorting] = [],
+                      limit: Int = 100,
+                      offset: Int = 0) -> Observable<MembersQueryResponse> {
+        let query: MembersQuery
+        if base.id.isEmpty {
+            query = MembersQuery(channelType: base.type,
+                                 members: Array(base.members),
+                                 filter: filter,
+                                 sorting: sorting,
+                                 limit: limit,
+                                 offset: offset)
+        } else {
+            query = MembersQuery(channelId: base.cid,
+                                 filter: filter,
+                                 sorting: sorting,
+                                 limit: limit,
+                                 offset: offset)
+        }
+        return Client.shared.rx.queryMembers(membersQuery: query)
+    }
+    
     // MARK: - Uploading
     
     /// Upload an image to the channel.

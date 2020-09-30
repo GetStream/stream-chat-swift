@@ -533,6 +533,64 @@ public extension Client {
         return request(endpoint: .inviteAnswer(answer), completion)
     }
     
+    /// Query the channel's members.
+    /// - Parameters:
+    ///   - channelId: Channel Id for the channel.
+    ///   - filter: Filter conditions for query
+    ///   - sorting: Sorting conditions for query
+    ///   - limit: Limit for number of members to return. Defaults to 100.
+    ///   - offset: Offset of pagination. Defaults to 0.
+    ///   - completion: Completion block with `MembersQueryResponse`
+    @discardableResult
+    func queryMembers(channelId: ChannelId,
+                      filter: Filter,
+                      sorting: [Sorting] = [],
+                      limit: Int = 100,
+                      offset: Int = 0,
+                      _ completion: @escaping Client.Completion<MembersQueryResponse>) -> Cancellable {
+        let query = MembersQuery(channelId: channelId,
+                                 filter: filter,
+                                 sorting: sorting,
+                                 limit: limit,
+                                 offset: offset)
+        return request(endpoint: .queryMembers(query), completion)
+    }
+    
+    /// Query the channel's members.
+    /// - Parameters:
+    ///   - channelTyoe: Channel type for the channel.
+    ///   - members: Members for member-based channels (Direct Message)
+    ///   - filter: Filter conditions for query
+    ///   - sorting: Sorting conditions for query
+    ///   - limit: Limit for number of members to return. Defaults to 100.
+    ///   - offset: Offset of pagination. Defaults to 0.
+    ///   - completion: Completion block with `MembersQueryResponse`
+    @discardableResult
+    func queryMembers(channelType: ChannelType,
+                      members: [Member],
+                      filter: Filter,
+                      sorting: [Sorting] = [],
+                      limit: Int = 100,
+                      offset: Int = 0,
+                      _ completion: @escaping Client.Completion<MembersQueryResponse>) -> Cancellable {
+        let query = MembersQuery(channelType: channelType,
+                                 members: members,
+                                 filter: filter,
+                                 sorting: sorting,
+                                 limit: limit,
+                                 offset: offset)
+        return request(endpoint: .queryMembers(query), completion)
+    }
+    
+    /// Query the channel's members.
+    /// - Parameters:
+    ///   - membersQuery: `MembersQuery` object for the query.
+    ///   - completion: Completion block with `MembersQueryResponse`
+    @discardableResult
+    func queryMembers(membersQuery: MembersQuery, _ completion: @escaping Client.Completion<MembersQueryResponse>) -> Cancellable {
+        request(endpoint: .queryMembers(membersQuery), completion)
+    }
+    
     // MARK: - Uploading
     
     /// Upload an image to the channel.
