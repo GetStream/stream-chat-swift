@@ -275,6 +275,14 @@
 		DA4AA3B8250271BD00FAAF6E /* CurrentUserController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B7250271BD00FAAF6E /* CurrentUserController+Combine.swift */; };
 		DA4AA3BA2502731900FAAF6E /* Publisher+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */; };
 		DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */; };
+		DA8407002524F778005A0F62 /* UserListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8406FF2524F778005A0F62 /* UserListController.swift */; };
+		DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407022524F7E6005A0F62 /* UserListUpdater.swift */; };
+		DA8407062524F84F005A0F62 /* UserListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407052524F84F005A0F62 /* UserListQuery.swift */; };
+		DA84070925250528005A0F62 /* UserEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070825250528005A0F62 /* UserEndpoints.swift */; };
+		DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070B25250581005A0F62 /* UserListPayload.swift */; };
+		DA84071025250720005A0F62 /* UserListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070F25250720005A0F62 /* UserListQueryDTO.swift */; };
+		DA84071325250E23005A0F62 /* SimpleUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84071225250E23005A0F62 /* SimpleUsersViewController.swift */; };
+		DA84071F25251F12005A0F62 /* NewUserQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84071B25251EC7005A0F62 /* NewUserQueryUpdater.swift */; };
 		DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */; };
 		DA99D0D024ED63C600AD5354 /* NewChannelQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */; };
 		DAD539DB250B8A9C00CFC649 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD539DA250B8A9C00CFC649 /* Controller.swift */; };
@@ -669,6 +677,14 @@
 		DA4AA3B7250271BD00FAAF6E /* CurrentUserController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentUserController+Combine.swift"; sourceTree = "<group>"; };
 		DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Extensions.swift"; sourceTree = "<group>"; };
 		DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload_Tests.swift; sourceTree = "<group>"; };
+		DA8406FF2524F778005A0F62 /* UserListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListController.swift; sourceTree = "<group>"; };
+		DA8407022524F7E6005A0F62 /* UserListUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListUpdater.swift; sourceTree = "<group>"; };
+		DA8407052524F84F005A0F62 /* UserListQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListQuery.swift; sourceTree = "<group>"; };
+		DA84070825250528005A0F62 /* UserEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEndpoints.swift; sourceTree = "<group>"; };
+		DA84070B25250581005A0F62 /* UserListPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListPayload.swift; sourceTree = "<group>"; };
+		DA84070F25250720005A0F62 /* UserListQueryDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListQueryDTO.swift; sourceTree = "<group>"; };
+		DA84071225250E23005A0F62 /* SimpleUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleUsersViewController.swift; sourceTree = "<group>"; };
+		DA84071B25251EC7005A0F62 /* NewUserQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserQueryUpdater.swift; sourceTree = "<group>"; };
 		DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCodingKeys.swift; sourceTree = "<group>"; };
 		DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChannelQueryUpdater.swift; sourceTree = "<group>"; };
 		DAD539DA250B8A9C00CFC649 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
@@ -819,6 +835,7 @@
 				791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */,
 				DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */,
 				DAFC1D4524F50C2C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift */,
+				DA84071B25251EC7005A0F62 /* NewUserQueryUpdater.swift */,
 				F670B50E24FE6EA900003B1A /* MessageEditor.swift */,
 				F61D7C3624FFE17200188A0E /* MessageEditor_Tests.swift */,
 				DAE566F625010CA100E39431 /* ChannelWatchStateUpdater.swift */,
@@ -858,6 +875,7 @@
 				79877A1F2498E50D00015F8B /* TeamDTO.swift */,
 				79877A222498E50D00015F8B /* UserDTO.swift */,
 				79877A202498E50D00015F8B /* UserDTO_Tests.swift */,
+				DA84070F25250720005A0F62 /* UserListQueryDTO.swift */,
 				79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */,
 				79BA19F224B3386B00E11FC2 /* CurrentUserDTO_Tests.swift */,
 				79877A212498E50D00015F8B /* MemberModelDTO.swift */,
@@ -917,6 +935,7 @@
 			isa = PBXGroup;
 			children = (
 				792A4F4C248011E500EAF71D /* ChannelListQuery.swift */,
+				DA8407052524F84F005A0F62 /* UserListQuery.swift */,
 				792A4F4A248010A600EAF71D /* QueryOptions.swift */,
 				792A4F422480107A00EAF71D /* ChannelQuery.swift */,
 				DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */,
@@ -978,6 +997,7 @@
 		79682C4724BF37550071578E /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
+				DA84070B25250581005A0F62 /* UserListPayload.swift */,
 				79B5517124E593C200CE9FEC /* UserPayloads.swift */,
 				79B5517024E593C200CE9FEC /* UserPayloads_Tests.swift */,
 				79B5517424E595CC00CE9FEC /* CurrentUserPayloads.swift */,
@@ -1025,6 +1045,7 @@
 				8A0D649424E579A50017A3C0 /* GuestEndpoints_Tests.swift */,
 				79877A132498E4EE00015F8B /* ChannelEndpoints.swift */,
 				DAEAF4B724DC026C0015FB28 /* ChannelEndpoints_Tests.swift */,
+				DA84070825250528005A0F62 /* UserEndpoints.swift */,
 				F6ED5F75250278D7005D7327 /* SyncEndpoint.swift */,
 				F62BE78225062FC400D13B86 /* SyncEndpoint_Tests.swift */,
 				F6FF1DA924FD23D300151735 /* MessageEndpoints.swift */,
@@ -1096,6 +1117,7 @@
 				F6FF1DA724FD232C00151735 /* MessageUpdater.swift */,
 				F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */,
 				F61D7C3424FFA6FD00188A0E /* MessageUpdater_Tests.swift */,
+				DA8407022524F7E6005A0F62 /* UserListUpdater.swift */,
 				F63CC36D24E591690052844D /* EventObservers */,
 				79280F4524850ECC00CDEB89 /* Background */,
 			);
@@ -1163,6 +1185,7 @@
 				DAE566F32500F98D00E39431 /* ChannelListController */,
 				DAE566F42500F99900E39431 /* CurrentUserController */,
 				F649B23F250125C9008F98C8 /* MessageController */,
+				DA8406FE2524F761005A0F62 /* UserListController */,
 				79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */,
 				793C14DB24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift */,
 				792AF91524D812440010097B /* EntityDatabaseObserver.swift */,
@@ -1289,6 +1312,7 @@
 				8008C18B24F44D3200F5BCCE /* Views */,
 				792A4F28247FF01800EAF71D /* SimpleChannelsViewController.swift */,
 				792A4F2A247FF01800EAF71D /* SimpleChatViewController.swift */,
+				DA84071225250E23005A0F62 /* SimpleUsersViewController.swift */,
 				804B126B24E712C2002B00EA /* SimpleChat.storyboard */,
 			);
 			path = SimpleChat;
@@ -1447,6 +1471,14 @@
 				79200D4B25025B81002F4EB1 /* Error+InternetNotAvailable.swift */,
 			);
 			path = "Internet Connection";
+			sourceTree = "<group>";
+		};
+		DA8406FE2524F761005A0F62 /* UserListController */ = {
+			isa = PBXGroup;
+			children = (
+				DA8406FF2524F778005A0F62 /* UserListController.swift */,
+			);
+			path = UserListController;
 			sourceTree = "<group>";
 		};
 		DAD8A89D2507E1A900D05282 /* CombineSimpleChat */ = {
@@ -1777,6 +1809,7 @@
 				8008C18724EDBCFF00F5BCCE /* LogsViewController.swift in Sources */,
 				8008C19524F456BF00F5BCCE /* ComposerView.swift in Sources */,
 				804B127224E712F5002B00EA /* SimpleChatViewController.swift in Sources */,
+				DA84071325250E23005A0F62 /* SimpleUsersViewController.swift in Sources */,
 				DAD8A8A52507E1C800D05282 /* CombineSimpleChatViewController.swift in Sources */,
 				80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */,
 				8008C19224F44DF900F5BCCE /* UIView+InstantiateFromNib.swift in Sources */,
@@ -1794,6 +1827,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */,
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
 				792CA62624CEE93700D70A5E /* ChannelListUpdater.swift in Sources */,
 				79896D5E25065ECD00BA8F1C /* ChannelRead.swift in Sources */,
@@ -1804,11 +1838,13 @@
 				7931818C24FD2660002F8C84 /* ChannelListController+Combine.swift in Sources */,
 				8A62706E24BF45360040BFD6 /* BanEnabling.swift in Sources */,
 				79877A0A2498E4BC00015F8B /* Device.swift in Sources */,
+				DA8407062524F84F005A0F62 /* UserListQuery.swift in Sources */,
 				79280F4F2485308100CDEB89 /* DataController.swift in Sources */,
 				F6ED5F7825027907005D7327 /* MissingEventsRequestBody.swift in Sources */,
 				79877A252498E50D00015F8B /* TeamDTO.swift in Sources */,
 				7964F3B7249A314D002A09EC /* LogFormatter.swift in Sources */,
 				F63CC36F24E591840052844D /* EventObserver.swift in Sources */,
+				DA84070925250528005A0F62 /* UserEndpoints.swift in Sources */,
 				8A0D649724E579A50017A3C0 /* GuestEndpoints.swift in Sources */,
 				8A62705024B867190040BFD6 /* EventPayload.swift in Sources */,
 				F6778F9A24F5144F005E7D22 /* EventNotificationCenter.swift in Sources */,
@@ -1828,6 +1864,7 @@
 				792A4F1D247FEA2200EAF71D /* ChannelListController.swift in Sources */,
 				79280F49248520B300CDEB89 /* EventDecoder.swift in Sources */,
 				8A0D649B24E579E90017A3C0 /* GuestUserTokenPayload.swift in Sources */,
+				DA84071025250720005A0F62 /* UserListQueryDTO.swift in Sources */,
 				799C9449247D5211001F1104 /* MessageSender.swift in Sources */,
 				792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */,
 				7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */,
@@ -1847,6 +1884,7 @@
 				792A4F3F247FFDE700EAF71D /* Codable+Extensions.swift in Sources */,
 				79C750BB248FC4100023F0B7 /* ErrorPayload.swift in Sources */,
 				799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */,
+				DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */,
 				79877A272498E50D00015F8B /* MemberModelDTO.swift in Sources */,
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				8A0C3BD424C1DF2100CAFD19 /* MessageEvents.swift in Sources */,
@@ -1866,6 +1904,7 @@
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
 				79877A1C2498E4EE00015F8B /* Endpoint.swift in Sources */,
 				DAEAF4B324DAD99E0015FB28 /* HideChannelRequest.swift in Sources */,
+				DA84071F25251F12005A0F62 /* NewUserQueryUpdater.swift in Sources */,
 				792FCB4924A3BF38000290C7 /* OptionSet+Extensions.swift in Sources */,
 				79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */,
 				F688643624E6DA8700A71361 /* CurrentUserController.swift in Sources */,
@@ -1929,6 +1968,7 @@
 				DA99D0D024ED63C600AD5354 /* NewChannelQueryUpdater.swift in Sources */,
 				8A0175F02501174000570345 /* EventSender.swift in Sources */,
 				F6FF1DAA24FD23D300151735 /* MessageEndpoints.swift in Sources */,
+				DA8407002524F778005A0F62 /* UserListController.swift in Sources */,
 				799C943E247D2FB9001F1104 /* Message.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

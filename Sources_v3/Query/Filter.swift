@@ -65,7 +65,7 @@ public enum Filter: Encodable, CustomStringConvertible {
     // MARK: - Technical
 
     /// "Technical" enum case needed for situation when we need to keep filterHash different from the current `Filter`.
-    /// Used for `NewChannelQueryUpdater`
+    /// Used for `NewChannelQueryUpdater` and `NewUserQueryUpdater`
     indirect case explicitFilterHash(Filter, String)
     
     public var description: String {

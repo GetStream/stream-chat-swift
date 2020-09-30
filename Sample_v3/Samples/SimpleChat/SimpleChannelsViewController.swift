@@ -193,6 +193,17 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
         controller.synchronize()
     }
     
+    @objc func handleUsersButton(_ sender: Any) {
+        guard
+            let usersViewController = UIStoryboard.simpleChat
+            .instantiateViewController(withIdentifier: "SimpleUsersViewController") as? SimpleUsersViewController
+        else { return }
+        
+        usersViewController.userListController = chatClient
+            .userListController(query: .init(filter: .autocomplete("name", with: "b")))
+        present(usersViewController, animated: true)
+    }
+    
     ///
     /// # handleLongPress
     ///
@@ -282,9 +293,16 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
             target: self,
             action: #selector(handleSettingsButton)
         )
-
+        
+        let usersButton = UIBarButtonItem(
+            title: "Users",
+            style: .plain,
+            target: self,
+            action: #selector(handleUsersButton)
+        )
+        
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAddChannelButton(_:)))
-        navigationItem.rightBarButtonItem = addButton
+        navigationItem.rightBarButtonItems = [usersButton, addButton]
         if let split = splitViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count - 1] as! UINavigationController)
