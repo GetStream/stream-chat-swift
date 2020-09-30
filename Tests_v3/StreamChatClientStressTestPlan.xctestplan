@@ -15,8 +15,7 @@
         "key" : "STRESS_TESTS",
         "value" : "TRUE"
       }
-    ],
-    "testExecutionOrdering" : "random"
+    ]
   },
   "testTargets" : [
     {
