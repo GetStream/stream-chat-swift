@@ -172,11 +172,16 @@ public extension _CurrentChatUserController {
         }
         
         // Set up a waiter for the new connection id to know when the connection process is finished
-        client.provideConnectionId { connectionId in
+        client.provideConnectionId { [weak self] connectionId in
             if connectionId != nil {
                 completion?(nil)
             } else {
-                completion?(ClientError.ConnectionNotSuccessfull())
+                // Try to get a concrete error
+                if case let .disconnected(error) = self?.client.webSocketClient.connectionState {
+                    completion?(ClientError.ConnectionNotSuccessfull(with: error))
+                } else {
+                    completion?(ClientError.ConnectionNotSuccessfull())
+                }
             }
         }
         
