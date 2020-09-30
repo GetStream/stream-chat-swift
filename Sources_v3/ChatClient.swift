@@ -333,8 +333,15 @@ extension _ChatClient: ConnectionStateDelegate {
             self.connectionId = connectionId
             connectionIdWaiters.forEach { $0(connectionId) }
             connectionIdWaiters.removeAll()
+            
         } else {
             connectionId = nil
+
+            if case .disconnected = state {
+                // No reconnection attempt schedule, we should fail all existing connecitonId waiters.
+                connectionIdWaiters.forEach { $0(nil) }
+                connectionIdWaiters.removeAll()
+            }
         }
     }
 }
