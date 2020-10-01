@@ -88,9 +88,8 @@ final class CurrentUserController_Tests: StressTestCase {
     // MARK: - Delegate
     
     func test_delegate_isAssignedCorrectly() {
-        let delegate = TestDelegate()
-        
         // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly
@@ -99,7 +98,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_delegate_isReferencedWeakly() {
         // Create the delegate
-        var delegate: TestDelegate? = TestDelegate()
+        var delegate: TestDelegate? = .init(expectedQueueId: callbackQueueID)
         
         // Set the delegate
         controller.delegate = delegate
@@ -113,7 +112,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_genericDelegate_isReferencedWeakly() {
         // Create the delegate
-        var delegate: TestDelegateGeneric? = TestDelegateGeneric()
+        var delegate: TestDelegateGeneric? = .init(expectedQueueId: callbackQueueID)
         
         // Set the delegate
         controller.setDelegate(delegate)
@@ -127,8 +126,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_delegate_isNotifiedAboutConnectionStatusChanges() {
         // Set the delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Assert no connection status changes received so far
@@ -151,8 +149,7 @@ final class CurrentUserController_Tests: StressTestCase {
         )
         
         // Set the delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -176,8 +173,7 @@ final class CurrentUserController_Tests: StressTestCase {
         )
         
         // Set the delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -209,8 +205,7 @@ final class CurrentUserController_Tests: StressTestCase {
         let unreadCount = UnreadCount(channels: 10, messages: 15)
         
         // Set the delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
 
         // Simulate saving current user to a database

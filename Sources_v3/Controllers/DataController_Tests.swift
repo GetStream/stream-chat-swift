@@ -9,9 +9,8 @@ class DataController_Tests: XCTestCase {
     func test_delegateMethodIsCalled() {
         let controller = DataController()
         let delegateQueueId = UUID()
-        let delegate = TestDelegate()
+        let delegate = TestDelegate(expectedQueueId: delegateQueueId)
         
-        delegate.expectedQueueId = delegateQueueId
         controller.stateMulticastDelegate.mainDelegate = delegate
         controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
         

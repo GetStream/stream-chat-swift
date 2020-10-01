@@ -269,8 +269,7 @@ class ChannelController_Tests: StressTestCase {
     // MARK: - Delegate tests
     
     func test_settingDelegate_leads_to_FetchingLocalData() {
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
            
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
@@ -283,8 +282,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert delegate is notified about state changes
@@ -302,8 +300,7 @@ class ChannelController_Tests: StressTestCase {
 
     func test_genericDelegate_isNotifiedAboutStateChanges() throws {
         // Set the generic delegate
-        let delegate = TestDelegateGeneric()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         
         // Assert delegate is notified about state changes
@@ -331,8 +328,7 @@ class ChannelController_Tests: StressTestCase {
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
 
         // Setup delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
 
         // Simulate `synchronize` call
@@ -382,11 +378,8 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_channelMemberEvents_areForwaredToDelegate() throws {
-        let delegate = TestDelegate()
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        
-        // Set the queue for delegate calls
-        delegate.expectedQueueId = controllerCallbackQueueID
         
         // Simulate `synchronize()` call
         controller.synchronize()
@@ -401,11 +394,8 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_channelMemberEvents_areForwaredToGenericDelegate() throws {
-        let delegate = TestDelegateGeneric()
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
-        
-        // Set the queue for delegate calls
-        delegate.expectedQueueId = controllerCallbackQueueID
         
         // Simulate `synchronize()` call
         controller.synchronize()
@@ -427,9 +417,8 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createMember(userId: memberId, cid: channelId)
         
         // Set the queue for delegate calls
-        let delegate = TestDelegate()
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
-        delegate.expectedQueueId = controllerCallbackQueueID
         
         // Simulate `synchronize()` call
         controller.synchronize()
@@ -458,9 +447,8 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createMember(userId: memberId, cid: channelId)
         
         // Set the queue for delegate calls
-        let delegate = TestDelegateGeneric()
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
-        delegate.expectedQueueId = controllerCallbackQueueID
         
         // Simulate `synchronize()` call
         controller.synchronize()
@@ -482,15 +470,12 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_delegateMethodsAreCalled() throws {
-        let delegate = TestDelegate()
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
         // do in the controller.
         XCTAssert(controller.delegate === delegate)
-        
-        // Set the queue for delegate calls
-        delegate.expectedQueueId = controllerCallbackQueueID
         
         // Simulate `synchronize()` call
         controller.synchronize()
@@ -513,11 +498,8 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_genericDelegate() throws {
-        let delegate = TestDelegateGeneric()
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
-        
-        // Set the queue for delegate calls
-        delegate.expectedQueueId = controllerCallbackQueueID
         
         // Simulate `synchronize()` call
         controller.synchronize()
