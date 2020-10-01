@@ -275,6 +275,7 @@
 		DA4AA3B8250271BD00FAAF6E /* CurrentUserController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B7250271BD00FAAF6E /* CurrentUserController+Combine.swift */; };
 		DA4AA3BA2502731900FAAF6E /* Publisher+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */; };
 		DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */; };
+		DA8407002524F778005A0F62 /* UserListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8406FF2524F778005A0F62 /* UserListController.swift */; };
 		DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407022524F7E6005A0F62 /* UserListUpdater.swift */; };
 		DA8407062524F84F005A0F62 /* UserListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407052524F84F005A0F62 /* UserListQuery.swift */; };
 		DA84070925250528005A0F62 /* UserEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070825250528005A0F62 /* UserEndpoints.swift */; };
@@ -286,6 +287,7 @@
 		DA84072D2525EF8D005A0F62 /* UserEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84072C2525EF8D005A0F62 /* UserEndpoints_Tests.swift */; };
 		DA8407302526002D005A0F62 /* UserListUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84072F2526002D005A0F62 /* UserListUpdater_Mock.swift */; };
 		DA8407332526003D005A0F62 /* UserListUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407322526003D005A0F62 /* UserListUpdater_Tests.swift */; };
+		DA84074025260CA3005A0F62 /* UserListController+Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84073D25260C95005A0F62 /* UserListController+Tests.swift */; };
 		DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */; };
 		DA99D0D024ED63C600AD5354 /* NewChannelQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */; };
 		DAD539DB250B8A9C00CFC649 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD539DA250B8A9C00CFC649 /* Controller.swift */; };
@@ -680,6 +682,7 @@
 		DA4AA3B7250271BD00FAAF6E /* CurrentUserController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CurrentUserController+Combine.swift"; sourceTree = "<group>"; };
 		DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher+Extensions.swift"; sourceTree = "<group>"; };
 		DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload_Tests.swift; sourceTree = "<group>"; };
+		DA8406FF2524F778005A0F62 /* UserListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListController.swift; sourceTree = "<group>"; };
 		DA8407022524F7E6005A0F62 /* UserListUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListUpdater.swift; sourceTree = "<group>"; };
 		DA8407052524F84F005A0F62 /* UserListQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListQuery.swift; sourceTree = "<group>"; };
 		DA84070825250528005A0F62 /* UserEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEndpoints.swift; sourceTree = "<group>"; };
@@ -691,6 +694,7 @@
 		DA84072C2525EF8D005A0F62 /* UserEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEndpoints_Tests.swift; sourceTree = "<group>"; };
 		DA84072F2526002D005A0F62 /* UserListUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListUpdater_Mock.swift; sourceTree = "<group>"; };
 		DA8407322526003D005A0F62 /* UserListUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListUpdater_Tests.swift; sourceTree = "<group>"; };
+		DA84073D25260C95005A0F62 /* UserListController+Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+Tests.swift"; sourceTree = "<group>"; };
 		DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCodingKeys.swift; sourceTree = "<group>"; };
 		DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChannelQueryUpdater.swift; sourceTree = "<group>"; };
 		DAD539DA250B8A9C00CFC649 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
@@ -1196,6 +1200,7 @@
 				DAE566F32500F98D00E39431 /* ChannelListController */,
 				DAE566F42500F99900E39431 /* CurrentUserController */,
 				F649B23F250125C9008F98C8 /* MessageController */,
+				DA8406FE2524F761005A0F62 /* UserListController */,
 				79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */,
 				793C14DB24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift */,
 				792AF91524D812440010097B /* EntityDatabaseObserver.swift */,
@@ -1480,6 +1485,15 @@
 				79200D4B25025B81002F4EB1 /* Error+InternetNotAvailable.swift */,
 			);
 			path = "Internet Connection";
+			sourceTree = "<group>";
+		};
+		DA8406FE2524F761005A0F62 /* UserListController */ = {
+			isa = PBXGroup;
+			children = (
+				DA8406FF2524F778005A0F62 /* UserListController.swift */,
+				DA84073D25260C95005A0F62 /* UserListController+Tests.swift */,
+			);
+			path = UserListController;
 			sourceTree = "<group>";
 		};
 		DAD8A89D2507E1A900D05282 /* CombineSimpleChat */ = {
@@ -1968,6 +1982,7 @@
 				DA99D0D024ED63C600AD5354 /* NewChannelQueryUpdater.swift in Sources */,
 				8A0175F02501174000570345 /* EventSender.swift in Sources */,
 				F6FF1DAA24FD23D300151735 /* MessageEndpoints.swift in Sources */,
+				DA8407002524F778005A0F62 /* UserListController.swift in Sources */,
 				799C943E247D2FB9001F1104 /* Message.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1992,6 +2007,7 @@
 				DA8407332526003D005A0F62 /* UserListUpdater_Tests.swift in Sources */,
 				F69E7F7D24ED7562000F5252 /* CurrentUserController_Tests.swift in Sources */,
 				7922F30A24DAE3B600C364BC /* EntityDatabaseObserver_Tests.swift in Sources */,
+				DA84074025260CA3005A0F62 /* UserListController+Tests.swift in Sources */,
 				8A62705E24BE2CD70040BFD6 /* XCTestCase+MockJSON.swift in Sources */,
 				F63CC37124E591990052844D /* EventObserver_Tests.swift in Sources */,
 				F62BE7872506525700D13B86 /* MissingEventsRequestBody_Tests.swift in Sources */,

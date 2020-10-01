@@ -455,8 +455,12 @@ extension XCTestCase {
     }
     
     var dummyUser: UserPayload<NameAndImageExtraData> {
+        dummyUser(id: .unique)
+    }
+    
+    func dummyUser(id: String) -> UserPayload<NameAndImageExtraData> {
         UserPayload(
-            id: .unique,
+            id: id,
             role: .user,
             createdAt: .unique,
             updatedAt: .unique,
