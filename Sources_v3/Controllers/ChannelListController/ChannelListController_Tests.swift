@@ -183,8 +183,7 @@ class ChannelListController_Tests: StressTestCase {
     // MARK: - Delegate tests
     
     func test_settingDelegate_leads_to_FetchingLocalData() {
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
            
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
@@ -197,8 +196,7 @@ class ChannelListController_Tests: StressTestCase {
     
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert delegate is notified about state changes
@@ -216,8 +214,7 @@ class ChannelListController_Tests: StressTestCase {
 
     func test_genericDelegate_isNotifiedAboutStateChanges() throws {
         // Set the generic delegate
-        let delegate = TestDelegateGeneric()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         
         // Assert delegate is notified about state changes
@@ -234,12 +231,8 @@ class ChannelListController_Tests: StressTestCase {
     }
     
     func test_delegateMethodsAreCalled() throws {
-        let delegate = TestDelegate()
-        
-        // Set the queue for delegate calls
-        let delegateQueueId = UUID()
-        delegate.expectedQueueId = delegateQueueId
-        controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -260,14 +253,8 @@ class ChannelListController_Tests: StressTestCase {
     }
     
     func test_genericDelegate() throws {
-        let delegate = TestDelegateGeneric()
-        
-        // Set the queue for delegate calls
-        let delegateQueueId = UUID()
-        delegate.expectedQueueId = delegateQueueId
-        controller.callbackQueue = .testQueue(withId: delegateQueueId)
-        
         // Set delegate
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         
         // Simulate DB update

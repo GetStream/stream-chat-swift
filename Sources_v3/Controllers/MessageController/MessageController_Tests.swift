@@ -157,7 +157,7 @@ final class MessageController_Tests: StressTestCase {
     // MARK: - Delegate
 
     func test_delegate_isAssignedCorrectly() {
-        let delegate = TestDelegate()
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
 
         // Set the delegate
         controller.delegate = delegate
@@ -167,12 +167,11 @@ final class MessageController_Tests: StressTestCase {
     }
     
     func test_settingDelegate_leads_to_FetchingLocalData() {
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
-        
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
         
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Assert state changed
@@ -181,8 +180,7 @@ final class MessageController_Tests: StressTestCase {
 
     func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Assert delegate is notified about state changes
@@ -200,8 +198,7 @@ final class MessageController_Tests: StressTestCase {
 
     func test_genericDelegate_isNotifiedAboutStateChanges() throws {
         // Set the generic delegate
-        let delegate = TestDelegateGeneric()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegateGeneric(expectedQueueId: callbackQueueID)
         controller.setDelegate(delegate)
         
         // Assert delegate is notified about state changes
@@ -225,8 +222,7 @@ final class MessageController_Tests: StressTestCase {
         try client.databaseContainer.createChannel(cid: cid)
         
         // Set the delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Simulate `synchronize` call
@@ -262,8 +258,7 @@ final class MessageController_Tests: StressTestCase {
         try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid, text: initialMessageText)
         
         // Set the delegate
-        let delegate = TestDelegate()
-        delegate.expectedQueueId = controllerCallbackQueueID
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
         controller.delegate = delegate
         
         // Simulate `synchronize` call
