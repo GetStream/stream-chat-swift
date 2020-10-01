@@ -256,9 +256,9 @@ class ChannelDTO_Tests: XCTestCase {
         let payload2 = dummyPayload(with: channel2Id)
         
         // Save the channels to DB, but only channel 1 is associated with the query
-        database.write { session in
-            try! session.saveChannel(payload: payload1, query: query)
-            try! session.saveChannel(payload: payload2)
+        try! database.writeSynchronously { session in
+            try session.saveChannel(payload: payload1, query: query)
+            try session.saveChannel(payload: payload2)
         }
         
         let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
@@ -266,10 +266,8 @@ class ChannelDTO_Tests: XCTestCase {
             try! database.viewContext.fetch(fetchRequest)
         }
         
-        AssertAsync {
-            Assert.willBeEqual(loadedChannels.count, 1)
-            Assert.willBeEqual(loadedChannels.first?.cid, channel1Id.rawValue)
-        }
+        XCTAssertEqual(loadedChannels.count, 1)
+        XCTAssertEqual(loadedChannels.first?.cid, channel1Id.rawValue)
     }
     
     func test_channelListQuery_withSorting() {
@@ -290,11 +288,11 @@ class ChannelDTO_Tests: XCTestCase {
             .sorted(by: { $0 > $1 })
         
         // Save the channels to DB. It doesn't matter which query we use because the filter for both of them is the same.
-        database.write { session in
-            try! session.saveChannel(payload: payload1, query: queryWithDefaultSorting)
-            try! session.saveChannel(payload: payload2, query: queryWithDefaultSorting)
-            try! session.saveChannel(payload: payload3, query: queryWithDefaultSorting)
-            try! session.saveChannel(payload: payload4, query: queryWithDefaultSorting)
+        try! database.writeSynchronously { session in
+            try session.saveChannel(payload: payload1, query: queryWithDefaultSorting)
+            try session.saveChannel(payload: payload2, query: queryWithDefaultSorting)
+            try session.saveChannel(payload: payload3, query: queryWithDefaultSorting)
+            try session.saveChannel(payload: payload4, query: queryWithDefaultSorting)
         }
         
         // A fetch request with a default sorting.
@@ -305,15 +303,13 @@ class ChannelDTO_Tests: XCTestCase {
         var channelsWithDefaultSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithDefaultSorting) }
         var channelsWithCIDSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithCIDSorting) }
         
-        AssertAsync {
-            // Check the default sorting.
-            Assert.willBeEqual(channelsWithDefaultSorting.count, 4)
-            Assert.willBeEqual(channelsWithDefaultSorting.map { $0.lastMessageAt ?? $0.createdAt }, createdAndLastMessageDates)
-            
-            // Check the sorting by `cid`.
-            Assert.willBeEqual(channelsWithCIDSorting.count, 4)
-            Assert.willBeEqual(channelsWithCIDSorting.map(\.cid), ["a:a", "a:b", "a:c", "a:d"])
-        }
+        // Check the default sorting.
+        XCTAssertEqual(channelsWithDefaultSorting.count, 4)
+        XCTAssertEqual(channelsWithDefaultSorting.map { $0.lastMessageAt ?? $0.createdAt }, createdAndLastMessageDates)
+        
+        // Check the sorting by `cid`.
+        XCTAssertEqual(channelsWithCIDSorting.count, 4)
+        XCTAssertEqual(channelsWithCIDSorting.map(\.cid), ["a:a", "a:b", "a:c", "a:d"])
     }
     
     /// `ChannelListSortingKey` test for sort descriptor and encoded value.

@@ -7,7 +7,7 @@ import XCTest
 
 class ChannelQuery_Tests: XCTestCase {
     // Test ChannelQuery encoded correctly
-    func test_channelQuery_encodedCorreclty() throws {
+    func test_channelQuery_encodedCorrectly() throws {
         let cid: ChannelId = .unique
         let messagesPagination = Pagination(arrayLiteral: .offset(3))
         let membersPagination = Pagination(arrayLiteral: .offset(4))

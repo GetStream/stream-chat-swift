@@ -4,7 +4,8 @@
 
 import Foundation
 
-/// A channels query.
+/// A query is used for querying specific channels from backend.
+/// You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.
 public struct ChannelListQuery: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"

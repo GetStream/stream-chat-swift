@@ -134,7 +134,7 @@ class ChannelController_Tests: StressTestCase {
 
     // MARK: - Creating `ChannelController` tests
 
-    func test_channelControllerForNewChannel_createdCorreclty() {
+    func test_channelControllerForNewChannel_createdCorrectly() {
         let cid: ChannelId = .unique
         let team: String = .unique
         let members: Set<UserId> = [.unique]
@@ -158,7 +158,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(extraData, controller.channelQuery.channelPayload?.extraData)
     }
 
-    func test_channelControllerForNew1on1Channel_createdCorreclty() throws {
+    func test_channelControllerForNew1on1Channel_createdCorrectly() throws {
         let team: String = .unique
         let members: Set<UserId> = [.unique]
         let extraData: NameAndImageExtraData = .init(name: .unique, imageURL: .unique())
@@ -268,7 +268,7 @@ class ChannelController_Tests: StressTestCase {
 
     // MARK: - Delegate tests
     
-    func test_settingDelegate_leads_to_FetchingLocalData() {
+    func test_settingDelegate_leadsToFetchingLocalData() {
         let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
            
         // Check initial state
@@ -497,7 +497,7 @@ class ChannelController_Tests: StressTestCase {
         }
     }
     
-    func test_genericDelegate() throws {
+    func test_genericDelegateMethodsAreCalled() throws {
         let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         

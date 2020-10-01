@@ -166,7 +166,7 @@ final class MessageController_Tests: StressTestCase {
         XCTAssert(controller.delegate === delegate)
     }
     
-    func test_settingDelegate_leads_to_FetchingLocalData() {
+    func test_settingDelegate_leadsToFetchingLocalDataa() {
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
         
