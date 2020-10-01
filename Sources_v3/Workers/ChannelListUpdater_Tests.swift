@@ -25,6 +25,8 @@ class ChannelListUpdater_Tests: StressTestCase {
     override func tearDown() {
         apiClient.cleanUp()
         
+        AssertAsync.canBeReleased(&listUpdater)
+        
         super.tearDown()
     }
     
@@ -63,7 +65,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         }
     }
     
-    func test_update_errorReponse_isPropagatedToCompletion() {
+    func test_update_errorResponse_isPropagatedToCompletion() {
         // Simulate `update` call
         let query = ChannelListQuery(filter: .in("member", ["Luke"]))
         var completionCalledError: Error?

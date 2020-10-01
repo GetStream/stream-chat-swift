@@ -87,7 +87,7 @@ class ChannelListController_Tests: StressTestCase {
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
     }
     
-    func test_changesAreReported_beforeCallingsynchronize() throws {
+    func test_changesAreReported_beforeCallingSynchronize() throws {
         // Save a new channel to DB
         client.databaseContainer.write { session in
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: self.query)
@@ -97,7 +97,7 @@ class ChannelListController_Tests: StressTestCase {
         AssertAsync.willBeFalse(controller.channels.isEmpty)
     }
     
-    func test_channels_are_fetched_beforeCallingsynchronize() throws {
+    func test_channelsAreFetched_beforeCallingSynchronize() throws {
         // Save three channels to DB
         let cidMatchingQuery = ChannelId.unique
         let cidMatchingQueryDeleted = ChannelId.unique
@@ -182,7 +182,7 @@ class ChannelListController_Tests: StressTestCase {
     
     // MARK: - Delegate tests
     
-    func test_settingDelegate_leads_to_FetchingLocalData() {
+    func test_settingDelegate_leadsToFetchingLocalData() {
         let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
            
         // Check initial state
@@ -241,29 +241,26 @@ class ChannelListController_Tests: StressTestCase {
   
         // Simulate DB update
         let cid: ChannelId = .unique
-        let error = try await {
-            client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
-            }, completion: $0)
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
         }
-        XCTAssertNil(error)
+
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
         
         AssertAsync.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
     }
     
-    func test_genericDelegate() throws {
+    func test_genericDelegateMethodsAreCalled() throws {
         // Set delegate
         let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         
         // Simulate DB update
         let cid: ChannelId = .unique
-        _ = try await {
-            client.databaseContainer.write({ session in
-                try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
-            }, completion: $0)
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
         }
+        
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
         
         AssertAsync.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
