@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.4.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.4.0)
+_October 01, 2020_
+
+### 🔄 Changed
+- Starscream dependency updated from 3.1 to latest (4.0.4) [#511](https://github.com/GetStream/stream-chat-swift/issues/511)
+
 ### ✅ Added
 - `queryMembers` API for queriyng members, see [docs](https://getstream.io/chat/docs/query_members/?language=swift) [#521](https://github.com/GetStream/stream-chat-swift/issues/521)
 
