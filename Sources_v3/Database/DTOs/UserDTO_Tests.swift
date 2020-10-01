@@ -247,39 +247,26 @@ class UserDTO_Tests: XCTestCase {
 
     /// `UserListSortingKey` test for sort descriptor and encoded value.
     func test_channelListSortingKey() {
+        let encoder = JSONEncoder.stream
         var userListSortingKey = UserListSortingKey.createdAt
-        XCTAssertEqual(encodedUserListSortingKey(userListSortingKey), "created_at")
+        XCTAssertEqual(encoder.encodedString(userListSortingKey), "created_at")
         XCTAssertEqual(
             userListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "userCreatedAt", ascending: true)
         )
         
         userListSortingKey = .lastActiveAt
-        XCTAssertEqual(encodedUserListSortingKey(userListSortingKey), "lastActiveAt")
+        XCTAssertEqual(encoder.encodedString(userListSortingKey), "lastActiveAt")
         XCTAssertEqual(
             userListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "lastActivityAt", ascending: true)
         )
         
         userListSortingKey = .updatedAt
-        XCTAssertEqual(encodedUserListSortingKey(userListSortingKey), "updated_at")
+        XCTAssertEqual(encoder.encodedString(userListSortingKey), "updated_at")
         XCTAssertEqual(
             userListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "userUpdatedAt", ascending: true)
         )
-    }
-    
-    private func encodedUserListSortingKey(_ sortingKey: UserListSortingKey) -> String {
-        if #available(iOS 13, *) {
-            let encodedData = try! JSONEncoder.stream.encode(sortingKey)
-            return String(data: encodedData, encoding: .utf8)!.trimmingCharacters(in: .init(charactersIn: "\""))
-        
-        } else {
-            @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
-            // Workaround for a bug https://bugs.swift.org/browse/SR-6163 fixed in iOS 13
-            let data = try! JSONEncoder.stream.encode(["key": sortingKey])
-            let json = try! JSONSerialization.jsonObject(with: data) as! [String: Any]
-            return json["key"] as! String
-        }
     }
 }

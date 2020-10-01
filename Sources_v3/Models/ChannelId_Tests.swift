@@ -25,9 +25,10 @@ class ChannelId_Tests: XCTestCase {
     }
     
     func test_channelId_encoding() throws {
-        XCTAssertEqual(encode(channelId: try ChannelId(cid: "*")), "*")
-        XCTAssertEqual(encode(channelId: ChannelId(type: .messaging, id: "123")), "messaging:123")
-        XCTAssertEqual(encode(channelId: ChannelId(type: .custom("asd"), id: "123")), "asd:123")
+        let encoder = JSONEncoder.stream
+        XCTAssertEqual(encoder.encodedString(try ChannelId(cid: "*")), "*")
+        XCTAssertEqual(encoder.encodedString(ChannelId(type: .messaging, id: "123")), "messaging:123")
+        XCTAssertEqual(encoder.encodedString(ChannelId(type: .custom("asd"), id: "123")), "asd:123")
     }
 
     func test_channelId_decoding() throws {
@@ -47,18 +48,6 @@ class ChannelId_Tests: XCTestCase {
         let channelId = ChannelId(type: .unknown, id: "")
         XCTAssertEqual(channelId.type, ChannelType.unknown)
         XCTAssertEqual(channelId.id, "*")
-    }
-    
-    @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
-    private func encode(channelId: ChannelId) -> String? {
-        // We must encode it as a part of JSON because older iOS version don't support JSON fragments
-        let key = String.unique
-        guard
-            let data = try? JSONEncoder.stream.encode([key: channelId]),
-            let json = try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
-        else { return nil }
-        
-        return json[key] as? String
     }
     
     @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")

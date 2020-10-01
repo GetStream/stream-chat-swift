@@ -314,8 +314,10 @@ class ChannelDTO_Tests: XCTestCase {
     
     /// `ChannelListSortingKey` test for sort descriptor and encoded value.
     func test_channelListSortingKey() {
+        let encoder = JSONEncoder.stream
+            
         var channelListSortingKey = ChannelListSortingKey.default
-        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "updated_at")
+        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "updated_at")
         XCTAssertEqual(
             channelListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "defaultSortingAt", ascending: true)
@@ -330,32 +332,32 @@ class ChannelDTO_Tests: XCTestCase {
         )
         
         channelListSortingKey = .cid
-        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "cid")
+        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "cid")
         XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true), NSSortDescriptor(key: "cid", ascending: true))
         
         channelListSortingKey = .type
-        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "type")
+        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "type")
         XCTAssertEqual(
             channelListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "typeRawValue", ascending: true)
         )
         
         channelListSortingKey = .createdAt
-        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "created_at")
+        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "created_at")
         XCTAssertEqual(
             channelListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "createdAt", ascending: true)
         )
         
         channelListSortingKey = .deletedAt
-        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "deleted_at")
+        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "deleted_at")
         XCTAssertEqual(
             channelListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "deletedAt", ascending: true)
         )
         
         channelListSortingKey = .lastMessageAt
-        XCTAssertEqual(encodedChannelListSortingKey(channelListSortingKey), "last_message_at")
+        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "last_message_at")
         XCTAssertEqual(
             channelListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "lastMessageAt", ascending: true)
@@ -414,20 +416,6 @@ class ChannelDTO_Tests: XCTestCase {
         
         // Assert channel's currentlyTypingMembers are cleared
         AssertAsync.willBeTrue(channel.currentlyTypingMembers.isEmpty)
-    }
-    
-    private func encodedChannelListSortingKey(_ sortingKey: ChannelListSortingKey) -> String {
-        if #available(iOS 13, *) {
-            let encodedData = try! JSONEncoder.stream.encode(sortingKey)
-            return String(data: encodedData, encoding: .utf8)!.trimmingCharacters(in: .init(charactersIn: "\""))
-        
-        } else {
-            @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
-            // Workaround for a bug https://bugs.swift.org/browse/SR-6163 fixed in iOS 13
-            let data = try! JSONEncoder.stream.encode(["key": sortingKey])
-            let json = try! JSONSerialization.jsonObject(with: data) as! [String: Any]
-            return json["key"] as! String
-        }
     }
 }
 
