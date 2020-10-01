@@ -10,7 +10,7 @@ protocol UserDatabaseSession {
     /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successfull. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>) throws -> UserDTO
+    func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>, query: UserListQuery?) throws -> UserDTO
     
     /// Fetchtes `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
     func user(id: UserId) -> UserDTO?
@@ -131,6 +131,11 @@ extension DatabaseSession {
     @discardableResult
     func saveChannel<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>) throws -> ChannelDTO {
         try saveChannel(payload: payload, query: nil)
+    }
+    
+    @discardableResult
+    func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>) throws -> UserDTO {
+        try saveUser(payload: payload, query: nil)
     }
     
     // MARK: - Event
