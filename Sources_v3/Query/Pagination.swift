@@ -48,6 +48,8 @@ public enum PaginationOption: Encodable, Hashable {
     public static let messagesPageSize: Self = .limit(25)
     /// A default messages page size for the next page.
     public static let messagesNextPageSize: Self = .limit(50)
+    /// A default users page size.
+    public static let usersPageSize: Self = .limit(30)
     
     private enum CodingKeys: String, CodingKey {
         case limit

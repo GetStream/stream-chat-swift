@@ -38,6 +38,7 @@ public struct Sorting<Key: SortingKey>: Encodable, CustomStringConvertible {
 
 // MARK: Channel List Sorting Key
 
+/// `ChannelListSortingKey` is keys by which you can get sorted channels after query.
 public enum ChannelListSortingKey: SortingKey {
     /// The default sorting is by the last massage date or a channel created date. The same as by `updatedDate`.
     case `default`
@@ -89,6 +90,59 @@ extension ChannelListSortingKey {
         
         if let keyPath = stringKeyPath {
             return .init(keyPath: keyPath, ascending: isAscending)
+        }
+        
+        if let keyPath = dateKeyPath {
+            return .init(keyPath: keyPath, ascending: isAscending)
+        }
+        
+        if let keyPath = optionalDateKeyPath {
+            return .init(keyPath: keyPath, ascending: isAscending)
+        }
+        
+        return nil
+    }
+}
+
+// MARK: User List Sorting Key
+
+/// `UserListSortingKey` is keys by which you can get sorted users after query.
+public enum UserListSortingKey: SortingKey {
+    case createdAt
+    case updatedAt
+    case lastActiveAt
+    case custom(String)
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        let value: String
+        
+        switch self {
+        case .createdAt: value = "created_at"
+        case .updatedAt: value = "updated_at"
+        case .lastActiveAt: value = "lastActiveAt"
+        case let .custom(string): value = string
+        }
+        
+        try container.encode(value)
+    }
+}
+
+extension UserListSortingKey {
+    static let defaultSortDescriptor: NSSortDescriptor = {
+        let dateKeyPath: KeyPath<UserDTO, Date> = \UserDTO.userUpdatedAt
+        return .init(keyPath: dateKeyPath, ascending: false)
+    }()
+    
+    func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
+        var dateKeyPath: KeyPath<UserDTO, Date>?
+        var optionalDateKeyPath: KeyPath<UserDTO, Date?>?
+        
+        switch self {
+        case .createdAt: dateKeyPath = \UserDTO.userCreatedAt
+        case .updatedAt: dateKeyPath = \UserDTO.userUpdatedAt
+        case .lastActiveAt: optionalDateKeyPath = \UserDTO.lastActivityAt
+        case .custom: break
         }
         
         if let keyPath = dateKeyPath {
