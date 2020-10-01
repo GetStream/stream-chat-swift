@@ -278,6 +278,7 @@
 		DA8407062524F84F005A0F62 /* UserListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407052524F84F005A0F62 /* UserListQuery.swift */; };
 		DA84070925250528005A0F62 /* UserEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070825250528005A0F62 /* UserEndpoints.swift */; };
 		DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070B25250581005A0F62 /* UserListPayload.swift */; };
+		DA84071025250720005A0F62 /* UserListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070F25250720005A0F62 /* UserListQueryDTO.swift */; };
 		DA8407232525E871005A0F62 /* UserListPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407222525E871005A0F62 /* UserListPayload_Tests.swift */; };
 		DA8407262525E90D005A0F62 /* UsersQuery.json in Resources */ = {isa = PBXBuildFile; fileRef = DA8407252525E90D005A0F62 /* UsersQuery.json */; };
 		DA84072A2525EB2F005A0F62 /* UserListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407292525EB2F005A0F62 /* UserListQuery_Tests.swift */; };
@@ -679,6 +680,7 @@
 		DA8407052524F84F005A0F62 /* UserListQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListQuery.swift; sourceTree = "<group>"; };
 		DA84070825250528005A0F62 /* UserEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEndpoints.swift; sourceTree = "<group>"; };
 		DA84070B25250581005A0F62 /* UserListPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListPayload.swift; sourceTree = "<group>"; };
+		DA84070F25250720005A0F62 /* UserListQueryDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListQueryDTO.swift; sourceTree = "<group>"; };
 		DA8407222525E871005A0F62 /* UserListPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListPayload_Tests.swift; sourceTree = "<group>"; };
 		DA8407252525E90D005A0F62 /* UsersQuery.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UsersQuery.json; sourceTree = "<group>"; };
 		DA8407292525EB2F005A0F62 /* UserListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListQuery_Tests.swift; sourceTree = "<group>"; };
@@ -872,6 +874,7 @@
 				79877A1F2498E50D00015F8B /* TeamDTO.swift */,
 				79877A222498E50D00015F8B /* UserDTO.swift */,
 				79877A202498E50D00015F8B /* UserDTO_Tests.swift */,
+				DA84070F25250720005A0F62 /* UserListQueryDTO.swift */,
 				79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */,
 				79BA19F224B3386B00E11FC2 /* CurrentUserDTO_Tests.swift */,
 				79877A212498E50D00015F8B /* MemberModelDTO.swift */,
@@ -1852,6 +1855,7 @@
 				792A4F1D247FEA2200EAF71D /* ChannelListController.swift in Sources */,
 				79280F49248520B300CDEB89 /* EventDecoder.swift in Sources */,
 				8A0D649B24E579E90017A3C0 /* GuestUserTokenPayload.swift in Sources */,
+				DA84071025250720005A0F62 /* UserListQueryDTO.swift in Sources */,
 				799C9449247D5211001F1104 /* MessageSender.swift in Sources */,
 				792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */,
 				7964F3B8249A314D002A09EC /* ConsoleLogDestination.swift in Sources */,

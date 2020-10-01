@@ -60,7 +60,10 @@ extension NSManagedObjectContext: UserDatabaseSession {
         UserDTO.load(id: id, context: self)
     }
     
-    func saveUser<ExtraUserData: Codable & Hashable>(payload: UserPayload<ExtraUserData>) throws -> UserDTO {
+    func saveUser<ExtraUserData: Codable & Hashable>(
+        payload: UserPayload<ExtraUserData>,
+        query: UserListQuery?
+    ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
         
         dto.isBanned = payload.isBanned
@@ -73,6 +76,11 @@ extension NSManagedObjectContext: UserDatabaseSession {
         // TODO: TEAMS
         
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        
+        if let query = query {
+            let queryDTO = saveQuery(query: query)
+            queryDTO.users.insert(dto)
+        }
         
         return dto
     }
@@ -95,6 +103,26 @@ extension UserDTO {
         }
         
         return .init(id: id, extraData: extraData ?? .defaultValue)
+    }
+}
+
+extension UserDTO {
+    static func userListFetchRequest(query: UserListQuery) -> NSFetchRequest<UserDTO> {
+        let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
+        
+        // Fetch results controller requires at least one sorting descriptor.
+        let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
+        request.sortDescriptors = sortDescriptors.isEmpty ? [UserListSortingKey.defaultSortDescriptor] : sortDescriptors
+                
+        request.predicate = NSPredicate(format: "queries.filterHash == %@", query.filter.filterHash)
+        return request
+    }
+
+    static var userWithoutQueryFetchRequest: NSFetchRequest<UserDTO> {
+        let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
+        request.sortDescriptors = [UserListSortingKey.defaultSortDescriptor]
+        request.predicate = NSPredicate(format: "queries.@count == 0")
+        return request
     }
 }
 
