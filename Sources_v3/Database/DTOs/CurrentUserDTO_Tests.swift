@@ -20,8 +20,15 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         let payload: CurrentUserPayload<NameAndImageExtraData> = .dummy(
             userId: userId,
             role: .admin,
-            extraData: extraData
+            extraData: extraData,
+            mutedUsers: [
+                .dummy(userId: .unique),
+                .dummy(userId: .unique),
+                .dummy(userId: .unique)
+            ]
         )
+        
+        let mutedUserIDs = Set(payload.mutedUsers.map(\.mutedUser.id))
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -46,14 +53,25 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
                 try? JSONDecoder.default.decode(NameAndImageExtraData.self, from: $0.user.extraData)
             })
-            // TODO: Teams, Mutes, Devices
+            Assert.willBeEqual(mutedUserIDs, Set(loadedCurrentUser?.mutedUsers.map(\.id) ?? []))
+            // TODO: Teams, Devices
         }
     }
     
     func test_currentUserPayload_withNoExtraData_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         
-        let payload: CurrentUserPayload<NoExtraData> = .dummy(userId: userId, role: .user)
+        let payload: CurrentUserPayload<NoExtraData> = .dummy(
+            userId: userId,
+            role: .user,
+            mutedUsers: [
+                .dummy(userId: .unique),
+                .dummy(userId: .unique),
+                .dummy(userId: .unique)
+            ]
+        )
+        
+        let mutedUserIDs = Set(payload.mutedUsers.map(\.mutedUser.id))
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -78,8 +96,8 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
                 try? JSONDecoder.default.decode(NoExtraData.self, from: $0.user.extraData)
             })
-            
-            // TODO: Teams, Mutes, Devices
+            Assert.willBeEqual(mutedUserIDs, Set(loadedCurrentUser?.mutedUsers.map(\.id) ?? []))
+            // TODO: Teams, Devices
         }
     }
     
