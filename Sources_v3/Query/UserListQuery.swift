@@ -51,3 +51,12 @@ public struct UserListQuery: Encodable {
         try options.encode(to: encoder)
     }
 }
+
+extension UserListQuery {
+    /// Builds `UserListQuery` for a user with the provided `userId`
+    /// - Parameter userId: The user identifier
+    /// - Returns: `UserListQuery` for a specific user
+    static func user(withID userId: UserId) -> Self {
+        .init(filter: .equal("id", to: userId))
+    }
+}
