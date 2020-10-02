@@ -67,9 +67,9 @@ extension DatabaseContainer {
     }
 
     /// Synchronously creates a new UserDTO in the DB with the given id.
-    func createUser(id: UserId = .unique) throws {
+    func createUser(id: UserId = .unique, extraData: NameAndImageExtraData = .dummy) throws {
         try writeSynchronously { session in
-            try session.saveUser(payload: .dummy(userId: id))
+            try session.saveUser(payload: .dummy(userId: id, extraData: extraData))
         }
     }
 
