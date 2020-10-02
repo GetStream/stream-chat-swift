@@ -207,7 +207,7 @@
 		8819DFE625262B1500FD1A50 /* UserController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFE525262B1500FD1A50 /* UserController_Tests.swift */; };
 		8819DFE925262EBA00FD1A50 /* UserUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFE825262EBA00FD1A50 /* UserUpdater_Mock.swift */; };
 		8836133825274F5F003CB958 /* ExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133725274F5F003CB958 /* ExtraData.swift */; };
-		8836133C25275170003CB958 /* MutedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133B25275170003CB958 /* MutedUser.swift */; };
+		8836133C25275170003CB958 /* MutedUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133B25275170003CB958 /* MutedUserPayload.swift */; };
 		88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A00DCF2525F08000259AB4 /* ModerationEndpoints.swift */; };
 		8A0175F02501174000570345 /* EventSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175EF2501174000570345 /* EventSender.swift */; };
 		8A0175F425013B6400570345 /* EventSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175F325013B6400570345 /* EventSender_Tests.swift */; };
@@ -604,7 +604,7 @@
 		8819DFE525262B1500FD1A50 /* UserController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserController_Tests.swift; sourceTree = "<group>"; };
 		8819DFE825262EBA00FD1A50 /* UserUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdater_Mock.swift; sourceTree = "<group>"; };
 		8836133725274F5F003CB958 /* ExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraData.swift; sourceTree = "<group>"; };
-		8836133B25275170003CB958 /* MutedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUser.swift; sourceTree = "<group>"; };
+		8836133B25275170003CB958 /* MutedUserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUserPayload.swift; sourceTree = "<group>"; };
 		88A00DCF2525F08000259AB4 /* ModerationEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationEndpoints.swift; sourceTree = "<group>"; };
 		8A0175EF2501174000570345 /* EventSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender.swift; sourceTree = "<group>"; };
 		8A0175F325013B6400570345 /* EventSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender_Tests.swift; sourceTree = "<group>"; };
@@ -819,7 +819,7 @@
 				F67415BF24F0129800C3222F /* UnreadCount.swift */,
 				F6CCA25025124BA9004C1859 /* MemberPayload.swift */,
 				8836133725274F5F003CB958 /* ExtraData.swift */,
-				8836133B25275170003CB958 /* MutedUser.swift */,
+				8836133B25275170003CB958 /* MutedUserPayload.swift */,
 			);
 			path = "Dummy data";
 			sourceTree = "<group>";
@@ -2066,7 +2066,7 @@
 				DA8407302526002D005A0F62 /* UserListUpdater_Mock.swift in Sources */,
 				F6CCA25125124BA9004C1859 /* MemberPayload.swift in Sources */,
 				F69C4BC624F66CC200A3D740 /* EventLogger.swift in Sources */,
-				8836133C25275170003CB958 /* MutedUser.swift in Sources */,
+				8836133C25275170003CB958 /* MutedUserPayload.swift in Sources */,
 				7991D83F24F8F1BF00D21BA3 /* ChatClient_Mock.swift in Sources */,
 				792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */,
 				79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */,

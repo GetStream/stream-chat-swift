@@ -9,7 +9,7 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
     /// A list of devices.
     let devices: [Device]
     /// Muted users.
-    let mutedUsers: [MutedUser<ExtraData>]
+    let mutedUsers: [MutedUserPayload<ExtraData>]
     /// Unread channel and message counts
     let unreadCount: UnreadCount?
     
@@ -25,7 +25,7 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
         teams: [String] = [],
         extraData: ExtraData,
         devices: [Device] = [],
-        mutedUsers: [MutedUser<ExtraData>] = [],
+        mutedUsers: [MutedUserPayload<ExtraData>] = [],
         unreadCount: UnreadCount? = nil
     ) {
         self.devices = devices
@@ -49,7 +49,7 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
-        mutedUsers = try container.decodeIfPresent([MutedUser<ExtraData>].self, forKey: .mutedUsers) ?? []
+        mutedUsers = try container.decodeIfPresent([MutedUserPayload<ExtraData>].self, forKey: .mutedUsers) ?? []
         unreadCount = try? UnreadCount(from: decoder)
         
         try super.init(from: decoder)
@@ -61,8 +61,8 @@ class CurrentUserRequestBody<ExtraData: UserExtraData>: Encodable {
     // TODO: Add more fields while working on CIS-235
 }
 
-/// A muted user.
-struct MutedUser<ExtraData: UserExtraData>: Decodable {
+/// An object describing the incoming muted-user JSON payload.
+struct MutedUserPayload<ExtraData: UserExtraData>: Decodable {
     private enum CodingKeys: String, CodingKey {
         case mutedUser = "target"
         case created = "created_at"
@@ -74,8 +74,8 @@ struct MutedUser<ExtraData: UserExtraData>: Decodable {
     let updated: Date
 }
 
-extension MutedUser: Equatable {
-    static func == (lhs: MutedUser<ExtraData>, rhs: MutedUser<ExtraData>) -> Bool {
+extension MutedUserPayload: Equatable {
+    static func == (lhs: MutedUserPayload<ExtraData>, rhs: MutedUserPayload<ExtraData>) -> Bool {
         lhs.mutedUser.id == rhs.mutedUser.id && lhs.created == rhs.created
     }
 }
@@ -88,7 +88,7 @@ struct MutedUsersResponse<ExtraData: UserExtraData>: Decodable {
     }
     
     /// A muted user.
-    public let mutedUser: MutedUser<ExtraData>
+    public let mutedUser: MutedUserPayload<ExtraData>
     /// The current user.
     public let currentUser: CurrentUserPayload<ExtraData>
 }
