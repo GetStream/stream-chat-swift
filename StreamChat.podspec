@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "StreamChat"
-  spec.version = "3.0-beta.1"
+  spec.version = "3.0-beta.2"
   spec.summary = "StreamChat iOS Client"
   spec.description = "stream-chat-swift is the official Swift client for Stream Chat, a service for building chat applications."
 
@@ -19,5 +19,5 @@ Pod::Spec.new do |spec|
 
   spec.framework = "Foundation", "UIKit"
 
-  spec.dependency "Starscream", "~> 3.1"
+  spec.dependency "Starscream", "~> 4.0"
 end
