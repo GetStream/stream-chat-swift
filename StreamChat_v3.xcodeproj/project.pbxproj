@@ -200,7 +200,10 @@
 		805A11492506FBBD0089DFC4 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */; };
 		80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */; };
 		80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */; };
+		8819DFCF2525F3C600FD1A50 /* UserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFCE2525F3C600FD1A50 /* UserUpdater.swift */; };
 		8819DFDE252622D900FD1A50 /* ModerationEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFDD252622D900FD1A50 /* ModerationEndpoints_Tests.swift */; };
+		8819DFE2252628CA00FD1A50 /* UserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFE1252628CA00FD1A50 /* UserUpdater_Tests.swift */; };
+		8819DFE925262EBA00FD1A50 /* UserUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFE825262EBA00FD1A50 /* UserUpdater_Mock.swift */; };
 		8836133825274F5F003CB958 /* ExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133725274F5F003CB958 /* ExtraData.swift */; };
 		8836133C25275170003CB958 /* MutedUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133B25275170003CB958 /* MutedUser.swift */; };
 		88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A00DCF2525F08000259AB4 /* ModerationEndpoints.swift */; };
@@ -592,7 +595,10 @@
 		805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+Cells.swift"; sourceTree = "<group>"; };
 		80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AlertTextField.swift"; sourceTree = "<group>"; };
+		8819DFCE2525F3C600FD1A50 /* UserUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdater.swift; sourceTree = "<group>"; };
 		8819DFDD252622D900FD1A50 /* ModerationEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationEndpoints_Tests.swift; sourceTree = "<group>"; };
+		8819DFE1252628CA00FD1A50 /* UserUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdater_Tests.swift; sourceTree = "<group>"; };
+		8819DFE825262EBA00FD1A50 /* UserUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdater_Mock.swift; sourceTree = "<group>"; };
 		8836133725274F5F003CB958 /* ExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraData.swift; sourceTree = "<group>"; };
 		8836133B25275170003CB958 /* MutedUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUser.swift; sourceTree = "<group>"; };
 		88A00DCF2525F08000259AB4 /* ModerationEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationEndpoints.swift; sourceTree = "<group>"; };
@@ -1147,6 +1153,9 @@
 				DA8407022524F7E6005A0F62 /* UserListUpdater.swift */,
 				DA84072F2526002D005A0F62 /* UserListUpdater_Mock.swift */,
 				DA8407322526003D005A0F62 /* UserListUpdater_Tests.swift */,
+				8819DFCE2525F3C600FD1A50 /* UserUpdater.swift */,
+				8819DFE825262EBA00FD1A50 /* UserUpdater_Mock.swift */,
+				8819DFE1252628CA00FD1A50 /* UserUpdater_Tests.swift */,
 				F63CC36D24E591690052844D /* EventObservers */,
 				79280F4524850ECC00CDEB89 /* Background */,
 			);
@@ -1913,6 +1922,7 @@
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,
 				799C944C247D5766001F1104 /* ChannelController.swift in Sources */,
 				792A4F3F247FFDE700EAF71D /* Codable+Extensions.swift in Sources */,
+				8819DFCF2525F3C600FD1A50 /* UserUpdater.swift in Sources */,
 				79C750BB248FC4100023F0B7 /* ErrorPayload.swift in Sources */,
 				799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */,
 				DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */,
@@ -2035,6 +2045,7 @@
 				79896D622507B16000BA8F1C /* ChannelListUpdater_Mock.swift in Sources */,
 				79877A2A2498E51500015F8B /* MemberModelDTO_Tests.swift in Sources */,
 				F649B2372500F785008F98C8 /* MessageController_Tests.swift in Sources */,
+				8819DFE925262EBA00FD1A50 /* UserUpdater_Mock.swift in Sources */,
 				799C947D247E6114001F1104 /* TestError.swift in Sources */,
 				799C946A247D791A001F1104 /* AssertAsync.swift in Sources */,
 				DA8407302526002D005A0F62 /* UserListUpdater_Mock.swift in Sources */,
@@ -2072,6 +2083,7 @@
 				79BA19F324B3386B00E11FC2 /* CurrentUserDTO_Tests.swift in Sources */,
 				F61D7C3324FFA60600188A0E /* MessageUpdater_Mock.swift in Sources */,
 				79280F7D24891B1300CDEB89 /* WebSocketEngine_Mock.swift in Sources */,
+				8819DFE2252628CA00FD1A50 /* UserUpdater_Tests.swift in Sources */,
 				79B5517C24E6A1CA00CE9FEC /* MessagePayloads_Tests.swift in Sources */,
 				F6D61D9D2510B57F00EB0624 /* NSManagedObject_Tests.swift in Sources */,
 				79896D66250A6D1800BA8F1C /* ChannelReadUpdaterMiddleware_Tests.swift in Sources */,
