@@ -16,6 +16,14 @@ class UserDTO: NSManagedObject {
     @NSManaged var userCreatedAt: Date
     @NSManaged var userRoleRaw: String
     @NSManaged var userUpdatedAt: Date
+    
+    /// Returns a fetch request for the dto with the provided `userId`.
+    static func user(withID userId: UserId) -> NSFetchRequest<UserDTO> {
+        let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \UserDTO.id, ascending: false)]
+        request.predicate = NSPredicate(format: "id == %@", userId)
+        return request
+    }
 }
 
 extension UserDTO: EphemeralValuesContainer {
