@@ -11,7 +11,8 @@ extension CurrentUserPayload {
         userId: UserId,
         role: UserRole,
         unreadCount: UnreadCount? = .dummy,
-        extraData: T = .defaultValue
+        extraData: T = .defaultValue,
+        mutedUsers: [MutedUser<T>] = []
     ) -> CurrentUserPayload<T> {
         .init(
             id: userId,
@@ -25,7 +26,7 @@ extension CurrentUserPayload {
             teams: [],
             extraData: extraData,
             devices: [.init(.unique)],
-            mutedUsers: [],
+            mutedUsers: mutedUsers,
             unreadCount: unreadCount
         )
     }

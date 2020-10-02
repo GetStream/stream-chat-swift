@@ -60,8 +60,10 @@ extension CurrentUserDTO {
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
     func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
-        dto.mutedUsers = [] // TODO: mutedUsers
         dto.user = try saveUser(payload: payload)
+
+        let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
+        dto.mutedUsers = Set(mutedUsers)
         
         if let unreadCount = payload.unreadCount {
             try saveCurrentUserUnreadCount(count: unreadCount)
