@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChatClient
 
-extension MutedUser {
+extension MutedUserPayload {
     /// Returns a muted user with the given `userId` and `extraData`
     static func dummy(
         userId: UserId,

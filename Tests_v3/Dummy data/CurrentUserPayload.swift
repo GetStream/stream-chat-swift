@@ -12,7 +12,7 @@ extension CurrentUserPayload {
         role: UserRole,
         unreadCount: UnreadCount? = .dummy,
         extraData: T = .defaultValue,
-        mutedUsers: [MutedUser<T>] = []
+        mutedUsers: [MutedUserPayload<T>] = []
     ) -> CurrentUserPayload<T> {
         .init(
             id: userId,
