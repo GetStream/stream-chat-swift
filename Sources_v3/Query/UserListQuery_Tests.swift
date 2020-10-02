@@ -32,4 +32,17 @@ class UserListQuery_Tests: XCTestCase {
         // Assert UserListQuery encoded correctly
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
+    
+    func test_singleUserQuery_worksCorrectly() throws {
+        let userId: UserId = .unique
+        
+        let actual = UserListQuery.user(withID: userId)
+        let actualJSON = try JSONEncoder.default.encode(actual)
+
+        let expected = UserListQuery(filter: .equal("id", to: userId))
+        let expectedJSON = try JSONEncoder.default.encode(expected)
+    
+        // Assert queries match
+        AssertJSONEqual(actualJSON, expectedJSON)
+    }
 }
