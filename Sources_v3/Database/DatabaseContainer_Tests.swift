@@ -47,32 +47,49 @@ class DatabaseContainer_Tests: StressTestCase {
     }
     
     func test_removingAllData() throws {
-        let container = try DatabaseContainer(kind: .inMemory)
+        // Test removing all data works for all persistent store types
+        let containerTypes: [DatabaseContainer.Kind] = [.inMemory, .onDisk(databaseFileURL: .newTemporaryFileURL())]
         
-        // Add some random objects and for completion block
-        let error = try await {
-            container.write(
-                { session in
-                    try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
-                    try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
-                    try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
-                },
-                completion: $0
-            )
-        }
-        XCTAssertNil(error)
-        
-        // Delete the data
-        _ = try await { container.removeAllData(force: true, completion: $0) }
-        
-        // Assert the DB is empty by trying to fetch all possible entities
-        try container.managedObjectModel.entities.forEach { entityDescription in
-            let fetchRequrest = NSFetchRequest<NSManagedObject>(entityName: entityDescription.name!)
-            let fetchedObjects = try container.viewContext.fetch(fetchRequrest)
-            XCTAssertTrue(fetchedObjects.isEmpty)
+        try containerTypes.forEach { containerType in
+            
+            let container = try DatabaseContainer(kind: containerType)
+            
+            // Add some random objects and for completion block
+            try container.writeSynchronously { session in
+                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+                try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil)
+            }
+            
+            // Delete the data
+            try container.removeAllData()
+            
+            // Assert the DB is empty by trying to fetch all possible entities
+            try container.managedObjectModel.entities.forEach { entityDescription in
+                let fetchRequrest = NSFetchRequest<NSManagedObject>(entityName: entityDescription.name!)
+                let fetchedObjects = try container.viewContext.fetch(fetchRequrest)
+                XCTAssertTrue(fetchedObjects.isEmpty)
+            }
         }
     }
-    
+
+    func test_removingAllData_generatesRemoveAllDataNotifications() throws {
+        let container = try DatabaseContainer(kind: .inMemory)
+        
+        // Set up notification expectations for all contexts
+        let contexts = [container.viewContext, container.backgroundReadOnlyContext, container.writableContext]
+        contexts.forEach {
+            expectation(forNotification: DatabaseContainer.WillRemoveAllDataNotification, object: $0)
+            expectation(forNotification: DatabaseContainer.DidRemoveAllDataNotification, object: $0)
+        }
+
+        // Delete the data
+        try container.removeAllData(force: true)
+        
+        // All expectations should be fulfilled by now
+        waitForExpectations(timeout: 0)
+    }
+
     func test_databaseContainer_callsResetEphemeralValues_onAllEphemeralValuesContainerEntities() throws {
         // Create a new on-disc database with the test data model
         let dbURL = URL.newTemporaryFileURL()

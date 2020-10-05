@@ -28,9 +28,9 @@ class DatabaseContainerMock: DatabaseContainer {
         try super.init(kind: kind, shouldFlushOnStart: shouldFlushOnStart, modelName: modelName, bundle: bundle)
     }
     
-    override func removeAllData(force: Bool, completion: ((Error?) -> Void)? = nil) {
+    override func removeAllData(force: Bool = true) throws {
         flush_called = true
-        super.removeAllData(force: force, completion: completion)
+        try super.removeAllData(force: force)
     }
     
     override func recreatePersistentStore() throws {
