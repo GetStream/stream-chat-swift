@@ -109,6 +109,18 @@ extension DatabaseContainer {
         }
     }
     
+    func createUserListQuery(filter: Filter = .contains(.unique, String.unique)) throws {
+        try writeSynchronously { session in
+            let dto = NSEntityDescription
+                .insertNewObject(
+                    forEntityName: UserListQueryDTO.entityName,
+                    into: session as! NSManagedObjectContext
+                ) as! UserListQueryDTO
+            dto.filterHash = filter.filterHash
+            dto.filterJSONData = try JSONEncoder.default.encode(filter)
+        }
+    }
+    
     /// Synchronously creates a new MessageDTO in the DB with the given id.
     func createMessage(
         id: MessageId = .unique,

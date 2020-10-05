@@ -33,6 +33,7 @@ class ChatClient_Tests: StressTestCase {
     var workerBuilders: [WorkerBuilder] = [
         MessageSender<DefaultExtraData>.init,
         NewChannelQueryUpdater<DefaultExtraData>.init,
+        NewUserQueryUpdater<DefaultExtraData.User>.init,
         ChannelWatchStateUpdater<DefaultExtraData>.init
     ]
     
@@ -317,6 +318,7 @@ class ChatClient_Tests: StressTestCase {
         // Check all the mandatory background workers are initialized
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender<DefaultExtraData> })
         XCTAssert(client.backgroundWorkers.contains { $0 is NewChannelQueryUpdater<DefaultExtraData> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater<DefaultExtraData.User> })
         XCTAssert(client.backgroundWorkers.contains { $0 is ChannelWatchStateUpdater<DefaultExtraData> })
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor<DefaultExtraData> })
         XCTAssert(client.backgroundWorkers.contains { $0 is MissingEventsPublisher<DefaultExtraData> })

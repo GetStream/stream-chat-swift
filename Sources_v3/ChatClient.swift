@@ -211,6 +211,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         let workerBuilders: [WorkerBuilder] = [
             MessageSender<ExtraData>.init,
             NewChannelQueryUpdater<ExtraData>.init,
+            NewUserQueryUpdater<ExtraData.User>.init,
             ChannelWatchStateUpdater<ExtraData>.init,
             MessageEditor<ExtraData>.init,
             MissingEventsPublisher<ExtraData>.init
