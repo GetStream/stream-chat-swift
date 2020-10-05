@@ -132,7 +132,7 @@ class ChannelListController_Tests: StressTestCase {
         }
         
         // Assert the updater is called with the query
-        XCTAssertEqual(env.channelListUpdater!.update_query?.filter.filterHash, query.filter.filterHash)
+        XCTAssertEqual(env.channelListUpdater!.update_queries.first?.filter.filterHash, query.filter.filterHash)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
@@ -287,7 +287,10 @@ class ChannelListController_Tests: StressTestCase {
         AssertAsync.willBeTrue(completionCalled)
         
         // Assert correct `Pagination` is created
-        XCTAssertEqual(env!.channelListUpdater?.update_query?.pagination, [.limit(limit), .offset(controller.channels.count)])
+        XCTAssertEqual(
+            env!.channelListUpdater?.update_queries.first?.pagination,
+            [.limit(limit), .offset(controller.channels.count)]
+        )
     }
     
     func test_loadNextChannels_callsChannelUpdaterWithError() {

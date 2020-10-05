@@ -46,7 +46,7 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         super.tearDown()
     }
     
-    func test_update_called_for_each_query() throws {
+    func test_update_called_forEachQuery() throws {
         let filter1: Filter = .contains(.unique, String.unique)
         let filter2: Filter = .notEqual(.unique, to: 1)
         
@@ -56,10 +56,13 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         try database.createChannel()
         
         // Assert `update(channelListQuery` called for each query in DB
-        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_calls_counter, 2)
+        AssertAsync.willBeEqual(
+            env!.channelQueryUpdater?.update_queries.map(\.filter.filterHash).sorted(),
+            [filter1, filter2].map(\.filterHash).sorted()
+        )
     }
     
-    func test_update_called_for_existingChannel() throws {
+    func test_update_called_forExistingChannel() throws {
         // Deinitialize newChannelQueryUpdater
         newChannelQueryUpdater = nil
         
@@ -68,7 +71,7 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         try database.createChannel(cid: .unique)
         
         // Assert `update(channelListQuery` is not called
-        AssertAsync.willBeNil(env!.channelQueryUpdater?.update_query)
+        AssertAsync.willBeTrue(env!.channelQueryUpdater?.update_queries.isEmpty)
         
         // Create `newChannelQueryUpdater`
         newChannelQueryUpdater = NewChannelQueryUpdater(
@@ -79,10 +82,10 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         )
         
         // Assert `update(channelListQuery` called for channel that was in DB before observing started
-        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_query?.filter.filterHash, filter.filterHash)
+        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_queries.first?.filter.filterHash, filter.filterHash)
     }
     
-    func test_filter_is_Modified() throws {
+    func test_filter_isModified() throws {
         let cid: ChannelId = .unique
         let filter: Filter = .notEqual(.unique, to: 1)
         
@@ -93,8 +96,8 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         
         // Assert `update(channelListQuery` called with modified query
         AssertAsync {
-            Assert.willBeEqual(self.env!.channelQueryUpdater?.update_query?.filter.filterHash, filter.filterHash)
-            Assert.willBeEqual(self.env!.channelQueryUpdater?.update_query?.filter.description, expectedFilter.description)
+            Assert.willBeEqual(self.env!.channelQueryUpdater?.update_queries.first?.filter.filterHash, filter.filterHash)
+            Assert.willBeEqual(self.env!.channelQueryUpdater?.update_queries.first?.filter.description, expectedFilter.description)
         }
     }
     
@@ -104,7 +107,7 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         try database.createChannel()
         
         // Assert `update(channelListQuery` is called
-        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_calls_counter, 1)
+        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_queries.first?.filter.filterHash, filter.filterHash)
         
         // Assert `newChannelQueryUpdater` can be released even though network response hasn't come yet
         AssertAsync.canBeReleased(&newChannelQueryUpdater)

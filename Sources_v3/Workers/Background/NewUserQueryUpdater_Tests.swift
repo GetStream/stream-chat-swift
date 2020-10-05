@@ -46,7 +46,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         super.tearDown()
     }
     
-    func test_update_called_for_each_query() throws {
+    func test_update_called_forEachQuery() throws {
         let filter1: Filter = .contains(.unique, String.unique)
         let filter2: Filter = .notEqual(.unique, to: 1)
         
@@ -56,10 +56,13 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         try database.createUser()
         
         // Assert `update(userListQuery` called for each query in DB
-        AssertAsync.willBeEqual(env!.userQueryUpdater?.update_calls_counter, 2)
+        AssertAsync.willBeEqual(
+            env!.userQueryUpdater?.update_queries.map(\.filter.filterHash).sorted(),
+            [filter1, filter2].map(\.filterHash).sorted()
+        )
     }
     
-    func test_update_called_for_existingUser() throws {
+    func test_update_called_forExistingUser() throws {
         // Deinitialize newUserQueryUpdater
         newUserQueryUpdater = nil
         
@@ -68,7 +71,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         try database.createUser(id: .unique)
         
         // Assert `update(userListQuery` is not called
-        AssertAsync.willBeNil(env!.userQueryUpdater?.update_query)
+        AssertAsync.willBeTrue(env!.userQueryUpdater?.update_queries.isEmpty)
         
         // Create `newUserQueryUpdater`
         newUserQueryUpdater = NewUserQueryUpdater(
@@ -79,10 +82,10 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         )
         
         // Assert `update(userListQuery` called for user that was in DB before observing started
-        AssertAsync.willBeEqual(env!.userQueryUpdater?.update_query?.filter.filterHash, filter.filterHash)
+        AssertAsync.willBeEqual(env!.userQueryUpdater?.update_queries.first?.filter.filterHash, filter.filterHash)
     }
     
-    func test_filter_is_Modified() throws {
+    func test_filter_isModified() throws {
         let id: UserId = .unique
         let filter: Filter = .notEqual(.unique, to: 1)
         
@@ -93,8 +96,8 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         
         // Assert `update(userListQuery` called with modified query
         AssertAsync {
-            Assert.willBeEqual(self.env!.userQueryUpdater?.update_query?.filter.filterHash, filter.filterHash)
-            Assert.willBeEqual(self.env!.userQueryUpdater?.update_query?.filter.description, expectedFilter.description)
+            Assert.willBeEqual(self.env!.userQueryUpdater?.update_queries.first?.filter.filterHash, filter.filterHash)
+            Assert.willBeEqual(self.env!.userQueryUpdater?.update_queries.first?.filter.description, expectedFilter.description)
         }
     }
     
@@ -104,7 +107,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         try database.createUser()
         
         // Assert `update(userListQuery` is called
-        AssertAsync.willBeEqual(env!.userQueryUpdater?.update_calls_counter, 1)
+        AssertAsync.willBeEqual(env!.userQueryUpdater?.update_queries.first?.filter.filterHash, filter.filterHash)
         
         // Assert `newUserQueryUpdater` can be released even though network response hasn't come yet
         AssertAsync.canBeReleased(&newUserQueryUpdater)
