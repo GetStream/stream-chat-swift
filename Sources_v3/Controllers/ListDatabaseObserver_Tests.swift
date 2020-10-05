@@ -60,6 +60,11 @@ class ListDatabaseObserver_Tests: XCTestCase {
         )
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&observer)
+        super.tearDown()
+    }
+    
     func test_initialValues() {
         XCTAssertEqual(observer.frc.fetchRequest, fetchRequest)
         XCTAssertEqual(observer.frc.managedObjectContext, database.viewContext)
@@ -110,6 +115,46 @@ class ListDatabaseObserver_Tests: XCTestCase {
         assert(testFRC.test_performFetchCalled == false)
         try observer.startObserving()
         XCTAssertTrue(testFRC.test_performFetchCalled)
+    }
+    
+    func test_allItemsAreRemoved_whenDatabaseContainerRemovesAllData() throws {
+        // Call startObserving to set everything up
+        try observer.startObserving()
+        
+        // Simulate objects fetched by FRC
+        let objects = [
+            TestManagedObject(),
+            TestManagedObject()
+        ]
+        testFRC.test_fetchedObjects = objects
+        XCTAssertEqual(observer.items, objects.map(\.uniqueValue))
+        
+        // Listen to callbacks
+        var receivedChanges: [ListChange<String>]?
+        observer.onChange = { receivedChanges = $0 }
+
+        // Reset test FRC's `performFetch` called flag
+        testFRC.test_performFetchCalled = false
+        
+        // Simulate `WillRemoveAllDataNotification` is posted by the observed context
+        NotificationCenter.default
+            .post(name: DatabaseContainer.WillRemoveAllDataNotification, object: observer.context)
+
+        // Simulate all entities are removed
+        testFRC.test_fetchedObjects = []
+
+        // Simulate `DidRemoveAllDataNotification` is posted by the observed context
+        NotificationCenter.default
+            .post(name: DatabaseContainer.DidRemoveAllDataNotification, object: observer.context)
+        
+        // Assert `performFetch` was called again on the FRC
+        XCTAssertTrue(testFRC.test_performFetchCalled)
+        
+        // Assert callback is called with removed entities
+        AssertAsync.willBeEqual(
+            receivedChanges,
+            [.remove(objects[0].uniqueValue, index: [0, 0]), .remove(objects[1].uniqueValue, index: [0, 1])]
+        )
     }
 }
 
