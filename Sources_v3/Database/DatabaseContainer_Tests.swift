@@ -128,7 +128,7 @@ class DatabaseContainer_Tests: StressTestCase {
         AssertAsync.canBeReleased(&newDatabase)
     }
     
-    func test_databaseContainer_flushes_on_start() throws {
+    func test_databaseContainer_removesAllData_whenShouldFlushOnStartIsTrue() throws {
         // Create a new on-disc database with the test data model
         let dbURL = URL.newTemporaryFileURL()
         var database: DatabaseContainerMock? = try DatabaseContainerMock(
@@ -158,17 +158,16 @@ class DatabaseContainer_Tests: StressTestCase {
         XCTAssertNil(testObject)
     }
     
-    func test_databaseContainer_skipping_flush_for_inMemory_type() throws {
-        // Create a new in-memory database that should flush on start.
-        let database: DatabaseContainerMock? = try DatabaseContainerMock(
-            kind: .inMemory,
-            shouldFlushOnStart: true,
-            modelName: "TestDataModel",
-            bundle: Bundle(for: DatabaseContainer_Tests.self)
+    func test_databaseContainer_hasDefinedBehaviorForInMemoryStore_whenShouldFlushOnStartIsTrue() throws {
+        // Create a new in-memory database that should flush on start and assert no error is thrown
+        XCTAssertNoThrow(
+            try DatabaseContainerMock(
+                kind: .inMemory,
+                shouldFlushOnStart: true,
+                modelName: "TestDataModel",
+                bundle: Bundle(for: DatabaseContainer_Tests.self)
+            )
         )
-        
-        // Assert recreatePersistentStore is not called for in-memory DB.
-        XCTAssertFalse(database!.recreatePersistentStore_called)
     }
 }
 
