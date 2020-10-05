@@ -243,7 +243,7 @@ final class CurrentUserController_Tests: StressTestCase {
     func test_setAnonymousUser_forwardsDatabaseError() throws {
         // Set the error to be thrown on database write
         let databaseError = TestError()
-        client.mockDatabaseContainer.write_errorResponse = databaseError
+        client.mockDatabaseContainer.recreatePersistentStore_errorResponse = databaseError
         
         // Set up a new anonymous user and wait for the completion
         let completionError = try await(controller.setAnonymousUser)
@@ -292,7 +292,7 @@ final class CurrentUserController_Tests: StressTestCase {
     func test_setUser_forwardsDatabaseError() throws {
         // Set the error to be thrown on database write
         let databaseError = TestError()
-        client.mockDatabaseContainer.write_errorResponse = databaseError
+        client.mockDatabaseContainer.recreatePersistentStore_errorResponse = databaseError
         
         // Set up a new anonymous user and wait for the completion
         let completionError = try await {
@@ -409,7 +409,7 @@ final class CurrentUserController_Tests: StressTestCase {
     func test_setGuestUser_forwardsDatabaseError() throws {
         // Set the error to be thrown on database write
         let databaseError = TestError()
-        client.mockDatabaseContainer.write_errorResponse = databaseError
+        client.mockDatabaseContainer.recreatePersistentStore_errorResponse = databaseError
         
         // Set up a new guest user and wait for the completion
         let completionError = try await {

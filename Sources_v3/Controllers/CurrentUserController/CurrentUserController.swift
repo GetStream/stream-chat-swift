@@ -145,12 +145,17 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, 
             // Re-create backgroundWorker's so their ongoing requests won't affect database state
             client.createBackgroundWorkers()
 
-            // Reset all existing local data
-            client.databaseContainer.removeAllData(force: true) { completion($0) }
-        } else {
-            // Otherwise we're done
-            completion(nil)
+            do {
+                // Reset all existing local data
+                try client.databaseContainer.removeAllData(force: true)
+
+            } catch {
+                completion(error)
+            }
         }
+
+        // Otherwise we're done
+        completion(nil)
     }
 }
 
