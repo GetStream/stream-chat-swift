@@ -104,7 +104,7 @@ class DatabaseContainer: NSPersistentContainer {
         
         persistentStoreDescriptions = [description]
                 
-        if shouldFlushOnStart, kind != .inMemory {
+        if shouldFlushOnStart {
             try recreatePersistentStore()
         } else {
             try setupPersistentStore()
