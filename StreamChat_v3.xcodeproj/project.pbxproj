@@ -97,6 +97,7 @@
 		797EEA4624FFAF4F00C81203 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4524FFAF4F00C81203 /* DataStore.swift */; };
 		797EEA4824FFB4C200C81203 /* DataStore_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4724FFB4C200C81203 /* DataStore_Tests.swift */; };
 		797EEA4A24FFC37600C81203 /* ConnectionStatus_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4924FFC37600C81203 /* ConnectionStatus_Tests.swift */; };
+		7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */; };
 		798779FB2498E47700015F8B /* Member.json in Resources */ = {isa = PBXBuildFile; fileRef = 798779F62498E47700015F8B /* Member.json */; };
 		798779FC2498E47700015F8B /* Channel.json in Resources */ = {isa = PBXBuildFile; fileRef = 798779F72498E47700015F8B /* Channel.json */; };
 		798779FD2498E47700015F8B /* OtherUser.json in Resources */ = {isa = PBXBuildFile; fileRef = 798779F82498E47700015F8B /* OtherUser.json */; };
@@ -500,6 +501,7 @@
 		797EEA4524FFAF4F00C81203 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		797EEA4724FFB4C200C81203 /* DataStore_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore_Tests.swift; sourceTree = "<group>"; };
 		797EEA4924FFC37600C81203 /* ConnectionStatus_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStatus_Tests.swift; sourceTree = "<group>"; };
+		7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainQueue+Synchronous.swift"; sourceTree = "<group>"; };
 		798779F62498E47700015F8B /* Member.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Member.json; sourceTree = "<group>"; };
 		798779F72498E47700015F8B /* Channel.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Channel.json; sourceTree = "<group>"; };
 		798779F82498E47700015F8B /* OtherUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = OtherUser.json; sourceTree = "<group>"; };
@@ -972,6 +974,7 @@
 				797E10A724EAF6DE00353791 /* UniqueId.swift */,
 				79CD959124F9380B00E87377 /* MulticastDelegate.swift */,
 				79CD959324F9381700E87377 /* MulticastDelegate_Tests.swift */,
+				7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1908,6 +1911,7 @@
 				F6FF1DA824FD232C00151735 /* MessageUpdater.swift in Sources */,
 				7931818C24FD2660002F8C84 /* ChannelListController+Combine.swift in Sources */,
 				8A62706E24BF45360040BFD6 /* BanEnabling.swift in Sources */,
+				7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */,
 				79877A0A2498E4BC00015F8B /* Device.swift in Sources */,
 				DA8407062524F84F005A0F62 /* UserListQuery.swift in Sources */,
 				79280F4F2485308100CDEB89 /* DataController.swift in Sources */,
