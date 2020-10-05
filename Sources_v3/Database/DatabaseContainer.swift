@@ -15,7 +15,25 @@ class DatabaseContainer: NSPersistentContainer {
         /// The database file is stored on the disk and is persisted between application launches.
         case onDisk(databaseFileURL: URL)
     }
-    
+
+    /// A notification with this name is posted by every `NSManagedObjectContext` before all its data is flushed.
+    ///
+    /// This is needed because flushing all data is done by resetting the persisten store, and it's not reflected in the contexts.
+    /// All observers of the context should listen to this notification, and generate a deletion callback when the notification
+    /// is received.
+    ///
+    static let WillRemoveAllDataNotification =
+        Notification.Name(rawValue: "co.getStream.iOSChatSDK.DabaseContainer.WillRemoveAllDataNotification")
+
+    /// A notification with this name is posted by every `NSManagedObjectContext` after all its data is flushed.
+    ///
+    /// This is needed because flushing all data is done by resetting the persisten store, and it's not reflected in the contexts.
+    /// All observers of the context should listen to this notification, and reset all NSFetchedResultControllers ofserving
+    /// the contexts.
+    ///
+    static let DidRemoveAllDataNotification =
+        Notification.Name(rawValue: "co.getStream.iOSChatSDK.DabaseContainer.DidRemoveAllDataNotification")
+
     /// We use `writableContext` for having just one place to save changes
     /// so it’s not possible to have conflicts when saving payloads from various sources.
     /// All writes are happening serially using this context and its `write { }` methods.
@@ -42,6 +60,9 @@ class DatabaseContainer: NSPersistentContainer {
     }()
     
     private var loggerNotificationObserver: NSObjectProtocol?
+    
+    /// All `NSManagedObjectContext`s this container owns.
+    private lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
     
     /// Creates a new `DatabaseContainer` instance.
     ///
@@ -143,41 +164,38 @@ class DatabaseContainer: NSPersistentContainer {
     
     /// Removes all data from the local storage.
     ///
+    /// Invoking this method will cause `WillRemoveAllDataNotification` being send by all contexts of the container.
+    ///
     /// - Warning: ⚠️ This is a non-recoverable operation. All data will be lost after calling this method.
     ///
     /// - Parameters:
     ///   - force: If sets to `false`, the method fails if there are unsynced data in to local storage, for example
     /// messages pedning sent. You can use this option to warn a user about potential data loss.
     ///   - completion: Called when the operation is completed. If the error is present, the operation failed.
-    func removeAllData(force: Bool, completion: ((Error?) -> Void)? = nil) {
+    ///
+    func removeAllData(force: Bool = true) throws {
         if !force {
-            fatalError("Non-force flush is not implemented.")
+            fatalError("Non-force flush is not implemented yet.")
         }
         
-        write({ [persistentStoreDescriptions] session in
-            let session = session as! NSManagedObjectContext
-            
-            try self.managedObjectModel.entities.forEach { entityDescription in
-                guard let entityName = entityDescription.name else { return }
-                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
-                
-                if persistentStoreDescriptions.contains(where: { $0.type == NSInMemoryStoreType }) {
-                    // If we use `NSInMemoryStoreType` we can't use `NSBatchDeleteRequest` and we have to delete
-                    // the objects one by one.
-                    let objects = try session.fetch(fetchRequest) as? [NSManagedObject]
-                    objects?.forEach {
-                        session.delete($0)
-                    }
-                    
-                } else {
-                    let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-                    try session.execute(deleteRequest)
-                }
-            }
-            
-        }, completion: { completion?($0) })
+        sendNotificationForAllContexts(name: Self.WillRemoveAllDataNotification)
+
+        // If the current persistent store is a SQLite store, this method will reset and recreate it.
+        try recreatePersistentStore()
+
+        sendNotificationForAllContexts(name: Self.DidRemoveAllDataNotification)
     }
     
+    private func sendNotificationForAllContexts(name: Notification.Name) {
+        // Make sure the notifications are sent synchronously on the main thread to give enough time to notification
+        // listeners to react on it.
+        DispatchQueue.performSynchronouslyOnMainQueue {
+            allContext.forEach {
+                NotificationCenter.default.post(.init(name: name, object: $0, userInfo: nil))
+            }
+        }
+    }
+
     /// Set up listener to changes in the writable context and logs the changes.
     private func setupLoggerForDatabaseChanges() {
         loggerNotificationObserver = NotificationCenter.default
@@ -188,7 +206,11 @@ class DatabaseContainer: NSPersistentContainer {
             ) { log.debug("Data saved to DB: \(String(describing: $0.userInfo))") }
     }
     
-    /// Load persistent store and recreate it if failed
+    /// Tries to load a persistent store.
+    ///
+    /// If it fails, for example because of non-matching models, it removes the store, recreates is, and tries to load it again.
+    /// If the second loading fails, too, it throws an error.
+    ///
     private func setupPersistentStore() throws {
         var storeLoadingError: Error?
         
@@ -201,14 +223,30 @@ class DatabaseContainer: NSPersistentContainer {
         }
     }
     
-    /// Recreate rersistent store
+    /// Removes the loaded persistent store and tries to recreate it.
     func recreatePersistentStore() throws {
-        guard let url = persistentStoreDescriptions.first!.url
-        else { throw ClientError("Internal Error. Wrong database file url.") }
+        log.assert(
+            persistentStoreDescriptions.count == 1,
+            "DatabaseContainer always assumes 1 persistent store description. Existing descriptions: \(persistentStoreDescriptions)"
+        )
         
-        try persistentStoreCoordinator.destroyPersistentStore(at: url, ofType: "sqlite", options: nil)
-        try FileManager.default.removeItem(at: url)
+        guard let storeDescription = persistentStoreDescriptions.first else {
+            throw ClientError("No persisten store descriptions available.")
+        }
+
+        // Remove all loaded persistent stores first
+        try persistentStoreCoordinator.persistentStores.forEach { store in
+            try persistentStoreCoordinator.remove(store)
+        }
         
+        // If the store was SQLite store, remove the actual DB file
+        if storeDescription.type == NSSQLiteStoreType,
+            let storeURL = storeDescription.url,
+            storeURL.absoluteString.hasSuffix("/dev/null") == false {
+            try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: NSSQLiteStoreType, options: nil)
+            try FileManager.default.removeItem(at: storeURL)
+        }
+    
         var storeLoadingError: Error?
         
         loadPersistentStores { _, error in
