@@ -221,17 +221,7 @@ final class CurrentUserController_Tests: StressTestCase {
         // Assert delegate received correct unread count
         AssertAsync.willBeEqual(delegate.didChangeCurrentUserUnreadCount_count, unreadCount)
     }
-    
-    func test_delegate_isNotifiedAboutDeletedUser() {
-        // TODO: Write the test once the db flushing is fixed
-        XCTAssertTrue(true)
-    }
-    
-    func test_delegate_isNotifiedAboutNoUnreadCount_whenUserIsDeleted() {
-        // TODO: Write the test once the db flushing is fixed
-        XCTAssertTrue(true)
-    }
-    
+
     // MARK: - Setting new user
     
     func test_setUser_updatesClientToken() {
