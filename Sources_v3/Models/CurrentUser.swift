@@ -6,11 +6,11 @@ import Foundation
 
 extension UserId {
     /// The prefix used for anonymous user ids
-    private static let anonymousIdPrefix = "## ANONYMOUS ##"
+    private static let anonymousIdPrefix = "__anonymous__"
     
     /// Creates a new anonymous User id.
     static var anonymous: UserId {
-        anonymousIdPrefix + " " + UUID().uuidString
+        anonymousIdPrefix + UUID().uuidString
     }
     
     var isAnonymousUser: Bool {
