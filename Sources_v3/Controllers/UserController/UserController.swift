@@ -17,7 +17,8 @@ public extension _ChatClient {
 
 /// `ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
 ///
-/// `ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations, and for quick user actions (like mute/unmute).
+/// `ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
+/// and for quick user actions (like mute/unmute).
 ///
 /// - Note: `ChatUserController` is a typealias of `_ChatUserController` with default extra data. If you're using custom
 /// extra data, create your own typealias of `_ChatUserController`.
@@ -28,7 +29,8 @@ public typealias ChatUserController = _ChatUserController<DefaultExtraData>
 
 /// `_ChatUserController` is a controller class which allows mutating and observing changes of a specific chat user.
 ///
-/// `_ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations, and for quick user actions (like mute/unmute).
+/// `_ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
+/// and for quick user actions (like mute/unmute).
 ///
 /// - Note: `ChatUserController` is a typealias of `_ChatUserController` with default extra data. If you're using custom
 /// extra data, create your own typealias of `_ChatUserController`.
@@ -205,8 +207,8 @@ public extension _ChatUserController where ExtraData == DefaultExtraData {
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
     /// instead to set the delegate, if you're using custom extra data types.
     var delegate: ChatUserControllerDelegate? {
-        set { multicastDelegate.mainDelegate = AnyChatUserControllerDelegate(newValue) }
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatUserControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyChatUserControllerDelegate(newValue) }
     }
 }
 
