@@ -7,13 +7,11 @@ import XCTest
 
 /// Mock implementation of UserListUpdater
 class UserListUpdaterMock<ExtraData: UserExtraData>: UserListUpdater<ExtraData> {
-    @Atomic var update_query: UserListQuery?
-    @Atomic var update_calls_counter = 0
+    @Atomic var update_queries: [UserListQuery] = []
     @Atomic var update_completion: ((Error?) -> Void)?
         
     override func update(userListQuery: UserListQuery, completion: ((Error?) -> Void)? = nil) {
-        update_query = userListQuery
+        _update_queries.mutate { $0.append(userListQuery) }
         update_completion = completion
-        _update_calls_counter.mutate { $0 += 1 }
     }
 }
