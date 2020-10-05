@@ -78,6 +78,9 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
     
+    /// When called, release the nofication observers
+    var releaseNotificationObservers: (() -> Void)?
+    
     /// Creates a new `ListObserver`.
     ///
     /// Please note that no updates are reported until you call `startUpdating`.
@@ -103,6 +106,12 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         self.fetchedResultsControllerType = fetchedResultsControllerType
         
         _items.computeValue = { [unowned self] in (self.frc.fetchedObjects ?? []).lazy.compactMap(self.itemCreator) }
+
+        listenForRemoveAllDataNotifications()
+    }
+    
+    deinit {
+        releaseNotificationObservers?()
     }
     
     /// Starts observing the changes in the database. The current items in the list are synchronously available in the
@@ -118,6 +127,55 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         // listening to changes. We just need to make sure the `didSet` callback of `onChange` is executed at least once.
         if onChange == nil {
             onChange = nil
+        }
+    }
+    
+    /// Listens for `Will/DidRemoveAllData` notifications from the context and simulates the callback when the notifications
+    /// are received.
+    private func listenForRemoveAllDataNotifications() {
+        let notificationCenter = NotificationCenter.default
+        
+        // When `WillRemoveAllDataNotification` is received, we need to simulate the callback from change observer, like all
+        // existing entities are being removed. At this point, these entities still existing in the context, and it's safe to
+        // access and serialize them.
+        let willRemoveAllDataNotificationObserver = notificationCenter.addObserver(
+            forName: DatabaseContainer.WillRemoveAllDataNotification,
+            object: context,
+            queue: .main
+        ) { [unowned self] _ in
+            // Simulate ChangeObserver callbacks like all data are being removed
+            self.changeAggregator.controllerWillChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
+            
+            self.frc.fetchedObjects?.enumerated().forEach { index, item in
+                self.changeAggregator.controller(
+                    self.frc as! NSFetchedResultsController<NSFetchRequestResult>,
+                    didChange: item,
+                    at: IndexPath(item: index, section: 0),
+                    for: .delete,
+                    newIndexPath: nil
+                )
+            }
+        }
+        
+        // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
+        // the FRC doesn't know about it yet. Resetting the FRC removes the content of `FRC.fetchedObjects`. We also need to
+        // call `controllerDidChangeContent` on the change agregator to finish reporting about the removed object which started
+        // in the `WillRemoveAllDataNotification` handler above.
+        let didRemoveAllDataNotificationObserver = notificationCenter.addObserver(
+            forName: DatabaseContainer.DidRemoveAllDataNotification,
+            object: context,
+            queue: .main
+        ) { [unowned self] _ in
+            // Reset FRC which causes the current `frc.fetchedObjects` to be reloaded
+            try! self.startObserving()
+            
+            // Publish the changes started in `WillRemoveAllDataNotification`
+            self.changeAggregator.controllerDidChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
+        }
+        
+        releaseNotificationObservers = { [weak notificationCenter] in
+            notificationCenter?.removeObserver(willRemoveAllDataNotificationObserver)
+            notificationCenter?.removeObserver(didRemoveAllDataNotificationObserver)
         }
     }
 }
