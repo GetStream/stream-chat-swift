@@ -94,7 +94,7 @@ final class MessageUpdater_Tests: StressTestCase {
             let updatedText: String = .unique
             
             // Flush the database
-            try database.flush()
+            try database.removeAllData()
             
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -136,7 +136,7 @@ final class MessageUpdater_Tests: StressTestCase {
             let updatedText: String = .unique
             
             // Flush the database
-            try database.flush()
+            try database.removeAllData()
             
             // Create current user is the database
             try database.createCurrentUser(id: currentUserId)
@@ -277,7 +277,7 @@ final class MessageUpdater_Tests: StressTestCase {
             let messageId: MessageId = .unique
 
             // Flush the database
-            try database.flush()
+            try database.removeAllData()
             
             // Create current user in the database
             try database.createCurrentUser(id: currentUserId)
@@ -318,7 +318,7 @@ final class MessageUpdater_Tests: StressTestCase {
             let messageId: MessageId = .unique
             
             // Flush the database
-            try database.flush()
+            try database.removeAllData()
             
             // Create current user in the database
             try database.createCurrentUser(id: currentUserId)

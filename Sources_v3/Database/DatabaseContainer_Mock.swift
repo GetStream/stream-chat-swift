@@ -13,6 +13,7 @@ class DatabaseContainerMock: DatabaseContainer {
     @Atomic var init_kind: DatabaseContainer.Kind
     @Atomic var flush_called = false
     @Atomic var recreatePersistentStore_called = false
+    @Atomic var recreatePersistentStore_errorResponse: Error?
     
     convenience init() {
         try! self.init(kind: .inMemory)
@@ -35,6 +36,11 @@ class DatabaseContainerMock: DatabaseContainer {
     
     override func recreatePersistentStore() throws {
         recreatePersistentStore_called = true
+        
+        if let error = recreatePersistentStore_errorResponse {
+            throw error
+        }
+        
         try super.recreatePersistentStore()
     }
 
@@ -49,13 +55,6 @@ class DatabaseContainerMock: DatabaseContainer {
 }
 
 extension DatabaseContainer {
-    /// Deletes all data synchronously
-    func flush() throws {
-        if let error = try await({ self.removeAllData(force: true, completion: $0) }) {
-            throw error
-        }
-    }
-    
     /// Writes changes to the DB synchronously. Only for test purposes!
     func writeSynchronously(_ actions: @escaping (DatabaseSession) throws -> Void) throws {
         let error = try await { completion in
