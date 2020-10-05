@@ -122,7 +122,7 @@ extension UserDTO {
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         request.sortDescriptors = sortDescriptors.isEmpty ? [UserListSortingKey.defaultSortDescriptor] : sortDescriptors
                 
-        request.predicate = NSPredicate(format: "queries.filterHash == %@", query.filter.filterHash)
+        request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         return request
     }
 
