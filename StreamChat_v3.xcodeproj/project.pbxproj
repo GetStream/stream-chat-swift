@@ -291,6 +291,8 @@
 		DA4EE5A1252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5A0252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift */; };
 		DA4EE5B2252B67F500CB26D4 /* UserListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5B1252B67F500CB26D4 /* UserListController+SwiftUI.swift */; };
 		DA4EE5B5252B680700CB26D4 /* UserListController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5B4252B680700CB26D4 /* UserListController+SwiftUI_Tests.swift */; };
+		DA4EE5B8252B69E300CB26D4 /* UserListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5B7252B69E300CB26D4 /* UserListController+Combine.swift */; };
+		DA4EE5BB252B69FD00CB26D4 /* UserListController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5BA252B69FD00CB26D4 /* UserListController+Combine_Tests.swift */; };
 		DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */; };
 		DA8407002524F778005A0F62 /* UserListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8406FF2524F778005A0F62 /* UserListController.swift */; };
 		DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407022524F7E6005A0F62 /* UserListUpdater.swift */; };
@@ -716,6 +718,8 @@
 		DA4EE5A0252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewUserQueryUpdater_Tests.swift; sourceTree = "<group>"; };
 		DA4EE5B1252B67F500CB26D4 /* UserListController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+SwiftUI.swift"; sourceTree = "<group>"; };
 		DA4EE5B4252B680700CB26D4 /* UserListController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
+		DA4EE5B7252B69E300CB26D4 /* UserListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+Combine.swift"; sourceTree = "<group>"; };
+		DA4EE5BA252B69FD00CB26D4 /* UserListController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+Combine_Tests.swift"; sourceTree = "<group>"; };
 		DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload_Tests.swift; sourceTree = "<group>"; };
 		DA8406FF2524F778005A0F62 /* UserListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListController.swift; sourceTree = "<group>"; };
 		DA8407022524F7E6005A0F62 /* UserListUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListUpdater.swift; sourceTree = "<group>"; };
@@ -1554,6 +1558,8 @@
 				DA84073D25260C95005A0F62 /* UserListController_Tests.swift */,
 				DA4EE5B1252B67F500CB26D4 /* UserListController+SwiftUI.swift */,
 				DA4EE5B4252B680700CB26D4 /* UserListController+SwiftUI_Tests.swift */,
+				DA4EE5B7252B69E300CB26D4 /* UserListController+Combine.swift */,
+				DA4EE5BA252B69FD00CB26D4 /* UserListController+Combine_Tests.swift */,
 			);
 			path = UserListController;
 			sourceTree = "<group>";
@@ -2030,6 +2036,7 @@
 				797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */,
 				F6FF1DA624FD17B400151735 /* MessageController.swift in Sources */,
 				797E10A824EAF6DE00353791 /* UniqueId.swift in Sources */,
+				DA4EE5B8252B69E300CB26D4 /* UserListController+Combine.swift in Sources */,
 				F6ED5F7425023EB4005D7327 /* MissingEventsPublisher.swift in Sources */,
 				79877A0B2498E4BC00015F8B /* Member.swift in Sources */,
 				F670B50F24FE6EA900003B1A /* MessageEditor.swift in Sources */,
@@ -2098,6 +2105,7 @@
 				8836133C25275170003CB958 /* MutedUserPayload.swift in Sources */,
 				DA4EE5A1252B443400CB26D4 /* NewUserQueryUpdater_Tests.swift in Sources */,
 				7991D83F24F8F1BF00D21BA3 /* ChatClient_Mock.swift in Sources */,
+				DA4EE5BB252B69FD00CB26D4 /* UserListController+Combine_Tests.swift in Sources */,
 				792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */,
 				79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */,
 				79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */,
