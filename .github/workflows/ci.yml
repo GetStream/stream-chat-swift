@@ -206,5 +206,3 @@ jobs:
         xcrun simctl list devices 12.4
     - name: Run v3 Tests (Debug - iOS 12.4)
       run: bundle exec fastlane test_v3 device:"iPhone 7 (12.4)"
-    - name: Post Codecov report
-      run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
