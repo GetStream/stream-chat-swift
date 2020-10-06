@@ -20,9 +20,9 @@ class CombineSimpleChannelsViewController: UITableViewController {
     /// # channelListController
     ///
     ///  The property below holds the `ChannelListController` object.  It is used to make calls to the Stream Chat API and to listen to the events related to the channels list.
-    ///  After it is set, we are subscribing to `Publishers` from `ChannelController.BasePublisher` to receive updates.
-    ///  `Publishers` functionality is identical to methods from `ChannelControllerDelegate`.
-    ///  Also we need to call `channelController.synchronize()` to update local data with remote one.
+    ///  After it is set, we are subscribing to `Publishers` from `ChannelListController.BasePublisher` to receive updates.
+    ///  `Publishers` functionality is identical to methods from `ChannelListControllerDelegate`.
+    ///  Also we need to call `channelListController.synchronize()` to update local data with remote one.
     ///  Additionally, `channelListController.client` holds a reference to the `ChatClient` which created this instance.
     ///  It can be used to create other controllers.
     var channelListController: ChatChannelListController! {
@@ -225,6 +225,23 @@ class CombineSimpleChannelsViewController: UITableViewController {
     }
     
     ///
+    /// # handleUsersButton
+    ///
+    /// The method below is called when the user taps the `Users` button. It opens `CombineSimpleUsersViewController`.
+    ///
+    @objc func handleUsersButton(_ sender: Any) {
+        guard
+            let usersViewController = UIStoryboard.combineSimpleChat
+            .instantiateViewController(withIdentifier: "CombineSimpleUsersViewController") as? CombineSimpleUsersViewController
+        else { return }
+        
+        usersViewController.userListController = chatClient
+            // TODO: Change filter to all users after Filter adjustments
+            .userListController(query: .init(filter: .autocomplete("name", with: "a")))
+        navigationController?.pushViewController(usersViewController, animated: true)
+    }
+    
+    ///
     /// # handleLongPress
     ///
     /// The method below handles long press on channel cells by displaying a `UIAlertController` with many actions that can be taken on the `channelController` such
@@ -319,9 +336,16 @@ class CombineSimpleChannelsViewController: UITableViewController {
             target: self,
             action: #selector(handleSettingsButton)
         )
+        
+        let usersButton = UIBarButtonItem(
+            title: "Users",
+            style: .plain,
+            target: self,
+            action: #selector(handleUsersButton)
+        )
 
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAddChannelButton(_:)))
-        navigationItem.rightBarButtonItem = addButton
+        navigationItem.rightBarButtonItems = [usersButton, addButton]
         if let split = splitViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count - 1] as! UINavigationController)
