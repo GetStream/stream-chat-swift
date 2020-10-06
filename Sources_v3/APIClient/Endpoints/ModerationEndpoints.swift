@@ -16,6 +16,40 @@ extension Endpoint {
     }
 }
 
+// MARK: - User banning
+
+extension Endpoint {
+    static func banMember(
+        _ userId: UserId,
+        cid: ChannelId,
+        timeoutInMinutes: Int? = nil,
+        reason: String? = nil
+    ) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "moderation/ban",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ChannelMemberBanRequestPayload(
+                userId: userId,
+                cid: cid,
+                timeoutInMinutes: timeoutInMinutes,
+                reason: reason
+            )
+        )
+    }
+    
+    static func unbanMember(_ userId: UserId, cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "moderation/ban",
+            method: .delete,
+            queryItems: ChannelMemberBanRequestPayload(userId: userId, cid: cid),
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+}
+
 // MARK: - Private
 
 private extension Endpoint {
