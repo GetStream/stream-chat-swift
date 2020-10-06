@@ -221,6 +221,7 @@
 		888E8C3F252B2AD600195E03 /* UserController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C3E252B2AD600195E03 /* UserController+Combine_Tests.swift */; };
 		888E8C41252B2ADC00195E03 /* UserController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C3B252B2AC900195E03 /* UserController+SwiftUI_Tests.swift */; };
 		889B00E5252C972C007709A8 /* ChannelMemberListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */; };
+		889B00E9252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */; };
 		88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A00DCF2525F08000259AB4 /* ModerationEndpoints.swift */; };
 		8A0175F02501174000570345 /* EventSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175EF2501174000570345 /* EventSender.swift */; };
 		8A0175F425013B6400570345 /* EventSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175F325013B6400570345 /* EventSender_Tests.swift */; };
@@ -640,6 +641,7 @@
 		888E8C3B252B2AC900195E03 /* UserController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		888E8C3E252B2AD600195E03 /* UserController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+Combine_Tests.swift"; sourceTree = "<group>"; };
 		889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQuery_Tests.swift; sourceTree = "<group>"; };
+		889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQueryDTO_Tests.swift; sourceTree = "<group>"; };
 		88A00DCF2525F08000259AB4 /* ModerationEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationEndpoints.swift; sourceTree = "<group>"; };
 		8A0175EF2501174000570345 /* EventSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender.swift; sourceTree = "<group>"; };
 		8A0175F325013B6400570345 /* EventSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender_Tests.swift; sourceTree = "<group>"; };
@@ -962,6 +964,8 @@
 				796FD215250654940076C99B /* ChannelReadDTO.swift */,
 				7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */,
 				7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */,
+				882C575F252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift */,
+				889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */,
 			);
 			path = DTOs;
 			sourceTree = "<group>";
@@ -2118,6 +2122,7 @@
 				DAFC1D4724F50C5C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift in Sources */,
 				7964F3AA249A19EA002A09EC /* Filter_Tests.swift in Sources */,
 				DA84072D2525EF8D005A0F62 /* UserEndpoints_Tests.swift in Sources */,
+				889B00E9252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift in Sources */,
 				F67415C024F0129800C3222F /* UnreadCount.swift in Sources */,
 				8A0175F425013B6400570345 /* EventSender_Tests.swift in Sources */,
 				79DDF819249CE38B002F4412 /* MockNetworkURLProtocol.swift in Sources */,

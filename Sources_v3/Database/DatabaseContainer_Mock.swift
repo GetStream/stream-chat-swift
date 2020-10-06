@@ -120,6 +120,12 @@ extension DatabaseContainer {
         }
     }
     
+    func createMemberListQuery(query: ChannelMemberListQuery) throws {
+        try writeSynchronously { session in
+            try session.saveQuery(query)
+        }
+    }
+    
     /// Synchronously creates a new MessageDTO in the DB with the given id.
     func createMessage(
         id: MessageId = .unique,
