@@ -38,8 +38,8 @@ Pod installation complete! There are 2 dependencies from the Podfile and 13 tota
 6. Open the project: `open ChatExample.xcworkspace`
 67. Select `ChatExample` as an active scheme (if needed):
 
-<img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/example_app_active_scheme.jpg" width="690">
+<img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/docs/images/example_app_active_scheme.jpg" width="690">
 
 8. Click build and run.
 
-<img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/master/docs/images/example_app.png" width="375">
+<img src="https://raw.githubusercontent.com/GetStream/stream-chat-swift/main/docs/images/example_app.png" width="375">

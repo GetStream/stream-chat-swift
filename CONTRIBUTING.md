@@ -37,6 +37,6 @@ Guidelines on "Fixed a bug" part is applicable.
 We make sure to follow all QA test procedure for minor and major releases. 
 
 We accumulate changes and release them in batches, unless high priority.
-We make sure to put staged changes (on master but not released in a version) as "Upcoming" in [CHANGELOG](https://github.com/GetStream/stream-chat-swift/blob/master/CHANGELOG.md).
+We make sure to put staged changes (on default branch but not released in a version) as "Upcoming" in [CHANGELOG](https://github.com/GetStream/stream-chat-swift/blob/main/CHANGELOG.md).
 
 If possible, we deprecate stuff before removing them directly. Deprecated stuff will be removed after a minor release, and will include a migration/upgrade guide.
