@@ -156,3 +156,22 @@ extension UserListSortingKey {
         return nil
     }
 }
+
+// MARK: - Members Sorting
+
+/// `ChannelMemberListSortingKey` describes the keys by which you can get sorted channel members after query.
+public struct ChannelMemberListSortingKey: RawRepresentable, Equatable, SortingKey {
+    public let rawValue: String
+    
+    public init(rawValue: String) {
+        self.rawValue = rawValue
+    }
+}
+
+public extension ChannelMemberListSortingKey {
+    /// When used this key sorts the member list by member's `createdAt` field.
+    static let createdAt = Self(rawValue: "created_at")
+    
+    /// When used this key sorts the member list by member's `updatedAt` field.
+    static let updatedAt = Self(rawValue: "updated_at")
+}
