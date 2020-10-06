@@ -120,12 +120,22 @@ protocol MemberDatabaseSession {
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
 }
 
+protocol MemberListQueryDatabaseSession {
+    /// Fetchtes `MemberListQueryDatabaseSession` entity for the given `filterHash`.
+    func channelMemberListQuery(queryHash: String) -> ChannelMemberListQueryDTO?
+    
+    /// Creates a new `MemberListQueryDatabaseSession` object in the database based in the given `ChannelMemberListQuery`.
+    @discardableResult
+    func saveQuery(_ query: ChannelMemberListQuery) throws -> ChannelMemberListQueryDTO
+}
+
 protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
     ChannelReadDatabaseSession,
     ChannelDatabaseSession,
-    MemberDatabaseSession {}
+    MemberDatabaseSession,
+    MemberListQueryDatabaseSession {}
 
 extension DatabaseSession {
     @discardableResult
