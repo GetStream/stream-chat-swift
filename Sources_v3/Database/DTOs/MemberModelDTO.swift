@@ -55,7 +55,11 @@ extension MemberDTO {
 }
 
 extension NSManagedObjectContext {
-    func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId) throws -> MemberDTO {
+    func saveMember<ExtraData: UserExtraData>(
+        payload: MemberPayload<ExtraData>,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?
+    ) throws -> MemberDTO {
         let dto = MemberDTO.loadOrCreate(id: payload.user.id, channelId: channelId, context: self)
         
         // Save user-part of member first
@@ -68,6 +72,11 @@ extension NSManagedObjectContext {
         
         dto.memberCreatedAt = payload.createdAt
         dto.memberUpdatedAt = payload.updatedAt
+        
+        if let query = query {
+            let queryDTO = try saveQuery(query)
+            queryDTO.members.insert(dto)
+        }
         
         return dto
     }
