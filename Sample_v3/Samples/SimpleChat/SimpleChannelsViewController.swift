@@ -19,7 +19,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     /// # channelListController
     ///
     ///  The property below holds the `ChannelListController` object.  It is used to make calls to the Stream Chat API and to listen to the events related to the channels list.
-    ///  After it is set, `channelController.delegate` needs to receive a reference to a `ChannelListControllerDelegate`, which, in this case, is `self`. After the
+    ///  After it is set, `channelListController.delegate` needs to receive a reference to a `ChannelListControllerDelegate`, which, in this case, is `self`. After the
     ///  delegate is set,`channelListController.synchronize()` must be called to start listening to events related to the channel list. Additionally,
     ///  `channelListController.client` holds a reference to the `ChatClient` which created this instance. It can be used to create other controllers.
     ///
@@ -43,13 +43,13 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
 
     ///
     /// The methods below are part of the `ChannelListControllerDelegate` protocol and will be called when events happen in the channel list. In order for these updates to
-    /// happen, `channelController.delegate` must be equal `self` and `channelController.synchronize()` must be called.
+    /// happen, `channelListController.delegate` must be equal `self` and `channelListController.synchronize()` must be called.
     ///
     
     ///
     /// # didChangeChannels
     ///
-    /// The method below receives the `changes` that happen in the list of messages and updates the `UITableView` accordingly.
+    /// The method below receives the `changes` that happen in the list of channels and updates the `UITableView` accordingly.
     ///
     func controller(
         _ controller: ChatChannelListController,
