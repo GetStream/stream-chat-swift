@@ -26,6 +26,14 @@ class MemberDTO: NSManagedObject {
     private static func createId(userId: String, channeldId: ChannelId) -> String {
         channeldId.rawValue + userId
     }
+    
+    /// Returns a fetch request for the dto with the provided `userId`.
+    static func member(_ userId: UserId, in cid: ChannelId) -> NSFetchRequest<MemberDTO> {
+        let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MemberDTO.memberCreatedAt, ascending: false)]
+        request.predicate = NSPredicate(format: "id == %@", Self.createId(userId: userId, channeldId: cid))
+        return request
+    }
 }
 
 extension MemberDTO {
