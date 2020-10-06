@@ -294,6 +294,7 @@
 		DA4EE5B5252B680700CB26D4 /* UserListController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5B4252B680700CB26D4 /* UserListController+SwiftUI_Tests.swift */; };
 		DA4EE5B8252B69E300CB26D4 /* UserListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5B7252B69E300CB26D4 /* UserListController+Combine.swift */; };
 		DA4EE5BB252B69FD00CB26D4 /* UserListController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5BA252B69FD00CB26D4 /* UserListController+Combine_Tests.swift */; };
+		DA4EE5C5252C777A00CB26D4 /* CombineSimpleUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4EE5C4252C777A00CB26D4 /* CombineSimpleUsersViewController.swift */; };
 		DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */; };
 		DA8407002524F778005A0F62 /* UserListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8406FF2524F778005A0F62 /* UserListController.swift */; };
 		DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407022524F7E6005A0F62 /* UserListUpdater.swift */; };
@@ -301,6 +302,7 @@
 		DA84070925250528005A0F62 /* UserEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070825250528005A0F62 /* UserEndpoints.swift */; };
 		DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070B25250581005A0F62 /* UserListPayload.swift */; };
 		DA84071025250720005A0F62 /* UserListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84070F25250720005A0F62 /* UserListQueryDTO.swift */; };
+		DA84071325250E23005A0F62 /* SimpleUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84071225250E23005A0F62 /* SimpleUsersViewController.swift */; };
 		DA8407232525E871005A0F62 /* UserListPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407222525E871005A0F62 /* UserListPayload_Tests.swift */; };
 		DA8407262525E90D005A0F62 /* UsersQuery.json in Resources */ = {isa = PBXBuildFile; fileRef = DA8407252525E90D005A0F62 /* UsersQuery.json */; };
 		DA84072A2525EB2F005A0F62 /* UserListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407292525EB2F005A0F62 /* UserListQuery_Tests.swift */; };
@@ -309,7 +311,6 @@
 		DA8407332526003D005A0F62 /* UserListUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407322526003D005A0F62 /* UserListUpdater_Tests.swift */; };
 		DA84074025260CA3005A0F62 /* UserListController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84073D25260C95005A0F62 /* UserListController_Tests.swift */; };
 		DA84074B2526417B005A0F62 /* JSONEncoder+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84074A2526417B005A0F62 /* JSONEncoder+Extensions.swift */; };
-		DA84071325250E23005A0F62 /* SimpleUsersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA84071225250E23005A0F62 /* SimpleUsersViewController.swift */; };
 		DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */; };
 		DA99D0D024ED63C600AD5354 /* NewChannelQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */; };
 		DAD539DB250B8A9C00CFC649 /* Controller.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD539DA250B8A9C00CFC649 /* Controller.swift */; };
@@ -723,6 +724,7 @@
 		DA4EE5B4252B680700CB26D4 /* UserListController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		DA4EE5B7252B69E300CB26D4 /* UserListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+Combine.swift"; sourceTree = "<group>"; };
 		DA4EE5BA252B69FD00CB26D4 /* UserListController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListController+Combine_Tests.swift"; sourceTree = "<group>"; };
+		DA4EE5C4252C777A00CB26D4 /* CombineSimpleUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineSimpleUsersViewController.swift; sourceTree = "<group>"; };
 		DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload_Tests.swift; sourceTree = "<group>"; };
 		DA8406FF2524F778005A0F62 /* UserListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListController.swift; sourceTree = "<group>"; };
 		DA8407022524F7E6005A0F62 /* UserListUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListUpdater.swift; sourceTree = "<group>"; };
@@ -730,6 +732,7 @@
 		DA84070825250528005A0F62 /* UserEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserEndpoints.swift; sourceTree = "<group>"; };
 		DA84070B25250581005A0F62 /* UserListPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListPayload.swift; sourceTree = "<group>"; };
 		DA84070F25250720005A0F62 /* UserListQueryDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListQueryDTO.swift; sourceTree = "<group>"; };
+		DA84071225250E23005A0F62 /* SimpleUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleUsersViewController.swift; sourceTree = "<group>"; };
 		DA8407222525E871005A0F62 /* UserListPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListPayload_Tests.swift; sourceTree = "<group>"; };
 		DA8407252525E90D005A0F62 /* UsersQuery.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = UsersQuery.json; sourceTree = "<group>"; };
 		DA8407292525EB2F005A0F62 /* UserListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListQuery_Tests.swift; sourceTree = "<group>"; };
@@ -738,7 +741,6 @@
 		DA8407322526003D005A0F62 /* UserListUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListUpdater_Tests.swift; sourceTree = "<group>"; };
 		DA84073D25260C95005A0F62 /* UserListController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListController_Tests.swift; sourceTree = "<group>"; };
 		DA84074A2526417B005A0F62 /* JSONEncoder+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JSONEncoder+Extensions.swift"; sourceTree = "<group>"; };
-		DA84071225250E23005A0F62 /* SimpleUsersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleUsersViewController.swift; sourceTree = "<group>"; };
 		DA9985ED24E175AA000E9885 /* ChannelCodingKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelCodingKeys.swift; sourceTree = "<group>"; };
 		DA99D0CF24ED63C600AD5354 /* NewChannelQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChannelQueryUpdater.swift; sourceTree = "<group>"; };
 		DAD539DA250B8A9C00CFC649 /* Controller.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Controller.swift; sourceTree = "<group>"; };
@@ -1574,6 +1576,7 @@
 			isa = PBXGroup;
 			children = (
 				DAD8A89E2507E1A900D05282 /* CombineSimpleChannelsViewController.swift */,
+				DA4EE5C4252C777A00CB26D4 /* CombineSimpleUsersViewController.swift */,
 				DAD8A8A02507E1A900D05282 /* CombineSimpleChatViewController.swift */,
 				DAD8A89F2507E1A900D05282 /* CombineSimpleChat.storyboard */,
 			);
@@ -1900,6 +1903,7 @@
 				8008C19524F456BF00F5BCCE /* ComposerView.swift in Sources */,
 				804B127224E712F5002B00EA /* SimpleChatViewController.swift in Sources */,
 				DA84071325250E23005A0F62 /* SimpleUsersViewController.swift in Sources */,
+				DA4EE5C5252C777A00CB26D4 /* CombineSimpleUsersViewController.swift in Sources */,
 				DAD8A8A52507E1C800D05282 /* CombineSimpleChatViewController.swift in Sources */,
 				80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */,
 				8008C19224F44DF900F5BCCE /* UIView+InstantiateFromNib.swift in Sources */,
