@@ -114,7 +114,11 @@ protocol ChannelReadDatabaseSession {
 protocol MemberDatabaseSession {
     /// Creates a new `MemberDTO` object in the database with the given `payload` in the channel with `channelId`.
     @discardableResult
-    func saveMember<ExtraData: UserExtraData>(payload: MemberPayload<ExtraData>, channelId: ChannelId) throws -> MemberDTO
+    func saveMember<ExtraData: UserExtraData>(
+        payload: MemberPayload<ExtraData>,
+        channelId: ChannelId,
+        query: ChannelMemberListQuery?
+    ) throws -> MemberDTO
     
     /// Fetchtes `MemberDTO`entity for the given `userId` and `cid`.
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
@@ -146,6 +150,14 @@ extension DatabaseSession {
     @discardableResult
     func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>) throws -> UserDTO {
         try saveUser(payload: payload, query: nil)
+    }
+    
+    @discardableResult
+    func saveMember<ExtraData: UserExtraData>(
+        payload: MemberPayload<ExtraData>,
+        channelId: ChannelId
+    ) throws -> MemberDTO {
+        try saveMember(payload: payload, channelId: channelId, query: nil)
     }
     
     // MARK: - Event

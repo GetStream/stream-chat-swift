@@ -147,4 +147,24 @@ class MemberModelDTO_Tests: XCTestCase {
         let loadedMember: ChatChannelMember? = database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         XCTAssertEqual(loadedMember?.extraData, .defaultValue)
     }
+    
+    func test_saveMember_savesQuery_and_linksMember_ifQueryIsProvided() throws {
+        let userId: UserId = .unique
+        let cid: ChannelId = .unique
+
+        // Create member and query.
+        let member: MemberPayload<DefaultExtraData.User> = .dummy(userId: userId)
+        let query = ChannelMemberListQuery(cid: cid, filter: .equal("id", to: userId))
+
+        // Save channel, then member, and pass the query in.
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid))
+            try session.saveMember(payload: member, channelId: cid, query: query)
+        }
+        
+        // Assert query and member exists in the database and linked.
+        let loadedQuery = try XCTUnwrap(database.viewContext.channelMemberListQuery(queryHash: query.hash))
+        let loadedMember = try XCTUnwrap(database.viewContext.member(userId: userId, cid: cid))
+        XCTAssertTrue(loadedQuery.members.contains(loadedMember))
+    }
 }
