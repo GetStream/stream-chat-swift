@@ -194,6 +194,23 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     }
     
     ///
+    /// # handleUsersButton
+    ///
+    /// The method below is called when the user taps the `Users` button. It opens `SimpleUsersViewController`.
+    ///
+    @objc func handleUsersButton(_ sender: Any) {
+        guard
+            let usersViewController = UIStoryboard.simpleChat
+            .instantiateViewController(withIdentifier: "SimpleUsersViewController") as? SimpleUsersViewController
+        else { return }
+        
+        usersViewController.userListController = chatClient
+            // TODO: Change filter to all users after Filter adjustments
+            .userListController(query: .init(filter: .autocomplete("name", with: "a")))
+        navigationController?.pushViewController(usersViewController, animated: true)
+    }
+    
+    ///
     /// # handleLongPress
     ///
     /// The method below handles long press on channel cells by displaying a `UIAlertController` with many actions that can be taken on the `channelController` such
@@ -282,9 +299,16 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
             target: self,
             action: #selector(handleSettingsButton)
         )
-
+        
+        let usersButton = UIBarButtonItem(
+            title: "Users",
+            style: .plain,
+            target: self,
+            action: #selector(handleUsersButton)
+        )
+        
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(handleAddChannelButton(_:)))
-        navigationItem.rightBarButtonItem = addButton
+        navigationItem.rightBarButtonItems = [usersButton, addButton]
         if let split = splitViewController {
             let controllers = split.viewControllers
             detailViewController = (controllers[controllers.count - 1] as! UINavigationController)
