@@ -14,8 +14,8 @@ struct ChannelListView: View {
     @State private var showActionSheet: ChannelId?
     /// Binding for ChatView navigation.
     @State private var showDetails: Int?
-    /// Binding for SettingsView.
-    @State private var showSettings: Bool = false
+    /// Binding for showing `sheet`s
+    @State var activeSheet: ActiveSheet?
     
     var body: some View {
         VStack {
@@ -47,11 +47,18 @@ struct ChannelListView: View {
         .actionSheet(item: $showActionSheet, content: self.actionSheet)
         .navigationBarTitle("Channels")
         /// Settings and create channel buttons.
-        .navigationBarItems(leading: showSettingsButton, trailing: addChannelButton)
-        /// Settings presenter.
-        .sheet(isPresented: $showSettings, content: {
-            SettingsView(currentUserController: self.channelList.controller.client.currentUserController())
-        })
+        .navigationBarItems(leading: showSettingsButton, trailing: HStack { usersButton; addChannelButton })
+        /// Modal view presenter
+        .sheet(item: $activeSheet) { item in
+            switch item {
+            /// Show settings.
+            case .settings:
+                SettingsView(currentUserController: self.channelList.controller.client.currentUserController())
+            /// Show list of users.
+            case .users:
+                userListView
+            }
+        }
         /// Synchronize local data with remote.
         .onAppear(perform: { self.channelList.controller.synchronize() })
     }
@@ -112,10 +119,27 @@ struct ChannelListView: View {
         }
     }
     
+    /// Button that will open `UserListView`.
+    var usersButton: some View {
+        Button(action: {
+            activeSheet = .users
+        }) {
+            Image(systemName: "person.3.fill").imageScale(.large)
+        }
+    }
+    
+    /// `UserLisView` for users matching the query.
+    var userListView: some View {
+        // TODO: Change filter to all users after Filter adjustments
+        let query: UserListQuery = .init(filter: .autocomplete("name", with: "a"))
+        let controller = channelList.controller.client.userListController(query: query)
+        return UserListView(userList: controller.observableObject)
+    }
+    
     /// Button that will open `SettingsView`.
     var showSettingsButton: some View {
         Button(action: {
-            self.showSettings = true
+            self.activeSheet = .settings
         }) {
             Image(systemName: "gear").imageScale(.large)
         }
@@ -187,4 +211,12 @@ extension ChannelId: Identifiable {}
 
 private extension ChatChannel {
     var name: String { extraData.name ?? cid.description }
+}
+
+enum ActiveSheet: Identifiable {
+    case settings, users
+    
+    var id: Int {
+        hashValue
+    }
 }
