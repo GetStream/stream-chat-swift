@@ -16,7 +16,7 @@ desc "Release a new version"
 lane :release do |options|
   UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
   
-  ensure_git_branch # We can only release on master
+  ensure_git_branch # We can only release on default branch
   
   ensure_git_status_clean unless options[:no_ensure_clean]
   
