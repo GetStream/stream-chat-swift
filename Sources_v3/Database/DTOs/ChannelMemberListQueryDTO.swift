@@ -34,3 +34,30 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
         return new
     }
 }
+
+extension NSManagedObjectContext: MemberListQueryDatabaseSession {
+    func channelMemberListQuery(queryHash: String) -> ChannelMemberListQueryDTO? {
+        ChannelMemberListQueryDTO.load(queryHash: queryHash, context: self)
+    }
+    
+    func saveQuery(_ query: ChannelMemberListQuery) throws -> ChannelMemberListQueryDTO {
+        guard let channelDTO = channel(cid: query.cid) else {
+            throw ClientError.ChannelDoesNotExist(cid: query.cid)
+        }
+        
+        let dto = ChannelMemberListQueryDTO.loadOrCreate(queryHash: query.hash, context: self)
+        dto.channel = channelDTO
+
+        let jsonData: Data
+        do {
+            jsonData = try JSONEncoder().encode(query.filter)
+        } catch {
+            log.error("Failed encoding query Filter data with error: \(error). Using 'none' filter instead.")
+            jsonData = try! JSONEncoder().encode(Filter.none)
+        }
+        
+        dto.filterJSONData = jsonData
+        
+        return dto
+    }
+}
