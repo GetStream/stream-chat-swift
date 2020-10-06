@@ -213,6 +213,7 @@
 		882C5752252C770900E60C44 /* ChannelMembersQuery.json in Resources */ = {isa = PBXBuildFile; fileRef = 882C5751252C770900E60C44 /* ChannelMembersQuery.json */; };
 		882C5759252C794900E60C44 /* MemberEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882C5758252C794900E60C44 /* MemberEndpoints.swift */; };
 		882C575C252C79E900E60C44 /* MemberEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882C575B252C79E900E60C44 /* MemberEndpoints_Tests.swift */; };
+		882C5760252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882C575F252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift */; };
 		8836133825274F5F003CB958 /* ExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133725274F5F003CB958 /* ExtraData.swift */; };
 		8836133C25275170003CB958 /* MutedUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133B25275170003CB958 /* MutedUserPayload.swift */; };
 		888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */; };
@@ -631,6 +632,7 @@
 		882C5751252C770900E60C44 /* ChannelMembersQuery.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = ChannelMembersQuery.json; sourceTree = "<group>"; };
 		882C5758252C794900E60C44 /* MemberEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEndpoints.swift; sourceTree = "<group>"; };
 		882C575B252C79E900E60C44 /* MemberEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEndpoints_Tests.swift; sourceTree = "<group>"; };
+		882C575F252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQueryDTO.swift; sourceTree = "<group>"; };
 		8836133725274F5F003CB958 /* ExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraData.swift; sourceTree = "<group>"; };
 		8836133B25275170003CB958 /* MutedUserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUserPayload.swift; sourceTree = "<group>"; };
 		888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -2001,6 +2003,7 @@
 				79200D4C25025B81002F4EB1 /* Error+InternetNotAvailable.swift in Sources */,
 				8A0CC9F124C606EF00705CF9 /* ReactionEvents.swift in Sources */,
 				79877A0F2498E4BC00015F8B /* ChannelId.swift in Sources */,
+				882C5760252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,
 				799C944C247D5766001F1104 /* ChannelController.swift in Sources */,
