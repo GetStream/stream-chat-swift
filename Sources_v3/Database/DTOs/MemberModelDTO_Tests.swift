@@ -163,7 +163,7 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         // Assert query and member exists in the database and linked.
-        let loadedQuery = try XCTUnwrap(database.viewContext.channelMemberListQuery(queryHash: query.hash))
+        let loadedQuery = try XCTUnwrap(database.viewContext.channelMemberListQuery(queryHash: query.queryHash))
         let loadedMember = try XCTUnwrap(database.viewContext.member(userId: userId, cid: cid))
         XCTAssertTrue(loadedQuery.members.contains(loadedMember))
     }
