@@ -176,7 +176,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="UserListQueryDTO" representedClassName="UserListQueryDTO" syncable="YES">
-        <attribute name="filterHash" optional="YES" attributeType="String"/>
+        <attribute name="filterHash" attributeType="String"/>
         <attribute name="filterJSONData" optional="YES" attributeType="Binary"/>
         <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="queries" inverseEntity="UserDTO"/>
         <fetchIndex name="filterHash">

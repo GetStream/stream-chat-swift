@@ -19,11 +19,9 @@ import Foundation
 /// ```
 public enum Filter: Encodable, CustomStringConvertible {
     public typealias Key = String
-    
-    /// No filter.
-    /// Can be used to get all users in queryUsers
-    /// Warning: Should not be used in queryChannels.
-    case none
+
+    /// Placeholder filterHash when no filter is specified.
+    static let nilFilterHash = "nilFilterHash"
     
     // MARK: Operators
     
@@ -70,8 +68,6 @@ public enum Filter: Encodable, CustomStringConvertible {
     
     public var description: String {
         switch self {
-        case .none:
-            return ""
         case let .equal(key, object):
             return "\(key) = \(object)"
         case let .notEqual(key, object):
@@ -114,8 +110,6 @@ public enum Filter: Encodable, CustomStringConvertible {
         var operands: [Encodable] = []
         
         switch self {
-        case .none:
-            return
         case let .equal(key, object):
             try [key: AnyEncodable(object)].encode(to: encoder)
             return
