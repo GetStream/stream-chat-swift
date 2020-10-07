@@ -65,7 +65,7 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         
         // Load query.
         var queryDTO: ChannelMemberListQueryDTO? {
-            database.viewContext.channelMemberListQuery(queryHash: query.hash)
+            database.viewContext.channelMemberListQuery(queryHash: query.queryHash)
         }
         
         AssertAsync {
@@ -117,7 +117,7 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         
         // Load query.
         var queryDTO: ChannelMemberListQueryDTO? {
-            database.viewContext.channelMemberListQuery(queryHash: query.hash)
+            database.viewContext.channelMemberListQuery(queryHash: query.queryHash)
         }
         
         AssertAsync {

@@ -45,7 +45,7 @@ extension NSManagedObjectContext: MemberListQueryDatabaseSession {
             throw ClientError.ChannelDoesNotExist(cid: query.cid)
         }
         
-        let dto = ChannelMemberListQueryDTO.loadOrCreate(queryHash: query.hash, context: self)
+        let dto = ChannelMemberListQueryDTO.loadOrCreate(queryHash: query.queryHash, context: self)
         dto.channel = channelDTO
 
         let jsonData: Data

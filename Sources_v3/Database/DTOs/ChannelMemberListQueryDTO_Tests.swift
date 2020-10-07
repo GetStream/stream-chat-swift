@@ -31,11 +31,11 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
         try database.writeSynchronously {
             let dto = ChannelMemberListQueryDTO(context: $0 as! NSManagedObjectContext)
             dto.filterJSONData = try JSONEncoder.default.encode(query.filter)
-            dto.queryHash = query.hash
+            dto.queryHash = query.queryHash
         }
         
         // Load dto and assert it is correct.
-        let queryDTO = try XCTUnwrap(database.viewContext.channelMemberListQuery(queryHash: query.hash))
+        let queryDTO = try XCTUnwrap(database.viewContext.channelMemberListQuery(queryHash: query.queryHash))
         assert(queryDTO, match: query)
     }
     
@@ -50,7 +50,7 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
         try database.createMemberListQuery(query: query)
         
         // Load dto and assert it is correct.
-        let queryDTO = try XCTUnwrap(database.viewContext.channelMemberListQuery(queryHash: query.hash))
+        let queryDTO = try XCTUnwrap(database.viewContext.channelMemberListQuery(queryHash: query.queryHash))
         assert(queryDTO, match: query)
     }
     
@@ -69,7 +69,7 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
 
     private func assert(_ dto: ChannelMemberListQueryDTO, match query: ChannelMemberListQuery) {
         let filter = try? JSONDecoder.default.decode(Filter.self, from: dto.filterJSONData)
-        XCTAssertEqual(dto.queryHash, query.hash)
+        XCTAssertEqual(dto.queryHash, query.queryHash)
         XCTAssertEqual(filter?.filterHash, query.filter.filterHash)
     }
 }
