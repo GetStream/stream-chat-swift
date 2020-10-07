@@ -10,7 +10,7 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
     @NSManaged var queryHash: String
     
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated.
-    @NSManaged var filterJSONData: Data
+    @NSManaged var filterJSONData: Data?
     
     /// The channel the query works with.
     @NSManaged var channel: ChannelDTO
@@ -48,12 +48,13 @@ extension NSManagedObjectContext: MemberListQueryDatabaseSession {
         let dto = ChannelMemberListQueryDTO.loadOrCreate(queryHash: query.queryHash, context: self)
         dto.channel = channelDTO
 
-        let jsonData: Data
+        var jsonData: Data?
         do {
-            jsonData = try JSONEncoder().encode(query.filter)
+            // On iOS 12 attempt of encoding nil value will produce an error.
+            // We can remove this nil check after dropping iOS 12 support.
+            jsonData = query.filter == nil ? nil : try JSONEncoder.default.encode(query.filter)
         } catch {
             log.error("Failed encoding query Filter data with error: \(error). Using 'none' filter instead.")
-            jsonData = try! JSONEncoder().encode(Filter.none)
         }
         
         dto.filterJSONData = jsonData
