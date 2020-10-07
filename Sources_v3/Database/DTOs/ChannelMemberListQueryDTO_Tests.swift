@@ -2,9 +2,9 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChatClient
 import XCTest
-import CoreData
 
 final class ChannelMemberListQueryDTO_Tests: XCTestCase {
     var database: DatabaseContainer!
@@ -68,8 +68,11 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
     // MARK: - Tests
 
     private func assert(_ dto: ChannelMemberListQueryDTO, match query: ChannelMemberListQuery) {
-        let filter = try? JSONDecoder.default.decode(Filter.self, from: dto.filterJSONData)
         XCTAssertEqual(dto.queryHash, query.queryHash)
-        XCTAssertEqual(filter?.filterHash, query.filter.filterHash)
+        
+        if let filterJSONData = dto.filterJSONData {
+            let filter = try? JSONDecoder.default.decode(Filter.self, from: filterJSONData)
+            XCTAssertEqual(filter?.filterHash, query.filter?.filterHash)
+        }
     }
 }
