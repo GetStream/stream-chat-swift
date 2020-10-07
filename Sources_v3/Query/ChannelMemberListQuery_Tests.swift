@@ -38,7 +38,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         
         let expectedHash = [
             query.cid.rawValue,
-            query.filter.filterHash,
+            query.filter?.filterHash ?? Filter.nilFilterHash,
             query.sort.map(\.description).joined()
         ].joined(separator: "-")
         
