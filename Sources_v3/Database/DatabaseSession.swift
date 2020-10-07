@@ -14,6 +14,9 @@ protocol UserDatabaseSession {
     
     /// Fetchtes `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
     func user(id: UserId) -> UserDTO?
+    
+    /// Updates user with the query if both user and query exist.
+    func updateQuery(for userId: UserId, queryFilterHash: String) throws
 }
 
 protocol CurrentUserDatabaseSession {

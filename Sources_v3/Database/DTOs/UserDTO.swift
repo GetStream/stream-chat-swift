@@ -92,6 +92,16 @@ extension NSManagedObjectContext: UserDatabaseSession {
         
         return dto
     }
+    
+    func updateQuery(
+        for userId: UserId,
+        queryFilterHash: String
+    ) {
+        if let userDTO = user(id: userId),
+            let queryDTO = userListQuery(filterHash: queryFilterHash) {
+            queryDTO.users.insert(userDTO)
+        }
+    }
 }
 
 extension UserDTO {
@@ -122,7 +132,7 @@ extension UserDTO {
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         request.sortDescriptors = sortDescriptors.isEmpty ? [UserListSortingKey.defaultSortDescriptor] : sortDescriptors
                 
-        request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.filter?.filterHash ?? Filter.nilFilterHash)
         return request
     }
 
