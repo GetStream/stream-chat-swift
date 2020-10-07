@@ -236,8 +236,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
         else { return }
         
         usersViewController.userListController = chatClient
-            // TODO: Change filter to all users after Filter adjustments
-            .userListController(query: .init(filter: .autocomplete("name", with: "a")))
+            .userListController(query: .init())
         navigationController?.pushViewController(usersViewController, animated: true)
     }
     

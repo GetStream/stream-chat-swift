@@ -130,8 +130,7 @@ struct ChannelListView: View {
     
     /// `UserLisView` for users matching the query.
     var userListView: some View {
-        // TODO: Change filter to all users after Filter adjustments
-        let query: UserListQuery = .init(filter: .autocomplete("name", with: "a"))
+        let query: UserListQuery = .init()
         let controller = channelList.controller.client.userListController(query: query)
         return UserListView(userList: controller.observableObject)
     }
