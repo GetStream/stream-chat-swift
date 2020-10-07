@@ -52,7 +52,7 @@ public struct ChannelMemberListQuery: Encodable {
 }
 
 extension ChannelMemberListQuery {
-    var hash: String {
+    var queryHash: String {
         [
             cid.rawValue,
             filter.filterHash,

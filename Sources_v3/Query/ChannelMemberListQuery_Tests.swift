@@ -42,8 +42,8 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             query.sort.map(\.description).joined()
         ].joined(separator: "-")
         
-        // Assert hash is calculated correctly.
-        XCTAssertEqual(query.hash, expectedHash)
+        // Assert queryHash is calculated correctly.
+        XCTAssertEqual(query.queryHash, expectedHash)
     }
     
     func test_emptySorting_isNotEncoded() throws {
