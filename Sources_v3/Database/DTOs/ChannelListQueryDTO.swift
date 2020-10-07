@@ -39,10 +39,10 @@ extension NSManagedObjectContext {
         
         let jsonData: Data
         do {
-            jsonData = try JSONEncoder().encode(query.filter)
+            jsonData = try JSONEncoder.default.encode(query.filter)
         } catch {
-            log.error("Failed encoding query Filter data with error: \(error). Using 'none' filter instead.")
-            jsonData = try! JSONEncoder().encode(Filter.none)
+            log.error("Failed encoding query Filter data with error: \(error).")
+            jsonData = Data()
         }
         
         newDTO.filterJSONData = jsonData
