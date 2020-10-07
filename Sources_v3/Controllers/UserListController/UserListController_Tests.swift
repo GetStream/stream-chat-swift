@@ -42,7 +42,7 @@ class UserListController_Tests: StressTestCase {
     func test_clientAndQueryAreCorrect() {
         let controller = client.userListController(query: query)
         XCTAssert(controller.client === client)
-        XCTAssertEqual(controller.query.filter.filterHash, query.filter.filterHash)
+        XCTAssertEqual(controller.query.filter?.filterHash, query.filter?.filterHash)
     }
     
     // MARK: - Synchronize tests
@@ -127,7 +127,7 @@ class UserListController_Tests: StressTestCase {
         }
         
         // Assert the updater is called with the query
-        XCTAssertEqual(env.userListUpdater!.update_queries.first?.filter.filterHash, query.filter.filterHash)
+        XCTAssertEqual(env.userListUpdater!.update_queries.first?.filter?.filterHash, query.filter?.filterHash)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         

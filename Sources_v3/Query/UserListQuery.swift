@@ -15,7 +15,7 @@ public struct UserListQuery: Encodable {
     }
     
     /// A filter for the query (see `Filter`).
-    public let filter: Filter
+    public let filter: Filter?
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<UserListSortingKey>]
     /// A pagination.
@@ -25,15 +25,14 @@ public struct UserListQuery: Encodable {
     
     /// Init a users query.
     /// - Parameters:
-    ///   - filter: a users filter.
+    ///   - filter: a users filter. Empty filter will return all users.
     ///   - sort: a sorting list for users.
     ///   - pagination: a users pagination.
     public init(
-        filter: Filter,
+        filter: Filter? = nil,
         sort: [Sorting<UserListSortingKey>] = [],
         pagination: Pagination = [.usersPageSize]
     ) {
-        if case .none = filter {}
         self.filter = filter
         self.sort = sort
         self.pagination = pagination
@@ -41,8 +40,15 @@ public struct UserListQuery: Encodable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(filter, forKey: .filter)
         
+        if let filter = filter {
+            try container.encode(filter, forKey: .filter)
+        } else {
+            // Backend expects empty object for "filter_conditions" in case no filter specified.
+            struct EmptyObject: Encodable {}
+            try container.encode(EmptyObject(), forKey: .filter)
+        }
+
         if !sort.isEmpty {
             try container.encode(sort, forKey: .sort)
         }
