@@ -125,7 +125,8 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         channelController
             .typingMembersPublisher
             .sink { [weak self] _ in
-                self?.title = self?.channelController.channel.flatMap { $0.extraData.name ?? $0.cid.description }
+                self?.title = self?.channelController.channel
+                    .flatMap { createChannelTitle(for: $0, self?.channelController.client.currentUserId) }
                 self?.navigationItem.prompt = self?.channelController.channel.flatMap {
                     createTypingMemberString(for: $0) ?? createMemberInfoString(for: $0)
                 }
