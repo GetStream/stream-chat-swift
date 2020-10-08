@@ -92,6 +92,46 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
             .store(in: &cancellables)
     }
     
+    // MARK: - Actions
+    
+    ///
+    /// # openDirectMessagesChat
+    ///
+    /// Closure that will be triggered on `didSelectRowAt`.
+    /// After user selection it will dismiss current controller and show direct message chat with the selected user.
+    ///
+    var openDirectMessagesChat: ((UserId) -> Void)?
+    
+    ///
+    /// # handleLongPress
+    ///
+    /// The method below handles long press on user cells by displaying a `UIAlertController` with actions that can be taken on the `userController`. (`mute` and `unmute`)
+    @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
+        guard
+            let indexPath = tableView.indexPathForRow(at: gestureRecognizer.location(in: tableView)),
+            gestureRecognizer.state == .began
+        else {
+            return
+        }
+
+        let userId = userListController.users[indexPath.row].id
+        let userController = userListController.client.userController(userId: userId)
+
+        let actionSheet = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let actions = [
+            UIAlertAction(title: "Mute", style: .default) { _ in
+                userController.mute()
+            },
+            UIAlertAction(title: "Unmute", style: .default) { _ in
+                userController.unmute()
+            },
+            UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        ]
+        actions.forEach(actionSheet.addAction)
+
+        present(actionSheet, animated: true)
+    }
+    
     // MARK: - UITableViewDataSource
 
     ///
@@ -124,6 +164,19 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
         }
         
         cell!.textLabel?.text = user.name
+        
+        let imageView = UIImageView(frame: CGRect(x: 0, y: 0, width: 20, height: 20))
+        /// Check if user is muted.
+        let isUserMuted = (
+            userListController.client.currentUserController().currentUser?.mutedUsers
+                .contains(where: { $0.id == user.id })
+        )!
+        /// Show muted icon for users that were munted by current user.
+        if isUserMuted {
+            imageView.image = UIImage(systemName: "speaker.slash.fill")
+        }
+        cell!.accessoryView = imageView
+        
         return cell!
     }
     
@@ -140,5 +193,34 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
             indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             userListController.loadNextUsers()
         }
+    }
+    
+    ///
+    /// # didSelectRowAt
+    ///
+    /// The method below handles the user selection.
+    ///
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        openDirectMessagesChat?(userListController.users[indexPath.row].id)
+    }
+    
+    // MARK: - UI Code
+    
+    private lazy var longPressRecognizer = UILongPressGestureRecognizer(
+        target: self,
+        action: #selector(handleLongPress)
+    )
+    
+    override func viewDidLoad() {
+        tableView.addGestureRecognizer(longPressRecognizer)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: self,
+            action: #selector(dismissHandler)
+        )
+    }
+    
+    @objc func dismissHandler() {
+        dismiss(animated: true, completion: nil)
     }
 }

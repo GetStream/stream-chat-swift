@@ -138,7 +138,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
         }
         
         return channelCellWithName(
-            channel.extraData.name ?? channel.cid.description,
+            createChannelTitle(for: channel, chatClient.currentUserId),
             subtitle: subtitle,
             unreadCount: channel.unreadCount.messages
         )
@@ -236,8 +236,33 @@ class CombineSimpleChannelsViewController: UITableViewController {
         else { return }
         
         usersViewController.userListController = chatClient
-            .userListController(query: .init())
-        navigationController?.pushViewController(usersViewController, animated: true)
+            .userListController(query: .init(sort: [.init(key: .createdAt)]))
+        
+        /// Push direct message chat screen with selected user.
+        /// If there were no chat with this user previously it will be created.
+        func pushDirectMessageChat(for userId: UserId) {
+            if let chatVC = UIStoryboard.combineSimpleChat
+                .instantiateViewController(withIdentifier: "CombineSimpleChatViewController") as? CombineSimpleChatViewController {
+                let newChatMemebers = [userId, chatClient.currentUserId]
+                let controller = try! chatClient.channelController(
+                    createDirectMessageChannelWith: Set(newChatMemebers),
+                    extraData: .init()
+                )
+                chatVC.channelController = controller
+                self.navigationController?.pushViewController(chatVC, animated: true)
+            }
+        }
+        
+        /// `openDirectMessagesChat` closure that is passed to `CombineSimpleUsersViewController`.
+        /// After user selection it will dismiss user list screen and show direct message chat with the selected user.
+        let openDirectMessagesChat: ((UserId) -> Void)? = { [weak self] userId in
+            guard let self = self else { return }
+            self.dismiss(animated: true, completion: { pushDirectMessageChat(for: userId) })
+        }
+        
+        usersViewController.openDirectMessagesChat = openDirectMessagesChat
+        let navigationController = UINavigationController(rootViewController: usersViewController)
+        present(navigationController, animated: true, completion: nil)
     }
     
     ///
