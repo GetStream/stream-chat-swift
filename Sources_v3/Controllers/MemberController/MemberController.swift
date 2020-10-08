@@ -64,7 +64,7 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
     /// A type-erased delegate.
-    var multicastDelegate: MulticastDelegate<AnyChatMemberControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyChatChannelMemberControllerDelegate<ExtraData>> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -130,9 +130,9 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
     ///
-    public func setDelegate<Delegate: _ChatMemberControllerDelegate>(_ delegate: Delegate)
+    public func setDelegate<Delegate: _ChatChannelMemberControllerDelegate>(_ delegate: Delegate)
         where Delegate.ExtraData == ExtraData {
-        multicastDelegate.mainDelegate = AnyChatMemberControllerDelegate(delegate)
+        multicastDelegate.mainDelegate = AnyChatChannelMemberControllerDelegate(delegate)
     }
     
     // MARK: - Private
@@ -237,20 +237,20 @@ public extension _ChatChannelMemberController where ExtraData == DefaultExtraDat
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
     /// instead to set the delegate, if you're using custom extra data types.
-    var delegate: ChatMemberControllerDelegate? {
-        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatMemberControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyChatMemberControllerDelegate(newValue) }
+    var delegate: ChatChannelMemberControllerDelegate? {
+        get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelMemberControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyChatChannelMemberControllerDelegate(newValue) }
     }
 }
 
 // MARK: - Delegates
 
-/// `ChatMemberControllerDelegate` uses this protocol to communicate changes to its delegate.
+/// `ChatChannelMemberControllerDelegate` uses this protocol to communicate changes to its delegate.
 ///
 /// This protocol can be used only when no custom extra data are specified. If you're using custom extra data types,
-/// please use `_ChatMemberControllerDelegate` instead.
+/// please use `_ChatChannelMemberControllerDelegate` instead.
 ///
-public protocol ChatMemberControllerDelegate: DataControllerStateDelegate {
+public protocol ChatChannelMemberControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatChannelMember` entity.
     func memberController(
         _ controller: ChatChannelMemberController,
@@ -258,7 +258,7 @@ public protocol ChatMemberControllerDelegate: DataControllerStateDelegate {
     )
 }
 
-public extension ChatMemberControllerDelegate {
+public extension ChatChannelMemberControllerDelegate {
     func memberController(
         _ controller: ChatChannelMemberController,
         didUpdateMember change: EntityChange<ChatChannelMember>
@@ -270,9 +270,9 @@ public extension ChatMemberControllerDelegate {
 /// `_ChatChannelMemberController` uses this protocol to communicate changes to its delegate.
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `ChatMemberControllerDelegate`, which hides the generic types, and make the usage easier.
+/// named `ChatChannelMemberControllerDelegate`, which hides the generic types, and make the usage easier.
 ///
-public protocol _ChatMemberControllerDelegate: DataControllerStateDelegate {
+public protocol _ChatChannelMemberControllerDelegate: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
     /// The controller observed a change in the `_ChatChannelMember<ExtraData.User>` entity.
@@ -282,7 +282,7 @@ public protocol _ChatMemberControllerDelegate: DataControllerStateDelegate {
     )
 }
 
-public extension _ChatMemberControllerDelegate {
+public extension _ChatChannelMemberControllerDelegate {
     func memberController(
         _ controller: _ChatChannelMemberController<ExtraData>,
         didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
@@ -291,7 +291,7 @@ public extension _ChatMemberControllerDelegate {
 
 // MARK: Type erased Delegate
 
-class AnyChatMemberControllerDelegate<ExtraData: ExtraDataTypes>: _ChatMemberControllerDelegate {
+class AnyChatChannelMemberControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelMemberControllerDelegate {
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     
     private var _controllerDidUpdateMember: (
@@ -326,8 +326,8 @@ class AnyChatMemberControllerDelegate<ExtraData: ExtraDataTypes>: _ChatMemberCon
     }
 }
 
-extension AnyChatMemberControllerDelegate {
-    convenience init<Delegate: _ChatMemberControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+extension AnyChatChannelMemberControllerDelegate {
+    convenience init<Delegate: _ChatChannelMemberControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -336,8 +336,8 @@ extension AnyChatMemberControllerDelegate {
     }
 }
 
-extension AnyChatMemberControllerDelegate where ExtraData == DefaultExtraData {
-    convenience init(_ delegate: ChatMemberControllerDelegate?) {
+extension AnyChatChannelMemberControllerDelegate where ExtraData == DefaultExtraData {
+    convenience init(_ delegate: ChatChannelMemberControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
