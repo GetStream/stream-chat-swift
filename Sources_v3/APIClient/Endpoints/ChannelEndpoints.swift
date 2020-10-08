@@ -18,7 +18,7 @@ extension Endpoint {
     
     static func channel<ExtraData: ExtraDataTypes>(query: ChannelQuery<ExtraData>) -> Endpoint<ChannelPayload<ExtraData>> {
         .init(
-            path: "channels/\(query.cid.type.rawValue)/\(query.cid.id)/query",
+            path: "channels/\(query.cid.type.rawValue)\(query.cid.id == "*" ? "" : "/\(query.cid.id)")/query",
             method: .post,
             queryItems: nil,
             requiresConnectionId: query.options.contains(oneOf: [.presence, .state, .watch]),
