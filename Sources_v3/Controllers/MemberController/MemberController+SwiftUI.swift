@@ -26,7 +26,7 @@ extension _ChatChannelMemberController {
             self.controller = controller
             state = controller.state
             
-            controller.multicastDelegate.additionalDelegates.append(AnyChatMemberControllerDelegate(self))
+            controller.multicastDelegate.additionalDelegates.append(AnyChatChannelMemberControllerDelegate(self))
             
             member = controller.member
         }
@@ -34,7 +34,7 @@ extension _ChatChannelMemberController {
 }
 
 @available(iOS 13, *)
-extension _ChatChannelMemberController.ObservableObject: _ChatMemberControllerDelegate {
+extension _ChatChannelMemberController.ObservableObject: _ChatChannelMemberControllerDelegate {
     public func memberController(
         _ controller: _ChatChannelMemberController<ExtraData>,
         didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
