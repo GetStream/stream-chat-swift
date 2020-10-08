@@ -438,8 +438,8 @@
     )
  }
 
-// A concrete `ChatMemberControllerDelegate` implementation allowing capturing the delegate calls
- private class TestDelegate: QueueAwareDelegate, ChatMemberControllerDelegate {
+// A concrete `ChatChannelMemberControllerDelegate` implementation allowing capturing the delegate calls
+ private class TestDelegate: QueueAwareDelegate, ChatChannelMemberControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateMember_change: EntityChange<ChatChannelMember>?
 
@@ -454,8 +454,8 @@
     }
  }
 
-// A concrete `_ChatMemberControllerDelegate` implementation allowing capturing the delegate calls.
- private class TestDelegateGeneric: QueueAwareDelegate, _ChatMemberControllerDelegate {
+// A concrete `_ChatChannelMemberControllerDelegate` implementation allowing capturing the delegate calls.
+ private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelMemberControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateMember_change: EntityChange<ChatChannelMember>?
 
