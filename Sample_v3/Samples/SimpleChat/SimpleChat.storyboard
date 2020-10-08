@@ -52,18 +52,18 @@
                                 <rect key="frame" x="0.0" y="28" width="414" height="55.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="W2n-we-iYD" id="rqX-7l-GNm">
-                                    <rect key="frame" x="0.0" y="0.0" width="383" height="55.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="395" height="55.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="channel" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="KC1-Rc-dsO">
-                                            <rect key="frame" x="20" y="10" width="60" height="20.5"/>
+                                            <rect key="frame" x="15" y="10" width="60" height="20.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="last message" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Scs-Wu-zzc">
-                                            <rect key="frame" x="20" y="31.5" width="74.5" height="14.5"/>
+                                            <rect key="frame" x="15" y="31.5" width="74.5" height="14.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                             <color key="textColor" systemColor="secondaryLabelColor"/>
@@ -108,7 +108,7 @@
         <!--Cool Channel-->
         <scene sceneID="0dN-EP-EqE">
             <objects>
-                <tableViewController id="47C-ND-0Qu" customClass="SimpleChatViewController" customModule="Sample" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController storyboardIdentifier="SimpleChatViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="47C-ND-0Qu" customClass="SimpleChatViewController" customModule="Sample" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="nDU-Ia-SV6">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -143,7 +143,7 @@
             </objects>
             <point key="canvasLocation" x="1579.7101449275362" y="87.723214285714278"/>
         </scene>
-        <!--Users-->
+        <!--Select user to start chat:-->
         <scene sceneID="0Vo-0L-bKj">
             <objects>
                 <tableViewController storyboardIdentifier="SimpleUsersViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="VDe-2P-uXR" customClass="SimpleUsersViewController" customModule="Sample" customModuleProvider="target" sceneMemberID="viewController">
@@ -166,29 +166,12 @@
                             <outlet property="delegate" destination="VDe-2P-uXR" id="zRO-BL-lKu"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Users" id="FMm-ef-Va0"/>
+                    <navigationItem key="navigationItem" title="Select user to start chat:" id="FMm-ef-Va0"/>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="csm-As-H7n" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1580" y="822"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="pAn-JW-0bD">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Lyc-fZ-rE2" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="9zu-oR-gow">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="VDe-2P-uXR" kind="relationship" relationship="rootViewController" id="oiS-qz-SQN"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Y42-g3-UGH" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="825" y="822"/>
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
