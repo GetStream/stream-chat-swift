@@ -15,7 +15,7 @@ struct ChannelListView: View {
     /// Binding for ChatView navigation.
     @State private var showDetails: Int?
     /// Binding for showing `sheet`s
-    @State var activeSheet: ActiveSheet?
+    @State private var activeSheet: ActiveSheet?
     
     var body: some View {
         VStack {
@@ -27,16 +27,16 @@ struct ChannelListView: View {
                 /// Range version is used here for pagination.
                 ForEach(0..<channelList.channels.count, id: \.self) { index in
                     /// Navigation for ChatView
-                    NavigationLink(destination: self.chatView(for: index), tag: index, selection: self.$showDetails) {
+                    NavigationLink(destination: chatView(for: index), tag: index, selection: self.$showDetails) {
                         self.channelView(for: index)
                             /// Workaround for gestures to work with the whole cell.
                             .contentShape(Rectangle())
                             /// Open ChatView on tap.
-                            .onTapGesture { self.showDetails = index }
+                            .onTapGesture { showDetails = index }
                             /// Show ActionSheet on long press.
-                            .onLongPressGesture { self.showActionSheet = self.channel(index).cid }
+                            .onLongPressGesture { showActionSheet = channel(index).cid }
                             /// Pagination.
-                            .onAppear(perform: { self.loadNextIfNecessary(encounteredIndex: index) })
+                            .onAppear(perform: { loadNextIfNecessary(encounteredIndex: index) })
                     }
                 }
                 /// Swipe to delete action.
@@ -44,7 +44,7 @@ struct ChannelListView: View {
             }
         }
         /// ActionSheet presenter.
-        .actionSheet(item: $showActionSheet, content: self.actionSheet)
+        .actionSheet(item: $showActionSheet, content: actionSheet)
         .navigationBarTitle("Channels")
         /// Settings and create channel buttons.
         .navigationBarItems(leading: showSettingsButton, trailing: HStack { usersButton; addChannelButton })
@@ -53,7 +53,7 @@ struct ChannelListView: View {
             switch item {
             /// Show settings.
             case .settings:
-                SettingsView(currentUserController: self.channelList.controller.client.currentUserController())
+                SettingsView(currentUserController: channelList.controller.client.currentUserController())
             /// Show list of users.
             case .users:
                 userListView
@@ -84,9 +84,9 @@ struct ChannelListView: View {
     var addChannelButton: some View {
         Button(action: {
             let id = UUID().uuidString
-            let controller = self.channelList.controller.client.channelController(
+            let controller = channelList.controller.client.channelController(
                 createChannelWithId: .init(type: .messaging, id: id),
-                members: [self.channelList.controller.client.currentUserId],
+                members: [channelList.controller.client.currentUserId],
                 extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
             )
             controller.synchronize()
@@ -99,12 +99,12 @@ struct ChannelListView: View {
     private func channelView(for index: Int) -> some View {
         HStack {
             VStack(alignment: .leading) {
-                Text(self.channel(index).name)
+                Text(createChannelTitle(for: channel(index), channelList.controller.client.currentUserId))
                     .lineLimit(1)
                     .font(.system(
                         size: UIFontMetrics.default.scaledValue(for: 19),
                         /// Highlight channel name on unread messages.
-                        weight: self.channel(index).isUnread ? .medium : .regular,
+                        weight: channel(index).isUnread ? .medium : .regular,
                         design: .default
                     ))
                 /// Latest message subtitle.
@@ -115,7 +115,7 @@ struct ChannelListView: View {
             }
             Spacer()
             /// Unread count.
-            unreadCountCircle(for: self.channel(index))
+            unreadCountCircle(for: channel(index))
         }
     }
     
