@@ -8,32 +8,20 @@ import UIKit
 import StreamChatClient
 
 class LoginViewController: UITableViewController {
-    @IBOutlet var tokenTypeSegmentedControl: UISegmentedControl!
-    @IBOutlet var jwtCell: UITableViewCell!
-    @IBOutlet var apiKeyTextField: UITextField!
-    @IBOutlet var userIdTextField: UITextField!
-    @IBOutlet var userNameTextField: UITextField!
-    @IBOutlet var jwtTextField: UITextField!
-    
-    @IBOutlet var regionSegmentedControl: UISegmentedControl!
-    @IBOutlet var localStorageEnabledSwitch: UISwitch!
-    @IBOutlet var flushLocalStorageSwitch: UISwitch!
-    
     @IBOutlet var uiKitAndDelegatesCell: UITableViewCell!
     @IBOutlet var uiKitAndCombineCell: UITableViewCell!
     @IBOutlet var swiftUICell: UITableViewCell!
     
     func logIn() -> ChatClient {
-        var config = ChatClientConfig(apiKey: APIKey(apiKey))
-        
-        config.isLocalStorageEnabled = localStorageEnabledSwitch.isOn
-        config.shouldFlushLocalStorageOnStart = flushLocalStorageSwitch.isOn
-        config.baseURL = baseURL
+        var config = ChatClientConfig(apiKey: APIKey(Configuration.apiKey))
+        config.isLocalStorageEnabled = Configuration.isLocalStorageEnabled
+        config.shouldFlushLocalStorageOnStart = Configuration.shouldFlushLocalStorageOnStart
+        config.baseURL = Configuration.baseURL
         
         let chatClient = ChatClient(config: config)
         
         let currentUserController = chatClient.currentUserController()
-        let extraData = NameAndImageExtraData(name: userName, imageURL: nil)
+        let extraData = NameAndImageExtraData(name: Configuration.userName, imageURL: nil)
         
         func setUserCompletion(_ error: Error?) {
             guard let error = error else { return }
@@ -46,81 +34,22 @@ class LoginViewController: UITableViewController {
             }
         }
         
-        if let token = token {
+        if let token = Configuration.token {
             currentUserController.setUser(
-                userId: userId,
+                userId: Configuration.userId,
                 userExtraData: extraData,
                 token: token,
                 completion: setUserCompletion
             )
         } else {
             currentUserController.setGuestUser(
-                userId: userId,
+                userId: Configuration.userId,
                 extraData: extraData,
                 completion: setUserCompletion
             )
         }
         
         return chatClient
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        tokenTypeSegmentedControl.addTarget(self, action: #selector(tokenTypeSegmentedControlDidChangeValue), for: .valueChanged)
-    }
-    
-    @objc
-    func tokenTypeSegmentedControlDidChangeValue() {
-        tableView.beginUpdates()
-        tableView.endUpdates()
-    }
-
-    @IBAction func randomUserPressed(_ sender: Any) {
-        let users = [
-            (
-                name: "Broken Waterfall",
-                id: "broken-waterfall-5",
-                jwt: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
-            ),
-            (
-                name: "Suspicious Coyote",
-                id: "suspicious-coyote-3",
-                jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3VzcGljaW91cy1jb3lvdGUtMyJ9.xVaBHFTexlYPEymPmlgIYCM5M_iQVHrygaGS1QhkaEE"
-            ),
-            (
-                name: "Steep Moon",
-                id: "steep-moon-9",
-                jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RlZXAtbW9vbi05In0.xwGjOwnTy3r4o2owevNTyzZLWMsMh_bK7e5s1OQ2zXU"
-            )
-        ]
-        
-        if let user = users.randomElement() {
-            userIdTextField.text = user.id
-            userNameTextField.text = user.name
-            jwtTextField.text = user.jwt
-        }
-    }
-}
-
-// MARK: - UITableView
-
-extension LoginViewController {
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch tableView.cellForRow(at: indexPath) {
-        case jwtCell:
-            return heightForJwtCell()
-        default:
-            return super.tableView(tableView, heightForRowAt: indexPath)
-        }
-    }
-    
-    func heightForJwtCell() -> CGFloat {
-        if tokenTypeSegmentedControl.selectedSegmentIndex != 0 {
-            return 0
-        } else {
-            return jwtCell.intrinsicContentSize.height
-        }
     }
 }
 
@@ -129,8 +58,6 @@ extension LoginViewController {
 extension LoginViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        
-        guard indexPath.section == 1 else { return }
 
         let chatClient = logIn()
         
@@ -195,50 +122,6 @@ extension LoginViewController {
             }
         default:
             return
-        }
-    }
-}
-
-// MARK: - Inputs
-
-extension LoginViewController {
-    var apiKey: String {
-        apiKeyTextField.text ?? ""
-    }
-    
-    var userId: String {
-        userIdTextField.text ?? ""
-    }
-    
-    var userName: String {
-        userNameTextField.text ?? ""
-    }
-    
-    var baseURL: BaseURL {
-        switch regionSegmentedControl.selectedSegmentIndex {
-        case 0:
-            return .usEast
-        case 1:
-            return .dublin
-        case 2:
-            return .singapore
-        case 3:
-            return .sydney
-        default:
-            fatalError("Segmented Control out of bounds")
-        }
-    }
-
-    var token: Token? {
-        switch tokenTypeSegmentedControl.selectedSegmentIndex {
-        case 0:
-            return jwtTextField.text ?? ""
-        case 1:
-            return nil
-        case 2:
-            return .development
-        default:
-            fatalError("Segmented Control out of bounds")
         }
     }
 }
