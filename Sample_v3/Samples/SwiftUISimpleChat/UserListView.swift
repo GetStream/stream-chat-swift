@@ -10,6 +10,10 @@ import SwiftUI
 struct UserListView: View {
     /// The `ChatUserListController` used to interact with this users. Will be synchronized in `onAppear`.
     @StateObject var userList: ChatUserListController.ObservableObject
+    /// Binding for user actions ActionSheet.
+    @State private var showActionSheet: ChatUser?
+    /// Used for dismissing.
+    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     
     var body: some View {
         VStack {
@@ -21,13 +25,57 @@ struct UserListView: View {
             List {
                 /// Range version is used here for pagination.
                 ForEach(0..<userList.users.count, id: \.self) { index in
-                    Text(userList.users[index].name ?? "Missing name")
+                    userView(for: userList.users[index])
+                        /// Workaround for gestures to work with the whole cell.
+                        .contentShape(Rectangle())
+                        /// On tap gesture direct message channel will be created and you will be directed back to channel list.
+                        .onTapGesture {
+                            let client = userList.controller.client
+                            let directChatUsers = [client.currentUserId, userList.users[index].id]
+                            let channelController = try! client.channelController(
+                                createDirectMessageChannelWith: Set(directChatUsers),
+                                extraData: .init()
+                            )
+                            channelController.synchronize()
+                            presentationMode.wrappedValue.dismiss()
+                        }
+                        /// Show ActionSheet on long press.
+                        .onLongPressGesture { showActionSheet = userList.users[index] }
                         /// Pagination.
-                        .onAppear(perform: { self.loadNextIfNecessary(encounteredIndex: index) })
+                        .onAppear(perform: { loadNextIfNecessary(encounteredIndex: index) })
                 }
             }
         }
+        /// ActionSheet presenter.
+        .actionSheet(item: $showActionSheet, content: actionSheet)
         .onAppear { userList.controller.synchronize() }
+    }
+    
+    /// View with user name and mute icon if user is muted.
+    private func userView(for user: ChatUser) -> some View {
+        let isUserMuted = (
+            userList.controller.client.currentUserController().currentUser?.mutedUsers
+                .contains(where: { $0.id == user.id })
+        )!
+        return HStack {
+            Text(user.name ?? "Missing name")
+            Spacer()
+            /// Show `mute` icon if user is muted.
+            if isUserMuted {
+                Image(systemName: "speaker.slash.fill")
+            }
+        }
+    }
+    
+    /// `ActionSheet` with actions that can be taken on the `userController`(`mute`, `unmute`)
+    /// Will appear on long pressing the user cell.
+    private func actionSheet(for user: ChatUser) -> ActionSheet {
+        let userController = userList.controller.client.userController(userId: user.id)
+        return ActionSheet(title: Text(user.name ?? "User name"), message: Text(""), buttons: [
+            .default(Text("Mute")) { userController.mute() },
+            .default(Text("Unmute")) { userController.unmute() },
+            .cancel()
+        ])
     }
     
     /// Pagination. Load next channels if last item is reached.
@@ -36,3 +84,6 @@ struct UserListView: View {
         userList.controller.loadNextUsers()
     }
 }
+
+/// Protocol conformance needed for ActionSheet presenting.
+extension ChatUser: Identifiable {}
