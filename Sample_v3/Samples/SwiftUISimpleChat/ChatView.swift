@@ -35,7 +35,10 @@ struct ChatView: View {
         }))
         /// Set title to channel's name.
         .navigationBarTitle(
-            Text(createTypingMemberString(for: channel.channel) ?? channel.channel?.extraData.name ?? "Unnamed Channel"),
+            Text(
+                createTypingMemberString(for: channel.channel) ??
+                    createChannelTitle(for: channel.channel, channel.controller.client.currentUserId)
+            ),
             displayMode: .inline
         )
         /// Channel actions button.
