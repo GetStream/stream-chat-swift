@@ -341,7 +341,7 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
 
 extension SimpleChatViewController {
     func updateNavigationTitleAndPrompt() {
-        title = channelController.channel.flatMap { $0.extraData.name ?? $0.cid.description }
+        title = channelController.channel.flatMap { createChannelTitle(for: $0, channelController.client.currentUserId) }
         navigationItem.prompt = channelController.channel.flatMap {
             createTypingMemberString(for: $0) ?? createMemberInfoString(for: $0)
         }
