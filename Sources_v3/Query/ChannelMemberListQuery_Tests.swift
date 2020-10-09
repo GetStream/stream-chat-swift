@@ -23,7 +23,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             "id": query.cid.id,
             "type": query.cid.type.rawValue,
             "filter_conditions": ["name": ["$contains": "a"]],
-            "sort": [["key": "created_at", "direction": 1]] as NSArray,
+            "sort": [["field": "created_at", "direction": 1]] as NSArray,
             "offset": 3
         ])
     }

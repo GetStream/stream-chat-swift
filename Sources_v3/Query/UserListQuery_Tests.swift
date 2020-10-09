@@ -23,7 +23,7 @@ class UserListQuery_Tests: XCTestCase {
             "presence": true,
             "offset": 3,
             "filter_conditions": ["name": ["$contains": "a"]],
-            "sort": [["key": "lastActiveAt", "direction": -1]]
+            "sort": [["field": "lastActiveAt", "direction": -1]]
         ]
 
         let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
