@@ -35,6 +35,37 @@ extension ListChange: CustomStringConvertible {
     }
 }
 
+extension ListChange {
+    /// Returns the underlaying item that was changed.
+    var item: Item {
+        switch self {
+        case let .insert(item, _):
+            return item
+        case let .move(item, _, _):
+            return item
+        case let .remove(item, _):
+            return item
+        case let .update(item, _):
+            return item
+        }
+    }
+    
+    /// Returns `ListChange` of the same type but for the specific `Item` field.
+    func fieldChange<Value>(_ path: KeyPath<Item, Value>) -> ListChange<Value> {
+        let field = item[keyPath: path]
+        switch self {
+        case let .insert(_, at):
+            return .insert(field, index: at)
+        case let .move(_, from, to):
+            return .move(field, fromIndex: from, toIndex: to)
+        case let .remove(_, at):
+            return .remove(field, index: at)
+        case let .update(_, at):
+            return .update(field, index: at)
+        }
+    }
+}
+
 extension ListChange: Equatable where Item: Equatable {}
 
 /// Observes changes of the list of items specified using an `NSFetchRequest`in the provided `NSManagedObjectContext`.
