@@ -17,6 +17,7 @@ class CurrentUserDTO: NSManagedObject {
 
     @NSManaged var mutedUsers: Set<UserDTO>
     @NSManaged var user: UserDTO
+    @NSManaged var devices: Set<DeviceDTO>
     
     /// Returns a default fetch request for the current user.
     static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
@@ -69,7 +70,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
         
-        // TODO: devices
+        try saveCurrentUserDevices(payload.devices, clearExisting: true)
         
         return dto
     }
@@ -81,6 +82,28 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         
         dto.unreadChannelsCount = Int16(count.channels)
         dto.unreadMessagesCount = Int16(count.messages)
+    }
+    
+    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws {
+        guard let currentUser = currentUser() else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+        
+        if clearExisting {
+            currentUser.devices.removeAll()
+        }
+        
+        for device in devices {
+            let dto = DeviceDTO.loadOrCreate(id: device.id, context: self)
+            dto.createdAt = device.createdAt
+            dto.user = currentUser
+        }
+    }
+    
+    func deleteDevice(id: String) {
+        if let dto = DeviceDTO.load(id: id, context: self) {
+            delete(dto)
+        }
     }
     
     func currentUser() -> CurrentUserDTO? { .load(context: self) }
@@ -124,7 +147,7 @@ extension _CurrentChatUser {
             updatedAt: user.userUpdatedAt,
             lastActiveAt: user.lastActivityAt,
             extraData: extraData,
-            devices: [],
+            devices: dto.devices.map { $0.asModel() },
             currentDevice: nil,
             mutedUsers: Set(mutedUsers),
             unreadCount: UnreadCount(
