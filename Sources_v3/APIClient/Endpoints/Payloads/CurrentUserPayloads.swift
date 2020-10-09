@@ -7,7 +7,7 @@ import Foundation
 /// An object describing the incoming current user JSON payload.
 class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
     /// A list of devices.
-    let devices: [Device]
+    let devices: [DevicePayload]
     /// Muted users.
     let mutedUsers: [MutedUserPayload<ExtraData>]
     /// Unread channel and message counts
@@ -24,7 +24,7 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
         isBanned: Bool,
         teams: [String] = [],
         extraData: ExtraData,
-        devices: [Device] = [],
+        devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload<ExtraData>] = [],
         unreadCount: UnreadCount? = nil
     ) {
@@ -48,7 +48,7 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
-        devices = try container.decodeIfPresent([Device].self, forKey: .devices) ?? []
+        devices = try container.decodeIfPresent([DevicePayload].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUserPayload<ExtraData>].self, forKey: .mutedUsers) ?? []
         unreadCount = try? UnreadCount(from: decoder)
         
