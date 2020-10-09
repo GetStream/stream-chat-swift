@@ -175,6 +175,7 @@ extension ConfigurationViewController {
                 tokenTypeSegmentedControl.selectedSegmentIndex = 2
             default:
                 tokenTypeSegmentedControl.selectedSegmentIndex = 0
+                jwtTextField.text = newValue
             }
             
             tableView.beginUpdates()
