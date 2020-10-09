@@ -26,12 +26,24 @@ class MemberDTO: NSManagedObject {
     private static func createId(userId: String, channeldId: ChannelId) -> String {
         channeldId.rawValue + userId
     }
-    
+}
+
+// MARK: - Fetch requests
+
+extension MemberDTO {
     /// Returns a fetch request for the dto with the provided `userId`.
     static func member(_ userId: UserId, in cid: ChannelId) -> NSFetchRequest<MemberDTO> {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MemberDTO.memberCreatedAt, ascending: false)]
         request.predicate = NSPredicate(format: "id == %@", Self.createId(userId: userId, channeldId: cid))
+        return request
+    }
+    
+    /// Returns a fetch request for the DTOs matching the provided `query`.
+    static func members(matching query: ChannelMemberListQuery) -> NSFetchRequest<MemberDTO> {
+        let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
+        request.predicate = NSPredicate(format: "ANY queries.queryHash == %@", query.queryHash)
+        request.sortDescriptors = query.sortDescriptors
         return request
     }
 }
@@ -129,5 +141,12 @@ extension _ChatChannelMember {
             inviteAcceptedAt: nil,
             inviteRejectedAt: nil
         )
+    }
+}
+
+private extension ChannelMemberListQuery {
+    var sortDescriptors: [NSSortDescriptor] {
+        let sortDescriptors = sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
+        return sortDescriptors.isEmpty ? [ChannelMemberListSortingKey.defaultSortDescriptor] : sortDescriptors
     }
 }
