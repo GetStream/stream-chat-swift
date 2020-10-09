@@ -32,6 +32,7 @@
     override func tearDown() {
         userId = nil
         cid = nil
+        controllerCallbackQueueID = nil
 
         AssertAsync {
             Assert.canBeReleased(&controller)

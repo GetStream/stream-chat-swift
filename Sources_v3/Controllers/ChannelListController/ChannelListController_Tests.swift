@@ -30,6 +30,9 @@ class ChannelListController_Tests: StressTestCase {
     }
     
     override func tearDown() {
+        query = nil
+        controllerCallbackQueueID = nil
+        
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
