@@ -20,6 +20,11 @@ public struct Sorting<Key: SortingKey>: Encodable, CustomStringConvertible {
     /// A sorting direction.
     public let direction: Int
     
+    private enum CodingKeys: String, CodingKey {
+        case key = "field"
+        case direction
+    }
+    
     /// True if the sorting in ascending order, otherwise false.
     public var isAscending: Bool { direction == 1 }
     
