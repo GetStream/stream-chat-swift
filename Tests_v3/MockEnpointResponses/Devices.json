@@ -1,0 +1,9 @@
+{
+    "devices" : [
+        {
+            "id" : "2552c2ec3ba609bd6ebe5d437e6926de20fde3adae2d2e7f0a5a72bc90285fa5",
+            "push_provider" : "apn"
+        }
+    ],
+    "duration" : "0.43ms"
+}
