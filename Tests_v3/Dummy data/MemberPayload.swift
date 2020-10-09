@@ -7,12 +7,17 @@ import Foundation
 
 extension MemberPayload where ExtraData == NameAndImageExtraData {
     /// Returns a dummy member payload with the given `userId` and `role`
-    static func dummy(userId: UserId = .unique, role: MemberRole = .member) -> MemberPayload {
+    static func dummy(
+        userId: UserId = .unique,
+        createdAt: Date = .unique,
+        updatedAt: Date = .unique,
+        role: MemberRole = .member
+    ) -> MemberPayload {
         .init(
             user: .dummy(userId: userId),
             role: role,
-            createdAt: .unique,
-            updatedAt: .unique
+            createdAt: createdAt,
+            updatedAt: updatedAt
         )
     }
 }
