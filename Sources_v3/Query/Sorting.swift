@@ -175,3 +175,26 @@ public extension ChannelMemberListSortingKey {
     /// When used this key sorts the member list by member's `updatedAt` field.
     static let updatedAt = Self(rawValue: "updated_at")
 }
+
+extension ChannelMemberListSortingKey {
+    static var defaultSortDescriptor: NSSortDescriptor {
+        .init(keyPath: \MemberDTO.memberUpdatedAt, ascending: false)
+    }
+    
+    func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
+        var keyPath: KeyPath<MemberDTO, Date>? {
+            switch self {
+            case .createdAt:
+                return \.memberCreatedAt
+            case .updatedAt:
+                return \.memberUpdatedAt
+            default:
+                return nil
+            }
+        }
+        
+        return keyPath.flatMap {
+            .init(keyPath: $0, ascending: isAscending)
+        }
+    }
+}
