@@ -33,7 +33,7 @@ extension EntityChange: CustomStringConvertible {
 
 extension EntityChange {
     /// Returns the underlaying item that was changed
-    public var item: Item {
+    var item: Item {
         switch self {
         case let .create(item):
             return item
