@@ -29,6 +29,7 @@ final class UserController_Tests: StressTestCase {
     
     override func tearDown() {
         userId = nil
+        controllerCallbackQueueID = nil
         
         AssertAsync {
             Assert.canBeReleased(&controller)
