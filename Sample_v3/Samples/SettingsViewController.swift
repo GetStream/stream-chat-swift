@@ -99,7 +99,9 @@ extension SettingsViewController: CurrentChatUserControllerDelegate {
         _ controller: CurrentChatUserController,
         didChangeCurrentUser change: EntityChange<CurrentChatUser>
     ) {
-        updateUserCell(with: change.item)
+        // We're not interested in details about the change so we can ignore the `change` value
+        // and use the current version of `currentUser` from the controller.
+        updateUserCell(with: controller.currentUser)
     }
 }
 
