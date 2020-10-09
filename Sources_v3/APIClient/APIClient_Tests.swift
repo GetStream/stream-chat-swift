@@ -237,30 +237,44 @@ class TestRequestDecoder: RequestDecoder {
     }
 }
 
+extension AnyEncodable: Equatable {
+    public static func == (lhs: AnyEncodable, rhs: AnyEncodable) -> Bool {
+        do {
+            let encoder = JSONEncoder.default
+            let encodedLhs = try encoder.encode(lhs)
+            let encodedRhs = try encoder.encode(rhs)
+            try CompareJSONEqual(encodedLhs, encodedRhs)
+            return true
+        } catch {
+            return String(describing: lhs) == String(describing: rhs)
+        }
+    }
+}
+
 struct AnyEndpoint: Equatable {
     let path: String
     let method: EndpointMethod
-    let queryItems: Encodable?
+    let queryItems: AnyEncodable?
     let requiresConnectionId: Bool
-    let body: Encodable?
+    let body: AnyEncodable?
     let payloadType: Decodable.Type
     
     init<T: Decodable>(_ endpoint: Endpoint<T>) {
         path = endpoint.path
         method = endpoint.method
-        queryItems = endpoint.queryItems
+        queryItems = endpoint.queryItems?.asAnyEncodable
         requiresConnectionId = endpoint.requiresConnectionId
-        body = endpoint.body
+        body = endpoint.body?.asAnyEncodable
         payloadType = T.self
     }
     
     static func == (lhs: AnyEndpoint, rhs: AnyEndpoint) -> Bool {
         lhs.path == rhs.path
             && lhs.method == rhs.method
-            && String(describing: lhs.queryItems) == String(describing: rhs.queryItems)
+            && lhs.queryItems == rhs.queryItems
             && lhs.requiresConnectionId == rhs.requiresConnectionId
-            && String(describing: lhs.body) == String(describing: rhs.body)
-            && String(describing: lhs.payloadType) == String(describing: rhs.payloadType)
+            && lhs.body == rhs.body
+            && lhs.payloadType == rhs.payloadType
     }
 }
 

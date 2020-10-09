@@ -144,3 +144,9 @@ struct AnyEncodable: Encodable {
         try encodable.encode(to: encoder)
     }
 }
+
+extension Encodable {
+    var asAnyEncodable: AnyEncodable {
+        AnyEncodable(self)
+    }
+}
