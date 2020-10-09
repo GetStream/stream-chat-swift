@@ -29,8 +29,21 @@ protocol CurrentUserDatabaseSession {
     /// If there is no current user, the error will be thown
     func saveCurrentUserUnreadCount(count: UnreadCount) throws
     
+    /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
+    /// If there's no current user set, an error will be thrown.
+    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws
+    
+    /// Removes the device with the given id from DB.
+    func deleteDevice(id: DeviceId)
+    
     /// Returns `CurrentUserDTO` from the DB. Returns `nil` if no `CurrentUserDTO` exists.
     func currentUser() -> CurrentUserDTO?
+}
+
+extension CurrentUserDatabaseSession {
+    func saveCurrentUserDevices(_ devices: [DevicePayload]) throws {
+        try saveCurrentUserDevices(devices, clearExisting: false)
+    }
 }
 
 protocol MessageDatabaseSession {

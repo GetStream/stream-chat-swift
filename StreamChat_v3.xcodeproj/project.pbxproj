@@ -12,6 +12,8 @@
 		790A4C4A252DDD50001F4A23 /* DeviceEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C47252DDD1A001F4A23 /* DeviceEndpoints_Tests.swift */; };
 		790A4C4E252E092E001F4A23 /* DevicePayloads_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C4D252E0901001F4A23 /* DevicePayloads_Tests.swift */; };
 		790A4C51252E0966001F4A23 /* Devices.json in Resources */ = {isa = PBXBuildFile; fileRef = 790A4C50252E0957001F4A23 /* Devices.json */; };
+		790A4C55252F25DA001F4A23 /* DeviceDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C54252F25DA001F4A23 /* DeviceDTO.swift */; };
+		790A4C58252F2AF2001F4A23 /* DeviceDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C57252F2AF2001F4A23 /* DeviceDTO_Tests.swift */; };
 		790B9E3024DC21D7005455AA /* MessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B9E2F24DC21D7005455AA /* MessagePayload.swift */; };
 		790B9E3224DC221A005455AA /* UserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B9E3124DC221A005455AA /* UserPayload.swift */; };
 		79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */; };
@@ -454,6 +456,8 @@
 		790A4C47252DDD1A001F4A23 /* DeviceEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceEndpoints_Tests.swift; sourceTree = "<group>"; };
 		790A4C4D252E0901001F4A23 /* DevicePayloads_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePayloads_Tests.swift; sourceTree = "<group>"; };
 		790A4C50252E0957001F4A23 /* Devices.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Devices.json; sourceTree = "<group>"; };
+		790A4C54252F25DA001F4A23 /* DeviceDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDTO.swift; sourceTree = "<group>"; };
+		790A4C57252F2AF2001F4A23 /* DeviceDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceDTO_Tests.swift; sourceTree = "<group>"; };
 		790B9E2F24DC21D7005455AA /* MessagePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayload.swift; sourceTree = "<group>"; };
 		790B9E3124DC221A005455AA /* UserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPayload.swift; sourceTree = "<group>"; };
 		79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AssertAsync+Events.swift"; sourceTree = "<group>"; };
@@ -1015,6 +1019,8 @@
 				7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */,
 				882C575F252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift */,
 				889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */,
+				790A4C54252F25DA001F4A23 /* DeviceDTO.swift */,
+				790A4C57252F2AF2001F4A23 /* DeviceDTO_Tests.swift */,
 			);
 			path = DTOs;
 			sourceTree = "<group>";
@@ -2052,6 +2058,7 @@
 				8AC9CBD624C73689006E236C /* NotificationEvents.swift in Sources */,
 				F6FF1DA824FD232C00151735 /* MessageUpdater.swift in Sources */,
 				7931818C24FD2660002F8C84 /* ChannelListController+Combine.swift in Sources */,
+				790A4C55252F25DA001F4A23 /* DeviceDTO.swift in Sources */,
 				8A62706E24BF45360040BFD6 /* BanEnabling.swift in Sources */,
 				7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */,
 				79877A0A2498E4BC00015F8B /* Device.swift in Sources */,
@@ -2284,6 +2291,7 @@
 				F61D7C3524FFA6FD00188A0E /* MessageUpdater_Tests.swift in Sources */,
 				79B5517824E5969700CE9FEC /* UserPayloads_Tests.swift in Sources */,
 				792921C924C056F400116BBB /* ChannelListController_Tests.swift in Sources */,
+				790A4C58252F2AF2001F4A23 /* DeviceDTO_Tests.swift in Sources */,
 				8A0D64AB24E57BF20017A3C0 /* ChannelListPayload_Tests.swift in Sources */,
 				DAF8359C24F8059900392699 /* TypingEventObserver_Tests.swift in Sources */,
 				799C9468247D791A001F1104 /* AssertJSONEqual.swift in Sources */,

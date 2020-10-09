@@ -21,6 +21,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             userId: userId,
             role: .admin,
             extraData: extraData,
+            devices: [DevicePayload.dummy],
             mutedUsers: [
                 .dummy(userId: .unique),
                 .dummy(userId: .unique),
@@ -54,7 +55,9 @@ class CurrentUserModelDTO_Tests: XCTestCase {
                 try? JSONDecoder.default.decode(NameAndImageExtraData.self, from: $0.user.extraData)
             })
             Assert.willBeEqual(mutedUserIDs, Set(loadedCurrentUser?.mutedUsers.map(\.id) ?? []))
-            // TODO: Teams, Devices
+            Assert.willBeEqual(payload.devices.count, loadedCurrentUser?.devices.count)
+            Assert.willBeEqual(payload.devices.first?.id, loadedCurrentUser?.devices.first?.id)
+            // TODO: Teams
         }
     }
     
@@ -64,6 +67,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         let payload: CurrentUserPayload<NoExtraData> = .dummy(
             userId: userId,
             role: .user,
+            devices: [DevicePayload.dummy],
             mutedUsers: [
                 .dummy(userId: .unique),
                 .dummy(userId: .unique),
@@ -97,7 +101,9 @@ class CurrentUserModelDTO_Tests: XCTestCase {
                 try? JSONDecoder.default.decode(NoExtraData.self, from: $0.user.extraData)
             })
             Assert.willBeEqual(mutedUserIDs, Set(loadedCurrentUser?.mutedUsers.map(\.id) ?? []))
-            // TODO: Teams, Devices
+            Assert.willBeEqual(payload.devices.count, loadedCurrentUser?.devices.count)
+            Assert.willBeEqual(payload.devices.first?.id, loadedCurrentUser?.devices.first?.id)
+            // TODO: Teams
         }
     }
     
