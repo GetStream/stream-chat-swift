@@ -6,100 +6,123 @@
 import XCTest
 
 class Filter_Tests: XCTestCase {
-    func testOperators() {
-        var filter = Filter.equal("a", to: "b")
-        XCTAssertEqual(filter.json, "{\"a\":\"b\"}")
+    func test_helperOperators() {
+        var filter: Filter<TestScope> = .equal(.testKey, to: "equal value")
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? String, "equal value")
+        XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
         
-        filter = .notEqual("a", to: "b")
-        XCTAssertEqual(filter.json, "{\"a\":{\"$ne\":\"b\"}}")
+        filter = .notEqual(.testKey, to: "not equal value")
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? String, "not equal value")
+        XCTAssertEqual(filter.operator, FilterOperator.notEqual.rawValue)
         
-        filter = .greater("a", than: "b")
-        XCTAssertEqual(filter.json, "{\"a\":{\"$gt\":\"b\"}}")
+        filter = .greater(.testKey, than: "greater value")
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? String, "greater value")
+        XCTAssertEqual(filter.operator, FilterOperator.greater.rawValue)
         
-        filter = .greaterOrEqual("a", than: "b")
-        XCTAssertEqual(filter.json, "{\"a\":{\"$gte\":\"b\"}}")
+        filter = .greaterOrEqual(.testKey, than: "greater or equal value")
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? String, "greater or equal value")
+        XCTAssertEqual(filter.operator, FilterOperator.greaterOrEqual.rawValue)
         
-        filter = .less("a", than: "b")
-        XCTAssertEqual(filter.json, "{\"a\":{\"$lt\":\"b\"}}")
+        filter = .less(.testKey, than: "less value")
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? String, "less value")
+        XCTAssertEqual(filter.operator, FilterOperator.less.rawValue)
         
-        filter = .lessOrEqual("a", than: "b")
-        XCTAssertEqual(filter.json, "{\"a\":{\"$lte\":\"b\"}}")
+        filter = .lessOrEqual(.testKey, than: "less or equal value")
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? String, "less or equal value")
+        XCTAssertEqual(filter.operator, FilterOperator.lessOrEqual.rawValue)
         
-        filter = .in("a", ["b"])
-        XCTAssertEqual(filter.json, "{\"a\":{\"$in\":[\"b\"]}}")
+        filter = .in(.testKey, values: ["in value 1", "in value 2"])
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? [String], ["in value 1", "in value 2"])
+        XCTAssertEqual(filter.operator, FilterOperator.in.rawValue)
         
-        filter = .notIn("a", ["b"])
-        XCTAssertEqual(filter.json, "{\"a\":{\"$nin\":[\"b\"]}}")
+        filter = .notIn(.testKey, values: ["nin value 1", "nin value 2"])
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? [String], ["nin value 1", "nin value 2"])
+        XCTAssertEqual(filter.operator, FilterOperator.notIn.rawValue)
         
-        filter = .query("a", with: "b")
-        XCTAssertEqual(filter.json, "{\"a\":{\"$q\":\"b\"}}")
+        filter = .query(.testKey, text: "searched text")
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? String, "searched text")
+        XCTAssertEqual(filter.operator, FilterOperator.query.rawValue)
         
-        filter = .autocomplete("a", with: "b")
-        XCTAssertEqual(filter.json, "{\"a\":{\"$autocomplete\":\"b\"}}")
+        filter = .autocomplete(.testKey, text: "atocomplete text")
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? String, "atocomplete text")
+        XCTAssertEqual(filter.operator, FilterOperator.autocomplete.rawValue)
         
-        filter = .contains("a", "b")
-        XCTAssertEqual(filter.json, "{\"a\":{\"$contains\":\"b\"}}")
+        filter = .exists(.testKey, exists: false)
+        XCTAssertEqual(filter.key, FilterKey<TestScope, String>.testKey.rawValue)
+        XCTAssertEqual(filter.value as? Bool, false)
+        XCTAssertEqual(filter.operator, FilterOperator.exists.rawValue)
         
-        filter = .custom("myOperator", key: "a", value: "b")
-        XCTAssertEqual(filter.json, "{\"a\":{\"$myOperator\":\"b\"}}")
+        let filter1: Filter<TestScope> = .init(operator: "$" + .unique, key: .unique, value: String.unique)
+        let filter2: Filter<TestScope> = .init(operator: "$" + .unique, key: .unique, value: String.unique)
+        
+        filter = .and([filter1, filter2])
+        XCTAssertEqual(filter.key, nil)
+        XCTAssertEqual(filter.value as? [Filter<TestScope>], [filter1, filter2])
+        XCTAssertEqual(filter.operator, FilterOperator.and.rawValue)
+        
+        filter = .or([filter1, filter2])
+        XCTAssertEqual(filter.key, nil)
+        XCTAssertEqual(filter.value as? [Filter<TestScope>], [filter1, filter2])
+        XCTAssertEqual(filter.operator, FilterOperator.or.rawValue)
+        
+        filter = .nor([filter1, filter2])
+        XCTAssertEqual(filter.key, nil)
+        XCTAssertEqual(filter.value as? [Filter<TestScope>], [filter1, filter2])
+        XCTAssertEqual(filter.operator, FilterOperator.nor.rawValue)
     }
     
-    func testFilterEncoding() {
-        let filter1 = Filter.equal("a", to: "b")
-        let filter2 = Filter.equal("c", to: "d")
-        let filter3 = Filter.equal("e", to: "f")
+    func test_operatorEncodingAndDecoding() {
+        // Test non-group filter
+        var filter: Filter<TestScope> = .init(operator: FilterOperator.equal.rawValue, key: "test_key", value: "test_value")
+        var jsonString: String { filter.serialized }
+        XCTAssertEqual(jsonString, #"{"test_key":{"$eq":"test_value"}}"#)
+        XCTAssertEqual(jsonString.deserialize(), filter)
         
-        // And
-        var filter = filter1
-        filter &= filter2
-        XCTAssertEqual((filter1 & filter2).json, "{\"$and\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
-        XCTAssertEqual(filter.json, "{\"$and\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
+        // Test in filter
+        filter = .init(operator: FilterOperator.in.rawValue, key: "test_key", value: [1, 2, 3])
+        XCTAssertEqual(filter.serialized, #"{"test_key":{"$in":[1,2,3]}}"#)
+        XCTAssertEqual(jsonString.deserialize(), filter)
         
-        // Or
-        filter = filter1
-        filter |= filter2
-        XCTAssertEqual((filter1 | filter2).json, "{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
-        XCTAssertEqual(filter.json, "{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
-        
-        // Combination of Or + And
-        XCTAssertEqual(
-            ((filter1 | filter2) & filter3).json,
-            "{\"$and\":[{\"$or\":[{\"a\":\"b\"},{\"c\":\"d\"}]},{\"e\":\"f\"}]}"
-        )
-        XCTAssertEqual(
-            (filter1 | (filter2 & filter3)).json,
-            "{\"$or\":[{\"a\":\"b\"},{\"$and\":[{\"c\":\"d\"},{\"e\":\"f\"}]}]}"
-        )
-        
-        // Nor
-        XCTAssertEqual(Filter.nor([filter1, filter2]).json, "{\"$nor\":[{\"a\":\"b\"},{\"c\":\"d\"}]}")
-    }
-    
-    func testFilterDecoding() throws {
-        let filter1: Filter = .and([.and([.or([.equal(.unique, to: String.unique)])])])
-        let filter2: Filter = .custom(String.unique, key: .unique, value: 1)
-        let filter3: Filter = .nor([.notIn(.unique, [1, 2, 3, 4, 5]), .in(.unique, [1.1, 2.2, 3.3])])
-        
-        // Encode filters
-        let encoded1 = try JSONEncoder.default.encode(filter1)
-        let encoded2 = try JSONEncoder.default.encode(filter2)
-        let encoded3 = try JSONEncoder.default.encode(filter3)
-        
-        // Decode filters
-        let decoded1 = try JSONDecoder.default.decode(Filter.self, from: encoded1)
-        let decoded2 = try JSONDecoder.default.decode(Filter.self, from: encoded2)
-        let decoded3 = try JSONDecoder.default.decode(Filter.self, from: encoded3)
-        
-        // Assert filters decoded correctly
-        XCTAssertEqual(filter1.filterHash, decoded1.filterHash)
-        XCTAssertEqual(filter2.filterHash, decoded2.filterHash)
-        XCTAssertEqual(filter3.filterHash, decoded3.filterHash)
+        // Test group filter
+        let filter1: Filter<TestScope> = .equal(.testKey, to: "test_value_1")
+        let filter2: Filter<TestScope> = .notEqual(.testKey, to: "test_value_2")
+        filter = .or([filter1, filter2])
+        XCTAssertEqual(filter.serialized, #"{"$or":[{"test_key":{"$eq":"test_value_1"}},{"test_key":{"$ne":"test_value_2"}}]}"#)
+        XCTAssertEqual(jsonString.deserialize(), filter)
     }
 }
 
-extension Filter {
-    var json: String {
+private struct TestScope: FilterScope {}
+
+private extension FilterKey where Scope == TestScope {
+    static var testKey: FilterKey<Scope, String> { "test_key" }
+}
+
+extension Filter: Equatable {
+    public static func == (lhs: Filter<Scope>, rhs: Filter<Scope>) -> Bool {
+        String(describing: lhs) == String(describing: rhs)
+    }
+}
+
+private extension Filter {
+    var serialized: String {
         let data = try! JSONEncoder.default.encode(self)
         return String(data: data, encoding: .utf8)!
+    }
+}
+
+private extension String {
+    func deserialize<Scope: FilterScope>() -> Filter<Scope>? {
+        try? JSONDecoder.default.decode(Filter<Scope>.self, from: data(using: .utf8)!)
     }
 }

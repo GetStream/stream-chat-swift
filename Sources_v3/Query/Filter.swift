@@ -4,253 +4,329 @@
 
 import Foundation
 
-/// A filter.
+/// An enum with possible operators to use in filters.
+public enum FilterOperator: String {
+    /// Matches values that are equal to a specified value.
+    case equal = "$eq"
+    
+    /// Matches all values that are not equal to a specified value.
+    case notEqual = "$ne"
+    
+    /// Matches values that are greater than a specified value.
+    case greater = "$gt"
+    
+    /// Matches values that are greater than a specified value.
+    case greaterOrEqual = "$gte"
+    
+    /// Matches values that are less than a specified value.
+    case less = "$lt"
+    
+    /// Matches values that are less than or equal to a specified value.
+    case lessOrEqual = "$lte"
+    
+    /// Matches any of the values specified in an array.
+    case `in` = "$in"
+    
+    /// Matches none of the values specified in an array.
+    case notIn = "$nin"
+    
+    /// Matches values by performing text search with the specified value.
+    case query = "$q"
+    
+    /// Matches values with the specified prefix.
+    case autocomplete = "$autocomplete"
+
+    /// Matches values that exist/don't exist based on the specified boolean value.
+    case exists = "$exists"
+
+    /// Matches all the values specified in an array.
+    case and = "$and"
+    
+    /// Matches at least one of the values specified in an array.
+    case or = "$or"
+    
+    /// Matches none of the values specified in an array.
+    case nor = "$nor"
+}
+
+/// A phantom protocol used to limit the scope of `Filter`.
 ///
-/// For example:
-/// ```
-/// // Filter channels by type:
-/// var filter = "type".equal(to: "messaging")
-/// // Filter channels by members:
-/// filter = "members".in(["jon"])
-/// // Filter channels by type and members:
-/// filter = "type".equal(to: "messaging") + "members".in(["jon"])
-/// // Filter channels by type or members:
-/// filter = "type".equal(to: "messaging") | "members".in(["jon"])
-/// ```
-public enum Filter: Encodable, CustomStringConvertible {
-    public typealias Key = String
+/// This type isn't reflected in `Filter` directly, rather it's used for providing better autocompletion and compile-time
+/// validation of `Filter`.
+///
+public protocol FilterScope {}
 
-    /// Placeholder filterHash when no filter is specified.
-    static let nilFilterHash = "nilFilterHash"
-    
-    // MARK: Operators
-    
-    /// An equal operator.
-    case equal(Key, to: Encodable)
-    /// A not equal operator.
-    case notEqual(Key, to: Encodable)
-    /// A greater then operator.
-    case greater(Key, than: Encodable)
-    /// A greater or equal than operator.
-    case greaterOrEqual(Key, than: Encodable)
-    /// A less then operator.
-    case less(Key, than: Encodable)
-    /// A less or equal than operator.
-    case lessOrEqual(Key, than: Encodable)
-    /// An in list operator.
-    case `in`(Key, [Encodable])
-    /// A not in list operator.
-    case notIn(Key, [Encodable])
-    /// A query operator.
-    case query(Key, with: String)
-    /// An autocomplete operator.
-    case autocomplete(Key, with: String)
-    /// Contains operator
-    case contains(Key, Encodable)
-    /// A custom operator. Please make sure to provide a valid operator.
-    /// Example:  `.custom("contains", key: "teams", value: "red")`
-    case custom(String, key: Key, value: Encodable)
+/// A protocol to which all values that can be used as `Filter` values conform.
+///
+/// Only types representing text, numbers, booleans, dates, and other filters can be on the "right-hand" side of `Filter`.
+///
+public protocol FilterValue: Encodable {}
 
-    // MARK: Combine operators
-    
-    /// Filter with all filters (like `and`).
-    indirect case and([Filter])
-    /// Filter with any of filters (like `or`).
-    indirect case or([Filter])
-    /// Filter without any of filters (like `not or`).
-    indirect case nor([Filter])
-    
-    // MARK: - Technical
+// Built-in `FilterValue` conformances for supported types
 
-    /// "Technical" enum case needed for situation when we need to keep filterHash different from the current `Filter`.
-    /// Used for `NewChannelQueryUpdater`
-    indirect case explicitFilterHash(Filter, String)
+extension String: FilterValue {}
+extension Int: FilterValue {}
+extension Double: FilterValue {}
+extension Float: FilterValue {}
+extension Bool: FilterValue {}
+extension Date: FilterValue {}
+extension URL: FilterValue {}
+
+extension Array: FilterValue where Element: FilterValue {}
+extension Filter: FilterValue {}
+
+extension ChannelId: FilterValue {}
+extension ChannelType: FilterValue {}
+
+/// Filter is used to specify the details about which elements should be returned from a specific query.
+///
+/// Learn more about how to create simple, advanced, and custom filters in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
+///
+public struct Filter<Scope: FilterScope> {
+    /// An operator used for the filter.
+    public let `operator`: String
     
-    public var description: String {
-        switch self {
-        case let .equal(key, object):
-            return "\(key) = \(object)"
-        case let .notEqual(key, object):
-            return "\(key) != \(object)"
-        case let .greater(key, object):
-            return "\(key) > \(object)"
-        case let .greaterOrEqual(key, object):
-            return "\(key) >= \(object)"
-        case let .less(key, object):
-            return "\(key) < \(object)"
-        case let .lessOrEqual(key, object):
-            return "\(key) >= \(object)"
-        case let .in(key, objects):
-            return "\(key) IN (\(objects))"
-        case let .notIn(key, objects):
-            return "\(key) NOT IN (\(objects))"
-        case let .query(key, object):
-            return "\(key) QUERY \(object)"
-        case let .autocomplete(key, object):
-            return "\(key) AUTOCOMPLETE \(object)"
-        case let .contains(key, object):
-            return "\(key) CONTAINS \(object)"
-        case let .custom(`operator`, key, object):
-            return "\(key) \(`operator`.uppercased()) \(object)"
-        case let .and(filters):
-            return "(" + filters.map(\.description).joined(separator: ") AND (") + ")"
-        case let .or(filters):
-            return "(" + filters.map(\.description).joined(separator: ") OR (") + ")"
-        case let .nor(filters):
-            return "(" + filters.map(\.description).joined(separator: ") NOR (") + ")"
-        case let .explicitFilterHash(filter, _):
-            return filter.description
-        }
-    }
+    /// The "left-hand" side of the filter. Specifies the name of the field the filter should match. Some operators like
+    /// `and` or `or`, don't require the key value to be present.
+    public let key: String?
     
-    public func encode(to encoder: Encoder) throws {
-        var keyOperand: Key = ""
-        var operatorName = ""
-        var operand: Encodable?
-        var operands: [Encodable] = []
-        
-        switch self {
-        case let .equal(key, object):
-            try [key: AnyEncodable(object)].encode(to: encoder)
-            return
-        case let .notEqual(key, object):
-            keyOperand = key
-            operatorName = .notEqual
-            operand = object
-        case let .greater(key, object):
-            keyOperand = key
-            operatorName = .greater
-            operand = object
-        case let .greaterOrEqual(key, object):
-            keyOperand = key
-            operatorName = .greaterOrEqual
-            operand = object
-        case let .less(key, object):
-            keyOperand = key
-            operatorName = .less
-            operand = object
-        case let .lessOrEqual(key, object):
-            keyOperand = key
-            operatorName = .lessOrEqual
-            operand = object
-        case let .in(key, objects):
-            keyOperand = key
-            operatorName = .in
-            operands = objects
-        case let .notIn(key, objects):
-            keyOperand = key
-            operatorName = .notIn
-            operands = objects
-        case let .query(key, object):
-            keyOperand = key
-            operatorName = .query
-            operand = object
-        case let .autocomplete(key, object):
-            keyOperand = key
-            operatorName = .autocomplete
-            operand = object
-        case let .contains(key, object):
-            keyOperand = key
-            operatorName = .contains
-            operand = object
-        case let .custom(`operator`, key, object):
-            keyOperand = key
-            operatorName = "$\(`operator`)"
-            operand = object
-            
-        case let .and(filters):
-            try [String.and: filters].encode(to: encoder)
-            return
-        case let .or(filters):
-            try [String.or: filters].encode(to: encoder)
-            return
-        case let .nor(filters):
-            try [String.nor: filters].encode(to: encoder)
-            return
-        case let .explicitFilterHash(filter, _):
-            try filter.encode(to: encoder)
-        }
-        
-        guard !keyOperand.isEmpty, !operatorName.isEmpty else {
-            return
-        }
-        
-        if let operand = operand {
-            try [keyOperand: [operatorName: AnyEncodable(operand)]].encode(to: encoder)
-        } else if !operands.isEmpty {
-            try [keyOperand: [operatorName: operands.map { AnyEncodable($0) }]].encode(to: encoder)
-        }
+    /// The "right-hand" side of the filter. Specifies the value the filter should match.
+    public let value: FilterValue
+    
+    /// Set this value if you want to alter the hash of the filter. This is handy when you want to change the filter
+    /// but you want the changed filter to have the same hash as the original filter (for example, when you use the
+    /// hash to identify queries).
+    var explicitHash: String?
+    
+    /// Creates a new instance of `Filter`.
+    ///
+    /// Learn more about how to create simple, advanced, and custom filters in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
+    ///
+    /// - Important: Creating filters directly using the initializer is an advanced operation and should be done only in
+    /// specific cases.
+    ///
+    /// - Parameters:
+    ///   - operator: An operator which should be used for the filter. The operator string must start with `$`.
+    ///   - key: The "left-hand" side of the filter. Specifies the name of the field the filter should match.
+    ///   - value: The "right-hand" side of the filter. Specifies the value the filter should match.
+    ///
+    public init(operator: String, key: String?, value: FilterValue) {
+        assert(`operator`.hasPrefix("$"), "A filter operator must have `$` prefix.")
+        self.operator = `operator`
+        self.key = key
+        self.value = value
     }
 }
 
-// MARK: - Helper Operator
+/// Internal initializers used by the DSL. This doesn't have to exposed publicly because customers use the
+/// built-in helpers we provide.
+extension Filter {
+    init<Value: FilterValue>(operator: FilterOperator, key: FilterKey<Scope, Value>, value: FilterValue) {
+        self.init(operator: `operator`.rawValue, key: key.rawValue, value: value)
+    }
+    
+    init(operator: FilterOperator, value: FilterValue) {
+        self.init(operator: `operator`.rawValue, key: nil, value: value)
+    }
+}
 
 public extension Filter {
-    static func & (lhs: Filter, rhs: Filter) -> Filter {
-        var newFilter: [Filter] = []
-        
-        if case let .and(filter) = lhs {
-            newFilter.append(contentsOf: filter)
-        } else {
-            newFilter.append(lhs)
-        }
-        
-        if case let .and(filter) = rhs {
-            newFilter.append(contentsOf: filter)
-        } else {
-            newFilter.append(rhs)
-        }
-        
-        return .and(newFilter)
+    /// Combines the provided filters and matches the values matched by all filters.
+    static func and(_ filters: [Filter]) -> Filter {
+        .init(operator: .and, value: filters)
     }
     
-    static func &= (lhs: inout Filter, rhs: Filter) {
-        lhs = lhs & rhs
+    /// Combines the provided filters and matches the values matched by at least one of the filters.
+    static func or(_ filters: [Filter]) -> Filter {
+        .init(operator: .or, value: filters)
     }
     
-    static func | (lhs: Filter, rhs: Filter) -> Filter {
-        var newFilter: [Filter] = []
-        
-        if case let .or(filter) = lhs {
-            newFilter.append(contentsOf: filter)
-        } else {
-            newFilter.append(lhs)
-        }
-        
-        if case let .or(filter) = rhs {
-            newFilter.append(contentsOf: filter)
-        } else {
-            newFilter.append(rhs)
-        }
-        
-        return .or(newFilter)
-    }
-    
-    static func |= (lhs: inout Filter, rhs: Filter) {
-        lhs = lhs | rhs
+    /// Combines the provided filters and matches the values not matched by all the filters.
+    static func nor(_ filters: [Filter]) -> Filter {
+        .init(operator: .nor, value: filters)
     }
 }
 
-// MARK: - Hash
+/// A helper struct that represents a key of a filter.
+///
+/// It allows tagging a key with a scope and a type of the value the key is related to.
+///
+/// Learn more about how to create filter keys for your custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#query-filters).
+///
+public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleByStringLiteral, RawRepresentable {
+    /// The raw value of the key. This value should match the "encodable" key for the given object.
+    public let rawValue: String
+    
+    public init(stringLiteral value: String) {
+        rawValue = value
+    }
+    
+    public init(rawValue value: String) {
+        rawValue = value
+    }
+}
+
+public extension Filter {
+    /// Matches values that are equal to a specified value.
+    static func equal<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
+        .init(operator: .equal, key: key, value: value)
+    }
+    
+    /// Matches all values that are not equal to a specified value.
+    static func notEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
+        .init(operator: .notEqual, key: key, value: value)
+    }
+    
+    /// Matches values that are greater than a specified value.
+    static func greater<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
+        .init(operator: .greater, key: key, value: value)
+    }
+    
+    /// Matches values that are greater than a specified value.
+    static func greaterOrEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
+        .init(operator: .greaterOrEqual, key: key, value: value)
+    }
+    
+    /// Matches values that are less than a specified value.
+    static func less<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
+        .init(operator: .less, key: key, value: value)
+    }
+    
+    /// Matches values that are less than or equal to a specified value.
+    static func lessOrEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
+        .init(operator: .lessOrEqual, key: key, value: value)
+    }
+    
+    /// Matches any of the values specified in an array.
+    static func `in`<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
+        .init(operator: .in, key: key, value: values)
+    }
+    
+    /// Matches none of the values specified in an array.
+    static func notIn<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
+        .init(operator: .notIn, key: key, value: values)
+    }
+    
+    /// Matches values by performing text search with the specified value.
+    static func query<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
+        .init(operator: .query, key: key, value: text)
+    }
+    
+    /// Matches values with the specified prefix.
+    static func autocomplete<Value: Encodable>(_ key: FilterKey<Scope, Value>, text: String) -> Filter {
+        .init(operator: .autocomplete, key: key, value: text)
+    }
+    
+    /// Matches values that exist/don't exist based on the specified boolean value.
+    ///
+    /// - Parameter exists: `true`(default value) if the filter matches values that exist. `false` if the
+    /// filter should match values that don't exist.
+    ///
+    static func exists<Value: Encodable>(_ key: FilterKey<Scope, Value>, exists: Bool = true) -> Filter {
+        .init(operator: .exists, key: key, value: exists)
+    }
+}
 
 extension Filter {
+    /// Filter hash that can be used to uniquely identify a filter.
     var filterHash: String {
-        switch self {
-        case let .explicitFilterHash(_, filterHash):
-            return filterHash
-        default:
-            let hash = String(describing: self)
-            if hash.isEmpty {
-                return "empty"
-            } else {
-                return hash
-            }
+        explicitHash ?? String(describing: self)
+    }
+}
+
+extension Filter: CustomStringConvertible {
+    public var description: String {
+        let key = self.key ?? "*"
+        
+        guard let `operator` = FilterOperator(rawValue: self.operator) else {
+            // The operator doesn't match any of the known operators
+            return "\(key) \(self.operator) \(value)"
+        }
+        
+        switch `operator` {
+        case .equal:
+            return "\(key) == \(value)"
+        case .notEqual:
+            return "\(key) != \(value)"
+        case .greater:
+            return "\(key) > \(value)"
+        case .greaterOrEqual:
+            return "\(key) >= \(value)"
+        case .less:
+            return "\(key) < \(value)"
+        case .lessOrEqual:
+            return "\(key) <= \(value)"
+        case .in:
+            return "\(key) IN \(value)"
+        case .notIn:
+            return "\(key) NOT IN \(value)"
+        case .query:
+            return "\(key) QUERY \(value)"
+        case .autocomplete:
+            return "\(key) AUTOCOMPLETE \(value)"
+        case .exists:
+            return "\(key) EXISTS \(value)"
+        case .and:
+            let filters = value as? [Filter] ?? []
+            return "(" + filters.map(\.description).joined(separator: ") AND (") + ")"
+        case .or:
+            let filters = value as? [Filter] ?? []
+            return "(" + filters.map(\.description).joined(separator: ") OR (") + ")"
+        case .nor:
+            let filters = value as? [Filter] ?? []
+            return "(" + filters.map(\.description).joined(separator: ") NOR (") + ")"
         }
     }
 }
 
-// Arbitrary key
-private struct Keys: CodingKey, Hashable, CustomStringConvertible {
+extension Filter: Codable {
+    public func encode(to encoder: Encoder) throws {
+        if self.operator.isGroupOperator {
+            // Filters with group operators are encoded in the following form:
+            //  { $<operator>: [ <filter 1>, <filter 2> ] }
+            try [self.operator: AnyEncodable(value)].encode(to: encoder)
+            return
+            
+        } else if let key = self.key {
+            // Normal filters are encoded in the following form:
+            //  { key: { $<operator>: <value> } }
+            try [key: [self.operator: AnyEncodable(value)]].encode(to: encoder)
+            return
+            
+        } else {
+            throw EncodingError.invalidValue(
+                self,
+                EncodingError.Context(
+                    codingPath: encoder.codingPath,
+                    debugDescription: "Filter must have the `key` value when the operator is not a group operator."
+                )
+            )
+        }
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: ArbitraryKey.self)
+        for key in container.allKeys {
+            if key.stringValue.hasPrefix("$") {
+                // The right side should be an array of other filters
+                let filters = try container.decode([Filter].self, forKey: key)
+                self.init(operator: key.stringValue, key: nil, value: filters)
+                return
+                
+            } else {
+                // The right side should be FilterRightSide
+                let rightSide = try container.decode(FilterRightSide.self, forKey: key)
+                self.init(operator: rightSide.operator, key: key.stringValue, value: rightSide.value)
+                return
+            }
+        }
+        
+        throw NSError()
+    }
+}
+
+/// An arbitrary CodingKey matching all keys. Useful when the keys are not known ahead.
+private struct ArbitraryKey: CodingKey, Hashable, CustomStringConvertible {
     let stringValue: String
     init(_ string: String) { stringValue = string }
     init?(stringValue: String) { self.init(stringValue) }
@@ -258,108 +334,40 @@ private struct Keys: CodingKey, Hashable, CustomStringConvertible {
     init?(intValue: Int) { nil }
 }
 
-extension Filter: Decodable {
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: Keys.self)
-        for key in container.allKeys {
-            if key.stringValue.hasPrefix("$") {
-                // and / or / nor and other operators
-                let filters = try container.decode([Filter].self, forKey: key)
-                switch key.stringValue {
-                case .and:
-                    self = .and(filters)
-                    return
-                case .or:
-                    self = .or(filters)
-                    return
-                case .nor:
-                    self = .nor(filters)
-                    return
-                default:
-                    throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: ""))
-                }
-            } else {
-                let keyValue = key.stringValue
-                if let value = try? container.decode(String.self, forKey: key) {
-                    // value is string -> equal
-                    self = .equal(keyValue, to: value)
-                    return
-                }
-                // Try to decode the rest as partial filter
-                let rest = try container.decode(PartialFilter.self, forKey: key)
-                switch rest.operator {
-                case .notEqual:
-                    self = .notEqual(key.stringValue, to: rest.value)
-                    return
-                case .greater:
-                    self = .greater(key.stringValue, than: rest.value)
-                    return
-                case .greaterOrEqual:
-                    self = .greaterOrEqual(key.stringValue, than: rest.value)
-                    return
-                case .less:
-                    self = .less(key.stringValue, than: rest.value)
-                    return
-                case .lessOrEqual:
-                    self = .lessOrEqual(key.stringValue, than: rest.value)
-                    return
-                case .in:
-                    guard !rest.array.isEmpty else {
-                        throw DecodingError.typeMismatch(
-                            [Encodable].self,
-                            .init(codingPath: decoder.codingPath, debugDescription: "")
-                        )
-                    }
-                    self = .in(key.stringValue, rest.array)
-                    return
-                case .notIn:
-                    guard !rest.array.isEmpty else {
-                        throw DecodingError.typeMismatch(
-                            [Encodable].self,
-                            .init(codingPath: decoder.codingPath, debugDescription: "")
-                        )
-                    }
-                    self = .notIn(key.stringValue, rest.array)
-                    return
-                case .query:
-                    guard let stringValue = rest.value as? String else {
-                        throw DecodingError.typeMismatch(String.self, .init(codingPath: decoder.codingPath, debugDescription: ""))
-                    }
-                    self = .query(key.stringValue, with: stringValue)
-                    return
-                case .autocomplete:
-                    guard let stringValue = rest.value as? String else {
-                        throw DecodingError.typeMismatch(String.self, .init(codingPath: decoder.codingPath, debugDescription: ""))
-                    }
-                    self = .autocomplete(key.stringValue, with: stringValue)
-                    return
-                case .contains:
-                    self = .contains(key.stringValue, rest.value)
-                    return
-                default:
-                    self = .custom(String(rest.operator.dropFirst()), key: key.stringValue, value: rest.value)
-                    return
-                }
-            }
-        }
-        throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: ""))
+private extension String {
+    /// Returns true if the string is one of the group `FilterOperator`s
+    var isGroupOperator: Bool {
+        let groupOperators: [FilterOperator] = [.and, .or, .nor]
+        return groupOperators.map(\.rawValue).contains(self)
     }
 }
 
-struct PartialFilter: Decodable {
+/// A struct representing the right-hand side of a filter
+///
+/// Example:
+/// ```
+///   { "key": {"$eq": "value"} }
+///            ^--------------^
+///               right side
+/// ```
+///
+private struct FilterRightSide: Decodable {
     let `operator`: String
-    let value: Encodable
-    let array: [Encodable]
+    let value: FilterValue
+    
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: Keys.self)
-        guard container.allKeys.count == 1 else { throw ClientError() }
-        let key = container.allKeys.first!
-        guard key.stringValue.hasPrefix("$") else { throw ClientError() }
-        self.operator = container.allKeys.first!.stringValue
-        var value: Encodable?
-        var array: [Encodable] = []
+        let container = try decoder.container(keyedBy: ArbitraryKey.self)
+        guard container.allKeys.count == 1 else { throw NSError() }
         
-        if let stringValue = try? container.decode(String.self, forKey: key) {
+        let key = container.allKeys.first!
+        guard key.stringValue.hasPrefix("$") else { throw NSError() }
+        
+        self.operator = container.allKeys.first!.stringValue
+        var value: FilterValue?
+        
+        if let dateValue = try? container.decode(Date.self, forKey: key) {
+            value = dateValue
+        } else if let stringValue = try? container.decode(String.self, forKey: key) {
             value = stringValue
         } else if let intValue = try? container.decode(Int.self, forKey: key) {
             value = intValue
@@ -368,34 +376,21 @@ struct PartialFilter: Decodable {
         } else if let boolValue = try? container.decode(Bool.self, forKey: key) {
             value = boolValue
         } else if let stringArray = try? container.decode([String].self, forKey: key) {
-            array = stringArray
+            value = stringArray
         } else if let intArray = try? container.decode([Int].self, forKey: key) {
-            array = intArray
+            value = intArray
         } else if let doubleArray = try? container.decode([Double].self, forKey: key) {
-            array = doubleArray
+            value = doubleArray
         }
         
-        if value == nil, array.isEmpty {
-            throw DecodingError.typeMismatch(String.self, .init(codingPath: decoder.codingPath, debugDescription: ""))
+        if let value = value {
+            self.value = value
+        } else {
+            throw DecodingError.dataCorruptedError(
+                forKey: key,
+                in: container,
+                debugDescription: "The data can't be decoded as `FilterValue`."
+            )
         }
-        
-        self.value = value ?? ""
-        self.array = array
     }
-}
-
-private extension String {
-    static let and = "$and"
-    static let or = "$or"
-    static let nor = "$nor"
-    static let notEqual = "$ne"
-    static let greater = "$gt"
-    static let greaterOrEqual = "$gte"
-    static let less = "$lt"
-    static let lessOrEqual = "$lte"
-    static let `in` = "$in"
-    static let notIn = "$nin"
-    static let query = "$q"
-    static let autocomplete = "$autocomplete"
-    static let contains = "$contains"
 }
