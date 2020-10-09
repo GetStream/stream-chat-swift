@@ -4,26 +4,29 @@
 
 import Foundation
 
+/// A unique identifier of a device.
+public typealias DeviceId = String
+
 /// An object representing a device which can receive push notifications.
 public struct Device: Codable, Equatable {
     private enum CodingKeys: String, CodingKey {
         case id
-        case created = "created_at"
+        case createdAt = "created_at"
     }
     
     /// The device identifier.
-    public let id: String
+    public let id: DeviceId
     /// The date when the device for created.
-    public let created: Date
+    public let createdAt: Date?
     
     /// Init a device for Push Notifications.
     ///
     /// - Parameters:
     ///   - id: The push notifications device identifier.
     ///   - created: The date when the device token was created.
-    public init(_ id: String, created: Date = .init()) {
+    init(_ id: DeviceId, createdAt: Date? = .init()) {
         self.id = id
-        self.created = created
+        self.createdAt = createdAt
     }
 }
 
