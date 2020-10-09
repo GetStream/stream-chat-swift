@@ -543,6 +543,315 @@ final class CurrentUserController_Tests: StressTestCase {
             Assert.willBeTrue(connectCompletionCalled)
         }
     }
+    
+    // MARK: - Device endpoints
+    
+    // MARK: addDevice
+    
+    func test_addDevice_cannotBeCalled_withoutCurrentUser() {
+        controller.addDevice(token: Data()) {
+            XCTAssert($0 is ClientError.CurrentUserDoesNotExist)
+        }
+    }
+    
+    func test_addDevice_makesCorrectAPICall() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Call addDevice
+        controller.addDevice(token: .init(repeating: 1, count: 1)) {
+            // No error should be returned
+            XCTAssertNil($0)
+        }
+        
+        // Assert that request is made to the correct endpoint
+        let expectedEndpoint: Endpoint<EmptyResponse> = .addDevice(userId: userPayload.id, deviceId: "01")
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+    
+    func test_addDevice_forwardsNetworkError() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Call addDevice
+        var completionCalledError: Error?
+        controller.addDevice(token: .init()) {
+            completionCalledError = $0
+        }
+        
+        // Simulate API error
+        let error = TestError()
+        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    func test_addDevice_forwardsDatabaseError() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Simulate the DB failing with `TestError`
+        let testError = TestError()
+        client.mockDatabaseContainer.write_errorResponse = testError
+        
+        // Call updateDevices
+        var completionCalledError: Error?
+        controller.addDevice(token: .init(repeating: 1, count: 1)) {
+            completionCalledError = $0
+        }
+        
+        // Simluate successfull API response
+        client.mockAPIClient.test_simulateResponse(.success(EmptyResponse()))
+        
+        // Check returned error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_addDevice_successfullResponse_isSavedToDB() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Call updateDevices
+        controller.addDevice(token: .init(repeating: 1, count: 1)) {
+            // No error should be returned
+            XCTAssertNil($0)
+        }
+        
+        // Simulate API response with devices data
+        client.mockAPIClient.test_simulateResponse(.success(EmptyResponse()))
+        
+        // Assert data is stored in the DB
+        var currentUser: CurrentChatUser? {
+            client.databaseContainer.viewContext.currentUser()?.asModel()
+        }
+        
+        AssertAsync {
+            Assert.willBeEqual(currentUser?.devices.count, 2)
+        }
+    }
+    
+    // MARK: removeDevice
+    
+    func test_removeDevice_cannotBeCalled_withoutCurrentUser() {
+        controller.removeDevice(id: "") {
+            XCTAssert($0 is ClientError.CurrentUserDoesNotExist)
+        }
+    }
+    
+    func test_removeDevice_makesCorrectAPICall() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Call removeDevice
+        controller.removeDevice(id: "01") {
+            // No error should be returned
+            XCTAssertNil($0)
+        }
+        
+        // Assert that request is made to the correct endpoint
+        let expectedEndpoint: Endpoint<EmptyResponse> = .removeDevice(userId: userPayload.id, deviceId: "01")
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+    
+    func test_removeDevice_forwardsNetworkError() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Call removeDevice
+        var completionCalledError: Error?
+        controller.removeDevice(id: "") {
+            completionCalledError = $0
+        }
+        
+        // Simulate API error
+        let error = TestError()
+        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    func test_removeDevice_forwardsDatabaseError() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let deviceId = userPayload.devices.first!.id
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Simulate the DB failing with `TestError`
+        let testError = TestError()
+        client.mockDatabaseContainer.write_errorResponse = testError
+        
+        // Call updateDevices
+        var completionCalledError: Error?
+        controller.removeDevice(id: deviceId) {
+            completionCalledError = $0
+        }
+        
+        // Simluate successfull API response
+        client.mockAPIClient.test_simulateResponse(.success(EmptyResponse()))
+        
+        // Check returned error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_removeDevice_successfullResponse_isSavedToDB() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let deviceId = userPayload.devices.first!.id
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Call updateDevices
+        controller.removeDevice(id: deviceId) {
+            // No error should be returned
+            XCTAssertNil($0)
+        }
+        
+        // Simulate API response with devices data
+        client.mockAPIClient.test_simulateResponse(.success(EmptyResponse()))
+        
+        // Assert data is stored in the DB
+        var currentUser: CurrentChatUser? {
+            client.databaseContainer.viewContext.currentUser()?.asModel()
+        }
+        
+        AssertAsync {
+            Assert.willBeEqual(currentUser?.devices.count, 0)
+        }
+    }
+    
+    // MARK: updateDevices
+    
+    func test_updateDevices_cannotBeCalled_withoutCurrentUser() {
+        controller.updateDevices {
+            XCTAssert($0 is ClientError.CurrentUserDoesNotExist)
+        }
+    }
+    
+    func test_updateDevices_makesCorrectAPICall() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Call updateDevices
+        controller.updateDevices {
+            // No error should be returned
+            XCTAssertNil($0)
+        }
+        
+        // Assert that request is made to the correct endpoint
+        let expectedEndpoint: Endpoint<DeviceListPayload> = .devices(userId: userPayload.id)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+    
+    func test_updateDevices_forwardsNetworkError() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Call updateDevices
+        var completionCalledError: Error?
+        controller.updateDevices {
+            completionCalledError = $0
+        }
+        
+        // Simulate API error
+        let error = TestError()
+        client.mockAPIClient.test_simulateResponse(Result<DeviceListPayload, Error>.failure(error))
+        
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    func test_updateDevices_forwardsDatabaseError() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Simulate the DB failing with `TestError`
+        let testError = TestError()
+        client.mockDatabaseContainer.write_errorResponse = testError
+        
+        // Call updateDevices
+        var completionCalledError: Error?
+        controller.updateDevices {
+            completionCalledError = $0
+        }
+        
+        // Simluate successfull API response
+        client.mockAPIClient.test_simulateResponse(.success(DeviceListPayload.dummy))
+        
+        // Check returned error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_updateDevices_successfullResponse_isSavedToDB() throws {
+        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        
+        // Save user to the db
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Call updateDevices
+        controller.updateDevices {
+            // No error should be returned
+            XCTAssertNil($0)
+        }
+        
+        // Simulate API response with devices data
+        let dummyDevices = DeviceListPayload.dummy
+        client.mockAPIClient.test_simulateResponse(.success(dummyDevices))
+        
+        // Assert data is stored in the DB
+        var currentUser: CurrentChatUser? {
+            client.databaseContainer.viewContext.currentUser()?.asModel()
+        }
+        
+        AssertAsync {
+            Assert.willBeEqual(currentUser?.devices.count, dummyDevices.devices.count)
+            Assert.willBeEqual(currentUser?.devices.first?.id, dummyDevices.devices.first?.id)
+        }
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, CurrentChatUserControllerDelegate {

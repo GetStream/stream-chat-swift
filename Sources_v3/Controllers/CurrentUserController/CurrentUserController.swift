@@ -316,6 +316,100 @@ public extension _CurrentChatUserController {
             }
         }
     }
+    
+    /// Registers a device to the current user.
+    /// `setUser` must be called before calling this.
+    /// - Parameters:
+    ///   - token: Device token, obtained via `didRegisterForRemoteNotificationsWithDeviceToken` function in `AppDelegate`.
+    ///   - completion: Called when device is successfully registered, or with error.
+    func addDevice(token: Data, completion: ((Error?) -> Void)? = nil) {
+        guard let currentUserId = currentUser?.id else {
+            completion?(ClientError.CurrentUserDoesNotExist())
+            return
+        }
+        let completion: ((Error?) -> Void) = { [weak self] error in
+            self?.callback {
+                completion?(error)
+            }
+        }
+        let deviceId = token.deviceToken
+        client
+            .apiClient
+            .request(
+                endpoint: .addDevice(
+                    userId: currentUserId,
+                    deviceId: deviceId
+                ),
+                completion: { [weak client] result in
+                    if let error = result.error {
+                        completion(error)
+                        return
+                    }
+                    client?.databaseContainer.write({ (session) in
+                        try session.saveCurrentUserDevices([.init(id: deviceId)])
+                    }) { completion($0) }
+                }
+            )
+    }
+    
+    /// Removes a registered device from the current user.
+    /// `setUser` must be called before calling this.
+    /// - Parameters:
+    ///   - id: Device id to be removed. You can obtain registered devices via `currentUser.devices`.
+    ///   If `currentUser.devices` is not up-to-date, please make an `updateDevices` call.
+    ///   - completion: Called when device is successfully deregistered, or with error.
+    func removeDevice(id: String, completion: ((Error?) -> Void)? = nil) {
+        guard let currentUserId = currentUser?.id else {
+            completion?(ClientError.CurrentUserDoesNotExist())
+            return
+        }
+        let completion: ((Error?) -> Void) = { [weak self] error in
+            self?.callback {
+                completion?(error)
+            }
+        }
+        client
+            .apiClient
+            .request(
+                endpoint: .removeDevice(
+                    userId: currentUserId,
+                    deviceId: id
+                ),
+                completion: { [weak client] result in
+                    if let error = result.error {
+                        completion(error)
+                        return
+                    }
+                    client?.databaseContainer.write({ (session) in
+                        session.deleteDevice(id: id)
+                    }) { completion($0) }
+                }
+            )
+    }
+    
+    /// Updates the registered devices for the current user from backend.
+    /// - Parameter completion: Called when request is successfully completed, or with error.
+    func updateDevices(completion: ((Error?) -> Void)? = nil) {
+        guard let currentUserId = currentUser?.id else {
+            completion?(ClientError.CurrentUserDoesNotExist())
+            return
+        }
+        let completion: ((Error?) -> Void) = { [weak self] error in
+            self?.callback {
+                completion?(error)
+            }
+        }
+        client.apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] (result) in
+            do {
+                let devicesPayload = try result.get()
+                self?.client.databaseContainer.write({ (session) in
+                    try session.saveCurrentUserDevices(devicesPayload.devices, clearExisting: true)
+                }) { completion($0) }
+            } catch {
+                completion(error)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
