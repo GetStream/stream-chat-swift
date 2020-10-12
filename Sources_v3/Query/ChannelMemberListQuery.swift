@@ -4,8 +4,15 @@
 
 import Foundation
 
+/// A namespace for the `FilterKey`s suitable to be used for `ChannelMemberListQuery`. This scope is not aware of any
+/// extra data types.
+public typealias AnyMemberListFilterScope = AnyUserListFilterScope
+
+/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `ChannelMemberListQuery`.
+public typealias MemberListFilterScope<ExtraData: UserExtraData> = UserListFilterScope<ExtraData>
+
 /// A query type used for fetching channel members from the backend.
-public struct ChannelMemberListQuery: Encodable {
+public struct ChannelMemberListQuery<ExtraData: UserExtraData>: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort
@@ -16,7 +23,7 @@ public struct ChannelMemberListQuery: Encodable {
     /// A channel identifier the members should be fetched for.
     public let cid: ChannelId
     /// A filter for the query (see `Filter`).
-    public let filter: Filter?
+    public let filter: Filter<MemberListFilterScope<ExtraData>>?
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<ChannelMemberListSortingKey>]
     /// A pagination.
@@ -30,7 +37,7 @@ public struct ChannelMemberListQuery: Encodable {
     ///   - pagination: The pagination.
     public init(
         cid: ChannelId,
-        filter: Filter? = nil,
+        filter: Filter<MemberListFilterScope<ExtraData>>? = nil,
         sort: [Sorting<ChannelMemberListSortingKey>] = [],
         pagination: Pagination = [.channelMembersPageSize]
     ) {
@@ -46,8 +53,6 @@ public struct ChannelMemberListQuery: Encodable {
         if let filter = filter {
             try container.encode(filter, forKey: .filter)
         } else {
-            // Backend expects empty object for "filter_conditions" in case no filter specified.
-            struct EmptyObject: Encodable {}
             try container.encode(EmptyObject(), forKey: .filter)
         }
         
@@ -63,9 +68,9 @@ extension ChannelMemberListQuery {
     var queryHash: String {
         [
             cid.rawValue,
-            filter?.filterHash ?? Filter.nilFilterHash,
+            filter?.filterHash,
             sort.map(\.description).joined()
-        ].joined(separator: "-")
+        ].compactMap { $0 }.joined(separator: "-")
     }
 }
 
@@ -79,3 +84,6 @@ extension ChannelMemberListQuery {
         .init(cid: cid, filter: .equal("id", to: userId))
     }
 }
+
+// Backend expects empty object for "filter_conditions" in case no filter specified.
+private struct EmptyObject: Encodable {}
