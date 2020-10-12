@@ -12,7 +12,7 @@ extension _ChatClient {
     ///
     /// - Returns: A new instance of `_ChatUserListController`.
     ///
-    public func userListController(query: UserListQuery<ExtraData.User>) -> _ChatUserListController<ExtraData> {
+    public func userListController(query: UserListQuery<ExtraData.User> = .init()) -> _ChatUserListController<ExtraData> {
         .init(query: query, client: self)
     }
 }
