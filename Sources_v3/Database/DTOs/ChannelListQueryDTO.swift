@@ -28,7 +28,7 @@ extension NSManagedObjectContext {
         ChannelListQueryDTO.load(filterHash: filterHash, context: self)
     }
     
-    func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
+    func saveQuery<ExtraData: ChannelExtraData>(query: ChannelListQuery<ExtraData>) -> ChannelListQueryDTO {
         if let existingDTO = ChannelListQueryDTO.load(filterHash: query.filter.filterHash, context: self) {
             return existingDTO
         }

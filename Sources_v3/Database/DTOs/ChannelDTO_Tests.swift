@@ -246,7 +246,9 @@ class ChannelDTO_Tests: XCTestCase {
     }
     
     func test_channelWithChannelListQuery_isSavedAndLoaded() {
-        let query = ChannelListQuery(filter: .equal("name", to: "Luke Skywalker") & .less("age", than: 50))
+        let query = ChannelListQuery<NameAndImageExtraData>(
+            filter: .and([.less(.createdAt, than: .unique), .exists(.deletedAt, exists: false)])
+        )
         
         // Create two channels
         let channel1Id: ChannelId = .unique
@@ -272,7 +274,7 @@ class ChannelDTO_Tests: XCTestCase {
     
     func test_channelListQuery_withSorting() {
         // Create two channels queries with different sortings.
-        let filter = Filter.equal("some", to: String.unique)
+        let filter: Filter<ChannelListFilterScope<NameAndImageExtraData>> = .in(.members, values: [.unique])
         let queryWithDefaultSorting = ChannelListQuery(filter: filter)
         let queryWithUpdatedAtSorting = ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
 

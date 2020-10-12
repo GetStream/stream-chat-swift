@@ -12,7 +12,7 @@ class ChannelListUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - channelListQuery: The channels query used in the request
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func update(channelListQuery: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
+    func update(channelListQuery: ChannelListQuery<ExtraData.Channel>, completion: ((Error?) -> Void)? = nil) {
         apiClient
             .request(endpoint: .channels(query: channelListQuery)) { (result: Result<ChannelListPayload<ExtraData>, Error>) in
                 switch result {

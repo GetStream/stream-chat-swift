@@ -75,7 +75,7 @@ extension ChannelDTO: EphemeralValuesContainer {
 extension NSManagedObjectContext {
     func saveChannel<ExtraData: ExtraDataTypes>(
         payload: ChannelDetailPayload<ExtraData>,
-        query: ChannelListQuery?
+        query: ChannelListQuery<ExtraData.Channel>?
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self)
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
@@ -112,7 +112,7 @@ extension NSManagedObjectContext {
     
     func saveChannel<ExtraData: ExtraDataTypes>(
         payload: ChannelPayload<ExtraData>,
-        query: ChannelListQuery?
+        query: ChannelListQuery<ExtraData.Channel>?
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
         
@@ -139,7 +139,9 @@ extension NSManagedObjectContext {
 // To get the data from the DB
 
 extension ChannelDTO {
-    static func channelListFetchRequest(query: ChannelListQuery) -> NSFetchRequest<ChannelDTO> {
+    static func channelListFetchRequest<ExtraData: ChannelExtraData>(
+        query: ChannelListQuery<ExtraData>
+    ) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
         
         // Fetch results controller requires at least one sorting descriptor.
