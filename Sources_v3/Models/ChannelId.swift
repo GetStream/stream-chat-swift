@@ -9,13 +9,9 @@ import Foundation
 /// It reflects channel's type and a unique id.
 ///
 public struct ChannelId: Hashable, CustomStringConvertible {
-    private static let any = "*"
     private static let separator: Character = ":"
     
     let rawValue: String
-    
-    /// Returns `true` if the channel id matches "all" channels.
-    public var isAny: Bool { rawValue == ChannelType.unknown.rawValue + String(Self.separator) + Self.any }
     
     /// Creates a new `ChannelId` value.
     ///
@@ -24,45 +20,35 @@ public struct ChannelId: Hashable, CustomStringConvertible {
     ///     - id: An id of the channel the `ChannelId` represents.
     ///
     public init(type: ChannelType, id: String) {
-        rawValue = type.rawValue + "\(Self.separator)" + (id.isEmpty ? ChannelId.any : id)
+        rawValue = type.rawValue + "\(Self.separator)" + id
     }
     
     init(cid: String) throws {
-        if cid == ChannelId.any {
-            self.init(type: .unknown, id: Self.any)
-            return
-        }
-        
-        if cid.contains(ChannelId.separator) {
-            let channelPair = cid.split(separator: ChannelId.separator)
-            let type = ChannelType(rawValue: String(channelPair[0]))
-            let id = String(channelPair[1])
-            self.init(type: type, id: id)
-        } else {
+        let channelPair = cid.split(separator: ChannelId.separator)
+    
+        guard
+            channelPair.count == 2,
+            !channelPair[0].replacingOccurrences(of: " ", with: "").isEmpty,
+            !channelPair[1].replacingOccurrences(of: " ", with: "").isEmpty
+        else {
             throw ClientError.InvalidChannelId("The channel id has invalid format and can't be decoded: \(cid)")
         }
+        
+        rawValue = cid
     }
-    
+ 
     public var description: String { rawValue }
 }
 
 public extension ChannelId {
     /// The type of the channel the id belongs to.
     var type: ChannelType {
-        guard rawValue.contains(ChannelId.separator) else {
-            return .unknown
-        }
-        
         let channelPair = rawValue.split(separator: ChannelId.separator)
         return ChannelType(rawValue: String(channelPair[0]))
     }
     
     /// The id of the channel without the encoded type information.
     var id: String {
-        guard rawValue.contains(ChannelId.separator) else {
-            return ChannelId.any
-        }
-        
         let channelPair = rawValue.split(separator: ChannelId.separator)
         return String(channelPair[1])
     }
@@ -77,7 +63,7 @@ extension ChannelId: Codable {
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        try container.encode(id == ChannelId.any ? ChannelId.any : rawValue)
+        try container.encode(rawValue)
     }
 }
 
