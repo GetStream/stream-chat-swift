@@ -15,7 +15,7 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
     /// The channel the query works with.
     @NSManaged var channel: ChannelDTO
         
-    /// Set of members matching the query.
+    /// A set of members matching the query.
     @NSManaged var members: Set<MemberDTO>
         
     static func load(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO? {
