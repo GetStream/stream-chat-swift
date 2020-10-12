@@ -6,9 +6,6 @@ import Foundation
 
 /// An enum describing possible types of a channel.
 public enum ChannelType: Codable, Hashable {
-    /// The type of the channel is not specified.
-    case unknown
-    
     /// Sensible defaults in case you want to build livestream chat like Instagram Livestream or Periscope.
     case livestream
     
@@ -33,7 +30,6 @@ public enum ChannelType: Codable, Hashable {
     /// A raw value of the channel type.
     public var rawValue: String {
         switch self {
-        case .unknown: return "unknown"
         case .livestream: return "livestream"
         case .messaging: return "messaging"
         case .team: return "team"
@@ -47,11 +43,6 @@ public enum ChannelType: Codable, Hashable {
     ///
     /// - Parameter rawValue: a string raw value of a channel type.
     init(rawValue: String) {
-        if rawValue.isEmpty || rawValue.contains(" ") || rawValue == "unknown" {
-            self = .unknown
-            return
-        }
-        
         switch rawValue {
         case "livestream": self = .livestream
         case "messaging": self = .messaging

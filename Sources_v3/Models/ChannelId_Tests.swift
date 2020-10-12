@@ -11,43 +11,36 @@ class ChannelId_Tests: XCTestCase {
         XCTAssertEqual(channelId.rawValue, "messaging:123")
         XCTAssertEqual(channelId.type, ChannelType.messaging)
         XCTAssertEqual(channelId.id, "123")
-        XCTAssertFalse(channelId.isAny)
     }
     
-    func test_channelId_any() throws {
-        var channelId = try! ChannelId(cid: "*")
-        XCTAssertEqual(channelId.rawValue, "unknown:*")
-        XCTAssertTrue(channelId.isAny)
+    func test_invalidChannelId() {
+        // Channel with invalid character
+        XCTAssertThrowsError(try ChannelId(cid: "*"))
         
-        channelId = ChannelId(type: .unknown, id: "*")
-        XCTAssertEqual(channelId.rawValue, "unknown:*")
-        XCTAssertTrue(channelId.isAny)
-    }
-    
-    func test_channelId_encoding() throws {
-        let encoder = JSONEncoder.stream
-        XCTAssertEqual(encoder.encodedString(try ChannelId(cid: "*")), "*")
-        XCTAssertEqual(encoder.encodedString(ChannelId(type: .messaging, id: "123")), "messaging:123")
-        XCTAssertEqual(encoder.encodedString(ChannelId(type: .custom("asd"), id: "123")), "asd:123")
-    }
-
-    func test_channelId_decoding() throws {
-        XCTAssertEqual(decode(value: "*"), try! ChannelId(cid: "*"))
-        XCTAssertEqual(decode(value: "messaging:123"), ChannelId(type: .messaging, id: "123"))
-        XCTAssertEqual(decode(value: "asd:123"), ChannelId(type: .custom("asd"), id: "123"))
-    }
-
-    func test_channelId_edgeCases() throws {
         // Channel with empty string
         XCTAssertThrowsError(try ChannelId(cid: ""))
         
         // Channel with invalid cid format
         XCTAssertThrowsError(try ChannelId(cid: "asd123"))
         
-        // Unknown channel type
-        let channelId = ChannelId(type: .unknown, id: "")
-        XCTAssertEqual(channelId.type, ChannelType.unknown)
-        XCTAssertEqual(channelId.id, "*")
+        // Channel with invalid cid format
+        XCTAssertThrowsError(try ChannelId(cid: "      :      "))
+        
+        // Channel with invalid cid format
+        XCTAssertThrowsError(try ChannelId(cid: ":"))
+    }
+    
+    func test_channelId_encoding() throws {
+        let encoder = JSONEncoder.stream
+        XCTAssertEqual(encoder.encodedString(try ChannelId(cid: "messaging:123")), "messaging:123")
+        XCTAssertEqual(encoder.encodedString(ChannelId(type: .messaging, id: "123")), "messaging:123")
+        XCTAssertEqual(encoder.encodedString(ChannelId(type: .custom("asd"), id: "123")), "asd:123")
+    }
+
+    func test_channelId_decoding() throws {
+        XCTAssertNil(decode(value: "*"))
+        XCTAssertEqual(decode(value: "messaging:123"), ChannelId(type: .messaging, id: "123"))
+        XCTAssertEqual(decode(value: "asd:123"), ChannelId(type: .custom("asd"), id: "123"))
     }
     
     @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
