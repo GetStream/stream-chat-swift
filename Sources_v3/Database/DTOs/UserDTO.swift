@@ -85,22 +85,11 @@ extension NSManagedObjectContext: UserDatabaseSession {
         
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         
-        if let query = query {
-            let queryDTO = saveQuery(query: query)
+        if let query = query, let queryDTO = try saveQuery(query: query) {
             queryDTO.users.insert(dto)
         }
         
         return dto
-    }
-    
-    func updateQuery(
-        for userId: UserId,
-        queryFilterHash: String
-    ) {
-        if let userDTO = user(id: userId),
-            let queryDTO = userListQuery(filterHash: queryFilterHash) {
-            queryDTO.users.insert(userDTO)
-        }
     }
 }
 
@@ -125,14 +114,18 @@ extension UserDTO {
 }
 
 extension UserDTO {
-    static func userListFetchRequest(query: UserListQuery) -> NSFetchRequest<UserDTO> {
+    static func userListFetchRequest<ExtraData: UserExtraData>(query: UserListQuery<ExtraData>) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         
         // Fetch results controller requires at least one sorting descriptor.
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         request.sortDescriptors = sortDescriptors.isEmpty ? [UserListSortingKey.defaultSortDescriptor] : sortDescriptors
-                
-        request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", query.filter?.filterHash ?? Filter.nilFilterHash)
+        
+        // If a filter exists, use is for the predicate. Otherwise, `nil` filter matches all users.
+        if let filterHash = query.filter?.filterHash {
+            request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", filterHash)
+        }
+        
         return request
     }
 

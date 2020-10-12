@@ -62,24 +62,6 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         )
     }
     
-    func test_update_isNotCalled_forNilFilterQuery() throws {
-        try database.createUserListQuery(filter: nil)
-        try database.createUser()
-        
-        // Assert `update(userListQuery` is not called for .none filter query
-        AssertAsync.willBeTrue(env!.userQueryUpdater?.update_queries.isEmpty)
-    }
-    
-    func test_newUser_updated_withNilFilterQuery() throws {
-        let id: UserId = .unique
-        
-        try database.createUserListQuery(filter: nil)
-        try database.createUser(id: id, extraData: .defaultValue)
-        
-        // Assert .none filter query linked to new user
-        AssertAsync.willBeTrue(database.viewContext.userListQuery(filterHash: Filter.nilFilterHash)?.users.map(\.id).contains(id))
-    }
-    
     func test_update_called_forExistingUser() throws {
         // Deinitialize newUserQueryUpdater
         newUserQueryUpdater = nil

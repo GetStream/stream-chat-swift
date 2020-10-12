@@ -10,7 +10,7 @@ class UserListQueryDTO: NSManagedObject {
     @NSManaged var filterHash: String
     
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated.
-    @NSManaged var filterJSONData: Data?
+    @NSManaged var filterJSONData: Data
     
     // MARK: - Relationships
     
@@ -28,25 +28,25 @@ extension NSManagedObjectContext {
         UserListQueryDTO.load(filterHash: filterHash, context: self)
     }
     
-    func saveQuery(query: UserListQuery) -> UserListQueryDTO {
-        if let existingDTO = UserListQueryDTO.load(filterHash: query.filter?.filterHash ?? Filter.nilFilterHash, context: self) {
+    func saveQuery<ExtraData: UserExtraData>(query: UserListQuery<ExtraData>) throws -> UserListQueryDTO? {
+        guard let filterHash = query.filter?.filterHash else {
+            // A query without a filter doesn't have to be saved to the DB because it matches all users by default.
+            return nil
+        }
+        
+        if let existingDTO = UserListQueryDTO.load(filterHash: filterHash, context: self) {
             return existingDTO
         }
         
         let newDTO = NSEntityDescription
             .insertNewObject(forEntityName: UserListQueryDTO.entityName, into: self) as! UserListQueryDTO
-        newDTO.filterHash = query.filter?.filterHash ?? Filter.nilFilterHash
+        newDTO.filterHash = filterHash
         
-        var jsonData: Data?
         do {
-            // On iOS 12 attempt of encoding nil value will produce an error.
-            // We can remove this nil check after dropping iOS 12 support.
-            jsonData = (query.filter == nil) ? nil : try JSONEncoder.default.encode(query.filter)
+            newDTO.filterJSONData = try JSONEncoder.default.encode(query.filter)
         } catch {
             log.error("Failed encoding query Filter data with error: \(error).")
         }
-        
-        newDTO.filterJSONData = jsonData
         
         return newDTO
     }
