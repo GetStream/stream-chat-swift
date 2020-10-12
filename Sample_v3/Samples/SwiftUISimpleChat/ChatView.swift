@@ -143,12 +143,10 @@ struct ChatView: View {
     /// ActionSheet for channel action or message actions depending on `editingMessage` value.
     /// This is done due to `SwiftUI` limitations: it's not possible to have multiple `.actionSheet` modifiers.
     func actionSheet() -> ActionSheet {
-        if let message = editingMessage {
+        if let message = editingMessage,
+            let cid = channel.controller.cid {
+            let messageController = channel.controller.client.messageController(cid: cid, messageId: message.id)
             /// Message ActionSheet with actions that can be taken on `MessageController`. (`deleteMessage`, `editMessage`)
-            let messageController = channel.controller.client.messageController(
-                cid: channel.channel!.cid,
-                messageId: message.id
-            )
             return ActionSheet(title: Text("Message Actions"), message: Text(""), buttons: [
                 .default(Text("Edit"), action: { self.editingMessage = message; self.text = message.text }),
                 .destructive(Text("Delete")) { messageController.deleteMessage(); self.editingMessage = nil },

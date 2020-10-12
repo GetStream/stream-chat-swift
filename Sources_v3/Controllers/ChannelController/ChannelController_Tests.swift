@@ -184,6 +184,14 @@ class ChannelController_Tests: StressTestCase {
         }
     }
     
+    func test_channelController_returnsNilCID_forNewDirectMessageChannel() throws {
+        // Create ChatChannelController for new channel
+        controller = try client.channelController(createDirectMessageChannelWith: [.unique], extraData: .defaultValue)
+        
+        // Assert cid is nil
+        XCTAssertNil(controller.cid)
+    }
+    
     // MARK: - Channel change propagation tests
     
     func test_channelChanges_arePropagated() throws {
@@ -386,7 +394,7 @@ class ChannelController_Tests: StressTestCase {
         controller.synchronize()
         
         // Send notification with event happened in the observed channel
-        let event = TestMemberEvent(cid: controller.channelQuery.cid, userId: .unique)
+        let event = TestMemberEvent(cid: controller.channelQuery.cid!, userId: .unique)
         let notification = Notification(newEventReceived: event, sender: self)
         client.webSocketClient.eventNotificationCenter.post(notification)
         
@@ -551,7 +559,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
         // Simulate succsesfull backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `updateChannel` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
@@ -615,8 +623,8 @@ class ChannelController_Tests: StressTestCase {
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
-        // Simulate succsesfull backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `muteChannel` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
@@ -683,8 +691,8 @@ class ChannelController_Tests: StressTestCase {
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
-        // Simulate succsesfull backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `unmuteChannel` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
@@ -751,8 +759,8 @@ class ChannelController_Tests: StressTestCase {
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
-        // Simulate succsesfull backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `deleteChannel` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
@@ -889,8 +897,8 @@ class ChannelController_Tests: StressTestCase {
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
-        // Simulate succsesfull backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `showChannel` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
@@ -1253,8 +1261,8 @@ class ChannelController_Tests: StressTestCase {
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
-        // Simulate succsesfull backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `addMembers` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
@@ -1326,8 +1334,8 @@ class ChannelController_Tests: StressTestCase {
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
-        // Simulate succsesfull backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `removeMembers` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
@@ -1398,8 +1406,8 @@ class ChannelController_Tests: StressTestCase {
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
         
-        // Simulate succsesfull backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
         
         // Simulate `markRead` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
