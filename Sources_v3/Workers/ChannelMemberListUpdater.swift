@@ -10,7 +10,7 @@ class ChannelMemberListUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - query: The query used in the request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func load(_ query: ChannelMemberListQuery, completion: ((Error?) -> Void)? = nil) {
+    func load(_ query: ChannelMemberListQuery<ExtraData.User>, completion: ((Error?) -> Void)? = nil) {
         fetchAndSaveChannelIfNeeded(query.cid) { error in
             guard error == nil else {
                 completion?(error)
@@ -20,7 +20,7 @@ class ChannelMemberListUpdater<ExtraData: ExtraDataTypes>: Worker {
             let membersEndpoint: Endpoint<ChannelMemberListPayload<ExtraData.User>> = .channelMembers(query: query)
             self.apiClient.request(endpoint: membersEndpoint) { membersResult in
                 switch membersResult {
-                case .success(let memberListPayload):
+                case let .success(memberListPayload):
                     self.database.write({ session in
                         try memberListPayload.members.forEach {
                             try session.saveMember(
@@ -35,7 +35,7 @@ class ChannelMemberListUpdater<ExtraData: ExtraDataTypes>: Worker {
                         }
                         completion?(error)
                     })
-                case .failure(let error):
+                case let .failure(error):
                     completion?(error)
                 }
             }
@@ -56,7 +56,7 @@ private extension ChannelMemberListUpdater {
         let query = ChannelQuery<ExtraData>(cid: cid)
         apiClient.request(endpoint: .channel(query: query)) {
             switch $0 {
-            case .success(let payload):
+            case let .success(payload):
                 self.database.write({ session in
                     try session.saveChannel(payload: payload)
                 }, completion: { error in
@@ -65,7 +65,7 @@ private extension ChannelMemberListUpdater {
                     }
                     completion(error)
                 })
-            case .failure(let error):
+            case let .failure(error):
                 completion(error)
             }
         }

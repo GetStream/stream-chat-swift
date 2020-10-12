@@ -40,7 +40,7 @@ extension MemberDTO {
     }
     
     /// Returns a fetch request for the DTOs matching the provided `query`.
-    static func members(matching query: ChannelMemberListQuery) -> NSFetchRequest<MemberDTO> {
+    static func members<ExtraData: UserExtraData>(matching query: ChannelMemberListQuery<ExtraData>) -> NSFetchRequest<MemberDTO> {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
         request.predicate = NSPredicate(format: "ANY queries.queryHash == %@", query.queryHash)
         request.sortDescriptors = query.sortDescriptors
@@ -78,7 +78,7 @@ extension NSManagedObjectContext {
     func saveMember<ExtraData: UserExtraData>(
         payload: MemberPayload<ExtraData>,
         channelId: ChannelId,
-        query: ChannelMemberListQuery?
+        query: ChannelMemberListQuery<ExtraData>?
     ) throws -> MemberDTO {
         let dto = MemberDTO.loadOrCreate(id: payload.user.id, channelId: channelId, context: self)
         

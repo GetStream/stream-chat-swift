@@ -7,9 +7,9 @@ import XCTest
 
 final class MemberEndpoints_Tests: XCTestCase {
     func test_channelMembers_buildsCorrectly() {
-        let query = ChannelMemberListQuery(
+        let query = ChannelMemberListQuery<NameAndImageExtraData>(
             cid: .unique,
-            filter: .contains("name", "a"),
+            filter: .equal(.id, to: "Luke"),
             sort: [.init(key: .createdAt)],
             pagination: [.offset(3)]
         )
