@@ -236,7 +236,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
         else { return }
         
         usersViewController.userListController = chatClient
-            .userListController(query: .init(sort: [.init(key: .createdAt)]))
+            .userListController(query: .init(sort: [.init(key: .lastActivityAt)]))
         
         /// Push direct message chat screen with selected user.
         /// If there were no chat with this user previously it will be created.
