@@ -8,9 +8,9 @@ import XCTest
 final class ChannelMemberListQuery_Tests: XCTestCase {
     func test_query_isEncodedCorrectly() throws {
         // Create the query.
-        let query = ChannelMemberListQuery(
+        let query = ChannelMemberListQuery<NoExtraData>(
             cid: .unique,
-            filter: .contains("name", "a"),
+            filter: .equal(.id, to: "luke"),
             sort: [.init(key: .createdAt, isAscending: true)],
             pagination: [.offset(3)]
         )
@@ -22,23 +22,23 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         AssertJSONEqual(json, [
             "id": query.cid.id,
             "type": query.cid.type.rawValue,
-            "filter_conditions": ["name": ["$contains": "a"]],
             "sort": [["field": "created_at", "direction": 1]] as NSArray,
+            "filter_conditions": ["id": ["$eq": "luke"]],
             "offset": 3
         ])
     }
     
     func test_hash_isCalculatedCorrectly() {
         // Create the query.
-        let query = ChannelMemberListQuery(
+        let query = ChannelMemberListQuery<NoExtraData>(
             cid: .unique,
-            filter: .contains("name", "a"),
+            filter: .equal(.id, to: "luke"),
             sort: [.init(key: .createdAt, isAscending: true)]
         )
         
         let expectedHash = [
             query.cid.rawValue,
-            query.filter?.filterHash ?? Filter.nilFilterHash,
+            query.filter!.filterHash,
             query.sort.map(\.description).joined()
         ].joined(separator: "-")
         
@@ -48,9 +48,9 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
     
     func test_emptySorting_isNotEncoded() throws {
         // Create the query without any sort options.
-        let query = ChannelMemberListQuery(
+        let query = ChannelMemberListQuery<NoExtraData>(
             cid: .unique,
-            filter: .contains("name", "a"),
+            filter: .equal(.id, to: "luke"),
             pagination: [.offset(3)]
         )
 
@@ -61,16 +61,16 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         AssertJSONEqual(json, [
             "id": query.cid.id,
             "type": query.cid.type.rawValue,
-            "filter_conditions": ["name": ["$contains": "a"]],
+            "filter_conditions": ["id": ["$eq": "luke"]],
             "offset": 3
         ])
     }
     
     func test_defaultPageSizeIsUsed_ifNotSpecified() throws {
         // Create the query with default params.
-        let query = ChannelMemberListQuery(
+        let query = ChannelMemberListQuery<NoExtraData>(
             cid: .unique,
-            filter: .contains("name", "a")
+            filter: .equal(.id, to: "luke")
         )
 
         // Encode the query.
@@ -80,7 +80,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         AssertJSONEqual(json, [
             "id": query.cid.id,
             "type": query.cid.type.rawValue,
-            "filter_conditions": ["name": ["$contains": "a"]],
+            "filter_conditions": ["id": ["$eq": "luke"]],
             "limit": PaginationOption.channelMembersPageSize.limit!
         ])
     }
@@ -89,10 +89,10 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
 
-        let actual = ChannelMemberListQuery.channelMember(userId: userId, cid: cid)
+        let actual = ChannelMemberListQuery<NoExtraData>.channelMember(userId: userId, cid: cid)
         let actualJSON = try JSONEncoder.default.encode(actual)
 
-        let expected = ChannelMemberListQuery(cid: cid, filter: .equal("id", to: userId))
+        let expected = ChannelMemberListQuery<NoExtraData>(cid: cid, filter: .equal("id", to: userId))
         let expectedJSON = try JSONEncoder.default.encode(expected)
     
         // Assert queries match
