@@ -198,7 +198,26 @@ class UserDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedUsers.count, 1)
         XCTAssertEqual(loadedUsers.first?.id, id1)
     }
-    
+
+    func test_userListQueryWithoutFilter_matchesAllUsers() throws {
+        let query = UserListQuery<DefaultExtraData.User>()
+        
+        // Save 4 users to the DB
+        try database.writeSynchronously { session in
+            try session.saveUser(payload: self.dummyUser(id: .unique))
+            try session.saveUser(payload: self.dummyUser(id: .unique))
+            try session.saveUser(payload: self.dummyUser(id: .unique))
+            try session.saveUser(payload: self.dummyUser(id: .unique))
+        }
+        
+        let fetchRequest = UserDTO.userListFetchRequest(query: query)
+        var loadedUsers: [UserDTO] {
+            try! database.viewContext.fetch(fetchRequest)
+        }
+        
+        XCTAssertEqual(loadedUsers.count, 4)
+    }
+
     func test_userListQuery_withSorting() {
         // Create two user queries with different sortings.
         let filter = Filter<UserListFilterScope<NameAndImageExtraData>>.query(.name, text: "a")

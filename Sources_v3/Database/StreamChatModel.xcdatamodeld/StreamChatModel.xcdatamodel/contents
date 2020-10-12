@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19G2021" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19E266" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
         <attribute name="cid" attributeType="String"/>
         <attribute name="config" attributeType="Binary"/>
@@ -188,7 +188,7 @@
     </entity>
     <entity name="UserListQueryDTO" representedClassName="UserListQueryDTO" syncable="YES">
         <attribute name="filterHash" attributeType="String"/>
-        <attribute name="filterJSONData" optional="YES" attributeType="Binary"/>
+        <attribute name="filterJSONData" attributeType="Binary"/>
         <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="queries" inverseEntity="UserDTO"/>
         <fetchIndex name="filterHash">
             <fetchIndexElement property="filterHash" type="Binary" order="ascending"/>
