@@ -63,7 +63,6 @@ public struct UserListQuery<ExtraData: UserExtraData>: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort
-        case presence
         case pagination
     }
     
@@ -72,10 +71,12 @@ public struct UserListQuery<ExtraData: UserExtraData>: Encodable {
     
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<UserListSortingKey>]
+    
     /// A pagination.
     public var pagination: Pagination
-    /// Query options.
-    let options: QueryOptions = [.presence]
+    
+    /// Query options. By default the query options contain `presence`.
+    var options: QueryOptions = [.presence]
     
     /// Init a users query.
     /// - Parameters:
