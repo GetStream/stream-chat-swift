@@ -110,17 +110,15 @@ extension DatabaseContainer {
         }
     }
     
-    func createUserListQuery(filter: Filter<UserListFilterScope<NameAndImageExtraData>>? = .query(.id, text: .unique)) throws {
+    func createUserListQuery(filter: Filter<UserListFilterScope<NameAndImageExtraData>> = .query(.id, text: .unique)) throws {
         try writeSynchronously { session in
             let dto = NSEntityDescription
                 .insertNewObject(
                     forEntityName: UserListQueryDTO.entityName,
                     into: session as! NSManagedObjectContext
                 ) as! UserListQueryDTO
-            dto.filterHash = filter?.filterHash ?? Filter.nilFilterHash
-            // On iOS 12 attempt of encoding nil value will produce an error.
-            // We can remove this nil check after dropping iOS 12 support.
-            dto.filterJSONData = (filter == nil) ? nil : try JSONEncoder.default.encode(filter)
+            dto.filterHash = filter.filterHash
+            dto.filterJSONData = try JSONEncoder.default.encode(filter)
         }
     }
     
