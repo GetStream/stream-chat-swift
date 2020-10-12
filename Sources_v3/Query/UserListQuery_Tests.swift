@@ -9,7 +9,7 @@ class UserListQuery_Tests: XCTestCase {
     // Test UserListQuery encoded correctly
     func test_UserListQuery_encodedCorrectly() throws {
         let filter: Filter = .contains("name", "a")
-        let sort: [Sorting<UserListSortingKey>] = [.init(key: .lastActiveAt)]
+        let sort: [Sorting<UserListSortingKey>] = [.init(key: .lastActivityAt)]
         let pagination: Pagination = .init(arrayLiteral: .offset(3))
 
         // Create UserListQuery
@@ -23,7 +23,7 @@ class UserListQuery_Tests: XCTestCase {
             "presence": true,
             "offset": 3,
             "filter_conditions": ["name": ["$contains": "a"]],
-            "sort": [["field": "lastActiveAt", "direction": -1]]
+            "sort": [["field": "last_active", "direction": -1]]
         ]
 
         let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])

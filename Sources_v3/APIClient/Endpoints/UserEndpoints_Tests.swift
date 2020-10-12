@@ -9,7 +9,7 @@ final class UserEndpoints_Tests: XCTestCase {
     func test_users_buildsCorrectly() {
         let query: UserListQuery = .init(
             filter: .contains("name", "a"),
-            sort: [.init(key: .lastActiveAt)],
+            sort: [.init(key: .lastActivityAt)],
             pagination: [.offset(3)]
         )
         
