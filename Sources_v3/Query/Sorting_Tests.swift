@@ -7,10 +7,10 @@ import XCTest
 
 class Sorting_Tests: XCTestCase {
     func test_Encoding() throws {
-        let sorting = Sorting<ChannelListSortingKey>(key: .cid, isAscending: true)
+        let sorting = Sorting<ChannelListSortingKey>(key: .createdAt, isAscending: true)
         
         let expectedData: [String: Any] = [
-            "field": "cid",
+            "field": "created_at",
             "direction": 1
         ]
         
