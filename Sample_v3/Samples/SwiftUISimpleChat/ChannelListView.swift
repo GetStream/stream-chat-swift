@@ -95,7 +95,7 @@ struct ChannelListView: View {
         }
     }
     
-    /// Channel cell containter view.
+    /// Channel cell container view.
     private func channelView(for index: Int) -> some View {
         HStack {
             VStack(alignment: .leading) {
@@ -130,8 +130,7 @@ struct ChannelListView: View {
     
     /// `UserLisView` for users matching the query.
     var userListView: some View {
-        let query: UserListQuery = .init()
-        let controller = channelList.controller.client.userListController(query: query)
+        let controller = channelList.controller.client.userListController()
         return UserListView(userList: controller.observableObject)
     }
     
