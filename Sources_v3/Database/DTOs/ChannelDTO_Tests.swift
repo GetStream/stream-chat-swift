@@ -274,19 +274,24 @@ class ChannelDTO_Tests: XCTestCase {
         // Create two channels queries with different sortings.
         let filter = Filter.equal("some", to: String.unique)
         let queryWithDefaultSorting = ChannelListQuery(filter: filter)
-        let queryWithCIDSorting = ChannelListQuery(filter: filter, sort: [.init(key: .cid, isAscending: true)])
-        
+        let queryWithUpdatedAtSorting = ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
+
         // Create dummy channels payloads with ids: a, b, c, d.
         let payload1 = dummyPayload(with: try! .init(cid: "a:a"))
         let payload2 = dummyPayload(with: try! .init(cid: "a:b"))
         let payload3 = dummyPayload(with: try! .init(cid: "a:c"))
         let payload4 = dummyPayload(with: try! .init(cid: "a:d"))
-        
+
         // Get `lastMessageDate` and `created` dates from generated dummy channels and sort the for the default sorting.
         let createdAndLastMessageDates = [payload1, payload2, payload3, payload4]
             .map { $0.channel.lastMessageAt ?? $0.channel.createdAt }
             .sorted(by: { $0 > $1 })
         
+        // Get `updatedAt` dates from generated dummy channels and sort the for the updatedAt sorting.
+        let updatedAtDates = [payload1, payload2, payload3, payload4]
+            .map(\.channel.updatedAt)
+            .sorted(by: { $0 > $1 })
+
         // Save the channels to DB. It doesn't matter which query we use because the filter for both of them is the same.
         try! database.writeSynchronously { session in
             try session.saveChannel(payload: payload1, query: queryWithDefaultSorting)
@@ -294,28 +299,28 @@ class ChannelDTO_Tests: XCTestCase {
             try session.saveChannel(payload: payload3, query: queryWithDefaultSorting)
             try session.saveChannel(payload: payload4, query: queryWithDefaultSorting)
         }
-        
+
         // A fetch request with a default sorting.
         let fetchRequestWithDefaultSorting = ChannelDTO.channelListFetchRequest(query: queryWithDefaultSorting)
-        // A fetch request with a sorting by `cid`.
-        let fetchRequestWithCIDSorting = ChannelDTO.channelListFetchRequest(query: queryWithCIDSorting)
-        
+        // A fetch request with a sorting by `updatedAt`.
+        let fetchRequestWithUpdatedAtSorting = ChannelDTO.channelListFetchRequest(query: queryWithUpdatedAtSorting)
+
         var channelsWithDefaultSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithDefaultSorting) }
-        var channelsWithCIDSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithCIDSorting) }
-        
+        var channelsWithUpdatedAtSorting: [ChannelDTO] { try! database.viewContext.fetch(fetchRequestWithUpdatedAtSorting) }
+
         // Check the default sorting.
         XCTAssertEqual(channelsWithDefaultSorting.count, 4)
         XCTAssertEqual(channelsWithDefaultSorting.map { $0.lastMessageAt ?? $0.createdAt }, createdAndLastMessageDates)
-        
-        // Check the sorting by `cid`.
-        XCTAssertEqual(channelsWithCIDSorting.count, 4)
-        XCTAssertEqual(channelsWithCIDSorting.map(\.cid), ["a:a", "a:b", "a:c", "a:d"])
+
+        // Check the sorting by `updatedAt`.
+        XCTAssertEqual(channelsWithUpdatedAtSorting.count, 4)
+        XCTAssertEqual(channelsWithUpdatedAtSorting.map(\.updatedAt), updatedAtDates)
     }
-    
+
     /// `ChannelListSortingKey` test for sort descriptor and encoded value.
     func test_channelListSortingKey() {
         let encoder = JSONEncoder.stream
-            
+
         var channelListSortingKey = ChannelListSortingKey.default
         XCTAssertEqual(encoder.encodedString(channelListSortingKey), "updated_at")
         XCTAssertEqual(
@@ -330,32 +335,21 @@ class ChannelDTO_Tests: XCTestCase {
             ChannelListSortingKey.defaultSortDescriptor,
             NSSortDescriptor(key: "defaultSortingAt", ascending: false)
         )
-        
-        channelListSortingKey = .cid
-        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "cid")
-        XCTAssertEqual(channelListSortingKey.sortDescriptor(isAscending: true), NSSortDescriptor(key: "cid", ascending: true))
-        
-        channelListSortingKey = .type
-        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "type")
-        XCTAssertEqual(
-            channelListSortingKey.sortDescriptor(isAscending: true),
-            NSSortDescriptor(key: "typeRawValue", ascending: true)
-        )
-        
+
         channelListSortingKey = .createdAt
         XCTAssertEqual(encoder.encodedString(channelListSortingKey), "created_at")
         XCTAssertEqual(
             channelListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "createdAt", ascending: true)
         )
-        
-        channelListSortingKey = .deletedAt
-        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "deleted_at")
+
+        channelListSortingKey = .memberCount
+        XCTAssertEqual(encoder.encodedString(channelListSortingKey), "member_count")
         XCTAssertEqual(
             channelListSortingKey.sortDescriptor(isAscending: true),
-            NSSortDescriptor(key: "deletedAt", ascending: true)
+            NSSortDescriptor(key: "memberCount", ascending: true)
         )
-        
+
         channelListSortingKey = .lastMessageAt
         XCTAssertEqual(encoder.encodedString(channelListSortingKey), "last_message_at")
         XCTAssertEqual(
@@ -364,7 +358,7 @@ class ChannelDTO_Tests: XCTestCase {
         )
     }
     
-    func test_channelUreadCount_calculatedCorrectly() {
+    func test_channelUnreadCount_calculatedCorrectly() {
         // Create and save a current user, to be used for channel unread calculations
         try! database.createCurrentUser(id: "dummyCurrentUser")
         
