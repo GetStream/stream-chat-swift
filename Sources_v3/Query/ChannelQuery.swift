@@ -28,10 +28,10 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     /// ChannelCreatePayload that is needed only when creating channel
     let channelPayload: ChannelEditDetailPayload<ExtraData>?
     
-    /// ChannelId this query handles.
-    var cid: ChannelId {
-        guard let id = id else { return .init(type: type, id: "") }
-        return ChannelId(type: type, id: id)
+    /// `ChannelId` this query handles.
+    /// If `id` part is missing then it's impossible to create valid `ChannelId`.
+    public var cid: ChannelId? {
+        id.map { ChannelId(type: type, id: $0) }
     }
     
     /// Path parameters that are used in endpoints.

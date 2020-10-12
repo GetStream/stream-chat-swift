@@ -98,7 +98,7 @@ class ChannelUpdater_Tests: StressTestCase {
         channelUpdater.update(channelQuery: query, channelCreatedCallback: callback, completion: nil)
 
         // Simulate API response with channel data
-        let payload = dummyPayload(with: query.cid)
+        let payload = dummyPayload(with: query.cid!)
         apiClient.test_simulateResponse(.success(payload))
 
         // Assert `channelCreatedCallback` is called

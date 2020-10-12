@@ -254,10 +254,14 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
+        guard let cid = channelController.cid else {
+            fatalError("channelController will always have cid if channel created and we have messages available.")
+        }
+        
         let message = channelController.messages[indexPath.row]
         
         let messageController = channelController.client.messageController(
-            cid: channelController.channelQuery.cid,
+            cid: cid,
             messageId: message.id
         )
         
