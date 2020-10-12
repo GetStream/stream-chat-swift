@@ -82,7 +82,7 @@ final class NewUserQueryUpdater<ExtraData: UserExtraData>: Worker {
     private func updateUserListQuery(for userDTO: UserDTO) {
         database.backgroundReadOnlyContext.perform { [weak self] in
             guard var queries = self?.queries else { return }
-            var updatedQueries: [UserListQuery] = []
+            var updatedQueries: [UserListQuery<ExtraData>] = []
             
             // For query with `nil` Filter we don't need to make any requests cause all users are part of this query
             // and we can just link it.
@@ -128,11 +128,15 @@ extension NewUserQueryUpdater {
 }
 
 private extension UserListQueryDTO {
-    func asUserListQueryWithUpdatedFilter(filterToAdd filter: Filter) throws -> UserListQuery {
+    func asUserListQueryWithUpdatedFilter<ExtraData: UserExtraData>(
+        filterToAdd filter: Filter<UserListFilterScope<ExtraData>>
+    ) throws -> UserListQuery<ExtraData> {
         guard let filterJSONData = filterJSONData else { throw ClientError() }
-        let encodedFilter = try JSONDecoder().decode(Filter.self, from: filterJSONData)
+        let encodedFilter = try JSONDecoder.default.decode(Filter<UserListFilterScope<ExtraData>>.self, from: filterJSONData)
+        
         // We need to pass original `filterHash` so user will be linked to original query, not the modified one
-        let updatedFilter: Filter = .explicitFilterHash(.and([encodedFilter, filter]), filterHash)
+        var updatedFilter: Filter<UserListFilterScope<ExtraData>> = .and([encodedFilter, filter])
+        updatedFilter.explicitHash = filterHash
         
         return UserListQuery(filter: updatedFilter)
     }

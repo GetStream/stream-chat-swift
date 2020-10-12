@@ -34,7 +34,7 @@ class UserListUpdater_Tests: StressTestCase {
     
     func test_update_makesCorrectAPICall() {
         // Simulate `update` call
-        let query = UserListQuery(filter: .contains("name", "a"))
+        let query = UserListQuery<DefaultExtraData.User>(filter: .equal(.id, to: "Luke"))
         listUpdater.update(userListQuery: query)
         
         let referenceEndpoint: Endpoint<UserListPayload<DefaultExtraData.User>> = .users(query: query)
@@ -43,7 +43,7 @@ class UserListUpdater_Tests: StressTestCase {
     
     func test_update_successfullReponseData_areSavedToDB() {
         // Simulate `update` call
-        let query = UserListQuery(filter: .contains("name", "a"))
+        let query = UserListQuery<DefaultExtraData.User>(filter: .equal(.id, to: "Luke"))
         var completionCalled = false
         listUpdater.update(userListQuery: query, completion: { error in
             XCTAssertNil(error)
@@ -69,7 +69,7 @@ class UserListUpdater_Tests: StressTestCase {
     
     func test_update_errorResponse_isPropagatedToCompletion() {
         // Simulate `update` call
-        let query = UserListQuery(filter: .contains("name", "a"))
+        let query = UserListQuery<DefaultExtraData.User>(filter: .equal(.id, to: "Luke"))
         var completionCalledError: Error?
         listUpdater.update(userListQuery: query, completion: { completionCalledError = $0 })
         

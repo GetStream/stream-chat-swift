@@ -11,7 +11,7 @@ class UserListController_Tests: StressTestCase {
     
     var client: ChatClient!
     
-    var query: UserListQuery!
+    var query: UserListQuery<NameAndImageExtraData>!
     
     var controller: ChatUserListController!
     var controllerCallbackQueueID: UUID!
@@ -23,7 +23,7 @@ class UserListController_Tests: StressTestCase {
         
         env = TestEnvironment()
         client = _ChatClient.mock
-        query = .init(filter: .contains("name", "a"))
+        query = .init(filter: .query(.id, text: .unique))
         controller = ChatUserListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)

@@ -47,8 +47,8 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     }
     
     func test_update_called_forEachQuery() throws {
-        let filter1: Filter = .contains(.unique, String.unique)
-        let filter2: Filter = .notEqual(.unique, to: 1)
+        let filter1: Filter<UserListFilterScope<NameAndImageExtraData>> = .equal(.id, to: .unique)
+        let filter2: Filter<UserListFilterScope<NameAndImageExtraData>> = .notEqual(.id, to: .unique)
         
         try database.createUserListQuery(filter: filter1)
         try database.createUserListQuery(filter: filter2)
@@ -84,7 +84,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         // Deinitialize newUserQueryUpdater
         newUserQueryUpdater = nil
         
-        let filter: Filter = .notEqual(.unique, to: 1)
+        let filter: Filter<UserListFilterScope<NameAndImageExtraData>> = .notEqual(.id, to: .unique)
         try database.createUserListQuery(filter: filter)
         try database.createUser(id: .unique)
         
@@ -105,12 +105,12 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     
     func test_filter_isModified() throws {
         let id: UserId = .unique
-        let filter: Filter = .notEqual(.unique, to: 1)
+        let filter: Filter<UserListFilterScope<NameAndImageExtraData>> = .notEqual(.id, to: .unique)
         
         try database.createUserListQuery(filter: filter)
         try database.createUser(id: id)
         
-        let expectedFilter: Filter = .and([filter, .equal("id", to: id)])
+        let expectedFilter: Filter = .and([filter, .equal(.id, to: id)])
         
         // Assert `update(userListQuery` called with modified query
         AssertAsync {
@@ -120,7 +120,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     }
     
     func test_newUserQueryUpdater_doesNotRetainItself() throws {
-        let filter: Filter = .contains(.unique, String.unique)
+        let filter: Filter<UserListFilterScope<NameAndImageExtraData>> = .notEqual(.id, to: .unique)
         try database.createUserListQuery(filter: filter)
         try database.createUser()
         

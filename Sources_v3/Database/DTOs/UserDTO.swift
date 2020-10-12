@@ -68,9 +68,9 @@ extension NSManagedObjectContext: UserDatabaseSession {
         UserDTO.load(id: id, context: self)
     }
     
-    func saveUser<ExtraUserData: Codable & Hashable>(
-        payload: UserPayload<ExtraUserData>,
-        query: UserListQuery?
+    func saveUser<ExtraData: UserExtraData>(
+        payload: UserPayload<ExtraData>,
+        query: UserListQuery<ExtraData>?
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
         
