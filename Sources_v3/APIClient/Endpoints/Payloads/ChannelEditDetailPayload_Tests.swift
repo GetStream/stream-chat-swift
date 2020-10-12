@@ -38,4 +38,31 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         // Assert ChannelEditDetailPayload encoded correctly
         AssertJSONEqual(encodedJSON, expectedJSON)
     }
+    
+    func test_pathParameters() {
+        // Create payload without id specified
+        let payload1: ChannelEditDetailPayload<DefaultExtraData> = .init(
+            type: .messaging,
+            team: nil,
+            members: [.unique],
+            invites: [],
+            extraData: .defaultValue
+        )
+        
+        // Assert only type is part of path
+        XCTAssertEqual(payload1.pathParameters, "\(payload1.type)")
+        
+        // Create payload with id and type specified
+        let cid: ChannelId = .unique
+        let payload2: ChannelEditDetailPayload<DefaultExtraData> = .init(
+            cid: cid,
+            team: nil,
+            members: [],
+            invites: [],
+            extraData: .defaultValue
+        )
+        
+        // Assert type and id are part of path
+        XCTAssertEqual(payload2.pathParameters, "\(payload2.type)/\(payload2.id!)")
+    }
 }

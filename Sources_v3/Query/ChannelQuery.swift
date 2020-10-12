@@ -13,8 +13,10 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
         case watchers
     }
 
-    /// ChannelId this query handles.
-    public let cid: ChannelId
+    /// Channel id this query handles.
+    public let id: String?
+    /// Channel type this query handles.
+    public let type: ChannelType
     /// A pagination for messages (see `Pagination`).
     public var messagesPagination: Pagination
     /// A pagination for members (see `Pagination`). You can use `.limit` and `.offset`.
@@ -25,6 +27,18 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     public let options: QueryOptions
     /// ChannelCreatePayload that is needed only when creating channel
     let channelPayload: ChannelEditDetailPayload<ExtraData>?
+    
+    /// ChannelId this query handles.
+    var cid: ChannelId {
+        guard let id = id else { return .init(type: type, id: "") }
+        return ChannelId(type: type, id: id)
+    }
+    
+    /// Path parameters that are used in endpoints.
+    var pathParameters: String {
+        guard let id = id else { return "\(type)" }
+        return "\(type)/\(id)"
+    }
 
     /// Init a channel query.
     /// - Parameters:
@@ -40,7 +54,8 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
         watchersPagination: Pagination = [],
         options: QueryOptions = []
     ) {
-        self.cid = cid
+        id = cid.id
+        type = cid.type
         channelPayload = nil
         self.messagesPagination = messagesPagination
         self.membersPagination = membersPagination
@@ -56,7 +71,8 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
         channelPayload: ChannelEditDetailPayload<ExtraData>,
         options: QueryOptions = []
     ) {
-        cid = channelPayload.cid
+        id = channelPayload.id
+        type = channelPayload.type
         self.channelPayload = channelPayload
         messagesPagination = []
         membersPagination = []

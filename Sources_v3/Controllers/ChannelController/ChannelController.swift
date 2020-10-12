@@ -74,7 +74,7 @@ extension _ChatClient {
     ) throws -> _ChatChannelController<ExtraData> {
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
         let payload = ChannelEditDetailPayload<ExtraData>(
-            cid: .init(type: .messaging, id: ""),
+            type: .messaging,
             team: team,
             members: members,
             invites: [],
@@ -247,7 +247,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
         _channelObserver.computeValue = { [unowned self] in
             let observer = EntityDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
-                fetchRequest: ChannelDTO.fetchRequest(for: self.channelQuery.cid),
+                fetchRequest: ChannelDTO.fetchRequest(for: self.channelId),
                 itemCreator: { $0.asModel() as _ChatChannel<ExtraData> }
             ).onChange { change in
                 self.delegateCallback { $0.channelController(self, didUpdateChannel: change) }
@@ -267,7 +267,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
             let sortAscending = self.listOrdering == .topToBottom ? false : true
             let observer = ListDatabaseObserver(
                 context: self.client.databaseContainer.viewContext,
-                fetchRequest: MessageDTO.messagesFetchRequest(for: self.channelQuery.cid, sortAscending: sortAscending),
+                fetchRequest: MessageDTO.messagesFetchRequest(for: self.channelId, sortAscending: sortAscending),
                 itemCreator: { $0.asModel() as _ChatMessage<ExtraData> }
             )
             observer.onChange = { changes in

@@ -48,7 +48,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         for (query, requiresConnectionId) in testCases {
             let expectedEndpoint =
                 Endpoint<ChannelPayload<DefaultExtraData>>(
-                    path: "channels/\(query.cid.type.rawValue)/\(query.cid.id)/query",
+                    path: "channels/\(query.pathParameters)/query",
                     method: .post,
                     queryItems: nil,
                     requiresConnectionId: requiresConnectionId,
@@ -67,7 +67,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let channelPayload: ChannelEditDetailPayload<DefaultExtraData> = .unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(channelPayload.cid.type)/\(channelPayload.cid.id)",
+            path: "channels/\(channelPayload.pathParameters)",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
