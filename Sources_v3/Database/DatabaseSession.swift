@@ -7,23 +7,23 @@ import CoreData
 extension NSManagedObjectContext: DatabaseSession {}
 
 protocol UserDatabaseSession {
-    /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successfull. Throws an error
+    /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
     func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>, query: UserListQuery<ExtraData>?) throws -> UserDTO
     
-    /// Fetchtes `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
+    /// Fetches `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
     func user(id: UserId) -> UserDTO?
 }
 
 protocol CurrentUserDatabaseSession {
-    /// Saves the provided payload to the DB. Return's a `CurrentUserDTO` if the save was successfull. Throws an error
+    /// Saves the provided payload to the DB. Return's a `CurrentUserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
     func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO
 
     /// Updates the `CurrentUserDTO` with the provided unread.
-    /// If there is no current user, the error will be thown
+    /// If there is no current user, the error will be thrown.
     func saveCurrentUserUnreadCount(count: UnreadCount) throws
     
     /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
@@ -64,7 +64,7 @@ protocol MessageDatabaseSession {
         for cid: ChannelId
     ) throws -> MessageDTO
     
-    /// Fetchtes `MessageDTO` with the given `id` from the DB. Returns `nil` if no `MessageDTO` matching the `id` exists.
+    /// Fetches `MessageDTO` with the given `id` from the DB. Returns `nil` if no `MessageDTO` matching the `id` exists.
     func message(id: MessageId) -> MessageDTO?
     
     /// Deletes the provided dto from a database
@@ -119,11 +119,11 @@ protocol ChannelReadDatabaseSession {
         for cid: ChannelId
     ) throws -> ChannelReadDTO
     
-    /// Fetchtes `ChannelReadDTO` with the given `cid` and `userId` from the DB.
+    /// Fetches `ChannelReadDTO` with the given `cid` and `userId` from the DB.
     /// Returns `nil` if no `ChannelReadDTO` matching the `cid` and `userId`  exists.
     func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO?
     
-    /// Fetchtes `ChannelReadDTO`entities for the given `userId` from the DB.
+    /// Fetches `ChannelReadDTO`entities for the given `userId` from the DB.
     func loadChannelReads(for userId: UserId) -> [ChannelReadDTO]
 }
 
@@ -133,15 +133,15 @@ protocol MemberDatabaseSession {
     func saveMember<ExtraData: UserExtraData>(
         payload: MemberPayload<ExtraData>,
         channelId: ChannelId,
-        query: ChannelMemberListQuery?
+        query: ChannelMemberListQuery<ExtraData>?
     ) throws -> MemberDTO
     
-    /// Fetchtes `MemberDTO`entity for the given `userId` and `cid`.
+    /// Fetches `MemberDTO`entity for the given `userId` and `cid`.
     func member(userId: UserId, cid: ChannelId) -> MemberDTO?
 }
 
 protocol MemberListQueryDatabaseSession {
-    /// Fetchtes `MemberListQueryDatabaseSession` entity for the given `filterHash`.
+    /// Fetches `MemberListQueryDatabaseSession` entity for the given `filterHash`.
     func channelMemberListQuery(queryHash: String) -> ChannelMemberListQueryDTO?
     
     /// Creates a new `MemberListQueryDatabaseSession` object in the database based in the given `ChannelMemberListQuery`.

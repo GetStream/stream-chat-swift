@@ -16,10 +16,13 @@ public struct QueryOptions: OptionSet, Encodable {
     
     /// A query will return a channel state, e.g. messages.
     public static let state = QueryOptions(rawValue: 1 << 0)
-    /// Listen for a channel changes in real time, e.g. a new message evevnt.
+    
+    /// Listen for a channel changes in real time, e.g. a new message event.
     public static let watch = QueryOptions(rawValue: 1 << 1)
+    
     /// Get updates when the user goes offline/online.
     public static let presence = QueryOptions(rawValue: 1 << 2)
+    
     /// Includes all query options: state, watch and presence.
     public static let all: QueryOptions = [.state, .watch, .presence]
     

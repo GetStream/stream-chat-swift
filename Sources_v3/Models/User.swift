@@ -107,7 +107,7 @@ public enum UserRole: String, Codable, Hashable {
     /// A user that connected using guest user authentication.
     case guest
     
-    /// A user that connected using anynonymous authentication.
+    /// A user that connected using anonymous authentication.
     case anonymous
 }
 

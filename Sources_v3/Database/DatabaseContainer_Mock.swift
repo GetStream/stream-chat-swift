@@ -83,7 +83,7 @@ extension DatabaseContainer {
         }
     }
     
-    /// Synchrnously creates a new ChannelDTO in the DB with the given cid.
+    /// Synchronously creates a new ChannelDTO in the DB with the given cid.
     func createChannel(cid: ChannelId = .unique, withMessages: Bool = true) throws {
         try writeSynchronously { session in
             let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))

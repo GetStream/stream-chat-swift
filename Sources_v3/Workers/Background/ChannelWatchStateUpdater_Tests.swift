@@ -64,7 +64,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
         AssertAsync.staysTrue(apiClient.request_endpoint == nil)
     }
     
-    func test_apiClient_called_on_websocket_connected() throws {
+    func test_apiClient_called_on_webSocket_connected() throws {
         let cid: ChannelId = .unique
         
         try database.createChannel(cid: cid, withMessages: false)

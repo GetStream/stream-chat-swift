@@ -41,7 +41,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
-    func test_update_successfullReponseData_areSavedToDB() {
+    func test_update_successfulResponseData_areSavedToDB() {
         // Simulate `update` call
         let query = ChannelListQuery<NameAndImageExtraData>(filter: .in(.members, values: [.unique]))
         var completionCalled = false
@@ -50,7 +50,7 @@ class ChannelListUpdater_Tests: StressTestCase {
             completionCalled = true
         })
         
-        // Simualte API response with channel data
+        // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
         let payload = ChannelListPayload<DefaultExtraData>(channels: [dummyPayload(with: cid)])
         apiClient.test_simulateResponse(.success(payload))
@@ -71,7 +71,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         var completionCalledError: Error?
         listUpdater.update(channelListQuery: query, completion: { completionCalledError = $0 })
         
-        // Simualte API response with failure
+        // Simulate API response with failure
         let error = TestError()
         apiClient.test_simulateResponse(Result<ChannelListPayload<DefaultExtraData>, Error>.failure(error))
         
