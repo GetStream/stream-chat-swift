@@ -110,7 +110,7 @@ extension DatabaseContainer {
         }
     }
     
-    func createUserListQuery(filter: Filter? = .contains(.unique, String.unique)) throws {
+    func createUserListQuery(filter: Filter<UserListFilterScope<NameAndImageExtraData>>? = .query(.id, text: .unique)) throws {
         try writeSynchronously { session in
             let dto = NSEntityDescription
                 .insertNewObject(

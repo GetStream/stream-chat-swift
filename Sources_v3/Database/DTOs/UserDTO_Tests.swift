@@ -176,7 +176,7 @@ class UserDTO_Tests: XCTestCase {
     }
     
     func test_userWithUserListQuery_isSavedAndLoaded() {
-        let query = UserListQuery(filter: .contains("name", "a"))
+        let query = UserListQuery(filter: .query(.name, text: "a"))
         
         // Create user
         let payload1 = dummyUser
@@ -201,7 +201,7 @@ class UserDTO_Tests: XCTestCase {
     
     func test_userListQuery_withSorting() {
         // Create two user queries with different sortings.
-        let filter = Filter.equal("some", to: String.unique)
+        let filter = Filter<UserListFilterScope<NameAndImageExtraData>>.query(.name, text: "a")
         let queryWithLastActiveAtSorting = UserListQuery(filter: filter, sort: [.init(key: .lastActivityAt, isAscending: false)])
         let queryWithIdSorting = UserListQuery(filter: filter, sort: [.init(key: .id, isAscending: false)])
 

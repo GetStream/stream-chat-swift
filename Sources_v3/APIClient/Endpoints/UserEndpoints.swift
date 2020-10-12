@@ -5,7 +5,7 @@
 import Foundation
 
 extension Endpoint {
-    static func users<ExtraData: UserExtraData>(query: UserListQuery)
+    static func users<ExtraData: UserExtraData>(query: UserListQuery<ExtraData>)
         -> Endpoint<UserListPayload<ExtraData>> {
         .init(
             path: "users",

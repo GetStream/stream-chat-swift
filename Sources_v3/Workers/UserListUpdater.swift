@@ -12,7 +12,7 @@ class UserListUpdater<ExtraData: UserExtraData>: Worker {
     ///   - userListQuery: The users query used in the request
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func update(userListQuery: UserListQuery, completion: ((Error?) -> Void)? = nil) {
+    func update(userListQuery: UserListQuery<ExtraData>, completion: ((Error?) -> Void)? = nil) {
         apiClient
             .request(endpoint: .users(query: userListQuery)) { (result: Result<UserListPayload<ExtraData>, Error>) in
                 switch result {
