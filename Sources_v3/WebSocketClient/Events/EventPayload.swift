@@ -101,7 +101,9 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         eventType = try container.decode(EventType.self, forKey: .eventType)
         connectionId = try container.decodeIfPresent(String.self, forKey: .connectionId)
-        cid = try container.decodeIfPresent(ChannelId.self, forKey: .cid)
+        // In healthCheck event we can receive invalid id containing "*".
+        // We don't need to throw error in that case and can treat it like missing cid.
+        cid = try? container.decodeIfPresent(ChannelId.self, forKey: .cid)
         currentUser = try container.decodeIfPresent(CurrentUserPayload<ExtraData.User>.self, forKey: .currentUser)
         user = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .user)
         createdBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .createdBy)
