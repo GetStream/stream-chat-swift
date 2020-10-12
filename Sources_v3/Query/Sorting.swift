@@ -125,41 +125,29 @@ extension UserListSortingKey {
 // MARK: - Members Sorting
 
 /// `ChannelMemberListSortingKey` describes the keys by which you can get sorted channel members after query.
-public struct ChannelMemberListSortingKey: RawRepresentable, Equatable, SortingKey {
-    public let rawValue: String
+public enum ChannelMemberListSortingKey: String, SortingKey {
+    case createdAt
     
-    public init(rawValue: String) {
-        self.rawValue = rawValue
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        let value: String
+        
+        switch self {
+        /// Sort channel members by date they were created.
+        case .createdAt: value = "created_at"
+        }
+        
+        try container.encode(value)
     }
-}
-
-public extension ChannelMemberListSortingKey {
-    /// When used this key sorts the member list by member's `createdAt` field.
-    static let createdAt = Self(rawValue: "created_at")
-    
-    /// When used this key sorts the member list by member's `updatedAt` field.
-    static let updatedAt = Self(rawValue: "updated_at")
 }
 
 extension ChannelMemberListSortingKey {
-    static var defaultSortDescriptor: NSSortDescriptor {
-        .init(keyPath: \MemberDTO.memberUpdatedAt, ascending: false)
-    }
+    static let defaultSortDescriptor: NSSortDescriptor = {
+        let dateKeyPath: KeyPath<MemberDTO, Date> = \MemberDTO.memberCreatedAt
+        return .init(keyPath: dateKeyPath, ascending: false)
+    }()
     
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
-        var keyPath: KeyPath<MemberDTO, Date>? {
-            switch self {
-            case .createdAt:
-                return \.memberCreatedAt
-            case .updatedAt:
-                return \.memberUpdatedAt
-            default:
-                return nil
-            }
-        }
-        
-        return keyPath.flatMap {
-            .init(keyPath: $0, ascending: isAscending)
-        }
+        .init(key: rawValue, ascending: isAscending)
     }
 }

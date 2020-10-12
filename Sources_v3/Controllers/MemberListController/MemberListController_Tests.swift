@@ -267,17 +267,17 @@ final class MemberListController_Tests: StressTestCase {
         // Create channel in the database.
         try client.databaseContainer.createChannel(cid: query.cid)
         
-        // Create 2 members, the first updated more recently
+        // Create 2 members, the first created more recently
         var member1: MemberPayload = .dummy(
             userId: member1ID,
-            updatedAt: Date()
+            createdAt: Date()
         )
         var member2: MemberPayload = .dummy(
             userId: member2ID,
-            updatedAt: Date().addingTimeInterval(-10)
+            createdAt: Date().addingTimeInterval(-10)
         )
         
-        // Save both memebers to the database and link to the query.
+        // Save both members to the database and link to the query.
         try client.databaseContainer.writeSynchronously { session in
             for member in [member1, member2] {
                 try session.saveMember(
@@ -306,17 +306,17 @@ final class MemberListController_Tests: StressTestCase {
         // Simulate `synchronize` call to fetch user from remote
         controller.synchronize()
 
-        // Update 2 members, the first updated more recently
+        // Update 2 members, the first created more recently
         member1 = .dummy(
             userId: member1ID,
-            updatedAt: Date()
+            createdAt: Date()
         )
         member2 = .dummy(
             userId: member2ID,
-            updatedAt: Date().addingTimeInterval(-10)
+            createdAt: Date().addingTimeInterval(-10)
         )
         
-        // Save both memebers to the database and link to the query.
+        // Save both members to the database and link to the query.
         try client.databaseContainer.writeSynchronously { session in
             for member in [member1, member2] {
                 try session.saveMember(payload: member, channelId: self.query.cid, query: self.query)
@@ -339,9 +339,9 @@ final class MemberListController_Tests: StressTestCase {
                 )
         }
         
-        // Update second member to be updated earlier than the first one.
+        // Update second member to be created earlier than the first one.
         try client.databaseContainer.writeSynchronously { session in
-            session.member(userId: member2.user.id, cid: self.query.cid)?.memberUpdatedAt = Date()
+            session.member(userId: member2.user.id, cid: self.query.cid)?.memberCreatedAt = Date()
         }
         
         // Assert `move` change is received for the second member.
