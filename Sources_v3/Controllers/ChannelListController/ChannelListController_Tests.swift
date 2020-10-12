@@ -11,7 +11,7 @@ class ChannelListController_Tests: StressTestCase {
     
     var client: ChatClient!
     
-    var query: ChannelListQuery!
+    var query: ChannelListQuery<NameAndImageExtraData>!
     
     var controller: ChatChannelListController!
     var controllerCallbackQueueID: UUID!
@@ -23,7 +23,7 @@ class ChannelListController_Tests: StressTestCase {
         
         env = TestEnvironment()
         client = _ChatClient.mock
-        query = .init(filter: .in("members", ["Luke"]))
+        query = .init(filter: .in(.members, values: [.unique]))
         controller = ChatChannelListController(query: query, client: client, environment: env.environment)
         controllerCallbackQueueID = UUID()
         controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
