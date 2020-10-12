@@ -10,7 +10,7 @@ final class MemberEndpoints_Tests: XCTestCase {
         let query = ChannelMemberListQuery(
             cid: .unique,
             filter: .contains("name", "a"),
-            sort: [.init(key: .updatedAt)],
+            sort: [.init(key: .createdAt)],
             pagination: [.offset(3)]
         )
         
