@@ -9,7 +9,9 @@ extension _ChatClient {
     /// Creates a new `_ChatChannelMemberListController` with the provided query.
     /// - Parameter query: The query specify the filter and sorting options for members the controller should fetch.
     /// - Returns: A new instance of `_ChatChannelMemberListController`.
-    public func memberListController(query: ChannelMemberListQuery) -> _ChatChannelMemberListController<ExtraData> {
+    public func memberListController(
+        query: ChannelMemberListQuery<ExtraData.User>
+    ) -> _ChatChannelMemberListController<ExtraData> {
         .init(query: query, client: self)
     }
 }
@@ -37,7 +39,7 @@ public typealias ChatChannelMemberListController = _ChatChannelMemberListControl
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying sorting and filtering for the list of channel members.
-    @Atomic public private(set) var query: ChannelMemberListQuery
+    @Atomic public private(set) var query: ChannelMemberListQuery<ExtraData.User>
     
     /// The `ChatClient` instance this controller belongs to.
     public let client: _ChatClient<ExtraData>
@@ -72,7 +74,7 @@ public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataCo
     ///   - query: The query used for filtering and sorting the channel members.
     ///   - client: The `Client` this controller belongs to.
     ///   - environment: Environment for this controller.
-    init(query: ChannelMemberListQuery, client: _ChatClient<ExtraData>, environment: Environment = .init()) {
+    init(query: ChannelMemberListQuery<ExtraData.User>, client: _ChatClient<ExtraData>, environment: Environment = .init()) {
         self.client = client
         self.query = query
         self.environment = environment

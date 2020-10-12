@@ -122,7 +122,7 @@ extension DatabaseContainer {
         }
     }
     
-    func createMemberListQuery(query: ChannelMemberListQuery) throws {
+    func createMemberListQuery<ExtraData: UserExtraData>(query: ChannelMemberListQuery<ExtraData>) throws {
         try writeSynchronously { session in
             try session.saveQuery(query)
         }
@@ -150,7 +150,7 @@ extension DatabaseContainer {
         userId: UserId = .unique,
         role: MemberRole = .member,
         cid: ChannelId,
-        query: ChannelMemberListQuery? = nil
+        query: ChannelMemberListQuery<NameAndImageExtraData>? = nil
     ) throws {
         try writeSynchronously { session in
             try session.saveMember(

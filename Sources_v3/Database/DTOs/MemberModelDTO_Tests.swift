@@ -154,7 +154,7 @@ class MemberModelDTO_Tests: XCTestCase {
 
         // Create member and query.
         let member: MemberPayload<DefaultExtraData.User> = .dummy(userId: userId)
-        let query = ChannelMemberListQuery(cid: cid, filter: .equal("id", to: userId))
+        let query = ChannelMemberListQuery<NameAndImageExtraData>(cid: cid, filter: .equal("id", to: userId))
 
         // Save channel, then member, and pass the query in.
         try database.writeSynchronously { session in

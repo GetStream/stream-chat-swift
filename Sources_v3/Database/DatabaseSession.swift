@@ -146,7 +146,7 @@ protocol MemberListQueryDatabaseSession {
     
     /// Creates a new `MemberListQueryDatabaseSession` object in the database based in the given `ChannelMemberListQuery`.
     @discardableResult
-    func saveQuery(_ query: ChannelMemberListQuery) throws -> ChannelMemberListQueryDTO
+    func saveQuery<ExtraData: UserExtraData>(_ query: ChannelMemberListQuery<ExtraData>) throws -> ChannelMemberListQueryDTO
 }
 
 protocol DatabaseSession: UserDatabaseSession,
