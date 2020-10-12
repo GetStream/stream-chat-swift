@@ -200,6 +200,8 @@
 		8008C1A024F8517000F5BCCE /* UITableViewController+KeyboardAvoidance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008C19E24F84DB600F5BCCE /* UITableViewController+KeyboardAvoidance.swift */; };
 		8040BC5E24FDAB1E00DE369F /* UIColor+ForUsername.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8040BC5C24FDA9B200DE369F /* UIColor+ForUsername.swift */; };
 		8040BC6124FDD5EA00DE369F /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8040BC5F24FDD58700DE369F /* SplitViewController.swift */; };
+		80437AA3252E519E000920A3 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80437A9F252E4E87000920A3 /* Configuration.swift */; };
+		80437AA7252E51E8000920A3 /* ConfigurationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80437A9C252E0792000920A3 /* ConfigurationViewController.swift */; };
 		804B126924E6C820002B00EA /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804B126724E6C80B002B00EA /* LoginViewController.swift */; };
 		804B127124E712F1002B00EA /* SimpleChannelsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F28247FF01800EAF71D /* SimpleChannelsViewController.swift */; };
 		804B127224E712F5002B00EA /* SimpleChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F2A247FF01800EAF71D /* SimpleChatViewController.swift */; };
@@ -648,6 +650,8 @@
 		8008C19E24F84DB600F5BCCE /* UITableViewController+KeyboardAvoidance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+KeyboardAvoidance.swift"; sourceTree = "<group>"; };
 		8040BC5C24FDA9B200DE369F /* UIColor+ForUsername.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+ForUsername.swift"; sourceTree = "<group>"; };
 		8040BC5F24FDD58700DE369F /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
+		80437A9C252E0792000920A3 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
+		80437A9F252E4E87000920A3 /* Configuration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		804B126724E6C80B002B00EA /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		804B126B24E712C2002B00EA /* SimpleChat.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = SimpleChat.storyboard; sourceTree = "<group>"; };
 		804B127424ED596C002B00EA /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
@@ -1030,9 +1034,11 @@
 			children = (
 				792A4F24247FF01800EAF71D /* AppDelegate.swift */,
 				8008C18824EEB8BD00F5BCCE /* LogStore.swift */,
+				80437A9F252E4E87000920A3 /* Configuration.swift */,
 				792A4F26247FF01800EAF71D /* SceneDelegate.swift */,
 				792A4F2C247FF01800EAF71D /* Main.storyboard */,
 				804B126724E6C80B002B00EA /* LoginViewController.swift */,
+				80437A9C252E0792000920A3 /* ConfigurationViewController.swift */,
 				8008C17E24ED647900F5BCCE /* Extensions */,
 				804B126D24E712CC002B00EA /* Samples */,
 				792A4F2F247FF01900EAF71D /* Assets.xcassets */,
@@ -2016,12 +2022,14 @@
 			files = (
 				804B127124E712F1002B00EA /* SimpleChannelsViewController.swift in Sources */,
 				DAD8A8A42507E1C400D05282 /* CombineSimpleChannelsViewController.swift in Sources */,
+				80437AA3252E519E000920A3 /* Configuration.swift in Sources */,
 				804B126924E6C820002B00EA /* LoginViewController.swift in Sources */,
 				8008C19D24F7EF2400F5BCCE /* ChannelListView.swift in Sources */,
 				8008C1A024F8517000F5BCCE /* UITableViewController+KeyboardAvoidance.swift in Sources */,
 				8008C18A24EEB8CA00F5BCCE /* LogStore.swift in Sources */,
 				8040BC6124FDD5EA00DE369F /* SplitViewController.swift in Sources */,
 				8008C18424ED65AB00F5BCCE /* UIStoryboard+Definitions.swift in Sources */,
+				80437AA7252E51E8000920A3 /* ConfigurationViewController.swift in Sources */,
 				8008C19C24F7EF1F00F5BCCE /* ChatView.swift in Sources */,
 				804B127524ED596C002B00EA /* SettingsViewController.swift in Sources */,
 				792A4F25247FF01800EAF71D /* AppDelegate.swift in Sources */,
