@@ -158,7 +158,7 @@ class UserDTO_Tests: XCTestCase {
         }
     }
     
-    func test_DTO_resetsItsEmpemeralValues() throws {
+    func test_DTO_resetsItsEphemeralValues() throws {
         // Create a new user and set it's online status to `true`
         let userId: UserId = .unique
         try database.writeSynchronously {
@@ -202,8 +202,8 @@ class UserDTO_Tests: XCTestCase {
     func test_userListQuery_withSorting() {
         // Create two user queries with different sortings.
         let filter = Filter.equal("some", to: String.unique)
-        let queryWithCreatedAtSorting = UserListQuery(filter: filter, sort: [.init(key: .createdAt, isAscending: false)])
-        let queryWithUpdatedAtSorting = UserListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
+        let queryWithLastActiveAtSorting = UserListQuery(filter: filter, sort: [.init(key: .lastActivityAt, isAscending: false)])
+        let queryWithIdSorting = UserListQuery(filter: filter, sort: [.init(key: .id, isAscending: false)])
 
         // Create dummy users payloads.
         let payload1 = dummyUser
@@ -211,62 +211,69 @@ class UserDTO_Tests: XCTestCase {
         let payload3 = dummyUser
         let payload4 = dummyUser
 
-        // Get dates and sort.
-        let createdDates = [payload1, payload2, payload3, payload4]
-            .map(\.createdAt)
+        // Get parameters and sort.
+        let lastActiveDates = [payload1, payload2, payload3, payload4]
+            .compactMap(\.lastActiveAt)
             .sorted(by: { $0 > $1 })
         
-        let updatedDates = [payload1, payload2, payload3, payload4]
-            .map(\.updatedAt)
+        let ids = [payload1, payload2, payload3, payload4]
+            .map(\.id)
             .sorted(by: { $0 > $1 })
 
         // Save the users to DB. It doesn't matter which query we use because the filter for both of them is the same.
         try! database.writeSynchronously { session in
-            try session.saveUser(payload: payload1, query: queryWithCreatedAtSorting)
-            try session.saveUser(payload: payload2, query: queryWithCreatedAtSorting)
-            try session.saveUser(payload: payload3, query: queryWithCreatedAtSorting)
-            try session.saveUser(payload: payload4, query: queryWithCreatedAtSorting)
+            try session.saveUser(payload: payload1, query: queryWithLastActiveAtSorting)
+            try session.saveUser(payload: payload2, query: queryWithLastActiveAtSorting)
+            try session.saveUser(payload: payload3, query: queryWithLastActiveAtSorting)
+            try session.saveUser(payload: payload4, query: queryWithLastActiveAtSorting)
         }
 
-        // A fetch request with a createdAt sorting.
-        let fetchRequestWithCreatedAtSorting = UserDTO.userListFetchRequest(query: queryWithCreatedAtSorting)
-        // A fetch request with a updatedAt sorting.
-        let fetchRequestWithUpdatedAtSorting = UserDTO.userListFetchRequest(query: queryWithUpdatedAtSorting)
+        // A fetch request with lastActiveAt sorting.
+        let fetchRequestWithLastActiveAtSorting = UserDTO.userListFetchRequest(query: queryWithLastActiveAtSorting)
+        // A fetch request with a id sorting.
+        let fetchRequestWithIdSorting = UserDTO.userListFetchRequest(query: queryWithIdSorting)
 
-        var usersWithCreatedAtSorting: [UserDTO] { try! database.viewContext.fetch(fetchRequestWithCreatedAtSorting) }
-        var usersWithUpdatedAtSorting: [UserDTO] { try! database.viewContext.fetch(fetchRequestWithUpdatedAtSorting) }
+        var usersWithLastActiveAtSorting: [UserDTO] { try! database.viewContext.fetch(fetchRequestWithLastActiveAtSorting) }
+        var usersWithIdSorting: [UserDTO] { try! database.viewContext.fetch(fetchRequestWithIdSorting) }
         
-        // Check the createdAt sorting.
-        XCTAssertEqual(usersWithCreatedAtSorting.count, 4)
-        XCTAssertEqual(usersWithCreatedAtSorting.map(\.userCreatedAt), createdDates)
+        // Check the lastActiveAt sorting.
+        XCTAssertEqual(usersWithLastActiveAtSorting.count, 4)
+        XCTAssertEqual(usersWithLastActiveAtSorting.map(\.lastActivityAt), lastActiveDates)
         
-        // Check the updatedAt sorting.
-        XCTAssertEqual(usersWithUpdatedAtSorting.count, 4)
-        XCTAssertEqual(usersWithUpdatedAtSorting.map(\.userUpdatedAt), updatedDates)
+        // Check the id sorting.
+        XCTAssertEqual(usersWithIdSorting.count, 4)
+        XCTAssertEqual(usersWithIdSorting.map(\.id), ids)
     }
 
     /// `UserListSortingKey` test for sort descriptor and encoded value.
-    func test_channelListSortingKey() {
+    func test_userListSortingKey() {
         let encoder = JSONEncoder.stream
-        var userListSortingKey = UserListSortingKey.createdAt
-        XCTAssertEqual(encoder.encodedString(userListSortingKey), "created_at")
+        var userListSortingKey = UserListSortingKey.id
+        XCTAssertEqual(encoder.encodedString(userListSortingKey), "id")
         XCTAssertEqual(
             userListSortingKey.sortDescriptor(isAscending: true),
-            NSSortDescriptor(key: "userCreatedAt", ascending: true)
+            NSSortDescriptor(key: "id", ascending: true)
         )
-        
-        userListSortingKey = .lastActiveAt
-        XCTAssertEqual(encoder.encodedString(userListSortingKey), "lastActiveAt")
+
+        userListSortingKey = .lastActivityAt
+        XCTAssertEqual(encoder.encodedString(userListSortingKey), "last_active")
         XCTAssertEqual(
             userListSortingKey.sortDescriptor(isAscending: true),
             NSSortDescriptor(key: "lastActivityAt", ascending: true)
         )
-        
-        userListSortingKey = .updatedAt
-        XCTAssertEqual(encoder.encodedString(userListSortingKey), "updated_at")
+
+        userListSortingKey = .isBanned
+        XCTAssertEqual(encoder.encodedString(userListSortingKey), "banned")
         XCTAssertEqual(
             userListSortingKey.sortDescriptor(isAscending: true),
-            NSSortDescriptor(key: "userUpdatedAt", ascending: true)
+            NSSortDescriptor(key: "isBanned", ascending: true)
+        )
+        
+        userListSortingKey = .role
+        XCTAssertEqual(encoder.encodedString(userListSortingKey), "role")
+        XCTAssertEqual(
+            userListSortingKey.sortDescriptor(isAscending: true),
+            NSSortDescriptor(key: "userRoleRaw", ascending: true)
         )
     }
 }

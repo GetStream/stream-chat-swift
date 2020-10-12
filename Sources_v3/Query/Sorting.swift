@@ -86,21 +86,25 @@ extension ChannelListSortingKey {
 // MARK: User List Sorting Key
 
 /// `UserListSortingKey` is keys by which you can get sorted users after query.
-public enum UserListSortingKey: SortingKey {
-    case createdAt
-    case updatedAt
-    case lastActiveAt
-    case custom(String)
+public enum UserListSortingKey: String, SortingKey {
+    /// Sort users by id.
+    case id
+    /// Sort users by role. (`user`, `admin`, `guest`, `anonymous`)
+    case role = "userRoleRaw"
+    /// Sort users by ban status.
+    case isBanned
+    /// Sort users by last activity date.
+    case lastActivityAt
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         let value: String
         
         switch self {
-        case .createdAt: value = "created_at"
-        case .updatedAt: value = "updated_at"
-        case .lastActiveAt: value = "lastActiveAt"
-        case let .custom(string): value = string
+        case .id: value = "id"
+        case .role: value = "role"
+        case .isBanned: value = "banned"
+        case .lastActivityAt: value = "last_active"
         }
         
         try container.encode(value)
@@ -109,30 +113,12 @@ public enum UserListSortingKey: SortingKey {
 
 extension UserListSortingKey {
     static let defaultSortDescriptor: NSSortDescriptor = {
-        let dateKeyPath: KeyPath<UserDTO, Date> = \UserDTO.userUpdatedAt
-        return .init(keyPath: dateKeyPath, ascending: false)
+        let stringKeyPath: KeyPath<UserDTO, String> = \UserDTO.id
+        return .init(keyPath: stringKeyPath, ascending: false)
     }()
     
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
-        var dateKeyPath: KeyPath<UserDTO, Date>?
-        var optionalDateKeyPath: KeyPath<UserDTO, Date?>?
-        
-        switch self {
-        case .createdAt: dateKeyPath = \UserDTO.userCreatedAt
-        case .updatedAt: dateKeyPath = \UserDTO.userUpdatedAt
-        case .lastActiveAt: optionalDateKeyPath = \UserDTO.lastActivityAt
-        case .custom: break
-        }
-        
-        if let keyPath = dateKeyPath {
-            return .init(keyPath: keyPath, ascending: isAscending)
-        }
-        
-        if let keyPath = optionalDateKeyPath {
-            return .init(keyPath: keyPath, ascending: isAscending)
-        }
-        
-        return nil
+        .init(key: rawValue, ascending: isAscending)
     }
 }
 
