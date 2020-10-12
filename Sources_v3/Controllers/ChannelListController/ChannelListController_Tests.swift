@@ -15,7 +15,7 @@ class ChannelListController_Tests: StressTestCase {
     
     var controller: ChatChannelListController!
     var controllerCallbackQueueID: UUID!
-    /// Workaround for uwrapping **controllerCallbackQueueID!** in each closure that captures it
+    /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
     
     override func setUp() {
@@ -57,7 +57,7 @@ class ChannelListController_Tests: StressTestCase {
         // Simulate `synchronize` call
         controller.synchronize()
         
-        // Simulate successfull network call.
+        // Simulate successful network call.
         env.channelListUpdater?.update_completion?(nil)
         
         // Check if state changed after successful network call.

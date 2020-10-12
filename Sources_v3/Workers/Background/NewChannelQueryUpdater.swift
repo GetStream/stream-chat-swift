@@ -5,10 +5,10 @@
 import CoreData
 
 /// After creating new channel it's not observed cause it's not linked to any ChannelListQuery.
-/// The only job of `NewChannelQueryUpdater` is to find whether new channel belongs to any of the exsisting queries
+/// The only job of `NewChannelQueryUpdater` is to find whether new channel belongs to any of the existing queries
 /// and link it to the channel if so.
-///     1. This worker observers DB for the insertations of the new `ChannelDTO`s without any linked queries.
-///     2. When new channel is found, all exsisting queries are fetched from DB and we modify exsiting queries filters so
+///     1. This worker observers DB for the insertions of the new `ChannelDTO`s without any linked queries.
+///     2. When new channel is found, all existing queries are fetched from DB and we modify existing queries filters so
 ///     in response for `update(channelListQuery` request new channel will be returned if it is part of the original query filter.
 ///     3. After sending `update(channelListQuery` for all queries `ChannelListUpdater` does the job of linking
 ///     corresponding queries to the channel.
@@ -69,7 +69,7 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     }
     
     private func handle(changes: [ListChange<ChannelDTO>]) {
-        // Observe `ChannelDTO` insertations
+        // Observe `ChannelDTO` insertions
         changes.forEach { change in
             switch change {
             case let .insert(channelDTO, _):
