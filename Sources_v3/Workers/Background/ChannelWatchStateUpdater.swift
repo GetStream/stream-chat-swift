@@ -5,8 +5,8 @@
 import CoreData
 
 /// After WebSocket changes it's state to `connected` we need to start watching existing channels so we can receive updated on them.
-/// This background worker listents to `ConnectionStatusUpdated` event and on `connected` we are fetching all channels from DB and
-/// sending ChannelListQuery to backend to start `watching` channels.
+/// This background worker listens to `ConnectionStatusUpdated` event and on `connected` we are fetching all channels from DB and
+/// sending ChannelListQuery to the backend to start `watching` channels.
 final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: Worker {
     private var webSocketConnectedObserver: WebSocketConnectedObserver?
     
@@ -38,10 +38,19 @@ final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: Worker {
         database.backgroundReadOnlyContext.perform { [weak self] in
             guard let channels = self?.channels else { return }
             
-            let channelIds = channels.map(\.cid)
+            let channelIds: [ChannelId] = channels.map(\.cid).compactMap {
+                do {
+                    return try ChannelId(cid: $0)
+                } catch {
+                    log.error("Failed to decode `ChannelId` from \($0).")
+                    return nil
+                }
+            }
+            
             guard !channelIds.isEmpty else { return }
-            let channelListQuery = ChannelListQuery(
-                filter: .in("cid", channelIds),
+            
+            let channelListQuery = ChannelListQuery<ExtraData.Channel>(
+                filter: .in(.cid, values: channelIds),
                 pagination: [.limit(1)],
                 options: [.watch]
             )
