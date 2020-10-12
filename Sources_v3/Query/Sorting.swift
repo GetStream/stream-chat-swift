@@ -34,7 +34,7 @@ public struct Sorting<Key: SortingKey>: Encodable, CustomStringConvertible {
     ///
     /// - Parameters:
     ///     - key: a sorting key.
-    ///     - isAscending: a diration of the sorting.
+    ///     - isAscending: a direction of the sorting.
     public init(key: Key, isAscending: Bool = false) {
         self.key = key
         direction = isAscending ? 1 : -1
@@ -44,15 +44,17 @@ public struct Sorting<Key: SortingKey>: Encodable, CustomStringConvertible {
 // MARK: Channel List Sorting Key
 
 /// `ChannelListSortingKey` is keys by which you can get sorted channels after query.
-public enum ChannelListSortingKey: SortingKey {
+public enum ChannelListSortingKey: String, SortingKey {
     /// The default sorting is by the last massage date or a channel created date. The same as by `updatedDate`.
-    case `default`
-    case cid
-    case type
+    case `default` = "defaultSortingAt"
+    /// Sort channels by date they were created.
     case createdAt
-    case deletedAt
+    /// Sort channels by date they were updated.
+    case updatedAt
+    /// Sort channels by the last message date..
     case lastMessageAt
-    case custom(String)
+    /// Sort channels by number of members.
+    case memberCount
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -60,12 +62,10 @@ public enum ChannelListSortingKey: SortingKey {
         
         switch self {
         case .default: value = "updated_at"
-        case .cid: value = "cid"
-        case .type: value = "type"
         case .createdAt: value = "created_at"
-        case .deletedAt: value = "deleted_at"
+        case .updatedAt: value = "updated_at"
         case .lastMessageAt: value = "last_message_at"
-        case let .custom(string): value = string
+        case .memberCount: value = "member_count"
         }
         
         try container.encode(value)
@@ -79,33 +79,7 @@ extension ChannelListSortingKey {
     }()
     
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
-        var stringKeyPath: KeyPath<ChannelDTO, String>?
-        var dateKeyPath: KeyPath<ChannelDTO, Date>?
-        var optionalDateKeyPath: KeyPath<ChannelDTO, Date?>?
-        
-        switch self {
-        case .default: dateKeyPath = \ChannelDTO.defaultSortingAt
-        case .cid: stringKeyPath = \ChannelDTO.cid
-        case .type: stringKeyPath = \ChannelDTO.typeRawValue
-        case .createdAt: dateKeyPath = \ChannelDTO.createdAt
-        case .deletedAt: optionalDateKeyPath = \ChannelDTO.deletedAt
-        case .lastMessageAt: optionalDateKeyPath = \ChannelDTO.lastMessageAt
-        case .custom: break
-        }
-        
-        if let keyPath = stringKeyPath {
-            return .init(keyPath: keyPath, ascending: isAscending)
-        }
-        
-        if let keyPath = dateKeyPath {
-            return .init(keyPath: keyPath, ascending: isAscending)
-        }
-        
-        if let keyPath = optionalDateKeyPath {
-            return .init(keyPath: keyPath, ascending: isAscending)
-        }
-        
-        return nil
+        .init(key: rawValue, ascending: isAscending)
     }
 }
 
