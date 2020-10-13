@@ -62,6 +62,10 @@ class ConfigurationViewController: UITableViewController {
     @IBAction func donePressed(_ sender: Any) {
         dismiss(animated: true)
     }
+    
+    @IBAction func didEndEditing(_ sender: UITextField) {
+        sender.resignFirstResponder()
+    }
 }
 
 // MARK: - UITableView
