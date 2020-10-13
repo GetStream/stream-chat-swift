@@ -211,6 +211,9 @@
                                                     <rect key="frame" x="118" y="4" width="276" height="34.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="didEndEditing:" destination="cRN-bf-0sE" eventType="primaryActionTriggered" id="tfw-AB-pId"/>
+                                                    </connections>
                                                 </textField>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="API Key" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="O9V-S5-Tu3">
                                                     <rect key="frame" x="52" y="11" width="58" height="21.5"/>
@@ -241,6 +244,9 @@
                                                     <rect key="frame" x="118" y="4" width="276" height="34.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="didEndEditing:" destination="cRN-bf-0sE" eventType="primaryActionTriggered" id="FWT-kP-eat"/>
+                                                    </connections>
                                                 </textField>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Id" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g4c-z5-52n">
                                                     <rect key="frame" x="55" y="11" width="55" height="21.5"/>
@@ -271,6 +277,9 @@
                                                     <rect key="frame" x="118" y="4" width="276" height="34.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="didEndEditing:" destination="cRN-bf-0sE" eventType="primaryActionTriggered" id="XFn-C8-qjQ"/>
+                                                    </connections>
                                                 </textField>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MD7-e5-EhG">
                                                     <rect key="frame" x="24" y="11" width="86" height="21.5"/>
@@ -324,6 +333,9 @@
                                                     <rect key="frame" x="118" y="4" width="276" height="34.5"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits"/>
+                                                    <connections>
+                                                        <action selector="didEndEditing:" destination="cRN-bf-0sE" eventType="primaryActionTriggered" id="kZP-GC-ZqG"/>
+                                                    </connections>
                                                 </textField>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="JWT" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c6J-OZ-Csy">
                                                     <rect key="frame" x="74.5" y="11" width="35.5" height="21.5"/>
