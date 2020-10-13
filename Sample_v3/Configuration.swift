@@ -18,13 +18,38 @@ struct Configuration {
     
     struct DefaultValues {
         static let apiKey = "qk4nn7rpcn75"
-        static let userId = "broken-waterfall-5"
-        static let userName = "Broken Waterfall"
+        static let userId = TestUser.defaults[0].id
+        static let userName = TestUser.defaults[0].name
+        static let token = TestUser.defaults[0].token
         static let baseURL = BaseURL.usEast
-        static let token =
-            "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
         static let isLocalStorageEnabled = true
         static let shouldFlushLocalStorageOnStart = false
+    }
+    
+    struct TestUser {
+        let name: String
+        let id: String
+        let token: String
+        
+        static var defaults: [Self] {
+            [
+                TestUser(
+                    name: "Broken Waterfall",
+                    id: "broken-waterfall-5",
+                    token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
+                ),
+                TestUser(
+                    name: "Suspicious Coyote",
+                    id: "suspicious-coyote-3",
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3VzcGljaW91cy1jb3lvdGUtMyJ9.xVaBHFTexlYPEymPmlgIYCM5M_iQVHrygaGS1QhkaEE"
+                ),
+                TestUser(
+                    name: "Steep Moon",
+                    id: "steep-moon-9",
+                    token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RlZXAtbW9vbi05In0.xwGjOwnTy3r4o2owevNTyzZLWMsMh_bK7e5s1OQ2zXU"
+                )
+            ]
+        }
     }
     
     static var apiKey: String {

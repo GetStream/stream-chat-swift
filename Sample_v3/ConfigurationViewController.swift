@@ -52,28 +52,10 @@ class ConfigurationViewController: UITableViewController {
     }
     
     @IBAction func randomUserPressed(_ sender: Any) {
-        let users = [
-            (
-                name: "Broken Waterfall",
-                id: "broken-waterfall-5",
-                jwt: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
-            ),
-            (
-                name: "Suspicious Coyote",
-                id: "suspicious-coyote-3",
-                jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3VzcGljaW91cy1jb3lvdGUtMyJ9.xVaBHFTexlYPEymPmlgIYCM5M_iQVHrygaGS1QhkaEE"
-            ),
-            (
-                name: "Steep Moon",
-                id: "steep-moon-9",
-                jwt: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RlZXAtbW9vbi05In0.xwGjOwnTy3r4o2owevNTyzZLWMsMh_bK7e5s1OQ2zXU"
-            )
-        ]
-        
-        if let user = users.randomElement() {
+        if let user = Configuration.TestUser.defaults.shuffled().first(where: { $0.id != userId }) {
             userId = user.id
             userName = user.name
-            token = user.jwt
+            token = user.token
         }
     }
     
