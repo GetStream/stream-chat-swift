@@ -6,10 +6,16 @@ import Foundation
 
 /// A namespace for the `FilterKey`s suitable to be used for `ChannelMemberListQuery`. This scope is not aware of any
 /// extra data types.
-public typealias AnyMemberListFilterScope = AnyUserListFilterScope
+public protocol AnyMemberListFilterScope: AnyUserListFilterScope {}
 
 /// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `ChannelMemberListQuery`.
-public typealias MemberListFilterScope<ExtraData: UserExtraData> = UserListFilterScope<ExtraData>
+public class MemberListFilterScope<ExtraData: UserExtraData>: UserListFilterScope<ExtraData>, AnyMemberListFilterScope {}
+
+/// Non extra-data-specific filer keys for member list.
+public extension FilterKey where Scope: AnyMemberListFilterScope {
+    /// A filter key for matching moderators of a channel.
+    static var isModerator: FilterKey<Scope, Bool> { "is_moderator" }
+}
 
 /// A query type used for fetching channel members from the backend.
 public struct ChannelMemberListQuery<ExtraData: UserExtraData>: Encodable {

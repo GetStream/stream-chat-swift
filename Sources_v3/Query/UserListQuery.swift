@@ -8,7 +8,7 @@ import Foundation
 public protocol AnyUserListFilterScope {}
 
 /// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `UserListQuery`.
-public struct UserListFilterScope<ExtraData: UserExtraData>: FilterScope, AnyUserListFilterScope {}
+public class UserListFilterScope<ExtraData: UserExtraData>: FilterScope, AnyUserListFilterScope {}
 
 /// Non extra-data-specific filer keys for channel list.
 public extension FilterKey where Scope: AnyUserListFilterScope {
@@ -49,7 +49,7 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
 }
 
 /// Channel list filter keys for `NameAndImageExtraData`.
-public extension FilterKey where Scope == UserListFilterScope<NameAndImageExtraData> {
+public extension FilterKey where Scope: UserListFilterScope<NameAndImageExtraData> {
     /// A filter key for matching the `name` value.
     static var name: FilterKey<Scope, String> { "name" }
     
