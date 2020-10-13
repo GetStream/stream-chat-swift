@@ -19,13 +19,38 @@ class ConfigurationViewController: UITableViewController {
     @IBOutlet var localStorageEnabledSwitch: UISwitch!
     @IBOutlet var flushLocalStorageSwitch: UISwitch!
     
+    private let jwtCellIndexPath = IndexPath(row: 4, section: 0)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tokenTypeSegmentedControl.addTarget(self, action: #selector(tokenTypeSegmentedControlDidChangeValue), for: .valueChanged)
     }
     
-    @objc func tokenTypeSegmentedControlDidChangeValue() {
+    @objc func tokenTypeSegmentedControlDidChangeValue(_ control: UISegmentedControl) {
         tableView.beginUpdates()
+        
+        switch control.selectedSegmentIndex {
+        case 1:
+            tokenTypeSegmentedControl.selectedSegmentIndex = 1
+            jwtTextField.isEnabled = false
+            if token != .development {
+                tableView.deleteRows(at: [jwtCellIndexPath], with: .top)
+            }
+            jwtTextField.text = nil
+        case 2:
+            tokenTypeSegmentedControl.selectedSegmentIndex = 2
+            jwtTextField.isEnabled = false
+            if token != "" {
+                tableView.deleteRows(at: [jwtCellIndexPath], with: .top)
+            }
+            jwtTextField.text = .development
+        default:
+            tokenTypeSegmentedControl.selectedSegmentIndex = 0
+            jwtTextField.isEnabled = true
+            jwtTextField.text = Configuration.TestUser.defaults.first(where: { $0.id == userId })?.token ?? ""
+            tableView.insertRows(at: [jwtCellIndexPath], with: .top)
+        }
+        
         tableView.endUpdates()
     }
     
@@ -68,23 +93,12 @@ class ConfigurationViewController: UITableViewController {
     }
 }
 
-// MARK: - UITableView
-
 extension ConfigurationViewController {
-    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        switch tableView.cellForRow(at: indexPath) {
-        case jwtCell:
-            return heightForJwtCell()
-        default:
-            return super.tableView(tableView, heightForRowAt: indexPath)
-        }
-    }
-    
-    func heightForJwtCell() -> CGFloat {
-        if tokenTypeSegmentedControl.selectedSegmentIndex != 0 {
-            return 0
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        if section == 0 {
+            return tokenTypeSegmentedControl.selectedSegmentIndex == 0 ? 5 : 4
         } else {
-            return jwtCell.intrinsicContentSize.height
+            return super.tableView(tableView, numberOfRowsInSection: section)
         }
     }
 }
@@ -140,33 +154,8 @@ extension ConfigurationViewController {
     }
 
     var token: Token? {
-        get {
-            switch tokenTypeSegmentedControl.selectedSegmentIndex {
-            case 0:
-                return jwtTextField.text ?? ""
-            case 1:
-                return nil
-            case 2:
-                return .development
-            default:
-                fatalError("Segmented Control out of bounds")
-            }
-        }
-        
-        set {
-            switch newValue {
-            case nil:
-                tokenTypeSegmentedControl.selectedSegmentIndex = 1
-            case Token.development:
-                tokenTypeSegmentedControl.selectedSegmentIndex = 2
-            default:
-                tokenTypeSegmentedControl.selectedSegmentIndex = 0
-                jwtTextField.text = newValue
-            }
-            
-            tableView.beginUpdates()
-            tableView.endUpdates()
-        }
+        get { jwtTextField.text ?? "" }
+        set { jwtTextField.text = newValue }
     }
     
     var isLocalStorageEnabled: Bool {
