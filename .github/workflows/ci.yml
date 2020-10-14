@@ -182,3 +182,46 @@ jobs:
         xcrun simctl list devices 12.4
     - name: Run v3 Tests (Debug - iOS 12.4)
       run: bundle exec fastlane test_v3 device:"iPhone 7 (12.4)"
+
+  build-sample-v3:
+    name: Build v3 Sample
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
+    - name: Build v3 Sample
+      run: bundle exec fastlane build_sample_v3
+
+  build-sample-v3-ios12:
+    name: Build v3 Sample (iOS12.4)
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
+    - name: Prepare iOS 12 simulator
+      run: |
+        sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
+        sudo ln -s /Applications/Xcode_10.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 12.4.simruntime
+        xcrun simctl list runtimes
+        xcrun simctl create custom-test-device "iPhone 7" "com.apple.CoreSimulator.SimRuntime.iOS-12-4"
+        xcrun simctl list devices 12.4
+    - name: Build v3 Sample
+      run: bundle exec fastlane build_sample_v3 device:"iPhone 7 (12.4)"

@@ -339,3 +339,14 @@ lane :stress_test_v3_release do
     )
   }
 end
+
+desc "Builds v3 Sample app"
+lane :build_sample_v3 do |options|
+  scan(
+    project: "StreamChat_v3.xcodeproj",
+    scheme: "Sample",
+    clean: true,
+    build_for_testing: true,
+    devices: options[:device],
+  )
+end
