@@ -241,7 +241,9 @@
 		889B00E5252C972C007709A8 /* ChannelMemberListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */; };
 		889B00E9252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */; };
 		88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A00DCF2525F08000259AB4 /* ModerationEndpoints.swift */; };
+		88BEBCD32536FD7600D9E8B7 /* MemberListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BEBCD22536FD7600D9E8B7 /* MemberListController+Combine.swift */; };
 		88BEBCD62536FDBF00D9E8B7 /* MemberListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BEBCD52536FDBF00D9E8B7 /* MemberListController+SwiftUI.swift */; };
+		88BEBCD92536FDDB00D9E8B7 /* MemberListController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BEBCD82536FDDB00D9E8B7 /* MemberListController+Combine_Tests.swift */; };
 		88BEBCDC2536FDF200D9E8B7 /* MemberListController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BEBCDB2536FDF200D9E8B7 /* MemberListController+SwiftUI_Tests.swift */; };
 		88BEBCE1253704AE00D9E8B7 /* MemberListController_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BEBCE0253704AE00D9E8B7 /* MemberListController_Mock.swift */; };
 		88D85D97252F168000AE1030 /* MemberController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D85D96252F168000AE1030 /* MemberController+SwiftUI.swift */; };
@@ -696,7 +698,9 @@
 		889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQuery_Tests.swift; sourceTree = "<group>"; };
 		889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQueryDTO_Tests.swift; sourceTree = "<group>"; };
 		88A00DCF2525F08000259AB4 /* ModerationEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationEndpoints.swift; sourceTree = "<group>"; };
+		88BEBCD22536FD7600D9E8B7 /* MemberListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListController+Combine.swift"; sourceTree = "<group>"; };
 		88BEBCD52536FDBF00D9E8B7 /* MemberListController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListController+SwiftUI.swift"; sourceTree = "<group>"; };
+		88BEBCD82536FDDB00D9E8B7 /* MemberListController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListController+Combine_Tests.swift"; sourceTree = "<group>"; };
 		88BEBCDB2536FDF200D9E8B7 /* MemberListController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		88BEBCE0253704AE00D9E8B7 /* MemberListController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListController_Mock.swift; sourceTree = "<group>"; };
 		88D85D96252F168000AE1030 /* MemberController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberController+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -1545,6 +1549,8 @@
 				88D85DAA252F3C2A00AE1030 /* MemberListController_Tests.swift */,
 				88BEBCD52536FDBF00D9E8B7 /* MemberListController+SwiftUI.swift */,
 				88BEBCDB2536FDF200D9E8B7 /* MemberListController+SwiftUI_Tests.swift */,
+				88BEBCD22536FD7600D9E8B7 /* MemberListController+Combine.swift */,
+				88BEBCD82536FDDB00D9E8B7 /* MemberListController+Combine_Tests.swift */,
 			);
 			path = MemberListController;
 			sourceTree = "<group>";
@@ -2177,6 +2183,7 @@
 				792FCB4924A3BF38000290C7 /* OptionSet+Extensions.swift in Sources */,
 				79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */,
 				F688643624E6DA8700A71361 /* CurrentUserController.swift in Sources */,
+				88BEBCD32536FD7600D9E8B7 /* MemberListController+Combine.swift in Sources */,
 				888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */,
 				790A4C45252DD4F1001F4A23 /* DevicePayloads.swift in Sources */,
 				792A4F39247FFACB00EAF71D /* WebSocketEngine.swift in Sources */,
@@ -2290,6 +2297,7 @@
 				F62BE7872506525700D13B86 /* MissingEventsRequestBody_Tests.swift in Sources */,
 				79DDF81B249CE38B002F4412 /* AssertNetworkRequest.swift in Sources */,
 				882C575C252C79E900E60C44 /* MemberEndpoints_Tests.swift in Sources */,
+				88BEBCD92536FDDB00D9E8B7 /* MemberListController+Combine_Tests.swift in Sources */,
 				791C0B6324EEBDF40013CA2F /* MessageSender_Tests.swift in Sources */,
 				797EEA4824FFB4C200C81203 /* DataStore_Tests.swift in Sources */,
 				882C574E252C76A400E60C44 /* ChannelMemberListPayload_Tests.swift in Sources */,
