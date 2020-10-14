@@ -2,6 +2,8 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+#if swift(>=5.3)
+
 import Combine
 import StreamChatClient
 import SwiftUI
@@ -16,11 +18,11 @@ struct ChatView: View {
     @State var actionSheetTrigger: Bool = false
     /// Message being edited.
     @State var editingMessage: ChatMessage?
-
+    
     /// User action.
     @State var userActionTrigger: Bool = false
     @State var userAction: ((String) -> Void)?
-
+    
     var body: some View {
         VStack {
             self.messageList().layoutPriority(1)
@@ -134,7 +136,7 @@ struct ChatView: View {
         } else {
             channel.controller.createNewMessage(text: text)
         }
-
+        
         text = ""
     }
     
@@ -143,7 +145,10 @@ struct ChatView: View {
     func actionSheet() -> ActionSheet {
         if let message = editingMessage {
             /// Message ActionSheet with actions that can be taken on `MessageController`. (`deleteMessage`, `editMessage`)
-            let messageController = channel.controller.client.messageController(cid: channel.channel!.cid, messageId: message.id)
+            let messageController = channel.controller.client.messageController(
+                cid: channel.channel!.cid,
+                messageId: message.id
+            )
             return ActionSheet(title: Text("Message Actions"), message: Text(""), buttons: [
                 .default(Text("Edit"), action: { self.editingMessage = message; self.text = message.text }),
                 .destructive(Text("Delete")) { messageController.deleteMessage(); self.editingMessage = nil },
@@ -177,3 +182,5 @@ struct ChatView: View {
         channel.controller.sendStopTypingEvent()
     }
 }
+
+#endif

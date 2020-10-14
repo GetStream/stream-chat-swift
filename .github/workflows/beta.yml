@@ -1,4 +1,4 @@
-name: Beta
+name: Firebase Testing Build (v2)
     
 on:
   push:

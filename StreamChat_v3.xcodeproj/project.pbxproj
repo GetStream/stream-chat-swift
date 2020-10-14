@@ -3,10 +3,11 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
 		790A4C42252DD377001F4A23 /* DeviceEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C41252DD36A001F4A23 /* DeviceEndpoints.swift */; };
 		790A4C45252DD4F1001F4A23 /* DevicePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C44252DD4F1001F4A23 /* DevicePayloads.swift */; };
 		790A4C4A252DDD50001F4A23 /* DeviceEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C47252DDD1A001F4A23 /* DeviceEndpoints_Tests.swift */; };
@@ -90,8 +91,6 @@
 		7964F3BA249A314D002A09EC /* LogDestination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3B5249A314D002A09EC /* LogDestination.swift */; };
 		7964F3BC249A5E60002A09EC /* RequestEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3BB249A5E60002A09EC /* RequestEncoder.swift */; };
 		7964F3BE249A5E6E002A09EC /* RequestEncoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3BD249A5E6E002A09EC /* RequestEncoder_Tests.swift */; };
-		796610B4248E518D00761629 /* Starscream.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC122E9BAC5005CFAC9 /* Starscream.framework */; };
-		796610B5248E518D00761629 /* Starscream.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8AD5EDC122E9BAC5005CFAC9 /* Starscream.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		796610B9248E651800761629 /* EventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796610B8248E651800761629 /* EventMiddleware.swift */; };
 		796610BB248E687000761629 /* EventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796610BA248E687000761629 /* EventMiddleware_Tests.swift */; };
 		79682C4624BC9DAF0071578E /* ChannelUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79682C4524BC9DAF0071578E /* ChannelUpdater.swift */; };
@@ -167,6 +166,7 @@
 		79A0E9BB2498C31300E9BD50 /* TypingStartCleanupMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9B92498C31300E9BD50 /* TypingStartCleanupMiddleware.swift */; };
 		79A0E9BC2498C31A00E9BD50 /* TypingStartCleanupMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9B82498C31300E9BD50 /* TypingStartCleanupMiddleware_Tests.swift */; };
 		79A0E9BE2498C33100E9BD50 /* TypingEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9BD2498C33100E9BD50 /* TypingEvent.swift */; };
+		79A4AE112536EE5500C32A74 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 79A4AE102536EE5500C32A74 /* Starscream */; };
 		79B5517324E593C200CE9FEC /* UserPayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B5517124E593C200CE9FEC /* UserPayloads.swift */; };
 		79B5517524E595CC00CE9FEC /* CurrentUserPayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B5517424E595CC00CE9FEC /* CurrentUserPayloads.swift */; };
 		79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B5517624E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift */; };
@@ -448,20 +448,10 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		796610B6248E518D00761629 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				796610B5248E518D00761629 /* Starscream.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7900452525374CA20096ECA1 /* User+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+SwiftUI.swift"; sourceTree = "<group>"; };
 		790A4C41252DD36A001F4A23 /* DeviceEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceEndpoints.swift; sourceTree = "<group>"; };
 		790A4C44252DD4F1001F4A23 /* DevicePayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePayloads.swift; sourceTree = "<group>"; };
 		790A4C47252DDD1A001F4A23 /* DeviceEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceEndpoints_Tests.swift; sourceTree = "<group>"; };
@@ -914,7 +904,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				796610B4248E518D00761629 /* Starscream.framework in Frameworks */,
+				79A4AE112536EE5500C32A74 /* Starscream in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1347,6 +1337,7 @@
 				799C9431247D2FB9001F1104 /* Message.swift */,
 				794927EC249E0BE2009D7EB7 /* ExtraData.swift */,
 				8AAB1C6524CB39F2009B783F /* UnreadCount.swift */,
+				7900452525374CA20096ECA1 /* User+SwiftUI.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1882,7 +1873,6 @@
 				799C9417247D2F80001F1104 /* Sources */,
 				799C9418247D2F80001F1104 /* Frameworks */,
 				799C9419247D2F80001F1104 /* Resources */,
-				796610B6248E518D00761629 /* Embed Frameworks */,
 				8ABC329924EAC40700CFC920 /* SwiftLint */,
 			);
 			buildRules = (
@@ -1890,6 +1880,9 @@
 			dependencies = (
 			);
 			name = StreamChatClient;
+			packageProductDependencies = (
+				79A4AE102536EE5500C32A74 /* Starscream */,
+			);
 			productName = Sources_v3;
 			productReference = 799C941B247D2F80001F1104 /* StreamChatClient.framework */;
 			productType = "com.apple.product-type.framework";
@@ -1943,6 +1936,9 @@
 				Base,
 			);
 			mainGroup = 8AD5EC8522E9A3E8005CFAC9;
+			packageReferences = (
+				79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */,
+			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2180,6 +2176,7 @@
 				DA4EE59E252B43B700CB26D4 /* NewUserQueryUpdater.swift in Sources */,
 				882C5759252C794900E60C44 /* MemberEndpoints.swift in Sources */,
 				DA640FC12535CFA100D32944 /* ChannelMemberListSortingKey.swift in Sources */,
+				7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */,
 				792FCB4924A3BF38000290C7 /* OptionSet+Extensions.swift in Sources */,
 				79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */,
 				F688643624E6DA8700A71361 /* CurrentUserController.swift in Sources */,
@@ -2642,7 +2639,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -2663,7 +2660,6 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-					"$(SRCROOT)/Carthage/Build/iOS",
 				);
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -2722,7 +2718,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -2737,7 +2733,6 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-					"$(SRCROOT)/Carthage/Build/iOS",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2796,7 +2791,7 @@
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				FRAMEWORK_SEARCH_PATHS = "$(PROJECT_DIR)/Carthage/Build/iOS";
+				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -2811,7 +2806,6 @@
 				LD_RUNPATH_SEARCH_PATHS = (
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
-					"$(SRCROOT)/Carthage/Build/iOS",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
@@ -2941,6 +2935,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/daltoniam/Starscream.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.0.4;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		79A4AE102536EE5500C32A74 /* Starscream */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */;
+			productName = Starscream;
+		};
+/* End XCSwiftPackageProductDependency section */
 
 /* Begin XCVersionGroup section */
 		7922F30424DACEF100C364BC /* TestDataModel.xcdatamodeld */ = {

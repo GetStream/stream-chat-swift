@@ -2,6 +2,8 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+#if swift(>=5.3)
+
 import Combine
 import StreamChatClient
 import SwiftUI
@@ -218,3 +220,5 @@ enum ActiveSheet: Identifiable {
         hashValue
     }
 }
+
+#endif
