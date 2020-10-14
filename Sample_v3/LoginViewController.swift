@@ -107,6 +107,7 @@ extension LoginViewController {
                 alert(title: "iOS 13 required", message: "You need iOS 13 to run this sample.")
             }
         case swiftUICell:
+            #if swift(>=5.3)
             if #available(iOS 14, *) {
                 // Ideally, we'd pass the `Client` instance as the environment object and create the list controller later.
                 UIView.transition(with: self.view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
@@ -120,6 +121,9 @@ extension LoginViewController {
             } else {
                 alert(title: "iOS 14 required", message: "You need iOS 14 to run this sample.")
             }
+            #else
+            alert(title: "Swift 5.3 required", message: "The app needs to be compiled with Swift 5.3 or above.")
+            #endif
         default:
             return
         }

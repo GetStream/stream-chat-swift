@@ -1,4 +1,4 @@
-name: Test-Old-iOS-Versions
+name: Test Old iOS Versions (v2)
 
 on:
   schedule:
