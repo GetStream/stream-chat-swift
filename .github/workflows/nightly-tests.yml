@@ -1,4 +1,4 @@
-name: Stres Tests (v3)
+name: Stress Tests (v3)
 
 on:
   schedule:
@@ -10,12 +10,6 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Cache Carthage dependencies
-      uses: actions/cache@v2
-      id: carthage-cache
-      with:
-        path: Carthage
-        key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
       uses: actions/cache@v1
       id: rubygem-cache
@@ -26,8 +20,6 @@ jobs:
     - name: Install RubyGems
       if: steps.rubygem-cache.outputs.cache-hit != 'true'
       run: bundle install
-    - name: Install Carthage dependencies
-      run: bundle exec fastlane carthage_bootstrap
     - name: Run Stress Tests
       run: bundle exec fastlane stress_test_v3
 
@@ -36,12 +28,6 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Cache Carthage dependencies
-      uses: actions/cache@v2
-      id: carthage-cache
-      with:
-        path: Carthage
-        key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
       uses: actions/cache@v1
       id: rubygem-cache
@@ -52,8 +38,6 @@ jobs:
     - name: Install RubyGems
       if: steps.rubygem-cache.outputs.cache-hit != 'true'
       run: bundle install
-    - name: Install Carthage dependencies
-      run: bundle exec fastlane carthage_bootstrap
     - name: Run Stress Tests
       run: bundle exec fastlane stress_test_v3_release
 
@@ -62,12 +46,6 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
-    - name: Cache Carthage dependencies
-      uses: actions/cache@v2
-      id: carthage-cache
-      with:
-        path: Carthage
-        key: ${{ runner.os }}-carthage-cache-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
       uses: actions/cache@v2
       id: rubygem-cache
@@ -80,8 +58,6 @@ jobs:
       run: bundle install
     - name: Install iOS11.4 runtime
       run: bundle exec xcversion simulators --install='iOS 11.4'
-    - name: Install Carthage dependencies
-      run: bundle exec fastlane carthage_bootstrap
     - name: Run v3 Tests (Debug - iOS 11.4)
       run: bundle exec fastlane test_v3 device:"iPhone 7 (11.4)"
     - name: Post Codecov report

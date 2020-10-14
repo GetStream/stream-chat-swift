@@ -4,6 +4,8 @@
 
 --exclude **/*_Vendor.swift
 
+--ifdef no-indent
+
 # Rules inferred from Swift Standard Library:
 --disable anyObjectProtocol, wrapMultilineStatementBraces
 --indent 4
