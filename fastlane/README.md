@@ -95,6 +95,11 @@ Runs stress tests for v3
 fastlane stress_test_v3_release
 ```
 Runs stress tests for v3 in Release config
+### build_sample_v3
+```
+fastlane build_sample_v3
+```
+Builds v3 Sample app
 
 ----
 
