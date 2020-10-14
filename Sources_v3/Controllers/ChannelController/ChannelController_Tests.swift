@@ -15,7 +15,7 @@ class ChannelController_Tests: StressTestCase {
     
     var controller: ChatChannelController!
     var controllerCallbackQueueID: UUID!
-    /// Workaround for uwrapping **controllerCallbackQueueID!** in each closure that captures it
+    /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
     
     override func setUp() {
@@ -74,7 +74,7 @@ class ChannelController_Tests: StressTestCase {
         // Simulate `synchronize` call.
         controller.synchronize()
         
-        // Simulate successfull network call.
+        // Simulate successful network call.
         env.channelUpdater?.update_completion?(nil)
         
         // Check if state changed after successful network call.
@@ -110,7 +110,7 @@ class ChannelController_Tests: StressTestCase {
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater!.update_completion?(nil)
         
         // Completion should be called
@@ -125,7 +125,7 @@ class ChannelController_Tests: StressTestCase {
             AssertTestQueue(withId: callbackQueueID)
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.update_completion?(testError)
         
@@ -232,8 +232,8 @@ class ChannelController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate an incoming message
-        let newMesageId: MessageId = .unique
-        let newMessagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: newMesageId, authorUserId: .unique)
+        let newMessageId: MessageId = .unique
+        let newMessagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: newMessageId, authorUserId: .unique)
         _ = try await {
             client.databaseContainer.write({ session in
                 try session.saveMessage(payload: newMessagePayload, for: self.channelId)
@@ -241,7 +241,7 @@ class ChannelController_Tests: StressTestCase {
         }
         
         // Assert the new message is presented
-        AssertAsync.willBeTrue(controller.messages.contains { $0.id == newMesageId })
+        AssertAsync.willBeTrue(controller.messages.contains { $0.id == newMessageId })
     }
 
     func test_messagesHaveCorrectOrder() throws {
@@ -261,8 +261,8 @@ class ChannelController_Tests: StressTestCase {
         controller.listOrdering = .topToBottom
         
         // Check the order of messages is correct
-        let topToBotttomIds = [message1, message2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
-        XCTAssertEqual(controller.messages.map(\.id), topToBotttomIds)
+        let topToBottomIds = [message1, message2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
+        XCTAssertEqual(controller.messages.map(\.id), topToBottomIds)
         
         // Set bottom-to-top ordering
         controller.listOrdering = .bottomToTop
@@ -386,7 +386,7 @@ class ChannelController_Tests: StressTestCase {
         }
     }
     
-    func test_channelMemberEvents_areForwaredToDelegate() throws {
+    func test_channelMemberEvents_areForwardedToDelegate() throws {
         let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
         controller.delegate = delegate
         
@@ -402,7 +402,7 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
     }
     
-    func test_channelMemberEvents_areForwaredToGenericDelegate() throws {
+    func test_channelMemberEvents_areForwardedToGenericDelegate() throws {
         let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         
@@ -410,7 +410,7 @@ class ChannelController_Tests: StressTestCase {
         controller.synchronize()
         
         // Send notification with event happened in the observed channel
-        let event = TestMemberEvent(cid: controller.channelQuery.cid, userId: .unique)
+        let event = TestMemberEvent(cid: controller.cid!, userId: .unique)
         let notification = Notification(newEventReceived: event, sender: self)
         client.webSocketClient.eventNotificationCenter.post(notification)
         
@@ -418,7 +418,7 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
     }
     
-    func test_channelTypingEvents_areForwaredToDelegate() throws {
+    func test_channelTypingEvents_areForwardedToDelegate() throws {
         let memberId: UserId = .unique
         // Create channel in the database
         try client.databaseContainer.createChannel(cid: channelId)
@@ -448,7 +448,7 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(delegate.didChangeTypingMembers_typingMembers, [typingMember])
     }
     
-    func test_channelTypingEvents_areForwaredToGenericDelegate() throws {
+    func test_channelTypingEvents_areForwardedToGenericDelegate() throws {
         let memberId: UserId = .unique
         // Create channel in the database
         try client.databaseContainer.createChannel(cid: channelId)
@@ -474,7 +474,7 @@ class ChannelController_Tests: StressTestCase {
             client.databaseContainer.viewContext.member(userId: memberId, cid: channelId)!.asModel()
         }
         
-        // Assert the delegate receives typing memeber
+        // Assert the delegate receives typing member
         AssertAsync.willBeEqual(delegate.didChangeTypingMembers_typingMembers, [typingMember])
     }
     
@@ -584,7 +584,7 @@ class ChannelController_Tests: StressTestCase {
         // Assert payload is passed to `channelUpdater`, completion is not called yet
         XCTAssertNotNil(env.channelUpdater!.updateChannel_payload)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater!.updateChannel_completion?(nil)
         
         // Assert completion is called
@@ -599,7 +599,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.updateChannel_completion?(testError)
         
@@ -652,7 +652,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(env.channelUpdater!.muteChannel_mute, true)
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater!.muteChannel_completion?(nil)
         
         // Assert completion is called
@@ -667,7 +667,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.muteChannel_completion?(testError)
         
@@ -720,7 +720,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(env.channelUpdater!.muteChannel_mute, false)
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater!.muteChannel_completion?(nil)
         
         // Assert completion is called
@@ -735,7 +735,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.muteChannel_completion?(testError)
         
@@ -786,7 +786,7 @@ class ChannelController_Tests: StressTestCase {
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater?.deleteChannel_completion?(nil)
         
         // Completion should be called
@@ -803,7 +803,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.deleteChannel_completion?(testError)
         
@@ -827,8 +827,8 @@ class ChannelController_Tests: StressTestCase {
         }
         XCTAssert(error is ClientError.ChannelNotCreatedYet)
 
-        // Simulate succsesfull backend channel creation
-        env.channelUpdater!.update_channelCreatedCallback?(query.cid)
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `hideChannel` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
@@ -854,7 +854,7 @@ class ChannelController_Tests: StressTestCase {
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater?.hideChannel_completion?(nil)
         
         // Completion should be called
@@ -873,7 +873,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.hideChannel_completion?(testError)
         
@@ -924,7 +924,7 @@ class ChannelController_Tests: StressTestCase {
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater?.showChannel_completion?(nil)
         
         // Completion should be called
@@ -942,7 +942,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.showChannel_completion?(testError)
         
@@ -988,7 +988,7 @@ class ChannelController_Tests: StressTestCase {
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater?.update_completion?(nil)
         
         // Completion should be called
@@ -1029,7 +1029,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.update_completion?(testError)
         
@@ -1037,7 +1037,7 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
-    func test_loadPreviousMessages_callsChannelUdpdate() throws {
+    func test_loadPreviousMessages_callsChannelUpdate() throws {
         var error: Error?
         var messageId: MessageId?
         
@@ -1060,7 +1060,7 @@ class ChannelController_Tests: StressTestCase {
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater?.update_completion?(nil)
         
         // Completion should be called
@@ -1101,7 +1101,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.update_completion?(testError)
         
@@ -1123,7 +1123,7 @@ class ChannelController_Tests: StressTestCase {
         // Check keystroke cid.
         XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.eventSender!.keystroke_completion!(testError)
         
@@ -1143,7 +1143,7 @@ class ChannelController_Tests: StressTestCase {
         // Check `startTyping` cid.
         XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.eventSender!.startTyping_completion!(testError)
         
@@ -1163,7 +1163,7 @@ class ChannelController_Tests: StressTestCase {
         // Check `stopTyping` cid.
         XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.eventSender!.stopTyping_completion!(testError)
         
@@ -1202,7 +1202,7 @@ class ChannelController_Tests: StressTestCase {
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater?.createNewMessage_completion?(.success(newMessageId))
         
         // Completion should be called
@@ -1292,14 +1292,14 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(env.channelUpdater!.addMembers_userIds, members)
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater!.addMembers_completion?(nil)
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
     }
     
-    func test_addMembers_propagesErrorFromUpdater() {
+    func test_addMembers_propagatesErrorFromUpdater() {
         let members: Set<UserId> = [.unique]
         
         // Simulate `addMembers` call and catch the completion
@@ -1309,7 +1309,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.addMembers_completion?(testError)
         
@@ -1365,7 +1365,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(env.channelUpdater!.removeMembers_userIds, members)
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater!.removeMembers_completion?(nil)
         
         // Assert completion is called
@@ -1382,7 +1382,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.removeMembers_completion?(testError)
         
@@ -1434,14 +1434,14 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(env.channelUpdater!.markRead_cid, channelId)
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelUpdater!.markRead_completion?(nil)
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
     }
     
-    func test_markRead_propagesErrorFromUpdater() {
+    func test_markRead_propagatesErrorFromUpdater() {
         // Simulate `markRead` call and catch the completion
         var completionCalledError: Error?
         controller.markRead { [callbackQueueID] in
@@ -1449,7 +1449,7 @@ class ChannelController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.markRead_completion?(testError)
         
@@ -1474,7 +1474,7 @@ private class TestEnvironment {
     )
 }
 
-/// A concrete `ChanneControllerDelegate` implementation allowing capturing the delegate calls
+/// A concrete `ChannelControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChatChannelControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var willStartFetchingRemoteDataCalledCounter = 0
