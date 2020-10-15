@@ -41,14 +41,20 @@ final class ChannelEndpoints_Tests: XCTestCase {
     }
     
     func test_channel_buildsCorrectly() {
-        let channelID = ChannelId(type: .livestream, id: "qwerty")
+        let cid = ChannelId(type: .livestream, id: "qwerty")
+        
+        func channelQuery(options: QueryOptions) -> ChannelQuery<DefaultExtraData> {
+            var query: ChannelQuery<DefaultExtraData> = .init(cid: cid)
+            query.options = options
+            return query
+        }
         
         let testCases: [(ChannelQuery<DefaultExtraData>, Bool)] = [
-            (.init(cid: channelID, options: .state), true),
-            (.init(cid: channelID, options: .presence), true),
-            (.init(cid: channelID, options: .watch), true),
-            (.init(cid: channelID, options: .all), true),
-            (.init(cid: channelID, options: []), false)
+            (channelQuery(options: .state), true),
+            (channelQuery(options: .presence), true),
+            (channelQuery(options: .watch), true),
+            (channelQuery(options: .all), true),
+            (channelQuery(options: []), false)
         ]
         
         for (query, requiresConnectionId) in testCases {
