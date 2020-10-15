@@ -162,7 +162,7 @@ public extension _ChatUserListController {
         completion: ((Error?) -> Void)? = nil
     ) {
         var updatedQuery = query
-        updatedQuery.pagination = [.limit(limit), .offset(users.count)]
+        updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)
         worker.update(userListQuery: updatedQuery) { [weak self] error in
             self?.callback { completion?(error) }
         }

@@ -39,25 +39,24 @@ class UserListQuery_Tests: XCTestCase {
     func test_UserListQuery_encodedCorrectly() throws {
         let filter: Filter<UserListFilterScope<NameAndImageExtraData>> = .equal(.id, to: "luke")
         let sort: [Sorting<UserListSortingKey>] = [.init(key: .lastActivityAt)]
-        let pagination: Pagination = .init(arrayLiteral: .offset(3))
 
         // Create UserListQuery
         let query = UserListQuery(
             filter: filter,
             sort: sort,
-            pagination: pagination
+            pageSize: 23
         )
 
         let expectedData: [String: Any] = [
             "presence": true,
-            "offset": 3,
+            "limit": 23,
             "filter_conditions": ["id": ["$eq": "luke"]],
             "sort": [["field": "last_active", "direction": -1]]
         ]
 
         let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
         let encodedJSON = try JSONEncoder.default.encode(query)
-
+        
         // Assert UserListQuery encoded correctly
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
