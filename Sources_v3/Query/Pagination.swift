@@ -4,70 +4,74 @@
 
 import Foundation
 
-public typealias Pagination = Set<PaginationOption>
-
-public extension Pagination {
-    var limit: Int? {
-        first(where: { $0.limit != nil })?.limit
-    }
-    
-    var offset: Int? {
-        first(where: { $0.offset != nil })?.offset
-    }
-    
-    func encode(to encoder: Encoder) throws {
-        try forEach { try $0.encode(to: encoder) }
-    }
-}
-
-public extension KeyedEncodingContainer {
-    mutating func encode(_ value: Pagination, forKey key: Self.Key) throws {
-        let encoder = superEncoder(forKey: key)
-        try value.forEach { try $0.encode(to: encoder) }
-    }
-}
-
-/// Pagination options.
-///
-/// For example:
-/// ```
-/// // Limit by 20.
-/// var pagination = Pagination.limit(20)
-/// // add the offset to the limit:
-/// pagination += .offset(40)
-///
-/// // Another pagination:
-/// let pagination = Pagination.limit(50) + .lessThan("some_id")
-/// ```
-public enum PaginationOption: Encodable, Hashable {
+public extension Int {
     /// A default channels page size.
-    public static let channelsPageSize: Self = .limit(20)
-    /// A default channels page sizefor the next page.
-    public static let channelsNextPageSize: Self = .limit(30)
+    static let channelsPageSize = 20
     /// A default messages page size.
-    public static let messagesPageSize: Self = .limit(25)
-    /// A default messages page size for the next page.
-    public static let messagesNextPageSize: Self = .limit(50)
+    static let messagesPageSize = 25
     /// A default users page size.
-    public static let usersPageSize: Self = .limit(30)
+    static let usersPageSize = 30
     /// A default channel members page size.
-    public static let channelMembersPageSize: Self = .limit(30)
+    static let channelMembersPageSize = 30
+}
+
+/// Basic pagination with `pageSize` and `offset`.
+/// Used everywhere except `ChannelQuery`. (See `MessagesPagination`)
+public struct Pagination: Encodable, Equatable {
+    /// A page size.
+    let pageSize: Int
+    /// An offset.
+    let offset: Int?
     
     private enum CodingKeys: String, CodingKey {
-        case limit
+        case pageSize = "limit"
         case offset
+    }
+    
+    init(pageSize: Int, offset: Int? = nil) {
+        self.pageSize = pageSize
+        self.offset = offset
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(pageSize, forKey: .pageSize)
+        try offset.map { try container.encode($0, forKey: .offset) }
+    }
+}
+
+public struct MessagesPagination: Encodable, Equatable {
+    /// A page size
+    let pageSize: Int?
+    /// Parameter for pagination.
+    let parameter: PaginationParameter?
+    
+    /// Failable initializer for attempts of creating invalid pagination.
+    init?(pageSize: Int? = nil, parameter: PaginationParameter? = nil) {
+        guard pageSize != nil, parameter != nil else { return nil }
+        self.pageSize = pageSize
+        self.parameter = parameter
+    }
+    
+    private enum CodingKeys: String, CodingKey {
+        case pageSize = "limit"
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(pageSize, forKey: .pageSize)
+        try parameter.map { try $0.encode(to: encoder) }
+    }
+}
+
+/// Pagination parameters
+public enum PaginationParameter: Encodable, Hashable {
+    private enum CodingKeys: String, CodingKey {
         case greaterThan = "id_gt"
         case greaterThanOrEqual = "id_gte"
         case lessThan = "id_lt"
         case lessThanOrEqual = "id_lte"
     }
-    
-    /// The amount of items requested from the APIs.
-    case limit(_ limit: Int)
-    
-    /// The offset of requesting items.
-    /// - Note: Using `lessThan` or `lessThanOrEqual` for pagination is preferable to using `offset`.
-    case offset(_ offset: Int)
     
     /// Filter on ids greater than the given value.
     case greaterThan(_ id: String)
@@ -80,32 +84,10 @@ public enum PaginationOption: Encodable, Hashable {
     
     /// Filter on ids smaller than or equal to the given value.
     case lessThanOrEqual(_ id: String)
-    
-    /// A limit value, if the pagination has it or nil.
-    public var limit: Int? {
-        if case let .limit(limit) = self {
-            return limit
-        }
-        
-        return nil
-    }
-    
-    /// An offset value, if the pagination has it or nil.
-    public var offset: Int? {
-        if case let .offset(offset) = self {
-            return offset
-        }
-        
-        return nil
-    }
-    
+
     /// Parameters for a request.
     var parameters: [String: Any] {
         switch self {
-        case let .limit(limit):
-            return ["limit": limit]
-        case let .offset(offset):
-            return ["offset": offset]
         case let .greaterThan(id):
             return ["id_gt": id]
         case let .greaterThanOrEqual(id):
@@ -121,10 +103,6 @@ public enum PaginationOption: Encodable, Hashable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         
         switch self {
-        case let .limit(limit):
-            try container.encode(limit, forKey: .limit)
-        case let .offset(offset):
-            try container.encode(offset, forKey: .offset)
         case let .greaterThan(id):
             try container.encode(id, forKey: .greaterThan)
         case let .greaterThanOrEqual(id):
@@ -138,9 +116,6 @@ public enum PaginationOption: Encodable, Hashable {
     
     public static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
-        case let (.limit(value1), .limit(value2)),
-             let (.offset(value1), .offset(value2)):
-            return value1 == value2
         case let (.greaterThan(value1), .greaterThan(value2)),
              let (.greaterThanOrEqual(value1), .greaterThanOrEqual(value2)),
              let (.lessThan(value1), .lessThan(value2)),
