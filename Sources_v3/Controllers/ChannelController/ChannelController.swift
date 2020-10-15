@@ -13,8 +13,8 @@ extension _ChatClient {
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
-    public func channelController(for cid: ChannelId, options: QueryOptions = .all) -> _ChatChannelController<ExtraData> {
-        .init(channelQuery: .init(cid: cid, options: options), client: self)
+    public func channelController(for cid: ChannelId) -> _ChatChannelController<ExtraData> {
+        .init(channelQuery: .init(cid: cid), client: self)
     }
     
     /// Creates a new `ChatChannelController` for the channel with the provided channel query.

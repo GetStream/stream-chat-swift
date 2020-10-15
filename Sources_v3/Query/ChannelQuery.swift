@@ -24,7 +24,7 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     /// A pagination for watchers (see `Pagination`). You can use `.limit` and `.offset`.
     public let watchersPagination: Pagination
     /// A query options.
-    public let options: QueryOptions
+    var options: QueryOptions = .all
     /// ChannelCreatePayload that is needed only when creating channel
     let channelPayload: ChannelEditDetailPayload<ExtraData>?
     
@@ -51,8 +51,7 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
         cid: ChannelId,
         messagesPagination: Pagination = [],
         membersPagination: Pagination = [],
-        watchersPagination: Pagination = [],
-        options: QueryOptions = []
+        watchersPagination: Pagination = []
     ) {
         id = cid.id
         type = cid.type
@@ -60,24 +59,18 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
         self.messagesPagination = messagesPagination
         self.membersPagination = membersPagination
         self.watchersPagination = watchersPagination
-        self.options = options
     }
 
     /// Init a channel query.
     /// - Parameters:
     ///   - channelPayload: a payload that has data needed for channel creation.
-    ///   - options: a query options (see `QueryOptions`).
-    init(
-        channelPayload: ChannelEditDetailPayload<ExtraData>,
-        options: QueryOptions = []
-    ) {
+    init(channelPayload: ChannelEditDetailPayload<ExtraData>) {
         id = channelPayload.id
         type = channelPayload.type
         self.channelPayload = channelPayload
         messagesPagination = []
         membersPagination = []
         watchersPagination = []
-        self.options = options
     }
 
     /// Init a channel query.
@@ -89,8 +82,7 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
             cid: cid,
             messagesPagination: channelQuery.messagesPagination,
             membersPagination: channelQuery.membersPagination,
-            watchersPagination: channelQuery.watchersPagination,
-            options: channelQuery.options
+            watchersPagination: channelQuery.watchersPagination
         )
     }
 
