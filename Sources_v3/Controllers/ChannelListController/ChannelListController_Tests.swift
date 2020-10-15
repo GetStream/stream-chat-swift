@@ -292,7 +292,7 @@ class ChannelListController_Tests: StressTestCase {
         // Assert correct `Pagination` is created
         XCTAssertEqual(
             env!.channelListUpdater?.update_queries.first?.pagination,
-            [.limit(limit), .offset(controller.channels.count)]
+            .init(pageSize: limit, offset: controller.channels.count)
         )
     }
     

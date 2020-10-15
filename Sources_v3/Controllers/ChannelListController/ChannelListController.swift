@@ -162,7 +162,7 @@ public extension _ChatChannelListController {
         completion: ((Error?) -> Void)? = nil
     ) {
         var updatedQuery = query
-        updatedQuery.pagination = [.limit(limit), .offset(channels.count)]
+        updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
         worker.update(channelListQuery: updatedQuery) { [weak self] error in
             self?.callback { completion?(error) }
         }

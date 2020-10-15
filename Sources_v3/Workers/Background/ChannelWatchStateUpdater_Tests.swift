@@ -76,7 +76,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
         
         let query: ChannelListQuery<NameAndImageExtraData> = .init(
             filter: .in(.cid, values: [cid]),
-            pagination: [.limit(1)],
+            pageSize: 1
         )
         
         let endpoint: Endpoint<ChannelListPayload<ExtraData>> = .channels(query: query)
