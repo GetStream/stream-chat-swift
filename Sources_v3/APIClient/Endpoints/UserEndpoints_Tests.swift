@@ -9,8 +9,7 @@ final class UserEndpoints_Tests: XCTestCase {
     func test_users_buildsCorrectly() {
         let query: UserListQuery<DefaultExtraData.User> = .init(
             filter: .equal(.id, to: .unique),
-            sort: [.init(key: .lastActivityAt)],
-            pagination: [.offset(3)]
+            sort: [.init(key: .lastActivityAt)]
         )
         
         let expectedEndpoint = Endpoint<UserListPayload<DefaultExtraData.User>>(
