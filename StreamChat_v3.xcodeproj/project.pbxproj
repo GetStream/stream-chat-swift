@@ -341,6 +341,7 @@
 		DA640FBB2535CF8500D32944 /* ChannelListSortingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA640FBA2535CF8500D32944 /* ChannelListSortingKey.swift */; };
 		DA640FBE2535CF9200D32944 /* UserListSortingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA640FBD2535CF9200D32944 /* UserListSortingKey.swift */; };
 		DA640FC12535CFA100D32944 /* ChannelMemberListSortingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA640FC02535CFA100D32944 /* ChannelMemberListSortingKey.swift */; };
+		DA6AC7F62538725B009C1B39 /* Pagination_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6AC7F22538724F009C1B39 /* Pagination_Tests.swift */; };
 		DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */; };
 		DA8407002524F778005A0F62 /* UserListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8406FF2524F778005A0F62 /* UserListController.swift */; };
 		DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8407022524F7E6005A0F62 /* UserListUpdater.swift */; };
@@ -808,6 +809,7 @@
 		DA640FBA2535CF8500D32944 /* ChannelListSortingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSortingKey.swift; sourceTree = "<group>"; };
 		DA640FBD2535CF9200D32944 /* UserListSortingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListSortingKey.swift; sourceTree = "<group>"; };
 		DA640FC02535CFA100D32944 /* ChannelMemberListSortingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListSortingKey.swift; sourceTree = "<group>"; };
+		DA6AC7F22538724F009C1B39 /* Pagination_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pagination_Tests.swift; sourceTree = "<group>"; };
 		DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload_Tests.swift; sourceTree = "<group>"; };
 		DA8406FF2524F778005A0F62 /* UserListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListController.swift; sourceTree = "<group>"; };
 		DA8407022524F7E6005A0F62 /* UserListUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListUpdater.swift; sourceTree = "<group>"; };
@@ -1097,6 +1099,7 @@
 				792A4F432480107A00EAF71D /* Filter.swift */,
 				7964F3A9249A19EA002A09EC /* Filter_Tests.swift */,
 				792A4F442480107A00EAF71D /* Pagination.swift */,
+				DA6AC7F22538724F009C1B39 /* Pagination_Tests.swift */,
 				DA640FB72535CF6600D32944 /* Sorting */,
 			);
 			path = Query;
@@ -2400,6 +2403,7 @@
 				79A0E9BC2498C31A00E9BD50 /* TypingStartCleanupMiddleware_Tests.swift in Sources */,
 				796610BB248E687000761629 /* EventMiddleware_Tests.swift in Sources */,
 				DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */,
+				DA6AC7F62538725B009C1B39 /* Pagination_Tests.swift in Sources */,
 				79CD959624F9414700E87377 /* ChannelListController+SwiftUI_Tests.swift in Sources */,
 				7988F6B124D010890004219B /* TestRunnerEnvironment.swift in Sources */,
 				799C9469247D791A001F1104 /* AssertResult.swift in Sources */,
