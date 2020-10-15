@@ -73,7 +73,7 @@ public struct UserListQuery<ExtraData: UserExtraData>: Encodable {
     public let sort: [Sorting<UserListSortingKey>]
     
     /// A pagination.
-    public var pagination: Pagination
+    public var pagination: Pagination?
     
     /// Query options. By default the query options contain `presence`.
     var options: QueryOptions = [.presence]
@@ -82,15 +82,15 @@ public struct UserListQuery<ExtraData: UserExtraData>: Encodable {
     /// - Parameters:
     ///   - filter: a users filter. Empty filter will return all users.
     ///   - sort: a sorting list for users.
-    ///   - pagination: a users pagination.
+    ///   - pageSize: a page size for pagination.
     public init(
         filter: Filter<UserListFilterScope<ExtraData>>? = nil,
         sort: [Sorting<UserListSortingKey>] = [],
-        pagination: Pagination = [.usersPageSize]
+        pageSize: Int = .usersPageSize
     ) {
         self.filter = filter
         self.sort = sort
-        self.pagination = pagination
+        pagination = Pagination(pageSize: pageSize)
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -106,7 +106,7 @@ public struct UserListQuery<ExtraData: UserExtraData>: Encodable {
             try container.encode(sort, forKey: .sort)
         }
         
-        try pagination.encode(to: encoder)
+        try pagination.map { try $0.encode(to: encoder) }
         try options.encode(to: encoder)
     }
 }

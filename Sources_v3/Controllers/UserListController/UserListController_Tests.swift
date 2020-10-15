@@ -284,7 +284,10 @@ class UserListController_Tests: StressTestCase {
         AssertAsync.willBeTrue(completionCalled)
         
         // Assert correct `Pagination` is created
-        XCTAssertEqual(env!.userListUpdater?.update_queries.first?.pagination, [.limit(limit), .offset(controller.users.count)])
+        XCTAssertEqual(
+            env!.userListUpdater?.update_queries.first?.pagination,
+            .init(pageSize: limit, offset: controller.users.count)
+        )
     }
     
     func test_loadNextUsers_callsUserUpdaterWithError() {
