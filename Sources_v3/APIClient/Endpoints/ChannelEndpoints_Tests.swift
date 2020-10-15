@@ -9,12 +9,18 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_channels_buildsCorrectly() {
         let filter: Filter<ChannelListFilterScope<NameAndImageExtraData>> = .containMembers(userIds: [.unique])
         
+        func channelListQuery(options: QueryOptions) -> ChannelListQuery<NameAndImageExtraData> {
+            var query: ChannelListQuery<NameAndImageExtraData> = .init(filter: filter)
+            query.options = options
+            return query
+        }
+        
         let testCases: [(ChannelListQuery<NameAndImageExtraData>, Bool)] = [
-            (.init(filter: filter, options: .state), true),
-            (.init(filter: filter, options: .presence), true),
-            (.init(filter: filter, options: .watch), true),
-            (.init(filter: filter, options: .all), true),
-            (.init(filter: filter, options: []), false)
+            (channelListQuery(options: .state), true),
+            (channelListQuery(options: .presence), true),
+            (channelListQuery(options: .watch), true),
+            (channelListQuery(options: .all), true),
+            (channelListQuery(options: []), false)
         ]
         
         for (query, requiresConnectionId) in testCases {

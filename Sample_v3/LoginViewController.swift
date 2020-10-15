@@ -64,8 +64,7 @@ extension LoginViewController {
         let channelListController = chatClient.channelListController(
             query: ChannelListQuery(
                 filter: .containMembers(userIds: [chatClient.currentUserId]),
-                pagination: [.limit(25)],
-                options: [.watch]
+                pagination: [.limit(25)]
             )
         )
         
