@@ -413,7 +413,7 @@ final class MemberListController_Tests: StressTestCase {
     func test_loadNextMembers_callsUserUpdaterWithCorrectValues_and_updatesTheQuery() {
         let limit = 10
         let oldPagination = controller.query.pagination
-        let newPagination: Pagination = [.limit(limit), .offset(controller.members.count)]
+        let newPagination: Pagination = .init(pageSize: limit, offset: controller.members.count)
         
         // Simulate `loadNextMembers` call.
         controller.loadNextMembers(limit: limit)

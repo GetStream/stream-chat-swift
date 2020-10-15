@@ -166,7 +166,7 @@ public extension _ChatChannelMemberListController {
         completion: ((Error?) -> Void)? = nil
     ) {
         var updatedQuery = query
-        updatedQuery.pagination = [.limit(limit), .offset(members.count)]
+        updatedQuery.pagination = Pagination(pageSize: limit, offset: members.count)
         memberListUpdater.load(updatedQuery) { [weak self] error in
             self?.query = updatedQuery
             self?.callback {

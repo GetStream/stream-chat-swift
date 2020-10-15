@@ -10,8 +10,7 @@ final class MemberEndpoints_Tests: XCTestCase {
         let query = ChannelMemberListQuery<NameAndImageExtraData>(
             cid: .unique,
             filter: .equal(.id, to: "Luke"),
-            sort: [.init(key: .createdAt)],
-            pagination: [.offset(3)]
+            sort: [.init(key: .createdAt)]
         )
         
         let expectedEndpoint = Endpoint<ChannelMemberListPayload<DefaultExtraData.User>>(

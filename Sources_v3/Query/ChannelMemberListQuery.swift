@@ -40,17 +40,17 @@ public struct ChannelMemberListQuery<ExtraData: UserExtraData>: Encodable {
     ///   - cid: The channel identifier.
     ///   - filter: The members filter. Empty filter will return all users.
     ///   - sort: The sorting for members list.
-    ///   - pagination: The pagination.
+    ///   - pageSize: The page size for pagination.
     public init(
         cid: ChannelId,
         filter: Filter<MemberListFilterScope<ExtraData>>? = nil,
         sort: [Sorting<ChannelMemberListSortingKey>] = [],
-        pagination: Pagination = [.channelMembersPageSize]
+        pageSize: Int = .channelMembersPageSize
     ) {
         self.cid = cid
         self.filter = filter
         self.sort = sort
-        self.pagination = pagination
+        pagination = Pagination(pageSize: pageSize)
     }
     
     public func encode(to encoder: Encoder) throws {
