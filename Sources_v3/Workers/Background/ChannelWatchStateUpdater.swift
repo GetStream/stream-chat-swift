@@ -51,8 +51,7 @@ final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: Worker {
             
             let channelListQuery = ChannelListQuery<ExtraData.Channel>(
                 filter: .in(.cid, values: channelIds),
-                pagination: [.limit(1)],
-                options: [.watch]
+                pagination: [.limit(1)]
             )
             
             self?.apiClient.request(

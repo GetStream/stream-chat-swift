@@ -87,7 +87,7 @@ public struct ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
     /// A number of messages inside each channel.
     public let messagesLimit: Pagination
     /// Query options.
-    public let options: QueryOptions
+    var options: QueryOptions = [.watch]
     
     /// Init a channels query.
     /// - Parameters:
@@ -95,19 +95,16 @@ public struct ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
     ///   - sort: a sorting list for channels.
     ///   - pagination: a channels pagination.
     ///   - messagesLimit: a messages pagination for the each channel.
-    ///   - options: a query options (see `QueryOptions`).
     public init(
         filter: Filter<ChannelListFilterScope<ExtraData>>,
         sort: [Sorting<ChannelListSortingKey>] = [],
         pagination: Pagination = [.channelsPageSize],
-        messagesLimit: Pagination = [.messagesPageSize],
-        options: QueryOptions = []
+        messagesLimit: Pagination = [.messagesPageSize]
     ) {
         self.filter = filter
         self.sort = sort
         self.pagination = pagination
         self.messagesLimit = messagesLimit
-        self.options = options
     }
     
     public func encode(to encoder: Encoder) throws {
