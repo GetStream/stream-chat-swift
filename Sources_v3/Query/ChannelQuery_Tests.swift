@@ -9,27 +9,25 @@ class ChannelQuery_Tests: XCTestCase {
     // Test ChannelQuery encoded correctly
     func test_channelQuery_encodedCorrectly() throws {
         let cid: ChannelId = .unique
-        let messagesPagination = Pagination(arrayLiteral: .offset(3))
-        let membersPagination = Pagination(arrayLiteral: .offset(4))
-        let watchersPagination = Pagination(arrayLiteral: .offset(5))
-        let options: QueryOptions = .all
+        let paginationParameter: PaginationParameter = .lessThan("testId")
+        let membersLimit = 10
+        let watchersLimit = 10
 
         // Create ChannelQuery
         let query = ChannelQuery<DefaultExtraData>(
             cid: cid,
-            messagesPagination: messagesPagination,
-            membersPagination: membersPagination,
-            watchersPagination: watchersPagination,
-            options: options
+            paginationParameter: paginationParameter,
+            membersLimit: membersLimit,
+            watchersLimit: watchersLimit
         )
 
         let expectedData: [String: Any] = [
             "presence": true,
             "watch": true,
             "state": true,
-            "messages": ["offset": 3],
-            "members": ["offset": 4],
-            "watchers": ["offset": 5]
+            "messages": ["limit": 25, "id_lt": "testId"],
+            "members": ["limit": 10],
+            "watchers": ["limit": 10]
         ]
 
         let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])

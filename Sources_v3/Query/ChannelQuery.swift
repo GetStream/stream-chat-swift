@@ -17,12 +17,12 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     public let id: String?
     /// Channel type this query handles.
     public let type: ChannelType
-    /// A pagination for messages (see `Pagination`).
-    public var messagesPagination: Pagination
-    /// A pagination for members (see `Pagination`). You can use `.limit` and `.offset`.
-    public let membersPagination: Pagination
-    /// A pagination for watchers (see `Pagination`). You can use `.limit` and `.offset`.
-    public let watchersPagination: Pagination
+    /// A pagination for messages (see `MessagesPagination`).
+    public var pagination: MessagesPagination?
+    /// A number of members for the channel to be retrieved.
+    public let membersLimit: Int?
+    /// A number of watchers for the channel to be retrieved.
+    public let watchersLimit: Int?
     /// A query options.
     var options: QueryOptions = .all
     /// ChannelCreatePayload that is needed only when creating channel
@@ -43,22 +43,24 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     /// Init a channel query.
     /// - Parameters:
     ///   - cid: a channel cid.
-    ///   - messagesPagination: a pagination for messages.
-    ///   - membersPagination: a pagination for members. You can use `.limit` and `.offset`.
-    ///   - watchersPagination: a pagination for watchers. You can use `.limit` and `.offset`.
-    ///   - options: a query options (see `QueryOptions`).
+    ///   - pageSize: a page size for pagination.
+    ///   - paginationOptions: an advanced options for pagination. (see `PaginationOption`)
+    ///   - membersLimit: a number of members for the channel  to be retrieved.
+    ///   - watchersLimit: a number of watchers for the channel to be retrieved.
     public init(
         cid: ChannelId,
-        messagesPagination: Pagination = [],
-        membersPagination: Pagination = [],
-        watchersPagination: Pagination = []
+        pageSize: Int? = .messagesPageSize,
+        paginationParameter: PaginationParameter? = nil,
+        membersLimit: Int? = nil,
+        watchersLimit: Int? = nil
     ) {
         id = cid.id
         type = cid.type
         channelPayload = nil
-        self.messagesPagination = messagesPagination
-        self.membersPagination = membersPagination
-        self.watchersPagination = watchersPagination
+        
+        pagination = MessagesPagination(pageSize: pageSize, parameter: paginationParameter)
+        self.membersLimit = membersLimit
+        self.watchersLimit = watchersLimit
     }
 
     /// Init a channel query.
@@ -68,9 +70,9 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
         id = channelPayload.id
         type = channelPayload.type
         self.channelPayload = channelPayload
-        messagesPagination = []
-        membersPagination = []
-        watchersPagination = []
+        pagination = nil
+        membersLimit = nil
+        watchersLimit = nil
     }
 
     /// Init a channel query.
@@ -80,9 +82,10 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     init(cid: ChannelId, channelQuery: Self) {
         self.init(
             cid: cid,
-            messagesPagination: channelQuery.messagesPagination,
-            membersPagination: channelQuery.membersPagination,
-            watchersPagination: channelQuery.watchersPagination
+            pageSize: channelQuery.pagination?.pageSize,
+            paginationParameter: channelQuery.pagination?.parameter,
+            membersLimit: channelQuery.membersLimit,
+            watchersLimit: channelQuery.watchersLimit
         )
     }
 
@@ -94,17 +97,9 @@ public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
         // Only needed for channel creation
         try container.encodeIfPresent(channelPayload, forKey: .data)
         
-        if !messagesPagination.isEmpty {
-            try container.encode(messagesPagination, forKey: .messages)
-        }
-        
-        if !membersPagination.isEmpty {
-            try container.encode(membersPagination, forKey: .members)
-        }
-        
-        if !watchersPagination.isEmpty {
-            try container.encode(watchersPagination, forKey: .watchers)
-        }
+        try pagination.map { try container.encode($0, forKey: .messages) }
+        try membersLimit.map { try container.encode(Pagination(pageSize: $0), forKey: .members) }
+        try watchersLimit.map { try container.encode(Pagination(pageSize: $0), forKey: .watchers) }
     }
 }
 

@@ -994,8 +994,11 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         
-        // Assert correct `Pagination` is created
-        XCTAssertEqual(env!.channelUpdater?.update_channelQuery?.messagesPagination, [.limit(25), .lessThan(messageId!)])
+        // Assert correct `MessagesPagination` is created
+        XCTAssertEqual(
+            env!.channelUpdater?.update_channelQuery?.pagination,
+            MessagesPagination(pageSize: 25, parameter: .lessThan(messageId!))
+        )
     }
     
     func test_loadNextMessages_throwsError_on_emptyMessages() throws {
@@ -1066,8 +1069,11 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
         
-        // Assert correct `Pagination` is created
-        XCTAssertEqual(env!.channelUpdater?.update_channelQuery?.messagesPagination, [.limit(25), .greaterThan(messageId!)])
+        // Assert correct `MessagesPagination` is created
+        XCTAssertEqual(
+            env!.channelUpdater?.update_channelQuery?.pagination,
+            MessagesPagination(pageSize: 25, parameter: .greaterThan(messageId!))
+        )
     }
     
     func test_loadPreviousMessages_throwsError_on_emptyMessages() throws {
