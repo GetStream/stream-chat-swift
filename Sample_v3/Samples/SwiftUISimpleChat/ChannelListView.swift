@@ -133,7 +133,14 @@ struct ChannelListView: View {
     /// `UserLisView` for users matching the query.
     var userListView: some View {
         let controller = channelList.controller.client.userListController()
-        return UserListView(userList: controller.observableObject)
+        return UserListView(
+            userList: controller.observableObject,
+            didSelectUser: { userId in
+                createDirectMessageChannel(with: userId) {
+                    activeSheet = nil
+                }
+            }
+        )
     }
     
     /// Button that will open `SettingsView`.
@@ -202,6 +209,20 @@ struct ChannelListView: View {
                 for: channelList.channels[index].cid
             ).observableObject
         )
+    }
+    
+    private func createDirectMessageChannel(with userId: UserId, completion: @escaping () -> Void) {
+        let client = channelList.controller.client
+        
+        let newChannelController = try! client.channelController(
+            createDirectMessageChannelWith: [client.currentUserId, userId],
+            extraData: .init()
+        )
+        
+        newChannelController.synchronize { [newChannelController] _ in
+            _ = newChannelController
+            completion()
+        }
     }
 }
 
