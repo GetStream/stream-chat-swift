@@ -100,24 +100,11 @@ struct ChatView: View {
                     
                     // Ban / Unban user
                     if message.author.isBanned {
-                        /* actions.append(UIAction(
-                             title: "Unban",
-                             image: UIImage(systemName: "checkmark.square")
-                         ) { _ in
-                             memberController.unban()
-                         }) */
                         Button(action: { memberController.unban() }) {
                             Text("Unban")
                             Image(systemName: "checkmark.square")
                         }
                     } else {
-                        /* actions.append(UIAction(
-                             title: "Ban",
-                             image: UIImage(systemName: "exclamationmark.octagon"),
-                             attributes: [.destructive]
-                         ) { _ in
-                             memberController.ban()
-                         }) */
                         Button(action: { memberController.ban() }) {
                             Text("Ban")
                             Image(systemName: "exclamationmark.octagon")
@@ -128,22 +115,7 @@ struct ChatView: View {
                         cid: cid,
                         messageId: message.id
                     )
-                    
-                    // Edit message
-                    /* actions.append(UIAction(title: "Edit", image: UIImage(systemName: "pencil")) { [weak self] _ in
-                         self?.showTextEditingAlert(for: message.text) {
-                             messageController.editMessage(text: $0)
-                         }
-                     })
-                    
-                     // Delete message
-                     actions.append(UIAction(
-                         title: "Delete",
-                         image: UIImage(systemName: "trash"),
-                         attributes: [.destructive]
-                     ) { _ in
-                         messageController.deleteMessage()
-                     }) */
+
                     Button(action: { self.editingMessage = message; self.text = message.text }) {
                         Text("Edit")
                         Image(systemName: "pencil")
