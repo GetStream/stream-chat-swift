@@ -1,9 +1,0 @@
-platform :ios, '11.0'
-inhibit_all_warnings!
-
-target 'ChatExample' do
-  use_frameworks!
-  pod 'StreamChatCore', :path => "../.."
-  pod 'StreamChatClient', :path => "../.."
-  pod 'StreamChat', :path => "../.."
-end
