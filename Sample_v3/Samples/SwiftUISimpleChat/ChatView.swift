@@ -18,23 +18,17 @@ struct ChatView: View {
     @State var actionSheetTrigger: Bool = false
     /// Message being edited.
     @State var editingMessage: ChatMessage?
-    
-    /// User action.
-    @State var userActionTrigger: Bool = false
-    @State var userAction: ((String) -> Void)?
-    
+    /// Member list trigger.
+    @State private var isShowingMemberList = false
+
     var body: some View {
         VStack {
             self.messageList().layoutPriority(1)
             self.composerView()
+            NavigationLink(destination: memberList, isActive: $isShowingMemberList) { EmptyView() }
         }
         /// ActionSheet presenter.
         .actionSheet(isPresented: $actionSheetTrigger, content: self.actionSheet)
-        /// User action alert
-        .alert(isPresented: $userActionTrigger, TextAlert(title: "User Id", placeholder: "steep-moon-9", action: {
-            self.userAction?($0 ?? "steep-moon-9")
-            self.userAction = nil
-        }))
         /// Set title to channel's name.
         .navigationBarTitle(
             Text(
@@ -185,21 +179,20 @@ struct ChatView: View {
     /// ActionSheet for channel action or message actions depending on `editingMessage` value.
     /// This is done due to `SwiftUI` limitations: it's not possible to have multiple `.actionSheet` modifiers.
     func actionSheet() -> ActionSheet {
-        ActionSheet(title: Text("Channel Actions"), message: Text(""), buttons: [
+        ActionSheet(title: Text("Channel Actions"), buttons: [
             .default(
-                Text("Add Member"), action: {
-                    self.userAction = { self.channel.controller.addMembers(userIds: [$0]) }
-                    self.userActionTrigger = true
-                }
-            ),
-            .default(
-                Text("Remove Member"), action: {
-                    self.userAction = { self.channel.controller.removeMembers(userIds: [$0]) }
-                    self.userActionTrigger = true
+                Text("Edit Members"), action: {
+                    self.isShowingMemberList = true
                 }
             ),
             .cancel()
         ])
+    }
+    
+    /// `MemberListView` for channel memebers.
+    var memberList: some View {
+        let controller = channel.controller.client.memberListController(query: .init(cid: channel.channel!.cid))
+        return MemberListView(channel: channel, memberList: controller.observableObject)
     }
     
     private func didKeystroke() {
