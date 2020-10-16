@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 extension MessagePayload {
     /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.

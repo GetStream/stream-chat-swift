@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 extension UserPayload where ExtraData == NameAndImageExtraData {
     /// Returns a dummy user payload with the given `id` and `extraData`

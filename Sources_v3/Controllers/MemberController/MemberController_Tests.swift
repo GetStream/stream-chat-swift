@@ -2,11 +2,11 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
- import CoreData
- @testable import StreamChatClient
- import XCTest
+import CoreData
+@testable import StreamChat
+import XCTest
 
- final class MemberController_Tests: StressTestCase {
+final class MemberController_Tests: StressTestCase {
     fileprivate var env: TestEnvironment!
 
     var userId: UserId!
@@ -401,9 +401,9 @@
         XCTAssertEqual(env.memberUpdater!.unbanMember_userId, controller.userId)
         XCTAssertEqual(env.memberUpdater!.unbanMember_cid, controller.cid)
     }
- }
+}
 
- private class TestEnvironment {
+private class TestEnvironment {
     @Atomic var memberUpdater: ChannelMemberUpdaterMock?
     @Atomic var memberListUpdater: ChannelMemberListUpdaterMock<DefaultExtraData>?
     @Atomic var memberObserver: EntityDatabaseObserverMock<ChatChannelMember, MemberDTO>?
@@ -437,10 +437,10 @@
             return self.memberObserver!
         }
     )
- }
+}
 
 // A concrete `ChatChannelMemberControllerDelegate` implementation allowing capturing the delegate calls
- private class TestDelegate: QueueAwareDelegate, ChatChannelMemberControllerDelegate {
+private class TestDelegate: QueueAwareDelegate, ChatChannelMemberControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateMember_change: EntityChange<ChatChannelMember>?
 
@@ -453,10 +453,10 @@
         validateQueue()
         didUpdateMember_change = change
     }
- }
+}
 
 // A concrete `_ChatChannelMemberControllerDelegate` implementation allowing capturing the delegate calls.
- private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelMemberControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelMemberControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didUpdateMember_change: EntityChange<ChatChannelMember>?
 
@@ -469,4 +469,4 @@
         validateQueue()
         didUpdateMember_change = change
     }
- }
+}

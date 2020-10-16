@@ -3,7 +3,7 @@
 //
 
 import CoreData
-@testable import StreamChatClient
+@testable import StreamChat
 import XCTest
 
 /// A testable subclass of DatabaseContainer allowing response simulation.

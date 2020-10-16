@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 class WebSocketEngineMock: WebSocketEngine {
     var request: URLRequest

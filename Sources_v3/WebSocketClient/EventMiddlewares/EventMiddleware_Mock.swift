@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 /// A test middleware that can be initiated with a closure
 final class EventMiddlewareMock: EventMiddleware {

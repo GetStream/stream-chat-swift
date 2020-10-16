@@ -4,7 +4,7 @@
 
 import Combine
 import CoreData
-@testable import StreamChatClient
+@testable import StreamChat
 import XCTest
 
 @available(iOS 13, *)

@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 /// The type can be used to check the events published by `NotificationCenter`
 final class EventLogger {
