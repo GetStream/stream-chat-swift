@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 extension NameAndImageExtraData {
     /// Returns a dummy data with unique `name` and `imageURL`

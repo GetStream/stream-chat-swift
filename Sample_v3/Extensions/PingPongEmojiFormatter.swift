@@ -2,7 +2,7 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-import StreamChatClient
+import StreamChat
 
 /// Formats the given WebSocket ping/pong log message with the emoji prefix: 🏓
 public class PingPongEmojiFormatter: LogFormatter {

@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChatClient
+import StreamChat
 
 class LogStore: BaseLogDestination {
     @Atomic var logs = ""

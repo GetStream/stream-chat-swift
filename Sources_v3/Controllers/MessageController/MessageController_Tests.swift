@@ -3,7 +3,7 @@
 //
 
 import CoreData
-@testable import StreamChatClient
+@testable import StreamChat
 import XCTest
 
 final class MessageController_Tests: StressTestCase {

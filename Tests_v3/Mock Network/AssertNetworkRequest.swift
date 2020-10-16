@@ -2,7 +2,7 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChatClient
+@testable import StreamChat
 import XCTest
 
 /// The maximum time `AssertNetworkRequest` waits for the request. When running stress tests, this value

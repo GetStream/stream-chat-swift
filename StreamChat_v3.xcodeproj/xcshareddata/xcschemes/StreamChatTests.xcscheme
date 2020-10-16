@@ -17,8 +17,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "799C9450247D59B1001F1104"
-               BuildableName = "StreamChatClientTests.xctest"
-               BlueprintName = "StreamChatClientTests"
+               BuildableName = "StreamChatTests.xctest"
+               BlueprintName = "StreamChatTests"
                ReferencedContainer = "container:StreamChat_v3.xcodeproj">
             </BuildableReference>
          </TestableReference>

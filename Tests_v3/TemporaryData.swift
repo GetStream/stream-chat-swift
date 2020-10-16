@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChatClient
+import StreamChat
 
 extension URL {
     /// Returns a unique random URL

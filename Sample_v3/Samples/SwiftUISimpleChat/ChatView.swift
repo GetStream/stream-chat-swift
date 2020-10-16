@@ -5,7 +5,7 @@
 #if swift(>=5.3)
 
 import Combine
-import StreamChatClient
+import StreamChat
 import SwiftUI
 
 @available(iOS 14, *)

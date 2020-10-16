@@ -6,7 +6,7 @@ import Foundation
 import Network
 
 extension Notification.Name {
-    static let internetConnectionStatusDidChange = Notification.Name("io.getstream.StreamChatClient.internetConnectionStatus")
+    static let internetConnectionStatusDidChange = Notification.Name("io.getstream.StreamChat.internetConnectionStatus")
 }
 
 extension Notification {

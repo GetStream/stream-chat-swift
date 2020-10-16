@@ -270,12 +270,12 @@ end
 desc "Runs tests for v3 in Debug config"
 lane :test_v3 do |options|
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatClientTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatTestPlan.xctestplan")
 
   scan(
     project: "StreamChat_v3.xcodeproj",
-    scheme: "StreamChatClient",
-    testplan: "StreamChatClientTestPlan",
+    scheme: "StreamChat",
+    testplan: "StreamChatTestPlan",
     configuration: "Debug",
     clean: true,
     devices: options[:device],
@@ -285,12 +285,12 @@ end
 desc "Runs tests for v3 in Release config"
 lane :test_v3_release do
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatClientTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatTestPlan.xctestplan")
 
   scan(
     project: "StreamChat_v3.xcodeproj",
-    scheme: "StreamChatClient",
-    testplan: "StreamChatClientTestPlan",
+    scheme: "StreamChat",
+    testplan: "StreamChatTestPlan",
     configuration: "ReleaseTests",
     clean: true,
   )
@@ -300,19 +300,19 @@ desc "Runs stress tests for v3"
 lane :stress_test_v3 do
   scan(
     project: "StreamChat_v3.xcodeproj",
-    scheme: "StreamChatClient",
+    scheme: "StreamChat",
     clean: true,
     build_for_testing: true
   )
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatClientStressTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatStressTestPlan.xctestplan")
 
   stress_tests_cycles.times {
     scan(
       project: "StreamChat_v3.xcodeproj",
-      scheme: "StreamChatClient",
+      scheme: "StreamChat",
       test_without_building: true,
-      testplan: "StreamChatClientStressTestPlan"
+      testplan: "StreamChatStressTestPlan"
     )
   }
 end
@@ -321,21 +321,21 @@ desc "Runs stress tests for v3 in Release config"
 lane :stress_test_v3_release do
   scan(
     project: "StreamChat_v3.xcodeproj",
-    scheme: "StreamChatClient",
+    scheme: "StreamChat",
     configuration: "ReleaseTests",
     clean: true,
     build_for_testing: true
   )
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatClientStressTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatStressTestPlan.xctestplan")
 
   stress_tests_cycles.times {
     scan(
       project: "StreamChat_v3.xcodeproj",
-      scheme: "StreamChatClient",
+      scheme: "StreamChat",
       configuration: "ReleaseTests",
       test_without_building: true,
-      testplan: "StreamChatClientStressTestPlan"
+      testplan: "StreamChatStressTestPlan"
     )
   }
 end

@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 extension ChatClient {
     static var mock: ChatClient {

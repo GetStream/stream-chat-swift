@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 /// Mock implementation of ChannelUpdater
 class EventSenderMock<ExtraData: ExtraDataTypes>: EventSender<ExtraData> {

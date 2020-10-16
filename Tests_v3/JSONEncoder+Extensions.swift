@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChatClient
+import StreamChat
 
 extension JSONEncoder {
     func encodedString<T: Encodable>(_ encodable: T) -> String {
