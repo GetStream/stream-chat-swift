@@ -14,8 +14,8 @@ struct UserListView: View {
     @StateObject var userList: ChatUserListController.ObservableObject
     /// Binding for user actions ActionSheet.
     @State private var showActionSheet: ChatUser?
-    /// Used for dismissing.
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+    /// The callback that is called when a user is selected.
+    let didSelectUser: (UserId) -> Void
     
     var body: some View {
         VStack {
@@ -31,16 +31,7 @@ struct UserListView: View {
                         /// Workaround for gestures to work with the whole cell.
                         .contentShape(Rectangle())
                         /// On tap gesture direct message channel will be created and you will be directed back to channel list.
-                        .onTapGesture {
-                            let client = userList.controller.client
-                            let directChatUsers = [client.currentUserId, userList.users[index].id]
-                            let channelController = try! client.channelController(
-                                createDirectMessageChannelWith: Set(directChatUsers),
-                                extraData: .init()
-                            )
-                            channelController.synchronize()
-                            presentationMode.wrappedValue.dismiss()
-                        }
+                        .onTapGesture { didSelectUser(userList.users[index].id) }
                         /// Show ActionSheet on long press.
                         .onLongPressGesture { showActionSheet = userList.users[index] }
                         /// Pagination.
