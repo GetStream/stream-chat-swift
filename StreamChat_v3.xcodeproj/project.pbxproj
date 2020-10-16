@@ -233,6 +233,7 @@
 		8836133825274F5F003CB958 /* ExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133725274F5F003CB958 /* ExtraData.swift */; };
 		8836133C25275170003CB958 /* MutedUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133B25275170003CB958 /* MutedUserPayload.swift */; };
 		8837C63A2539B4A600D8FE86 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6392539B4A600D8FE86 /* Date+Extensions.swift */; };
+		8837C6442539C17A00D8FE86 /* ChannelMember+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6432539C17A00D8FE86 /* ChannelMember+Extensions.swift */; };
 		888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */; };
 		888E8C39252B2ABB00195E03 /* UserController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C38252B2ABB00195E03 /* UserController+Combine.swift */; };
 		888E8C3F252B2AD600195E03 /* UserController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C3E252B2AD600195E03 /* UserController+Combine_Tests.swift */; };
@@ -684,6 +685,7 @@
 		8836133725274F5F003CB958 /* ExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraData.swift; sourceTree = "<group>"; };
 		8836133B25275170003CB958 /* MutedUserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUserPayload.swift; sourceTree = "<group>"; };
 		8837C6392539B4A600D8FE86 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
+		8837C6432539C17A00D8FE86 /* ChannelMember+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelMember+Extensions.swift"; sourceTree = "<group>"; };
 		888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+SwiftUI.swift"; sourceTree = "<group>"; };
 		888E8C38252B2ABB00195E03 /* UserController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+Combine.swift"; sourceTree = "<group>"; };
 		888E8C3B252B2AC900195E03 /* UserController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
@@ -1466,6 +1468,7 @@
 				8040BC5C24FDA9B200DE369F /* UIColor+ForUsername.swift */,
 				80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */,
 				F6CA70912513A1400024ED5D /* Channel+Extensions.swift */,
+				8837C6432539C17A00D8FE86 /* ChannelMember+Extensions.swift */,
 				8837C6392539B4A600D8FE86 /* Date+Extensions.swift */,
 			);
 			path = Extensions;
@@ -2077,6 +2080,7 @@
 				792A4F25247FF01800EAF71D /* AppDelegate.swift in Sources */,
 				8008C18724EDBCFF00F5BCCE /* LogsViewController.swift in Sources */,
 				8008C19524F456BF00F5BCCE /* ComposerView.swift in Sources */,
+				8837C6442539C17A00D8FE86 /* ChannelMember+Extensions.swift in Sources */,
 				804B127224E712F5002B00EA /* SimpleChatViewController.swift in Sources */,
 				DA84071325250E23005A0F62 /* SimpleUsersViewController.swift in Sources */,
 				DA4EE5C5252C777A00CB26D4 /* CombineSimpleUsersViewController.swift in Sources */,
