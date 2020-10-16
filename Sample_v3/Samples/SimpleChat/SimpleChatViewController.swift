@@ -385,31 +385,9 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     ///
     @objc func showChannelActionsAlert() {
         let alert = UIAlertController(title: "Member Actions", message: "", preferredStyle: .actionSheet)
-        
-        let defaultUserId = "steep-moon-9"
-        
-        alert.addAction(.init(title: "Add a member", style: .default, handler: { [weak self] _ in
-            guard let self = self else { return }
-            
-            self.alertTextField(title: "Add member", placeholder: defaultUserId) { userId in
-                self.channelController?.addMembers(userIds: [userId]) {
-                    guard let error = $0 else {
-                        return print("Members \(userId) added successfully")
-                    }
-                    self.alert(title: "Error", message: "Error adding member \(userId): \(error)")
-                }
-            }
-        }))
-        
-        alert.addAction(.init(title: "Remove a member", style: .default, handler: { [unowned self] _ in
-            self.alertTextField(title: "Remove member", placeholder: defaultUserId) { userId in
-                self.channelController?.removeMembers(userIds: [userId]) {
-                    guard let error = $0 else {
-                        return print("Member \(userId) removed successfully")
-                    }
-                    self.alert(title: "Error", message: "Error removing member \(userId): \(error)")
-                }
-            }
+                
+        alert.addAction(.init(title: "Edit members", style: .default, handler: { [weak self] _ in
+            self?.showMemberSettings()
         }))
         
         alert.addAction(.init(title: "Delete the channel", style: .default, handler: { [unowned self] _ in
@@ -424,6 +402,20 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
         
         present(alert, animated: true)
+    }
+    
+    private func showMemberSettings() {
+        guard
+            let cid = channelController.channel?.cid,
+            let channelMembersViewController = UIStoryboard.simpleChat
+            .instantiateViewController(withIdentifier: "SimpleChannelMembersViewController") as? SimpleChannelMembersViewController
+        else { return }
+        
+        channelMembersViewController.memberListController = channelController.client.memberListController(
+            query: .init(cid: cid)
+        )
+        
+        show(channelMembersViewController, sender: self)
     }
     
     // MARK: - UITextViewDelegate
