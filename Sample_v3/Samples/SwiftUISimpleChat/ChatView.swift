@@ -98,7 +98,6 @@ struct ChatView: View {
                 if !isMessageFromCurrentUser {
                     let memberController = channel.controller.client.memberController(userId: message.author.id, in: cid)
                     
-                    // Ban / Unban user
                     if message.author.isBanned {
                         Button(action: { memberController.unban() }) {
                             Text("Unban")

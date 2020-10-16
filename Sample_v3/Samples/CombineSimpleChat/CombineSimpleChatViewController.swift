@@ -280,6 +280,12 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         return configuration
     }
     
+    ///
+    /// # contextMenuConfigurationForRowAt
+    ///
+    /// The method below returns the context menu with actions that can be taken on the message such as deleting and editing, or on the message's author such as banning and
+    /// unbanning.
+    ///
     @available(iOS 13, *)
     override func tableView(
         _ tableView: UITableView,
