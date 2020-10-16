@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 /// Mock implementation of APIClient allowing easy control and simulation of responses.
 class APIClientMock: APIClient {

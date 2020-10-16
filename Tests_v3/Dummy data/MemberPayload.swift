@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 extension MemberPayload where ExtraData == NameAndImageExtraData {
     /// Returns a dummy member payload with the given `userId` and `role`

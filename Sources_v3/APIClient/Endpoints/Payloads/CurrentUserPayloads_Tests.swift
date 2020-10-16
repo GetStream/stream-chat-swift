@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 import XCTest
 
 class CurrentUserPayload_Tests: XCTestCase {

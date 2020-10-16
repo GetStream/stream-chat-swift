@@ -3,7 +3,7 @@
 //
 
 import Foundation
-import StreamChatClient
+import StreamChat
 
 struct Configuration {
     struct PersistenceKeys {

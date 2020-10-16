@@ -49,9 +49,9 @@ class Reachability {
     
     private var isRunningOnDevice: Bool = {
         #if targetEnvironment(simulator)
-            return false
+        return false
         #else
-            return true
+        return true
         #endif
     }()
     
@@ -76,7 +76,7 @@ class Reachability {
         allowsCellularConnection = true
         self.reachabilityRef = reachabilityRef
         reachabilitySerialQueue = DispatchQueue(
-            label: "io.getstream.StreamChatClient.reachability",
+            label: "io.getstream.StreamChat.reachability",
             qos: queueQoS,
             target: targetQueue
         )
@@ -222,34 +222,34 @@ private extension SCNetworkReachabilityFlags {
         
         // If we're reachable, but not on an iOS device (i.e. simulator), we must be on WiFi
         #if targetEnvironment(simulator)
-            return .wifi
+        return .wifi
         #else
         
-            var connection = Connection.unavailable
+        var connection = Connection.unavailable
         
-            if !isConnectionRequiredFlagSet {
+        if !isConnectionRequiredFlagSet {
+            connection = .wifi
+        }
+        
+        if isConnectionOnTrafficOrDemandFlagSet {
+            if !isInterventionRequiredFlagSet {
                 connection = .wifi
             }
+        }
         
-            if isConnectionOnTrafficOrDemandFlagSet {
-                if !isInterventionRequiredFlagSet {
-                    connection = .wifi
-                }
-            }
+        if isOnWWANFlagSet {
+            connection = .cellular
+        }
         
-            if isOnWWANFlagSet {
-                connection = .cellular
-            }
-        
-            return connection
+        return connection
         #endif
     }
     
     var isOnWWANFlagSet: Bool {
         #if os(iOS)
-            return contains(.isWWAN)
+        return contains(.isWWAN)
         #else
-            return false
+        return false
         #endif
     }
     

@@ -5,7 +5,7 @@
 import SwiftUI
 import UIKit
 
-import StreamChatClient
+import StreamChat
 
 class LoginViewController: UITableViewController {
     @IBOutlet var uiKitAndDelegatesCell: UITableViewCell!

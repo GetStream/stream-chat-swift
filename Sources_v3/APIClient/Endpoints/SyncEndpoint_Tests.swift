@@ -2,7 +2,7 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChatClient
+@testable import StreamChat
 import XCTest
 
 final class SyncEndpoint_Tests: XCTestCase {

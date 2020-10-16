@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 extension MutedUserPayload {
     /// Returns a muted user with the given `userId` and `extraData`

@@ -3,7 +3,7 @@
 //
 
 import Combine
-import StreamChatClient
+import StreamChat
 import UIKit
 
 ///

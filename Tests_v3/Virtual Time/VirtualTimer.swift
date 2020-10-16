@@ -3,9 +3,9 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
-struct VirtualTimeTimer: StreamChatClient.Timer {
+struct VirtualTimeTimer: StreamChat.Timer {
     static var time: VirtualTime!
     
     static func schedule(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) -> TimerControl {

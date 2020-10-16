@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "799C941A247D2F80001F1104"
-               BuildableName = "StreamChatClient.framework"
-               BlueprintName = "StreamChatClient"
+               BuildableName = "StreamChat.framework"
+               BlueprintName = "StreamChat"
                ReferencedContainer = "container:StreamChat_v3.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -29,11 +29,11 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests_v3/StreamChatClientTestPlan.xctestplan"
+            reference = "container:Tests_v3/StreamChatStressTestPlan.xctestplan"
             default = "YES">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Tests_v3/StreamChatClientStressTestPlan.xctestplan">
+            reference = "container:Tests_v3/StreamChatTestPlan.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
@@ -42,8 +42,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "799C9450247D59B1001F1104"
-               BuildableName = "StreamChatClientTests.xctest"
-               BlueprintName = "StreamChatClientTests"
+               BuildableName = "StreamChatTests.xctest"
+               BlueprintName = "StreamChatTests"
                ReferencedContainer = "container:StreamChat_v3.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -70,8 +70,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "799C941A247D2F80001F1104"
-            BuildableName = "StreamChatClient.framework"
-            BlueprintName = "StreamChatClient"
+            BuildableName = "StreamChat.framework"
+            BlueprintName = "StreamChat"
             ReferencedContainer = "container:StreamChat_v3.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

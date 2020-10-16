@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatClient
+@testable import StreamChat
 
 extension CurrentUserPayload {
     /// Returns a dummy current user payload with the given UserId and extra data
