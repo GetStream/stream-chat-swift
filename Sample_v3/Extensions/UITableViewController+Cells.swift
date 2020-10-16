@@ -2,6 +2,7 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
 extension UITableViewController {
@@ -63,6 +64,32 @@ extension UITableViewController {
         } else {
             cell?.textLabel?.text = messageText
         }
+        
+        return cell
+    }
+    
+    func memberCell(_ member: ChatChannelMember, isCurrentUser: Bool) -> UITableViewCell {
+        let cell = tableView
+            .dequeueReusableCell(withIdentifier: "MemberCell") ?? .init(style: .default, reuseIdentifier: "MemberCell")
+        cell.textLabel?.text = createMemberNameAndStatusInfoString(for: member, isCurrentUser: isCurrentUser)
+        cell.textLabel?.textColor = member.name.flatMap(UIColor.forUsername) ?? .black
+        cell.textLabel?.font = UIFontMetrics(forTextStyle: .body).scaledFont(for: .boldSystemFont(ofSize: UIFont.systemFontSize))
+        cell.textLabel?.adjustsFontSizeToFitWidth = true
+
+        cell.detailTextLabel?.text = createMemberOnlineStatusInfoString(for: member)
+        cell.detailTextLabel?.textColor = member.isOnline ? .blue : .lightGray
+        cell.detailTextLabel?.font = UIFontMetrics(forTextStyle: .footnote)
+            .scaledFont(for: .systemFont(ofSize: UIFont.smallSystemFontSize))
+        cell.detailTextLabel?.adjustsFontSizeToFitWidth = true
+
+        let banStatusLabel = UILabel(frame: .init(x: 0, y: 0, width: 100, height: 40))
+        banStatusLabel.text = createMemberRoleString(for: member)
+        banStatusLabel.textAlignment = .right
+        banStatusLabel.textColor = .darkGray
+        banStatusLabel.font = UIFontMetrics(forTextStyle: .footnote)
+            .scaledFont(for: .boldSystemFont(ofSize: UIFont.smallSystemFontSize))
+        banStatusLabel.adjustsFontForContentSizeCategory = true
+        cell.accessoryView = banStatusLabel
         
         return cell
     }
