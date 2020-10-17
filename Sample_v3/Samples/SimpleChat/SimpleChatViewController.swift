@@ -132,6 +132,8 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         
         cell.backgroundColor = message.localState == nil ? .white : .lightGray
         
+        // iOS 13 and over: We can use context menus
+        // iOS 13 and below: Context menus not available, we have to use long tap + action sheet
         if #available(iOS 13, *) {} else {
             let longTapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(didTapMessage(_:)))
             cell.addGestureRecognizer(longTapGestureRecognizer)
