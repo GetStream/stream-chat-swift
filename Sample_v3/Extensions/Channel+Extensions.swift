@@ -28,13 +28,20 @@ func createChannelTitle(for channel: ChatChannel?, _ currentUserId: UserId?) -> 
     let channelName = channel.extraData.name ?? channel.cid.description
     if channel.isDirectMessage {
         let otherMember = Array(channel.cachedMembers).first(where: { member in member.id != currentUserId })
-        let otherMemberName = otherMember?.name ?? ""
         // Naming priority for a DM:
         // 1. other member's name
         // 2. other member's id
         // 3. channel name
         // 4. channel id
-        return (otherMember != nil ? (otherMemberName.isEmpty ? otherMember!.id : otherMemberName) : channelName)
+        if let otherMember = otherMember {
+            if let otherMemberName = otherMember.name, !otherMemberName.isEmpty {
+                return otherMemberName
+            } else {
+                return otherMember.id
+            }
+        } else {
+            return channelName
+        }
     } else {
         // Naming priority for a channel:
         // 1. channel name
