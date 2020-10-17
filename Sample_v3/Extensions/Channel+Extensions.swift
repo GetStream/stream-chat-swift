@@ -22,7 +22,7 @@ func createTypingMemberString(for channel: ChatChannel?) -> String? {
 
 /// Creates title for channel. If it is direct message chat it will return users name.
 ///
-/// Example result: `"Joe Biden"`
+/// Example result: `"Luke Skywalker"`
 func createChannelTitle(for channel: ChatChannel?, _ currentUserId: UserId?) -> String {
     guard let channel = channel, let currentUserId = currentUserId else { return "Unnamed channel" }
     let channelName = channel.extraData.name ?? channel.cid.description
