@@ -95,21 +95,7 @@ struct ChatView: View {
                 let currentUserId = channel.controller.client.currentUserId
                 let isMessageFromCurrentUser = message.author.id == currentUserId
                 
-                if !isMessageFromCurrentUser {
-                    let memberController = channel.controller.client.memberController(userId: message.author.id, in: cid)
-                    
-                    if message.author.isBanned {
-                        Button(action: { memberController.unban() }) {
-                            Text("Unban")
-                            Image(systemName: "checkmark.square")
-                        }
-                    } else {
-                        Button(action: { memberController.ban() }) {
-                            Text("Ban")
-                            Image(systemName: "exclamationmark.octagon")
-                        }
-                    }
-                } else {
+                if isMessageFromCurrentUser {
                     let messageController = channel.controller.client.messageController(
                         cid: cid,
                         messageId: message.id
@@ -123,6 +109,20 @@ struct ChatView: View {
                     Button(action: { messageController.deleteMessage() }) {
                         Text("Delete")
                         Image(systemName: "trash")
+                    }
+                } else {
+                    let memberController = channel.controller.client.memberController(userId: message.author.id, in: cid)
+                    
+                    if message.author.isBanned {
+                        Button(action: { memberController.unban() }) {
+                            Text("Unban")
+                            Image(systemName: "checkmark.square")
+                        }
+                    } else {
+                        Button(action: { memberController.ban() }) {
+                            Text("Ban")
+                            Image(systemName: "exclamationmark.octagon")
+                        }
                     }
                 }
             }

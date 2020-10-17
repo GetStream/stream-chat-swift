@@ -242,27 +242,7 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         let currentUserId = channelController.client.currentUserId
         let isMessageFromCurrentUser = message.author.id == currentUserId
         
-        if !isMessageFromCurrentUser {
-            let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
-            
-            // Ban / Unban user
-            if message.author.isBanned {
-                actions.append(UIAction(
-                    title: "Unban",
-                    image: UIImage(systemName: "checkmark.square")
-                ) { _ in
-                    memberController.unban()
-                })
-            } else {
-                actions.append(UIAction(
-                    title: "Ban",
-                    image: UIImage(systemName: "exclamationmark.octagon"),
-                    attributes: [.destructive]
-                ) { _ in
-                    memberController.ban()
-                })
-            }
-        } else {
+        if isMessageFromCurrentUser {
             let messageController = channelController.client.messageController(
                 cid: cid,
                 messageId: message.id
@@ -283,6 +263,26 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
             ) { _ in
                 messageController.deleteMessage()
             })
+        } else {
+            let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
+            
+            // Ban / Unban user
+            if message.author.isBanned {
+                actions.append(UIAction(
+                    title: "Unban",
+                    image: UIImage(systemName: "checkmark.square")
+                ) { _ in
+                    memberController.unban()
+                })
+            } else {
+                actions.append(UIAction(
+                    title: "Ban",
+                    image: UIImage(systemName: "exclamationmark.octagon"),
+                    attributes: [.destructive]
+                ) { _ in
+                    memberController.ban()
+                })
+            }
         }
         
         view.endEditing(true)
@@ -317,20 +317,7 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         let currentUserId = channelController.client.currentUserId
         let isMessageFromCurrentUser = message.author.id == currentUserId
         
-        if !isMessageFromCurrentUser {
-            let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
-            
-            // Ban / Unban user
-            if message.author.isBanned {
-                alert.addAction(.init(title: "Unban", style: .default, handler: { _ in
-                    memberController.unban()
-                }))
-            } else {
-                alert.addAction(.init(title: "Ban", style: .default, handler: { _ in
-                    memberController.ban()
-                }))
-            }
-        } else {
+        if isMessageFromCurrentUser {
             let messageController = channelController.client.messageController(
                 cid: cid,
                 messageId: message.id
@@ -347,6 +334,19 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
             alert.addAction(.init(title: "Delete", style: .destructive, handler: { _ in
                 messageController.deleteMessage()
             }))
+        } else {
+            let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
+            
+            // Ban / Unban user
+            if message.author.isBanned {
+                alert.addAction(.init(title: "Unban", style: .default, handler: { _ in
+                    memberController.unban()
+                }))
+            } else {
+                alert.addAction(.init(title: "Ban", style: .default, handler: { _ in
+                    memberController.ban()
+                }))
+            }
         }
         
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))

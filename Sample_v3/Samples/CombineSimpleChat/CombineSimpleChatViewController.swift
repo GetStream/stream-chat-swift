@@ -303,27 +303,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
         let currentUserId = channelController.client.currentUserId
         let isMessageFromCurrentUser = message.author.id == currentUserId
         
-        if !isMessageFromCurrentUser {
-            let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
-            
-            // Ban / Unban user
-            if message.author.isBanned {
-                actions.append(UIAction(
-                    title: "Unban",
-                    image: UIImage(systemName: "checkmark.square")
-                ) { _ in
-                    memberController.unban()
-                })
-            } else {
-                actions.append(UIAction(
-                    title: "Ban",
-                    image: UIImage(systemName: "exclamationmark.octagon"),
-                    attributes: [.destructive]
-                ) { _ in
-                    memberController.ban()
-                })
-            }
-        } else {
+        if isMessageFromCurrentUser {
             let messageController = channelController.client.messageController(
                 cid: cid,
                 messageId: message.id
@@ -344,6 +324,26 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             ) { _ in
                 messageController.deleteMessage()
             })
+        } else {
+            let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
+            
+            // Ban / Unban user
+            if message.author.isBanned {
+                actions.append(UIAction(
+                    title: "Unban",
+                    image: UIImage(systemName: "checkmark.square")
+                ) { _ in
+                    memberController.unban()
+                })
+            } else {
+                actions.append(UIAction(
+                    title: "Ban",
+                    image: UIImage(systemName: "exclamationmark.octagon"),
+                    attributes: [.destructive]
+                ) { _ in
+                    memberController.ban()
+                })
+            }
         }
         
         view.endEditing(true)
