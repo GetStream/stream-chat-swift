@@ -72,7 +72,7 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
     }
     
     /// Used for observing the database for changes.
-    private(set) lazy var userListObserver: ListDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> = {
+    private(set) lazy var userListObserver: ListDatabaseObserver<_ChatUser<ExtraData.User>> = {
         let request = UserDTO.userListFetchRequest(query: self.query)
         
         let observer = self.environment.createUserListDabaseObserver(
@@ -182,7 +182,7 @@ extension _ChatUserListController {
             _ fetchRequest: NSFetchRequest<UserDTO>,
             _ itemCreator: @escaping (UserDTO) -> _ChatUser<ExtraData.User>?
         )
-            -> ListDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> = {
+            -> ListDatabaseObserver<_ChatUser<ExtraData.User>> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
             }
     }

@@ -421,7 +421,7 @@ extension _CurrentChatUserController {
             _ fetchRequest: NSFetchRequest<CurrentUserDTO>,
             _ itemCreator: @escaping (CurrentUserDTO) -> _CurrentChatUser<ExtraData.User>,
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
-        ) -> EntityDatabaseObserver<_CurrentChatUser<ExtraData.User>, CurrentUserDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserver<_CurrentChatUser<ExtraData.User>> = EntityDatabaseObserver.init
     }
 }
 
@@ -441,7 +441,7 @@ private extension EntityChange where Item == UnreadCount {
 }
 
 private extension _CurrentChatUserController {
-    func createUserObserver() -> EntityDatabaseObserver<_CurrentChatUser<ExtraData.User>, CurrentUserDTO> {
+    func createUserObserver() -> EntityDatabaseObserver<_CurrentChatUser<ExtraData.User>> {
         environment.currentUserObserverBuilder(
             client.databaseContainer.viewContext,
             CurrentUserDTO.defaultFetchRequest,

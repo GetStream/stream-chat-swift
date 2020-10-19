@@ -72,7 +72,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     }
     
     /// Used for observing the database for changes.
-    private(set) lazy var channelListObserver: ListDatabaseObserver<_ChatChannel<ExtraData>, ChannelDTO> = {
+    private(set) lazy var channelListObserver: ListDatabaseObserver<_ChatChannel<ExtraData>> = {
         let request = ChannelDTO.channelListFetchRequest(query: self.query)
         
         let observer = self.environment.createChannelListDabaseObserver(
@@ -194,7 +194,7 @@ extension _ChatChannelListController {
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
             _ itemCreator: @escaping (ChannelDTO) -> _ChatChannel<ExtraData>?
         )
-            -> ListDatabaseObserver<_ChatChannel<ExtraData>, ChannelDTO> = {
+            -> ListDatabaseObserver<_ChatChannel<ExtraData>> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
             }
     }

@@ -72,7 +72,9 @@ extension ListChange: Equatable where Item: Equatable {}
 ///
 /// `ListObserver` is just a wrapper around `NSFetchedResultsController` and `ChangeAggregator`. You can use both of
 /// these elements separately, if it better fits your use case.
-class ListDatabaseObserver<Item, DTO: NSManagedObject> {
+class ListDatabaseObserver<Item: ModelType> {
+    typealias DTO = Item.DTO
+    
     /// The current collection of items matching the provided fetch request. To receive granular updates to this collection,
     /// you can use the `onChange` callback.
     @Cached var items: [Item]
@@ -89,8 +91,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     }
     
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
-    private(set) lazy var changeAggregator: ListChangeAggregator<DTO, Item> =
-        ListChangeAggregator<DTO, Item>(itemCreator: self.itemCreator)
+    private(set) lazy var changeAggregator = ListChangeAggregator(itemCreator: itemCreator)
     
     /// Used for observing the changes in the DB.
     private(set) lazy var frc: NSFetchedResultsController<DTO> = self.fetchedResultsControllerType
@@ -213,7 +214,9 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
 
 /// When this object is set as `NSFetchedResultsControllerDelegate`, it aggregates the callbacks from the fetched results
 /// controller and forwards them in the way of `[Change<Item>]`. You can set the `onChange` callback to receive these updates.
-class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResultsControllerDelegate {
+class ListChangeAggregator<Item: ModelType>: NSObject, NSFetchedResultsControllerDelegate {
+    typealias DTO = Item.DTO
+    
     // TODO: Extend this to also provide `CollectionDifference` and `NSDiffableDataSourceSnapshot`
     
     /// Used for converting the `DTO`s provided by `FetchResultsController` to the resulting `Item`.
@@ -290,18 +293,5 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
     
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         onChange?(currentChanges)
-    }
-}
-
-extension ListDatabaseObserver where DTO == Item {
-    convenience init(
-        context: NSManagedObjectContext,
-        fetchRequest: NSFetchRequest<DTO>
-    ) {
-        self.init(
-            context: context,
-            fetchRequest: fetchRequest,
-            itemCreator: { $0 }
-        )
     }
 }

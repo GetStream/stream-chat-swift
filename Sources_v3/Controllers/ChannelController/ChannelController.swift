@@ -202,8 +202,8 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
 
     /// Database observers.
     /// Will be `nil` when observing channel with backend generated `id` is not yet created.
-    @Cached private var channelObserver: EntityDatabaseObserver<_ChatChannel<ExtraData>, ChannelDTO>?
-    @Cached private var messagesObserver: ListDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO>?
+    @Cached private var channelObserver: EntityDatabaseObserver<_ChatChannel<ExtraData>>?
+    @Cached private var messagesObserver: ListDatabaseObserver<_ChatMessage<ExtraData>>?
     
     private var eventObservers: [EventObserver] = []
     private let environment: Environment

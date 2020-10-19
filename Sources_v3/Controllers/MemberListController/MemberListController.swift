@@ -123,7 +123,7 @@ public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataCo
         )
     }
     
-    private func createMemberListObserver() -> ListDatabaseObserver<_ChatChannelMember<ExtraData.User>, MemberDTO> {
+    private func createMemberListObserver() -> ListDatabaseObserver<_ChatChannelMember<ExtraData.User>> {
         let observer = environment.memberListObserverBuilder(
             client.databaseContainer.viewContext,
             MemberDTO.members(matching: query),
@@ -189,7 +189,7 @@ extension _ChatChannelMemberListController {
             _ fetchRequest: NSFetchRequest<MemberDTO>,
             _ itemCreator: @escaping (MemberDTO) -> _ChatChannelMember<ExtraData.User>?,
             _ controllerType: NSFetchedResultsController<MemberDTO>.Type
-        ) -> ListDatabaseObserver<_ChatChannelMember<ExtraData.User>, MemberDTO> = ListDatabaseObserver.init
+        ) -> ListDatabaseObserver<_ChatChannelMember<ExtraData.User>> = ListDatabaseObserver.init
     }
 }
 

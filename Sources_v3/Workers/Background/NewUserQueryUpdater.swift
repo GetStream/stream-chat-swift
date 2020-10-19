@@ -24,7 +24,8 @@ final class NewUserQueryUpdater<ExtraData: UserExtraData>: Worker {
     
     private lazy var usersObserver: ListDatabaseObserver = .init(
         context: self.database.backgroundReadOnlyContext,
-        fetchRequest: UserDTO.userWithoutQueryFetchRequest
+        fetchRequest: UserDTO.userWithoutQueryFetchRequest,
+        itemCreator: { $0.asModel() as _ChatUser<ExtraData> }
     )
     
     private var queries: [UserListQueryDTO] {
@@ -68,18 +69,18 @@ final class NewUserQueryUpdater<ExtraData: UserExtraData>: Worker {
         }
     }
     
-    private func handle(changes: [ListChange<UserDTO>]) {
+    private func handle(changes: [ListChange<_ChatUser<ExtraData>>]) {
         // Observe `UserDTO` insertations
         changes.forEach { change in
             switch change {
-            case let .insert(userDTO, _):
-                updateUserListQuery(for: userDTO)
+            case let .insert(user, _):
+                updateUserListQuery(for: user)
             default: return
             }
         }
     }
     
-    private func updateUserListQuery(for userDTO: UserDTO) {
+    private func updateUserListQuery(for user: _ChatUser<ExtraData>) {
         database.backgroundReadOnlyContext.perform { [weak self] in
             guard let queries = self?.queries else { return }
 
@@ -89,7 +90,7 @@ final class NewUserQueryUpdater<ExtraData: UserExtraData>: Worker {
             do {
                 updatedQueries = try queries.map {
                     // Modify original query filter
-                    try $0.asUserListQueryWithUpdatedFilter(filterToAdd: .equal("id", to: userDTO.id))
+                    try $0.asUserListQueryWithUpdatedFilter(filterToAdd: .equal("id", to: user.id))
                 }
                 
             } catch {

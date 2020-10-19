@@ -24,11 +24,11 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
     /// every cid. These queues can send messages in parelel.
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue<ExtraData>] = [:]
 
-    private lazy var observer = ListDatabaseObserver<MessageDTO, MessageDTO>(
+    private lazy var observer = ListDatabaseObserver<_ChatMessage<ExtraData>>(
         context: self.database.backgroundReadOnlyContext,
         fetchRequest: MessageDTO
             .messagesPendingSendFetchRequest(),
-        itemCreator: { $0 }
+        itemCreator: { $0.asModel() }
     )
     
     private let sendingDispatchQueue: DispatchQueue = .init(
@@ -60,16 +60,16 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
         }
     }
     
-    func handleChanges(changes: [ListChange<MessageDTO>]) {
+    func handleChanges(changes: [ListChange<_ChatMessage<ExtraData>>]) {
         // Convert changes to a dictionary of requests by their cid
         var newRequests: [ChannelId: [MessageSendingQueue<ExtraData>.SendRequest]] = [:]
         changes.forEach { change in
             switch change {
-            case .insert(let dto, index: _), .update(let dto, index: _):
-                let cid = try! ChannelId(cid: dto.channel.cid)
+            case .insert(let model, index: _), .update(let model, index: _):
+                let cid = model.cid
                 // Create the array if it didn't exist
                 newRequests[cid] = newRequests[cid] ?? []
-                newRequests[cid]!.append(.init(messageId: dto.id, createdLocallyAt: dto.locallyCreatedAt ?? dto.createdAt))
+                newRequests[cid]!.append(.init(messageId: model.id, createdLocallyAt: model.locallyCreatedAt ?? model.createdAt))
                 
             case .move, .remove:
                 break

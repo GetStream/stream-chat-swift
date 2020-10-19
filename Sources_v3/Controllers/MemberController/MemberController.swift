@@ -153,7 +153,7 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
         )
     }
     
-    private func createMemberObserver() -> EntityDatabaseObserver<_ChatChannelMember<ExtraData.User>, MemberDTO> {
+    private func createMemberObserver() -> EntityDatabaseObserver<_ChatChannelMember<ExtraData.User>> {
         environment.memberObserverBuilder(
             client.databaseContainer.viewContext,
             MemberDTO.member(userId, in: cid),
@@ -227,7 +227,7 @@ extension _ChatChannelMemberController {
             _ fetchRequest: NSFetchRequest<MemberDTO>,
             _ itemCreator: @escaping (MemberDTO) -> _ChatChannelMember<ExtraData.User>,
             _ fetchedResultsControllerType: NSFetchedResultsController<MemberDTO>.Type
-        ) -> EntityDatabaseObserver<_ChatChannelMember<ExtraData.User>, MemberDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserver<_ChatChannelMember<ExtraData.User>> = EntityDatabaseObserver.init
     }
 }
 

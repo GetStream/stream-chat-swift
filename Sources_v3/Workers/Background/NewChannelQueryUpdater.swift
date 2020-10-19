@@ -24,7 +24,8 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
     
     private lazy var channelsObserver: ListDatabaseObserver = .init(
         context: self.database.backgroundReadOnlyContext,
-        fetchRequest: ChannelDTO.channelWithoutQueryFetchRequest
+        fetchRequest: ChannelDTO.channelWithoutQueryFetchRequest,
+        itemCreator: { $0.asModel() as _ChatChannel<ExtraData> }
     )
     
     private var queries: [ChannelListQueryDTO] {
@@ -68,18 +69,18 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
         }
     }
     
-    private func handle(changes: [ListChange<ChannelDTO>]) {
+    private func handle(changes: [ListChange<_ChatChannel<ExtraData>>]) {
         // Observe `ChannelDTO` insertions
         changes.forEach { change in
             switch change {
-            case let .insert(channelDTO, _):
-                updateChannelListQuery(for: channelDTO)
+            case let .insert(channel, _):
+                updateChannelListQuery(for: channel)
             default: return
             }
         }
     }
     
-    private func updateChannelListQuery(for channelDTO: ChannelDTO) {
+    private func updateChannelListQuery(for channel: _ChatChannel<ExtraData>) {
         database.backgroundReadOnlyContext.perform { [weak self] in
             guard let queries = self?.queries else { return }
             
@@ -88,7 +89,7 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
             do {
                 updatedQueries = try queries.map {
                     // Modify original query filter
-                    try $0.asChannelListQueryWithUpdatedFilter(filterToAdd: .equal("cid", to: channelDTO.cid))
+                    try $0.asChannelListQueryWithUpdatedFilter(filterToAdd: .equal("cid", to: channel.cid))
                 }
                 
             } catch {

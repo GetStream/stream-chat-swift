@@ -135,7 +135,7 @@ public class _ChatUserController<ExtraData: ExtraDataTypes>: DataController, Del
         )
     }
     
-    private func createUserObserver() -> EntityDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> {
+    private func createUserObserver() -> EntityDatabaseObserver<_ChatUser<ExtraData.User>> {
         environment.userObserverBuilder(
             client.databaseContainer.viewContext,
             UserDTO.user(withID: userId),
@@ -196,7 +196,7 @@ extension _ChatUserController {
             _ fetchRequest: NSFetchRequest<UserDTO>,
             _ itemCreator: @escaping (UserDTO) -> _ChatUser<ExtraData.User>,
             _ fetchedResultsControllerType: NSFetchedResultsController<UserDTO>.Type
-        ) -> EntityDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserver<_ChatUser<ExtraData.User>> = EntityDatabaseObserver.init
     }
 }
 

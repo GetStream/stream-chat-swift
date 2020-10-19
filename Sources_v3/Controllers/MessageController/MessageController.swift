@@ -158,7 +158,7 @@ extension _ChatMessageController {
             _ fetchRequest: NSFetchRequest<MessageDTO>,
             _ itemCreator: @escaping (MessageDTO) -> _ChatMessage<ExtraData>,
             _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
-        ) -> EntityDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO> = EntityDatabaseObserver.init
+        ) -> EntityDatabaseObserver<_ChatMessage<ExtraData>> = EntityDatabaseObserver.init
         
         var messageUpdaterBuilder: (
             _ database: DatabaseContainer,
@@ -171,7 +171,7 @@ extension _ChatMessageController {
 // MARK: - Private
 
 private extension _ChatMessageController {
-    func createMessageObserver() -> EntityDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO> {
+    func createMessageObserver() -> EntityDatabaseObserver<_ChatMessage<ExtraData>> {
         let observer = environment.messageObserverBuilder(
             client.databaseContainer.viewContext,
             MessageDTO.message(withID: messageId),

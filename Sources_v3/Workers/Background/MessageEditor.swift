@@ -20,13 +20,13 @@ import Foundation
 ///
 class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
-    private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
+    private let observer: ListDatabaseObserver<_ChatMessage<ExtraData>>
 
     override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
         observer = .init(
             context: database.backgroundReadOnlyContext,
             fetchRequest: MessageDTO.messagesPendingSyncFetchRequest(),
-            itemCreator: { $0 }
+            itemCreator: { $0.asModel() }
         )
         
         super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
@@ -47,9 +47,20 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
         }
     }
     
-    private func handleChanges(changes: [ListChange<MessageDTO>]) {
+    private func handleChanges(changes: [ListChange<_ChatMessage<ExtraData>>]) {
         let wasEmpty = pendingMessageIDs.isEmpty
-        changes.pendingEditMessageIDs.forEach { pendingMessageIDs.insert($0) }
+        
+        let pendingEditMessageIDs: [MessageId] = changes.compactMap {
+            switch $0 {
+            case let .insert(dto, _), let .update(dto, _):
+                return dto.id
+            case .move, .remove:
+                return nil
+            }
+        }
+        
+        pendingEditMessageIDs.forEach { self.pendingMessageIDs.insert($0) }
+        
         if wasEmpty {
             processNextMessage()
         }
@@ -93,18 +104,5 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
             }
             completion()
         })
-    }
-}
-
-private extension Array where Element == ListChange<MessageDTO> {
-    var pendingEditMessageIDs: [MessageId] {
-        compactMap {
-            switch $0 {
-            case let .insert(dto, _), let .update(dto, _):
-                return dto.id
-            case .move, .remove:
-                return nil
-            }
-        }
     }
 }
