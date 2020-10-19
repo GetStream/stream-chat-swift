@@ -24,7 +24,7 @@ public typealias UserId = String
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
 @dynamicMemberLookup
-public class _ChatUser<ExtraData: UserExtraData> {
+public struct _ChatUser<ExtraData: UserExtraData> {
     /// The unique identifier of the user.
     public let id: UserId
     
@@ -119,7 +119,7 @@ public extension ChatUser {
     ///   - name: The name of the user
     ///   - imageURL: The URL of the user's avatar
     ///
-    convenience init(id: String, name: String?, imageURL: URL?) {
+    init(id: String, name: String?, imageURL: URL?) {
         self.init(id: id, extraData: NameAndImageExtraData(name: name, imageURL: imageURL))
     }
 }
