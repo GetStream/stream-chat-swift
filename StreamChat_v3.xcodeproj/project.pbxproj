@@ -214,6 +214,7 @@
 		805A11492506FBBD0089DFC4 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */; };
 		80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */; };
 		80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */; };
+		8813130F253DAAA3001072EC /* Model+Database.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8813130E253DAAA3001072EC /* Model+Database.swift */; };
 		8819DFCF2525F3C600FD1A50 /* UserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFCE2525F3C600FD1A50 /* UserUpdater.swift */; };
 		8819DFD52525F49D00FD1A50 /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFD42525F49D00FD1A50 /* UserController.swift */; };
 		8819DFDE252622D900FD1A50 /* ModerationEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFDD252622D900FD1A50 /* ModerationEndpoints_Tests.swift */; };
@@ -664,6 +665,7 @@
 		805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+Cells.swift"; sourceTree = "<group>"; };
 		80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AlertTextField.swift"; sourceTree = "<group>"; };
+		8813130E253DAAA3001072EC /* Model+Database.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Model+Database.swift"; sourceTree = "<group>"; };
 		8819DFCE2525F3C600FD1A50 /* UserUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdater.swift; sourceTree = "<group>"; };
 		8819DFD42525F49D00FD1A50 /* UserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserController.swift; sourceTree = "<group>"; };
 		8819DFDD252622D900FD1A50 /* ModerationEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationEndpoints_Tests.swift; sourceTree = "<group>"; };
@@ -1329,6 +1331,7 @@
 		799C9430247D2FB9001F1104 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				8813130E253DAAA3001072EC /* Model+Database.swift */,
 				79877A072498E4BC00015F8B /* ChannelId.swift */,
 				8A5D3EF824AF749200E2FE35 /* ChannelId_Tests.swift */,
 				79896D5D25065E6900BA8F1C /* ChannelRead.swift */,
@@ -2133,6 +2136,7 @@
 				792FCB4B24A3D52A000290C7 /* DatabaseSession.swift in Sources */,
 				792A4F1D247FEA2200EAF71D /* ChannelListController.swift in Sources */,
 				79280F49248520B300CDEB89 /* EventDecoder.swift in Sources */,
+				8813130F253DAAA3001072EC /* Model+Database.swift in Sources */,
 				8A0D649B24E579E90017A3C0 /* GuestUserTokenPayload.swift in Sources */,
 				DA84071025250720005A0F62 /* UserListQueryDTO.swift in Sources */,
 				799C9449247D5211001F1104 /* MessageSender.swift in Sources */,
