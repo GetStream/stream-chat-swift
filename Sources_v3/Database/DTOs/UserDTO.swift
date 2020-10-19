@@ -85,7 +85,8 @@ extension NSManagedObjectContext: UserDatabaseSession {
         
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         
-        if let query = query, let queryDTO = try saveQuery(query: query) {
+        if let query = query {
+            let queryDTO = saveQuery(query: query)
             queryDTO.users.insert(dto)
         }
         
@@ -120,12 +121,7 @@ extension UserDTO {
         // Fetch results controller requires at least one sorting descriptor.
         let sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
         request.sortDescriptors = sortDescriptors.isEmpty ? [UserListSortingKey.defaultSortDescriptor] : sortDescriptors
-        
-        // If a filter exists, use is for the predicate. Otherwise, `nil` filter matches all users.
-        if let filterHash = query.filter?.filterHash {
-            request.predicate = NSPredicate(format: "ANY queries.filterHash == %@", filterHash)
-        }
-        
+        request.predicate = NSPredicate(format: "ANY queries.queryHash == %@", query.queryHash)
         return request
     }
 

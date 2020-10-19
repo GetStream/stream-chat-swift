@@ -128,7 +128,7 @@ private extension UserListQueryDTO {
         
         // We need to pass original `filterHash` so user will be linked to original query, not the modified one
         var updatedFilter: Filter<UserListFilterScope<ExtraData>> = .and([encodedFilter, filter])
-        updatedFilter.explicitHash = filterHash
+        updatedFilter.explicitHash = queryHash
         
         return UserListQuery(filter: updatedFilter)
     }

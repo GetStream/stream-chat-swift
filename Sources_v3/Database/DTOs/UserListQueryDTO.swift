@@ -7,7 +7,7 @@ import CoreData
 @objc(UserListQueryDTO)
 class UserListQueryDTO: NSManagedObject {
     /// Unique identifier of the query.
-    @NSManaged var filterHash: String
+    @NSManaged var queryHash: String
     
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated.
     @NSManaged var filterJSONData: Data
@@ -16,38 +16,37 @@ class UserListQueryDTO: NSManagedObject {
     
     @NSManaged var users: Set<UserDTO>
     
-    static func load(filterHash: String, context: NSManagedObjectContext) -> UserListQueryDTO? {
+    static func load(queryHash: String, context: NSManagedObjectContext) -> UserListQueryDTO? {
         let request = NSFetchRequest<UserListQueryDTO>(entityName: UserListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
+        request.predicate = NSPredicate(format: "queryHash == %@", queryHash)
         return try? context.fetch(request).first
+    }
+    
+    static func loadOrCreate(queryHash: String, context: NSManagedObjectContext) -> UserListQueryDTO {
+        if let existing = Self.load(queryHash: queryHash, context: context) {
+            return existing
+        }
+        
+        let new = UserListQueryDTO(context: context)
+        new.queryHash = queryHash
+        return new
     }
 }
 
 extension NSManagedObjectContext {
-    func userListQuery(filterHash: String) -> UserListQueryDTO? {
-        UserListQueryDTO.load(filterHash: filterHash, context: self)
+    func userListQuery(queryHash: String) -> UserListQueryDTO? {
+        UserListQueryDTO.load(queryHash: queryHash, context: self)
     }
     
-    func saveQuery<ExtraData: UserExtraData>(query: UserListQuery<ExtraData>) throws -> UserListQueryDTO? {
-        guard let filterHash = query.filter?.filterHash else {
-            // A query without a filter doesn't have to be saved to the DB because it matches all users by default.
-            return nil
-        }
-        
-        if let existingDTO = UserListQueryDTO.load(filterHash: filterHash, context: self) {
-            return existingDTO
-        }
-        
-        let newDTO = NSEntityDescription
-            .insertNewObject(forEntityName: UserListQueryDTO.entityName, into: self) as! UserListQueryDTO
-        newDTO.filterHash = filterHash
+    func saveQuery<ExtraData: UserExtraData>(query: UserListQuery<ExtraData>) -> UserListQueryDTO {
+        let dto = UserListQueryDTO.loadOrCreate(queryHash: query.queryHash, context: self)
         
         do {
-            newDTO.filterJSONData = try JSONEncoder.default.encode(query.filter)
+            dto.filterJSONData = try JSONEncoder.default.encode(query.filter)
         } catch {
             log.error("Failed encoding query Filter data with error: \(error).")
         }
         
-        return newDTO
+        return dto
     }
 }

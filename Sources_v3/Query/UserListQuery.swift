@@ -112,6 +112,15 @@ public struct UserListQuery<ExtraData: UserExtraData>: Encodable {
 }
 
 extension UserListQuery {
+    var queryHash: String {
+        [
+            filter?.filterHash,
+            sort.map(\.description).joined()
+        ].compactMap { $0 }.joined(separator: "-")
+    }
+}
+
+extension UserListQuery {
     /// Builds `UserListQuery` for a user with the provided `userId`
     /// - Parameter userId: The user identifier
     /// - Returns: `UserListQuery` for a specific user
