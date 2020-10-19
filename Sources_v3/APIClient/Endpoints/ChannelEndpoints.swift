@@ -5,7 +5,7 @@
 import Foundation
 
 extension Endpoint {
-    static func channels<ExtraData: ExtraDataTypes>(query: ChannelListQuery<ExtraData.Channel>)
+    static func channels<ExtraData: ExtraDataTypes>(query: ChannelListQuery<ExtraData>)
         -> Endpoint<ChannelListPayload<ExtraData>> {
         .init(
             path: "channels",

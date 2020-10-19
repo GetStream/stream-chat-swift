@@ -66,7 +66,7 @@ public extension FilterKey where Scope == ChannelListFilterScope<NameAndImageExt
 
 /// A query is used for querying specific channels from backend.
 /// You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.
-public struct ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
+public struct ChannelListQuery<ExtraData: ExtraDataTypes>: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort
@@ -79,7 +79,7 @@ public struct ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
     }
     
     /// A filter for the query (see `Filter`).
-    public let filter: Filter<ChannelListFilterScope<ExtraData>>
+    public let filter: Filter<ChannelListFilterScope<ExtraData.Channel>>
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<ChannelListSortingKey>]
     /// A pagination.
@@ -96,7 +96,7 @@ public struct ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
     ///   - pageSize: a page size for pagination.
     ///   - messagesLimit: a number of messages for the channel to be retrieved.
     public init(
-        filter: Filter<ChannelListFilterScope<ExtraData>>,
+        filter: Filter<ChannelListFilterScope<ExtraData.Channel>>,
         sort: [Sorting<ChannelListSortingKey>] = [],
         pageSize: Int = .channelsPageSize,
         messagesLimit: Int = .messagesPageSize

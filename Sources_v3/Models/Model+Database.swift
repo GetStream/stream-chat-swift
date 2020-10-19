@@ -28,3 +28,22 @@ extension _ChatChannelMember: Model {
 extension _CurrentChatUser: Model {
     typealias DTO = CurrentUserDTO
 }
+
+protocol Query: Model {
+    associatedtype QueryItem: Model
+}
+
+extension ChannelMemberListQuery: Query {
+    typealias DTO = ChannelMemberListQueryDTO
+    typealias QueryItem = _ChatChannelMember<ExtraData>
+}
+
+extension UserListQuery: Query {
+    typealias DTO = UserListQueryDTO
+    typealias QueryItem = _ChatUser<ExtraData>
+}
+
+extension ChannelListQuery: Query {
+    typealias DTO = ChannelListQueryDTO
+    typealias QueryItem = _ChatChannel<ExtraData>
+}

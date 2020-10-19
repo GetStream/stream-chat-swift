@@ -84,7 +84,7 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
         database.backgroundReadOnlyContext.perform { [weak self] in
             guard let queries = self?.queries else { return }
             
-            var updatedQueries: [ChannelListQuery<ExtraData.Channel>] = []
+            var updatedQueries: [ChannelListQuery<ExtraData>] = []
             
             do {
                 updatedQueries = try queries.map {
@@ -120,11 +120,11 @@ extension NewChannelQueryUpdater {
 }
 
 private extension ChannelListQueryDTO {
-    func asChannelListQueryWithUpdatedFilter<ExtraData: ChannelExtraData>(
-        filterToAdd filter: Filter<ChannelListFilterScope<ExtraData>>
+    func asChannelListQueryWithUpdatedFilter<ExtraData: ExtraDataTypes>(
+        filterToAdd filter: Filter<ChannelListFilterScope<ExtraData.Channel>>
     ) throws -> ChannelListQuery<ExtraData> {
         let encodedFilter = try JSONDecoder.default
-            .decode(Filter<ChannelListFilterScope<ExtraData>>.self, from: filterJSONData)
+            .decode(Filter<ChannelListFilterScope<ExtraData.Channel>>.self, from: filterJSONData)
         
         // We need to pass original `filterHash` so channel will be linked to original query, not the modified one
         var updatedFilter: Filter<ChannelListFilterScope> = .and([encodedFilter, filter])
