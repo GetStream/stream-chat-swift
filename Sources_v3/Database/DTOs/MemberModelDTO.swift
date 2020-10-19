@@ -10,6 +10,10 @@ class MemberDTO: NSManagedObject {
     // user' id and the channel the member belongs to.
     @NSManaged fileprivate var id: String
     
+    var cid: ChannelId {
+        try! .init(cid: String(id.dropLast(user.id.count)))
+    }
+    
     // This value is optional only temprorary until this is fixed https://getstream.slack.com/archives/CE5N802GP/p1592925726015900
     @NSManaged var channelRoleRaw: String?
     @NSManaged var memberCreatedAt: Date
@@ -112,28 +116,11 @@ extension MemberDTO {
 
 extension _ChatChannelMember {
     fileprivate static func create(fromDTO dto: MemberDTO) -> _ChatChannelMember {
-        let extraData: ExtraData
-        do {
-            extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.user.extraData)
-        } catch {
-            log.error(
-                "Failed to decode extra data for Member with id: <\(dto.user.id)>, using default value instead. "
-                    + "Error: \(error)"
-            )
-            extraData = .defaultValue
-        }
-        
         let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
         
         return _ChatChannelMember(
-            id: dto.user.id,
-            isOnline: dto.user.isOnline,
-            isBanned: dto.user.isBanned,
-            userRole: UserRole(rawValue: dto.user.userRoleRaw)!,
-            userCreatedAt: dto.user.userCreatedAt,
-            userUpdatedAt: dto.user.userUpdatedAt,
-            lastActiveAt: dto.user.lastActivityAt,
-            extraData: extraData,
+            cid: dto.cid,
+            user: dto.user.asModel(),
             memberRole: role,
             memberCreatedAt: dto.memberCreatedAt,
             memberUpdatedAt: dto.memberUpdatedAt,

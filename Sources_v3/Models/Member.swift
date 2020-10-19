@@ -21,7 +21,8 @@ public typealias ChatChannelMember = _ChatChannelMember<NameAndImageExtraData>
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
+@dynamicMemberLookup
+public struct _ChatChannelMember<ExtraData: UserExtraData> {
     /// The role of the user within the channel.
     public let memberRole: MemberRole
     
@@ -42,15 +43,15 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
     /// otherwise it's `nil`.
     public let inviteRejectedAt: Date?
     
+    /// The channel identifier.
+    public let cid: ChannelId
+    
+    /// The user.
+    public let user: _ChatUser<ExtraData>
+    
     public init(
-        id: String,
-        isOnline: Bool,
-        isBanned: Bool,
-        userRole: UserRole,
-        userCreatedAt: Date,
-        userUpdatedAt: Date,
-        lastActiveAt: Date?,
-        extraData: ExtraData,
+        cid: ChannelId,
+        user: _ChatUser<ExtraData>,
         memberRole: MemberRole,
         memberCreatedAt: Date,
         memberUpdatedAt: Date,
@@ -58,23 +59,35 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
         inviteAcceptedAt: Date?,
         inviteRejectedAt: Date?
     ) {
+        self.cid = cid
+        self.user = user
         self.memberRole = memberRole
         self.memberCreatedAt = memberCreatedAt
         self.memberUpdatedAt = memberUpdatedAt
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
-        
-        super.init(
-            id: id,
-            isOnline: isOnline,
-            isBanned: isBanned,
-            userRole: userRole,
-            createdAt: userCreatedAt,
-            updatedAt: userUpdatedAt,
-            lastActiveAt: lastActiveAt,
-            extraData: extraData
-        )
+    }
+}
+
+extension _ChatChannelMember: Hashable {
+    public static func == (lhs: _ChatChannelMember<ExtraData>, rhs: _ChatChannelMember<ExtraData>) -> Bool {
+        lhs.user.id == rhs.user.id && lhs.cid == rhs.cid
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(user.id)
+        hasher.combine(cid)
+    }
+}
+
+extension _ChatChannelMember {
+    public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData, T>) -> T {
+        user.extraData[keyPath: keyPath]
+    }
+    
+    public subscript<T>(dynamicMember keyPath: KeyPath<_ChatUser<ExtraData>, T>) -> T {
+        user[keyPath: keyPath]
     }
 }
 
