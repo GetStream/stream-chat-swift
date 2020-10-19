@@ -128,7 +128,7 @@ private extension ChannelListQueryDTO {
         
         // We need to pass original `filterHash` so channel will be linked to original query, not the modified one
         var updatedFilter: Filter<ChannelListFilterScope> = .and([encodedFilter, filter])
-        updatedFilter.explicitHash = filterHash
+        updatedFilter.explicitHash = queryHash
         
         return ChannelListQuery(filter: updatedFilter)
     }

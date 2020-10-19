@@ -79,7 +79,7 @@ public struct ChannelListQuery<ExtraData: ExtraDataTypes>: Encodable {
     }
     
     /// A filter for the query (see `Filter`).
-    public let filter: Filter<ChannelListFilterScope<ExtraData.Channel>>
+    public let filter: Filter<ChannelListFilterScope<ExtraData.Channel>>?
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<ChannelListSortingKey>]
     /// A pagination.
@@ -96,7 +96,7 @@ public struct ChannelListQuery<ExtraData: ExtraDataTypes>: Encodable {
     ///   - pageSize: a page size for pagination.
     ///   - messagesLimit: a number of messages for the channel to be retrieved.
     public init(
-        filter: Filter<ChannelListFilterScope<ExtraData.Channel>>,
+        filter: Filter<ChannelListFilterScope<ExtraData.Channel>>? = nil,
         sort: [Sorting<ChannelListSortingKey>] = [],
         pageSize: Int = .channelsPageSize,
         messagesLimit: Int = .messagesPageSize
@@ -118,5 +118,14 @@ public struct ChannelListQuery<ExtraData: ExtraDataTypes>: Encodable {
         try container.encode(messagesLimit, forKey: .messagesLimit)
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
+    }
+}
+
+extension ChannelListQuery {
+    var queryHash: String {
+        [
+            filter?.filterHash,
+            sort.map(\.description).joined()
+        ].compactMap { $0 }.joined(separator: "-")
     }
 }

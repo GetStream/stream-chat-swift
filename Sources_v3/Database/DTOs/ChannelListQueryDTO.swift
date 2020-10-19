@@ -7,7 +7,7 @@ import CoreData
 @objc(ChannelListQueryDTO)
 class ChannelListQueryDTO: NSManagedObject {
     /// Unique identifier of the query/
-    @NSManaged var filterHash: String
+    @NSManaged var queryHash: String
     
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated, i.e. for newly created channels.
     @NSManaged var filterJSONData: Data
@@ -16,26 +16,30 @@ class ChannelListQueryDTO: NSManagedObject {
     
     @NSManaged var channels: Set<ChannelDTO>
     
-    static func load(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
+    static func load(queryHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
         let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", filterHash)
+        request.predicate = NSPredicate(format: "queryHash == %@", queryHash)
         return try? context.fetch(request).first
+    }
+    
+    static func loadOrCreate(queryHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO {
+        if let existing = Self.load(queryHash: queryHash, context: context) {
+            return existing
+        }
+        
+        let new = ChannelListQueryDTO(context: context)
+        new.queryHash = queryHash
+        return new
     }
 }
 
 extension NSManagedObjectContext {
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
-        ChannelListQueryDTO.load(filterHash: filterHash, context: self)
+    func channelListQuery(queryHash: String) -> ChannelListQueryDTO? {
+        ChannelListQueryDTO.load(queryHash: queryHash, context: self)
     }
     
     func saveQuery<ExtraData: ExtraDataTypes>(query: ChannelListQuery<ExtraData>) -> ChannelListQueryDTO {
-        if let existingDTO = ChannelListQueryDTO.load(filterHash: query.filter.filterHash, context: self) {
-            return existingDTO
-        }
-        
-        let newDTO = NSEntityDescription
-            .insertNewObject(forEntityName: ChannelListQueryDTO.entityName, into: self) as! ChannelListQueryDTO
-        newDTO.filterHash = query.filter.filterHash
+        let dto = ChannelListQueryDTO.loadOrCreate(queryHash: query.queryHash, context: self)
         
         let jsonData: Data
         do {
@@ -45,8 +49,8 @@ extension NSManagedObjectContext {
             jsonData = Data()
         }
         
-        newDTO.filterJSONData = jsonData
+        dto.filterJSONData = jsonData
         
-        return newDTO
+        return dto
     }
 }
