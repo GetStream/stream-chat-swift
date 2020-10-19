@@ -25,6 +25,9 @@ public typealias ChatMessage = _ChatMessage<DefaultExtraData>
 ///
 @dynamicMemberLookup
 public struct _ChatMessage<ExtraData: ExtraDataTypes> {
+    /// A channel identifier.
+    public let cid: ChannelId
+    
     /// A unique identifier of the message.
     public let id: MessageId
     

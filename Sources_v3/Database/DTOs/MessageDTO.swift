@@ -223,6 +223,7 @@ extension MessageDTO {
 extension _ChatMessage {
     fileprivate init(fromDTO dto: MessageDTO) {
         id = dto.id
+        cid = try! ChannelId(cid: dto.channel.cid)
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
         command = dto.command
