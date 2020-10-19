@@ -191,7 +191,7 @@ extension ChatViewController {
         
         // We don't want users to send the same message multiple times
         // in case their internet is slow and message isn't sent immediately
-        composerView.sendButton.isEnabled = false
+        composerView.reset()
         
         presenter?.rx.send(text: text,
                            showReplyInChannel: composerView.alsoSendToChannelButton.isSelected,
@@ -203,10 +203,8 @@ extension ChatViewController {
                     }
                 },
                 onError: { [weak self] in
-                    self?.composerView.reset()
                     self?.show(error: $0)
-                },
-                onCompleted: { [weak self] in self?.composerView.reset() })
+                })
             .disposed(by: disposeBag)
     }
     
