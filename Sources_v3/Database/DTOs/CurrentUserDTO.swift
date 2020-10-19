@@ -123,30 +123,9 @@ extension CurrentUserDTO {
 
 extension _CurrentChatUser {
     fileprivate static func create(fromDTO dto: CurrentUserDTO) -> _CurrentChatUser {
-        let user = dto.user
-        
-        let extraData: ExtraData
-        do {
-            extraData = try JSONDecoder.default.decode(ExtraData.self, from: user.extraData)
-        } catch {
-            log.error(
-                "Failed to decode extra data for CurrentUser with id: <\(dto.user.id)>, using default value instead. "
-                    + " Error: \(error)"
-            )
-            extraData = .defaultValue
-        }
-        
         let mutedUsers: [_ChatUser<ExtraData>] = dto.mutedUsers.map { $0.asModel() }
-        
         return _CurrentChatUser(
-            id: user.id,
-            isOnline: user.isOnline,
-            isBanned: user.isBanned,
-            userRole: UserRole(rawValue: user.userRoleRaw)!,
-            createdAt: user.userCreatedAt,
-            updatedAt: user.userUpdatedAt,
-            lastActiveAt: user.lastActivityAt,
-            extraData: extraData,
+            user: dto.user.asModel(),
             devices: dto.devices.map { $0.asModel() },
             currentDevice: nil,
             mutedUsers: Set(mutedUsers),

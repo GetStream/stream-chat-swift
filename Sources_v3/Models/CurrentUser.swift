@@ -36,7 +36,8 @@ public typealias CurrentChatUser = _CurrentChatUser<DefaultExtraData.User>
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
+@dynamicMemberLookup
+public struct _CurrentChatUser<ExtraData: UserExtraData> {
     /// A list of devices associcated with the user.
     public let devices: [Device]
     
@@ -49,34 +50,31 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
     /// The unread counts for the current user.
     public let unreadCount: UnreadCount
     
+    /// The user.
+    public let user: _ChatUser<ExtraData>
+    
     public init(
-        id: String,
-        isOnline: Bool = false,
-        isBanned: Bool = false,
-        userRole: UserRole = .user,
-        createdAt: Date = .init(),
-        updatedAt: Date = .init(),
-        lastActiveAt: Date? = nil,
-        extraData: ExtraData = .defaultValue,
+        user: _ChatUser<ExtraData>,
         devices: [Device] = [],
         currentDevice: Device? = nil,
         mutedUsers: Set<_ChatUser<ExtraData>> = [],
         unreadCount: UnreadCount = .noUnread
     ) {
+        self.user = user
         self.devices = devices
         self.currentDevice = currentDevice
         self.mutedUsers = mutedUsers
         self.unreadCount = unreadCount
-        
-        super.init(
-            id: id,
-            isOnline: isOnline,
-            isBanned: isBanned,
-            userRole: userRole,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            lastActiveAt: lastActiveAt,
-            extraData: extraData
-        )
     }
 }
+
+extension _CurrentChatUser {
+    public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData, T>) -> T {
+        user.extraData[keyPath: keyPath]
+    }
+    
+    public subscript<T>(dynamicMember keyPath: KeyPath<_ChatUser<ExtraData>, T>) -> T {
+        user[keyPath: keyPath]
+    }
+}
+
