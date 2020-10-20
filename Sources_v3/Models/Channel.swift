@@ -164,7 +164,7 @@ extension _ChatChannel {
 //    public var readEventsEnabled: Bool { /* config.readEventsEnabled && members.contains(Member.current) */ fatalError() }
     
     /// Returns `true` when the channel is a direct-message channel between 2 users.
-    public var isDirectMessage: Bool { cid.id.hasPrefix("!members") && cachedMembers.count == 2 }
+    public var isDirectMessageChannel: Bool { cid.id.hasPrefix("!members") && cachedMembers.count == 2 }
     
     /// returns `true` if the channel has one or more unread messages for the current user.
     public var isUnread: Bool { unreadCount.messages > 0 }

@@ -132,6 +132,13 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         
         cell.backgroundColor = message.localState == nil ? .white : .lightGray
         
+        // iOS 13 and over: We can use context menus
+        // iOS 13 and below: Context menus not available, we have to use long tap + action sheet
+        if #available(iOS 13, *) {} else {
+            let longTapGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(didTapMessage(_:)))
+            cell.addGestureRecognizer(longTapGestureRecognizer)
+        }
+        
         return cell
     }
     
@@ -214,6 +221,141 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         return configuration
     }
     
+    ///
+    /// # contextMenuConfigurationForRowAt
+    ///
+    /// The method below returns the context menu with actions that can be taken on the message such as deleting and editing, or on the message's author such as banning and
+    /// unbanning.
+    ///
+    @available(iOS 13, *)
+    override func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        guard let cid = channelController.cid else {
+            return nil
+        }
+        
+        let message = channelController.messages[indexPath.row]
+        
+        var actions = [UIAction]()
+        
+        let currentUserId = channelController.client.currentUserId
+        let isMessageFromCurrentUser = message.author.id == currentUserId
+        
+        if isMessageFromCurrentUser {
+            let messageController = channelController.client.messageController(
+                cid: cid,
+                messageId: message.id
+            )
+            
+            // Edit message
+            actions.append(UIAction(title: "Edit", image: UIImage(systemName: "pencil")) { [weak self] _ in
+                self?.showTextEditingAlert(for: message.text) {
+                    messageController.editMessage(text: $0)
+                }
+            })
+            
+            // Delete message
+            actions.append(UIAction(
+                title: "Delete",
+                image: UIImage(systemName: "trash"),
+                attributes: [.destructive]
+            ) { _ in
+                messageController.deleteMessage()
+            })
+        } else {
+            let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
+            
+            // Ban / Unban user
+            if message.author.isBanned {
+                actions.append(UIAction(
+                    title: "Unban",
+                    image: UIImage(systemName: "checkmark.square")
+                ) { _ in
+                    memberController.unban()
+                })
+            } else {
+                actions.append(UIAction(
+                    title: "Ban",
+                    image: UIImage(systemName: "exclamationmark.octagon"),
+                    attributes: [.destructive]
+                ) { _ in
+                    memberController.ban()
+                })
+            }
+        }
+        
+        view.endEditing(true)
+        
+        let menu = UIMenu(title: "Select an action:", children: actions)
+        
+        return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in menu }
+    }
+    
+    override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        false
+    }
+    
+    // MARK: - Cell Actions
+    
+    @objc func didTapMessage(_ sender: UILongPressGestureRecognizer) {
+        guard let cell = sender.view as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) else { return }
+        let message = channelController.messages[indexPath.row]
+        let alert = alertController(for: message)
+        
+        view.endEditing(true)
+        present(alert, animated: true)
+    }
+    
+    public func alertController(for message: ChatMessage) -> UIAlertController {
+        guard let cid = channelController.cid else {
+            fatalError("channelController will always have cid if channel created and we have messages available.")
+        }
+        
+        let alert = UIAlertController(title: "Select an action:", message: nil, preferredStyle: .actionSheet)
+        
+        let currentUserId = channelController.client.currentUserId
+        let isMessageFromCurrentUser = message.author.id == currentUserId
+        
+        if isMessageFromCurrentUser {
+            let messageController = channelController.client.messageController(
+                cid: cid,
+                messageId: message.id
+            )
+            
+            // Edit message
+            alert.addAction(.init(title: "Edit", style: .default, handler: { [weak self] _ in
+                self?.showTextEditingAlert(for: message.text) {
+                    messageController.editMessage(text: $0)
+                }
+            }))
+            
+            // Delete message
+            alert.addAction(.init(title: "Delete", style: .destructive, handler: { _ in
+                messageController.deleteMessage()
+            }))
+        } else {
+            let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
+            
+            // Ban / Unban user
+            if message.author.isBanned {
+                alert.addAction(.init(title: "Unban", style: .default, handler: { _ in
+                    memberController.unban()
+                }))
+            } else {
+                alert.addAction(.init(title: "Ban", style: .default, handler: { _ in
+                    memberController.ban()
+                }))
+            }
+        }
+        
+        alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
+        
+        return alert
+    }
+
     // MARK: - Button Actions
 
     ///
