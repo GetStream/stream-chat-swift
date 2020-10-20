@@ -9,13 +9,15 @@ extension MessagePayload {
     /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.
     static func dummy<T: ExtraDataTypes>(
         messageId: MessageId,
+        parentId: MessageId? = nil,
+        showReplyInChannel: Bool = false,
         authorUserId: UserId,
         text: String = .unique,
         extraData: T.Message = .defaultValue
     ) -> MessagePayload<T> where T.User == NameAndImageExtraData {
         .init(
             id: messageId,
-            type: .regular,
+            type: parentId == nil ? .regular : .reply,
             user: UserPayload.dummy(userId: authorUserId) as UserPayload<T.User>,
             createdAt: .unique,
             updatedAt: .unique,
@@ -23,8 +25,8 @@ extension MessagePayload {
             text: text,
             command: .unique,
             args: .unique,
-            parentId: .unique,
-            showReplyInChannel: true,
+            parentId: parentId,
+            showReplyInChannel: showReplyInChannel,
             mentionedUsers: [UserPayload.dummy(userId: .unique)],
             replyCount: .random(in: 0...1000),
             extraData: extraData,
