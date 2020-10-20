@@ -65,11 +65,22 @@ class MessageDTO: NSManagedObject {
         return request
     }
     
+    /// Returns predicate with channel messages and replies that should be shown in channel.
+    static func channelMessagesPredicate(for cid: String) -> NSCompoundPredicate {
+        /// Channel messages.
+        let messagesPredicate = NSPredicate(format: "channel.cid == %@ AND type != %@", cid, MessageType.reply.rawValue)
+        /// Replies that should be shown in channel.
+        let repliesPredicate = NSPredicate(
+            format: "channel.cid == %@ AND type == %@ AND showReplyInChannel == 1", cid, MessageType.reply.rawValue
+        )
+        return .init(orPredicateWithSubpredicates: [messagesPredicate, repliesPredicate])
+    }
+    
     /// Returns a fetch request for messages from the channel with the provided `cid`.
     static func messagesFetchRequest(for cid: ChannelId, sortAscending: Bool = false) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
-        request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
+        request.predicate = channelMessagesPredicate(for: cid.rawValue)
         return request
     }
     
@@ -83,7 +94,7 @@ class MessageDTO: NSManagedObject {
     
     static func load(for cid: String, limit: Int, offset: Int = 0, context: NSManagedObjectContext) -> [MessageDTO] {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
-        request.predicate = NSPredicate(format: "channel.cid == %@", cid)
+        request.predicate = channelMessagesPredicate(for: cid)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = limit
         request.fetchOffset = offset

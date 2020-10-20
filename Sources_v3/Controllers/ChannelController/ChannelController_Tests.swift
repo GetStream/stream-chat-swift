@@ -274,6 +274,45 @@ class ChannelController_Tests: StressTestCase {
         let bottomToTopIds = [message1, message2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), bottomToTopIds)
     }
+    
+    func test_threadReplies_areNotShownInChannel() throws {
+        // Create a channel
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
+        
+        // Insert two messages
+        let message1: MessagePayload<DefaultExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: MessagePayload<DefaultExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        
+        // Insert reply that should be shown in channel.
+        let reply1: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: .unique,
+            parentId: message2.id,
+            showReplyInChannel: true,
+            authorUserId: .unique
+        )
+        
+        // Insert reply that should be visible only in thread.
+        let reply2: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: .unique,
+            parentId: message2.id,
+            showReplyInChannel: false,
+            authorUserId: .unique
+        )
+        
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: message1, for: self.channelId)
+            try $0.saveMessage(payload: message2, for: self.channelId)
+            try $0.saveMessage(payload: reply1, for: self.channelId)
+            try $0.saveMessage(payload: reply2, for: self.channelId)
+        }
+        
+        // Set top-to-bottom ordering
+        controller.listOrdering = .topToBottom
+        
+        // Check the relevant reply is shown in channel
+        let messagesWithReply = [message1, message2, reply1].sorted { $0.createdAt > $1.createdAt }.map(\.id)
+        XCTAssertEqual(controller.messages.map(\.id), messagesWithReply)
+    }
 
     // MARK: - Delegate tests
     
