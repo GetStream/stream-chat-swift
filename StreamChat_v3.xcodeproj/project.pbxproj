@@ -260,6 +260,7 @@
 		88F6DF94252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */; };
 		88F6DF97252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */; };
 		88F8DECD253EF61C003DC28E /* QueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F8DECC253EF61C003DC28E /* QueryUpdater.swift */; };
+		88F8DED6253F168E003DC28E /* MemberListQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F8DED5253F168E003DC28E /* MemberListQueryUpdater.swift */; };
 		8A0175F02501174000570345 /* EventSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175EF2501174000570345 /* EventSender.swift */; };
 		8A0175F425013B6400570345 /* EventSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175F325013B6400570345 /* EventSender_Tests.swift */; };
 		8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A08C6A524D437DF00DEF995 /* WebSocketPingController_Tests.swift */; };
@@ -712,6 +713,7 @@
 		88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Tests.swift; sourceTree = "<group>"; };
 		88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Mock.swift; sourceTree = "<group>"; };
 		88F8DECC253EF61C003DC28E /* QueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryUpdater.swift; sourceTree = "<group>"; };
+		88F8DED5253F168E003DC28E /* MemberListQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListQueryUpdater.swift; sourceTree = "<group>"; };
 		8A0175EF2501174000570345 /* EventSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender.swift; sourceTree = "<group>"; };
 		8A0175F325013B6400570345 /* EventSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender_Tests.swift; sourceTree = "<group>"; };
 		8A08C6A524D437DF00DEF995 /* WebSocketPingController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketPingController_Tests.swift; sourceTree = "<group>"; };
@@ -1563,6 +1565,7 @@
 			isa = PBXGroup;
 			children = (
 				88F8DECC253EF61C003DC28E /* QueryUpdater.swift */,
+				88F8DED5253F168E003DC28E /* MemberListQueryUpdater.swift */,
 			);
 			path = Queries;
 			sourceTree = "<group>";
@@ -2137,6 +2140,7 @@
 				792A4F40247FFDE700EAF71D /* Data+Gzip.swift in Sources */,
 				79E2B84024CAC8D60024752F /* ListDatabaseObserver.swift in Sources */,
 				796610B9248E651800761629 /* EventMiddleware.swift in Sources */,
+				88F8DED6253F168E003DC28E /* MemberListQueryUpdater.swift in Sources */,
 				7964F3B9249A314D002A09EC /* BaseLogDestination.swift in Sources */,
 				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
 				79B5517524E595CC00CE9FEC /* CurrentUserPayloads.swift in Sources */,
