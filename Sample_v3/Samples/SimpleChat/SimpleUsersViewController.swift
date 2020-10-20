@@ -37,7 +37,7 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
     /// Closure that will be triggered on `didSelectRowAt`.
     /// After user selection it will dismiss current controller and show direct message chat with the selected user.
     ///
-    var openDirectMessagesChat: ((UserId) -> Void)?
+    var didSelectUser: ((UserId) -> Void)?
     
     ///
     /// # handleLongPress
@@ -172,7 +172,7 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
     /// The method below handles the user selection.
     ///
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        openDirectMessagesChat?(userListController.users[indexPath.row].id)
+        didSelectUser?(userListController.users[indexPath.row].id)
     }
     
     // MARK: - UI Code

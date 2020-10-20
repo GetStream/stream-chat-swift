@@ -182,7 +182,7 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
             query: .init(sort: [.init(key: .lastActivityAt)])
         )
 
-        usersViewController.openDirectMessagesChat = { [weak self] userId in
+        usersViewController.didSelectUser = { [weak self] userId in
             self?.dismiss(animated: true) {
                 guard let self = self else { return }
                 
