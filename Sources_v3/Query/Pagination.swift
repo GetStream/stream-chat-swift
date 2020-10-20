@@ -53,6 +53,12 @@ public struct MessagesPagination: Encodable, Equatable {
         self.parameter = parameter
     }
     
+    /// Initializer with required page size.
+    init(pageSize: Int, parameter: PaginationParameter? = nil) {
+        self.pageSize = pageSize
+        self.parameter = parameter
+    }
+    
     private enum CodingKeys: String, CodingKey {
         case pageSize = "limit"
     }
