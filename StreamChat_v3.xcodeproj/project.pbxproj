@@ -353,6 +353,7 @@
 		DA640FBB2535CF8500D32944 /* ChannelListSortingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA640FBA2535CF8500D32944 /* ChannelListSortingKey.swift */; };
 		DA640FBE2535CF9200D32944 /* UserListSortingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA640FBD2535CF9200D32944 /* UserListSortingKey.swift */; };
 		DA640FC12535CFA100D32944 /* ChannelMemberListSortingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA640FC02535CFA100D32944 /* ChannelMemberListSortingKey.swift */; };
+		DA653BBA253F47EB00B448A0 /* Messages.json in Resources */ = {isa = PBXBuildFile; fileRef = DA653BB9253F47EB00B448A0 /* Messages.json */; };
 		DA6AC7F62538725B009C1B39 /* Pagination_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA6AC7F22538724F009C1B39 /* Pagination_Tests.swift */; };
 		DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */; };
 		DA8407002524F778005A0F62 /* UserListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA8406FF2524F778005A0F62 /* UserListController.swift */; };
@@ -831,6 +832,7 @@
 		DA640FBA2535CF8500D32944 /* ChannelListSortingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListSortingKey.swift; sourceTree = "<group>"; };
 		DA640FBD2535CF9200D32944 /* UserListSortingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListSortingKey.swift; sourceTree = "<group>"; };
 		DA640FC02535CFA100D32944 /* ChannelMemberListSortingKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListSortingKey.swift; sourceTree = "<group>"; };
+		DA653BB9253F47EB00B448A0 /* Messages.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Messages.json; sourceTree = "<group>"; };
 		DA6AC7F22538724F009C1B39 /* Pagination_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pagination_Tests.swift; sourceTree = "<group>"; };
 		DA7229E224E140260074503A /* ChannelEditDetailPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload_Tests.swift; sourceTree = "<group>"; };
 		DA8406FF2524F778005A0F62 /* UserListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListController.swift; sourceTree = "<group>"; };
@@ -1214,6 +1216,7 @@
 				790A4C50252E0957001F4A23 /* Devices.json */,
 				798779F72498E47700015F8B /* Channel.json */,
 				79F3ABE924EAB9CD00AB9505 /* Message.json */,
+				DA653BB9253F47EB00B448A0 /* Messages.json */,
 				798779F82498E47700015F8B /* OtherUser.json */,
 				798779F92498E47700015F8B /* CurrentUser.json */,
 				798779FA2498E47700015F8B /* ChannelsQuery.json */,
@@ -2066,6 +2069,7 @@
 				8AC9CBE224C74DD0006E236C /* NotificationInviteRejected.json in Resources */,
 				8A0CC9EC24C602B600705CF9 /* MemberAdded.json in Resources */,
 				DA8407262525E90D005A0F62 /* UsersQuery.json in Resources */,
+				DA653BBA253F47EB00B448A0 /* Messages.json in Resources */,
 				F62BE7902506620000D13B86 /* MissingEventsPayload.json in Resources */,
 				8A0CC9F624C608C500705CF9 /* ReactionNew.json in Resources */,
 			);
