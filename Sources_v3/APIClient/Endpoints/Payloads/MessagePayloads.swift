@@ -155,6 +155,11 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     }
 }
 
+/// An object describing the message replies JSON payload.
+struct MessageRepliesPayload<ExtraData: ExtraDataTypes>: Decodable {
+    let messages: [MessagePayload<ExtraData>]
+}
+
 // TODO: Command???
 
 /// A command in a message, e.g. /giphy.

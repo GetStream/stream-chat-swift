@@ -83,6 +83,16 @@ class MessageRequestBody_Tests: XCTestCase {
     }
 }
 
+class MessageRepliesPayload_Tests: XCTestCase {
+    func test_isSerialized() throws {
+        let mockJSON = XCTestCase.mockData(fromFile: "Messages")
+        let payload = try JSONDecoder.default.decode(MessageRepliesPayload<CustomData>.self, from: mockJSON)
+        
+        // Assert 2 messages successfully decoded.
+        XCTAssertTrue(payload.messages.count == 2)
+    }
+}
+
 private struct TestExtraMessageData: MessageExtraData {
     static var defaultValue: Self = .init(secretNote: "no secrets")
     
