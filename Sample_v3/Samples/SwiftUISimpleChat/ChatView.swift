@@ -56,7 +56,6 @@ struct ChatView: View {
     func messageList() -> some View {
         List(channel.messages, id: \.self) { message in
             self.messageView(for: message)
-                .onLongPressGesture { self.actionSheetTrigger = true; self.editingMessage = message }
         }
         /// Flipping `List` upside down so messages are displayed from bottom to top.
         .scaleEffect(x: 1, y: -1, anchor: .center)
@@ -77,6 +76,9 @@ struct ChatView: View {
         }
         
         return text
+            .contextMenu {
+                messageContextMenu(for: message)
+            }
             /// We have flipped `List` with messages upside down so now we need to flip each message view.
             .scaleEffect(x: 1, y: -1, anchor: .center)
             /// Load next more messages when the last is shown.
@@ -85,6 +87,46 @@ struct ChatView: View {
                     self.channel.controller.loadPreviousMessages()
                 }
             }
+    }
+    
+    func messageContextMenu(for message: ChatMessage) -> some View {
+        VStack {
+            if let cid = channel.controller.cid {
+                let currentUserId = channel.controller.client.currentUserId
+                let isMessageFromCurrentUser = message.author.id == currentUserId
+                
+                if isMessageFromCurrentUser {
+                    let messageController = channel.controller.client.messageController(
+                        cid: cid,
+                        messageId: message.id
+                    )
+
+                    Button(action: { self.editingMessage = message; self.text = message.text }) {
+                        Text("Edit")
+                        Image(systemName: "pencil")
+                    }
+                    
+                    Button(action: { messageController.deleteMessage() }) {
+                        Text("Delete")
+                        Image(systemName: "trash")
+                    }
+                } else {
+                    let memberController = channel.controller.client.memberController(userId: message.author.id, in: cid)
+                    
+                    if message.author.isBanned {
+                        Button(action: { memberController.unban() }) {
+                            Text("Unban")
+                            Image(systemName: "checkmark.square")
+                        }
+                    } else {
+                        Button(action: { memberController.ban() }) {
+                            Text("Ban")
+                            Image(systemName: "exclamationmark.octagon")
+                        }
+                    }
+                }
+            }
+        }
     }
     
     /// New message view with `TextEditor`.
@@ -143,33 +185,21 @@ struct ChatView: View {
     /// ActionSheet for channel action or message actions depending on `editingMessage` value.
     /// This is done due to `SwiftUI` limitations: it's not possible to have multiple `.actionSheet` modifiers.
     func actionSheet() -> ActionSheet {
-        if let message = editingMessage,
-            let cid = channel.controller.cid {
-            let messageController = channel.controller.client.messageController(cid: cid, messageId: message.id)
-            /// Message ActionSheet with actions that can be taken on `MessageController`. (`deleteMessage`, `editMessage`)
-            return ActionSheet(title: Text("Message Actions"), message: Text(""), buttons: [
-                .default(Text("Edit"), action: { self.editingMessage = message; self.text = message.text }),
-                .destructive(Text("Delete")) { messageController.deleteMessage(); self.editingMessage = nil },
-                .cancel { self.editingMessage = nil }
-            ])
-        } else {
-            /// Channel ActionSheet with actions that can be taken on `ChannelController`. (`addMembers`,`removeMembers`)
-            return ActionSheet(title: Text("Channel Actions"), message: Text(""), buttons: [
-                .default(
-                    Text("Add Member"), action: {
-                        self.userAction = { self.channel.controller.addMembers(userIds: [$0]) }
-                        self.userActionTrigger = true
-                    }
-                ),
-                .default(
-                    Text("Remove Member"), action: {
-                        self.userAction = { self.channel.controller.removeMembers(userIds: [$0]) }
-                        self.userActionTrigger = true
-                    }
-                ),
-                .cancel()
-            ])
-        }
+        ActionSheet(title: Text("Channel Actions"), message: Text(""), buttons: [
+            .default(
+                Text("Add Member"), action: {
+                    self.userAction = { self.channel.controller.addMembers(userIds: [$0]) }
+                    self.userActionTrigger = true
+                }
+            ),
+            .default(
+                Text("Remove Member"), action: {
+                    self.userAction = { self.channel.controller.removeMembers(userIds: [$0]) }
+                    self.userActionTrigger = true
+                }
+            ),
+            .cancel()
+        ])
     }
     
     private func didKeystroke() {
