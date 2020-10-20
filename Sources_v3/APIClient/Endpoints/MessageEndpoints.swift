@@ -35,10 +35,25 @@ extension Endpoint {
             body: ["message": payload]
         )
     }
+    
+    static func loadReplies<ExtraData: ExtraDataTypes>(messageId: MessageId, pagination: MessagesPagination)
+        -> Endpoint<MessageRepliesPayload<ExtraData>> {
+        .init(
+            path: messageId.repliesPath,
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: pagination
+        )
+    }
 }
 
 private extension MessageId {
     var path: String {
         "messages/\(self)"
+    }
+    
+    var repliesPath: String {
+        "messages/\(self)/replies"
     }
 }

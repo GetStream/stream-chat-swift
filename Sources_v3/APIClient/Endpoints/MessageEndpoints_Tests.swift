@@ -64,4 +64,23 @@ final class MessageEndpoints_Tests: XCTestCase {
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+    
+    func test_loadReplies_buildsCorrectly() {
+        let messageId: MessageId = .unique
+        let pagination: MessagesPagination = .init(pageSize: 10)
+        
+        let expectedEndpoint = Endpoint<MessageRepliesPayload<DefaultExtraData>>(
+            path: "messages/\(messageId)/replies",
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: pagination
+        )
+        
+        // Build endpoint
+        let endpoint: Endpoint<MessageRepliesPayload<DefaultExtraData>> = .loadReplies(messageId: messageId, pagination: pagination)
+        
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
