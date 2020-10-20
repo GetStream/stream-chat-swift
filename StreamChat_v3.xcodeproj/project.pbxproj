@@ -260,6 +260,7 @@
 		88F6DF94252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */; };
 		88F6DF97252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */; };
 		88F8DECD253EF61C003DC28E /* QueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F8DECC253EF61C003DC28E /* QueryUpdater.swift */; };
+		88F8DED2253F166E003DC28E /* UserListQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F8DED1253F166E003DC28E /* UserListQueryUpdater.swift */; };
 		88F8DED6253F168E003DC28E /* MemberListQueryUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F8DED5253F168E003DC28E /* MemberListQueryUpdater.swift */; };
 		8A0175F02501174000570345 /* EventSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175EF2501174000570345 /* EventSender.swift */; };
 		8A0175F425013B6400570345 /* EventSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175F325013B6400570345 /* EventSender_Tests.swift */; };
@@ -713,6 +714,7 @@
 		88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Tests.swift; sourceTree = "<group>"; };
 		88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Mock.swift; sourceTree = "<group>"; };
 		88F8DECC253EF61C003DC28E /* QueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QueryUpdater.swift; sourceTree = "<group>"; };
+		88F8DED1253F166E003DC28E /* UserListQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserListQueryUpdater.swift; sourceTree = "<group>"; };
 		88F8DED5253F168E003DC28E /* MemberListQueryUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListQueryUpdater.swift; sourceTree = "<group>"; };
 		8A0175EF2501174000570345 /* EventSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender.swift; sourceTree = "<group>"; };
 		8A0175F325013B6400570345 /* EventSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender_Tests.swift; sourceTree = "<group>"; };
@@ -1565,6 +1567,7 @@
 			isa = PBXGroup;
 			children = (
 				88F8DECC253EF61C003DC28E /* QueryUpdater.swift */,
+				88F8DED1253F166E003DC28E /* UserListQueryUpdater.swift */,
 				88F8DED5253F168E003DC28E /* MemberListQueryUpdater.swift */,
 			);
 			path = Queries;
@@ -2253,6 +2256,7 @@
 				79682C4B24BF37CB0071578E /* ChannelListPayload.swift in Sources */,
 				DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */,
 				888E8C4E252B4B1C00195E03 /* ChannelMemberBanRequestPayload.swift in Sources */,
+				88F8DED2253F166E003DC28E /* UserListQueryUpdater.swift in Sources */,
 				79FC85E724ACCBC500A665ED /* Token.swift in Sources */,
 				79877A0E2498E4BC00015F8B /* Channel.swift in Sources */,
 				DA4AA3B22502718600FAAF6E /* ChannelController+Combine.swift in Sources */,
