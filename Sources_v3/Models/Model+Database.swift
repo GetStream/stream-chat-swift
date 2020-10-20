@@ -2,48 +2,149 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData
+import Foundation
 
-protocol Model {
+// MARK: - ModelType
+
+protocol ModelType {
     associatedtype DTO: NSManagedObject
+    associatedtype Payload: Decodable
+    
+    static var allDTOFetchRequest: NSFetchRequest<DTO> { get }
+    var dtoFetchRequest: NSFetchRequest<DTO> { get }
 }
 
-extension _ChatChannel: Model {
+extension ModelType {
+    static var allDTOFetchRequest: NSFetchRequest<DTO> {
+        let request = NSFetchRequest<DTO>(entityName: DTO.entityName)
+        request.sortDescriptors = []
+        return request
+    }
+}
+ 
+extension _ChatChannel: ModelType {
     typealias DTO = ChannelDTO
+    typealias Payload = ChannelPayload<ExtraData>
+    
+    var dtoFetchRequest: NSFetchRequest<DTO> {
+        DTO.fetchRequest(for: cid)
+    }
 }
 
-extension _ChatUser: Model {
+extension _ChatUser: ModelType {
     typealias DTO = UserDTO
+    typealias Payload = UserPayload<ExtraData>
+    
+    var dtoFetchRequest: NSFetchRequest<DTO> {
+        DTO.user(withID: id)
+    }
 }
 
-extension _ChatMessage: Model {
+extension _ChatMessage: ModelType {
     typealias DTO = MessageDTO
+    typealias Payload = MessagePayload<ExtraData>
+    
+    var dtoFetchRequest: NSFetchRequest<DTO> {
+        DTO.message(withID: id)
+    }
 }
 
-extension _ChatChannelMember: Model {
+extension _ChatChannelMember: ModelType {
     typealias DTO = MemberDTO
+    typealias Payload = MemberPayload<ExtraData>
+    
+    var dtoFetchRequest: NSFetchRequest<DTO> {
+        DTO.member(user.id, in: cid)
+    }
 }
 
-extension _CurrentChatUser: Model {
+extension _CurrentChatUser: ModelType {
     typealias DTO = CurrentUserDTO
+    typealias Payload = CurrentUserPayload<ExtraData>
+    
+    var dtoFetchRequest: NSFetchRequest<DTO> {
+        DTO.defaultFetchRequest
+    }
 }
 
-protocol Query: Model {
-    associatedtype QueryItem: Model
+// MARK: - QueryPayloadType
+
+protocol QueryPayloadType: Decodable {
+    associatedtype ItemPayload: Decodable
+    
+    var items: [ItemPayload] { get }
 }
 
-extension ChannelMemberListQuery: Query {
+extension ChannelListPayload: QueryPayloadType {
+    var items: [ChannelPayload<ExtraData>] {
+        channels
+    }
+}
+
+extension UserListPayload: QueryPayloadType {
+    var items: [UserPayload<ExtraData>] {
+        users
+    }
+}
+
+extension ChannelMemberListPayload: QueryPayloadType {
+    var items: [MemberPayload<ExtraData>] {
+        members
+    }
+}
+
+// MARK: - QueryDTO
+
+protocol QueryDTO: NSManagedObject {
+    associatedtype ItemDTO: NSManagedObject
+    
+    var items: Set<ItemDTO> { get set }
+}
+
+extension ChannelMemberListQueryDTO: QueryDTO {
+    var items: Set<MemberDTO> {
+        get { members }
+        set { members = newValue }
+    }
+}
+
+extension UserListQueryDTO: QueryDTO {
+    var items: Set<UserDTO> {
+        get { users }
+        set { users = newValue }
+    }
+}
+
+extension ChannelListQueryDTO: QueryDTO {
+    var items: Set<ChannelDTO> {
+        get { channels }
+        set { channels = newValue }
+    }
+}
+
+// MARK: - QueryType
+
+protocol QueryType {
+    associatedtype Item: ModelType
+    associatedtype DTO: QueryDTO where DTO.ItemDTO == Item.DTO
+    associatedtype Payload: QueryPayloadType where Payload.ItemPayload == Item.Payload
+}
+
+extension ChannelMemberListQuery: QueryType {
+    typealias Item = _ChatChannelMember<ExtraData>
     typealias DTO = ChannelMemberListQueryDTO
-    typealias QueryItem = _ChatChannelMember<ExtraData>
+    typealias Payload = ChannelMemberListPayload<ExtraData>
 }
 
-extension UserListQuery: Query {
+extension UserListQuery: QueryType {
+    typealias Item = _ChatUser<ExtraData>
     typealias DTO = UserListQueryDTO
-    typealias QueryItem = _ChatUser<ExtraData>
+    typealias Payload = UserListPayload<ExtraData>
 }
 
-extension ChannelListQuery: Query {
+extension ChannelListQuery: QueryType {
+    typealias Item = _ChatChannel<ExtraData>
     typealias DTO = ChannelListQueryDTO
-    typealias QueryItem = _ChatChannel<ExtraData>
+    typealias Payload = ChannelListPayload<ExtraData>
 }
