@@ -229,7 +229,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
             self.dismiss(animated: true, completion: { pushDirectMessageChat(for: userId) })
         }
         
-        usersViewController.openDirectMessagesChat = openDirectMessagesChat
+        usersViewController.didSelectUser = openDirectMessagesChat
         let navigationController = UINavigationController(rootViewController: usersViewController)
         present(navigationController, animated: true, completion: nil)
     }
