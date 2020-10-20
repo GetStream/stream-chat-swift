@@ -210,11 +210,12 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         // All production workers
         let workerBuilders: [WorkerBuilder] = [
             MessageSender<ExtraData>.init,
-            NewChannelQueryUpdater<ExtraData>.init,
-            NewUserQueryUpdater<ExtraData.User>.init,
             ChannelWatchStateUpdater<ExtraData>.init,
             MessageEditor<ExtraData>.init,
-            MissingEventsPublisher<ExtraData>.init
+            MissingEventsPublisher<ExtraData>.init,
+            UserListQueryUpdater<ExtraData>.init,
+            MemberListQueryUpdater<ExtraData>.init,
+            ChannelListQueryUpdater<ExtraData>.init
         ]
         
         self.init(
