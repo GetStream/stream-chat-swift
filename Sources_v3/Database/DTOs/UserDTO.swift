@@ -17,6 +17,8 @@ class UserDTO: NSManagedObject {
     @NSManaged var userRoleRaw: String
     @NSManaged var userUpdatedAt: Date
     
+    @NSManaged var flaggedBy: CurrentUserDTO?
+    
     /// Returns a fetch request for the dto with the provided `userId`.
     static func user(withID userId: UserId) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)

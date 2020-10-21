@@ -15,6 +15,7 @@ class CurrentUserDTO: NSManagedObject {
     /// that returns all events that happen after the given date
     @NSManaged var lastReceivedEventDate: Date?
 
+    @NSManaged var flaggedUsers: Set<UserDTO>
     @NSManaged var mutedUsers: Set<UserDTO>
     @NSManaged var user: UserDTO
     @NSManaged var devices: Set<DeviceDTO>
