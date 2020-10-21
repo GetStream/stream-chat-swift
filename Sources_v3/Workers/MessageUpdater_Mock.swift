@@ -18,6 +18,15 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var editMessage_text: String?
     @Atomic var editMessage_completion: ((Error?) -> Void)?
     
+    @Atomic var createNewReply_cid: ChannelId?
+    @Atomic var createNewReply_text: String?
+    @Atomic var createNewReply_command: String?
+    @Atomic var createNewReply_arguments: String?
+    @Atomic var createNewReply_parentMessageId: MessageId?
+    @Atomic var createNewReply_showReplyInChannel: Bool?
+    @Atomic var createNewReply_extraData: ExtraData.Message?
+    @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
+    
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
         getMessage_cid = cid
         getMessage_messageId = messageId
@@ -33,5 +42,25 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         editMessage_messageId = messageId
         editMessage_text = text
         editMessage_completion = completion
+    }
+    
+    override func createNewReply(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        showReplyInChannel: Bool,
+        extraData: ExtraData.Message,
+        completion: ((Result<MessageId, Error>) -> Void)? = nil
+    ) {
+        createNewReply_cid = cid
+        createNewReply_text = text
+        createNewReply_command = command
+        createNewReply_arguments = arguments
+        createNewReply_parentMessageId = parentMessageId
+        createNewReply_showReplyInChannel = showReplyInChannel
+        createNewReply_extraData = extraData
+        createNewReply_completion = completion
     }
 }

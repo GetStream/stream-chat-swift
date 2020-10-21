@@ -124,6 +124,51 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0)
         })
     }
+
+    /// Creates a new reply message in the local DB and sets its local state to `.pendingSend`.
+    ///
+    /// - Parameters:
+    ///   - cid: The cid of the channel the message is create in.
+    ///   - text: Text of the message.
+    ///   - parentMessageId: The `MessageId` of the message this message replies to.
+    ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
+    ///   in the response thread.
+    ///   - extraData: Additional extra data of the message object.
+    ///   - completion: Called when saving the message to the local DB finishes.
+    ///
+    func createNewReply(
+        in cid: ChannelId,
+        text: String,
+        command: String?,
+        arguments: String?,
+        parentMessageId: MessageId,
+        showReplyInChannel: Bool,
+        extraData: ExtraData.Message,
+        completion: ((Result<MessageId, Error>) -> Void)? = nil
+    ) {
+        var newMessageId: MessageId?
+        database.write({ (session) in
+            let newMessageDTO = try session.createNewMessage(
+                in: cid,
+                text: text,
+                command: command,
+                arguments: arguments,
+                parentMessageId: parentMessageId,
+                showReplyInChannel: showReplyInChannel,
+                extraData: extraData
+            )
+            
+            newMessageDTO.localMessageState = .pendingSend
+            newMessageId = newMessageDTO.id
+            
+        }) { error in
+            if let messageId = newMessageId, error == nil {
+                completion?(.success(messageId))
+            } else {
+                completion?(.failure(error ?? ClientError.Unknown()))
+            }
+        }
+    }
 }
 
 extension ClientError {
