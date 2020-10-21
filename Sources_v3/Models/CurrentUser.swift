@@ -46,6 +46,9 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
     /// A set of users muted by the user.
     public let mutedUsers: Set<_ChatUser<ExtraData>>
     
+    /// A set of users flagged by the user.
+    public let flaggedUsers: Set<_ChatUser<ExtraData>>
+    
     /// The unread counts for the current user.
     public let unreadCount: UnreadCount
     
@@ -61,11 +64,13 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
         devices: [Device] = [],
         currentDevice: Device? = nil,
         mutedUsers: Set<_ChatUser<ExtraData>> = [],
+        flaggedUsers: Set<_ChatUser<ExtraData>> = [],
         unreadCount: UnreadCount = .noUnread
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
         self.mutedUsers = mutedUsers
+        self.flaggedUsers = flaggedUsers
         self.unreadCount = unreadCount
         
         super.init(
