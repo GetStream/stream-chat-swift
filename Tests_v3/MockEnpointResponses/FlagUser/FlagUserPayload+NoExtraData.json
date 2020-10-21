@@ -1,0 +1,42 @@
+{
+    "flag" : {
+        "reviewed_by" : "",
+        "rejected_at" : "0001-01-01T00:00:00Z",
+        "created_by_automod" : false,
+        "created_at" : "2020-10-21T14:45:03.115787Z",
+        "approved_at" : "0001-01-01T00:00:00Z",
+        "updated_at" : "2020-10-21T14:45:03.115787Z",
+        "target_user" : {
+            "id" : "steep-moon-9",
+            "banned" : false,
+            "unread_channels" : 3,
+            "totalUnreadCount" : 0,
+            "last_active" : "2020-10-21T09:39:14.027121Z",
+            "created_at" : "2019-12-12T15:34:00.762372Z",
+            "devices" : null,
+            "invisible" : false,
+            "unreadChannels" : 0,
+            "unread_count" : 21,
+            "channel_mutes" : null,
+            "updated_at" : "2020-10-21T09:39:14.027121Z",
+            "role" : "user",
+            "total_unread_count" : 21,
+            "online" : false
+        },
+        "reviewed_at" : "0001-01-01T00:00:00Z",
+        "user" : {
+            "id" : "broken-waterfall-5",
+            "banned" : false,
+            "last_active" : "2020-10-21T14:31:31.692634Z",
+            "created_at" : "2019-12-12T15:33:46.488935Z",
+            "devices" : null,
+            "invisible" : false,
+            "team" : 1,
+            "channel_mutes" : null,
+            "updated_at" : "2020-10-21T14:43:22.80866Z",
+            "role" : "user",
+            "online" : true
+        }
+    },
+    "duration" : "9.32ms"
+}

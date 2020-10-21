@@ -232,6 +232,11 @@
 		882C5766252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882C5765252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift */; };
 		8836133825274F5F003CB958 /* ExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133725274F5F003CB958 /* ExtraData.swift */; };
 		8836133C25275170003CB958 /* MutedUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133B25275170003CB958 /* MutedUserPayload.swift */; };
+		8836FFBB2540741D009FDF73 /* FlagUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836FFBA2540741D009FDF73 /* FlagUserPayload.swift */; };
+		8836FFC325408210009FDF73 /* FlagUserPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836FFC225408210009FDF73 /* FlagUserPayload_Tests.swift */; };
+		8836FFD3254082FF009FDF73 /* FlagUserPayload+CustomExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 8836FFD0254082FF009FDF73 /* FlagUserPayload+CustomExtraData.json */; };
+		8836FFD4254082FF009FDF73 /* FlagUserPayload+DefaultExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 8836FFD1254082FF009FDF73 /* FlagUserPayload+DefaultExtraData.json */; };
+		8836FFD5254082FF009FDF73 /* FlagUserPayload+NoExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 8836FFD2254082FF009FDF73 /* FlagUserPayload+NoExtraData.json */; };
 		8837C6342539B39700D8FE86 /* CombineSimpleChannelMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6332539B39700D8FE86 /* CombineSimpleChannelMembersViewController.swift */; };
 		8837C63A2539B4A600D8FE86 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6392539B4A600D8FE86 /* Date+Extensions.swift */; };
 		8837C6442539C17A00D8FE86 /* ChannelMember+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6432539C17A00D8FE86 /* ChannelMember+Extensions.swift */; };
@@ -687,6 +692,11 @@
 		882C5765252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListUpdater_Tests.swift; sourceTree = "<group>"; };
 		8836133725274F5F003CB958 /* ExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraData.swift; sourceTree = "<group>"; };
 		8836133B25275170003CB958 /* MutedUserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUserPayload.swift; sourceTree = "<group>"; };
+		8836FFBA2540741D009FDF73 /* FlagUserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagUserPayload.swift; sourceTree = "<group>"; };
+		8836FFC225408210009FDF73 /* FlagUserPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagUserPayload_Tests.swift; sourceTree = "<group>"; };
+		8836FFD0254082FF009FDF73 /* FlagUserPayload+CustomExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagUserPayload+CustomExtraData.json"; sourceTree = "<group>"; };
+		8836FFD1254082FF009FDF73 /* FlagUserPayload+DefaultExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagUserPayload+DefaultExtraData.json"; sourceTree = "<group>"; };
+		8836FFD2254082FF009FDF73 /* FlagUserPayload+NoExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagUserPayload+NoExtraData.json"; sourceTree = "<group>"; };
 		8837C6332539B39700D8FE86 /* CombineSimpleChannelMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineSimpleChannelMembersViewController.swift; sourceTree = "<group>"; };
 		8837C6392539B4A600D8FE86 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		8837C6432539C17A00D8FE86 /* ChannelMember+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelMember+Extensions.swift"; sourceTree = "<group>"; };
@@ -1190,6 +1200,8 @@
 				F62BE7842506309B00D13B86 /* MissingEventsPayload_Tests.swift */,
 				790A4C44252DD4F1001F4A23 /* DevicePayloads.swift */,
 				790A4C4D252E0901001F4A23 /* DevicePayloads_Tests.swift */,
+				8836FFBA2540741D009FDF73 /* FlagUserPayload.swift */,
+				8836FFC225408210009FDF73 /* FlagUserPayload_Tests.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -1206,6 +1218,7 @@
 				798779F92498E47700015F8B /* CurrentUser.json */,
 				798779FA2498E47700015F8B /* ChannelsQuery.json */,
 				DA8407252525E90D005A0F62 /* UsersQuery.json */,
+				8836FFCF254082FF009FDF73 /* FlagUser */,
 				F62BE7882506616900D13B86 /* Sync */,
 				8A0D649E24E57A260017A3C0 /* GuestUser */,
 				8A62705F24BE31B20040BFD6 /* Events */,
@@ -1538,6 +1551,16 @@
 				888E8C3B252B2AC900195E03 /* UserController+SwiftUI_Tests.swift */,
 			);
 			path = UserController;
+			sourceTree = "<group>";
+		};
+		8836FFCF254082FF009FDF73 /* FlagUser */ = {
+			isa = PBXGroup;
+			children = (
+				8836FFD1254082FF009FDF73 /* FlagUserPayload+DefaultExtraData.json */,
+				8836FFD0254082FF009FDF73 /* FlagUserPayload+CustomExtraData.json */,
+				8836FFD2254082FF009FDF73 /* FlagUserPayload+NoExtraData.json */,
+			);
+			path = FlagUser;
 			sourceTree = "<group>";
 		};
 		888E8C53252B522F00195E03 /* MemberController */ = {
@@ -1999,12 +2022,14 @@
 				8A0CC9F724C608C500705CF9 /* ReactionUpdated.json in Resources */,
 				8A62706524BE403C0040BFD6 /* UserStopTyping.json in Resources */,
 				794927F3249E3F77009D7EB7 /* NotificationAddedToChannel.json in Resources */,
+				8836FFD5254082FF009FDF73 /* FlagUserPayload+NoExtraData.json in Resources */,
 				790A4C51252E0966001F4A23 /* Devices.json in Resources */,
 				8AC9CBDF24C74DD0006E236C /* NotificationRemovedFromChannel.json in Resources */,
 				8A0C3BDF24C1F18700CAFD19 /* MessageRead.json in Resources */,
 				8A0C3BBF24C0ACAB00CAFD19 /* UserPresence.json in Resources */,
 				8A0C3BDD24C1F18700CAFD19 /* MessageUpdated.json in Resources */,
 				8A0C3BC624C0AEDB00CAFD19 /* UserStopWatching.json in Resources */,
+				8836FFD3254082FF009FDF73 /* FlagUserPayload+CustomExtraData.json in Resources */,
 				8A0D64A224E57A260017A3C0 /* GuestUser+DefaultExtraData.json in Resources */,
 				798779FB2498E47700015F8B /* Member.json in Resources */,
 				8A0CC9F824C608C500705CF9 /* ReactionDeleted.json in Resources */,
@@ -2012,6 +2037,7 @@
 				8A0C3BCC24C1CA9900CAFD19 /* ChannelUpdated.json in Resources */,
 				798779FD2498E47700015F8B /* OtherUser.json in Resources */,
 				F64F9B6225077CF600834F55 /* MessageNew+MissingFields.json in Resources */,
+				8836FFD4254082FF009FDF73 /* FlagUserPayload+DefaultExtraData.json in Resources */,
 				8A0C3BE024C1F18700CAFD19 /* NotificationMarkRead.json in Resources */,
 				8A0CC9EF24C604E000705CF9 /* MemberUpdated.json in Resources */,
 				8A0C3BCE24C1CB0500CAFD19 /* ChannelDeleted.json in Resources */,
@@ -2277,6 +2303,7 @@
 				8A62704E24B8660A0040BFD6 /* EventType.swift in Sources */,
 				F65D9091250A5989000B8CEB /* WebSocketConnectEndpoint.swift in Sources */,
 				DAE566EB24FFD26C00E39431 /* CurrentUserController+SwiftUI.swift in Sources */,
+				8836FFBB2540741D009FDF73 /* FlagUserPayload.swift in Sources */,
 				799C945E247D7283001F1104 /* DatabaseContainer.swift in Sources */,
 				79877A092498E4BC00015F8B /* User.swift in Sources */,
 				79B5517324E593C200CE9FEC /* UserPayloads.swift in Sources */,
@@ -2298,6 +2325,7 @@
 				DA8407232525E871005A0F62 /* UserListPayload_Tests.swift in Sources */,
 				799B5DC5253081C900C108FB /* DevicePayloads.swift in Sources */,
 				F61D7C3124FF9D1F00188A0E /* MessageEndpoints_Tests.swift in Sources */,
+				8836FFC325408210009FDF73 /* FlagUserPayload_Tests.swift in Sources */,
 				DAFC1D4724F50C5C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift in Sources */,
 				7964F3AA249A19EA002A09EC /* Filter_Tests.swift in Sources */,
 				DA84072D2525EF8D005A0F62 /* UserEndpoints_Tests.swift in Sources */,
