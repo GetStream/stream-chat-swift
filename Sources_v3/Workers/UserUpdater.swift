@@ -64,6 +64,38 @@ class UserUpdater<ExtraData: ExtraDataTypes>: Worker {
                 }
             }
     }
+    
+    /// Flags or unflags the user with the provided `userId` depending on `flag` value.
+    /// - Parameters:
+    ///   - flag: The indicator saying whether the user should be flagged or unflagged.
+    ///   - userId: The identifier of a user that should be flagged or unflagged.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func flagUser(_ flag: Bool, with userId: UserId, completion: ((Error?) -> Void)? = nil) {
+        let endpoint: Endpoint<FlagUserPayload<ExtraData.User>> = .flagUser(flag, with: userId)
+        apiClient.request(endpoint: endpoint) {
+            switch $0 {
+            case let .success(payload):
+                self.database.write({ session in
+                    let userDTO = try session.saveUser(payload: payload.flaggedUser)
+                    
+                    let currentUserDTO = session.currentUser()
+                    if flag {
+                        currentUserDTO?.flaggedUsers.insert(userDTO)
+                    } else {
+                        currentUserDTO?.flaggedUsers.remove(userDTO)
+                    }
+                }, completion: {
+                    if let error = $0 {
+                        log.error("Failed to save flagged user with id: <\(userId)> to the database. Error: \(error)")
+                    }
+                    completion?($0)
+                })
+            case let .failure(error):
+                completion?(error)
+            }
+        }
+    }
 }
 
 extension ClientError {

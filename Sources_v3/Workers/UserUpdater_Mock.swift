@@ -15,6 +15,10 @@ final class UserUpdaterMock<ExtraData: ExtraDataTypes>: UserUpdater<ExtraData> {
 
     @Atomic var loadUser_userId: UserId?
     @Atomic var loadUser_completion: ((Error?) -> Void)?
+    
+    @Atomic var flagUser_flag: Bool?
+    @Atomic var flagUser_userId: UserId?
+    @Atomic var flagUser_completion: ((Error?) -> Void)?
 
     override func muteUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
         muteUser_userId = userId
@@ -29,5 +33,11 @@ final class UserUpdaterMock<ExtraData: ExtraDataTypes>: UserUpdater<ExtraData> {
     override func loadUser(_ userId: UserId, completion: ((Error?) -> Void)? = nil) {
         loadUser_userId = userId
         loadUser_completion = completion
+    }
+    
+    override func flagUser(_ flag: Bool, with userId: UserId, completion: ((Error?) -> Void)? = nil) {
+        flagUser_flag = flag
+        flagUser_userId = userId
+        flagUser_completion = completion
     }
 }
