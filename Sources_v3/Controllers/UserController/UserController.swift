@@ -181,6 +181,28 @@ public extension _ChatUserController {
             }
         }
     }
+    
+    /// Flags the user this controller manages.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                         If request fails, the completion will be called with an error.
+    func flag(completion: ((Error?) -> Void)? = nil) {
+        userUpdater.flagUser(true, with: userId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Unflags the user this controller manages.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///
+    func unflag(completion: ((Error?) -> Void)? = nil) {
+        userUpdater.flagUser(false, with: userId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 extension _ChatUserController {
