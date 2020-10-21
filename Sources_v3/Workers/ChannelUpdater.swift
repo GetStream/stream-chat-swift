@@ -92,13 +92,14 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
+    ///   - extraData: Additional extra data of the message object.
+    ///   - completion: Called when saving the message to the local DB finishes.
+    ///
     func createNewMessage(
         in cid: ChannelId,
         text: String,
         command: String?,
         arguments: String?,
-        parentMessageId: MessageId?,
-        showReplyInChannel: Bool,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -109,8 +110,8 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
                 text: text,
                 command: command,
                 arguments: arguments,
-                parentMessageId: parentMessageId,
-                showReplyInChannel: showReplyInChannel,
+                parentMessageId: nil,
+                showReplyInChannel: false,
                 extraData: extraData
             )
             

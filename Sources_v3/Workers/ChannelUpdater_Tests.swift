@@ -131,19 +131,15 @@ class ChannelUpdater_Tests: StressTestCase {
         let text: String = .unique
         let command: String = .unique
         let arguments: String = .unique
-        let parentMessageId: MessageId = .unique
-        let showReplyInChannel = true
         let extraData: DefaultExtraData.Message = .defaultValue
         
         // Create new message
-        let newMesageId: MessageId = try await { completion in
+        let newMessageId: MessageId = try await { completion in
             channelUpdater.createNewMessage(
                 in: cid,
                 text: text,
                 command: command,
                 arguments: arguments,
-                parentMessageId: parentMessageId,
-                showReplyInChannel: showReplyInChannel,
                 extraData: extraData
             ) { result in
                 if let newMessageId = try? result.get() {
@@ -155,15 +151,13 @@ class ChannelUpdater_Tests: StressTestCase {
         }
         
         var message: ChatMessage? {
-            database.viewContext.message(id: newMesageId)?.asModel()
+            database.viewContext.message(id: newMessageId)?.asModel()
         }
         
         AssertAsync {
             Assert.willBeEqual(message?.text, text)
             Assert.willBeEqual(message?.command, command)
             Assert.willBeEqual(message?.arguments, arguments)
-            Assert.willBeEqual(message?.parentMessageId, parentMessageId)
-            Assert.willBeEqual(message?.showReplyInChannel, showReplyInChannel)
             Assert.willBeEqual(message?.extraData, extraData)
             Assert.willBeEqual(message?.localState, .pendingSend)
         }
@@ -197,8 +191,6 @@ class ChannelUpdater_Tests: StressTestCase {
                 text: .unique,
                 command: .unique,
                 arguments: .unique,
-                parentMessageId: .unique,
-                showReplyInChannel: true,
                 extraData: .defaultValue
             ) { completion($0) }
         }
