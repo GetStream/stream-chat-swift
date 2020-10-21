@@ -644,9 +644,6 @@ public extension _ChatChannelController {
     ///
     /// - Parameters:
     ///   - text: Text of the message.
-    ///   - parentMessageId: If the message is a reply, the `MessageId` of the message this message replies to.
-    ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
-    ///   in the response thread.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -654,8 +651,6 @@ public extension _ChatChannelController {
         text: String,
 //        command: String? = nil,
 //        arguments: String? = nil,
-        parentMessageId: MessageId? = nil,
-        showReplyInChannel: Bool = false,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -667,7 +662,7 @@ public extension _ChatChannelController {
             return
         }
         
-        // Send stop typing event.
+        /// Send stop typing event.
         eventSender.stopTyping(in: cid)
         
         updater.createNewMessage(
@@ -675,8 +670,6 @@ public extension _ChatChannelController {
             text: text,
             command: nil,
             arguments: nil,
-            parentMessageId: parentMessageId,
-            showReplyInChannel: showReplyInChannel,
             extraData: extraData
         ) { [weak self] result in
             self?.callback {

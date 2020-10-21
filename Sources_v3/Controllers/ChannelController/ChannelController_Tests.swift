@@ -1186,8 +1186,6 @@ class ChannelController_Tests: StressTestCase {
         let text: String = .unique
 //        let command: String = .unique
 //        let arguments: String = .unique
-        let parentMessageId: MessageId = .unique
-        let showReplyInChannel = true
         let extraData: DefaultExtraData.Message = .defaultValue
         
         // Simulate `createNewMessage` calls and catch the completion
@@ -1196,8 +1194,6 @@ class ChannelController_Tests: StressTestCase {
             text: text,
 //            command: command,
 //            arguments: arguments,
-            parentMessageId: parentMessageId,
-            showReplyInChannel: showReplyInChannel,
             extraData: extraData
         ) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
@@ -1218,8 +1214,6 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(env.channelUpdater?.createNewMessage_text, text)
 //        XCTAssertEqual(env.channelUpdater?.createNewMessage_command, command)
 //        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
-        XCTAssertEqual(env.channelUpdater?.createNewMessage_parentMessageId, parentMessageId)
-        XCTAssertEqual(env.channelUpdater?.createNewMessage_showReplyInChannel, showReplyInChannel)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
     }
     
@@ -1234,8 +1228,6 @@ class ChannelController_Tests: StressTestCase {
                 text: .unique,
 //                command: .unique,
 //                arguments: .unique,
-                parentMessageId: .unique,
-                showReplyInChannel: true,
                 extraData: .defaultValue
             ) { result in
                 AssertTestQueue(withId: callbackQueueID)

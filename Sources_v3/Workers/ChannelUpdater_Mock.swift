@@ -42,8 +42,6 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var createNewMessage_text: String?
     @Atomic var createNewMessage_command: String?
     @Atomic var createNewMessage_arguments: String?
-    @Atomic var createNewMessage_parentMessageId: MessageId?
-    @Atomic var createNewMessage_showReplyInChannel: Bool?
     @Atomic var createNewMessage_extraData: ExtraData.Message?
     @Atomic var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
     
@@ -94,8 +92,6 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         text: String,
         command: String?,
         arguments: String?,
-        parentMessageId: MessageId?,
-        showReplyInChannel: Bool,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -103,8 +99,6 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         createNewMessage_text = text
         createNewMessage_command = command
         createNewMessage_arguments = arguments
-        createNewMessage_parentMessageId = parentMessageId
-        createNewMessage_showReplyInChannel = showReplyInChannel
         createNewMessage_extraData = extraData
         createNewMessage_completion = completion
     }
