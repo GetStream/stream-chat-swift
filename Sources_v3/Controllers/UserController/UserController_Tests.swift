@@ -28,6 +28,8 @@ final class UserController_Tests: StressTestCase {
     }
     
     override func tearDown() {
+        env.userUpdater?.cleanUp()
+        
         userId = nil
         controllerCallbackQueueID = nil
         

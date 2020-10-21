@@ -40,4 +40,20 @@ final class UserUpdaterMock<ExtraData: ExtraDataTypes>: UserUpdater<ExtraData> {
         flagUser_userId = userId
         flagUser_completion = completion
     }
+    
+    // Cleans up all recorded values
+    func cleanUp() {
+        muteUser_userId = nil
+        muteUser_completion = nil
+        
+        unmuteUser_userId = nil
+        unmuteUser_completion = nil
+        
+        loadUser_userId = nil
+        loadUser_completion = nil
+        
+        flagUser_flag = nil
+        flagUser_userId = nil
+        flagUser_completion = nil
+    }
 }
