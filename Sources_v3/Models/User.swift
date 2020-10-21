@@ -34,6 +34,12 @@ public class _ChatUser<ExtraData: UserExtraData> {
     /// An indicator whether the user is banned.
     public let isBanned: Bool
     
+    /// An indicator whether the user is flagged by the current user.
+    ///
+    /// - Note: Please be aware that the value of this field is not persisted on the server,
+    /// and is valid only locally for the current session.
+    public let isFlaggedByCurrentUser: Bool
+    
     /// The role of the user.
     public let userRole: UserRole
     
@@ -62,6 +68,7 @@ public class _ChatUser<ExtraData: UserExtraData> {
         id: UserId,
         isOnline: Bool = false,
         isBanned: Bool = false,
+        isFlaggedByCurrentUser: Bool = false,
         userRole: UserRole = .user,
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
@@ -72,6 +79,7 @@ public class _ChatUser<ExtraData: UserExtraData> {
         self.id = id
         self.isOnline = isOnline
         self.isBanned = isBanned
+        self.isFlaggedByCurrentUser = isFlaggedByCurrentUser
         self.userRole = userRole
         userCreatedAt = createdAt
         userUpdatedAt = updatedAt

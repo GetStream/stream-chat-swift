@@ -153,6 +153,7 @@ extension _ChatUser {
             id: dto.id,
             isOnline: dto.isOnline,
             isBanned: dto.isBanned,
+            isFlaggedByCurrentUser: dto.flaggedBy != nil,
             userRole: UserRole(rawValue: dto.userRoleRaw)!,
             createdAt: dto.userCreatedAt,
             updatedAt: dto.userUpdatedAt,
