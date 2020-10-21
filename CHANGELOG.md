@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🐞 Fixed
 - `ComposerView` disables send button but retains the message after user taps send. Now, composerView resets its state after user taps send, so user can send multiple messages [#555](https://github.com/GetStream/stream-chat-swift/issues/555)
+- Fix pagination for message replies not encoded correctly [#550](https://github.com/GetStream/stream-chat-swift/issues/550)
 
 # [2.4.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.4.0)
 _October 01, 2020_
