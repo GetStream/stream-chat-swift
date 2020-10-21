@@ -245,4 +245,111 @@ final class UserUpdater_Tests: StressTestCase {
             Assert.willBeEqual(user?.id, userPayload.id)
         }
     }
+    
+    // MARK: - Flag user
+
+    func test_flagUser_makesCorrectAPICall() {
+        let cases = [
+            (true, UserId.unique),
+            (false, UserId.unique)
+        ]
+        
+        for (flag, userId) in cases {
+            // Simulate `flagUser` call.
+            userUpdater.flagUser(flag, with: userId)
+            
+            // Assert correct endpoint is called.
+            let expectedEndpoint: Endpoint<FlagUserPayload<ExtraData.User>> = .flagUser(flag, with: userId)
+            XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        }
+    }
+    
+    func test_flagUser_updatesFlaggedUserList() throws {
+        let currentUserId: UserId = .unique
+        let flaggedUserId: UserId = .unique
+
+        // Create current user in the database.
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Simulate `flagUser` call.
+        var flagCompletionCalled = false
+        userUpdater.flagUser(true, with: flaggedUserId) { error in
+            XCTAssertNil(error)
+            flagCompletionCalled = true
+        }
+        
+        // Simulate `flagUser` API response with success.
+        let payload = FlagUserPayload<DefaultExtraData.User>(
+            currentUser: .dummy(userId: currentUserId, role: .user),
+            flaggedUser: .dummy(userId: flaggedUserId)
+        )
+        apiClient.test_simulateResponse(.success(payload))
+        
+        // Load current user
+        let currentUser = database.viewContext.currentUser()
+        // Load flagged user
+        var user: UserDTO? {
+            database.viewContext.user(id: flaggedUserId)
+        }
+        
+        // Assert flagged user exists in the database, and current user has it as flagged.
+        AssertAsync {
+            Assert.willBeTrue(user != nil)
+            Assert.willBeEqual(currentUser?.flaggedUsers ?? [], [user])
+            Assert.willBeTrue(flagCompletionCalled)
+        }
+        
+        // Simulate `unflagUser` call.
+        var unflagCompletionCalled = false
+        userUpdater.flagUser(false, with: flaggedUserId) { error in
+            XCTAssertNil(error)
+            unflagCompletionCalled = true
+        }
+        
+        // Simulate `unflagUser` API response with success.
+        apiClient.test_simulateResponse(.success(payload))
+        
+        // Assert user is not a member of `flaggedUsers`.
+        AssertAsync {
+            Assert.willBeEqual(currentUser?.flaggedUsers, [])
+            Assert.willBeTrue(unflagCompletionCalled)
+        }
+    }
+
+    func test_flagUser_propagatesNetworkError() {
+        // Simulate `flagUser` call.
+        var completionCalledError: Error?
+        userUpdater.flagUser(true, with: .unique) {
+            completionCalledError = $0
+        }
+        
+        // Simulate API response with failure.
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<FlagUserPayload<ExtraData.User>, Error>.failure(error))
+        
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    func test_flagUser_propagatesDatabaseError() throws {
+        // Update database to throws the error on write.
+        let databaseError = TestError()
+        database.write_errorResponse = databaseError
+        
+        // Simulate `flagUser` call.
+        var completionCalledError: Error?
+        userUpdater.flagUser(true, with: .unique) {
+            completionCalledError = $0
+        }
+        
+        // Simulate API response with success.
+        let payload = FlagUserPayload<DefaultExtraData.User>(
+            currentUser: .dummy(userId: .unique, role: .user),
+            flaggedUser: .dummy(userId: .unique)
+        )
+        apiClient.test_simulateResponse(.success(payload))
+        
+        // Assert database error is propogated.
+        AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
+    }
 }
