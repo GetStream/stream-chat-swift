@@ -235,7 +235,13 @@ extension Endpoint {
         case .removeDevice(deviceId: let deviceId, let user):
             return ["id": deviceId, "user_id": user.id]
         case .replies(_, let pagination):
-            return pagination
+            let paginationOptions: [(String, Encodable)] = pagination
+                .flatMap({ $0.parameters })
+                .compactMap({
+                    guard let value = $1 as? Encodable else { return nil }
+                    return ($0, value)
+                })
+            return Dictionary(paginationOptions.map({ ($0, AnyEncodable($1)) }), uniquingKeysWith: { $1 })
         case .deleteImage(let url, _), .deleteFile(let url, _):
             return ["url": url]
         case .unban(let userBan):

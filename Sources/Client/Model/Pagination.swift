@@ -32,17 +32,6 @@ public extension KeyedEncodingContainer {
 }
 
 /// Pagination options.
-///
-/// For example:
-/// ```
-/// // Limit by 20.
-/// var pagination = Pagination.limit(20)
-/// // add the offset to the limit:
-/// pagination += .offset(40)
-///
-/// // Another pagination:
-/// let pagination = Pagination.limit(50) + .lessThan("some_id")
-/// ```
 public enum PaginationOption: Encodable, Hashable {
     /// Default queryUsers page size
     public static let usersPageSize: Self = .limit(25)
