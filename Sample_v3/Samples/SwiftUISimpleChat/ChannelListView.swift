@@ -136,9 +136,8 @@ struct ChannelListView: View {
         return UserListView(
             userList: controller.observableObject,
             didSelectUser: { userId in
-                createDirectMessageChannel(with: userId) {
-                    activeSheet = nil
-                }
+                activeSheet = nil
+                openDirectMessages(with: userId)
             }
         )
     }
@@ -211,18 +210,8 @@ struct ChannelListView: View {
         )
     }
     
-    private func createDirectMessageChannel(with userId: UserId, completion: @escaping () -> Void) {
-        let client = channelList.controller.client
-        
-        let newChannelController = try! client.channelController(
-            createDirectMessageChannelWith: [client.currentUserId, userId],
-            extraData: .init()
-        )
-        
-        newChannelController.synchronize { [newChannelController] _ in
-            _ = newChannelController
-            completion()
-        }
+    private func openDirectMessages(with userId: UserId) {
+        // TODO: Show a `ChatView` with the controller that creates new 1-1 channel.
     }
 }
 
