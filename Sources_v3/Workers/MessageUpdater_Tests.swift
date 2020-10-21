@@ -419,4 +419,83 @@ final class MessageUpdater_Tests: StressTestCase {
         // Assert fetched message is saved to the database
         XCTAssertNotNil(database.viewContext.message(id: messageId))
     }
+    
+    // MARK: - Create new reply
+    
+    func test_createNewReply_savesMessageToDatabase() throws {
+        // Prepare the current user and channel first
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+        
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: cid)
+        
+        // New reply message values
+        let text: String = .unique
+        let parentMessageId: MessageId = .unique
+        let showReplyInChannel = true
+        let command: String = .unique
+        let arguments: String = .unique
+        let extraData: DefaultExtraData.Message = .defaultValue
+        
+        // Create new reply message
+        let newMessageId: MessageId = try await { completion in
+            messageUpdater.createNewReply(
+                in: cid,
+                text: text,
+                command: command,
+                arguments: arguments,
+                parentMessageId: parentMessageId,
+                showReplyInChannel: showReplyInChannel,
+                extraData: extraData
+            ) { result in
+                if let newMessageId = try? result.get() {
+                    completion(newMessageId)
+                } else {
+                    XCTFail("Saving the message failed.")
+                }
+            }
+        }
+        
+        var message: ChatMessage? {
+            database.viewContext.message(id: newMessageId)?.asModel()
+        }
+        
+        AssertAsync {
+            Assert.willBeEqual(message?.text, text)
+            Assert.willBeEqual(message?.command, command)
+            Assert.willBeEqual(message?.arguments, arguments)
+            Assert.willBeEqual(message?.parentMessageId, parentMessageId)
+            Assert.willBeEqual(message?.showReplyInChannel, showReplyInChannel)
+            Assert.willBeEqual(message?.extraData, extraData)
+            Assert.willBeEqual(message?.localState, .pendingSend)
+        }
+    }
+    
+    func test_createNewMessage_propagatesErrorWhenSavingFails() throws {
+        // Prepare the current user and channel first
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+        
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: cid)
+
+        // Simulate the DB failing with `TestError`
+        let testError = TestError()
+        database.write_errorResponse = testError
+        
+        let result: Result<MessageId, Error> = try await { completion in
+            messageUpdater.createNewReply(
+                in: .unique,
+                text: .unique,
+                command: .unique,
+                arguments: .unique,
+                parentMessageId: .unique,
+                showReplyInChannel: false,
+                extraData: .defaultValue
+            ) { completion($0) }
+        }
+        
+        AssertResultFailure(result, testError)
+    }
 }
