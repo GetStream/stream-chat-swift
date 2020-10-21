@@ -169,6 +169,34 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             }
         }
     }
+    
+    /// Loads replies for the given message.
+    ///
+    ///  - Parameters:
+    ///   - cid: The `channelId` that messages should be linked to.
+    ///   - messageId: The message identifier.
+    ///   - pagination: The pagination for replies.
+    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
+    func loadReplies(
+        cid: ChannelId,
+        messageId: MessageId,
+        pagination: MessagesPagination,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let endpoint: Endpoint<MessageRepliesPayload<ExtraData>> = .loadReplies(messageId: messageId, pagination: pagination)
+        apiClient.request(endpoint: endpoint) {
+            switch $0 {
+            case let .success(payload):
+                self.database.write({ session in
+                    try payload.messages.forEach { try session.saveMessage(payload: $0, for: cid) }
+                }, completion: { error in
+                    completion?(error)
+                })
+            case let .failure(error):
+                completion?(error)
+            }
+        }
+    }
 }
 
 extension ClientError {

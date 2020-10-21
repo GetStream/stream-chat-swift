@@ -498,4 +498,86 @@ final class MessageUpdater_Tests: StressTestCase {
         
         AssertResultFailure(result, testError)
     }
+    
+    // MARK: Load replies
+    
+    func test_loadReplies_makesCorrectAPICall() {
+        let messageId: MessageId = .unique
+        let pagination: MessagesPagination = .init(pageSize: 25)
+        
+        // Simulate `loadReplies` call
+        messageUpdater.loadReplies(cid: .unique, messageId: messageId, pagination: pagination)
+        
+        // Assert correct endpoint is called
+        let expectedEndpoint: Endpoint<MessageRepliesPayload<ExtraData>> = .loadReplies(
+            messageId: messageId,
+            pagination: pagination
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+    
+    func test_loadReplies_propagatesRequestError() {
+        // Simulate `loadReplies` call
+        var completionCalledError: Error?
+        messageUpdater.loadReplies(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25)) {
+            completionCalledError = $0
+        }
+        
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<MessageRepliesPayload<ExtraData>, Error>.failure(error))
+        
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    func test_loadReplies_propagatesDatabaseError() {
+        let repliesPayload: MessageRepliesPayload<ExtraData> = .init(messages: [.dummy(messageId: .unique, authorUserId: .unique)])
+        
+        // Update database container to throw the error on write
+        let testError = TestError()
+        database.write_errorResponse = testError
+        
+        // Simulate `loadReplies` call
+        var completionCalledError: Error?
+        messageUpdater.loadReplies(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25)) {
+            completionCalledError = $0
+        }
+        
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<MessageRepliesPayload<ExtraData>, Error>.success(repliesPayload))
+        
+        // Assert database error is propagated
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_loadReplies_savesMessagesToDatabase() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create channel in the database
+        try database.createChannel(cid: cid)
+        
+        // Simulate `loadReplies` call
+        var completionCalled = false
+        messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) { _ in
+            completionCalled = true
+        }
+        
+        // Simulate API response with success
+        let repliesPayload: MessageRepliesPayload<ExtraData> = .init(
+            messages: [.dummy(messageId: messageId, authorUserId: .unique)]
+        )
+        apiClient.test_simulateResponse(Result<MessageRepliesPayload<ExtraData>, Error>.success(repliesPayload))
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Assert fetched message is saved to the database
+        XCTAssertNotNil(database.viewContext.message(id: messageId))
+    }
 }
