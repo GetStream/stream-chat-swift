@@ -138,6 +138,7 @@ extension _CurrentChatUser {
         }
         
         let mutedUsers: [_ChatUser<ExtraData>] = dto.mutedUsers.map { $0.asModel() }
+        let flaggedUsers: [_ChatUser<ExtraData>] = dto.flaggedUsers.map { $0.asModel() }
         
         return _CurrentChatUser(
             id: user.id,
@@ -151,6 +152,7 @@ extension _CurrentChatUser {
             devices: dto.devices.map { $0.asModel() },
             currentDevice: nil,
             mutedUsers: Set(mutedUsers),
+            flaggedUsers: Set(flaggedUsers),
             unreadCount: UnreadCount(
                 channels: Int(dto.unreadChannelsCount),
                 messages: Int(dto.unreadMessagesCount)
