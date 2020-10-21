@@ -27,6 +27,11 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var createNewReply_extraData: ExtraData.Message?
     @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
     
+    @Atomic var loadReplies_cid: ChannelId?
+    @Atomic var loadReplies_messageId: MessageId?
+    @Atomic var loadReplies_pagination: MessagesPagination?
+    @Atomic var loadReplies_completion: ((Error?) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
@@ -48,6 +53,11 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         createNewReply_showReplyInChannel = nil
         createNewReply_extraData = nil
         createNewReply_completion = nil
+        
+        loadReplies_cid = nil
+        loadReplies_messageId = nil
+        loadReplies_pagination = nil
+        loadReplies_completion = nil
     }
     
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
@@ -85,5 +95,17 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         createNewReply_showReplyInChannel = showReplyInChannel
         createNewReply_extraData = extraData
         createNewReply_completion = completion
+    }
+    
+    override func loadReplies(
+        cid: ChannelId,
+        messageId: MessageId,
+        pagination: MessagesPagination,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        loadReplies_cid = cid
+        loadReplies_messageId = messageId
+        loadReplies_pagination = pagination
+        loadReplies_completion = completion
     }
 }
