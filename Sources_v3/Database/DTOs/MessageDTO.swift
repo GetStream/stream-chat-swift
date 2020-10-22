@@ -28,6 +28,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var mentionedUsers: Set<UserDTO>
     @NSManaged var channel: ChannelDTO
     @NSManaged var replies: Set<MessageDTO>
+    @NSManaged var flaggedBy: CurrentUserDTO?
     
     // The timestamp the message was created locally. Applies only for the messages of the current user.
     @NSManaged var locallyCreatedAt: Date?

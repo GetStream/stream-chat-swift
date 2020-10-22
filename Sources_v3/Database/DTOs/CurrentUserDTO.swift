@@ -16,6 +16,7 @@ class CurrentUserDTO: NSManagedObject {
     @NSManaged var lastReceivedEventDate: Date?
 
     @NSManaged var flaggedUsers: Set<UserDTO>
+    @NSManaged var flaggedMessages: Set<MessageDTO>
     @NSManaged var mutedUsers: Set<UserDTO>
     @NSManaged var user: UserDTO
     @NSManaged var devices: Set<DeviceDTO>
