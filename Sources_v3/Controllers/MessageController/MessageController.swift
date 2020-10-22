@@ -53,6 +53,41 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     ///
     public var message: _ChatMessage<ExtraData>? { messageObserver.item }
     
+    /// The replies to the message the controller represents.
+    ///
+    /// To observe changes of the replies, set your class as a delegate of this controller or use the provided
+    /// `Combine` publishers.
+    ///
+    public var replies: [_ChatMessage<ExtraData>] {
+        if state == .initialized {
+            startRepliesObserver { [weak self] error in
+                self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
+            }
+        }
+        return repliesObserver?.items ?? []
+    }
+    
+    /// Describes the ordering the replies are presented.
+    ///
+    /// - Important: ⚠️ Changing this value doesn't trigger delegate methods. You should reload your UI manually after changing
+    /// the `listOrdering` value to reflect the changes. Further updates to the replies will be delivered using the delegate
+    /// methods, as usual.
+    ///
+    public var listOrdering: ListOrdering = .topToBottom {
+        didSet {
+            if state != .initialized {
+                // Reset replies observer to apply new ordering
+                startRepliesObserver { [weak self] error in
+                    self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
+                }
+                log.warning(
+                    "Changing `listOrdering` will update data inside controller, but you have to update your UI manually "
+                        + "to see changes."
+                )
+            }
+        }
+    }
+    
     private let environment: Environment
     
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -78,6 +113,10 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
             }
         }
     
+    /// The observer used to listen replies updates.
+    /// It will be reset on `listOrdering` changes.
+    @Cached private var repliesObserver: ListDatabaseObserver<_ChatMessage<ExtraData>, MessageDTO>?
+    
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var messageUpdater: MessageUpdater<ExtraData> = environment.messageUpdaterBuilder(
         client.databaseContainer,
@@ -96,10 +135,14 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
         self.cid = cid
         self.messageId = messageId
         self.environment = environment
+        super.init()
+        
+        setRepliesObserver()
     }
 
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         startMessageObserver()
+        startRepliesObserver()
         
         messageUpdater.getMessage(cid: cid, messageId: messageId) { [weak self] error in
             guard let self = self else { return }
@@ -179,6 +222,59 @@ public extension _ChatMessageController {
             }
         }
     }
+    
+    /// Loads previous messages from backend.
+    ///
+    /// - Parameters:
+    ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
+    ///     In case no replies are fetched you will get the first `limit` number of replies.
+    ///   - limit: Limit for page size.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    func loadPreviousReplies(
+        before messageId: MessageId? = nil,
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let lastMessageId = messageId ?? replies.last?.id
+    
+        messageUpdater.loadReplies(
+            cid: cid,
+            messageId: self.messageId,
+            pagination: MessagesPagination(pageSize: limit, parameter: lastMessageId.map { PaginationParameter.lessThan($0) })
+        ) { [weak self] error in
+            self?.callback { completion?(error) }
+        }
+    }
+    
+    /// Loads new messages from backend.
+    ///
+    /// - Parameters:
+    ///   - messageId: ID of the current first message. You will get messages `newer` then the provided ID.
+    ///   - limit: Limit for page size.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    func loadNextReplies(
+        after messageId: MessageId? = nil,
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard let messageId = messageId ?? replies.first?.id else {
+            log.error(ClientError.MessageEmptyReplies().localizedDescription)
+            callback { completion?(ClientError.MessageEmptyReplies()) }
+            return
+        }
+    
+        messageUpdater.loadReplies(
+            cid: cid,
+            messageId: self.messageId,
+            pagination: MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
+        ) { [weak self] error in
+            self?.callback { completion?(error) }
+        }
+    }
 }
 
 // MARK: - Environment
@@ -221,6 +317,36 @@ private extension _ChatMessageController {
         
         return observer
     }
+
+    func setRepliesObserver() {
+        _repliesObserver.computeValue = { [unowned self] in
+            let sortAscending = self.listOrdering == .topToBottom ? false : true
+            let observer = ListDatabaseObserver(
+                context: self.client.databaseContainer.viewContext,
+                fetchRequest: MessageDTO.repliesFetchRequest(for: self.messageId, sortAscending: sortAscending),
+                itemCreator: { $0.asModel() as _ChatMessage<ExtraData> }
+            )
+            observer.onChange = { changes in
+                self.delegateCallback {
+                    $0.messageController(self, didChangeReplies: changes)
+                }
+            }
+
+            return observer
+        }
+    }
+    
+    func startRepliesObserver(completion: ((Error?) -> Void)? = nil) {
+        _repliesObserver.reset()
+        
+        do {
+            try repliesObserver?.startObserving()
+            completion?(nil)
+        } catch {
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+            completion?(ClientError.FetchFailed())
+        }
+    }
 }
 
 // MARK: - Delegate
@@ -233,10 +359,15 @@ private extension _ChatMessageController {
 public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatMessage` its observes.
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>)
+    
+    /// The controller observed changes in the replies of the observed `ChatMessage`.
+    func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>])
 }
 
 public extension ChatMessageControllerDelegate {
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {}
+    
+    func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {}
 }
 
 /// `_MessageControllerDelegate` uses this protocol to communicate changes to its delegate.
@@ -252,12 +383,23 @@ public protocol _MessageControllerDelegate: DataControllerStateDelegate {
         _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     )
+    
+    /// The controller observed changes in the replies of the observed `ChatMessage`.
+    func messageController(
+        _ controller: _ChatMessageController<ExtraData>,
+        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+    )
 }
 
 public extension _MessageControllerDelegate {
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
+    ) {}
+    
+    func messageController(
+        _ controller: _ChatMessageController<ExtraData>,
+        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {}
 }
 
@@ -266,16 +408,21 @@ final class AnyMessageControllerDelegate<ExtraData: ExtraDataTypes>: _MessageCon
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     private var _messageControllerDidChangeMessage: (_ChatMessageController<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
         -> Void
+    private var _messageControllerDidChangeReplies: (_ChatMessageController<ExtraData>, [ListChange<_ChatMessage<ExtraData>>])
+        -> Void
     
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
         messageControllerDidChangeMessage: @escaping (_ChatMessageController<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
+            -> Void,
+        messageControllerDidChangeReplies: @escaping (_ChatMessageController<ExtraData>, [ListChange<_ChatMessage<ExtraData>>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
         _controllerDidChangeState = controllerDidChangeState
         _messageControllerDidChangeMessage = messageControllerDidChangeMessage
+        _messageControllerDidChangeReplies = messageControllerDidChangeReplies
     }
 
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
@@ -288,6 +435,13 @@ final class AnyMessageControllerDelegate<ExtraData: ExtraDataTypes>: _MessageCon
     ) {
         _messageControllerDidChangeMessage(controller, change)
     }
+    
+    func messageController(
+        _ controller: _ChatMessageController<ExtraData>,
+        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+    ) {
+        _messageControllerDidChangeReplies(controller, changes)
+    }
 }
 
 extension AnyMessageControllerDelegate {
@@ -295,7 +449,8 @@ extension AnyMessageControllerDelegate {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            messageControllerDidChangeMessage: { [weak delegate] in delegate?.messageController($0, didChangeMessage: $1) }
+            messageControllerDidChangeMessage: { [weak delegate] in delegate?.messageController($0, didChangeMessage: $1) },
+            messageControllerDidChangeReplies: { [weak delegate] in delegate?.messageController($0, didChangeReplies: $1) }
         )
     }
 }
@@ -305,7 +460,8 @@ extension AnyMessageControllerDelegate where ExtraData == DefaultExtraData {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
-            messageControllerDidChangeMessage: { [weak delegate] in delegate?.messageController($0, didChangeMessage: $1) }
+            messageControllerDidChangeMessage: { [weak delegate] in delegate?.messageController($0, didChangeMessage: $1) },
+            messageControllerDidChangeReplies: { [weak delegate] in delegate?.messageController($0, didChangeReplies: $1) }
         )
     }
 }
@@ -333,5 +489,13 @@ public extension ChatMessageController {
     var delegate: ChatMessageControllerDelegate? {
         set { multicastDelegate.mainDelegate = AnyMessageControllerDelegate(newValue) }
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatMessageControllerDelegate }
+    }
+}
+
+extension ClientError {
+    class MessageEmptyReplies: ClientError {
+        override public var localizedDescription: String {
+            "You can't load previous replies when there is no replies for the message."
+        }
     }
 }

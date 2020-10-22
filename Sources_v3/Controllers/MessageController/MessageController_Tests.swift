@@ -155,6 +155,47 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(message.id, messageId)
         XCTAssertEqual(message.text, messagePayload.text)
     }
+    
+    // MARK: - Order
+    
+    func test_replies_haveCorrectOrder() throws {
+        // Insert parent message
+        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
+        
+        // Insert 2 replies for parent message
+        let reply1: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique
+        )
+        
+        let reply2: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique
+        )
+        
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: reply1, for: self.cid)
+            try $0.saveMessage(payload: reply2, for: self.cid)
+        }
+        
+        // Set top-to-bottom ordering
+        controller.listOrdering = .topToBottom
+        
+        // Check the order of replies is correct
+        let topToBottomIds = [reply1, reply2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
+        XCTAssertEqual(controller.replies.map(\.id), topToBottomIds)
+        
+        // Set bottom-to-top ordering
+        controller.listOrdering = .bottomToTop
+        
+        // Check the order of replies is correct
+        let bottomToTopIds = [reply1, reply2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
+        XCTAssertEqual(controller.replies.map(\.id), bottomToTopIds)
+    }
 
     // MARK: - Delegate
 
@@ -282,6 +323,43 @@ final class MessageController_Tests: StressTestCase {
             Assert.willBeEqual(delegate.didChangeMessage_change?.fieldChange(\.id), .update(messagePayload.id))
             Assert.willBeEqual(delegate.didChangeMessage_change?.fieldChange(\.text), .update(messagePayload.text))
         }
+    }
+    
+    func test_delegate_isNotifiedAboutRepliesChanges() throws {
+        // Create current user in the database
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+        
+        // Create channel in the database
+        try client.databaseContainer.createChannel(cid: cid)
+        
+        // Create parent message
+        try client.databaseContainer.createMessage(id: messageId, authorId: currentUserId, cid: cid)
+        
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = delegate
+        
+        // Simulate `synchronize` call
+        controller.synchronize()
+        
+        // Add reply to DB
+        let reply: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: .unique,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique
+        )
+        
+        var replyDTO: MessageDTO?
+        try client.databaseContainer.writeSynchronously { session in
+            replyDTO = try session.saveMessage(payload: reply, for: self.cid)
+        }
+    
+        // Assert `insert` entity change is received by the delegate
+        AssertAsync.willBeEqual(
+            delegate.didChangeReplies_changes,
+            [.insert((replyDTO?.asModel())!, index: [0, 0])]
+        )
     }
     
     // MARK: - Delete message
@@ -426,11 +504,109 @@ final class MessageController_Tests: StressTestCase {
         // Assert controller is kept alive
         AssertAsync.staysTrue(weakController != nil)
     }
+    
+    // MARK: - Load replies
+    
+    func test_loadPreviousReplies_propagatesError() {
+        // Simulate `loadPreviousReplies` call and catch the completion
+        var completionError: Error?
+        controller.loadPreviousReplies { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+        
+        // Simulate network response with the error
+        let networkError = TestError()
+        env.messageUpdater.loadReplies_completion?(networkError)
+        
+        // Assert error is propagated
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+    
+    func test_loadPreviousReplies_propagatesNilError() {
+        // Simulate `loadPreviousReplies` call and catch the completion
+        var completionCalled = false
+        controller.loadPreviousReplies { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil($0)
+            completionCalled = true
+        }
+        
+        // Simulate successful network response
+        env.messageUpdater.loadReplies_completion?(nil)
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_loadPreviousReplies_callsMessageUpdater_withCorrectValues() {
+        // Simulate `loadNextReplies` call
+        controller.loadPreviousReplies()
+        
+        // Assert message updater is called with correct values
+        XCTAssertEqual(env.messageUpdater.loadReplies_cid, controller.cid)
+        XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 25))
+    }
+    
+    func test_loadNextReplies_failsOnEmptyReplies() throws {
+        // Simulate `loadNextReplies` call and catch the completion error.
+        let completionError = try await {
+            controller.loadNextReplies(completion: $0)
+        }
+        
+        // Assert correct error is thrown
+        AssertAsync.willBeTrue(completionError is ClientError.MessageEmptyReplies)
+    }
+    
+    func test_loadNextReplies_propagatesError() {
+        // Simulate `loadNextReplies` call and catch the completion
+        var completionError: Error?
+        controller.loadNextReplies(after: .unique) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+        
+        // Simulate network response with the error
+        let networkError = TestError()
+        env.messageUpdater.loadReplies_completion?(networkError)
+        
+        // Assert error is propagated
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+    
+    func test_loadNextReplies_propagatesNilError() {
+        // Simulate `loadNextReplies` call and catch the completion
+        var completionCalled = false
+        controller.loadNextReplies(after: .unique) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil($0)
+            completionCalled = true
+        }
+        
+        // Simulate successful network response
+        env.messageUpdater.loadReplies_completion?(nil)
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_loadNextReplies_callsMessageUpdater_withCorrectValues() {
+        // Simulate `loadNextReplies` call
+        let afterMessageId: MessageId = .unique
+        controller.loadNextReplies(after: afterMessageId)
+        
+        // Assert message updater is called with correct values
+        XCTAssertEqual(env.messageUpdater.loadReplies_cid, controller.cid)
+        XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 25, parameter: .greaterThan(afterMessageId)))
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeMessage_change: EntityChange<ChatMessage>?
+    @Atomic var didChangeReplies_changes: [ListChange<ChatMessage>] = []
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -439,6 +615,11 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
     
     func messageController(_ controller: ChatMessageController, didChangeMessage change: EntityChange<ChatMessage>) {
         didChangeMessage_change = change
+        validateQueue()
+    }
+    
+    func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {
+        didChangeReplies_changes = changes
         validateQueue()
     }
 }
