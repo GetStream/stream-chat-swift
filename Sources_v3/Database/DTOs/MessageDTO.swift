@@ -84,6 +84,14 @@ class MessageDTO: NSManagedObject {
         return request
     }
     
+    /// Returns a fetch request for replies for the specified `parentMessageId`.
+    static func repliesFetchRequest(for messageId: MessageId, sortAscending: Bool = false) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
+        request.predicate = NSPredicate(format: "parentMessageId == %@", messageId)
+        return request
+    }
+    
     /// Returns a fetch request for the dto with a specific `messageId`.
     static func message(withID messageId: MessageId) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
