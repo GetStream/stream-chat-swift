@@ -37,6 +37,7 @@ final class ReactionsView: UIView {
     }()
     
     func show(emojiReactionTypes: EmojiReactionTypes,
+              avatarViewStyle: AvatarViewStyle,
               at point: CGPoint,
               for message: Message,
               with preferredEmojiOrder: [String],
@@ -79,7 +80,7 @@ final class ReactionsView: UIView {
                                             reaction: reaction,
                                             completion: completion)
             
-            avatarsStackView.addArrangedSubview(createAvatarView(users))
+            avatarsStackView.addArrangedSubview(createAvatarView(users, style: avatarViewStyle))
             emojiesStackView.addArrangedSubview(emojiView)
             labelsStackView.addArrangedSubview(createLabel(score))
         }
@@ -99,13 +100,13 @@ final class ReactionsView: UIView {
             .disposed(by: disposeBag)
     }
     
-    func update(with message: Message) {
+    func update(with message: Message, style: AvatarViewStyle) {
         avatarsStackView.removeAllArrangedSubviews()
         labelsStackView.removeAllArrangedSubviews()
         
         emojiReactionTypes.forEach { reactionType, _ in
             let users = message.latestReactions.filter({ $0.type == reactionType }).compactMap({ $0.user })
-            avatarsStackView.addArrangedSubview(createAvatarView(users))
+            avatarsStackView.addArrangedSubview(createAvatarView(users, style: style))
             labelsStackView.addArrangedSubview(createLabel(message.reactionScores[reactionType] ?? 0))
         }
     }
@@ -235,11 +236,11 @@ final class ReactionsView: UIView {
         return stackView
     }
     
-    private func createAvatarView(_ users: [User]?) -> UIView {
+    private func createAvatarView(_ users: [User]?, style: AvatarViewStyle) -> UIView {
         let viewContainer = UIView(frame: .zero)
         viewContainer.snp.makeConstraints { $0.width.height.equalTo(CGFloat.reactionsPickerButtonWidth).priority(999) }
         
-        let avatarView = AvatarView(style: .init(radius: .reactionsPickerAvatarRadius))
+        let avatarView = AvatarView(style: style)
         avatarView.makeCenterEqualToSuperview(superview: viewContainer)
         
         if let user = users?.first {
