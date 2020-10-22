@@ -155,7 +155,8 @@ extension _ChatMessage {
             author: .init(id: .unique),
             mentionedUsers: [],
             latestReplies: [],
-            localState: nil
+            localState: nil,
+            isFlaggedByCurrentUser: false
         )
     }
 }

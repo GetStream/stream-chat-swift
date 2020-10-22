@@ -47,7 +47,16 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
     public let mutedUsers: Set<_ChatUser<ExtraData>>
     
     /// A set of users flagged by the user.
+    ///
+    /// - Note: Please be aware that the value of this field is not persisted on the server,
+    /// and is valid only locally for the current session.
     public let flaggedUsers: Set<_ChatUser<ExtraData>>
+    
+    /// A set of message ids flagged by the user.
+    ///
+    /// - Note: Please be aware that the value of this field is not persisted on the server,
+    /// and is valid only locally for the current session.
+    public let flaggedMessageIDs: Set<MessageId>
     
     /// The unread counts for the current user.
     public let unreadCount: UnreadCount
@@ -65,12 +74,14 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
         currentDevice: Device? = nil,
         mutedUsers: Set<_ChatUser<ExtraData>> = [],
         flaggedUsers: Set<_ChatUser<ExtraData>> = [],
+        flaggedMessageIDs: Set<MessageId> = [],
         unreadCount: UnreadCount = .noUnread
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
         self.mutedUsers = mutedUsers
         self.flaggedUsers = flaggedUsers
+        self.flaggedMessageIDs = flaggedMessageIDs
         self.unreadCount = unreadCount
         
         super.init(

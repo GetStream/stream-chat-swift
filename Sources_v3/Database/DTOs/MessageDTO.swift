@@ -300,6 +300,8 @@ extension _ChatMessage {
             .map(_ChatMessage.init)
         
         localState = dto.localMessageState
+        
+        isFlaggedByCurrentUser = dto.flaggedBy != nil
     }
 }
 
