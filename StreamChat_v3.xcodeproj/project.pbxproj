@@ -268,6 +268,11 @@
 		88F6DF91252C8845009A8AF0 /* ChannelMemberUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF90252C8845009A8AF0 /* ChannelMemberUpdater.swift */; };
 		88F6DF94252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */; };
 		88F6DF97252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */; };
+		88F896EE2541AB1000DE517D /* FlagMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F896ED2541AB1000DE517D /* FlagMessagePayload.swift */; };
+		88F896F22541AB2100DE517D /* FlagMessagePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F896F12541AB2100DE517D /* FlagMessagePayload_Tests.swift */; };
+		88F896F92541AC0900DE517D /* FlagMessagePayload+NoExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 88F896F62541AC0900DE517D /* FlagMessagePayload+NoExtraData.json */; };
+		88F896FA2541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 88F896F72541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json */; };
+		88F896FB2541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 88F896F82541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json */; };
 		8A0175F02501174000570345 /* EventSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175EF2501174000570345 /* EventSender.swift */; };
 		8A0175F425013B6400570345 /* EventSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0175F325013B6400570345 /* EventSender_Tests.swift */; };
 		8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A08C6A524D437DF00DEF995 /* WebSocketPingController_Tests.swift */; };
@@ -729,6 +734,11 @@
 		88F6DF90252C8845009A8AF0 /* ChannelMemberUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater.swift; sourceTree = "<group>"; };
 		88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Tests.swift; sourceTree = "<group>"; };
 		88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Mock.swift; sourceTree = "<group>"; };
+		88F896ED2541AB1000DE517D /* FlagMessagePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagMessagePayload.swift; sourceTree = "<group>"; };
+		88F896F12541AB2100DE517D /* FlagMessagePayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagMessagePayload_Tests.swift; sourceTree = "<group>"; };
+		88F896F62541AC0900DE517D /* FlagMessagePayload+NoExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagMessagePayload+NoExtraData.json"; sourceTree = "<group>"; };
+		88F896F72541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagMessagePayload+DefaultExtraData.json"; sourceTree = "<group>"; };
+		88F896F82541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagMessagePayload+CustomExtraData.json"; sourceTree = "<group>"; };
 		8A0175EF2501174000570345 /* EventSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender.swift; sourceTree = "<group>"; };
 		8A0175F325013B6400570345 /* EventSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSender_Tests.swift; sourceTree = "<group>"; };
 		8A08C6A524D437DF00DEF995 /* WebSocketPingController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketPingController_Tests.swift; sourceTree = "<group>"; };
@@ -1204,6 +1214,8 @@
 				790A4C4D252E0901001F4A23 /* DevicePayloads_Tests.swift */,
 				8836FFBA2540741D009FDF73 /* FlagUserPayload.swift */,
 				8836FFC225408210009FDF73 /* FlagUserPayload_Tests.swift */,
+				88F896ED2541AB1000DE517D /* FlagMessagePayload.swift */,
+				88F896F12541AB2100DE517D /* FlagMessagePayload_Tests.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -1221,6 +1233,7 @@
 				798779F92498E47700015F8B /* CurrentUser.json */,
 				798779FA2498E47700015F8B /* ChannelsQuery.json */,
 				DA8407252525E90D005A0F62 /* UsersQuery.json */,
+				88F896F52541AC0900DE517D /* FlagMessage */,
 				8836FFCF254082FF009FDF73 /* FlagUser */,
 				F62BE7882506616900D13B86 /* Sync */,
 				8A0D649E24E57A260017A3C0 /* GuestUser */,
@@ -1591,6 +1604,16 @@
 				88BEBCD82536FDDB00D9E8B7 /* MemberListController+Combine_Tests.swift */,
 			);
 			path = MemberListController;
+			sourceTree = "<group>";
+		};
+		88F896F52541AC0900DE517D /* FlagMessage */ = {
+			isa = PBXGroup;
+			children = (
+				88F896F62541AC0900DE517D /* FlagMessagePayload+NoExtraData.json */,
+				88F896F72541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json */,
+				88F896F82541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json */,
+			);
+			path = FlagMessage;
 			sourceTree = "<group>";
 		};
 		8A0C3BC124C0AD6E00CAFD19 /* User */ = {
@@ -2030,6 +2053,7 @@
 				8AC9CBDF24C74DD0006E236C /* NotificationRemovedFromChannel.json in Resources */,
 				8A0C3BDF24C1F18700CAFD19 /* MessageRead.json in Resources */,
 				8A0C3BBF24C0ACAB00CAFD19 /* UserPresence.json in Resources */,
+				88F896FA2541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json in Resources */,
 				8A0C3BDD24C1F18700CAFD19 /* MessageUpdated.json in Resources */,
 				8A0C3BC624C0AEDB00CAFD19 /* UserStopWatching.json in Resources */,
 				8836FFD3254082FF009FDF73 /* FlagUserPayload+CustomExtraData.json in Resources */,
@@ -2041,11 +2065,13 @@
 				798779FD2498E47700015F8B /* OtherUser.json in Resources */,
 				F64F9B6225077CF600834F55 /* MessageNew+MissingFields.json in Resources */,
 				8836FFD4254082FF009FDF73 /* FlagUserPayload+DefaultExtraData.json in Resources */,
+				88F896FB2541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json in Resources */,
 				8A0C3BE024C1F18700CAFD19 /* NotificationMarkRead.json in Resources */,
 				8A0CC9EF24C604E000705CF9 /* MemberUpdated.json in Resources */,
 				8A0C3BCE24C1CB0500CAFD19 /* ChannelDeleted.json in Resources */,
 				798779FE2498E47700015F8B /* CurrentUser.json in Resources */,
 				8AC9CBE624C7500E006E236C /* NotificationMarkAllRead.json in Resources */,
+				88F896F92541AC0900DE517D /* FlagMessagePayload+NoExtraData.json in Resources */,
 				8A0CC9ED24C602B600705CF9 /* MemberRemoved.json in Resources */,
 				8A0C3BC724C0AEDB00CAFD19 /* UserBanned.json in Resources */,
 				8A0D64A424E57A260017A3C0 /* GuestUser+CustomExtraData.json in Resources */,
@@ -2225,6 +2251,7 @@
 				F6ED5F76250278D7005D7327 /* SyncEndpoint.swift in Sources */,
 				797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */,
 				792B805024D95B5D00C2963E /* Cached.swift in Sources */,
+				88F896EE2541AB1000DE517D /* FlagMessagePayload.swift in Sources */,
 				DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
 				888E8C55252B525300195E03 /* MemberController.swift in Sources */,
@@ -2451,6 +2478,7 @@
 				8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */,
 				8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */,
 				79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */,
+				88F896F22541AB2100DE517D /* FlagMessagePayload_Tests.swift in Sources */,
 				799C9476247D7E94001F1104 /* TemporaryData.swift in Sources */,
 				F649B2392500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift in Sources */,
 				79CD959424F9381700E87377 /* MulticastDelegate_Tests.swift in Sources */,
