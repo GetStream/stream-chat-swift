@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- Introduce `avatarViewStyle` for `ReactionViewStyle`. Now, reactionView's avatarView is customizable for both reactions on incoming message and outgoing message. [#561](https://github.com/GetStream/stream-chat-swift/issues/561)
+  Access it via `style.incomingMessage.reactionViewStyle.avatarViewStyle` (or `outgoingMessage`)
+
 ### 🐞 Fixed
 - `ComposerView` disables send button but retains the message after user taps send. Now, composerView resets its state after user taps send, so user can send multiple messages [#555](https://github.com/GetStream/stream-chat-swift/issues/555)
 - Fix pagination for message replies not encoded correctly [#550](https://github.com/GetStream/stream-chat-swift/issues/550)

@@ -511,7 +511,10 @@ extension ChatViewController {
             }
             
             if let reactionsView = reactionsView, let message = messages.first {
-                reactionsView.update(with: message)
+                let reactionAvatarViewStyle = message.isOwn
+                    ? style.outgoingMessage.reactionViewStyle.avatarViewStyle
+                    : style.incomingMessage.reactionViewStyle.avatarViewStyle
+                reactionsView.update(with: message, style: reactionAvatarViewStyle)
             }
             
         case let .itemRemoved(row, items):

@@ -12,21 +12,23 @@ import UIKit
 public struct ReactionViewStyle: Hashable {
     
     /// An alignment of a reaction for incoming or outgoing messages.
-    public let alignment: MessageViewStyle.Alignment
+    public var alignment: MessageViewStyle.Alignment
     /// A font of a count of a reaction.
-    public let font: UIFont
+    public var font: UIFont
     /// A text color of a count of a reaction.
-    public let textColor: UIColor
+    public var textColor: UIColor
     /// A background color of reactions.
-    public let backgroundColor: UIColor
+    public var backgroundColor: UIColor
     /// A background color of the chat screen.
-    public let chatBackgroundColor: UIColor
+    public var chatBackgroundColor: UIColor
     /// A corner radius of the bubble.
-    public let cornerRadius: CGFloat
+    public var cornerRadius: CGFloat
     /// A small corner radius of the tail to the reactions bubble.
-    public let tailCornerRadius: CGFloat
+    public var tailCornerRadius: CGFloat
     /// A corner radius of the message bubble.
-    public let tailMessageCornerRadius: CGFloat
+    public var tailMessageCornerRadius: CGFloat
+    /// Avatars' style for reaction view.
+    public var avatarViewStyle: AvatarViewStyle
     /// A generated tail image.
     public private(set) var tailImage: UIImage
     
@@ -46,7 +48,8 @@ public struct ReactionViewStyle: Hashable {
                 backgroundColor: UIColor = .chatDarkGray,
                 chatBackgroundColor: UIColor = .white,
                 cornerRadius: CGFloat = .reactionsCornerRadius,
-                tailMessageCornerRadius: CGFloat = .messageCornerRadius) {
+                tailMessageCornerRadius: CGFloat = .messageCornerRadius,
+                avatarViewStyle: AvatarViewStyle = .init(radius: .reactionsPickerAvatarRadius)) {
         self.alignment = alignment
         self.font = font
         self.textColor = textColor
@@ -55,6 +58,7 @@ public struct ReactionViewStyle: Hashable {
         self.cornerRadius = cornerRadius
         self.tailCornerRadius = cornerRadius * 0.8
         self.tailMessageCornerRadius = tailMessageCornerRadius
+        self.avatarViewStyle = avatarViewStyle
         tailImage = .renderTailImage(smallRadius: tailCornerRadius, bigRadius: tailMessageCornerRadius, alignment: alignment)
     }
 }
