@@ -197,6 +197,68 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             }
         }
     }
+    
+    /// Flags or unflags the message with the provided `messageId` depending on `flag` value.
+    /// If the message doesn't exist locally it will be fetched and saved locally first first.
+    ///
+    /// - Parameters:
+    ///   - flag: The indicator saying whether the messageId should be flagged or unflagged.
+    ///   - messageId: The identifier of a messageId that should be flagged or unflagged.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    ///
+    func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        fetchAndSaveMessageIfNeeded(messageId, cid: cid) { error in
+            guard error == nil else {
+                completion?(error)
+                return
+            }
+            
+            let endpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(flag, with: messageId)
+            self.apiClient.request(endpoint: endpoint) { result in
+                switch result {
+                case let .success(payload):
+                    self.database.write({ session in
+                        guard let messageDTO = session.message(id: payload.flaggedMessageId) else {
+                            throw ClientError.MessageDoesNotExist(messageId: messageId)
+                        }
+                        
+                        let currentUserDTO = session.currentUser()
+                        if flag {
+                            currentUserDTO?.flaggedMessages.insert(messageDTO)
+                        } else {
+                            currentUserDTO?.flaggedMessages.remove(messageDTO)
+                        }
+                    }, completion: { error in
+                        completion?(error)
+                    })
+                case let .failure(error):
+                    completion?(error)
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Private
+
+private extension MessageUpdater {
+    func fetchAndSaveMessageIfNeeded(_ messageId: MessageId, cid: ChannelId, completion: @escaping (Error?) -> Void) {
+        checkMessageExistsLocally(messageId) { exists in
+            exists ? completion(nil) : self.getMessage(
+                cid: cid,
+                messageId: messageId,
+                completion: completion
+            )
+        }
+    }
+    
+    func checkMessageExistsLocally(_ messageId: MessageId, completion: @escaping (Bool) -> Void) {
+        let context = database.backgroundReadOnlyContext
+        context.perform {
+            let exists = context.message(id: messageId) != nil
+            completion(exists)
+        }
+    }
 }
 
 extension ClientError {
