@@ -116,6 +116,21 @@ class MessageDTO: NSManagedObject {
         new.id = id
         return new
     }
+    
+    /// Load replies for the specified `parentMessageId`.
+    static func loadReplies(
+        for messageId: MessageId,
+        limit: Int,
+        offset: Int = 0,
+        context: NSManagedObjectContext
+    ) -> [MessageDTO] {
+        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        request.predicate = NSPredicate(format: "parentMessageId == %@", messageId)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.fetchLimit = limit
+        request.fetchOffset = offset
+        return try! context.fetch(request)
+    }
 }
 
 extension MessageDTO {
@@ -270,6 +285,10 @@ extension _ChatMessage {
         
         author = dto.user.asModel()
         mentionedUsers = Set(dto.mentionedUsers.map { $0.asModel() })
+
+        latestReplies = MessageDTO
+            .loadReplies(for: dto.id, limit: 25, context: dto.managedObjectContext!)
+            .map(_ChatMessage.init)
         
         localState = dto.localMessageState
     }

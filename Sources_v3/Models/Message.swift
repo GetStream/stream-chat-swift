@@ -82,6 +82,9 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     
     /// A list of users that are mentioned in this message.
     public let mentionedUsers: Set<_ChatUser<ExtraData.User>>
+        
+    /// A list of latest 25 replies to this message.
+    public let latestReplies: [_ChatMessage<ExtraData>]
     
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     ///
