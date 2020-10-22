@@ -18,6 +18,9 @@ extension _ChatMessageController {
         /// The message that current controller observes.
         @Published public private(set) var message: _ChatMessage<ExtraData>?
         
+        /// The replies to the message controller observes.
+        @Published public private(set) var replies: [_ChatMessage<ExtraData>] = []
+        
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
         
@@ -29,6 +32,7 @@ extension _ChatMessageController {
             controller.multicastDelegate.additionalDelegates.append(AnyMessageControllerDelegate(self))
             
             message = controller.message
+            replies = controller.replies
         }
     }
 }
@@ -40,6 +44,13 @@ extension _ChatMessageController.ObservableObject: _MessageControllerDelegate {
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) {
         message = controller.message
+    }
+    
+    public func messageController(
+        _ controller: _ChatMessageController<ExtraData>,
+        didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
+    ) {
+        replies = controller.replies
     }
     
     public func controller(_ controller: DataController, didChangeState state: DataController.State) {
