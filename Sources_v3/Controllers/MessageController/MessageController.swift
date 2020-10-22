@@ -275,6 +275,30 @@ public extension _ChatMessageController {
             self?.callback { completion?(error) }
         }
     }
+    
+    /// Flags the message this controller manages.
+    ///
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///
+    func flag(completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.flagMessage(true, with: messageId, in: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Unflags the message this controller manages.
+    ///
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///
+    func unflag(completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.flagMessage(false, with: messageId, in: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
