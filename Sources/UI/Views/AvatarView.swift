@@ -111,12 +111,18 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
         avatarLabel.isHidden = false
         let unwrappedName = (name ?? "?")
         let name = unwrappedName.isEmpty ? "?" : unwrappedName
-        let words = name.split(separator: " ")
         
-        if words.count == 2, let a = String(describing: words[0]).first, let b = String(describing: words[1]).first {
-            avatarLabel.text = String(a).appending(String(b)).uppercased()
-        } else {
-            avatarLabel.text = (name.prefix(1) + name.suffix(1)).uppercased()
+        switch style.placeholderTextStyle {
+        case .initials:
+            let words = name.split(separator: " ")
+            
+            if words.count == 2, let a = String(describing: words[0]).first, let b = String(describing: words[1]).first {
+                avatarLabel.text = String(a).appending(String(b)).uppercased()
+            } else {
+                avatarLabel.text = (name.prefix(1) + name.suffix(1)).uppercased()
+            }
+        case .firstLetter:
+            avatarLabel.text = name.prefix(1).uppercased()
         }
         
         if let textColor = style.placeholderTextColor {
