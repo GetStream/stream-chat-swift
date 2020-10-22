@@ -444,4 +444,74 @@ class MessageDTO_Tests: XCTestCase {
         
         XCTAssert(result is ClientError.ChannelDoesNotExist)
     }
+    
+    func test_replies_linkedToParentMessage_onCreatingNewMessage() throws {
+        // Create current user
+        try database.createCurrentUser()
+        
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        
+        // Create parent message
+        try database.createMessage(id: messageId, cid: cid)
+        
+        // Reply messageId
+        var replyMessageId: MessageId?
+        
+        // Create new reply message
+        try database.writeSynchronously { session in
+            let replyDTO = try session.createNewMessage(
+                in: cid,
+                text: "Reply",
+                command: nil,
+                arguments: nil,
+                parentMessageId: messageId,
+                showReplyInChannel: false,
+                extraData: NoExtraData.defaultValue
+            )
+            // Get reply messageId
+            replyMessageId = replyDTO.id
+        }
+        
+        // Get parent message
+        let parentMessage = database.viewContext.message(id: messageId)
+        
+        // Assert reply linked to parent message
+        XCTAssert(parentMessage?.replies.first!.id == replyMessageId)
+    }
+    
+    func test_replies_linkedToParentMessage_onSavingMessagePayload() throws {
+        // Create current user
+        try database.createCurrentUser()
+        
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        
+        // Create parent message
+        try database.createMessage(id: messageId, cid: cid)
+        
+        // Reply messageId
+        let replyMessageId: MessageId = .unique
+        
+        // Create payload for reply message
+        let payload: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: replyMessageId,
+            parentId: messageId,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            text: "Reply",
+            extraData: NoExtraData.defaultValue
+        )
+        
+        // Save reply payload
+        try database.writeSynchronously { session in
+            try session.saveMessage(payload: payload, for: cid)
+        }
+        
+        // Get parent message
+        let parentMessage = database.viewContext.message(id: messageId)
+        
+        // Assert reply linked to parent message
+        XCTAssert(parentMessage?.replies.first!.id == replyMessageId)
+    }
 }
