@@ -111,4 +111,29 @@ final class ModerationEndpoints_Tests: XCTestCase {
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         }
     }
+    
+    func test_flagMessage_buildsCorrectly() {
+        let testCases = [
+            (true, "moderation/flag"),
+            (false, "moderation/unflag")
+        ]
+        
+        for (flag, path) in testCases {
+            let messageId: MessageId = .unique
+            
+            let expectedEndpoint = Endpoint<FlagMessagePayload<DefaultExtraData.User>>(
+                path: path,
+                method: .post,
+                queryItems: nil,
+                requiresConnectionId: false,
+                body: ["target_message_id": messageId]
+            )
+            
+            // Build endpoint.
+            let endpoint: Endpoint<FlagMessagePayload<DefaultExtraData.User>> = .flagMessage(flag, with: messageId)
+            
+            // Assert endpoint is built correctly.
+            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        }
+    }
 }

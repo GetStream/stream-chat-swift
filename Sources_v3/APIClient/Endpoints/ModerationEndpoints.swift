@@ -64,6 +64,23 @@ extension Endpoint {
     }
 }
 
+// MARK: - Message flagging
+
+extension Endpoint {
+    static func flagMessage<ExtraData: UserExtraData>(
+        _ flag: Bool,
+        with messageId: MessageId
+    ) -> Endpoint<FlagMessagePayload<ExtraData>> {
+        .init(
+            path: "moderation/\(flag ? "flag" : "unflag")",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["target_message_id": messageId]
+        )
+    }
+}
+
 // MARK: - Private
 
 private extension Endpoint {
