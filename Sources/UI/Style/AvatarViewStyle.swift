@@ -34,8 +34,12 @@ public struct AvatarViewStyle: Hashable {
     public var placeholderFont: UIFont?
     /// A placeholder text color.
     public var placeholderTextColor: UIColor?
+    /// Placeholder text color provider. Used if `placeholderTextColor` is not passed, or both are passed.
+    public var placeholderTextColorProvider: ((_ placeholder: String) -> UIColor)?
     /// A placeholder background color.
     public var placeholderBackgroundColor: UIColor?
+    /// Placeholder background color provider. Used if `placeholderBackgroundColor` is not passed, or both are passed.
+    public var placeholderBackgroundColorProvider: ((_ placeholder: String) -> UIColor)?
     /// Defines how placeholder text will be shown.
     public var placeholderTextStyle: PlaceholderTextStyle
     /// Vertical alignment inside the cell
@@ -51,14 +55,38 @@ public struct AvatarViewStyle: Hashable {
     public init(radius: CGFloat = .messageAvatarRadius,
                 placeholderFont: UIFont? = nil,
                 placeholderTextColor: UIColor? = nil,
+                placeholderTextColorProvider: ((String) -> UIColor)? = nil,
                 placeholderBackgroundColor: UIColor? = nil,
+                placeholderBackgroundColorProvider: ((String) -> UIColor)? = nil,
                 placeholderTextStyle: PlaceholderTextStyle = .initials,
                 verticalAlignment: VerticalAlignment = .center) {
         self.radius = radius
         self.placeholderFont = placeholderFont
         self.placeholderTextColor = placeholderTextColor
+        self.placeholderTextColorProvider = placeholderTextColorProvider
         self.placeholderBackgroundColor = placeholderBackgroundColor
+        self.placeholderBackgroundColorProvider = placeholderBackgroundColorProvider
         self.placeholderTextStyle = placeholderTextStyle
         self.verticalAlignment = verticalAlignment
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(radius)
+        hasher.combine(placeholderFont)
+        hasher.combine(placeholderTextColor)
+        hasher.combine(placeholderBackgroundColor)
+        hasher.combine(placeholderTextStyle)
+        hasher.combine(verticalAlignment)
+        // Hashable conformance ignores provider closures since we can't reliably hash them.
+    }
+    
+    public static func == (lhs: AvatarViewStyle, rhs: AvatarViewStyle) -> Bool {
+        // Equality comparison ignores provider closures since we can't reliably compare them.
+        lhs.radius == rhs.radius
+            && lhs.placeholderFont == rhs.placeholderFont
+            && lhs.placeholderTextColor == rhs.placeholderTextColor
+            && lhs.placeholderBackgroundColor == rhs.placeholderBackgroundColor
+            && lhs.placeholderTextStyle == rhs.placeholderTextStyle
+            && lhs.verticalAlignment == rhs.verticalAlignment
     }
 }

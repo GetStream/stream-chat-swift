@@ -127,6 +127,8 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
         
         if let textColor = style.placeholderTextColor {
             avatarLabel.textColor = textColor
+        } else if let provider = style.placeholderTextColorProvider {
+            avatarLabel.textColor = provider(name)
         } else if #available(iOS 13, *) {
             avatarLabel.textColor = UIColor(dynamicProvider: { trait -> UIColor in
                 UIColor.color(by: name, isDark: trait.userInterfaceStyle == .dark).withAlphaComponent(0.8)
@@ -137,6 +139,8 @@ public final class AvatarView: EscapeBridgingImageView<Void>, Reusable {
         
         if let backgroundColor = style.placeholderBackgroundColor {
             avatarLabel.backgroundColor = backgroundColor
+        } else if let provider = style.placeholderBackgroundColorProvider {
+            avatarLabel.backgroundColor = provider(name)
         } else if #available(iOS 13, *) {
             avatarLabel.backgroundColor = UIColor(dynamicProvider: { [weak self] trait -> UIColor in
                 (self?.backgroundColor ?? .white)
