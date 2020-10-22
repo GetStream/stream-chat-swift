@@ -36,6 +36,8 @@ final class MessageController_Tests: StressTestCase {
     }
     
     override func tearDown() {
+        env.messageUpdater?.cleanUp()
+        
         controllerCallbackQueueID = nil
         currentUserId = nil
         messageId = nil
@@ -367,6 +369,62 @@ final class MessageController_Tests: StressTestCase {
         // Assert message updater is called with correct `messageId` and `text`
         XCTAssertEqual(env.messageUpdater.editMessage_messageId, controller.messageId)
         XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
+    }
+    
+    // MARK: - Create new reply
+    
+    func test_createNewReply_callsChannelUpdater() {
+        let newMessageId: MessageId = .unique
+        
+        // New message values
+        let text: String = .unique
+//        let command: String = .unique
+//        let arguments: String = .unique
+        let showReplyInChannel = true
+        let extraData: DefaultExtraData.Message = .defaultValue
+        
+        // Simulate `createNewReply` calls and catch the completion
+        var completionCalled = false
+        controller.createNewReply(
+            text: text,
+//            command: command,
+//            arguments: arguments,
+            showReplyInChannel: showReplyInChannel,
+            extraData: extraData
+        ) { [callbackQueueID] result in
+            AssertTestQueue(withId: callbackQueueID)
+            AssertResultSuccess(result, newMessageId)
+            completionCalled = true
+        }
+        
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.messageUpdater?.createNewReply_completion?(.success(newMessageId))
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        XCTAssertEqual(env.messageUpdater?.createNewReply_cid, cid)
+        XCTAssertEqual(env.messageUpdater?.createNewReply_text, text)
+//        XCTAssertEqual(env.channelUpdater?.createNewMessage_command, command)
+//        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
+        XCTAssertEqual(env.messageUpdater?.createNewReply_parentMessageId, messageId)
+        XCTAssertEqual(env.messageUpdater?.createNewReply_showReplyInChannel, showReplyInChannel)
+        XCTAssertEqual(env.messageUpdater?.createNewReply_extraData, extraData)
+    }
+    
+    func test_createNewReply_keepsControllerAlive() {
+        // Simulate `createNewReply` call.
+        controller.createNewReply(text: "Reply")
+        
+        // Create a weak reference and release a controller.
+        weak var weakController = controller
+        controller = nil
+        
+        // Assert controller is kept alive
+        AssertAsync.staysTrue(weakController != nil)
     }
 }
 

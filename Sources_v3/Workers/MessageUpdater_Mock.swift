@@ -27,6 +27,29 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var createNewReply_extraData: ExtraData.Message?
     @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
     
+    // Cleans up all recorded values
+    func cleanUp() {
+        getMessage_cid = nil
+        getMessage_messageId = nil
+        getMessage_completion = nil
+
+        deleteMessage_messageId = nil
+        deleteMessage_completion = nil
+
+        editMessage_messageId = nil
+        editMessage_text = nil
+        editMessage_completion = nil
+        
+        createNewReply_cid = nil
+        createNewReply_text = nil
+        createNewReply_command = nil
+        createNewReply_arguments = nil
+        createNewReply_parentMessageId = nil
+        createNewReply_showReplyInChannel = nil
+        createNewReply_extraData = nil
+        createNewReply_completion = nil
+    }
+    
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
         getMessage_cid = cid
         getMessage_messageId = messageId
