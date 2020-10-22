@@ -27,6 +27,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var user: UserDTO
     @NSManaged var mentionedUsers: Set<UserDTO>
     @NSManaged var channel: ChannelDTO
+    @NSManaged var replies: Set<MessageDTO>
     
     // The timestamp the message was created locally. Applies only for the messages of the current user.
     @NSManaged var locallyCreatedAt: Date?
@@ -152,6 +153,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.user = currentUserDTO.user
         message.channel = channelDTO
         
+        if let parentMessageId = parentMessageId,
+            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+            parentMessageDTO.replies.insert(message)
+        }
+        
         return message
     }
     
@@ -179,6 +185,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         try payload.mentionedUsers.forEach { userPayload in
             let user = try saveUser(payload: userPayload)
             dto.mentionedUsers.insert(user)
+        }
+        
+        if let parentMessageId = payload.parentId,
+            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+            parentMessageDTO.replies.insert(dto)
         }
         
         return dto
