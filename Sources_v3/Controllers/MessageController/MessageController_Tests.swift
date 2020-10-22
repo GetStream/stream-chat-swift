@@ -449,6 +449,126 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
     }
     
+    // MARK: - Flag message
+    
+    func test_flag_propogatesError() {
+        // Simulate `flag` call and catch the completion.
+        var completionError: Error?
+        controller.flag { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+        
+        // Simulate network response with the error.
+        let networkError = TestError()
+        env.messageUpdater!.flagMessage_completion!(networkError)
+        
+        // Assert error is propogated.
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+    
+    func test_flag_propogatesNilError() {
+        // Simulate `flag` call and catch the completion.
+        var completionIsCalled = false
+        controller.flag { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+        
+        // Simulate successful network response.
+        env.messageUpdater!.flagMessage_completion!(nil)
+        
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+    }
+    
+    func test_flag_callsUpdater_withCorrectValues() {
+        // Simulate `flag` call.
+        controller.flag()
+        
+        // Assert updater is called with correct `flag`.
+        XCTAssertEqual(env.messageUpdater!.flagMessage_flag, true)
+        // Assert updater is called with correct `messageId`.
+        XCTAssertEqual(env.messageUpdater!.flagMessage_messageId, controller.messageId)
+        // Assert updater is called with correct `cid`.
+        XCTAssertEqual(env.messageUpdater!.flagMessage_cid, controller.cid)
+    }
+    
+    func test_flag_keepsControllerAlive() {
+        // Simulate `flag` call.
+        controller.flag()
+        
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+        
+        // Assert controller is kept alive.
+        AssertAsync.staysTrue(weakController != nil)
+    }
+    
+    // MARK: - Unflag message
+    
+    func test_unflag_propogatesError() {
+        // Simulate `unflag` call and catch the completion.
+        var completionError: Error?
+        controller.unflag { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+        
+        // Simulate network response with the error.
+        let networkError = TestError()
+        env.messageUpdater!.flagMessage_completion!(networkError)
+        
+        // Assert error is propogated.
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+    
+    func test_unflag_propogatesNilError() {
+        // Simulate `unflag` call and catch the completion.
+        var completionIsCalled = false
+        controller.unflag { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+        
+        // Simulate successful network response.
+        env.messageUpdater!.flagMessage_completion!(nil)
+        
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+    }
+    
+    func test_unflag_callsUpdater_withCorrectValues() {
+        // Simulate `unflag` call.
+        controller.unflag()
+        
+        // Assert updater is called with correct `flag`.
+        XCTAssertEqual(env.messageUpdater!.flagMessage_flag, false)
+        // Assert updater is called with correct `messageId`.
+        XCTAssertEqual(env.messageUpdater!.flagMessage_messageId, controller.messageId)
+        // Assert updater is called with correct `cid`.
+        XCTAssertEqual(env.messageUpdater!.flagMessage_cid, controller.cid)
+    }
+    
+    func test_unflag_keepsControllerAlive() {
+        // Simulate `unflag` call.
+        controller.unflag()
+        
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+        
+        // Assert controller is kept alive.
+        AssertAsync.staysTrue(weakController != nil)
+    }
+    
     // MARK: - Create new reply
     
     func test_createNewReply_callsChannelUpdater() {
