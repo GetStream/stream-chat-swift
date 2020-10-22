@@ -136,7 +136,8 @@
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="messages" inverseEntity="ChannelDTO"/>
         <relationship name="mentionedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mentionedMessages" inverseEntity="UserDTO"/>
-        <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO"/>
+        <relationship name="parentMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="replies" inverseEntity="MessageDTO"/>
+        <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="parentMessage" inverseEntity="MessageDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="messages" inverseEntity="UserDTO"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
@@ -210,7 +211,7 @@
         <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="148"/>
         <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="193"/>
-        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="358"/>
+        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="373"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="UserDTO" positionX="0" positionY="0" width="128" height="313"/>
         <element name="UserListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
