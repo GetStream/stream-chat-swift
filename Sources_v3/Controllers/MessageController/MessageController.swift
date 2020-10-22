@@ -147,6 +147,38 @@ public extension _ChatMessageController {
             }
         }
     }
+    
+    /// Creates a new reply message locally and schedules it for send.
+    ///
+    /// - Parameters:
+    ///   - text: Text of the message.
+    ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
+    ///   in the response thread.
+    ///   - extraData: Additional extra data of the message object.
+    ///   - completion: Called when saving the message to the local DB finishes.
+    ///
+    func createNewReply(
+        text: String,
+//        command: String? = nil,
+//        arguments: String? = nil,
+        showReplyInChannel: Bool = false,
+        extraData: ExtraData.Message = .defaultValue,
+        completion: ((Result<MessageId, Error>) -> Void)? = nil
+    ) {
+        messageUpdater.createNewReply(
+            in: cid,
+            text: text,
+            command: nil,
+            arguments: nil,
+            parentMessageId: messageId,
+            showReplyInChannel: showReplyInChannel,
+            extraData: extraData
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
