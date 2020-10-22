@@ -17,11 +17,13 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
     func test_controllerInitialValuesAreLoaded() {
         messageController.state_simulated = .localDataFetched
         messageController.message_simulated = .unique
+        messageController.replies_simulated = [.unique]
         
         let observableObject = messageController.observableObject
         
         XCTAssertEqual(observableObject.state, messageController.state)
         XCTAssertEqual(observableObject.message, messageController.message)
+        XCTAssertEqual(observableObject.replies, messageController.replies)
     }
     
     func test_observableObject_reactsToDelegateMessageChangeCallback() {
@@ -38,6 +40,22 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
         }
         
         AssertAsync.willBeEqual(observableObject.message, newMessage)
+    }
+    
+    func test_observableObject_reactsToDelegateRepliesChangesCallback() {
+        let observableObject = messageController.observableObject
+        
+        // Simulate replies changes
+        let newReply: ChatMessage = .unique
+        messageController.replies_simulated = [newReply]
+        messageController.delegateCallback {
+            $0.messageController(
+                self.messageController,
+                didChangeReplies: [.insert(newReply, index: .init())]
+            )
+        }
+        
+        AssertAsync.willBeEqual(observableObject.replies, [newReply])
     }
     
     func test_observableObject_reactsToDelegateStateChangesCallback() {
@@ -63,7 +81,12 @@ class MessageControllerMock: ChatMessageController {
     override var message: ChatMessage? {
         message_simulated ?? super.message
     }
-
+    
+    var replies_simulated: [_ChatMessage<DefaultExtraData>]?
+    override var replies: [_ChatMessage<DefaultExtraData>] {
+        replies_simulated ?? super.replies
+    }
+    
     var state_simulated: DataController.State?
     override var state: DataController.State {
         get { state_simulated ?? super.state }
