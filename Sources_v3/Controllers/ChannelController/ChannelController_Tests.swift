@@ -267,9 +267,6 @@ class ChannelController_Tests: StressTestCase {
         // Set bottom-to-top ordering
         controller.listOrdering = .bottomToTop
         
-        // Simulate `synchronize` call to apply changes
-        controller.synchronize()
-        
         // Check the order of messages is correct
         let bottomToTopIds = [message1, message2].sorted { $0.createdAt < $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), bottomToTopIds)
