@@ -92,6 +92,12 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// use of this value is to check if a message is pending send/delete, and update the UI accordingly.
     ///
     public let localState: LocalMessageState?
+    
+    /// An indicator whether the message is flagged by the current user.
+    ///
+    /// - Note: Please be aware that the value of this field is not persisted on the server,
+    /// and is valid only locally for the current session.
+    public let isFlaggedByCurrentUser: Bool
 }
 
 extension _ChatMessage: Hashable {
