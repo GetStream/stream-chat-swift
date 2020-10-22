@@ -4,6 +4,7 @@
 
 @testable import StreamChat
 import XCTest
+import CoreData
 
 final class MessageUpdater_Tests: StressTestCase {
     typealias ExtraData = DefaultExtraData
@@ -579,5 +580,228 @@ final class MessageUpdater_Tests: StressTestCase {
         
         // Assert fetched message is saved to the database
         XCTAssertNotNil(database.viewContext.message(id: messageId))
+    }
+    
+    // MARK: - Flag message
+    
+    func test_flagMessage_happyPath() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        
+        // Create current user in the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Load current user.
+        let currentUserDTO = try XCTUnwrap(database.viewContext.currentUser())
+        
+        // Create channel in the database.
+        try database.createChannel(cid: cid)
+        
+        // Simulate `flagMessage` call.
+        var flagCompletionCalled = false
+        messageUpdater.flagMessage(true, with: messageId, in: cid) { error in
+            XCTAssertNil(error)
+            flagCompletionCalled = true
+        }
+        
+        // Assert message endpoint is called.
+        let messageEndpoint: Endpoint<MessagePayload<ExtraData>> = .getMessage(messageId: messageId)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(messageEndpoint))
+        
+        // Simulate message response with success.
+        let messagePayload: MessagePayload<ExtraData> = .dummy(messageId: messageId, authorUserId: currentUserId)
+        apiClient.test_simulateResponse(.success(messagePayload))
+        
+        // Assert flag endpoint is called.
+        let flagEndpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(true, with: messageId)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
+        
+        // Simulate flag API response.
+        let flagMessagePayload = FlagMessagePayload<ExtraData.User>(
+            currentUser: .dummy(userId: currentUserId, role: .user),
+            flaggedMessageId: messageId
+        )
+        apiClient.test_simulateResponse(.success(flagMessagePayload))
+
+        // Load the message.
+        var messageDTO: MessageDTO? {
+            database.viewContext.message(id: messageId)
+        }
+        
+        AssertAsync {
+            // Assert flag completion is called.
+            Assert.willBeTrue(flagCompletionCalled)
+            // Assert current user has the message flagged.
+            Assert.willBeTrue(messageDTO.flatMap { currentUserDTO.flaggedMessages.contains($0) } ?? false)
+            // Assert message is flagged by current user.
+            Assert.willBeEqual(messageDTO?.flaggedBy, currentUserDTO)
+        }
+        
+        // Simulate `unflagMessage` call.
+        var unflagCompletionCalled = false
+        messageUpdater.flagMessage(false, with: messageId, in: cid) { error in
+            XCTAssertNil(error)
+            unflagCompletionCalled = true
+        }
+        
+        // Assert unflag endpoint is called.
+        let unflagEndpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(false, with: messageId)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(unflagEndpoint))
+        
+        // Simulate unflag API response.
+        apiClient.test_simulateResponse(.success(flagMessagePayload))
+        
+        AssertAsync {
+            // Assert unflag completion is called.
+            Assert.willBeTrue(unflagCompletionCalled)
+            // Assert current user doesn't have the message as flagged.
+            Assert.willBeFalse(messageDTO.flatMap { currentUserDTO.flaggedMessages.contains($0) } ?? true)
+            // Assert message is not flagged by current user anymore.
+            Assert.willBeEqual(messageDTO?.flaggedBy, nil)
+        }
+    }
+    
+    func test_flagMessage_propagatesMessageNetworkError() {
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        
+        // Simulate `flagMessage` call and catch the error.
+        var completionCalledError: Error?
+        messageUpdater.flagMessage(true, with: messageId, in: cid) {
+            completionCalledError = $0
+        }
+        
+        // Assert message endpoint is called.
+        let messageEndpoint: Endpoint<MessagePayload<ExtraData>> = .getMessage(messageId: messageId)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(messageEndpoint))
+        
+        // Simulate message response with failure.
+        let networkError = TestError()
+        apiClient.test_simulateResponse(Result<MessagePayload<ExtraData>, Error>.failure(networkError))
+        
+        // Assert the message network error is propogated.
+        AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
+    }
+    
+    func test_flagMessage_propagatesMessageDatabaseError() {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        
+        // Update database to throw the error on write.
+        let databaseError = TestError()
+        database.write_errorResponse = databaseError
+        
+        // Simulate `flagMessage` call and catch the error.
+        var completionCalledError: Error?
+        messageUpdater.flagMessage(true, with: messageId, in: cid) {
+            completionCalledError = $0
+        }
+        
+        // Assert message endpoint is called.
+        let messageEndpoint: Endpoint<MessagePayload<ExtraData>> = .getMessage(messageId: messageId)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(messageEndpoint))
+        
+        // Simulate message response with success.
+        let messagePayload: MessagePayload<ExtraData> = .dummy(messageId: messageId, authorUserId: currentUserId)
+        apiClient.test_simulateResponse(.success(messagePayload))
+        
+        // Assert the message database error is propogated.
+        AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
+    }
+    
+    func test_flagMessage_propagatesFlagNetworkError() throws {
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        
+        // Save message to the database.
+        try database.createMessage(id: messageId)
+        
+        // Simulate `flagMessage` call and catch the error.
+        var completionCalledError: Error?
+        messageUpdater.flagMessage(true, with: messageId, in: cid) {
+            completionCalledError = $0
+        }
+        
+        // Assert flag endpoint is called.
+        let flagEndpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(true, with: messageId)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
+        
+        // Simulate flag API response with failure.
+        let networkError = TestError()
+        apiClient.test_simulateResponse(Result<FlagMessagePayload<ExtraData.User>, Error>.failure(networkError))
+        
+        // Assert the flag database error is propogated.
+        AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
+    }
+    
+    func test_flagMessage_propagatesFlagDatabaseError() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        
+        // Save message to the database.
+        try database.createMessage(id: messageId)
+        
+        // Update database to throw the error on write.
+        let databaseError = TestError()
+        database.write_errorResponse = databaseError
+        
+        // Simulate `flagMessage` call and catch the error.
+        var completionCalledError: Error?
+        messageUpdater.flagMessage(true, with: messageId, in: cid) {
+            completionCalledError = $0
+        }
+        
+        // Assert flag endpoint is called.
+        let flagEndpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(true, with: messageId)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
+        
+        // Simulate flag API response with success.
+        let payload = FlagMessagePayload<ExtraData.User>(
+            currentUser: .dummy(userId: currentUserId, role: .user),
+            flaggedMessageId: messageId
+        )
+        apiClient.test_simulateResponse(.success(payload))
+        
+        // Assert the flag database error is propogated.
+        AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
+    }
+    
+    func test_flagMessage_propagatesMessageDoesNotExistError() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+        let cid: ChannelId = .unique
+        
+        // Save message to the database.
+        try database.createMessage(id: messageId)
+        
+        // Simulate `flagMessage` call and catch the error.
+        var completionCalledError: Error?
+        messageUpdater.flagMessage(true, with: messageId, in: cid) {
+            completionCalledError = $0
+        }
+        
+        // Assert flag endpoint is called.
+        let flagEndpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(true, with: messageId)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
+        
+        // Delete the message from the database.
+        try database.writeSynchronously {
+            let session = $0 as! NSManagedObjectContext
+            let messageDTO = try XCTUnwrap(session.message(id: messageId))
+            session.delete(messageDTO)
+        }
+        
+        // Simulate flag API response with success.
+        let payload = FlagMessagePayload<ExtraData.User>(
+            currentUser: .dummy(userId: currentUserId, role: .user),
+            flaggedMessageId: messageId
+        )
+        apiClient.test_simulateResponse(.success(payload))
+        
+        // Assert `MessageDoesNotExist` error is propogated.
+        AssertAsync.willBeTrue(completionCalledError is ClientError.MessageDoesNotExist)
     }
 }

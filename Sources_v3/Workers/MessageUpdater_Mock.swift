@@ -32,6 +32,11 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var loadReplies_pagination: MessagesPagination?
     @Atomic var loadReplies_completion: ((Error?) -> Void)?
     
+    @Atomic var flagMessage_flag: Bool?
+    @Atomic var flagMessage_messageId: MessageId?
+    @Atomic var flagMessage_cid: ChannelId?
+    @Atomic var flagMessage_completion: ((Error?) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
@@ -58,6 +63,11 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         loadReplies_messageId = nil
         loadReplies_pagination = nil
         loadReplies_completion = nil
+        
+        flagMessage_flag = nil
+        flagMessage_messageId = nil
+        flagMessage_cid = nil
+        flagMessage_completion = nil
     }
     
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
@@ -107,5 +117,12 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         loadReplies_messageId = messageId
         loadReplies_pagination = pagination
         loadReplies_completion = completion
+    }
+    
+    override func flagMessage(_ flag: Bool, with messageId: MessageId, in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        flagMessage_flag = flag
+        flagMessage_messageId = messageId
+        flagMessage_cid = cid
+        flagMessage_completion = completion
     }
 }
