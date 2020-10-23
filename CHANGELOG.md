@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.4.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.4.1)
+_October 23, 2020_
+
 ### ✅ Added
 - Introduce `avatarViewStyle` for `ReactionViewStyle`. Now, reactionView's avatarView is customizable for both reactions on incoming message and outgoing message. [#561](https://github.com/GetStream/stream-chat-swift/issues/561)
   Access it via `style.incomingMessage.reactionViewStyle.avatarViewStyle` (or `outgoingMessage`)
