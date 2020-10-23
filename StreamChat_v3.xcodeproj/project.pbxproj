@@ -996,6 +996,16 @@
 			path = StreamChat;
 			sourceTree = "<group>";
 		};
+		790881F525432ACF00896F03 /* StreamChat */ = {
+			isa = PBXGroup;
+			children = (
+				79087E7D2539D2E300896F03 /* StreamChatStressTestPlan.xctestplan */,
+				79087E7E2539D2E300896F03 /* StreamChatTestPlan.xctestplan */,
+				799C9455247D59B1001F1104 /* Info.plist */,
+			);
+			path = StreamChat;
+			sourceTree = "<group>";
+		};
 		790B9E2E24DC21C5005455AA /* Dummy data */ = {
 			isa = PBXGroup;
 			children = (
@@ -1455,8 +1465,7 @@
 		799C9452247D59B1001F1104 /* Tests_v3 */ = {
 			isa = PBXGroup;
 			children = (
-				79087E7D2539D2E300896F03 /* StreamChatStressTestPlan.xctestplan */,
-				79087E7E2539D2E300896F03 /* StreamChatTestPlan.xctestplan */,
+				790881F525432ACF00896F03 /* StreamChat */,
 				790B9E2E24DC21C5005455AA /* Dummy data */,
 				79DDF815249CE38B002F4412 /* Mock Network */,
 				798779F52498E47700015F8B /* MockEnpointResponses */,
@@ -1465,7 +1474,6 @@
 				799C9461247D78E2001F1104 /* Await.swift */,
 				791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */,
 				7988F6B624D15F100004219B /* StressTestCase.swift */,
-				799C9455247D59B1001F1104 /* Info.plist */,
 				799C9474247D7D41001F1104 /* TemporaryData.swift */,
 				799C947B247E6051001F1104 /* TestError.swift */,
 				792921CA24C077B400116BBB /* TestDispatchQueue.swift */,
@@ -2684,7 +2692,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D48F367GRM;
-				INFOPLIST_FILE = Tests_v3/Info.plist;
+				INFOPLIST_FILE = Tests_v3/StreamChat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2703,7 +2711,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D48F367GRM;
-				INFOPLIST_FILE = Tests_v3/Info.plist;
+				INFOPLIST_FILE = Tests_v3/StreamChat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2975,7 +2983,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D48F367GRM;
-				INFOPLIST_FILE = Tests_v3/Info.plist;
+				INFOPLIST_FILE = Tests_v3/StreamChat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
