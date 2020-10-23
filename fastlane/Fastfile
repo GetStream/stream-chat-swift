@@ -270,7 +270,7 @@ end
 desc "Runs tests for v3 in Debug config"
 lane :test_v3 do |options|
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatTests/StreamChatTestPlan.xctestplan")
 
   scan(
     project: "StreamChat_v3.xcodeproj",
@@ -285,7 +285,7 @@ end
 desc "Runs tests for v3 in Release config"
 lane :test_v3_release do
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatTests/StreamChatTestPlan.xctestplan")
 
   scan(
     project: "StreamChat_v3.xcodeproj",
@@ -305,7 +305,7 @@ lane :stress_test_v3 do
     build_for_testing: true
   )
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatStressTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatTests/StreamChatStressTestPlan.xctestplan")
 
   stress_tests_cycles.times {
     scan(
@@ -327,7 +327,7 @@ lane :stress_test_v3_release do
     build_for_testing: true
   )
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatStressTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests_v3/StreamChatTests/StreamChatStressTestPlan.xctestplan")
 
   stress_tests_cycles.times {
     scan(
