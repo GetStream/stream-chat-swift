@@ -1,5 +1,5 @@
 //
-//  StreamChath
+//  StreamChat.h
 //  StreamChat_v3
 //
 //  Created by Vojta on 26/05/2020.
