@@ -524,7 +524,7 @@ public extension _ChatChannelController {
         }
     }
     
-    /// Loads new messages from backend.
+    /// Loads previous messages from backend.
     ///
     /// - Parameters:
     ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
@@ -532,8 +532,8 @@ public extension _ChatChannelController {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func loadNextMessages(
-        after messageId: MessageId? = nil,
+    func loadPreviousMessages(
+        before messageId: MessageId? = nil,
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -556,7 +556,7 @@ public extension _ChatChannelController {
         })
     }
     
-    /// Loads previous messages from backend.
+    /// Loads next messages from backend.
     ///
     /// - Parameters:
     ///   - messageId: ID of the current first message. You will get messages `newer` than the provided ID.
@@ -564,8 +564,8 @@ public extension _ChatChannelController {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func loadPreviousMessages(
-        before messageId: MessageId? = nil,
+    func loadNextMessages(
+        after messageId: MessageId? = nil,
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
