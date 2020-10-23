@@ -35,9 +35,9 @@ public enum SystemEnvironment {
     
     static var isSimulator: Bool {
         #if targetEnvironment(simulator)
-            return true
+        return true
         #else
-            return false
+        return false
         #endif
     }
     
@@ -55,17 +55,17 @@ public enum SystemEnvironment {
     
     static var isExtention: Bool {
         #if TARGET_IS_EXTENSION
-            return true
+        return true
         #else
-            return false
+        return false
         #endif
     }
     
     static var isTests: Bool {
         #if DEBUG
-            return NSClassFromString("XCTest") != nil
+        return NSClassFromString("XCTest") != nil
         #else
-            return false
+        return false
         #endif
     }
 }
