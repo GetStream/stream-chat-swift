@@ -1001,82 +1001,7 @@ class ChannelController_Tests: StressTestCase {
         return message.id
     }
     
-    func test_loadNextMessages_callsChannelUpdater() throws {
-        var error: Error?
-        var messageId: MessageId?
-        
-        // Create new channel with message in DB
-        error = try await {
-            client.databaseContainer.write({ session in
-                messageId = try self.setupChannelWithMessage(session)
-            }, completion: $0)
-        }
-        
-        XCTAssertNil(error)
-        
-        var completionCalled = false
-        controller.loadNextMessages(after: messageId, limit: 25) { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
-            XCTAssertNil(error)
-            completionCalled = true
-        }
-        
-        // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
-        
-        // Simulate successful update
-        env.channelUpdater?.update_completion?(nil)
-        
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
-        
-        // Assert correct `MessagesPagination` is created
-        XCTAssertEqual(
-            env!.channelUpdater?.update_channelQuery?.pagination,
-            MessagesPagination(pageSize: 25, parameter: .lessThan(messageId!))
-        )
-    }
-    
-    func test_loadNextMessages_throwsError_on_emptyMessages() throws {
-        // Simulate `loadNextMessages` call and assert error is returned
-        let error: Error? = try await { [callbackQueueID] completion in
-            controller.loadNextMessages { error in
-                AssertTestQueue(withId: callbackQueueID)
-                completion(error)
-            }
-        }
-        XCTAssert(error is ClientError.ChannelEmptyMessages)
-    }
-    
-    func test_loadNextMessages_callsChannelUpdaterWithError() throws {
-        var error: Error?
-        var messageId: MessageId?
-        
-        // Create new channel with message in DB
-        error = try await {
-            client.databaseContainer.write({ session in
-                messageId = try self.setupChannelWithMessage(session)
-            }, completion: $0)
-        }
-        
-        XCTAssertNil(error)
-        
-        // Simulate `loadNextMessages` call and catch the completion
-        var completionCalledError: Error?
-        controller.loadNextMessages(after: messageId) { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
-            completionCalledError = $0
-        }
-        
-        // Simulate failed update
-        let testError = TestError()
-        env.channelUpdater!.update_completion?(testError)
-        
-        // Completion should be called with the error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
-    }
-    
-    func test_loadPreviousMessages_callsChannelUpdate() throws {
+    func test_loadPreviousMessages_callsChannelUpdater() throws {
         var error: Error?
         var messageId: MessageId?
         
@@ -1108,7 +1033,7 @@ class ChannelController_Tests: StressTestCase {
         // Assert correct `MessagesPagination` is created
         XCTAssertEqual(
             env!.channelUpdater?.update_channelQuery?.pagination,
-            MessagesPagination(pageSize: 25, parameter: .greaterThan(messageId!))
+            MessagesPagination(pageSize: 25, parameter: .lessThan(messageId!))
         )
     }
     
@@ -1139,6 +1064,81 @@ class ChannelController_Tests: StressTestCase {
         // Simulate `loadPreviousMessages` call and catch the completion
         var completionCalledError: Error?
         controller.loadPreviousMessages(before: messageId) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.update_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    func test_loadNextMessages_callsChannelUpdate() throws {
+        var error: Error?
+        var messageId: MessageId?
+        
+        // Create new channel with message in DB
+        error = try await {
+            client.databaseContainer.write({ session in
+                messageId = try self.setupChannelWithMessage(session)
+            }, completion: $0)
+        }
+        
+        XCTAssertNil(error)
+        
+        var completionCalled = false
+        controller.loadNextMessages(after: messageId, limit: 25) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.channelUpdater?.update_completion?(nil)
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        
+        // Assert correct `MessagesPagination` is created
+        XCTAssertEqual(
+            env!.channelUpdater?.update_channelQuery?.pagination,
+            MessagesPagination(pageSize: 25, parameter: .greaterThan(messageId!))
+        )
+    }
+    
+    func test_loadNextMessages_throwsError_on_emptyMessages() throws {
+        // Simulate `loadNextMessages` call and assert error is returned
+        let error: Error? = try await { [callbackQueueID] completion in
+            controller.loadNextMessages { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelEmptyMessages)
+    }
+    
+    func test_loadNextMessages_callsChannelUpdaterWithError() throws {
+        var error: Error?
+        var messageId: MessageId?
+        
+        // Create new channel with message in DB
+        error = try await {
+            client.databaseContainer.write({ session in
+                messageId = try self.setupChannelWithMessage(session)
+            }, completion: $0)
+        }
+        
+        XCTAssertNil(error)
+        
+        // Simulate `loadPreviousMessages` call and catch the completion
+        var completionCalledError: Error?
+        controller.loadNextMessages(after: messageId) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }
