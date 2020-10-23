@@ -8,8 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
-		79087E7F2539D2E300896F03 /* StreamChatStressTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 79087E7D2539D2E300896F03 /* StreamChatStressTestPlan.xctestplan */; };
-		79087E802539D2E300896F03 /* StreamChatTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 79087E7E2539D2E300896F03 /* StreamChatTestPlan.xctestplan */; };
+		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
+		7908821225432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
+		7908821325432B7200896F03 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		7908823325432C6400896F03 /* StreamChatUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7908823125432C6400896F03 /* StreamChatUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7908823C25432C9000896F03 /* StreamChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7908823A25432C9000896F03 /* StreamChatUITests.swift */; };
+		7908824A25432CC600896F03 /* StreamChatStressTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 7908824725432CC600896F03 /* StreamChatStressTestPlan.xctestplan */; };
+		7908824B25432CC600896F03 /* StreamChatTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 7908824825432CC600896F03 /* StreamChatTestPlan.xctestplan */; };
+		7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7908829A2546D95A00896F03 /* FlagMessagePayload.swift */; };
+		790882A22546D95F00896F03 /* FlagMessagePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7908829B2546D95A00896F03 /* FlagMessagePayload_Tests.swift */; };
 		790A4C42252DD377001F4A23 /* DeviceEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C41252DD36A001F4A23 /* DeviceEndpoints.swift */; };
 		790A4C45252DD4F1001F4A23 /* DevicePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C44252DD4F1001F4A23 /* DevicePayloads.swift */; };
 		790A4C4A252DDD50001F4A23 /* DeviceEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790A4C47252DDD1A001F4A23 /* DeviceEndpoints_Tests.swift */; };
@@ -268,8 +275,6 @@
 		88F6DF91252C8845009A8AF0 /* ChannelMemberUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF90252C8845009A8AF0 /* ChannelMemberUpdater.swift */; };
 		88F6DF94252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */; };
 		88F6DF97252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */; };
-		88F896EE2541AB1000DE517D /* FlagMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F896ED2541AB1000DE517D /* FlagMessagePayload.swift */; };
-		88F896F22541AB2100DE517D /* FlagMessagePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F896F12541AB2100DE517D /* FlagMessagePayload_Tests.swift */; };
 		88F896F92541AC0900DE517D /* FlagMessagePayload+NoExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 88F896F62541AC0900DE517D /* FlagMessagePayload+NoExtraData.json */; };
 		88F896FA2541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 88F896F72541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json */; };
 		88F896FB2541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 88F896F82541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json */; };
@@ -446,6 +451,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		790881AE2543282200896F03 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
+		};
 		799C9457247D59B1001F1104 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
@@ -471,8 +483,17 @@
 
 /* Begin PBXFileReference section */
 		7900452525374CA20096ECA1 /* User+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+SwiftUI.swift"; sourceTree = "<group>"; };
-		79087E7D2539D2E300896F03 /* StreamChatStressTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChatStressTestPlan.xctestplan; sourceTree = "<group>"; };
-		79087E7E2539D2E300896F03 /* StreamChatTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChatTestPlan.xctestplan; sourceTree = "<group>"; };
+		790881FD25432B7200896F03 /* StreamChatUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		7908820525432B7200896F03 /* StreamChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7908823125432C6400896F03 /* StreamChatUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamChatUI.h; sourceTree = "<group>"; };
+		7908823225432C6400896F03 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7908823A25432C9000896F03 /* StreamChatUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamChatUITests.swift; sourceTree = "<group>"; };
+		7908823B25432C9000896F03 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7908824725432CC600896F03 /* StreamChatStressTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChatStressTestPlan.xctestplan; sourceTree = "<group>"; };
+		7908824825432CC600896F03 /* StreamChatTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChatTestPlan.xctestplan; sourceTree = "<group>"; };
+		7908824925432CC600896F03 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		7908829A2546D95A00896F03 /* FlagMessagePayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlagMessagePayload.swift; sourceTree = "<group>"; };
+		7908829B2546D95A00896F03 /* FlagMessagePayload_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlagMessagePayload_Tests.swift; sourceTree = "<group>"; };
 		790A4C41252DD36A001F4A23 /* DeviceEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceEndpoints.swift; sourceTree = "<group>"; };
 		790A4C44252DD4F1001F4A23 /* DevicePayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevicePayloads.swift; sourceTree = "<group>"; };
 		790A4C47252DDD1A001F4A23 /* DeviceEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceEndpoints_Tests.swift; sourceTree = "<group>"; };
@@ -734,8 +755,6 @@
 		88F6DF90252C8845009A8AF0 /* ChannelMemberUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater.swift; sourceTree = "<group>"; };
 		88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Tests.swift; sourceTree = "<group>"; };
 		88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Mock.swift; sourceTree = "<group>"; };
-		88F896ED2541AB1000DE517D /* FlagMessagePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagMessagePayload.swift; sourceTree = "<group>"; };
-		88F896F12541AB2100DE517D /* FlagMessagePayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlagMessagePayload_Tests.swift; sourceTree = "<group>"; };
 		88F896F62541AC0900DE517D /* FlagMessagePayload+NoExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagMessagePayload+NoExtraData.json"; sourceTree = "<group>"; };
 		88F896F72541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagMessagePayload+DefaultExtraData.json"; sourceTree = "<group>"; };
 		88F896F82541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagMessagePayload+CustomExtraData.json"; sourceTree = "<group>"; };
@@ -955,6 +974,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		790881AB254327C800896F03 /* StreamChat */ = {
+			isa = PBXGroup;
+			children = (
+				79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */,
+				799C942F247D2FB9001F1104 /* ChatClient_Tests.swift */,
+				7991D83E24F8F1BF00D21BA3 /* ChatClient_Mock.swift */,
+				7962958A2481473A0078EB53 /* Config */,
+				799C9426247D2FB9001F1104 /* WebSocketClient */,
+				799C9435247D2FB9001F1104 /* APIClient */,
+				799C9427247D2FB9001F1104 /* Workers */,
+				799C9429247D2FB9001F1104 /* Database */,
+				799C9430247D2FB9001F1104 /* Models */,
+				799C944A247D574F001F1104 /* Controllers */,
+				792A4F412480103A00EAF71D /* Query */,
+				79280F3D2484E33C00CDEB89 /* Errors */,
+				792A4F3A247FFB7600EAF71D /* Utils */,
+				799C941D247D2F80001F1104 /* Sources_v3.h */,
+				799C941E247D2F80001F1104 /* Info.plist */,
+			);
+			path = StreamChat;
+			sourceTree = "<group>";
+		};
 		790B9E2E24DC21C5005455AA /* Dummy data */ = {
 			isa = PBXGroup;
 			children = (
@@ -1189,6 +1230,8 @@
 		79682C4724BF37550071578E /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
+				7908829B2546D95A00896F03 /* FlagMessagePayload_Tests.swift */,
+				7908829A2546D95A00896F03 /* FlagMessagePayload.swift */,
 				882C5749252C767E00E60C44 /* ChannelMemberListPayload.swift */,
 				882C574D252C76A300E60C44 /* ChannelMemberListPayload_Tests.swift */,
 				DA84070B25250581005A0F62 /* UserListPayload.swift */,
@@ -1214,8 +1257,6 @@
 				790A4C4D252E0901001F4A23 /* DevicePayloads_Tests.swift */,
 				8836FFBA2540741D009FDF73 /* FlagUserPayload.swift */,
 				8836FFC225408210009FDF73 /* FlagUserPayload_Tests.swift */,
-				88F896ED2541AB1000DE517D /* FlagMessagePayload.swift */,
-				88F896F12541AB2100DE517D /* FlagMessagePayload_Tests.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -1273,21 +1314,7 @@
 		799C9415247D2F38001F1104 /* Sources_v3 */ = {
 			isa = PBXGroup;
 			children = (
-				79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */,
-				799C942F247D2FB9001F1104 /* ChatClient_Tests.swift */,
-				7991D83E24F8F1BF00D21BA3 /* ChatClient_Mock.swift */,
-				7962958A2481473A0078EB53 /* Config */,
-				799C9426247D2FB9001F1104 /* WebSocketClient */,
-				799C9435247D2FB9001F1104 /* APIClient */,
-				799C9427247D2FB9001F1104 /* Workers */,
-				799C9429247D2FB9001F1104 /* Database */,
-				799C9430247D2FB9001F1104 /* Models */,
-				799C944A247D574F001F1104 /* Controllers */,
-				792A4F412480103A00EAF71D /* Query */,
-				79280F3D2484E33C00CDEB89 /* Errors */,
-				792A4F3A247FFB7600EAF71D /* Utils */,
-				799C941D247D2F80001F1104 /* Sources_v3.h */,
-				799C941E247D2F80001F1104 /* Info.plist */,
+				790881AB254327C800896F03 /* StreamChat */,
 			);
 			indentWidth = 4;
 			path = Sources_v3;
@@ -1928,6 +1955,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				790881AF2543282200896F03 /* PBXTargetDependency */,
 			);
 			name = Sample;
 			productName = Sample_v3;
@@ -2251,7 +2279,7 @@
 				F6ED5F76250278D7005D7327 /* SyncEndpoint.swift in Sources */,
 				797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */,
 				792B805024D95B5D00C2963E /* Cached.swift in Sources */,
-				88F896EE2541AB1000DE517D /* FlagMessagePayload.swift in Sources */,
+				7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */,
 				DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */,
 				799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */,
 				888E8C55252B525300195E03 /* MemberController.swift in Sources */,
@@ -2478,7 +2506,7 @@
 				8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */,
 				8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */,
 				79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */,
-				88F896F22541AB2100DE517D /* FlagMessagePayload_Tests.swift in Sources */,
+				790882A22546D95F00896F03 /* FlagMessagePayload_Tests.swift in Sources */,
 				799C9476247D7E94001F1104 /* TemporaryData.swift in Sources */,
 				F649B2392500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift in Sources */,
 				79CD959424F9381700E87377 /* MulticastDelegate_Tests.swift in Sources */,
@@ -2520,6 +2548,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		790881AF2543282200896F03 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = 790881AE2543282200896F03 /* PBXContainerItemProxy */;
+		};
 		799C9458247D59B1001F1104 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
@@ -2603,7 +2636,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources_v3/Info.plist;
+				INFOPLIST_FILE = Sources_v3/StreamChat/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2611,7 +2644,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "io.getstream.StreamChatClient-v3";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.getstream.StreamChat-v3";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -2630,7 +2663,7 @@
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
-				INFOPLIST_FILE = Sources_v3/Info.plist;
+				INFOPLIST_FILE = Sources_v3/StreamChat/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2638,7 +2671,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "io.getstream.StreamChatClient-v3";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.getstream.StreamChat-v3";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;
@@ -2921,7 +2954,7 @@
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
 				ENABLE_TESTABILITY = YES;
-				INFOPLIST_FILE = Sources_v3/Info.plist;
+				INFOPLIST_FILE = Sources_v3/StreamChat/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -2929,7 +2962,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "io.getstream.StreamChatClient-v3";
+				PRODUCT_BUNDLE_IDENTIFIER = "io.getstream.StreamChat-v3";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 5.0;

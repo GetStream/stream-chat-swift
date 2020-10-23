@@ -346,12 +346,12 @@ extension Notification {
 // MARK: - Test helpers
 
 #if TESTS
-    extension WebSocketClient {
-        /// Simulates connection status change
-        func simulateConnectionStatus(_ status: WebSocketConnectionState) {
-            connectionState = status
-        }
+extension WebSocketClient {
+    /// Simulates connection status change
+    func simulateConnectionStatus(_ status: WebSocketConnectionState) {
+        connectionState = status
     }
+}
 #endif
 
 extension ClientError {
