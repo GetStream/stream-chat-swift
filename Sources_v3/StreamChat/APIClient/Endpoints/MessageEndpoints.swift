@@ -46,6 +46,37 @@ extension Endpoint {
             body: pagination
         )
     }
+    
+    static func addReaction<ExtraData: MessageReactionExtraData>(
+        _ type: MessageReactionType,
+        score: Int,
+        extraData: ExtraData,
+        messageId: MessageId
+    ) -> Endpoint<EmptyResponse> {
+        .init(
+            path: messageId.reactionsPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "reaction": MessageReactionRequestPayload(
+                    type: type,
+                    score: score,
+                    extraData: extraData
+                )
+            ]
+        )
+    }
+    
+    static func deleteReaction(_ type: MessageReactionType, messageId: MessageId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: messageId.reactionsPath.appending("/\(type.rawValue)"),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
 }
 
 private extension MessageId {
@@ -55,5 +86,9 @@ private extension MessageId {
     
     var repliesPath: String {
         "messages/\(self)/replies"
+    }
+    
+    var reactionsPath: String {
+        path.appending("/reaction")
     }
 }

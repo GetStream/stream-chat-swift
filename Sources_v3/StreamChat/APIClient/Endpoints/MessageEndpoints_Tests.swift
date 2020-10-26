@@ -83,4 +83,55 @@ final class MessageEndpoints_Tests: XCTestCase {
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+    
+    func test_addReaction_buildsCorrectly() {
+        let messageId: MessageId = .unique
+        let reaction: MessageReactionType = .init(rawValue: "like")
+        let score = 5
+        let extraData: NoExtraData = .defaultValue
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "messages/\(messageId)/reaction",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "reaction": MessageReactionRequestPayload(
+                    type: reaction,
+                    score: score,
+                    extraData: extraData
+                )
+            ]
+        )
+        
+        // Build endpoint.
+        let endpoint: Endpoint<EmptyResponse> = .addReaction(
+            reaction,
+            score: score,
+            extraData: extraData,
+            messageId: messageId
+        )
+        
+        // Assert endpoint is built correctly.
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+    
+    func test_deleteReaction_buildsCorrectly() {
+        let messageId: MessageId = .unique
+        let reaction: MessageReactionType = .init(rawValue: "like")
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "messages/\(messageId)/reaction/\(reaction.rawValue)",
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+        
+        // Build endpoint.
+        let endpoint: Endpoint<EmptyResponse> = .deleteReaction(reaction, messageId: messageId)
+        
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
