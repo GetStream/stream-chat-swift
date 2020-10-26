@@ -6,8 +6,6 @@ import Foundation
 
 // MARK: - Temporary
 
-public typealias ReactionType = String
-
 struct ReactionPayload: Decodable {
     private enum CodingKeys: String, CodingKey {
         case type
