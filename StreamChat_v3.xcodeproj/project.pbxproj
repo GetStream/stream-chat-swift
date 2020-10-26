@@ -221,6 +221,7 @@
 		805A11492506FBBD0089DFC4 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */; };
 		80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */; };
 		80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */; };
+		80D880432546553500908B7B /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D880422546553500908B7B /* ChatScrollView.swift */; };
 		8819DFCF2525F3C600FD1A50 /* UserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFCE2525F3C600FD1A50 /* UserUpdater.swift */; };
 		8819DFD52525F49D00FD1A50 /* UserController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFD42525F49D00FD1A50 /* UserController.swift */; };
 		8819DFDE252622D900FD1A50 /* ModerationEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFDD252622D900FD1A50 /* ModerationEndpoints_Tests.swift */; };
@@ -722,6 +723,7 @@
 		805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+Cells.swift"; sourceTree = "<group>"; };
 		80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AlertTextField.swift"; sourceTree = "<group>"; };
+		80D880422546553500908B7B /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
 		8819DFCE2525F3C600FD1A50 /* UserUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdater.swift; sourceTree = "<group>"; };
 		8819DFD42525F49D00FD1A50 /* UserController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserController.swift; sourceTree = "<group>"; };
 		8819DFDD252622D900FD1A50 /* ModerationEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationEndpoints_Tests.swift; sourceTree = "<group>"; };
@@ -1613,6 +1615,7 @@
 		8008C19724F7EE0300F5BCCE /* SwiftUISimpleChat */ = {
 			isa = PBXGroup;
 			children = (
+				80D880422546553500908B7B /* ChatScrollView.swift */,
 				8008C19824F7EE5B00F5BCCE /* ChannelListView.swift */,
 				DA4EE5D2252CB64900CB26D4 /* UserListView.swift */,
 				8837C66B2539E50500D8FE86 /* MemberListView.swift */,
@@ -2327,6 +2330,7 @@
 				804B127224E712F5002B00EA /* SimpleChatViewController.swift in Sources */,
 				8837C66C2539E50500D8FE86 /* MemberListView.swift in Sources */,
 				DA84071325250E23005A0F62 /* SimpleUsersViewController.swift in Sources */,
+				80D880432546553500908B7B /* ChatScrollView.swift in Sources */,
 				DA4EE5C5252C777A00CB26D4 /* CombineSimpleUsersViewController.swift in Sources */,
 				DAD8A8A52507E1C800D05282 /* CombineSimpleChatViewController.swift in Sources */,
 				80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */,
