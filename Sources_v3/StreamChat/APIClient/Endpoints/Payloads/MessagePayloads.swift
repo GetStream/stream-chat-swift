@@ -20,8 +20,8 @@ enum MessagePayloadsCodingKeys: String, CodingKey {
     case showReplyInChannel = "show_in_channel"
     case mentionedUsers = "mentioned_users"
     case replyCount = "reply_count"
-    //        case latestReactions = "latest_reactions"
-    //        case ownReactions = "own_reactions"
+    case latestReactions = "latest_reactions"
+    case ownReactions = "own_reactions"
     case reactionScores = "reaction_scores"
     case isSilent = "silent"
     //        case i18n
@@ -48,8 +48,8 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     // TODO: Attachments
     // TODO: Translations
     
-    let latestReactions: [ReactionPayload] = []
-    let ownReactions: [ReactionPayload] = []
+    let latestReactions: [MessageReactionPayload<ExtraData>]
+    let ownReactions: [MessageReactionPayload<ExtraData>]
     let reactionScores: [MessageReactionType: Int]
     let isSilent: Bool
     
@@ -70,6 +70,8 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         mentionedUsers = try container.decode([UserPayload<ExtraData.User>].self, forKey: .mentionedUsers)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         
+        latestReactions = try container.decode([MessageReactionPayload<ExtraData>].self, forKey: .latestReactions)
+        ownReactions = try container.decode([MessageReactionPayload<ExtraData>].self, forKey: .ownReactions)
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
@@ -91,6 +93,8 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         mentionedUsers: [UserPayload<ExtraData.User>],
         replyCount: Int,
         extraData: ExtraData.Message,
+        latestReactions: [MessageReactionPayload<ExtraData>] = [],
+        ownReactions: [MessageReactionPayload<ExtraData>] = [],
         reactionScores: [MessageReactionType: Int],
         isSilent: Bool
     ) {
@@ -108,6 +112,8 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.mentionedUsers = mentionedUsers
         self.replyCount = replyCount
         self.extraData = extraData
+        self.latestReactions = latestReactions
+        self.ownReactions = ownReactions
         self.reactionScores = reactionScores
         self.isSilent = isSilent
     }

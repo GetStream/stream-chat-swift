@@ -6,22 +6,6 @@ import Foundation
 
 // MARK: - Temporary
 
-struct ReactionPayload: Decodable {
-    private enum CodingKeys: String, CodingKey {
-        case type
-        case score
-        case createdAt = "created_at"
-        case updatedAt = "updated_at"
-    }
-    
-    let type: ReactionType
-    let score: Int
-    let createdAt: Date
-    let updatedAt: Date
-}
-
-// MARK: Temporary -
-
 /// The DTO object mirroring the JSON representation of an event.
 struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     private enum CodingKeys: String, CodingKey {
@@ -51,7 +35,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     let memberContainer: MemberContainerPayload<ExtraData.User>?
     let channel: ChannelDetailPayload<ExtraData>?
     let message: MessagePayload<ExtraData>?
-    let reaction: ReactionPayload?
+    let reaction: MessageReactionPayload<ExtraData>?
     let watcherCount: Int?
     let unreadCount: UnreadCount?
     let createdAt: Date?
@@ -69,7 +53,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         memberContainer: MemberContainerPayload<ExtraData.User>? = nil,
         channel: ChannelDetailPayload<ExtraData>? = nil,
         message: MessagePayload<ExtraData>? = nil,
-        reaction: ReactionPayload? = nil,
+        reaction: MessageReactionPayload<ExtraData>? = nil,
         watcherCount: Int? = nil,
         unreadCount: UnreadCount? = nil,
         createdAt: Date? = nil,
@@ -108,7 +92,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         memberContainer = try container.decodeIfPresent(MemberContainerPayload<ExtraData.User>.self, forKey: .memberContainer)
         channel = try container.decodeIfPresent(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
         message = try container.decodeIfPresent(MessagePayload<ExtraData>.self, forKey: .message)
-        reaction = try container.decodeIfPresent(ReactionPayload.self, forKey: .reaction)
+        reaction = try container.decodeIfPresent(MessageReactionPayload<ExtraData>.self, forKey: .reaction)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         unreadCount = try? UnreadCount(from: decoder)
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
