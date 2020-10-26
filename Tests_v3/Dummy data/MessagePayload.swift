@@ -13,7 +13,9 @@ extension MessagePayload {
         showReplyInChannel: Bool = false,
         authorUserId: UserId,
         text: String = .unique,
-        extraData: T.Message = .defaultValue
+        extraData: T.Message = .defaultValue,
+        latestReactions: [MessageReactionPayload<T>] = [],
+        ownReactions: [MessageReactionPayload<T>] = []
     ) -> MessagePayload<T> where T.User == NameAndImageExtraData {
         .init(
             id: messageId,
@@ -30,6 +32,8 @@ extension MessagePayload {
             mentionedUsers: [UserPayload.dummy(userId: .unique)],
             replyCount: .random(in: 0...1000),
             extraData: extraData,
+            latestReactions: latestReactions,
+            ownReactions: ownReactions,
             reactionScores: ["like": 1],
             isSilent: true
         )
