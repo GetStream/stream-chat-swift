@@ -22,7 +22,7 @@
       "target" : {
         "containerPath" : "container:StreamChat_v3.xcodeproj",
         "identifier" : "799C9450247D59B1001F1104",
-        "name" : "StreamChatClientTests"
+        "name" : "StreamChatTests"
       }
     }
   ],
