@@ -29,6 +29,9 @@ public protocol ExtraDataTypes {
     
     /// An extra data type for `ChatChannel`.
     associatedtype Channel: ChannelExtraData = NameAndImageExtraData
+    
+    /// An extra data type for `ChatMessageReaction`.
+    associatedtype MessageReaction: MessageReactionExtraData = NoExtraData
 }
 
 /// A concrete implementation of `ExtraDataTypes` with the default extra data type values.

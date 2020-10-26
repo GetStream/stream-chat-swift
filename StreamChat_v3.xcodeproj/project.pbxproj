@@ -271,6 +271,7 @@
 		888E8C51252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C50252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift */; };
 		888E8C55252B525300195E03 /* MemberController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C54252B525300195E03 /* MemberController.swift */; };
 		888E8C59252B56A100195E03 /* MemberController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C58252B56A100195E03 /* MemberController_Tests.swift */; };
+		8899BC53254318CC003CB98B /* MessageReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC52254318CC003CB98B /* MessageReaction.swift */; };
 		889B00E5252C972C007709A8 /* ChannelMemberListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */; };
 		889B00E9252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */; };
 		88A00DD02525F08000259AB4 /* ModerationEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88A00DCF2525F08000259AB4 /* ModerationEndpoints.swift */; };
@@ -791,6 +792,7 @@
 		888E8C50252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberBanRequestPayload_Tests.swift; sourceTree = "<group>"; };
 		888E8C54252B525300195E03 /* MemberController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberController.swift; sourceTree = "<group>"; };
 		888E8C58252B56A100195E03 /* MemberController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberController_Tests.swift; sourceTree = "<group>"; };
+		8899BC52254318CC003CB98B /* MessageReaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReaction.swift; sourceTree = "<group>"; };
 		889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQuery_Tests.swift; sourceTree = "<group>"; };
 		889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQueryDTO_Tests.swift; sourceTree = "<group>"; };
 		88A00DCF2525F08000259AB4 /* ModerationEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationEndpoints.swift; sourceTree = "<group>"; };
@@ -1545,6 +1547,7 @@
 				794927EC249E0BE2009D7EB7 /* ExtraData.swift */,
 				8AAB1C6524CB39F2009B783F /* UnreadCount.swift */,
 				7900452525374CA20096ECA1 /* User+SwiftUI.swift */,
+				8899BC52254318CC003CB98B /* MessageReaction.swift */,
 				88EA9AED254721C0007EE76B /* MessageReactionType.swift */,
 				88EA9AFB25472269007EE76B /* MessageReactionType_Tests.swift */,
 			);
@@ -2607,6 +2610,7 @@
 				799C945E247D7283001F1104 /* DatabaseContainer.swift in Sources */,
 				79877A092498E4BC00015F8B /* User.swift in Sources */,
 				79B5517324E593C200CE9FEC /* UserPayloads.swift in Sources */,
+				8899BC53254318CC003CB98B /* MessageReaction.swift in Sources */,
 				DA99D0D024ED63C600AD5354 /* NewChannelQueryUpdater.swift in Sources */,
 				8A0175F02501174000570345 /* EventSender.swift in Sources */,
 				F6FF1DAA24FD23D300151735 /* MessageEndpoints.swift in Sources */,
