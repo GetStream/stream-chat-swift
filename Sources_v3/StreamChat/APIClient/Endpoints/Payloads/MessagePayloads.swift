@@ -50,7 +50,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     
     let latestReactions: [ReactionPayload] = []
     let ownReactions: [ReactionPayload] = []
-    let reactionScores: [String: Int]
+    let reactionScores: [MessageReactionType: Int]
     let isSilent: Bool
     
     init(from decoder: Decoder) throws {
@@ -70,7 +70,9 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         mentionedUsers = try container.decode([UserPayload<ExtraData.User>].self, forKey: .mentionedUsers)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         
-        reactionScores = try container.decodeIfPresent([String: Int].self, forKey: .reactionScores) ?? [:]
+        reactionScores = try container
+            .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
+            .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
         extraData = try ExtraData.Message(from: decoder)
     }
     
@@ -89,7 +91,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         mentionedUsers: [UserPayload<ExtraData.User>],
         replyCount: Int,
         extraData: ExtraData.Message,
-        reactionScores: [String: Int],
+        reactionScores: [MessageReactionType: Int],
         isSilent: Bool
     ) {
         self.id = id

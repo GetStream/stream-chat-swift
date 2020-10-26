@@ -56,7 +56,7 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
                 try? JSONDecoder.default.decode(NoExtraData.self, from: $0.extraData)
             })
-            Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)
+            Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys(MessageReactionType.init))
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
         }
     }
@@ -118,7 +118,7 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
                 try? JSONDecoder.default.decode(DeathStarMetadata.self, from: $0.extraData)
             })
-            Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)
+            Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys(MessageReactionType.init))
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
         }
     }
