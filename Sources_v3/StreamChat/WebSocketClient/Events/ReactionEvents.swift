@@ -8,7 +8,7 @@ public struct ReactionNewEvent<ExtraData: ExtraDataTypes>: EventWithReactionPayl
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
-    public let reactionType: ReactionType
+    public let reactionType: MessageReactionType
     public let reactionScore: Int
     public let createdAt: Date
     
@@ -29,7 +29,7 @@ public struct ReactionUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithReaction
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
-    public let reactionType: ReactionType
+    public let reactionType: MessageReactionType
     public let reactionScore: Int
     public let updatedAt: Date
     
@@ -50,7 +50,7 @@ public struct ReactionDeletedEvent<ExtraData: ExtraDataTypes>: EventWithReaction
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
-    public let reactionType: ReactionType
+    public let reactionType: MessageReactionType
     public let reactionScore: Int
     
     let payload: Any

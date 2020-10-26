@@ -47,6 +47,6 @@ protocol EventWithMemberPayload: EventWithPayload {
 
 /// A protocol for reaction `Event` where it has reacction with message payload.
 protocol EventWithReactionPayload: EventWithMessagePayload {
-    var reactionType: ReactionType { get }
+    var reactionType: MessageReactionType { get }
     var reactionScore: Int { get }
 }

@@ -211,7 +211,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.replyCount = Int32(payload.replyCount)
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.isSilent = payload.isSilent
-        dto.reactionScores = payload.reactionScores
+        dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
         dto.channel = ChannelDTO.loadOrCreate(cid: cid, context: self)
         
         let user = try saveUser(payload: payload.user)
@@ -281,7 +281,7 @@ extension _ChatMessage {
         showReplyInChannel = dto.showReplyInChannel
         replyCount = Int(dto.replyCount)
         isSilent = dto.isSilent
-        reactionScores = dto.reactionScores
+        reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         
         let extraData: ExtraData.Message
         do {

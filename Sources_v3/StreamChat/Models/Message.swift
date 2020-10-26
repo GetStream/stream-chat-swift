@@ -75,7 +75,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     public let isSilent: Bool
     
     /// The reactions to the message created by any user.
-    public let reactionScores: [String: Int]
+    public let reactionScores: [MessageReactionType: Int]
     
     /// The user which is the author of the message.
     public let author: _ChatUser<ExtraData.User>
