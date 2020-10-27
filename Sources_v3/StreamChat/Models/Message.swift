@@ -98,6 +98,14 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// - Note: Please be aware that the value of this field is not persisted on the server,
     /// and is valid only locally for the current session.
     public let isFlaggedByCurrentUser: Bool
+
+    /// The latest reactions to the message created by any user.
+    ///
+    /// - Note: There can be `10` reactions at max.
+    public let latestReactions: Set<_ChatMessageReaction<ExtraData>>
+    
+    /// The entire list of reactions to the message left by the current user.
+    public let currentUserReactions: Set<_ChatMessageReaction<ExtraData>>
 }
 
 extension _ChatMessage: Hashable {

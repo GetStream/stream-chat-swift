@@ -156,7 +156,9 @@ extension _ChatMessage {
             mentionedUsers: [],
             latestReplies: [],
             localState: nil,
-            isFlaggedByCurrentUser: false
+            isFlaggedByCurrentUser: false,
+            latestReactions: [],
+            currentUserReactions: []
         )
     }
 }

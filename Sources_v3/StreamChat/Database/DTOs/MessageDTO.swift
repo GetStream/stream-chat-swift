@@ -29,6 +29,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var channel: ChannelDTO
     @NSManaged var replies: Set<MessageDTO>
     @NSManaged var flaggedBy: CurrentUserDTO?
+    @NSManaged var reactions: Set<MessageReactionDTO>
     
     // The timestamp the message was created locally. Applies only for the messages of the current user.
     @NSManaged var locallyCreatedAt: Date?
@@ -211,11 +212,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.replyCount = Int32(payload.replyCount)
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.isSilent = payload.isSilent
-        dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
         dto.channel = ChannelDTO.loadOrCreate(cid: cid, context: self)
         
         let user = try saveUser(payload: payload.user)
         dto.user = user
+        
+        dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
+        let reactions = payload.latestReactions + payload.ownReactions
+        try reactions.forEach { try saveReaction(payload: $0) }
         
         try payload.mentionedUsers.forEach { userPayload in
             let user = try saveUser(payload: userPayload)
@@ -268,6 +272,8 @@ extension MessageDTO {
 
 extension _ChatMessage {
     fileprivate init(fromDTO dto: MessageDTO) {
+        let context = dto.managedObjectContext!
+        
         id = dto.id
         text = dto.text
         type = MessageType(rawValue: dto.type) ?? .regular
@@ -296,12 +302,28 @@ extension _ChatMessage {
         mentionedUsers = Set(dto.mentionedUsers.map { $0.asModel() })
 
         latestReplies = MessageDTO
-            .loadReplies(for: dto.id, limit: 25, context: dto.managedObjectContext!)
+            .loadReplies(for: dto.id, limit: 25, context: context)
             .map(_ChatMessage.init)
         
         localState = dto.localMessageState
         
         isFlaggedByCurrentUser = dto.flaggedBy != nil
+        
+        latestReactions = Set(
+            MessageReactionDTO
+                .loadLatestReactions(for: dto.id, limit: 10, context: context)
+                .map { $0.asModel() }
+        )
+        
+        if let currentUser = context.currentUser() {
+            currentUserReactions = Set(
+                MessageReactionDTO
+                    .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
+                    .map { $0.asModel() }
+            )
+        } else {
+            currentUserReactions = []
+        }
     }
 }
 
