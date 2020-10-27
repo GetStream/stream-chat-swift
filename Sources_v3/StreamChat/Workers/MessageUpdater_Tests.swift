@@ -2,9 +2,9 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 import XCTest
-import CoreData
 
 final class MessageUpdater_Tests: StressTestCase {
     typealias ExtraData = DefaultExtraData
@@ -803,5 +803,117 @@ final class MessageUpdater_Tests: StressTestCase {
         
         // Assert `MessageDoesNotExist` error is propogated.
         AssertAsync.willBeTrue(completionCalledError is ClientError.MessageDoesNotExist)
+    }
+    
+    // MARK: - Add reaction
+
+    func test_addReaction_makesCorrectAPICall() {
+        let reactionType: MessageReactionType = "like"
+        let reactionScore = 1
+        let reactionExtraData: ExtraData.MessageReaction = .defaultValue
+        let messageId: MessageId = .unique
+
+        // Simulate `addReaction` call.
+        messageUpdater.addReaction(
+            reactionType,
+            score: reactionScore,
+            extraData: reactionExtraData,
+            messageId: messageId
+        )
+
+        // Assert correct endpoint is called.
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(.addReaction(reactionType, score: reactionScore, extraData: reactionExtraData, messageId: messageId))
+        )
+    }
+
+    func test_addReaction_propagatesSuccessfulResponse() {
+        // Simulate `addReaction` call
+        var completionCalled = false
+        messageUpdater.addReaction(
+            .init(rawValue: .unique),
+            score: 1,
+            extraData: .defaultValue,
+            messageId: .unique
+        ) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_addReaction_propagatesError() {
+        // Simulate `addReaction` call
+        var completionCalledError: Error?
+        messageUpdater.addReaction(
+            .init(rawValue: .unique),
+            score: 1,
+            extraData: .defaultValue,
+            messageId: .unique
+        ) {
+            completionCalledError = $0
+        }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Delete reaction
+
+    func test_deleteReaction_makesCorrectAPICall() {
+        let reactionType: MessageReactionType = "like"
+        let messageId: MessageId = .unique
+
+        // Simulate `deleteReaction` call.
+        messageUpdater.deleteReaction(reactionType, messageId: messageId)
+
+        // Assert correct endpoint is called.
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.deleteReaction(reactionType, messageId: messageId)))
+    }
+
+    func test_deleteReaction_propagatesSuccessfulResponse() {
+        // Simulate `deleteReaction` call.
+        var completionCalled = false
+        messageUpdater.deleteReaction(.init(rawValue: .unique), messageId: .unique) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet.
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success.
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_deleteReaction_propagatesError() {
+        // Simulate `deleteReaction` call.
+        var completionCalledError: Error?
+        messageUpdater.deleteReaction(.init(rawValue: .unique), messageId: .unique) {
+            completionCalledError = $0
+        }
+
+        // Simulate API response with failure.
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error.
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 }

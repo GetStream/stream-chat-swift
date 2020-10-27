@@ -37,6 +37,16 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var flagMessage_cid: ChannelId?
     @Atomic var flagMessage_completion: ((Error?) -> Void)?
     
+    @Atomic var addReaction_type: MessageReactionType?
+    @Atomic var addReaction_score: Int?
+    @Atomic var addReaction_extraData: ExtraData.MessageReaction?
+    @Atomic var addReaction_messageId: MessageId?
+    @Atomic var addReaction_completion: ((Error?) -> Void)?
+    
+    @Atomic var deleteReaction_type: MessageReactionType?
+    @Atomic var deleteReaction_messageId: MessageId?
+    @Atomic var deleteReaction_completion: ((Error?) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         getMessage_cid = nil
@@ -68,6 +78,16 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         flagMessage_messageId = nil
         flagMessage_cid = nil
         flagMessage_completion = nil
+        
+        addReaction_type = nil
+        addReaction_score = nil
+        addReaction_extraData = nil
+        addReaction_messageId = nil
+        addReaction_completion = nil
+        
+        deleteReaction_type = nil
+        deleteReaction_messageId = nil
+        deleteReaction_completion = nil
     }
     
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
@@ -124,5 +144,29 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         flagMessage_messageId = messageId
         flagMessage_cid = cid
         flagMessage_completion = completion
+    }
+    
+    override func addReaction(
+        _ type: MessageReactionType,
+        score: Int,
+        extraData: ExtraData.MessageReaction,
+        messageId: MessageId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        addReaction_type = type
+        addReaction_score = score
+        addReaction_extraData = extraData
+        addReaction_messageId = messageId
+        addReaction_completion = completion
+    }
+    
+    override func deleteReaction(
+        _ type: MessageReactionType,
+        messageId: MessageId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        deleteReaction_type = type
+        deleteReaction_messageId = messageId
+        deleteReaction_completion = completion
     }
 }
