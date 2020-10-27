@@ -721,6 +721,132 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(env.messageUpdater.loadReplies_messageId, messageId)
         XCTAssertEqual(env.messageUpdater.loadReplies_pagination, .init(pageSize: 25, parameter: .greaterThan(afterMessageId)))
     }
+    
+    // MARK: - Add reaction
+    
+    func test_addReaction_propogatesError() {
+        // Simulate `addReaction` call and catch the completion.
+        var completionError: Error?
+        controller.addReaction(.init(rawValue: .unique)) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+        
+        // Simulate network response with the error.
+        let networkError = TestError()
+        env.messageUpdater!.addReaction_completion!(networkError)
+        
+        // Assert error is propogated.
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+    
+    func test_addReaction_propogatesNilError() {
+        // Simulate `addReaction` call and catch the completion.
+        var completionIsCalled = false
+        controller.addReaction(.init(rawValue: .unique)) { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+        
+        // Simulate successful network response.
+        env.messageUpdater!.addReaction_completion!(nil)
+        
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+    }
+    
+    func test_addReaction_callsUpdater_withCorrectValues() {
+        let type: MessageReactionType = "like"
+        let score = 5
+        let extraData: DefaultExtraData.MessageReaction = .defaultValue
+        
+        // Simulate `addReaction` call.
+        controller.addReaction(type, score: score, extraData: extraData)
+        
+        // Assert updater is called with correct `type`.
+        XCTAssertEqual(env.messageUpdater!.addReaction_type, type)
+        // Assert updater is called with correct `score`.
+        XCTAssertEqual(env.messageUpdater!.addReaction_score, score)
+        // Assert updater is called with correct `extraData`.
+        XCTAssertEqual(env.messageUpdater!.addReaction_extraData, extraData)
+        // Assert updater is called with correct `messageId`.
+        XCTAssertEqual(env.messageUpdater!.addReaction_messageId, controller.messageId)
+    }
+    
+    func test_addReaction_keepsControllerAlive() {
+        // Simulate `addReaction` call.
+        controller.addReaction(.init(rawValue: .unique))
+        
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+        
+        // Assert controller is kept alive.
+        AssertAsync.staysTrue(weakController != nil)
+    }
+    
+    // MARK: - Delete reaction
+    
+    func test_deleteReaction_propogatesError() {
+        // Simulate `deleteReaction` call and catch the completion.
+        var completionError: Error?
+        controller.deleteReaction(.init(rawValue: .unique)) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+        
+        // Simulate network response with the error.
+        let networkError = TestError()
+        env.messageUpdater!.deleteReaction_completion!(networkError)
+        
+        // Assert error is propogated.
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+    
+    func test_deleteReaction_propogatesNilError() {
+        // Simulate `deleteReaction` call and catch the completion.
+        var completionIsCalled = false
+        controller.deleteReaction(.init(rawValue: .unique)) { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+        
+        // Simulate successful network response.
+        env.messageUpdater!.deleteReaction_completion!(nil)
+        
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+    }
+    
+    func test_deleteReaction_callsUpdater_withCorrectValues() {
+        let type: MessageReactionType = "like"
+        
+        // Simulate `deleteReaction` call.
+        controller.deleteReaction(type)
+        
+        // Assert updater is called with correct `type`.
+        XCTAssertEqual(env.messageUpdater!.deleteReaction_type, type)
+        // Assert updater is called with correct `messageId`.
+        XCTAssertEqual(env.messageUpdater!.deleteReaction_messageId, controller.messageId)
+    }
+    
+    func test_deleteReaction_keepsControllerAlive() {
+        // Simulate `deleteReaction` call.
+        controller.deleteReaction(.init(rawValue: .unique))
+        
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+        
+        // Assert controller is kept alive.
+        AssertAsync.staysTrue(weakController != nil)
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
