@@ -70,6 +70,19 @@ protocol MessageDatabaseSession {
     /// Deletes the provided dto from a database
     /// - Parameter message: The DTO to be deleted
     func delete(message: MessageDTO)
+    
+    /// Fetches `MessageReactionDTO` for the given `messageId`, `userId`, and `type` from the DB.
+    /// Returns `nil` if there is no matching `MessageReactionDTO`.
+    func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO?
+    
+    /// Saves the provided reaction payload to the DB. Throws an error if the save fails
+    /// else returns saved `MessageReactionDTO` entity.
+    @discardableResult
+    func saveReaction<ExtraData: ExtraDataTypes>(payload: MessageReactionPayload<ExtraData>) throws -> MessageReactionDTO
+    
+    /// Deletes the provided dto from a database
+    /// - Parameter reaction: The DTO to be deleted
+    func delete(reaction: MessageReactionDTO)
 }
 
 extension MessageDatabaseSession {
