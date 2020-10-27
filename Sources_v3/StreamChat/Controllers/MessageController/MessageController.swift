@@ -299,6 +299,40 @@ public extension _ChatMessageController {
             }
         }
     }
+    
+    /// Adds new reaction to the message this controller manages.
+    /// - Parameters:
+    ///   - type: The reaction type.
+    ///   - score: The reaction score.
+    ///   - extraData: The reaction extra data.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    func addReaction(
+        _ type: MessageReactionType,
+        score: Int = 1,
+        extraData: ExtraData.MessageReaction = .defaultValue,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        messageUpdater.addReaction(type, score: score, extraData: extraData, messageId: messageId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Deletes the reaction from the message this controller manages.
+    /// - Parameters:
+    ///   - type: The reaction type.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    func deleteReaction(
+        _ type: MessageReactionType,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        messageUpdater.deleteReaction(type, messageId: messageId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
