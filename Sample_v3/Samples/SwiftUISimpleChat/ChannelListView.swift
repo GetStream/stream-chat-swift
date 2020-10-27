@@ -203,11 +203,13 @@ struct ChannelListView: View {
     }
     
     private func chatView(for index: Int) -> ChatView {
-        ChatView(
-            channel: channelList.controller.client.channelController(
-                for: channelList.channels[index].cid
-            ).observableObject
+        let channelController = channelList.controller.client.channelController(
+            for: channelList.channels[index].cid
         )
+        
+        channelController.listOrdering = .bottomToTop
+        
+        return ChatView(channel: channelController.observableObject)
     }
     
     private func openDirectMessages(with userId: UserId) {
