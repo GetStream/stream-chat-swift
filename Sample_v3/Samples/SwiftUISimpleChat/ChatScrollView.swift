@@ -4,7 +4,8 @@
 
 import SwiftUI
 
-@available(iOS 13, *)
+/// `ChatScrollView` implements the bottom-to-top scrolling behavior common to chats.
+@available(iOS 14, *)
 struct ChatScrollView<Content>: View where Content: View {
     var content: () -> Content
 
@@ -90,7 +91,7 @@ extension ViewHeightKey: ViewModifier {
     }
 }
 
-@available(iOS 13, *)
+@available(iOS 14, *)
 extension View {
     func onKeyboardAppear(_ callback: @escaping () -> Void) -> some View {
         onAppear {
