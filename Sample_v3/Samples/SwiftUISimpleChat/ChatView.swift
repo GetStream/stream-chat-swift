@@ -55,6 +55,8 @@ struct ChatView: View {
                         self.messageView(for: message)
                     }
                 }.onKeyboardAppear {
+                    /// When the keyboard appears, we scroll to the latest message.
+                    /// This resembles the behavior in Apple's Messages app.
                     scrollView.scrollTo(channel.messages[0])
                 }
             }
