@@ -139,11 +139,27 @@
         <relationship name="flaggedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="flaggedMessages" inverseEntity="CurrentUserDTO"/>
         <relationship name="mentionedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mentionedMessages" inverseEntity="UserDTO"/>
         <relationship name="parentMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="replies" inverseEntity="MessageDTO"/>
+        <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionDTO" inverseName="message" inverseEntity="MessageReactionDTO"/>
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="parentMessage" inverseEntity="MessageDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="messages" inverseEntity="UserDTO"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
         </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="id"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="MessageReactionDTO" representedClassName="MessageReactionDTO" syncable="YES">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="extraData" optional="YES" attributeType="Binary"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="score" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="reactions" inverseEntity="MessageDTO"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="reactions" inverseEntity="UserDTO"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="id"/>
@@ -181,6 +197,7 @@
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="user" inverseEntity="MessageDTO"/>
         <relationship name="mutedBy" toMany="YES" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="mutedUsers" inverseEntity="CurrentUserDTO"/>
         <relationship name="queries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserListQueryDTO" inverseName="users" inverseEntity="UserListQueryDTO"/>
+        <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionDTO" inverseName="user" inverseEntity="MessageReactionDTO"/>
         <relationship name="teams" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TeamDTO" inverseName="users" inverseEntity="TeamDTO"/>
         <relationship name="watchedChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="watchers" inverseEntity="ChannelDTO"/>
         <fetchIndex name="id">
@@ -214,6 +231,7 @@
         <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="193"/>
         <element name="MessageDTO" positionX="0" positionY="0" width="128" height="373"/>
+        <element name="MessageReactionDTO" positionX="9" positionY="153" width="128" height="163"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="UserDTO" positionX="0" positionY="0" width="128" height="313"/>
         <element name="UserListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
