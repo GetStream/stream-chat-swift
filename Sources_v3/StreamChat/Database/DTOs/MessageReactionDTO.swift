@@ -40,6 +40,33 @@ extension MessageReactionDTO {
         return try? context.fetch(request).first
     }
     
+    static func loadReactions(
+        for messageId: MessageId,
+        authoredBy userId: UserId,
+        context: NSManagedObjectContext
+    ) -> [MessageReactionDTO] {
+        let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "message.id == %@", messageId),
+            NSPredicate(format: "user.id == %@", userId)
+        ])
+        
+        return (try? context.fetch(request)) ?? []
+    }
+    
+    static func loadLatestReactions(
+        for messageId: MessageId,
+        limit: Int,
+        context: NSManagedObjectContext
+    ) -> [MessageReactionDTO] {
+        let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
+        request.predicate = NSPredicate(format: "message.id == %@", messageId)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageReactionDTO.updatedAt, ascending: false)]
+        request.fetchLimit = limit
+        
+        return (try? context.fetch(request)) ?? []
+    }
+    
     static func loadOrCreate(
         userId: String,
         messageId: MessageId,
