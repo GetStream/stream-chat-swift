@@ -237,6 +237,46 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             }
         }
     }
+    
+    /// Adds a new reaction to the message.
+    /// - Parameters:
+    ///   - type: The reaction type.
+    ///   - score: The reaction score.
+    ///   - extraData: The extra data attached to the reaction.
+    ///   - messageId: The message identifier the reaction will be added to.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func addReaction(
+        _ type: MessageReactionType,
+        score: Int,
+        extraData: ExtraData.MessageReaction,
+        messageId: MessageId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let endpoint: Endpoint<EmptyResponse> = .addReaction(
+            type,
+            score: score,
+            extraData: extraData,
+            messageId: messageId
+        )
+        apiClient.request(endpoint: endpoint) {
+            completion?($0.error)
+        }
+    }
+    
+    /// Deletes the message reaction left by the current user.
+    /// - Parameters:
+    ///   - type: The reaction type.
+    ///   - messageId: The message identifier the reaction will be deleted from.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func deleteReaction(
+        _ type: MessageReactionType,
+        messageId: MessageId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) {
+            completion?($0.error)
+        }
+    }
 }
 
 // MARK: - Private
