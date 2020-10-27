@@ -48,12 +48,19 @@ struct ChatView: View {
     }
     
     func messageList() -> some View {
-        List(channel.messages, id: \.self) { message in
-            self.messageView(for: message)
+        ChatScrollView {
+            ScrollViewReader { scrollView in
+                LazyVStack(alignment: .leading) {
+                    ForEach(channel.messages, id: \.self) { message in
+                        self.messageView(for: message)
+                    }
+                }.onKeyboardAppear {
+                    /// When the keyboard appears, we scroll to the latest message.
+                    /// This resembles the behavior in Apple's Messages app.
+                    scrollView.scrollTo(channel.messages[0])
+                }
+            }
         }
-        /// Flipping `List` upside down so messages are displayed from bottom to top.
-        .scaleEffect(x: 1, y: -1, anchor: .center)
-        .offset(x: 0, y: 2)
     }
     
     func messageView(for message: ChatMessage) -> some View {
@@ -70,14 +77,13 @@ struct ChatView: View {
         }
         
         return text
+            .padding()
             .contextMenu {
                 messageContextMenu(for: message)
             }
-            /// We have flipped `List` with messages upside down so now we need to flip each message view.
-            .scaleEffect(x: 1, y: -1, anchor: .center)
             /// Load next more messages when the last is shown.
             .onAppear {
-                if (self.channel.messages.last == message) {
+                if (self.channel.messages.first == message) {
                     self.channel.controller.loadPreviousMessages()
                 }
             }
