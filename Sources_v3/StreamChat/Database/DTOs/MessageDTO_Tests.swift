@@ -2,6 +2,7 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 import XCTest
 
@@ -20,7 +21,16 @@ class MessageDTO_Tests: XCTestCase {
         
         let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
         
-        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: messageId, authorUserId: userId)
+        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            latestReactions: [
+                .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
+            ],
+            ownReactions: [
+                .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
+            ]
+        )
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -34,6 +44,13 @@ class MessageDTO_Tests: XCTestCase {
         // Load the message from the db and check the fields are correct
         var loadedMessage: MessageDTO? {
             database.viewContext.message(id: messageId)
+        }
+        
+        // Load the message reactions from the db
+        var loadedReactions: Set<MessageReactionDTO> {
+            let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
+            request.predicate = .init(format: "message.id == %@", messageId)
+            return Set(try! database.viewContext.fetch(request))
         }
         
         AssertAsync {
@@ -57,6 +74,7 @@ class MessageDTO_Tests: XCTestCase {
                 try? JSONDecoder.default.decode(NoExtraData.self, from: $0.extraData)
             })
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys(MessageReactionType.init))
+            Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
         }
     }
@@ -81,7 +99,13 @@ class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessagePayload<SecretExtraData> = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            extraData: DeathStarMetadata(isSectedDeathStarPlanIncluded: true)
+            extraData: DeathStarMetadata(isSectedDeathStarPlanIncluded: true),
+            latestReactions: [
+                .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
+            ],
+            ownReactions: [
+                .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
+            ]
         )
         
         // Asynchronously save the payload to the db
@@ -96,6 +120,13 @@ class MessageDTO_Tests: XCTestCase {
         // Load the message from the db and check the fields are correct
         var loadedMessage: MessageDTO? {
             database.viewContext.message(id: messageId)
+        }
+        
+        // Load the message reactions from the db
+        var loadedReactions: Set<MessageReactionDTO> {
+            let request = NSFetchRequest<MessageReactionDTO>(entityName: MessageReactionDTO.entityName)
+            request.predicate = .init(format: "message.id == %@", messageId)
+            return Set(try! database.viewContext.fetch(request))
         }
         
         AssertAsync {
@@ -119,6 +150,7 @@ class MessageDTO_Tests: XCTestCase {
                 try? JSONDecoder.default.decode(DeathStarMetadata.self, from: $0.extraData)
             })
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys(MessageReactionType.init))
+            Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
         }
     }
@@ -146,16 +178,31 @@ class MessageDTO_Tests: XCTestCase {
     }
     
     func test_messagePayload_asModel() {
-        let userId: UserId = .unique
+        let currentUserId: UserId = .unique
+        let messageAuthorId: UserId = .unique
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
+        let currentUserPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: currentUserId, role: .user)
+    
         let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
         
-        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: messageId, authorUserId: userId)
+        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: messageId,
+            authorUserId: messageAuthorId,
+            latestReactions: (0..<20).map { _ in
+                .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
+            },
+            ownReactions: (0..<5).map { _ in
+                .dummy(messageId: messageId, user: UserPayload.dummy(userId: messageAuthorId))
+            }
+        )
         
         // Asynchronously save the payload to the db
         database.write { session in
+            // Create the current user first.
+            try! session.saveCurrentUser(payload: currentUserPayload)
+            
             // Create the channel first
             try! session.saveChannel(payload: channelPayload, query: nil)
             
@@ -166,6 +213,24 @@ class MessageDTO_Tests: XCTestCase {
         // Load the message from the db and check the fields are correct
         var loadedMessage: _ChatMessage<DefaultExtraData>? {
             database.viewContext.message(id: messageId)?.asModel()
+        }
+        
+        // Load 10 latest reactions for the message.
+        var latestReactions: Set<_ChatMessageReaction<DefaultExtraData>> {
+            Set(
+                MessageReactionDTO
+                    .loadLatestReactions(for: messageId, limit: 10, context: database.viewContext)
+                    .map { $0.asModel() }
+            )
+        }
+        
+        // Load message reactions left by the current user.
+        var currentUserReactions: Set<_ChatMessageReaction<DefaultExtraData>> {
+            Set(
+                MessageReactionDTO
+                    .loadReactions(for: messageId, authoredBy: currentUserId, context: database.viewContext)
+                    .map { $0.asModel() }
+            )
         }
         
         AssertAsync {
@@ -185,6 +250,8 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.extraData, messagePayload.extraData)
             Assert.willBeEqual(loadedMessage?.reactionScores, messagePayload.reactionScores)
             Assert.willBeEqual(loadedMessage?.isSilent, messagePayload.isSilent)
+            Assert.willBeEqual(loadedMessage?.latestReactions, latestReactions)
+            Assert.willBeEqual(loadedMessage?.currentUserReactions, currentUserReactions)
         }
     }
     
