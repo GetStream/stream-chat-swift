@@ -21,6 +21,7 @@
     {
       "skippedTests" : [
         "ChatClient_Tests",
+        "MessageSender_Tests",
         "MessageUpdater_Tests"
       ],
       "target" : {
