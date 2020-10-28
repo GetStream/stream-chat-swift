@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct ReactionNewEvent<ExtraData: ExtraDataTypes>: EventWithReactionPayload {
+public struct ReactionNewEvent: EventWithReactionPayload {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -14,10 +14,10 @@ public struct ReactionNewEvent<ExtraData: ExtraDataTypes>: EventWithReactionPayl
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
-        userId = try response.value(at: \.user?.id)
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        userId = try response.value(at: \.reaction?.user.id)
         cid = try response.value(at: \.cid)
-        messageId = try response.value(at: \.message?.id)
+        messageId = try response.value(at: \.reaction?.messageId)
         reactionType = try response.value(at: \.reaction?.type)
         reactionScore = try response.value(at: \.reaction?.score)
         createdAt = try response.value(at: \.reaction?.createdAt)
@@ -25,7 +25,7 @@ public struct ReactionNewEvent<ExtraData: ExtraDataTypes>: EventWithReactionPayl
     }
 }
 
-public struct ReactionUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithReactionPayload {
+public struct ReactionUpdatedEvent: EventWithReactionPayload {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -35,10 +35,10 @@ public struct ReactionUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithReaction
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
-        userId = try response.value(at: \.user?.id)
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        userId = try response.value(at: \.reaction?.user.id)
         cid = try response.value(at: \.cid)
-        messageId = try response.value(at: \.message?.id)
+        messageId = try response.value(at: \.reaction?.messageId)
         reactionType = try response.value(at: \.reaction?.type)
         reactionScore = try response.value(at: \.reaction?.score)
         updatedAt = try response.value(at: \.reaction?.updatedAt)
@@ -46,7 +46,7 @@ public struct ReactionUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithReaction
     }
 }
 
-public struct ReactionDeletedEvent<ExtraData: ExtraDataTypes>: EventWithReactionPayload {
+public struct ReactionDeletedEvent: EventWithReactionPayload {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -55,10 +55,10 @@ public struct ReactionDeletedEvent<ExtraData: ExtraDataTypes>: EventWithReaction
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
-        userId = try response.value(at: \.user?.id)
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        userId = try response.value(at: \.reaction?.user.id)
         cid = try response.value(at: \.cid)
-        messageId = try response.value(at: \.message?.id)
+        messageId = try response.value(at: \.reaction?.messageId)
         reactionType = try response.value(at: \.reaction?.type)
         reactionScore = try response.value(at: \.reaction?.score)
         payload = response

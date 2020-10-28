@@ -13,33 +13,42 @@ class ReactionEvents_Tests: XCTestCase {
     
     func test_new() throws {
         let json = XCTestCase.mockData(fromFile: "ReactionNew")
-        let event = try eventDecoder.decode(from: json) as? ReactionNewEvent<DefaultExtraData>
+        let event = try eventDecoder.decode(from: json) as? ReactionNewEvent
+        let reactionPayload = (event?.payload as? EventPayload<DefaultExtraData>)?[keyPath: \.reaction]
         XCTAssertEqual(event?.userId, userId)
         XCTAssertEqual(event?.cid, cid)
         XCTAssertEqual(event?.messageId, messageId)
         XCTAssertEqual(event?.reactionType, "like")
         XCTAssertEqual(event?.reactionScore, 1)
         XCTAssertEqual(event?.createdAt.description, "2020-07-20 17:09:56 +0000")
+        XCTAssertEqual(reactionPayload?.messageId, messageId)
+        XCTAssertEqual(reactionPayload?.user.id, userId)
     }
     
     func test_updated() throws {
         let json = XCTestCase.mockData(fromFile: "ReactionUpdated")
-        let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEvent<DefaultExtraData>
+        let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEvent
+        let reactionPayload = (event?.payload as? EventPayload<DefaultExtraData>)?[keyPath: \.reaction]
         XCTAssertEqual(event?.userId, userId)
         XCTAssertEqual(event?.cid, cid)
         XCTAssertEqual(event?.messageId, messageId)
         XCTAssertEqual(event?.reactionType, "like")
         XCTAssertEqual(event?.reactionScore, 2)
         XCTAssertEqual(event?.updatedAt.description, "2020-07-20 17:09:56 +0000")
+        XCTAssertEqual(reactionPayload?.messageId, messageId)
+        XCTAssertEqual(reactionPayload?.user.id, userId)
     }
     
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromFile: "ReactionDeleted")
-        let event = try eventDecoder.decode(from: json) as? ReactionDeletedEvent<DefaultExtraData>
+        let event = try eventDecoder.decode(from: json) as? ReactionDeletedEvent
+        let reactionPayload = (event?.payload as? EventPayload<DefaultExtraData>)?[keyPath: \.reaction]
         XCTAssertEqual(event?.userId, userId)
         XCTAssertEqual(event?.cid, cid)
         XCTAssertEqual(event?.messageId, messageId)
         XCTAssertEqual(event?.reactionType, "like")
         XCTAssertEqual(event?.reactionScore, 1)
+        XCTAssertEqual(reactionPayload?.messageId, messageId)
+        XCTAssertEqual(reactionPayload?.user.id, userId)
     }
 }
