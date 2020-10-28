@@ -28,18 +28,16 @@ extension Client {
         
         let jsonData = try JSONEncoder.default.encode(jsonParameter)
         
-        if let jsonString = String(data: jsonData, encoding: .utf8) {
-            urlComponents.queryItems?.append(URLQueryItem(name: "json", value: jsonString))
-        } else {
-            logger?.log("❌ Can't create a JSON parameter string from the json: \(jsonParameter)", level: .error)
-        }
-        
-        guard let url = urlComponents.url else {
+        guard
+            let url = urlComponents.url,
+            let jsonString = String(data: jsonData, encoding: .utf8)?.addingPercentEncoding(withAllowedCharacters: .alphanumerics),
+            let urlWithJson = URL(string: "\(url.absoluteString)&json=\(jsonString)")
+        else {
             logger?.log("❌ Bad URL: \(urlComponents)", level: .error)
             throw ClientError.invalidURL(urlComponents.description)
         }
-        
-        var request = URLRequest(url: url)
+
+        var request = URLRequest(url: urlWithJson)
         request.allHTTPHeaderFields = authHeaders(token: token)
         return request
     }
