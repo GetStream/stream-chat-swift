@@ -196,7 +196,17 @@ struct DefaultRequestEncoder: RequestEncoder {
         }
         
         log.assert(request.url != nil, "Request URL must not be `nil`.")
-        request.url = try request.url!.appendingQueryItems(bodyQueryItems)
+        request.url = bodyQueryItems.reduce(request.url) { url, item in
+            guard var urlString = url?.absoluteString else { return url }
+            
+            urlString += "&\(item.name)"
+            
+            if let value = item.value?.addingPercentEncoding(withAllowedCharacters: .alphanumerics) {
+                urlString += "=\(value)"
+            }
+            
+            return URL(string: urlString)
+        }
     }
 }
 

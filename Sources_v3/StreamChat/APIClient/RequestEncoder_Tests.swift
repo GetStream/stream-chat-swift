@@ -71,7 +71,7 @@ class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "anonymous")
     }
     
-    func test_endpointRequiringConectionId() throws {
+    func test_endpointRequiringConnectionId() throws {
         // Prepare an endpoint that requires connection id
         let endpoint = Endpoint<Data>(
             path: .unique,
@@ -148,7 +148,8 @@ class RequestEncoder_Tests: XCTestCase {
             requiresConnectionId: false,
             body: [
                 "user1": TestUser(name: "Luke", age: 22),
-                "user2": TestUser(name: "Leia", age: 22)
+                // Test non-alphanumeric characters, too
+                "user2": TestUser(name: "Leia is the best! + ♥️", age: 22)
             ]
         )
         
@@ -162,9 +163,8 @@ class RequestEncoder_Tests: XCTestCase {
         let user1JSON = try JSONDecoder.default.decode(TestUser.self, from: user1String.data(using: .utf8)!)
         XCTAssertEqual(user1JSON, TestUser(name: "Luke", age: 22))
         
-        let user2String = try XCTUnwrap(urlComponents.queryItems?["user2"])
-        let user2JSON = try JSONDecoder.default.decode(TestUser.self, from: user2String.data(using: .utf8)!)
-        XCTAssertEqual(user2JSON, TestUser(name: "Leia", age: 22))
+        // Check the + sign is encoded properly in query
+        XCTAssert(urlComponents.url!.query!.contains("%22name%22%3A%22Leia%20is%20the%20best%21%20%2B%20%E2%99%A5%EF%B8%8F%22"))
     }
     
     func test_encodingGETRequestBody_withQueryItems() throws {
