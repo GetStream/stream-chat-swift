@@ -148,5 +148,5 @@ public enum InviteAnswer: String {
 }
 
 public struct MembersQueryResponse: Decodable {
-    let members: [Member]
+    public let members: [Member]
 }

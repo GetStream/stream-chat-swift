@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### 🔄 Changed
+- `membership` attribute in `Channel` is now public [#574](https://github.com/GetStream/stream-chat-swift/issues/574)
+
+### 🐞 Fixed
+- `MembersQueryResponse.member` is now public [#574](https://github.com/GetStream/stream-chat-swift/issues/574)
 
 # [2.4.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.4.1)
 _October 23, 2020_

@@ -77,7 +77,7 @@ public final class Channel: Codable {
     /// Checks if the channel is frozen.
     public let frozen: Bool
     /// The current user is a member of the channel. If not, it will be nil.
-    var membership: Member?
+    public internal(set) var membership: Member?
     /// A list of channel members.
     public internal(set) var members = Set<Member>()
     
