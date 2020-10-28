@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+- `membership` attribute in `Channel` is now public [#574](https://github.com/GetStream/stream-chat-swift/issues/574)
+
 ### 🐞 Fixed
+- `MembersQueryResponse.member` is now public [#574](https://github.com/GetStream/stream-chat-swift/issues/574)
 - Fix plus signs in User fields becoming spaces in the set user request, preventing names with + signs, base64 custom fields, etc. [#572](https://github.com/GetStream/stream-chat-swift/issues/572)
 
 # [2.4.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.4.1)
