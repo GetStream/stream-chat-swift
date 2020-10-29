@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '0 2 * * *' # run at 2 AM UTC
 
+env:
+  carthage-cache-dir: 'carthage-cache-29102020' # When you change carthage cache directory, please append the date
+
 jobs:
   test-ios-11:
     name: Test iOS 11
@@ -15,7 +18,7 @@ jobs:
       id: carthage-cache
       with:
         path: Carthage
-        key: ${{ runner.os }}-carthage-stable-${{ hashFiles('**/Cartfile.resolved') }}
+        key: ${{ runner.os }}-${{ env.carthage-cache-dir }}-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
       uses: actions/cache@v1
       id: rubygem-cache
@@ -43,7 +46,7 @@ jobs:
       id: carthage-cache
       with:
         path: Carthage
-        key: ${{ runner.os }}-carthage-stable-${{ hashFiles('**/Cartfile.resolved') }}
+        key: ${{ runner.os }}-${{ env.carthage-cache-dir }}-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
       uses: actions/cache@v1
       id: rubygem-cache
