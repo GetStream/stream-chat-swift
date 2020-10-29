@@ -82,6 +82,9 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     
     /// A list of users that are mentioned in this message.
     public let mentionedUsers: Set<_ChatUser<ExtraData.User>>
+    
+    /// A list of attachments in this message.
+    public let attachments: Set<_ChatMessageAttachment<ExtraData>>
         
     /// A list of latest 25 replies to this message.
     public let latestReplies: [_ChatMessage<ExtraData>]
@@ -118,8 +121,8 @@ extension _ChatMessage: Hashable {
     }
 }
 
-extension _ChatMessage {
-    public subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.Message, T>) -> T {
+public extension _ChatMessage {
+    subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.Message, T>) -> T {
         extraData[keyPath: keyPath]
     }
 }

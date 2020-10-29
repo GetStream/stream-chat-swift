@@ -333,6 +333,8 @@ private extension _ChatMessage {
         } else {
             currentUserReactions = []
         }
+        
+        attachments = Set(dto.attachments.map { $0.asModel() })
     }
 }
 
