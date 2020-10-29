@@ -195,6 +195,7 @@ public extension _ChatMessageController {
     ///
     /// - Parameters:
     ///   - text: Text of the message.
+    ///   - attachments: An array of the attachments for the message.
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
     ///   in the response thread.
     ///   - extraData: Additional extra data of the message object.
@@ -204,6 +205,7 @@ public extension _ChatMessageController {
         text: String,
 //        command: String? = nil,
 //        arguments: String? = nil,
+        attachments: [_ChatMessageAttachment<ExtraData>] = [],
         showReplyInChannel: Bool = false,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
@@ -214,6 +216,7 @@ public extension _ChatMessageController {
             command: nil,
             arguments: nil,
             parentMessageId: messageId,
+            attachments: attachments,
             showReplyInChannel: showReplyInChannel,
             extraData: extraData
         ) { result in
