@@ -30,6 +30,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var replies: Set<MessageDTO>
     @NSManaged var flaggedBy: CurrentUserDTO?
     @NSManaged var reactions: Set<MessageReactionDTO>
+    @NSManaged var attachments: Set<AttachmentDTO>
     
     // The timestamp the message was created locally. Applies only for the messages of the current user.
     @NSManaged var locallyCreatedAt: Date?
