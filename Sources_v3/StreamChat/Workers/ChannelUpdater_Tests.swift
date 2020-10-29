@@ -131,6 +131,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let text: String = .unique
         let command: String = .unique
         let arguments: String = .unique
+        let attachments: [ChatMessageAttachment] = [.dummy()]
         let extraData: DefaultExtraData.Message = .defaultValue
         
         // Create new message
@@ -140,6 +141,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 text: text,
                 command: command,
                 arguments: arguments,
+                attachments: attachments,
                 extraData: extraData
             ) { result in
                 if let newMessageId = try? result.get() {
@@ -158,6 +160,7 @@ class ChannelUpdater_Tests: StressTestCase {
             Assert.willBeEqual(message?.text, text)
             Assert.willBeEqual(message?.command, command)
             Assert.willBeEqual(message?.arguments, arguments)
+            Assert.willBeEqual(message?.attachments, Set(attachments))
             Assert.willBeEqual(message?.extraData, extraData)
             Assert.willBeEqual(message?.localState, .pendingSend)
         }

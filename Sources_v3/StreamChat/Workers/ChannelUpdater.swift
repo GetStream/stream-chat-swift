@@ -92,6 +92,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
+    ///   - attachments: Attachments for the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -100,6 +101,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         text: String,
         command: String?,
         arguments: String?,
+        attachments: [_ChatMessageAttachment<ExtraData>] = [],
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -111,9 +113,9 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
                 command: command,
                 arguments: arguments,
                 parentMessageId: nil,
+                attachments: attachments,
                 showReplyInChannel: false,
-                extraData: extraData,
-                extraDataType: ExtraData.self
+                extraData: extraData
             )
             
             newMessageDTO.localMessageState = .pendingSend

@@ -5,7 +5,7 @@
 import CoreData
 import Foundation
 
-extension _ChatClient {
+public extension _ChatClient {
     /// Creates a new `ChatChannelController` for the channel with the provided id and options.
     ///
     /// - Parameter channelId: The id of the channel this controller represents.
@@ -13,7 +13,7 @@ extension _ChatClient {
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
-    public func channelController(for cid: ChannelId) -> _ChatChannelController<ExtraData> {
+    func channelController(for cid: ChannelId) -> _ChatChannelController<ExtraData> {
         .init(channelQuery: .init(cid: cid), client: self)
     }
     
@@ -23,7 +23,7 @@ extension _ChatClient {
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
-    public func channelController(for channelQuery: ChannelQuery<ExtraData>) -> _ChatChannelController<ExtraData> {
+    func channelController(for channelQuery: ChannelQuery<ExtraData>) -> _ChatChannelController<ExtraData> {
         .init(channelQuery: channelQuery, client: self)
     }
     
@@ -38,7 +38,7 @@ extension _ChatClient {
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
-    public func channelController(
+    func channelController(
         createChannelWithId cid: ChannelId,
         team: String? = nil,
         members: Set<UserId> = [],
@@ -67,7 +67,7 @@ extension _ChatClient {
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
-    public func channelController(
+    func channelController(
         createDirectMessageChannelWith members: Set<UserId>,
         team: String? = nil,
         extraData: ExtraData.Channel
@@ -645,12 +645,14 @@ public extension _ChatChannelController {
     /// - Parameters:
     ///   - text: Text of the message.
     ///   - extraData: Additional extra data of the message object.
+    ///   - attachments: An array of the attachments for the message.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
     func createNewMessage(
         text: String,
 //        command: String? = nil,
 //        arguments: String? = nil,
+        attachments: [_ChatMessageAttachment<ExtraData>] = [],
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -670,6 +672,7 @@ public extension _ChatChannelController {
             text: text,
             command: nil,
             arguments: nil,
+            attachments: attachments,
             extraData: extraData
         ) { [weak self] result in
             self?.callback {
