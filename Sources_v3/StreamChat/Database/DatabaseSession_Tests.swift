@@ -90,7 +90,8 @@ class DatabaseSession_Tests: StressTestCase {
             replyCount: 0,
             extraData: .init(),
             reactionScores: [:],
-            isSilent: false
+            isSilent: false,
+            attachments: []
         )
         
         let eventPayload: EventPayload<DefaultExtraData> = .init(

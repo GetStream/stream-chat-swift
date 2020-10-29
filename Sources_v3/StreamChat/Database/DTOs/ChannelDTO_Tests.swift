@@ -470,7 +470,8 @@ extension XCTestCase {
             replyCount: 0,
             extraData: NoExtraData(),
             reactionScores: ["like": 1],
-            isSilent: false
+            isSilent: false,
+            attachments: []
         )
     }
     
@@ -590,7 +591,8 @@ extension XCTestCase {
             replyCount: 0,
             extraData: NoExtraData(),
             reactionScores: [:],
-            isSilent: false
+            isSilent: false,
+            attachments: []
         )
     }
     
