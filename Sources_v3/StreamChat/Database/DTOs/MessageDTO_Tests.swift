@@ -170,7 +170,7 @@ class MessageDTO_Tests: XCTestCase {
             // Save the message
             let messageDTO = try! session.saveMessage(payload: messagePayload, for: channelId)
             // Make the extra data JSON invalid
-            messageDTO.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+            messageDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
         let loadedMessage: ChatMessage? = database.viewContext.message(id: messageId)?.asModel()
@@ -356,7 +356,7 @@ class MessageDTO_Tests: XCTestCase {
         
         var message1Id: MessageId!
         var message2Id: MessageId!
-        
+
         _ = try await { completion in
             database.write({ session in
                 let message1DTO = try session.createNewMessage(
@@ -365,6 +365,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
+                    attachments: [self.dummyNoExtraDataAttachment],
                     showReplyInChannel: false,
                     extraData: NoExtraData.defaultValue
                 )
@@ -378,6 +379,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
+                    attachments: [self.dummyNoExtraDataAttachment],
                     showReplyInChannel: false,
                     extraData: NoExtraData.defaultValue
                 )
@@ -432,7 +434,7 @@ class MessageDTO_Tests: XCTestCase {
         let newMessageCommand: String = .unique
         let newMessageArguments: String = .unique
         let newMessageParentMessageId: String = .unique
-        
+                
         _ = try await { completion in
             database.write({
                 let messageDTO = try $0.createNewMessage(
@@ -441,6 +443,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: newMessageCommand,
                     arguments: newMessageArguments,
                     parentMessageId: newMessageParentMessageId,
+                    attachments: [self.dummyNoExtraDataAttachment],
                     showReplyInChannel: true,
                     extraData: NoExtraData.defaultValue
                 )
@@ -473,6 +476,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
+                    attachments: [self.dummyNoExtraDataAttachment],
                     showReplyInChannel: true,
                     extraData: NoExtraData.defaultValue
                 )
@@ -493,7 +497,7 @@ class MessageDTO_Tests: XCTestCase {
                 ))
             }, completion: $0)
         }
-        
+                
         // Try to create a new message
         let result = try await { completion in
             database.write({ (session) in
@@ -503,6 +507,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
+                    attachments: [self.dummyNoExtraDataAttachment],
                     showReplyInChannel: true,
                     extraData: NoExtraData.defaultValue
                 )
@@ -524,7 +529,7 @@ class MessageDTO_Tests: XCTestCase {
         
         // Reply messageId
         var replyMessageId: MessageId?
-        
+                
         // Create new reply message
         try database.writeSynchronously { session in
             let replyDTO = try session.createNewMessage(
@@ -533,6 +538,7 @@ class MessageDTO_Tests: XCTestCase {
                 command: nil,
                 arguments: nil,
                 parentMessageId: messageId,
+                attachments: [self.dummyNoExtraDataAttachment],
                 showReplyInChannel: false,
                 extraData: NoExtraData.defaultValue
             )

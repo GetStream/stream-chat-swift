@@ -112,7 +112,8 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
                 arguments: arguments,
                 parentMessageId: nil,
                 showReplyInChannel: false,
-                extraData: extraData
+                extraData: extraData,
+                extraDataType: ExtraData.self
             )
             
             newMessageDTO.localMessageState = .pendingSend

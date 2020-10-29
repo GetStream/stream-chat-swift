@@ -47,12 +47,13 @@ class MessageSender_Tests: StressTestCase {
     func test_senderSendsMessage_withPendingSendLocalState() throws {
         var message1Id: MessageId!
         var message2Id: MessageId!
-        
+                
         // Create 2 messages in the DB, only message 1 has `.pendingSend` local state
         try database.writeSynchronously { session in
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -61,6 +62,7 @@ class MessageSender_Tests: StressTestCase {
             let message2 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message without local state",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             message2Id = message2.id
@@ -89,12 +91,13 @@ class MessageSender_Tests: StressTestCase {
     
     func test_sender_changesMessageStates_whenSending() throws {
         var message1Id: MessageId!
-        
-        // Create a message with pendin state
+                
+        // Create a message with pending state
         try database.writeSynchronously { session in
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -117,12 +120,13 @@ class MessageSender_Tests: StressTestCase {
     
     func test_sender_changesMessageStates_whenSendingFails() throws {
         var message1Id: MessageId!
-        
-        // Create a message with pendin state
+                
+        // Create a message with pending state
         try database.writeSynchronously { session in
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -150,6 +154,7 @@ class MessageSender_Tests: StressTestCase {
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send 1",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -158,6 +163,7 @@ class MessageSender_Tests: StressTestCase {
             let message2 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send 2",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             message2.localMessageState = .pendingSend
@@ -166,6 +172,7 @@ class MessageSender_Tests: StressTestCase {
             let message3 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send 3",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             message3.localMessageState = .pendingSend
@@ -231,6 +238,7 @@ class MessageSender_Tests: StressTestCase {
             let messageA1 = try session.createNewMessage(
                 in: cidA,
                 text: "Channel A message 1",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             messageA1.localMessageState = .pendingSend
@@ -239,6 +247,7 @@ class MessageSender_Tests: StressTestCase {
             let messageA2 = try session.createNewMessage(
                 in: cidA,
                 text: "Channel A message 2",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             messageA2.localMessageState = .pendingSend
@@ -247,6 +256,7 @@ class MessageSender_Tests: StressTestCase {
             let messageB1 = try session.createNewMessage(
                 in: cidB,
                 text: "Channel B message 1",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             messageB1.localMessageState = .pendingSend
@@ -255,6 +265,7 @@ class MessageSender_Tests: StressTestCase {
             let messageB2 = try session.createNewMessage(
                 in: cidB,
                 text: "Channel B message 2",
+                attachments: [ExtraData.dummyAttachment],
                 extraData: ExtraData.Message.defaultValue
             )
             messageB2.localMessageState = .pendingSend
