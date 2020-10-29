@@ -153,14 +153,15 @@ extension MessageDTO {
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {
-    func createNewMessage<ExtraData: MessageExtraData>(
+    func createNewMessage<ExtraData: ExtraDataTypes>(
         in cid: ChannelId,
         text: String,
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
+        attachments: [_ChatMessageAttachment<ExtraData>],
         showReplyInChannel: Bool,
-        extraData: ExtraData
+        extraData: ExtraData.Message
     ) throws -> MessageDTO {
         guard let currentUserDTO = currentUser() else {
             throw ClientError.CurrentUserDoesNotExist()
@@ -192,7 +193,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.channel = channelDTO
         
         if let parentMessageId = parentMessageId,
-            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(message)
         }
         
@@ -234,7 +235,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         if let parentMessageId = payload.parentId,
-            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(dto)
         }
         
@@ -278,8 +279,8 @@ extension MessageDTO {
     }
 }
 
-extension _ChatMessage {
-    fileprivate init(fromDTO dto: MessageDTO) {
+private extension _ChatMessage {
+    init(fromDTO dto: MessageDTO) {
         let context = dto.managedObjectContext!
         
         id = dto.id

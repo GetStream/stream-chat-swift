@@ -46,7 +46,7 @@ extension CurrentUserDatabaseSession {
 protocol MessageDatabaseSession {
     /// Creates a new `MessageDTO` object in the database. Throws an error if the message fails to be created.
     @discardableResult
-    func createNewMessage<ExtraData: MessageExtraData>(
+    func createNewMessage<ExtraData: ExtraDataTypes>(
         in cid: ChannelId,
         text: String,
         command: String?,
@@ -89,7 +89,7 @@ protocol MessageDatabaseSession {
 extension MessageDatabaseSession {
     /// Creates a new `MessageDTO` object in the database. Throws an error if the message fails to be created.
     @discardableResult
-    func createNewMessage<ExtraData: MessageExtraData>(
+    func createNewMessage<ExtraData: ExtraDataTypes>(
         in cid: ChannelId,
         text: String,
         attachments: [_ChatMessageAttachment<ExtraData>] = [],
