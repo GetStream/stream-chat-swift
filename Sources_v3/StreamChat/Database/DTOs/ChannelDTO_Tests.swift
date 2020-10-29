@@ -555,6 +555,7 @@ extension XCTestCase {
         typealias Channel = NoExtraData
         typealias Message = NoExtraData
         typealias User = NoExtraData
+        typealias Attachment = NoExtraData
     }
     
     var dummyUserWithNoExtraData: UserPayload<NoExtraData> {
