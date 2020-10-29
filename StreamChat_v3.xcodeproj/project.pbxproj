@@ -392,6 +392,8 @@
 		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
 		DA497180254AE0B200AC68C2 /* Attachment_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA49717A254AE08500AC68C2 /* Attachment_Tests.swift */; };
+		DA49712625476A3600AC68C2 /* AttachmentRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4971202547699E00AC68C2 /* AttachmentRequestBody.swift */; };
+		DA49713E2548AFF700AC68C2 /* AttachmentRequestBody_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA49713D2548AFF700AC68C2 /* AttachmentRequestBody_Tests.swift */; };
 		DA4971542549C2A000AC68C2 /* AttachmentPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4971532549C2A000AC68C2 /* AttachmentPayload_Tests.swift */; };
 		DA49715B2549C45E00AC68C2 /* AttachmentPayload+CustomExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = DA4971592549C45E00AC68C2 /* AttachmentPayload+CustomExtraData.json */; };
 		DA49715C2549C45E00AC68C2 /* AttachmentPayload+NoExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = DA49715A2549C45E00AC68C2 /* AttachmentPayload+NoExtraData.json */; };
@@ -956,6 +958,8 @@
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA49717A254AE08500AC68C2 /* Attachment_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment_Tests.swift; sourceTree = "<group>"; };
+		DA4971202547699E00AC68C2 /* AttachmentRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentRequestBody.swift; sourceTree = "<group>"; };
+		DA49713D2548AFF700AC68C2 /* AttachmentRequestBody_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentRequestBody_Tests.swift; sourceTree = "<group>"; };
 		DA4971532549C2A000AC68C2 /* AttachmentPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPayload_Tests.swift; sourceTree = "<group>"; };
 		DA4971592549C45E00AC68C2 /* AttachmentPayload+CustomExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "AttachmentPayload+CustomExtraData.json"; sourceTree = "<group>"; };
 		DA49715A2549C45E00AC68C2 /* AttachmentPayload+NoExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "AttachmentPayload+NoExtraData.json"; sourceTree = "<group>"; };
@@ -2140,6 +2144,8 @@
 				888E8C50252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift */,
 				8899BC46254305F8003CB98B /* MessageReactionRequestPayload.swift */,
 				88EA9AE725471EF4007EE76B /* MessageReactionRequestPayload_Tests.swift */,
+				DA4971202547699E00AC68C2 /* AttachmentRequestBody.swift */,
+				DA49713D2548AFF700AC68C2 /* AttachmentRequestBody_Tests.swift */,
 			);
 			path = Requests;
 			sourceTree = "<group>";
@@ -2753,6 +2759,7 @@
 				DA4EE5B8252B69E300CB26D4 /* UserListController+Combine.swift in Sources */,
 				F6ED5F7425023EB4005D7327 /* MissingEventsPublisher.swift in Sources */,
 				79877A0B2498E4BC00015F8B /* Member.swift in Sources */,
+				DA49712625476A3600AC68C2 /* AttachmentRequestBody.swift in Sources */,
 				F670B50F24FE6EA900003B1A /* MessageEditor.swift in Sources */,
 				7991D83D24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift in Sources */,
 				8A0D64A724E57A520017A3C0 /* GuestUserTokenRequestPayload.swift in Sources */,
@@ -2845,6 +2852,7 @@
 				79F3ABEC24EAE0B900AB9505 /* UserRequestBody.swift in Sources */,
 				7937282C249900CB00E13FE5 /* MemberPayload_Tests.swift in Sources */,
 				DAF1BED82506612B003CEDC0 /* MessageController+Combine_Tests.swift in Sources */,
+				DA49713E2548AFF700AC68C2 /* AttachmentRequestBody_Tests.swift in Sources */,
 				88BEBCE1253704AE00D9E8B7 /* MemberListController_Mock.swift in Sources */,
 				8A0D649324E5794C0017A3C0 /* CurrentUserPayload.swift in Sources */,
 				8A0D64AE24E5853F0017A3C0 /* DataController_Tests.swift in Sources */,
