@@ -996,6 +996,7 @@ class ChannelController_Tests: StressTestCase {
         let message = try session.createNewMessage(
             in: channelId,
             text: "Message",
+            attachments: [dummyNoExtraDataAttachment],
             extraData: DefaultExtraData.Message.defaultValue
         )
         return message.id
