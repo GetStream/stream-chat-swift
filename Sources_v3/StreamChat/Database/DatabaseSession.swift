@@ -52,8 +52,9 @@ protocol MessageDatabaseSession {
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
+        attachments: [_ChatMessageAttachment<ExtraData>],
         showReplyInChannel: Bool,
-        extraData: ExtraData
+        extraData: ExtraData.Message
     ) throws -> MessageDTO
     
     /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successfull.
@@ -91,7 +92,8 @@ extension MessageDatabaseSession {
     func createNewMessage<ExtraData: MessageExtraData>(
         in cid: ChannelId,
         text: String,
-        extraData: ExtraData = .defaultValue
+        attachments: [_ChatMessageAttachment<ExtraData>] = [],
+        extraData: ExtraData.Message = .defaultValue
     ) throws -> MessageDTO {
         try createNewMessage(
             in: cid,
@@ -99,6 +101,7 @@ extension MessageDatabaseSession {
             command: nil,
             arguments: nil,
             parentMessageId: nil,
+            attachments: attachments,
             showReplyInChannel: false,
             extraData: extraData
         )
@@ -162,13 +165,34 @@ protocol MemberListQueryDatabaseSession {
     func saveQuery<ExtraData: UserExtraData>(_ query: ChannelMemberListQuery<ExtraData>) throws -> ChannelMemberListQueryDTO
 }
 
+protocol AttachmentDatabaseSession {
+    /// Creates a new `AttachmentDTO` object in the database with the given `payload` for the message
+    /// with the given `messageId` in the channel with the given `cid`.
+    @discardableResult
+    func saveAttachment<ExtraData: AttachmentExtraData>(
+        payload: AttachmentPayload<ExtraData>,
+        messageId: MessageId,
+        cid: ChannelId
+    ) throws -> AttachmentDTO
+    
+    /// Creates a new `AttachmentDTO` object in the database from the given model for the message
+    /// with the given `messageId` in the channel with the given `cid`.
+    @discardableResult
+    func saveAttachment<ExtraData: AttachmentExtraData>(
+        attachment: _ChatMessageAttachment<ExtraData>,
+        messageId: MessageId,
+        cid: ChannelId
+    ) throws -> AttachmentDTO
+}
+
 protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
     ChannelReadDatabaseSession,
     ChannelDatabaseSession,
     MemberDatabaseSession,
-    MemberListQueryDatabaseSession {}
+    MemberListQueryDatabaseSession,
+    AttachmentDatabaseSession {}
 
 extension DatabaseSession {
     @discardableResult
