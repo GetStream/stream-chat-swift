@@ -32,6 +32,9 @@ public protocol ExtraDataTypes {
     
     /// An extra data type for `ChatMessageReaction`.
     associatedtype MessageReaction: MessageReactionExtraData = NoExtraData
+    
+    /// An extra data type for `ChatMessageAttachment`.
+    associatedtype Attachment: AttachmentExtraData = NoExtraData
 }
 
 /// A concrete implementation of `ExtraDataTypes` with the default extra data type values.
