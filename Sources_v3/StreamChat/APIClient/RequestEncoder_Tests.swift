@@ -163,8 +163,13 @@ class RequestEncoder_Tests: XCTestCase {
         let user1JSON = try JSONDecoder.default.decode(TestUser.self, from: user1String.data(using: .utf8)!)
         XCTAssertEqual(user1JSON, TestUser(name: "Luke", age: 22))
         
-        // Check the + sign is encoded properly in query
-        XCTAssert(urlComponents.url!.query!.contains("%22name%22%3A%22Leia%20is%20the%20best%21%20%2B%20%E2%99%A5%EF%B8%8F%22"))
+        let user2String = try XCTUnwrap(urlComponents.queryItems?["user2"])
+        let user2JSON = try JSONDecoder.default.decode(TestUser.self, from: user2String.data(using: .utf8)!)
+        XCTAssertEqual(user2JSON, TestUser(name: "Leia is the best! + ♥️", age: 22))
+        
+        // Check the + sign is encoded properly in the query
+        XCTAssertFalse(urlComponents.url!.query!.contains("+"))
+        XCTAssertTrue(urlComponents.url!.query!.contains("%2B"))
     }
     
     func test_encodingGETRequestBody_withQueryItems() throws {
