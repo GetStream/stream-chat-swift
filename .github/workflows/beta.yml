@@ -5,6 +5,9 @@ on:
     branches:
       - main
 
+env:
+  carthage-cache-dir: 'carthage-cache-29102020' # When you change carthage cache directory, please append the date
+
 jobs:
   beta:
     runs-on: macos-latest
@@ -15,7 +18,7 @@ jobs:
       id: carthage-cache
       with:
         path: Carthage
-        key: ${{ runner.os }}-carthage-stable-${{ hashFiles('**/Cartfile.resolved') }}
+        key: ${{ runner.os }}-${{ env.carthage-cache-dir }}-${{ hashFiles('**/Cartfile.resolved') }}
     - name: Cache RubyGems
       uses: actions/cache@v1
       id: rubygem-cache
