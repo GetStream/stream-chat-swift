@@ -131,6 +131,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
     ///   - parentMessageId: The `MessageId` of the message this message replies to.
+    ///   - attachments: An array of the attachments for the message.
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
     ///   in the response thread.
     ///   - extraData: Additional extra data of the message object.
@@ -142,6 +143,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         command: String?,
         arguments: String?,
         parentMessageId: MessageId,
+        attachments: [_ChatMessageAttachment<ExtraData>],
         showReplyInChannel: Bool,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
@@ -154,6 +156,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                 command: command,
                 arguments: arguments,
                 parentMessageId: parentMessageId,
+                attachments: attachments,
                 showReplyInChannel: showReplyInChannel,
                 extraData: extraData
             )

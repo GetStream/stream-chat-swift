@@ -437,6 +437,7 @@ final class MessageUpdater_Tests: StressTestCase {
         let showReplyInChannel = true
         let command: String = .unique
         let arguments: String = .unique
+        let attachments: [ChatMessageAttachment] = [.dummy()]
         let extraData: DefaultExtraData.Message = .defaultValue
         
         // Create new reply message
@@ -447,6 +448,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 command: command,
                 arguments: arguments,
                 parentMessageId: parentMessageId,
+                attachments: attachments,
                 showReplyInChannel: showReplyInChannel,
                 extraData: extraData
             ) { result in
@@ -468,6 +470,7 @@ final class MessageUpdater_Tests: StressTestCase {
             Assert.willBeEqual(message?.arguments, arguments)
             Assert.willBeEqual(message?.parentMessageId, parentMessageId)
             Assert.willBeEqual(message?.showReplyInChannel, showReplyInChannel)
+            Assert.willBeEqual(message?.attachments, Set(attachments))
             Assert.willBeEqual(message?.extraData, extraData)
             Assert.willBeEqual(message?.localState, .pendingSend)
         }
@@ -492,6 +495,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 command: .unique,
                 arguments: .unique,
                 parentMessageId: .unique,
+                attachments: [],
                 showReplyInChannel: false,
                 extraData: .defaultValue
             ) { completion($0) }

@@ -23,6 +23,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var createNewReply_command: String?
     @Atomic var createNewReply_arguments: String?
     @Atomic var createNewReply_parentMessageId: MessageId?
+    @Atomic var createNewReply_attachments: [_ChatMessageAttachment<ExtraData>]?
     @Atomic var createNewReply_showReplyInChannel: Bool?
     @Atomic var createNewReply_extraData: ExtraData.Message?
     @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
@@ -65,6 +66,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         createNewReply_command = nil
         createNewReply_arguments = nil
         createNewReply_parentMessageId = nil
+        createNewReply_attachments = nil
         createNewReply_showReplyInChannel = nil
         createNewReply_extraData = nil
         createNewReply_completion = nil
@@ -113,6 +115,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
+        attachments: [_ChatMessageAttachment<ExtraData>],
         showReplyInChannel: Bool,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
@@ -122,6 +125,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         createNewReply_command = command
         createNewReply_arguments = arguments
         createNewReply_parentMessageId = parentMessageId
+        createNewReply_attachments = attachments
         createNewReply_showReplyInChannel = showReplyInChannel
         createNewReply_extraData = extraData
         createNewReply_completion = completion
