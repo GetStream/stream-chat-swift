@@ -15,7 +15,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey {
     case text
     case command
     case args
-    //        case attachments
+    case attachments
     case parentId = "parent_id"
     case showReplyInChannel = "show_in_channel"
     case mentionedUsers = "mentioned_users"
@@ -45,12 +45,12 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let extraData: ExtraData.Message
     
     // TODO: Reactions
-    // TODO: Attachments
     // TODO: Translations
     
     let latestReactions: [MessageReactionPayload<ExtraData>]
     let ownReactions: [MessageReactionPayload<ExtraData>]
     let reactionScores: [MessageReactionType: Int]
+    let attachments: [AttachmentPayload<ExtraData.Attachment>]
     let isSilent: Bool
     
     init(from decoder: Decoder) throws {
@@ -69,12 +69,12 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
         mentionedUsers = try container.decode([UserPayload<ExtraData.User>].self, forKey: .mentionedUsers)
         replyCount = try container.decode(Int.self, forKey: .replyCount)
-        
         latestReactions = try container.decode([MessageReactionPayload<ExtraData>].self, forKey: .latestReactions)
         ownReactions = try container.decode([MessageReactionPayload<ExtraData>].self, forKey: .ownReactions)
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
+        attachments = try container.decode([AttachmentPayload<ExtraData.Attachment>].self, forKey: .attachments)
         extraData = try ExtraData.Message(from: decoder)
     }
     
@@ -96,7 +96,8 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         latestReactions: [MessageReactionPayload<ExtraData>] = [],
         ownReactions: [MessageReactionPayload<ExtraData>] = [],
         reactionScores: [MessageReactionType: Int],
-        isSilent: Bool
+        isSilent: Bool,
+        attachments: [AttachmentPayload<ExtraData.Attachment>]
     ) {
         self.id = id
         self.type = type
@@ -116,6 +117,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.ownReactions = ownReactions
         self.reactionScores = reactionScores
         self.isSilent = isSilent
+        self.attachments = attachments
     }
 }
 
@@ -128,6 +130,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let args: String?
     let parentId: String?
     let showReplyInChannel: Bool
+    let attachments: [AttachmentRequestBody<ExtraData.Attachment>]
     let extraData: ExtraData.Message
     
     init(
@@ -138,6 +141,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         args: String? = nil,
         parentId: String? = nil,
         showReplyInChannel: Bool = false,
+        attachments: [AttachmentRequestBody<ExtraData.Attachment>] = [],
         extraData: ExtraData.Message
     ) {
         self.id = id
@@ -147,6 +151,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         self.args = args
         self.parentId = parentId
         self.showReplyInChannel = showReplyInChannel
+        self.attachments = attachments
         self.extraData = extraData
     }
     
@@ -158,6 +163,10 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         try container.encodeIfPresent(args, forKey: .args)
         try container.encodeIfPresent(parentId, forKey: .parentId)
         try container.encodeIfPresent(showReplyInChannel, forKey: .showReplyInChannel)
+        
+        if !attachments.isEmpty {
+            try container.encode(attachments, forKey: .attachments)
+        }
         
         try extraData.encode(to: encoder)
     }

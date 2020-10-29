@@ -185,6 +185,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.extraData = try JSONEncoder.default.encode(extraData)
         message.isSilent = false
         message.reactionScores = [:]
+        message.attachments = try Set(attachments.map { try saveAttachment(attachment: $0, messageId: message.id, cid: cid) })
         message.showReplyInChannel = showReplyInChannel
         
         message.user = currentUserDTO.user
@@ -227,6 +228,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.mentionedUsers.insert(user)
         }
         
+        try payload.attachments.forEach { attachmentPayload in
+            let attachment = try saveAttachment(payload: attachmentPayload, messageId: payload.id, cid: cid)
+            dto.attachments.insert(attachment)
+        }
+        
         if let parentMessageId = payload.parentId,
             let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(dto)
@@ -266,6 +272,7 @@ extension MessageDTO {
             args: args,
             parentId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
+            attachments: attachments.map { $0.asRequestPayload() },
             extraData: extraData ?? .defaultValue
         )
     }

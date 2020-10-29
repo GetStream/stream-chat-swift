@@ -11,6 +11,7 @@ extension MessagePayload {
         messageId: MessageId,
         parentId: MessageId? = nil,
         showReplyInChannel: Bool = false,
+        attachments: [AttachmentPayload<T.Attachment>] = [],
         authorUserId: UserId,
         text: String = .unique,
         extraData: T.Message = .defaultValue,
@@ -35,7 +36,8 @@ extension MessagePayload {
             latestReactions: latestReactions,
             ownReactions: ownReactions,
             reactionScores: ["like": 1],
-            isSilent: true
+            isSilent: true,
+            attachments: attachments
         )
     }
 }
