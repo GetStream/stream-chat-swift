@@ -31,6 +31,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var currentlyTypingMembers: Set<MemberDTO>
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
+    @NSManaged var attachments: Set<AttachmentDTO>
     
     /// The fetch request that returns all existed channels from the database
     static var allChannelsFetchRequest: NSFetchRequest<ChannelDTO> {

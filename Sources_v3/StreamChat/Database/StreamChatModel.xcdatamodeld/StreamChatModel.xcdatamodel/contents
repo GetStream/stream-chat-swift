@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19G2021" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
+        <attribute name="actions" optional="YES" attributeType="Binary"/>
+        <attribute name="attachmentHash" attributeType="String"/>
+        <attribute name="author" optional="YES" attributeType="String"/>
+        <attribute name="extraData" optional="YES" attributeType="Binary"/>
+        <attribute name="file" optional="YES" attributeType="Binary"/>
+        <attribute name="imageURL" optional="YES" attributeType="URI"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="URI"/>
+        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="attachments" inverseEntity="ChannelDTO"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="attachments" inverseEntity="MessageDTO"/>
+        <fetchIndex name="attachmentHash">
+            <fetchIndexElement property="attachmentHash" type="Binary" order="ascending"/>
+        </fetchIndex>
+    </entity>
     <entity name="ChannelDTO" representedClassName="ChannelDTO" syncable="YES">
         <attribute name="cid" attributeType="String"/>
         <attribute name="config" attributeType="Binary"/>
@@ -13,6 +30,7 @@
         <attribute name="typeRawValue" optional="YES" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="watcherCount" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="attachments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AttachmentDTO" inverseName="channel" inverseEntity="AttachmentDTO"/>
         <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="createdChannels" inverseEntity="UserDTO"/>
         <relationship name="currentlyTypingMembers" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="typingIn" inverseEntity="MemberDTO"/>
         <relationship name="memberListQueries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelMemberListQueryDTO" inverseName="channel" inverseEntity="ChannelMemberListQueryDTO"/>
@@ -135,6 +153,7 @@
         <attribute name="text" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="attachments" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="AttachmentDTO" inverseName="message" inverseEntity="AttachmentDTO"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="messages" inverseEntity="ChannelDTO"/>
         <relationship name="flaggedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="flaggedMessages" inverseEntity="CurrentUserDTO"/>
         <relationship name="mentionedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mentionedMessages" inverseEntity="UserDTO"/>
@@ -223,7 +242,8 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="343"/>
+        <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="223"/>
+        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="373"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="ChannelReadDTO" positionX="9" positionY="153" width="128" height="103"/>
