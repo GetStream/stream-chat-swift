@@ -196,17 +196,8 @@ struct DefaultRequestEncoder: RequestEncoder {
         }
         
         log.assert(request.url != nil, "Request URL must not be `nil`.")
-        request.url = bodyQueryItems.reduce(request.url) { url, item in
-            guard var urlString = url?.absoluteString else { return url }
-            
-            urlString += "&\(item.name)"
-            
-            if let value = item.value?.addingPercentEncoding(withAllowedCharacters: .alphanumerics) {
-                urlString += "=\(value)"
-            }
-            
-            return URL(string: urlString)
-        }
+        
+        request.url = try request.url!.appendingQueryItems(bodyQueryItems)
     }
 }
 
@@ -217,6 +208,12 @@ private extension URL {
         }
         let existingQueryItems = components.queryItems ?? []
         components.queryItems = existingQueryItems + items
+        
+        // Manually replace all occurrences of "+" in the query because it can be understood as a placeholder
+        // value for a space. We want to keep it as "+" so we have to manually percent-encode it.
+        components.percentEncodedQuery = components.percentEncodedQuery?
+            .replacingOccurrences(of: "+", with: "%2B")
+        
         guard let newURL = components.url else {
             throw ClientError.InvalidURL("Can't create a new `URL` after appending query items: \(items).")
         }
