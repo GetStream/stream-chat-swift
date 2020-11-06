@@ -216,12 +216,16 @@ class CombineSimpleChannelsViewController: UITableViewController {
     @objc
     func handleAddChannelButton(_ sender: Any) {
         let id = UUID().uuidString
-        let controller = chatClient.channelController(
-            createChannelWithId: .init(type: .messaging, id: id),
-            members: [chatClient.currentUserId],
-            extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
-        )
-        controller.synchronize()
+        let defaultName = "Channel" + id.prefix(4)
+        
+        alertTextField(title: "Create channel", placeholder: defaultName) { name in
+            let controller = self.chatClient.channelController(
+                createChannelWithId: .init(type: .messaging, id: id),
+                members: [self.chatClient.currentUserId],
+                extraData: .init(name: name, imageURL: nil)
+            )
+            controller.synchronize()
+        }
     }
     
     ///

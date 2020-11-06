@@ -16,9 +16,26 @@ struct ChannelListView: View {
     @State private var showActionSheet: ChannelId?
     /// Binding for ChatView navigation.
     @State private var showDetails: Int?
+    /// Binding for add channel alert.
+    @State private var showAddChannelAlert: Bool = false
     /// Binding for showing `sheet`s
     @State private var activeSheet: ActiveSheet?
     
+    /// Definition of alert shown when add channel button is pressed.
+    var addChannelAlert: TextAlert {
+        let id = UUID().uuidString
+        let defaultName = "Channel" + id.prefix(4)
+        
+        return TextAlert(title: "Create channel", placeholder: defaultName) { name in
+            let controller = self.channelList.controller.client.channelController(
+                createChannelWithId: .init(type: .messaging, id: id),
+                members: [self.channelList.controller.client.currentUserId],
+                extraData: .init(name: name, imageURL: nil)
+            )
+            controller.synchronize()
+        }
+    }
+
     var body: some View {
         VStack {
             /// Loading indicator will appear when there is no channels in local storage and `synchronize()` is in progress.
@@ -47,6 +64,8 @@ struct ChannelListView: View {
         }
         /// ActionSheet presenter.
         .actionSheet(item: $showActionSheet, content: actionSheet)
+        /// Add channel alert presenter
+        .alert(isPresented: $showAddChannelAlert, addChannelAlert)
         .navigationBarTitle("Channels")
         /// Settings and create channel buttons.
         .navigationBarItems(leading: showSettingsButton, trailing: HStack { usersButton; addChannelButton })
@@ -85,13 +104,7 @@ struct ChannelListView: View {
     /// and call `synchronize()` on it.
     var addChannelButton: some View {
         Button(action: {
-            let id = UUID().uuidString
-            let controller = channelList.controller.client.channelController(
-                createChannelWithId: .init(type: .messaging, id: id),
-                members: [channelList.controller.client.currentUserId],
-                extraData: .init(name: "Channel" + id.prefix(4), imageURL: nil)
-            )
-            controller.synchronize()
+            self.showAddChannelAlert = true
         }) {
             Image(systemName: "plus.bubble").imageScale(.large)
         }
