@@ -209,6 +209,9 @@
 		79DDF81A249CE38B002F4412 /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */; };
 		79DDF81B249CE38B002F4412 /* AssertNetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */; };
 		79E2B84024CAC8D60024752F /* ListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */; };
+		79E8BFDB255ABBA500911660 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E8BFDA255ABBA500911660 /* Models.swift */; };
+		79E8BFE1255ABD4700911660 /* WIP.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E8BFE0255ABD4700911660 /* WIP.swift */; };
+		79E8BFE8255AD37C00911660 /* ChannelListUIExample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E8BFE7255AD37C00911660 /* ChannelListUIExample.swift */; };
 		79F3ABEA24EAB9CD00AB9505 /* Message.json in Resources */ = {isa = PBXBuildFile; fileRef = 79F3ABE924EAB9CD00AB9505 /* Message.json */; };
 		79F3ABEC24EAE0B900AB9505 /* UserRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F3ABEB24EAE0B900AB9505 /* UserRequestBody.swift */; };
 		79FC85E724ACCBC500A665ED /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FC85E624ACCBC500A665ED /* Token.swift */; };
@@ -271,11 +274,11 @@
 		888E8C51252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C50252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift */; };
 		888E8C55252B525300195E03 /* MemberController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C54252B525300195E03 /* MemberController.swift */; };
 		888E8C59252B56A100195E03 /* MemberController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C58252B56A100195E03 /* MemberController_Tests.swift */; };
-		8899BC53254318CC003CB98B /* MessageReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC52254318CC003CB98B /* MessageReaction.swift */; };
 		889062432548387D00E1898E /* MessageReactionsMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889062422548387D00E1898E /* MessageReactionsMiddleware_Tests.swift */; };
 		8899BC3F2542FFA1003CB98B /* MessageReactionPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC3E2542FFA1003CB98B /* MessageReactionPayload.swift */; };
 		8899BC47254305F8003CB98B /* MessageReactionRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC46254305F8003CB98B /* MessageReactionRequestPayload.swift */; };
 		8899BC4D25430E40003CB98B /* MessageReactionDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC4C25430E40003CB98B /* MessageReactionDTO.swift */; };
+		8899BC53254318CC003CB98B /* MessageReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC52254318CC003CB98B /* MessageReaction.swift */; };
 		8899BC57254337C7003CB98B /* MessageReactionsMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC56254337C7003CB98B /* MessageReactionsMiddleware.swift */; };
 		889B00E5252C972C007709A8 /* ChannelMemberListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */; };
 		889B00E9252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */; };
@@ -744,6 +747,9 @@
 		79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestRecorderURLProtocol.swift; sourceTree = "<group>"; };
 		79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertNetworkRequest.swift; sourceTree = "<group>"; };
 		79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserver.swift; sourceTree = "<group>"; };
+		79E8BFDA255ABBA500911660 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		79E8BFE0255ABD4700911660 /* WIP.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIP.swift; sourceTree = "<group>"; };
+		79E8BFE7255AD37C00911660 /* ChannelListUIExample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListUIExample.swift; sourceTree = "<group>"; };
 		79F3ABE924EAB9CD00AB9505 /* Message.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Message.json; sourceTree = "<group>"; };
 		79F3ABEB24EAE0B900AB9505 /* UserRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequestBody.swift; sourceTree = "<group>"; };
 		79FC85E624ACCBC500A665ED /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
@@ -804,11 +810,11 @@
 		888E8C50252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberBanRequestPayload_Tests.swift; sourceTree = "<group>"; };
 		888E8C54252B525300195E03 /* MemberController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberController.swift; sourceTree = "<group>"; };
 		888E8C58252B56A100195E03 /* MemberController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberController_Tests.swift; sourceTree = "<group>"; };
-		8899BC52254318CC003CB98B /* MessageReaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReaction.swift; sourceTree = "<group>"; };
 		889062422548387D00E1898E /* MessageReactionsMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsMiddleware_Tests.swift; sourceTree = "<group>"; };
 		8899BC3E2542FFA1003CB98B /* MessageReactionPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionPayload.swift; sourceTree = "<group>"; };
 		8899BC46254305F8003CB98B /* MessageReactionRequestPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionRequestPayload.swift; sourceTree = "<group>"; };
 		8899BC4C25430E40003CB98B /* MessageReactionDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionDTO.swift; sourceTree = "<group>"; };
+		8899BC52254318CC003CB98B /* MessageReaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReaction.swift; sourceTree = "<group>"; };
 		8899BC56254337C7003CB98B /* MessageReactionsMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsMiddleware.swift; sourceTree = "<group>"; };
 		889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQuery_Tests.swift; sourceTree = "<group>"; };
 		889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQueryDTO_Tests.swift; sourceTree = "<group>"; };
@@ -1104,6 +1110,8 @@
 				790882BE25486AB000896F03 /* ChatChannelList */,
 				7908823125432C6400896F03 /* StreamChatUI.h */,
 				7908823225432C6400896F03 /* Info.plist */,
+				79E8BFDA255ABBA500911660 /* Models.swift */,
+				79E8BFE0255ABD4700911660 /* WIP.swift */,
 			);
 			path = StreamChatUI;
 			sourceTree = "<group>";
@@ -1689,6 +1697,14 @@
 			path = "Mock Network";
 			sourceTree = "<group>";
 		};
+		79E8BFE6255AD35B00911660 /* UIExample */ = {
+			isa = PBXGroup;
+			children = (
+				79E8BFE7255AD37C00911660 /* ChannelListUIExample.swift */,
+			);
+			path = UIExample;
+			sourceTree = "<group>";
+		};
 		8008C17E24ED647900F5BCCE /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -1732,6 +1748,7 @@
 		804B126D24E712CC002B00EA /* Samples */ = {
 			isa = PBXGroup;
 			children = (
+				79E8BFE6255AD35B00911660 /* UIExample */,
 				804B127624ED59FE002B00EA /* Settings.storyboard */,
 				804B127424ED596C002B00EA /* SettingsViewController.swift */,
 				8008C18524EDBCF500F5BCCE /* LogsViewController.swift */,
@@ -2420,11 +2437,13 @@
 				790883482548770600896F03 /* ChatChannelCollectionViewDelegate.swift in Sources */,
 				7908833E254876F900896F03 /* ChatChannelCollectionViewDataSource.swift in Sources */,
 				790883522548771100896F03 /* ChatChannelNavigationBar.swift in Sources */,
+				79E8BFE1255ABD4700911660 /* WIP.swift in Sources */,
 				7908834D2548770C00896F03 /* ChatMessageCollectionViewCell.swift in Sources */,
 				7908830325486CA700896F03 /* ChatChannelListNavigationBar.swift in Sources */,
 				79088334254876EA00896F03 /* ChatChannelViewController.swift in Sources */,
 				790882DF25486B6800896F03 /* ChatChannelListViewController.swift in Sources */,
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
+				79E8BFDB255ABBA500911660 /* Models.swift in Sources */,
 				790882D625486B4A00896F03 /* ChatChannelListCollectionViewLayout.swift in Sources */,
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
 				79088343254876FE00896F03 /* ChatChannelCollectionViewLayout.swift in Sources */,
@@ -2473,6 +2492,7 @@
 				8008C19224F44DF900F5BCCE /* UIView+InstantiateFromNib.swift in Sources */,
 				DA4EE5D3252CB64900CB26D4 /* UserListView.swift in Sources */,
 				80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */,
+				79E8BFE8255AD37C00911660 /* ChannelListUIExample.swift in Sources */,
 				8040BC5E24FDAB1E00DE369F /* UIColor+ForUsername.swift in Sources */,
 				8837C6342539B39700D8FE86 /* CombineSimpleChannelMembersViewController.swift in Sources */,
 				F6CA70932513A1450024ED5D /* Channel+Extensions.swift in Sources */,

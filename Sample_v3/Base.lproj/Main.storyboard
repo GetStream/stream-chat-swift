@@ -3,7 +3,7 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17126"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -165,6 +165,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="swiftUICell" destination="qqJ-q2-6Di" id="hDj-Jk-A7I"/>
+                        <outlet property="uISample" destination="VTJ-un-u6c" id="sKX-Fu-hhN"/>
                         <outlet property="uiKitAndCombineCell" destination="ROL-9U-3uT" id="udb-Vo-Cfz"/>
                         <outlet property="uiKitAndDelegatesCell" destination="UXl-OF-aT4" id="59C-FP-kff"/>
                     </connections>

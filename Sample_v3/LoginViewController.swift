@@ -6,11 +6,14 @@ import SwiftUI
 import UIKit
 
 import StreamChat
+import StreamChatUI
 
 class LoginViewController: UITableViewController {
     @IBOutlet var uiKitAndDelegatesCell: UITableViewCell!
     @IBOutlet var uiKitAndCombineCell: UITableViewCell!
     @IBOutlet var swiftUICell: UITableViewCell!
+    
+    @IBOutlet var uISample: UITableViewCell!
     
     func logIn() -> ChatClient {
         var config = ChatClientConfig(apiKey: APIKey(Configuration.apiKey))
@@ -123,6 +126,21 @@ extension LoginViewController {
             #else
             alert(title: "Swift 5.3 required", message: "The app needs to be compiled with Swift 5.3 or above.")
             #endif
+            
+        case uISample:
+            var uiConfig = UIConfig<DefaultExtraData>()
+            uiConfig.channelList.unreadIndicatorView = SecretUnreadIndicator.self
+            
+            UnreadIndicatorView<DefaultExtraData>.appearance().backgroundColor = .green
+//            SecretUnreadIndicator.appearance().backgroundColor = .green
+            
+            let controller = ChannelList(uiConfig: uiConfig)
+            controller.controller = channelListController
+            
+            UIView.transition(with: view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
+                self.view.window?.rootViewController = UINavigationController(rootViewController: controller)
+            })
+
         default:
             return
         }
