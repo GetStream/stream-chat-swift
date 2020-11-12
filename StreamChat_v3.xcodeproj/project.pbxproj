@@ -18,7 +18,7 @@
 		7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7908829A2546D95A00896F03 /* FlagMessagePayload.swift */; };
 		790882A22546D95F00896F03 /* FlagMessagePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7908829B2546D95A00896F03 /* FlagMessagePayload_Tests.swift */; };
 		790882D625486B4A00896F03 /* ChatChannelListCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790882D525486B4A00896F03 /* ChatChannelListCollectionViewLayout.swift */; };
-		790882DF25486B6800896F03 /* ChatChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790882BF25486ADB00896F03 /* ChatChannelListViewController.swift */; };
+		790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790882BF25486ADB00896F03 /* ChatChannelListVC.swift */; };
 		790882E425486B6A00896F03 /* ChatChannelListCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790882C925486B0500896F03 /* ChatChannelListCollectionView.swift */; };
 		790882ED25486B6D00896F03 /* ChatChannelListCollectionViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790882CF25486B2300896F03 /* ChatChannelListCollectionViewDataSource.swift */; };
 		790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790882F625486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift */; };
@@ -556,7 +556,7 @@
 		7908824925432CC600896F03 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7908829A2546D95A00896F03 /* FlagMessagePayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlagMessagePayload.swift; sourceTree = "<group>"; };
 		7908829B2546D95A00896F03 /* FlagMessagePayload_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FlagMessagePayload_Tests.swift; sourceTree = "<group>"; };
-		790882BF25486ADB00896F03 /* ChatChannelListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListViewController.swift; sourceTree = "<group>"; };
+		790882BF25486ADB00896F03 /* ChatChannelListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListVC.swift; sourceTree = "<group>"; };
 		790882C925486B0500896F03 /* ChatChannelListCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListCollectionView.swift; sourceTree = "<group>"; };
 		790882CF25486B2300896F03 /* ChatChannelListCollectionViewDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListCollectionViewDataSource.swift; sourceTree = "<group>"; };
 		790882D525486B4A00896F03 /* ChatChannelListCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListCollectionViewLayout.swift; sourceTree = "<group>"; };
@@ -1151,7 +1151,7 @@
 		790882BE25486AB000896F03 /* ChatChannelList */ = {
 			isa = PBXGroup;
 			children = (
-				790882BF25486ADB00896F03 /* ChatChannelListViewController.swift */,
+				790882BF25486ADB00896F03 /* ChatChannelListVC.swift */,
 				790882C925486B0500896F03 /* ChatChannelListCollectionView.swift */,
 				790882CF25486B2300896F03 /* ChatChannelListCollectionViewDataSource.swift */,
 				790882D525486B4A00896F03 /* ChatChannelListCollectionViewLayout.swift */,
@@ -2467,7 +2467,7 @@
 				7908834D2548770C00896F03 /* ChatMessageCollectionViewCell.swift in Sources */,
 				7908830325486CA700896F03 /* ChatChannelListNavigationBar.swift in Sources */,
 				79088334254876EA00896F03 /* ChatChannelViewController.swift in Sources */,
-				790882DF25486B6800896F03 /* ChatChannelListViewController.swift in Sources */,
+				790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */,
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
 				790882D625486B4A00896F03 /* ChatChannelListCollectionViewLayout.swift in Sources */,
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
