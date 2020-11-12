@@ -189,10 +189,6 @@ extension ChatViewController {
             composerEditingContainerView.animate(show: false)
         }
         
-        // We don't want users to send the same message multiple times
-        // in case their internet is slow and message isn't sent immediately
-        composerView.reset()
-        
         presenter?.rx.send(text: text,
                            showReplyInChannel: composerView.alsoSendToChannelButton.isSelected,
                            parseMentionedUsers: parseMentionedUsersOnSend)
@@ -206,6 +202,10 @@ extension ChatViewController {
                     self?.show(error: $0)
                 })
             .disposed(by: disposeBag)
+        
+        // We don't want users to send the same message multiple times
+        // in case their internet is slow and message isn't sent immediately
+        composerView.reset()
     }
     
     private func findCommand(in text: String) -> String? {
