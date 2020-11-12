@@ -44,15 +44,18 @@ public extension UIConfig {
     struct ChannelListUI {
         public var channelCollectionView: ChatChannelListCollectionView.Type
         public var channelCollectionLayout: ChatChannelListCollectionViewLayout.Type
+        public var channelView: ChatChannelView<ExtraData>.Type
         public var avatarView: AvatarView.Type
 
         public init(
             channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self,
             channelCollectionLayout: ChatChannelListCollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self,
+            channelView: ChatChannelView<ExtraData>.Type = ChatChannelView<ExtraData>.self,
             avatarView: AvatarView.Type = AvatarView.self
         ) {
             self.channelCollectionView = channelCollectionView
             self.channelCollectionLayout = channelCollectionLayout
+            self.channelView = channelView
             self.avatarView = avatarView
         }
     }
