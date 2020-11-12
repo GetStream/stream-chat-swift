@@ -263,6 +263,7 @@
 		8837C63A2539B4A600D8FE86 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6392539B4A600D8FE86 /* Date+Extensions.swift */; };
 		8837C6442539C17A00D8FE86 /* ChannelMember+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6432539C17A00D8FE86 /* ChannelMember+Extensions.swift */; };
 		8837C66C2539E50500D8FE86 /* MemberListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C66B2539E50500D8FE86 /* MemberListView.swift */; };
+		8850B93C255C3168003AED69 /* ContainerStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850B93B255C3168003AED69 /* ContainerStackView.swift */; };
 		888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888123D1255D430B00070D5A /* UIView+Extensions.swift */; };
 		888123E0255D4D2100070D5A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888123DF255D4D2100070D5A /* UIImageView+Extensions.swift */; };
 		888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */; };
@@ -798,6 +799,7 @@
 		8837C6392539B4A600D8FE86 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		8837C6432539C17A00D8FE86 /* ChannelMember+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelMember+Extensions.swift"; sourceTree = "<group>"; };
 		8837C66B2539E50500D8FE86 /* MemberListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberListView.swift; sourceTree = "<group>"; };
+		8850B93B255C3168003AED69 /* ContainerStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStackView.swift; sourceTree = "<group>"; };
 		888123D1255D430B00070D5A /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		888123DF255D4D2100070D5A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -1105,6 +1107,7 @@
 			isa = PBXGroup;
 			children = (
 				888123D0255D42F000070D5A /* Utils */,
+				888123E5255D51BD00070D5A /* Common Views */,
 				7908830C2548707B00896F03 /* ChatChannel */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
 				7908823125432C6400896F03 /* StreamChatUI.h */,
@@ -1793,6 +1796,14 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		888123E5255D51BD00070D5A /* Common Views */ = {
+			isa = PBXGroup;
+			children = (
+				8850B93B255C3168003AED69 /* ContainerStackView.swift */,
+			);
+			path = "Common Views";
+			sourceTree = "<group>";
+		};
 		888E8C53252B522F00195E03 /* MemberController */ = {
 			isa = PBXGroup;
 			children = (
@@ -2443,6 +2454,7 @@
 				790882D625486B4A00896F03 /* ChatChannelListCollectionViewLayout.swift in Sources */,
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
 				888123E0255D4D2100070D5A /* UIImageView+Extensions.swift in Sources */,
+				8850B93C255C3168003AED69 /* ContainerStackView.swift in Sources */,
 				79088343254876FE00896F03 /* ChatChannelCollectionViewLayout.swift in Sources */,
 				790882ED25486B6D00896F03 /* ChatChannelListCollectionViewDataSource.swift in Sources */,
 				79088339254876F200896F03 /* ChatChannelCollectionView.swift in Sources */,
