@@ -263,6 +263,7 @@
 		8837C63A2539B4A600D8FE86 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6392539B4A600D8FE86 /* Date+Extensions.swift */; };
 		8837C6442539C17A00D8FE86 /* ChannelMember+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C6432539C17A00D8FE86 /* ChannelMember+Extensions.swift */; };
 		8837C66C2539E50500D8FE86 /* MemberListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8837C66B2539E50500D8FE86 /* MemberListView.swift */; };
+		888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888123D1255D430B00070D5A /* UIView+Extensions.swift */; };
 		888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */; };
 		888E8C39252B2ABB00195E03 /* UserController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C38252B2ABB00195E03 /* UserController+Combine.swift */; };
 		888E8C3F252B2AD600195E03 /* UserController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C3E252B2AD600195E03 /* UserController+Combine_Tests.swift */; };
@@ -796,6 +797,7 @@
 		8837C6392539B4A600D8FE86 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		8837C6432539C17A00D8FE86 /* ChannelMember+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelMember+Extensions.swift"; sourceTree = "<group>"; };
 		8837C66B2539E50500D8FE86 /* MemberListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemberListView.swift; sourceTree = "<group>"; };
+		888123D1255D430B00070D5A /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+SwiftUI.swift"; sourceTree = "<group>"; };
 		888E8C38252B2ABB00195E03 /* UserController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+Combine.swift"; sourceTree = "<group>"; };
 		888E8C3B252B2AC900195E03 /* UserController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
@@ -1100,6 +1102,7 @@
 		7908823025432C6400896F03 /* StreamChatUI */ = {
 			isa = PBXGroup;
 			children = (
+				888123D0255D42F000070D5A /* Utils */,
 				7908830C2548707B00896F03 /* ChatChannel */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
 				7908823125432C6400896F03 /* StreamChatUI.h */,
@@ -1779,6 +1782,14 @@
 			path = FlagUser;
 			sourceTree = "<group>";
 		};
+		888123D0255D42F000070D5A /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				888123D1255D430B00070D5A /* UIView+Extensions.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		888E8C53252B522F00195E03 /* MemberController */ = {
 			isa = PBXGroup;
 			children = (
@@ -2418,6 +2429,7 @@
 			files = (
 				790882E425486B6A00896F03 /* ChatChannelListCollectionView.swift in Sources */,
 				790883482548770600896F03 /* ChatChannelCollectionViewDelegate.swift in Sources */,
+				888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */,
 				7908833E254876F900896F03 /* ChatChannelCollectionViewDataSource.swift in Sources */,
 				790883522548771100896F03 /* ChatChannelNavigationBar.swift in Sources */,
 				7908834D2548770C00896F03 /* ChatMessageCollectionViewCell.swift in Sources */,
