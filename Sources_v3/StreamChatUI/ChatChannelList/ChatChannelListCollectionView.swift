@@ -5,4 +5,12 @@
 import Foundation
 import UIKit
 
-open class ChatChannelListCollectionView: UICollectionView {}
+open class ChatChannelListCollectionView: UICollectionView {
+    public required init(layout: ChatChannelListCollectionViewLayout) {
+        super.init(frame: .zero, collectionViewLayout: layout)
+    }
+    
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+}
