@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐞 Fixed
 - `MembersQueryResponse.member` is now public [#574](https://github.com/GetStream/stream-chat-swift/issues/574)
 - Fix plus signs in User fields becoming spaces in the set user request, preventing names with + signs, base64 custom fields, etc. [#572](https://github.com/GetStream/stream-chat-swift/issues/572)
+- Fix images and files are not being send. This was a bug introduced in 2.4.1, now resolved [#585](https://github.com/GetStream/stream-chat-swift/issues/585)
 
 # [2.4.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.4.1)
 _October 23, 2020_
