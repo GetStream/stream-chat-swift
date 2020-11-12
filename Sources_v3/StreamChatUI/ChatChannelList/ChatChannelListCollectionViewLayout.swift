@@ -5,4 +5,12 @@
 import Foundation
 import UIKit
 
-open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {}
+open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
+    override public required init() {
+        super.init()
+    }
+    
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+}
