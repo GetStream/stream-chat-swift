@@ -110,7 +110,8 @@ lane :match_me do
       "io.getstream.StreamChatCore",
       "io.getstream.StreamChat"
     ],
-    readonly: true
+    readonly: true,
+    force_for_new_devices: !is_ci
   )
   
   match(
@@ -121,7 +122,8 @@ lane :match_me do
       "io.getstream.StreamChatCore",
       "io.getstream.StreamChat"
     ],
-    readonly: true
+    readonly: true,
+    force_for_new_devices: !is_ci
   )
 end
 
