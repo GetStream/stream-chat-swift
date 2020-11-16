@@ -5,7 +5,17 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView {
+open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView, AppearanceSetting {
+    // MARK: - Default Appearance
+    
+    public class func initialAppearanceSetup(_ view: ChatChannelView<ExtraData>) {
+        if #available(iOS 13, *) {
+            view.backgroundColor = .systemBackground
+        } else {
+            view.backgroundColor = .white // Should be add custom support for dark theme?
+        }
+    }
+    
     // MARK: - Properties
     
     public let uiConfig: UIConfig<ExtraData>
@@ -82,6 +92,8 @@ open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView {
     
     public func commonInit() {
         embed(container)
+        // TODO: This should be called before `setupAppearance` is called but it doesn't have to be called in `init`
+        applyDefaultAppearance()
         
         setupAppearance()
         setupLayout()
