@@ -54,6 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private func setupAppearance() {
         ChatChannelListCollectionView.appearance().backgroundColor = .white
+        ChatChannelView<DefaultExtraData>.appearance().separatorColor = .lightGray
         AvatarView.appearance().backgroundColor = .gray
     }
 }
