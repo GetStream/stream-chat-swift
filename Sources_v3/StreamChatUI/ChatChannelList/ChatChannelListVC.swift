@@ -14,16 +14,10 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
     public var uiConfig: UIConfig<ExtraData> = .default
     public var didSelectChannel: (_ChatChannel<ExtraData>) -> Void = { _ in }
     
-    private lazy var layout: ChatChannelListCollectionViewLayout = {
-        let layout = uiConfig.channelList.channelCollectionLayout.init()
-        layout.minimumInteritemSpacing = 0
-        layout.minimumLineSpacing = 0
-        return layout
-    }()
-    
     private lazy var collectionView: ChatChannelListCollectionView = {
+        let layout = uiConfig.channelList.channelCollectionLayout.init()
         let collection = uiConfig.channelList.channelCollectionView.init(layout: layout)
-        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "Cell")
+        collection.register(uiConfig.channelList.channelViewCell.self, forCellWithReuseIdentifier: "Cell")
         collection.dataSource = self
         collection.delegate = self
         return collection
