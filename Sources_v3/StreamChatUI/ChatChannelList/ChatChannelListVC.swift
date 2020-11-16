@@ -62,12 +62,11 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
         didSelectChannel(channel)
     }
     
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath
-    ) {
-        guard indexPath.row == controller.channels.count - 1 else { return }
+    // MARK: - UIScrollViewDelegate
+    
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        let bottomEdge = scrollView.contentOffset.y + scrollView.bounds.height
+        guard bottomEdge >= scrollView.contentSize.height else { return }
         controller.loadNextChannels()
     }
 }
