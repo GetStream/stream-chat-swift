@@ -6,7 +6,6 @@ import StreamChat
 import UIKit
 
 open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView {
-    
     // MARK: - Properties
     
     public let uiConfig: UIConfig<ExtraData>
@@ -73,8 +72,8 @@ open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView {
     }
     
     public required init?(coder: NSCoder) {
-        self.uiConfig = .default
-        self.channel = nil
+        uiConfig = .default
+        channel = nil
         
         super.init(coder: coder)
         
@@ -82,6 +81,8 @@ open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView {
     }
     
     public func commonInit() {
+        embed(container)
+        
         setupAppearance()
         setupLayout()
         updateContent()
@@ -90,18 +91,17 @@ open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView {
     // MARK: - Public
     
     open func setupAppearance() {
+        container.centerStackView.isHidden = false
+        container.centerStackView.spacing = UIStackView.spacingUseSystem
+        container.centerStackView.alignment = .center
+        container.centerStackView.distribution = .fill
+        
         channelNameLabel.numberOfLines = 1
         channelNameLabel.font = UIFontMetrics(forTextStyle: .subheadline)
             .scaledFont(for: .boldSystemFont(ofSize: UIFont.systemFontSize))
     }
     
     open func setupLayout() {
-        embedUsingSystemSpacing(container)
-        
-        container.centerStackView.isHidden = false
-        container.centerStackView.spacing = 8
-        container.centerStackView.alignment = .center
-        container.centerStackView.distribution = .fill
         container.centerStackView.addArrangedSubview(channelAvatarView)
         container.centerStackView.addArrangedSubview(channelNameLabel)
         
