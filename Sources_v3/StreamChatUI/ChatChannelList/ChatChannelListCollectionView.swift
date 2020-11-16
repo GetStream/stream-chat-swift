@@ -6,7 +6,7 @@ import Foundation
 import UIKit
 
 open class ChatChannelListCollectionView: UICollectionView {
-    public required init(layout: ChatChannelListCollectionViewLayout) {
+    public required init(layout: UICollectionViewLayout) {
         super.init(frame: .zero, collectionViewLayout: layout)
     }
     

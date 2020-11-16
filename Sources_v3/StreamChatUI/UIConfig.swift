@@ -2,8 +2,8 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import StreamChat
+import UIKit
 
 public struct UIConfig<ExtraData: UIExtraDataTypes> {
     public var channelList: ChannelListUI
@@ -43,13 +43,13 @@ public extension UIConfig {
 public extension UIConfig {
     struct ChannelListUI {
         public var channelCollectionView: ChatChannelListCollectionView.Type
-        public var channelCollectionLayout: ChatChannelListCollectionViewLayout.Type
+        public var channelCollectionLayout: UICollectionViewLayout.Type
         public var channelView: ChatChannelView<ExtraData>.Type
         public var avatarView: AvatarView.Type
 
         public init(
             channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self,
-            channelCollectionLayout: ChatChannelListCollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self,
+            channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self,
             channelView: ChatChannelView<ExtraData>.Type = ChatChannelView<ExtraData>.self,
             avatarView: AvatarView.Type = AvatarView.self
         ) {
