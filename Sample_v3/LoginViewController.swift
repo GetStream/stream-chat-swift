@@ -129,6 +129,12 @@ extension LoginViewController {
         case streamDesignCell:
             let channelList = ChatChannelListVC<DefaultExtraData>()
             channelList.controller = channelListController
+        
+            // An example of change default appearance
+            ChatChannelView<DefaultExtraData>.defaultAppearance.addRule {
+                $0.backgroundColor = .lightGray
+                $0.channelNameLabel.backgroundColor = .yellow
+            }
             
             let navigation = UINavigationController(rootViewController: channelList)
 
