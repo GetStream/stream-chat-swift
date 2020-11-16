@@ -34,15 +34,6 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
         controller.synchronize()
     }
     
-    override open func viewWillLayoutSubviews() {
-        super.viewWillLayoutSubviews()
-        
-        (collectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize = .init(
-            width: view.bounds.width,
-            height: 70
-        )
-    }
-    
     // MARK: - UICollectionViewDataSource
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
