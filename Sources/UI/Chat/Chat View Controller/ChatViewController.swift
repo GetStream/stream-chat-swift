@@ -281,7 +281,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
                               in cell: MessageTableViewCell,
                               message: Message) {
         guard attachment.isImage else {
-            showWebView(url: attachment.url, title: attachment.title)
+            showWebView(for: message, url: attachment.url, title: attachment.title)
             return
         }
         
@@ -378,6 +378,18 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         chatViewController.presenter = channelPresenter
         
         return chatViewController
+    }
+    
+    /// Presents the Open Graph data in a `WebViewController`.
+    open func showWebView(for message: Message, url: URL?, title: String?, animated: Bool = true) {
+        guard let url = url else {
+            return
+        }
+        
+        let webViewController = WebViewController()
+        webViewController.url = url
+        webViewController.title = title
+        present(WebViewNavigationController(with: webViewController), animated: animated)
     }
     
     private func markReadIfPossible() {
