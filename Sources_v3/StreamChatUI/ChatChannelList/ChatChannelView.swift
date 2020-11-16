@@ -91,14 +91,16 @@ open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView {
     // MARK: - Public
     
     open func setupAppearance() {
+        container.preservesSuperviewLayoutMargins = true
+        container.isLayoutMarginsRelativeArrangement = true
         container.centerStackView.isHidden = false
         container.centerStackView.spacing = UIStackView.spacingUseSystem
         container.centerStackView.alignment = .center
         container.centerStackView.distribution = .fill
         
-        channelNameLabel.numberOfLines = 1
-        channelNameLabel.font = UIFontMetrics(forTextStyle: .subheadline)
-            .scaledFont(for: .boldSystemFont(ofSize: UIFont.systemFontSize))
+        channelNameLabel.numberOfLines = 0
+        channelNameLabel.font = .preferredFont(forTextStyle: .body)
+        channelNameLabel.adjustsFontForContentSizeCategory = true
     }
     
     open func setupLayout() {
