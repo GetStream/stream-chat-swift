@@ -78,6 +78,19 @@ extension ChatChannelListVC: _ChatChannelListControllerDelegate {
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
-        collectionView.reloadData()
+        collectionView.performBatchUpdates({
+            for change in changes {
+                switch change {
+                case let .insert(_, index):
+                    collectionView.insertItems(at: [index])
+                case let .move(_, fromIndex, toIndex):
+                    collectionView.moveItem(at: fromIndex, to: toIndex)
+                case let .remove(_, index):
+                    collectionView.deleteItems(at: [index])
+                case let .update(_, index):
+                    collectionView.reloadItems(at: [index])
+                }
+            }
+        }, completion: nil)
     }
 }
