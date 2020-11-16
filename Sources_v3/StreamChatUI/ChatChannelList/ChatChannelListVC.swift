@@ -44,16 +44,13 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let channel = controller.channels[indexPath.row]
-        
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
-        
-        if let channelView = cell.contentView.subviews.first as? ChatChannelView<ExtraData> {
-            channelView.channel = channel
-        } else {
-            let channelView = uiConfig.channelList.channelView.init(channel: channel, uiConfig: uiConfig)
-            cell.contentView.embed(channelView)
-        }
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: "Cell",
+            for: indexPath
+        ) as! ChatChannelListCollectionViewCell<ExtraData>
+    
+        cell.uiConfig = uiConfig
+        cell.channelView.channel = controller.channels[indexPath.row]
         
         return cell
     }
