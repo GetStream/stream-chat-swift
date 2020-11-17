@@ -207,8 +207,8 @@ extension _ChatChannelListController where ExtraData == DefaultExtraData {
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
     /// instead to set the delegate, if you're using custom extra data types.
     public weak var delegate: ChatChannelListControllerDelegate? {
-        set { multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(newValue) }
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatChannelListControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(newValue) }
     }
 }
 

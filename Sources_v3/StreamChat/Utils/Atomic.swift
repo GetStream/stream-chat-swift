@@ -25,14 +25,14 @@ import Foundation
 @propertyWrapper
 public class Atomic<T> {
     public var wrappedValue: T {
-        set {
-            mutate { $0 = newValue }
-        }
-        
         get {
             var currentValue: T!
             mutate { currentValue = $0 }
             return currentValue
+        }
+
+        set {
+            mutate { $0 = newValue }
         }
     }
     
