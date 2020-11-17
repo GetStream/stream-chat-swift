@@ -159,6 +159,7 @@
 		7991D83B24F5427E00D21BA3 /* EphemeralValuesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */; };
 		7991D83D24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83C24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift */; };
 		7991D83F24F8F1BF00D21BA3 /* ChatClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83E24F8F1BF00D21BA3 /* ChatClient_Mock.swift */; };
+		799ADAAF2563FFA1006D43F9 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 799ADAAE2563FFA1006D43F9 /* Nuke */; };
 		799B5DC5253081C900C108FB /* DevicePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B5DC4253081C900C108FB /* DevicePayloads.swift */; };
 		799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */; };
 		799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2EB248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift */; };
@@ -278,11 +279,11 @@
 		888E8C51252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C50252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift */; };
 		888E8C55252B525300195E03 /* MemberController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C54252B525300195E03 /* MemberController.swift */; };
 		888E8C59252B56A100195E03 /* MemberController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C58252B56A100195E03 /* MemberController_Tests.swift */; };
-		8899BC53254318CC003CB98B /* MessageReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC52254318CC003CB98B /* MessageReaction.swift */; };
 		889062432548387D00E1898E /* MessageReactionsMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889062422548387D00E1898E /* MessageReactionsMiddleware_Tests.swift */; };
 		8899BC3F2542FFA1003CB98B /* MessageReactionPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC3E2542FFA1003CB98B /* MessageReactionPayload.swift */; };
 		8899BC47254305F8003CB98B /* MessageReactionRequestPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC46254305F8003CB98B /* MessageReactionRequestPayload.swift */; };
 		8899BC4D25430E40003CB98B /* MessageReactionDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC4C25430E40003CB98B /* MessageReactionDTO.swift */; };
+		8899BC53254318CC003CB98B /* MessageReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC52254318CC003CB98B /* MessageReaction.swift */; };
 		8899BC57254337C7003CB98B /* MessageReactionsMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC56254337C7003CB98B /* MessageReactionsMiddleware.swift */; };
 		889B00E5252C972C007709A8 /* ChannelMemberListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */; };
 		889B00E9252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */; };
@@ -819,11 +820,11 @@
 		888E8C50252B4BAB00195E03 /* ChannelMemberBanRequestPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberBanRequestPayload_Tests.swift; sourceTree = "<group>"; };
 		888E8C54252B525300195E03 /* MemberController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberController.swift; sourceTree = "<group>"; };
 		888E8C58252B56A100195E03 /* MemberController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberController_Tests.swift; sourceTree = "<group>"; };
-		8899BC52254318CC003CB98B /* MessageReaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReaction.swift; sourceTree = "<group>"; };
 		889062422548387D00E1898E /* MessageReactionsMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsMiddleware_Tests.swift; sourceTree = "<group>"; };
 		8899BC3E2542FFA1003CB98B /* MessageReactionPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionPayload.swift; sourceTree = "<group>"; };
 		8899BC46254305F8003CB98B /* MessageReactionRequestPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionRequestPayload.swift; sourceTree = "<group>"; };
 		8899BC4C25430E40003CB98B /* MessageReactionDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionDTO.swift; sourceTree = "<group>"; };
+		8899BC52254318CC003CB98B /* MessageReaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReaction.swift; sourceTree = "<group>"; };
 		8899BC56254337C7003CB98B /* MessageReactionsMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionsMiddleware.swift; sourceTree = "<group>"; };
 		889B00E4252C972C007709A8 /* ChannelMemberListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQuery_Tests.swift; sourceTree = "<group>"; };
 		889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListQueryDTO_Tests.swift; sourceTree = "<group>"; };
@@ -1052,6 +1053,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				799ADAAF2563FFA1006D43F9 /* Nuke in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2193,6 +2195,9 @@
 				7908826625432D7900896F03 /* PBXTargetDependency */,
 			);
 			name = StreamChatUI;
+			packageProductDependencies = (
+				799ADAAE2563FFA1006D43F9 /* Nuke */,
+			);
 			productName = StreamChatUI;
 			productReference = 790881FD25432B7200896F03 /* StreamChatUI.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2315,6 +2320,7 @@
 			mainGroup = 8AD5EC8522E9A3E8005CFAC9;
 			packageReferences = (
 				79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */,
+				799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
@@ -3597,6 +3603,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kean/Nuke";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.1.2;
+			};
+		};
 		79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/daltoniam/Starscream.git";
@@ -3608,6 +3622,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		799ADAAE2563FFA1006D43F9 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
 		79A4AE102536EE5500C32A74 /* Starscream */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */;
