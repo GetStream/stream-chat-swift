@@ -51,7 +51,7 @@ class UserListQuery_Tests: XCTestCase {
             "presence": true,
             "limit": 23,
             "filter_conditions": ["id": ["$eq": "luke"]],
-            "sort": [["field": "last_active", "direction": -1]]
+            "sort": [["field": "last_active", "direction": -1], ["field": "id", "direction": -1]]
         ]
 
         let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
@@ -72,5 +72,21 @@ class UserListQuery_Tests: XCTestCase {
     
         // Assert queries match
         AssertJSONEqual(actualJSON, expectedJSON)
+    }
+    
+    func test_safeSorting_added() {
+        // Sortings without safe option
+        let sortings: [[Sorting<UserListSortingKey>]] = [
+            [.init(key: .lastActivityAt)],
+            [.init(key: .lastActivityAt), .init(key: .isBanned)]
+        ]
+        
+        // Create queries with sortings
+        let queries = sortings.map { UserListQuery<DefaultExtraData.User>(sort: $0) }
+        
+        // Assert safe sorting option is added
+        queries.forEach {
+            XCTAssertEqual($0.sort.last?.key, Sorting<UserListSortingKey>(key: .id).key)
+        }
     }
 }
