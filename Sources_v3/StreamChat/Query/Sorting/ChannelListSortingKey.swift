@@ -16,6 +16,9 @@ public enum ChannelListSortingKey: String, SortingKey {
     case lastMessageAt
     /// Sort channels by number of members.
     case memberCount
+    /// Sort channels by `cid`.
+    /// **Note**: This sorting option can extend your response waiting time if used as primary one.
+    case cid
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
@@ -27,6 +30,7 @@ public enum ChannelListSortingKey: String, SortingKey {
         case .updatedAt: value = "updated_at"
         case .lastMessageAt: value = "last_message_at"
         case .memberCount: value = "member_count"
+        case .cid: value = "cid"
         }
         
         try container.encode(value)
