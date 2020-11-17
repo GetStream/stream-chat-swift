@@ -102,7 +102,7 @@ public struct ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
         messagesLimit: Int = .messagesPageSize
     ) {
         self.filter = filter
-        self.sort = sort
+        self.sort = sort.appendingCidSortingKey()
         pagination = Pagination(pageSize: pageSize)
         self.messagesLimit = messagesLimit
     }
