@@ -39,4 +39,22 @@ final class ChannelListFilterScope_Tests: XCTestCase {
             Filter<ChannelListFilterScope<NoExtraData>>.in(.members, values: ids)
         )
     }
+    
+    func test_safeSorting_added() {
+        // Sortings without safe option
+        let sortings: [[Sorting<ChannelListSortingKey>]] = [
+            [.init(key: .createdAt)],
+            [.init(key: .updatedAt), .init(key: .memberCount)]
+        ]
+        
+        // Create queries with sortings
+        let queries = sortings.map {
+            ChannelListQuery<DefaultExtraData.Channel>(filter: .containMembers(userIds: [.unique]), sort: $0)
+        }
+        
+        // Assert safe sorting option is added
+        queries.forEach {
+            XCTAssertEqual($0.sort.last?.key, Sorting<ChannelListSortingKey>(key: .cid).key)
+        }
+    }
 }
