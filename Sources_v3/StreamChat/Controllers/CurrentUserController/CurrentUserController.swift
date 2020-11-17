@@ -634,8 +634,8 @@ public extension CurrentChatUserController {
     /// limits of Swift and the way it handles protocols with associated types, it's required to use `setDelegate` method
     /// instead to set the delegate, if you're using custom extra data types.
     var delegate: CurrentChatUserControllerDelegate? {
-        set { multicastDelegate.mainDelegate = AnyCurrentUserControllerDelegate(newValue) }
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? CurrentChatUserControllerDelegate }
+        set { multicastDelegate.mainDelegate = AnyCurrentUserControllerDelegate(newValue) }
     }
 }
 
