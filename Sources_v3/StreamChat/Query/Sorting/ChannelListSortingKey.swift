@@ -47,3 +47,15 @@ extension ChannelListSortingKey {
         .init(key: rawValue, ascending: isAscending)
     }
 }
+
+/// In case elements have same or `nil` target sorting values it's not possible to guarantee that order of elements will be the same
+/// all the time. So we need to additionally provide safe sorting option.
+extension Array where Element == Sorting<ChannelListSortingKey> {
+    func appendingCidSortingKey() -> [Sorting<ChannelListSortingKey>] {
+        guard !contains(where: { $0.key == .cid }), !isEmpty else {
+            return self
+        }
+        
+        return self + [.init(key: .cid)]
+    }
+}
