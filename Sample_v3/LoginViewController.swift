@@ -135,9 +135,13 @@ extension LoginViewController {
                 $0.backgroundColor = .lightGray
                 $0.channelNameLabel.backgroundColor = .yellow
             }
-            
-            let navigation = UINavigationController(rootViewController: channelList)
 
+            let navigation = UINavigationController(
+                navigationBarClass: channelList.uiConfig.navigation.navigationBar.self,
+                toolbarClass: nil
+            )
+            navigation.viewControllers = [channelList]
+            
             channelList.didSelectChannel = { [weak navigation] channel in
                 let chatStoryboard = UIStoryboard(name: "SimpleChat", bundle: nil)
                 let chat = chatStoryboard
