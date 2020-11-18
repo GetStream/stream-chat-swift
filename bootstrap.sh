@@ -6,9 +6,10 @@
 
 # Install swiftformat 0.45.6
 brew unlink swiftformat
-brew install https://raw.githubusercontent.com/nicklockwood/homebrew-core/0269354fff817670543922c73bb522adca3cc46b/Formula/swiftformat.rb
-brew link swiftformat
-brew switch swiftformat 0.45.6
+brew tap-new getstream/ios
+brew extract --version 0.45.6 swiftformat getstream/ios
+brew reinstall getstream/ios/swiftformat@0.45.6
+brew untap getstream/ios
 
 # Set bash to Strict Mode (http://redsymbol.net/articles/unofficial-bash-strict-mode/)
 set -euo pipefail
