@@ -64,19 +64,22 @@ public extension UIConfig {
         public var channelView: ChatChannelView<ExtraData>.Type
         public var channelViewCell: ChatChannelListCollectionViewCell<ExtraData>.Type
         public var avatarView: AvatarView.Type
+        public var newChannelButton: CreateNewChannelButton.Type
         
         public init(
             channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self,
             channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self,
             channelView: ChatChannelView<ExtraData>.Type = ChatChannelView<ExtraData>.self,
             channelViewCell: ChatChannelListCollectionViewCell<ExtraData>.Type = ChatChannelListCollectionViewCell<ExtraData>.self,
-            avatarView: AvatarView.Type = AvatarView.self
+            avatarView: AvatarView.Type = AvatarView.self,
+            newChannelButton: CreateNewChannelButton.Type = CreateNewChannelButton.self
         ) {
             self.channelCollectionView = channelCollectionView
             self.channelCollectionLayout = channelCollectionLayout
             self.channelView = channelView
             self.channelViewCell = channelViewCell
             self.avatarView = avatarView
+            self.newChannelButton = newChannelButton
         }
     }
 }
