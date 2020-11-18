@@ -30,12 +30,21 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
         return button
     }()
     
+    public private(set) lazy var userAvatarView: CurrentChatUserAvatarView<ExtraData> = {
+        let avatar = uiConfig.currentUser.currentUserView.init(uiConfig: uiConfig)
+        avatar.controller = controller.client.currentUserController()
+        avatar.translatesAutoresizingMaskIntoConstraints = false
+        avatar.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
+        return avatar
+    }()
+    
     // MARK: - Life Cycle
     
     override open func viewDidLoad() {
         super.viewDidLoad()
         
         title = "Stream Chat"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
         
         view.embed(collectionView)
@@ -81,6 +90,10 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
     }
     
     // MARK: Actions
+    
+    @objc open func didTapOnCurrentUserAvatar(_ sender: Any) {
+        debugPrint("didTapOnCurrentUserAvatar")
+    }
     
     @objc open func didTapCreateNewChannel(_ sender: Any) {
         debugPrint("didTapCreateNewChannel")
