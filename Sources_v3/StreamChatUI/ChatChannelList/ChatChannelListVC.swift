@@ -23,10 +23,20 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
         return collection
     }()
     
+    public private(set) lazy var createNewChannelButton: CreateNewChannelButton = {
+        let button = uiConfig.channelList.newChannelButton.init()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
+        return button
+    }()
+    
     // MARK: - Life Cycle
     
     override open func viewDidLoad() {
         super.viewDidLoad()
+        
+        title = "Stream Chat"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
         
         view.embed(collectionView)
         
@@ -68,6 +78,12 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
         let bottomEdge = scrollView.contentOffset.y + scrollView.bounds.height
         guard bottomEdge >= scrollView.contentSize.height else { return }
         controller.loadNextChannels()
+    }
+    
+    // MARK: Actions
+    
+    @objc open func didTapCreateNewChannel(_ sender: Any) {
+        debugPrint("didTapCreateNewChannel")
     }
 }
 
