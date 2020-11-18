@@ -7,11 +7,14 @@ import UIKit
 
 public struct UIConfig<ExtraData: UIExtraDataTypes> {
     public var channelList: ChannelListUI
-
+    public var navigation: Navigation
+    
     public init(
-        channelList: ChannelListUI = .init()
+        channelList: ChannelListUI = .init(),
+        navigation: Navigation = .init()
     ) {
         self.channelList = channelList
+        self.navigation = navigation
     }
 }
 
@@ -34,6 +37,20 @@ public extension UIConfig {
         set {
             let key = String(describing: ExtraData.self)
             defaults[key] = newValue
+        }
+    }
+}
+
+// MARK: - Navigation
+
+public extension UIConfig {
+    struct Navigation {
+        public var navigationBar: ChatNavigationBar.Type
+        
+        public init(
+            navigationBar: ChatNavigationBar.Type = ChatNavigationBar.self
+        ) {
+            self.navigationBar = navigationBar
         }
     }
 }
