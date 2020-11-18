@@ -7,13 +7,16 @@ import UIKit
 
 public struct UIConfig<ExtraData: UIExtraDataTypes> {
     public var channelList: ChannelListUI
+    public var currentUser: CurrentUserUI
     public var navigation: Navigation
     
     public init(
         channelList: ChannelListUI = .init(),
+        currentUser: CurrentUserUI = .init(),
         navigation: Navigation = .init()
     ) {
         self.channelList = channelList
+        self.currentUser = currentUser
         self.navigation = navigation
     }
 }
@@ -80,6 +83,23 @@ public extension UIConfig {
             self.channelViewCell = channelViewCell
             self.avatarView = avatarView
             self.newChannelButton = newChannelButton
+        }
+    }
+}
+
+// MARK: - CurrentUser
+
+public extension UIConfig {
+    struct CurrentUserUI {
+        public var currentUserView: CurrentChatUserAvatarView<ExtraData>.Type
+        public var currentUserAvatarView: AvatarView.Type
+
+        public init(
+            currentUserView: CurrentChatUserAvatarView<ExtraData>.Type = CurrentChatUserAvatarView<ExtraData>.self,
+            currentUserAvatarView: AvatarView.Type = AvatarView.self
+        ) {
+            self.currentUserView = currentUserView
+            self.currentUserAvatarView = currentUserAvatarView
         }
     }
 }
