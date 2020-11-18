@@ -831,6 +831,7 @@
 		8850B929255C286B003AED69 /* UIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIConfig.swift; sourceTree = "<group>"; };
 		8850B93B255C3168003AED69 /* ContainerStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStackView.swift; sourceTree = "<group>"; };
 		8850B945255C3B41003AED69 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		8850FE86256558A200C8D534 /* ChatChannelListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListRouter.swift; sourceTree = "<group>"; };
 		8850FE90256558B200C8D534 /* ChatRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRouter.swift; sourceTree = "<group>"; };
 		885B3D7625642B3D003E6BDF /* CurrentChatUserAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentChatUserAvatarView.swift; sourceTree = "<group>"; };
 		885B3D7C25642B88003E6BDF /* CreateNewChannelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewChannelButton.swift; sourceTree = "<group>"; };
@@ -1191,6 +1192,7 @@
 			isa = PBXGroup;
 			children = (
 				790882BF25486ADB00896F03 /* ChatChannelListVC.swift */,
+				8850FE86256558A200C8D534 /* ChatChannelListRouter.swift */,
 				790882C925486B0500896F03 /* ChatChannelListCollectionView.swift */,
 				790882CF25486B2300896F03 /* ChatChannelListCollectionViewDataSource.swift */,
 				790882D525486B4A00896F03 /* ChatChannelListCollectionViewLayout.swift */,
@@ -2553,6 +2555,7 @@
 				8850FE91256558B200C8D534 /* ChatRouter.swift in Sources */,
 				790883522548771100896F03 /* ChatChannelNavigationBar.swift in Sources */,
 				7952764A255D86BD008531E8 /* UIExtraData.swift in Sources */,
+				8850FE87256558A200C8D534 /* ChatChannelListRouter.swift in Sources */,
 				88BD82B02549D18F00369074 /* ChatChannelView.swift in Sources */,
 				8850B914255C1F77003AED69 /* NameAndImageProviding.swift in Sources */,
 				7908834D2548770C00896F03 /* ChatMessageCollectionViewCell.swift in Sources */,
