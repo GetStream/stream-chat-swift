@@ -272,6 +272,7 @@
 		8850B92A255C286B003AED69 /* UIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850B929255C286B003AED69 /* UIConfig.swift */; };
 		8850B93C255C3168003AED69 /* ContainerStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850B93B255C3168003AED69 /* ContainerStackView.swift */; };
 		8850B946255C3B41003AED69 /* AvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850B945255C3B41003AED69 /* AvatarView.swift */; };
+		885B3D7D25642B88003E6BDF /* CreateNewChannelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885B3D7C25642B88003E6BDF /* CreateNewChannelButton.swift */; };
 		888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888123D1255D430B00070D5A /* UIView+Extensions.swift */; };
 		888123E0255D4D2100070D5A /* UIImageView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888123DF255D4D2100070D5A /* UIImageView+Extensions.swift */; };
 		888E8C36252B2AAF00195E03 /* UserController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */; };
@@ -827,6 +828,7 @@
 		8850B929255C286B003AED69 /* UIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIConfig.swift; sourceTree = "<group>"; };
 		8850B93B255C3168003AED69 /* ContainerStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStackView.swift; sourceTree = "<group>"; };
 		8850B945255C3B41003AED69 /* AvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvatarView.swift; sourceTree = "<group>"; };
+		885B3D7C25642B88003E6BDF /* CreateNewChannelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewChannelButton.swift; sourceTree = "<group>"; };
 		888123D1255D430B00070D5A /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		888123DF255D4D2100070D5A /* UIImageView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+Extensions.swift"; sourceTree = "<group>"; };
 		888E8C35252B2AAF00195E03 /* UserController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserController+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -1856,6 +1858,7 @@
 				7908830225486CA700896F03 /* ChatNavigationBar.swift */,
 				8850B93B255C3168003AED69 /* ContainerStackView.swift */,
 				8850B945255C3B41003AED69 /* AvatarView.swift */,
+				885B3D7C25642B88003E6BDF /* CreateNewChannelButton.swift */,
 			);
 			path = "Common Views";
 			sourceTree = "<group>";
@@ -2546,6 +2549,7 @@
 				8850B914255C1F77003AED69 /* NameAndImageProviding.swift in Sources */,
 				7908834D2548770C00896F03 /* ChatMessageCollectionViewCell.swift in Sources */,
 				7908830325486CA700896F03 /* ChatNavigationBar.swift in Sources */,
+				885B3D7D25642B88003E6BDF /* CreateNewChannelButton.swift in Sources */,
 				79088334254876EA00896F03 /* ChatChannelViewController.swift in Sources */,
 				790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */,
 				79D86E832562BAB900DCD1D2 /* AppearanceSetting.swift in Sources */,
