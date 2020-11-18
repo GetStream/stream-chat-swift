@@ -141,14 +141,6 @@ extension LoginViewController {
                 toolbarClass: nil
             )
             navigation.viewControllers = [channelList]
-            
-            channelList.didSelectChannel = { [weak navigation] channel in
-                let chatStoryboard = UIStoryboard(name: "SimpleChat", bundle: nil)
-                let chat = chatStoryboard
-                    .instantiateViewController(withIdentifier: "SimpleChatViewController") as! SimpleChatViewController
-                chat.channelController = chatClient.channelController(for: channel.cid)
-                navigation?.pushViewController(chat, animated: true)
-            }
 
             UIView.transition(with: view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
                 self.view.window?.rootViewController = navigation
@@ -156,5 +148,15 @@ extension LoginViewController {
         default:
             return
         }
+    }
+}
+
+final class MyChatChannelListRouter: ChatChannelListRouter<DefaultExtraData> {
+    override func openChat(for channel: _ChatChannel<DefaultExtraData>) {
+        let chatStoryboard = UIStoryboard(name: "SimpleChat", bundle: nil)
+        let chatScreen = chatStoryboard
+            .instantiateViewController(withIdentifier: "SimpleChatViewController") as! SimpleChatViewController
+        chatScreen.channelController = rootViewController?.controller.client.channelController(for: channel.cid)
+        navigationController?.pushViewController(chatScreen, animated: true)
     }
 }

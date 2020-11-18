@@ -12,9 +12,10 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
     
     public var controller: _ChatChannelListController<ExtraData>!
     public var uiConfig: UIConfig<ExtraData> = .default
-    public var didSelectChannel: (_ChatChannel<ExtraData>) -> Void = { _ in }
     
-    private lazy var collectionView: ChatChannelListCollectionView = {
+    public private(set) lazy var router = uiConfig.navigation.channelListRouter.init(rootViewController: self)
+    
+    public private(set) lazy var collectionView: ChatChannelListCollectionView = {
         let layout = uiConfig.channelList.channelCollectionLayout.init()
         let collection = uiConfig.channelList.channelCollectionView.init(layout: layout)
         collection.register(uiConfig.channelList.channelViewCell.self, forCellWithReuseIdentifier: "Cell")
@@ -78,7 +79,7 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
     
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let channel = controller.channels[indexPath.row]
-        didSelectChannel(channel)
+        router.openChat(for: channel)
     }
     
     // MARK: - UIScrollViewDelegate
@@ -92,11 +93,13 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
     // MARK: Actions
     
     @objc open func didTapOnCurrentUserAvatar(_ sender: Any) {
-        debugPrint("didTapOnCurrentUserAvatar")
+        guard let currentUser = userAvatarView.controller?.currentUser else { return }
+        
+        router.openCurrentUserProfile(for: currentUser)
     }
     
     @objc open func didTapCreateNewChannel(_ sender: Any) {
-        debugPrint("didTapCreateNewChannel")
+        router.openCreateNewChannel()
     }
 }
 
