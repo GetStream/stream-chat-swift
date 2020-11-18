@@ -33,7 +33,7 @@ struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
     let type: AttachmentType
     /// Actions from a command (see `Action`, `Command`).
     let actions: [AttachmentAction]
-    /// A URL.
+    /// A URL. Depends on type of the attachment (e.g. some asset URL, enriched URL, tappable title URL)
     let url: URL?
     /// An image preview URL.
     let imageURL: URL?
@@ -43,7 +43,7 @@ struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
     let extraData: ExtraData
     
     /// Hash used to uniquely identify an object to store it in DB.
-    var hash: String {
+    var customHash: String {
         [title, author, text, type.rawValue, url?.absoluteString, imageURL?.absoluteString]
             .compactMap { $0 }
             .reduce("", +)
