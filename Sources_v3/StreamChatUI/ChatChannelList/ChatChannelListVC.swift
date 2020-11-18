@@ -44,11 +44,9 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
     override open func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "Stream Chat"
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
-        
         view.embed(collectionView)
+        
+        applyDefaultAppearance()
         
         controller.setDelegate(self)
         controller.synchronize()
@@ -124,5 +122,15 @@ extension ChatChannelListVC: _ChatChannelListControllerDelegate {
                 }
             }
         }, completion: nil)
+    }
+}
+
+// MARK: - AppearanceSetting
+
+extension ChatChannelListVC: AppearanceSetting {
+    public static func initialAppearanceSetup(_ controller: ChatChannelListVC<ExtraData>) {
+        controller.title = "Stream Chat"
+        controller.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: controller.userAvatarView)
+        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: controller.createNewChannelButton)
     }
 }
