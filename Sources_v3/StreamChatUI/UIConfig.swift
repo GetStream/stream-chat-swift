@@ -49,11 +49,14 @@ public extension UIConfig {
 public extension UIConfig {
     struct Navigation {
         public var navigationBar: ChatNavigationBar.Type
+        public var channelListRouter: ChatChannelListRouter<ExtraData>.Type
         
         public init(
-            navigationBar: ChatNavigationBar.Type = ChatNavigationBar.self
+            navigationBar: ChatNavigationBar.Type = ChatNavigationBar.self,
+            channelListRouter: ChatChannelListRouter<ExtraData>.Type = ChatChannelListRouter<ExtraData>.self
         ) {
             self.navigationBar = navigationBar
+            self.channelListRouter = channelListRouter
         }
     }
 }
