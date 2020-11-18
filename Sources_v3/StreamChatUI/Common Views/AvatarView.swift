@@ -5,7 +5,6 @@
 import UIKit
 
 open class AvatarView: UIView {
-    
     // MARK: - Subviews
     
     public let imageView: UIImageView = {
@@ -13,6 +12,13 @@ open class AvatarView: UIView {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
+    
+    // MARK: - Overrides
+    
+    open var defaultIntrinsicContentSize: CGSize?
+    override open var intrinsicContentSize: CGSize {
+        defaultIntrinsicContentSize ?? imageView.intrinsicContentSize
+    }
     
     // MARK: - Init
     
@@ -27,6 +33,7 @@ open class AvatarView: UIView {
     }
     
     private func commonInit() {
+        applyDefaultAppearance()
         setupLayout()
         setupAppearance()
     }
@@ -47,7 +54,16 @@ open class AvatarView: UIView {
     }
     
     open func setupLayout() {
+        imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         embed(imageView)
-        widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+    }
+}
+
+// MARK: - AppearanceSetting
+
+extension AvatarView: AppearanceSetting {
+    public class func initialAppearanceSetup(_ view: AvatarView) {
+        view.defaultIntrinsicContentSize = .init(width: 40, height: 40)
     }
 }
