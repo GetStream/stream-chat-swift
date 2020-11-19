@@ -105,6 +105,9 @@ public enum Event: Decodable, Equatable {
     /// When a user was removed from a channel (when the user invited).
     case notificationRemovedFromChannel(Channel, EventType)
     
+    /// When a channel was deleted (when watching the channel).
+    case notificationChannelDeleted(Channel, EventType)
+    
     /// When the user was invited to join a channel (when the user invited).
     case notificationInvited(Channel, EventType)
     /// When the user accepts an invite (when the user invited).
@@ -157,6 +160,8 @@ public enum Event: Decodable, Equatable {
              
              .notificationAddedToChannel(_, _, let type),
              .notificationRemovedFromChannel(_, let type),
+             
+             .notificationChannelDeleted(_, let type),
              
              .notificationInvited(_, let type),
              .notificationInviteAccepted(_, let type),
@@ -211,7 +216,8 @@ public enum Event: Decodable, Equatable {
              .notificationRemovedFromChannel(let channel, _),
              .notificationInvited(let channel, _),
              .notificationInviteAccepted(let channel, _),
-             .notificationInviteRejected(let channel, _):
+             .notificationInviteRejected(let channel, _),
+             .notificationChannelDeleted(let channel, _):
             return channel.cid
         }
     }
@@ -255,7 +261,8 @@ public enum Event: Decodable, Equatable {
              .notificationRemovedFromChannel,
              .notificationInvited,
              .notificationInviteAccepted,
-             .notificationInviteRejected:
+             .notificationInviteRejected,
+             .notificationChannelDeleted:
             return nil
         }
     }
@@ -271,7 +278,8 @@ public enum Event: Decodable, Equatable {
              .notificationRemovedFromChannel,
              .notificationInvited,
              .notificationInviteAccepted,
-             .notificationInviteRejected:
+             .notificationInviteRejected,
+             .notificationChannelDeleted:
             return true
         default:
             return false
@@ -436,6 +444,8 @@ public enum Event: Decodable, Equatable {
         case .notificationMessageNew:
             let watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount) ?? 0
             self = try .notificationMessageNew(message(), channel(), unreadCount(), watcherCount, type)
+        case .notificationChannelDeleted:
+            self = try .notificationChannelDeleted(channel(), type)
             
         // Invites
         case .notificationInvited:
