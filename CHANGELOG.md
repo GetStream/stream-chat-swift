@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- `notificationChannelDeleted` to be received when a channel is deleted while not being watched [#608](https://github.com/GetStream/stream-chat-swift/issues/608)
+
 ### 🔄 Changed
 - `showWebView` function in `ChatViewController` can be overridden. 
   This function will be called when a user taps on a link in a message, or an attachment which isn't an image (such as a video or a file) [#589](https://github.com/GetStream/stream-chat-swift/issues/589)
