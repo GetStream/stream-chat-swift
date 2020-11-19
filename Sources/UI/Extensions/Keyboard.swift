@@ -71,6 +71,10 @@ struct KeyboardNotification: Equatable {
         return height > 0
     }
     
+    var isFloating: Bool {
+        return height > (frame?.height ?? 0)
+    }
+    
     var isHidden: Bool {
         return !isVisible
     }

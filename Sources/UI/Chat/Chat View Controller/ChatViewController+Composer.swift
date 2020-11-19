@@ -61,6 +61,10 @@ extension Reactive where Base: ChatViewController {
                 contentOffset.y += min(bottom, contentHeight - tableHeight)
             }
             
+            if keyboardNotification.isFloating {
+                bottom = 0
+            }
+            
             func animations() {
                 chatViewController.view.removeAllAnimations()
                 chatViewController.additionalSafeAreaInsets = UIEdgeInsets(top: 0, left: 0, bottom: bottom, right: 0)
