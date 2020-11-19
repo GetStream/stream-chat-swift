@@ -102,7 +102,8 @@ final class EventTests: XCTestCase {
              .notificationRemovedFromChannel,
              .notificationInvited,
              .notificationInviteAccepted,
-             .notificationInviteRejected:
+             .notificationInviteRejected,
+             .notificationChannelDeleted:
             return event == event
         }
     }

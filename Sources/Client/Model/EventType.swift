@@ -82,6 +82,8 @@ public enum EventType: String, Codable, CaseIterable {
     case notificationAddedToChannel = "notification.added_to_channel"
     /// When a user was removed from a channel (when the user invited).
     case notificationRemovedFromChannel = "notification.removed_from_channel"
+    /// When a channel was deleted (when not watching the channel).
+    case notificationChannelDeleted = "notification.channel_deleted"
     
     /// When the user was invited to join a channel (when the user invited).
     case notificationInvited = "notification.invited"

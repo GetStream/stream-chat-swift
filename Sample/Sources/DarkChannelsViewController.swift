@@ -194,6 +194,10 @@ final class DarkChannelsViewController: ChannelsViewController {
             }))
         }
         
+        alertController.addAction(.init(title: "Delete", style: .destructive, handler: { _ in
+            channelPresenter.channel.delete { _ in }
+        }))
+        
         present(alertController, animated: true)
     }
     
