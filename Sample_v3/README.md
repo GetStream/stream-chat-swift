@@ -10,7 +10,7 @@ both **StreamChat** and **StreamChatUI** (coming soon).
 ### 1. Installation
 
 1. Close this repository.
-2. Open `StreamChat_v3.xcodeproj` on Xcode.
+2. Open `Sample.xcodeproj` on Xcode.
 3. Wait for Swift Package Manager to install dependencies.
 4. Select the `Sample` target and run in your preferred device.
 
