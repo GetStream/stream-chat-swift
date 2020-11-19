@@ -47,22 +47,22 @@ extension Reactive where Base: ChatViewController {
             
             var contentOffset = CGPoint.zero
             
-            let contentHeight = chatViewController.tableView.contentSize.height
-                + chatViewController.tableView.contentInset.top
-                + chatViewController.tableView.contentInset.bottom
-            
-            let tableHeight = chatViewController.tableView.bounds.height - keyboardNotification.height
-            
-            if keyboardNotification.animation != nil,
-                keyboardNotification.isVisible,
-                !chatViewController.keyboardIsVisible,
-                tableHeight < contentHeight {
-                contentOffset = chatViewController.tableView.contentOffset
-                contentOffset.y += min(bottom, contentHeight - tableHeight)
-            }
-            
             if keyboardNotification.isFloating {
                 bottom = 0
+            } else {
+                let contentHeight = chatViewController.tableView.contentSize.height
+                    + chatViewController.tableView.contentInset.top
+                    + chatViewController.tableView.contentInset.bottom
+                
+                let tableHeight = chatViewController.tableView.bounds.height - keyboardNotification.height
+                
+                if keyboardNotification.animation != nil,
+                    keyboardNotification.isVisible,
+                    !chatViewController.keyboardIsVisible,
+                    tableHeight < contentHeight {
+                    contentOffset = chatViewController.tableView.contentOffset
+                    contentOffset.y += min(bottom, contentHeight - tableHeight)
+                }
             }
             
             func animations() {
