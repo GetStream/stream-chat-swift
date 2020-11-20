@@ -67,25 +67,41 @@ public extension UIConfig {
     struct ChannelListUI {
         public var channelCollectionView: ChatChannelListCollectionView.Type
         public var channelCollectionLayout: UICollectionViewLayout.Type
-        public var channelView: ChatChannelView<ExtraData>.Type
+        public var channelListItemView: ChatChannelListItemView<ExtraData>.Type
         public var channelViewCell: ChatChannelListCollectionViewCell<ExtraData>.Type
-        public var avatarView: AvatarView.Type
         public var newChannelButton: CreateNewChannelButton.Type
-        
+        public var channelListItemSubviews: ChannelListItemSubviews
+
         public init(
             channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self,
             channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self,
-            channelView: ChatChannelView<ExtraData>.Type = ChatChannelView<ExtraData>.self,
+            channelListItemView: ChatChannelListItemView<ExtraData>.Type = ChatChannelListItemView<ExtraData>.self,
             channelViewCell: ChatChannelListCollectionViewCell<ExtraData>.Type = ChatChannelListCollectionViewCell<ExtraData>.self,
-            avatarView: AvatarView.Type = AvatarView.self,
-            newChannelButton: CreateNewChannelButton.Type = CreateNewChannelButton.self
+            newChannelButton: CreateNewChannelButton.Type = CreateNewChannelButton.self,
+            channelListItemSubviews: ChannelListItemSubviews = .init()
         ) {
             self.channelCollectionView = channelCollectionView
             self.channelCollectionLayout = channelCollectionLayout
-            self.channelView = channelView
+            self.channelListItemView = channelListItemView
             self.channelViewCell = channelViewCell
-            self.avatarView = avatarView
+            self.channelListItemSubviews = channelListItemSubviews
             self.newChannelButton = newChannelButton
+        }
+    }
+    
+    struct ChannelListItemSubviews {
+        public var avatarView: ChatChannelAvatarView<ExtraData>.Type
+        public var unreadCountView: ChatUnreadCountView.Type
+        public var readStatusView: ChatReadStatusCheckmarkView.Type
+        
+        public init(
+            avatarView: ChatChannelAvatarView<ExtraData>.Type = ChatChannelAvatarView.self,
+            unreadCountView: ChatUnreadCountView.Type = ChatUnreadCountView.self,
+            readStatusView: ChatReadStatusCheckmarkView.Type = ChatReadStatusCheckmarkView.self
+        ) {
+            self.avatarView = avatarView
+            self.unreadCountView = unreadCountView
+            self.readStatusView = readStatusView
         }
     }
 }

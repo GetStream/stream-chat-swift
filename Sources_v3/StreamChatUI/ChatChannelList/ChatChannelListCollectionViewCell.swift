@@ -6,13 +6,12 @@ import Foundation
 import UIKit
 
 open class ChatChannelListCollectionViewCell<ExtraData: UIExtraDataTypes>: UICollectionViewCell {
-    
     // MARK: - Properties
     
     var uiConfig: UIConfig<ExtraData> = .default
     
-    public private(set) lazy var channelView: ChatChannelView<ExtraData> = {
-        let view = uiConfig.channelList.channelView.init(uiConfig: uiConfig)
+    public private(set) lazy var channelView: ChatChannelListItemView<ExtraData> = {
+        let view = uiConfig.channelList.channelListItemView.init(uiConfig: uiConfig)
         contentView.embed(view)
         return view
     }()

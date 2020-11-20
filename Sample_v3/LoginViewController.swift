@@ -131,9 +131,8 @@ extension LoginViewController {
             channelList.controller = channelListController
         
             // An example of change default appearance
-            ChatChannelView<DefaultExtraData>.defaultAppearance.addRule {
-                $0.backgroundColor = .lightGray
-                $0.channelNameLabel.backgroundColor = .yellow
+            ChatChannelListItemView<DefaultExtraData>.defaultAppearance.addRule {
+                $0.unreadCountView.backgroundColor = .systemPink
             }
 
             let navigation = UINavigationController(
