@@ -94,15 +94,15 @@ public extension UIConfig {
 
 public extension UIConfig {
     struct CurrentUserUI {
-        public var currentUserView: CurrentChatUserAvatarView<ExtraData>.Type
-        public var currentUserAvatarView: AvatarView.Type
-
+        public var currentUserViewAvatarView: CurrentChatUserAvatarView<ExtraData>.Type
+        public var avatarView: AvatarView.Type
+        
         public init(
-            currentUserView: CurrentChatUserAvatarView<ExtraData>.Type = CurrentChatUserAvatarView<ExtraData>.self,
-            currentUserAvatarView: AvatarView.Type = AvatarView.self
+            currentUserViewAvatarView: CurrentChatUserAvatarView<ExtraData>.Type = CurrentChatUserAvatarView<ExtraData>.self,
+            avatarView: AvatarView.Type = AvatarView.self
         ) {
-            self.currentUserView = currentUserView
-            self.currentUserAvatarView = currentUserAvatarView
+            self.currentUserViewAvatarView = currentUserViewAvatarView
+            self.avatarView = avatarView
         }
     }
 }
