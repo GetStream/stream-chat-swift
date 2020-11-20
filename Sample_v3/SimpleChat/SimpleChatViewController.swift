@@ -5,26 +5,19 @@
 import StreamChat
 import UIKit
 
-///
-/// # SimpleChatViewController
-///
-/// A `UITableViewController` subclass that displays and manages a channel.  It uses the `ChannelController`  class to make calls to the Stream Chat API and listens to
-/// events by conforming to `ChannelControllerDelegate`.
-///
-final class SimpleChatViewController: UITableViewController, ChatChannelControllerDelegate, UITextViewDelegate {
-    // MARK: - Properties
-    
-    ///
-    /// # channelController
-    ///
-    ///  The property below holds the `ChannelController` object.  It is used to make calls to the Stream Chat API and to listen to the events. After it is set,
-    ///  `channelController.delegate` needs to receive a reference to a `ChannelControllerDelegate`, which, in this case, is `self`. After the delegate is set,
-    ///  `channelController.synchronize()` must be called to start listening to events related to the channel. Additionally, `channelController.client` holds a
-    ///  reference to the `ChatClient` which created this instance. It can be used to create other controllers.
-    ///
+/// A `UITableViewController` subclass that displays and manages a channel.
+/// It uses the `ChannelController`  class to make calls to the Stream Chat API
+/// and listens to events by conforming to `ChannelControllerDelegate`.
+final class SimpleChatViewController: UITableViewController {
+    var composerView = ComposerView.instantiateFromNib()!
+
+    /// `ChannelController` is used to make calls to the Stream Chat API and to listen to channel related the events.
+    /// `channelController.client` holds a reference to the `ChatClient` which created this instance. It can be used to create other controllers.
     var channelController: ChatChannelController! {
         didSet {
+            /// Provide `ChannelControllerDelegate` that will receive channel related events
             channelController.delegate = self
+            /// it's good practice to synchronize local storage with backend on start
             channelController.synchronize()
             
             if let channel = channelController?.channel {
@@ -32,19 +25,62 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
             }
         }
     }
-    
-    // MARK: - ChannelControllerDelegate
 
-    ///
-    /// The methods below are part of the `ChannelControllerDelegate` protocol and will be called when events happen in the channel. In order for these updates to happen,
-    /// `channelController.delegate` must be equal `self` and `channelController.synchronize()` must be called.
-    ///
+    // MARK: - Message actions
+    func deleteMessage(with id: MessageId) {
+        guard let cid = channelController.cid else {
+            fatalError("channelController will always have cid if channel created and we have messages available.")
+        }
+        let messageController = channelController.client.messageController(cid: cid, messageId: id)
+        messageController.deleteMessage()
+    }
+
+    func updateMessage(with id: MessageId, text: String) {
+        guard let cid = channelController.cid else {
+            fatalError("channelController will always have cid if channel created and we have messages available.")
+        }
+        let messageController = channelController.client.messageController(cid: cid, messageId: id)
+        messageController.editMessage(text: text)
+    }
+
+    func sendMessage(with text: String) {
+        channelController?.createNewMessage(text: text)
+    }
+
+    // MARK: - User actions
+    func banUser(with id: UserId) {
+        guard let cid = channelController.cid else {
+            fatalError("channelController will always have cid if channel created and we have messages available.")
+        }
+        let memberController = channelController.client.memberController(userId: id, in: cid)
+        memberController.ban()
+    }
+
+    func unbanUser(with id: UserId) {
+        guard let cid = channelController.cid else {
+            fatalError("channelController will always have cid if channel created and we have messages available.")
+        }
+        let memberController = channelController.client.memberController(userId: id, in: cid)
+        memberController.unban()
+    }
+
+    // MARK: - Channel actions
+    func deleteCurrentChannel() {
+        channelController?.deleteChannel {
+            guard let error = $0 else {
+                return print("Channel deleted successfully")
+            }
+            self.alert(title: "Error", message: "Error deleting channel: \(error)")
+        }
+    }
+}
+// MARK: - ChannelControllerDelegate
+extension SimpleChatViewController: ChatChannelControllerDelegate {
+    /// The methods below are part of the `ChannelControllerDelegate` protocol and will be called when events happen in the channel.
+    /// In order for these updates to happen, `channelController.delegate` must be equal `self`
     
-    ///
-    /// # didUpdateMessages
-    ///
-    /// The method below receives the `changes` that happen in the list of messages and updates the `UITableView` accordingly.
-    ///
+
+    /// Receives the `changes` that happen in the list of messages and updates the `UITableView` accordingly.
     func channelController(_ channelController: ChatChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
         tableView.beginUpdates()
         
@@ -63,13 +99,8 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         
         tableView.endUpdates()
     }
-    
-    ///
-    /// # didUpdateChannel
-    ///
-    /// The method below reacts to changes in the `Channel` entity. It updates the view controller's `title` and its `navigationItem.prompt` to display the count of channel
-    /// members and the count of online members. When the channel is deleted, this view controller is dismissed.
-    ///
+
+    /// The method below reacts to changes in the `Channel` entity.
     func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
         switch channel {
         case .create:
@@ -77,50 +108,52 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         case .update:
             updateNavigationTitleAndPrompt()
         case .remove:
+            /// Current channel have been deleted, controller should be dismissed
             dismiss(animated: true)
         }
     }
     
-    ///
-    /// # didChangeTypingMembers
-    ///
+
     /// The method below receives a set of `Member` that are currently typing.
-    ///
     func channelController(
         _ channelController: ChatChannelController,
         didChangeTypingMembers typingMembers: Set<ChatChannelMember>
     ) {
         updateNavigationTitleAndPrompt()
     }
-    
-    // MARK: - UITableViewDataSource
+}
 
-    ///
-    /// The methods below are part of the `UITableViewDataSource` protocol and will be called when the `UITableView` needs information which will be given by the
-    /// `channelController` object.
-    ///
-    
-    ///
-    /// # numberOfRowsInSection
-    ///
-    /// The method below returns the current loaded message count `channelController.messages.count`. It will increase as more messages are loaded or decrease as
-    /// messages are deleted.
-    ///
+// MARK: - UITextViewDelegate
+extension SimpleChatViewController: UITextViewDelegate {
+    /// The methods below are part of the `UITextViewDelegate` protocol and will be called when some event happened
+    /// in the  `ComposerView`'s `UITextView`  which will cause some action done by the `channelController` object.
+
+    func textViewDidChange(_ textView: UITextView) {
+        /// Notify channel members, that current user typing
+        channelController.sendKeystrokeEvent()
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+        /// Notify channel members, that current user stop typing
+        channelController.sendStopTypingEvent()
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension SimpleChatViewController {
+
+    /// The method below returns the current loaded message count `channelController.messages.count`.
+    ///  It will increase as more messages are loaded or decrease as messages are deleted.
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         channelController.messages.count
     }
-    
-    ///
-    /// # cellForRowAt
-    ///
-    /// The method below returns a cell configured based on the message in position `indexPath.row` of `channelController.messages`. It also highlights the cell based
-    /// on the message's `localState` which when different from `nil` means some local work is being done on it which is not completed yet.
-    ///
+
+    /// The method below returns a cell configured based on the message in position `indexPath.row` of `channelController.messages`.
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = channelController.messages[indexPath.row]
-        
+
         let cell: UITableViewCell
-        
+
         switch message.type {
         case .deleted:
             cell = messageCellWithAuthor(nil, messageText: "❌ the message was deleted")
@@ -129,7 +162,8 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         default:
             cell = messageCellWithAuthor(message.author.name ?? message.author.id, messageText: message.text)
         }
-        
+
+        /// Not `nil` message's `localState` means message is not synchronized with server yet
         cell.backgroundColor = message.localState == nil ? .white : .lightGray
         
         // iOS 13 and over: We can use context menus
@@ -141,78 +175,42 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         
         return cell
     }
-    
-    // MARK: - UITableViewDelegate
+}
 
-    ///
-    /// The methods below are part of the `UITableViewDelegate` protocol and will be called when some event happened in the `UITableView`  which will cause some action
-    /// done by the `channelController` object.
-    ///
-    
-    ///
-    /// # willDisplay
-    ///
-    /// The method below handles the case when the last cell in the message list is displayed by calling `channelController?.loadNextMessages()` to fetch more
-    /// messages.
-    ///
+// MARK: - UITableViewDelegate
+extension SimpleChatViewController {
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         let lastSection = tableView.numberOfSections - 1
         let lastRow = tableView.numberOfRows(inSection: indexPath.section) - 1
         let lastIndexPath = IndexPath(row: lastRow, section: lastSection)
-        
+        /// when user scrolls to last cell in table, load more messages
         if indexPath == lastIndexPath {
             channelController?.loadNextMessages()
         }
     }
-    
-    ///
-    /// # canEditRowAt
-    ///
-    /// The method below returns a bool indicating whether the message can be edited.
-    /// The editing is allowed for non-deleted messages
-    ///
+
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        /// The editing is allowed for non-deleted messages only
         channelController.messages[indexPath.row].deletedAt == nil
     }
-    
-    ///
-    /// # willBeginEditingRowAt
-    ///
-    /// In this method we get a swipe container and apply the same transform as the tableView has.
-    /// It fixes the bug when the list is in `listOrdering == .bottomToTop` but the swipe actions are
-    /// upside-down
-    ///
+
     override func tableView(_ tableView: UITableView, willBeginEditingRowAt indexPath: IndexPath) {
+        /// Fixes the bug when the list is in `listOrdering == .bottomToTop` but the swipe actions are upside-down
         tableView.cellForRow(at: indexPath)?.swipeActionsContainer?.transform = tableView.transform
     }
-    
-    ///
-    /// # trailingSwipeActionsConfigurationForRowAt
-    ///
-    /// The method below returns a list of swipe actions available on the message
-    ///
+
     override func tableView(
         _ tableView: UITableView,
         trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath
     ) -> UISwipeActionsConfiguration? {
-        guard let cid = channelController.cid else {
-            fatalError("channelController will always have cid if channel created and we have messages available.")
-        }
-        
         let message = channelController.messages[indexPath.row]
-        
-        let messageController = channelController.client.messageController(
-            cid: cid,
-            messageId: message.id
-        )
-        
-        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { _, _, _ in
-            messageController.deleteMessage()
+
+        let deleteAction = UIContextualAction(style: .destructive, title: "Delete") { [weak self] _, _, _ in
+            self?.deleteMessage(with: message.id)
         }
-        
         let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] _, _, _ in
             self?.showTextEditingAlert(for: message.text) {
-                messageController.editMessage(text: $0)
+                self?.updateMessage(with: message.id, text: $0)
             }
         }
         
@@ -220,23 +218,13 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         configuration.performsFirstActionWithFullSwipe = true
         return configuration
     }
-    
-    ///
-    /// # contextMenuConfigurationForRowAt
-    ///
-    /// The method below returns the context menu with actions that can be taken on the message such as deleting and editing, or on the message's author such as banning and
-    /// unbanning.
-    ///
+
     @available(iOS 13, *)
     override func tableView(
         _ tableView: UITableView,
         contextMenuConfigurationForRowAt indexPath: IndexPath,
         point: CGPoint
     ) -> UIContextMenuConfiguration? {
-        guard let cid = channelController.cid else {
-            return nil
-        }
-        
         let message = channelController.messages[indexPath.row]
         
         var actions = [UIAction]()
@@ -245,15 +233,10 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         let isMessageFromCurrentUser = message.author.id == currentUserId
         
         if isMessageFromCurrentUser {
-            let messageController = channelController.client.messageController(
-                cid: cid,
-                messageId: message.id
-            )
-            
             // Edit message
             actions.append(UIAction(title: "Edit", image: UIImage(systemName: "pencil")) { [weak self] _ in
                 self?.showTextEditingAlert(for: message.text) {
-                    messageController.editMessage(text: $0)
+                    self?.updateMessage(with: message.id, text: $0)
                 }
             })
             
@@ -262,44 +245,40 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
                 title: "Delete",
                 image: UIImage(systemName: "trash"),
                 attributes: [.destructive]
-            ) { _ in
-                messageController.deleteMessage()
+            ) { [weak self] _ in
+                self?.deleteMessage(with: message.id)
             })
         } else {
-            let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
-            
             // Ban / Unban user
             if message.author.isBanned {
                 actions.append(UIAction(
                     title: "Unban",
                     image: UIImage(systemName: "checkmark.square")
-                ) { _ in
-                    memberController.unban()
+                ) { [weak self] _ in
+                    self?.unbanUser(with: message.author.id)
                 })
             } else {
                 actions.append(UIAction(
                     title: "Ban",
                     image: UIImage(systemName: "exclamationmark.octagon"),
                     attributes: [.destructive]
-                ) { _ in
-                    memberController.ban()
+                ) { [weak self] _ in
+                    self?.banUser(with: message.author.id)
                 })
             }
         }
-        
         view.endEditing(true)
-        
         let menu = UIMenu(title: "Select an action:", children: actions)
-        
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { _ in menu }
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         false
     }
-    
-    // MARK: - Cell Actions
-    
+}
+
+// MARK: - Actions
+extension SimpleChatViewController {
     @objc func didTapMessage(_ sender: UILongPressGestureRecognizer) {
         guard let cell = sender.view as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) else { return }
         let message = channelController.messages[indexPath.row]
@@ -310,97 +289,57 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     }
     
     public func alertController(for message: ChatMessage) -> UIAlertController {
-        guard let cid = channelController.cid else {
-            fatalError("channelController will always have cid if channel created and we have messages available.")
-        }
-        
         let alert = UIAlertController(title: "Select an action:", message: nil, preferredStyle: .actionSheet)
         
         let currentUserId = channelController.client.currentUserId
         let isMessageFromCurrentUser = message.author.id == currentUserId
         
         if isMessageFromCurrentUser {
-            let messageController = channelController.client.messageController(
-                cid: cid,
-                messageId: message.id
-            )
-            
             // Edit message
             alert.addAction(.init(title: "Edit", style: .default, handler: { [weak self] _ in
-                self?.showTextEditingAlert(for: message.text) {
-                    messageController.editMessage(text: $0)
+                self?.showTextEditingAlert(for: message.text) { [weak self] in
+                    self?.updateMessage(with: message.id, text: $0)
                 }
             }))
             
             // Delete message
-            alert.addAction(.init(title: "Delete", style: .destructive, handler: { _ in
-                messageController.deleteMessage()
+            alert.addAction(.init(title: "Delete", style: .destructive, handler: { [weak self] _ in
+                self?.deleteMessage(with: message.id)
             }))
         } else {
-            let memberController = channelController.client.memberController(userId: message.author.id, in: cid)
-            
             // Ban / Unban user
             if message.author.isBanned {
-                alert.addAction(.init(title: "Unban", style: .default, handler: { _ in
-                    memberController.unban()
+                alert.addAction(.init(title: "Unban", style: .default, handler: { [weak self] _ in
+                    self?.unbanUser(with: message.author.id)
                 }))
             } else {
-                alert.addAction(.init(title: "Ban", style: .default, handler: { _ in
-                    memberController.ban()
+                alert.addAction(.init(title: "Ban", style: .default, handler: { [weak self] _ in
+                    self?.banUser(with: message.author.id)
                 }))
             }
         }
         
-        alert.addAction(.init(title: "Cancel", style: .cancel, handler: { _ in }))
-        
+        alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
         return alert
     }
 
-    // MARK: - Button Actions
-
-    ///
-    /// The methods below are called when the user presses some button in the interface to send a message or open the channel menu.
-    ///
-    
-    ///
-    /// # sendMessageButtonTapped
-    ///
-    /// The method below is called when the user taps the send button. To send the message, `channelController?.createNewMessage(text:)` is called.
-    ///
     @objc func sendMessageButtonTapped(_ sender: Any) {
         guard let text = composerView.textView.text else {
             return
         }
-
-        channelController?.createNewMessage(text: text)
-        
         composerView.textView.text = ""
+        sendMessage(with: text)
     }
-    
-    ///
-    /// # showChannelActionsAlert
-    ///
-    /// The method below displays a `UIAlertController` with many actions that can be taken on the `channelController` such as `addMembers`, `removeMembers`,
-    /// and `deleteChannel`.
-    ///
+
     @objc func showChannelActionsAlert() {
         let alert = UIAlertController(title: "Member Actions", message: "", preferredStyle: .actionSheet)
-                
         alert.addAction(.init(title: "Edit members", style: .default, handler: { [weak self] _ in
             self?.showMemberSettings()
         }))
-        
         alert.addAction(.init(title: "Delete the channel", style: .default, handler: { [unowned self] _ in
-            self.channelController?.deleteChannel {
-                guard let error = $0 else {
-                    return print("Channel deleted successfully")
-                }
-                self.alert(title: "Error", message: "Error deleting channel: \(error)")
-            }
+            self.deleteCurrentChannel()
         }))
-        
         alert.addAction(.init(title: "Cancel", style: .cancel, handler: nil))
-        
         present(alert, animated: true)
     }
     
@@ -417,40 +356,11 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         
         show(channelMembersViewController, sender: self)
     }
-    
-    // MARK: - UITextViewDelegate
+}
 
-    ///
-    /// The methods below are part of the `UITextViewDelegate` protocol and will be called when some event happened in the  `ComposerView`'s `UITextView`  which will
-    /// cause some action done by the `channelController` object.
-    ///
-    
-    ///
-    /// # textViewDidChange
-    ///
-    /// The method below handles changes to the `ComposerView`'s `UITextView` by calling `channelController.keystroke()` to send typing events to the channel so
-    /// other users will know the current user is typing.
-    ///
-    func textViewDidChange(_ textView: UITextView) {
-        channelController.sendKeystrokeEvent()
-    }
-    
-    ///
-    /// # textViewDidChange
-    ///
-    /// The method below handles the end of `ComposerView`'s `UITextView` editing by calling `channelController.stopTyping()` to immediately stop the typing
-    /// events so other users will know the current user stopped typing.
-    ///
-    func textViewDidEndEditing(_ textView: UITextView) {
-        channelController.sendStopTypingEvent()
-    }
-
-    // MARK: - UI code
-
-    //
-    // From here on, you'll see mostly UI code that's not related to the ChannelController usage.
-    //
-    var composerView = ComposerView.instantiateFromNib()!
+// MARK: - UI code
+extension SimpleChatViewController {
+    /// From here on, you'll see mostly UI code that's not related to the ChannelController usage.
     override var inputAccessoryView: UIView? {
         guard presentedViewController?.isBeingDismissed != false else {
             return nil
@@ -475,9 +385,7 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
 
         present(alert, animated: true)
     }
-}
 
-extension SimpleChatViewController {
     func updateNavigationTitleAndPrompt() {
         title = channelController.channel.flatMap { createChannelTitle(for: $0, channelController.client.currentUserId) }
         navigationItem.prompt = channelController.channel.flatMap {
@@ -528,7 +436,6 @@ extension SimpleChatViewController {
 }
 
 // MARK: - TableView
-
 extension SimpleChatViewController {
     func setupTableView() {
         tableView.contentInsetAdjustmentBehavior = .never
@@ -538,7 +445,6 @@ extension SimpleChatViewController {
 }
 
 // MARK: - Private
-
 private extension UITableViewCell {
     var swipeActionsContainer: UIView? {
         guard
