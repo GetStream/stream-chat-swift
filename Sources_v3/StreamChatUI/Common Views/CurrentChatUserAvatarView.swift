@@ -7,9 +7,7 @@ import UIKit
 
 open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: UIControl {
     // MARK: - Properties
-    
-    public let uiConfig: UIConfig<ExtraData>
-    
+        
     public var controller: _CurrentChatUserController<ExtraData>? {
         didSet {
             controller?.setDelegate(self)
@@ -20,7 +18,7 @@ open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: UIControl {
     // MARK: - Subviews
     
     public private(set) lazy var avatarView: AvatarView = {
-        let avatar = uiConfig.currentUser.avatarView.init()
+        let avatar = uiConfig(ExtraData.self).currentUser.avatarView.init()
         avatar.translatesAutoresizingMaskIntoConstraints = false
         return avatar
     }()
@@ -49,19 +47,9 @@ open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: UIControl {
     
     // MARK: - Init
     
-    public required init(uiConfig: UIConfig<ExtraData> = .default) {
-        self.uiConfig = uiConfig
-        super.init(frame: .zero)
-        commonInit()
-    }
-    
-    public required init?(coder: NSCoder) {
-        uiConfig = .default
-        super.init(coder: coder)
-        commonInit()
-    }
-    
-    private func commonInit() {
+    override open func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        
         applyDefaultAppearance()
         setupAppearance()
         setupLayout()
@@ -82,6 +70,8 @@ open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: UIControl {
     }
     
     @objc open func updateContent() {
+        guard superview != nil else { return }
+
         if let imageURL = controller?.currentUser?.imageURL {
             avatarView.imageView.setImage(from: imageURL)
         } else {

@@ -11,7 +11,11 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
     // MARK: - Properties
     
     public var controller: _ChatChannelListController<ExtraData>!
-    public var uiConfig: UIConfig<ExtraData> = .default
+    
+    public var uiConfig: UIConfig<ExtraData> {
+        get { view.uiConfig(ExtraData.self) }
+        set { view.register(config: newValue) }
+    }
     
     public private(set) lazy var router = uiConfig.navigation.channelListRouter.init(rootViewController: self)
     
@@ -32,7 +36,7 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
     }()
     
     public private(set) lazy var userAvatarView: CurrentChatUserAvatarView<ExtraData> = {
-        let avatar = uiConfig.currentUser.currentUserViewAvatarView.init(uiConfig: uiConfig)
+        let avatar = uiConfig.currentUser.currentUserViewAvatarView.init()
         avatar.controller = controller.client.currentUserController()
         avatar.translatesAutoresizingMaskIntoConstraints = false
         avatar.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
@@ -66,8 +70,7 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
             withReuseIdentifier: "Cell",
             for: indexPath
         ) as! ChatChannelListCollectionViewCell<ExtraData>
-    
-        cell.uiConfig = uiConfig
+        
         cell.channelView.channel = controller.channels[indexPath.row]
         
         return cell

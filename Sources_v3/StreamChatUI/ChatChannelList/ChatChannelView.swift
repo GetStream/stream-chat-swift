@@ -17,9 +17,7 @@ open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView, AppearanceSetti
     }
     
     // MARK: - Properties
-    
-    public let uiConfig: UIConfig<ExtraData>
-    
+        
     public var channel: _ChatChannel<ExtraData>? {
         didSet { updateContent() }
     }
@@ -33,7 +31,7 @@ open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView, AppearanceSetti
     }()
     
     public private(set) lazy var channelAvatarView: AvatarView = {
-        let avatar = uiConfig.channelList.avatarView.init()
+        let avatar = uiConfig(ExtraData.self).channelList.avatarView.init()
         avatar.translatesAutoresizingMaskIntoConstraints = false
         return avatar
     }()
@@ -69,28 +67,9 @@ open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView, AppearanceSetti
     
     // MARK: - Init
     
-    public required init(
-        channel: _ChatChannel<ExtraData>? = nil,
-        uiConfig: UIConfig<ExtraData> = .default
-    ) {
-        self.channel = channel
-        self.uiConfig = uiConfig
+    override open func didMoveToSuperview() {
+        super.didMoveToSuperview()
         
-        super.init(frame: .zero)
-        
-        commonInit()
-    }
-    
-    public required init?(coder: NSCoder) {
-        uiConfig = .default
-        channel = nil
-        
-        super.init(coder: coder)
-        
-        commonInit()
-    }
-    
-    public func commonInit() {
         embed(container)
         // TODO: This should be called before `setupAppearance` is called but it doesn't have to be called in `init`
         applyDefaultAppearance()
@@ -134,6 +113,8 @@ open class ChatChannelView<ExtraData: UIExtraDataTypes>: UIView, AppearanceSetti
     }
     
     open func updateContent() {
+        guard superview != nil else { return }
+        
         channelNameLabel.text = channel?.displayName
         
         if let imageURL = channel?.imageURL {
