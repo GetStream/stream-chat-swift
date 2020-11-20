@@ -43,14 +43,14 @@ open class AvatarView: UIView {
     override open func layoutSubviews() {
         super.layoutSubviews()
         
-        layer.cornerRadius = bounds.width / 2
+        imageView.layer.cornerRadius = imageView.bounds.width / 2
     }
     
     // MARK: - Public
     
     open func setupAppearance() {
         imageView.contentMode = .scaleAspectFit
-        layer.masksToBounds = true
+        imageView.clipsToBounds = true
     }
     
     open func setupLayout() {
