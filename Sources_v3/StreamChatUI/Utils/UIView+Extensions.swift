@@ -41,6 +41,11 @@ extension UIView {
             .compactMap { $0.makeConstraint(fromView: self, constant: constant) }
             .forEach { $0.isActive = true }
     }
+    
+    var withoutAutoresizingMaskConstraints: Self {
+        translatesAutoresizingMaskIntoConstraints = false
+        return self
+    }
 }
 
 enum LayoutAnchorName {
