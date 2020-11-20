@@ -20,7 +20,7 @@ open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: UIControl {
     // MARK: - Subviews
     
     public private(set) lazy var avatarView: AvatarView = {
-        let avatar = uiConfig.currentUser.currentUserAvatarView.init()
+        let avatar = uiConfig.currentUser.avatarView.init()
         avatar.translatesAutoresizingMaskIntoConstraints = false
         return avatar
     }()

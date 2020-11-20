@@ -32,7 +32,7 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
     }()
     
     public private(set) lazy var userAvatarView: CurrentChatUserAvatarView<ExtraData> = {
-        let avatar = uiConfig.currentUser.currentUserView.init(uiConfig: uiConfig)
+        let avatar = uiConfig.currentUser.currentUserViewAvatarView.init(uiConfig: uiConfig)
         avatar.controller = controller.client.currentUserController()
         avatar.translatesAutoresizingMaskIntoConstraints = false
         avatar.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
