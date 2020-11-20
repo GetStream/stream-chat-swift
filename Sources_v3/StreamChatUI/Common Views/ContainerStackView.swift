@@ -5,13 +5,12 @@
 import UIKit
 
 public class ContainerStackView: UIStackView {
-    
     // MARK: - Subviews
     
     public let topStackView = UIStackView()
     public let bottomStackView = UIStackView()
-    public let leadingStackView = UIStackView()
-    public let trailingStackView = UIStackView()
+    public let leftStackView = UIStackView()
+    public let rightStackView = UIStackView()
     public let centerStackView = UIStackView()
         
     // MARK: - Init
@@ -38,34 +37,17 @@ public class ContainerStackView: UIStackView {
         centerContainerStackView.alignment = .fill
         centerContainerStackView.translatesAutoresizingMaskIntoConstraints = false
         
-        centerContainerStackView.addArrangedSubview(leadingStackView)
+        centerContainerStackView.addArrangedSubview(leftStackView)
         centerContainerStackView.addArrangedSubview(centerStackView)
-        centerContainerStackView.addArrangedSubview(trailingStackView)
+        centerContainerStackView.addArrangedSubview(rightStackView)
         
         addArrangedSubview(topStackView)
         addArrangedSubview(centerContainerStackView)
         addArrangedSubview(bottomStackView)
         
-        [topStackView, bottomStackView, leadingStackView, trailingStackView, centerStackView].forEach {
+        [topStackView, bottomStackView, leftStackView, rightStackView, centerStackView].forEach {
             $0.isHidden = true
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-    }
-}
-
-extension UIStackView {
-    func addArranged(subview: UIView, spacingAfter: CGFloat = 0, offset: CGPoint = .zero) {
-        subview.bounds.origin.x += offset.x
-        subview.bounds.origin.y += offset.y
-        addArrangedSubview(subview)
-        // TODO: https://stackoverflow.com/questions/33073127/nested-uistackviews-broken-constraints
-        setCustomSpacing(spacingAfter, after: subview)
-    }
-    
-    func addSpacer() {
-        let spacerView = UIView()
-        spacerView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        spacerView.setContentHuggingPriority(.defaultLow, for: .vertical)
-        addArrangedSubview(spacerView)
     }
 }
