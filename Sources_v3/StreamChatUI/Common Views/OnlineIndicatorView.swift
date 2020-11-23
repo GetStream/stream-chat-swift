@@ -4,20 +4,21 @@
 
 import UIKit
 
+/// View indicating whether the user is online or not.
+/// This view is meant to be the green dot on the `ChatChannelAvatarView` indicating that
+/// the user is online, should work only for 1-1 Chat and currently shown only green when online.
 open class OnlineIndicatorView: UIView {
+    /// Enum describing current status of the user inside the chat,
+    /// currently, we are indicating just state:
+    /// - online: Uses green color when the user is online
     public enum AvailabilityStatus {
         case online
-        case offline
-        case unknown
+        case none
 
         var color: UIColor {
             switch self {
-            case .online:
-                return .systemGreen
-            case .offline:
-                return .systemRed
-            case .unknown:
-                return .systemGray
+            case .online: return .systemGreen
+            case .none: fatalError("You should never request the color for none status.")
             }
         }
     }
@@ -27,7 +28,7 @@ open class OnlineIndicatorView: UIView {
         defaultIntrinsicContentSize ?? super.intrinsicContentSize
     }
 
-    public var availabilityStatus: AvailabilityStatus? = .offline {
+    public var availabilityStatus: AvailabilityStatus = .none {
         didSet { layoutSubviews() }
     }
 
@@ -64,7 +65,7 @@ open class OnlineIndicatorView: UIView {
     // MARK: - Private
 
     private func drawIndicatorDot(with status: AvailabilityStatus?) {
-        guard let status = status, status != .unknown else {
+        guard let status = status, status != .none else {
             isHidden = true
             return
         }
@@ -79,7 +80,7 @@ open class OnlineIndicatorView: UIView {
             clockwise: true
         )
         .cgPath
-        // UIBezierPath(ovalIn: CGRect(origin: self.bounds.origin, size: size)).cgPath
+
         indicatorLayer.fillColor = status.color.cgColor
         layer.addSublayer(indicatorLayer)
     }

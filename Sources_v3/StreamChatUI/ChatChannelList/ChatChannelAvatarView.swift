@@ -40,6 +40,12 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
             return
         }
 
+        if channel.isDirectMessageChannel,
+            let member = channel.cachedMembers.first(where: { $0.isOnline }),
+            member.isOnline {
+            onlineIndicatorView.availabilityStatus = .online
+        }
+
         if let imageURL = channel.imageURL {
             imageView.setImage(from: imageURL)
         } else {

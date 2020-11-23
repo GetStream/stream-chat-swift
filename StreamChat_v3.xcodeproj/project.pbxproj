@@ -474,6 +474,7 @@
 		DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFAD6A024DC476A0043ED06 /* Result+Extensions.swift */; };
 		DAFAD6A324DD8E1A0043ED06 /* ChannelEditDetailPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFAD6A224DD8E1A0043ED06 /* ChannelEditDetailPayload.swift */; };
 		DAFC1D4724F50C5C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFC1D4524F50C2C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift */; };
+		E726C524256BDC7C003704DE /* OnlineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E726C523256BDC7C003704DE /* OnlineIndicatorView.swift */; };
 		F61D7C3124FF9D1F00188A0E /* MessageEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */; };
 		F61D7C3324FFA60600188A0E /* MessageUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */; };
 		F61D7C3524FFA6FD00188A0E /* MessageUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3424FFA6FD00188A0E /* MessageUpdater_Tests.swift */; };
@@ -1058,6 +1059,7 @@
 		DAFAD6A024DC476A0043ED06 /* Result+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Result+Extensions.swift"; sourceTree = "<group>"; };
 		DAFAD6A224DD8E1A0043ED06 /* ChannelEditDetailPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelEditDetailPayload.swift; sourceTree = "<group>"; };
 		DAFC1D4524F50C2C00CE2DD8 /* NewChannelQueryUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewChannelQueryUpdater_Tests.swift; sourceTree = "<group>"; };
+		E726C523256BDC7C003704DE /* OnlineIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineIndicatorView.swift; sourceTree = "<group>"; };
 		F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEndpoints_Tests.swift; sourceTree = "<group>"; };
 		F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUpdater_Mock.swift; sourceTree = "<group>"; };
 		F61D7C3424FFA6FD00188A0E /* MessageUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUpdater_Tests.swift; sourceTree = "<group>"; };
@@ -1891,6 +1893,7 @@
 			children = (
 				8850B93B255C3168003AED69 /* ContainerStackView.swift */,
 				8850B945255C3B41003AED69 /* AvatarView.swift */,
+				E726C523256BDC7C003704DE /* OnlineIndicatorView.swift */,
 				885B3D7625642B3D003E6BDF /* CurrentChatUserAvatarView.swift */,
 				885B3D7C25642B88003E6BDF /* CreateNewChannelButton.swift */,
 				22A0921625682880001FE9F0 /* ChatNavigationBar.swift */,
@@ -2599,6 +2602,7 @@
 				224FF6812562F2E900725DD1 /* ChatUnreadCountView.swift in Sources */,
 				224FF67B2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift in Sources */,
 				2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */,
+				E726C524256BDC7C003704DE /* OnlineIndicatorView.swift in Sources */,
 				888123E0255D4D2100070D5A /* UIImageView+Extensions.swift in Sources */,
 				8850B93C255C3168003AED69 /* ContainerStackView.swift in Sources */,
 				79088343254876FE00896F03 /* ChatChannelCollectionViewLayout.swift in Sources */,
@@ -3094,7 +3098,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3124,7 +3128,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3152,7 +3156,7 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3243,7 +3247,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Sample_v3/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3267,7 +3271,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Sample_v3/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3291,7 +3295,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3318,7 +3322,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3342,7 +3346,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests_v3/StreamChatTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3361,7 +3365,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests_v3/StreamChatTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3611,7 +3615,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEFINES_MODULE = YES;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				DYLIB_INSTALL_NAME_BASE = "@rpath";
@@ -3636,7 +3640,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Tests_v3/StreamChatTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -3657,7 +3661,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = D48F367GRM;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Sample_v3/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
