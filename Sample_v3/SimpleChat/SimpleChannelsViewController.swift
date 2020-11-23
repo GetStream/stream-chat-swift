@@ -42,7 +42,6 @@ class SimpleChannelsViewController: UITableViewController {
         )
         controller.synchronize()
     }
-
 }
 
 // MARK: - ChannelControllerDelegate

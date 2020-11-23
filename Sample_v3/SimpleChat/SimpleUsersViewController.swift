@@ -13,7 +13,6 @@ class SimpleUsersViewController: UITableViewController {
 
     ///  `ChatUserListController` is used to make calls to the Stream Chat API and to listen to the events related to the users list.
     ///  `userListController.client` holds a reference to the `ChatClient` which created this instance. It can be used to create other controllers.
-    ///
     var userListController: ChatUserListController! {
         didSet {
             /// Provide `ChatUserListControllerDelegate` that will receive user list updates
