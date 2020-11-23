@@ -7,7 +7,13 @@ import UIKit
 
 open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
     // MARK: - Properties
-    
+
+    public let onlineIndicatorView: OnlineIndicatorView = {
+        let indicator = OnlineIndicatorView()
+        indicator.translatesAutoresizingMaskIntoConstraints = false
+        return indicator
+    }()
+
     public var channel: _ChatChannel<ExtraData>? {
         didSet { updateContent() }
     }
@@ -21,6 +27,9 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
     override open func setupLayout() {
         widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
         embed(imageView)
+
+        addSubview(onlineIndicatorView)
+        onlineIndicatorView.pin(anchors: [.top, .right], to: self)
     }
     
     // MARK: - Public
@@ -30,7 +39,7 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
             imageView.image = nil
             return
         }
-        
+
         if let imageURL = channel.imageURL {
             imageView.setImage(from: imageURL)
         } else {
