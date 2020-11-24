@@ -47,7 +47,7 @@ open class OnlineIndicatorView: UIView {
     private func commonInit() {
         applyDefaultAppearance()
         if #available(iOS 13.0, *) {
-            self.backgroundColor = .systemBackground // What if cell background is different??
+            backgroundColor = .systemBackground // What if cell background is different??
         } else {
             backgroundColor = .white
         }
