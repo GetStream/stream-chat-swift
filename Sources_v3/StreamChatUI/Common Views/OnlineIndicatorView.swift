@@ -17,7 +17,12 @@ open class OnlineIndicatorView: UIView {
 
         var color: UIColor {
             switch self {
-            case .online: return .systemGreen
+            case .online:
+                if #available(iOS 13, *) {
+                    return .systemGreen
+                } else {
+                    return .green
+                }
             case .none: fatalError("You should never request the color for none status.")
             }
         }
