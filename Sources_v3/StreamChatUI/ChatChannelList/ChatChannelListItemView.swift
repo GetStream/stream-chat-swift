@@ -25,6 +25,8 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: UIView, Appeara
             updateContent()
         }
     }
+
+    public var currentUserId: UserId?
     
     // MARK: - Subviews
     
@@ -54,10 +56,12 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: UIView, Appeara
     
     public required init(
         channel: _ChatChannel<ExtraData>? = nil,
+        currentUserId: UserId? = nil,
         uiConfig: UIConfig<ExtraData> = .default
     ) {
         self.channel = channel
         self.uiConfig = uiConfig
+        self.currentUserId = currentUserId
         
         super.init(frame: .zero)
         
@@ -67,6 +71,7 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: UIView, Appeara
     public required init?(coder: NSCoder) {
         uiConfig = .default
         channel = nil
+        currentUserId = nil
         
         super.init(coder: coder)
         
@@ -164,6 +169,7 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: UIView, Appeara
         // Avatar
         
         avatarView.channel = channel
+        avatarView.currentUserId = currentUserId
         
         // UnreadCount
         

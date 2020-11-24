@@ -17,6 +17,10 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
     public var channel: _ChatChannel<ExtraData>? {
         didSet { updateContent() }
     }
+
+    public var currentUserId: UserId? {
+        didSet { updateContent() }
+    }
     
     override open var intrinsicContentSize: CGSize {
         .init(width: 56, height: 56)
@@ -41,7 +45,7 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
         }
 
         if channel.isDirectMessageChannel,
-            let member = channel.cachedMembers.first(where: { $0.isOnline }),
+            let member = channel.cachedMembers.first(where: { $0.isOnline && $0.id != currentUserId }),
             member.isOnline {
             onlineIndicatorView.availabilityStatus = .online
         }
