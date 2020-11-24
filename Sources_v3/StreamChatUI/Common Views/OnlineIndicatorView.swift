@@ -70,18 +70,17 @@ open class OnlineIndicatorView: UIView {
             return
         }
         isHidden = false
+        let indicatorLayer = CALayer()
+        indicatorLayer.masksToBounds = true
 
-        let indicatorLayer = CAShapeLayer()
-        indicatorLayer.path = UIBezierPath(
-            arcCenter: CGPoint(x: bounds.width / 2, y: bounds.height / 2),
-            radius: 4,
-            startAngle: CGFloat(0),
-            endAngle: CGFloat.pi * 2,
-            clockwise: true
+        indicatorLayer.frame = CGRect(
+            origin: .zero,
+            size: CGSize(width: 8, height: 8)
         )
-        .cgPath
+        indicatorLayer.cornerRadius = 4
 
-        indicatorLayer.fillColor = status.color.cgColor
+        indicatorLayer.position = CGPoint(x: layer.bounds.midX, y: layer.bounds.midY)
+        indicatorLayer.backgroundColor = status.color.cgColor
         layer.addSublayer(indicatorLayer)
     }
 }
