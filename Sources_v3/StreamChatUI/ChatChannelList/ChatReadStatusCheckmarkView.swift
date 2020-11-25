@@ -4,7 +4,7 @@
 
 import UIKit
 
-open class ChatReadStatusCheckmarkView: UIView {
+open class ChatReadStatusCheckmarkView: View {
     public enum Status {
         case read, unread, empty
     }
@@ -51,23 +51,21 @@ open class ChatReadStatusCheckmarkView: UIView {
     }
     
     private func commonInit() {
-        embed(imageView)
-        setupLayout()
-        setupAppearance()
         updateContent()
     }
     
     // MARK: - Public
     
-    open func setupAppearance() {
+    override open func setUpAppearance() {
         imageView.contentMode = .scaleAspectFit
     }
     
-    open func setupLayout() {
+    override open func setUpLayout() {
+        embed(imageView)
         widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
     }
     
-    open func updateContent() {
+    override open func updateContent() {
         switch status {
         case .empty:
             imageView.image = nil

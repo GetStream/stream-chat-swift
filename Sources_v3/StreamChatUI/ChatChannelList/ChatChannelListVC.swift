@@ -5,9 +5,16 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
+open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate {
+    
+    public func defaultAppearance() {
+        title = "Stream Chat"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
+    }
+    
     // MARK: - Properties
     
     public var controller: _ChatChannelListController<ExtraData>!
@@ -45,8 +52,6 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: UIViewController,
         super.viewDidLoad()
         
         view.embed(collectionView)
-        
-        applyDefaultAppearance()
         
         controller.setDelegate(self)
         controller.synchronize()
@@ -122,15 +127,5 @@ extension ChatChannelListVC: _ChatChannelListControllerDelegate {
                 }
             }
         }, completion: nil)
-    }
-}
-
-// MARK: - AppearanceSetting
-
-extension ChatChannelListVC: AppearanceSetting {
-    public static func initialAppearanceSetup(_ controller: ChatChannelListVC<ExtraData>) {
-        controller.title = "Stream Chat"
-        controller.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: controller.userAvatarView)
-        controller.navigationItem.rightBarButtonItem = UIBarButtonItem(customView: controller.createNewChannelButton)
     }
 }

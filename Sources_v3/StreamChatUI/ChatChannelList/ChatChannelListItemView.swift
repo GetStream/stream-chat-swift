@@ -5,17 +5,15 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: UIView, AppearanceSetting {
-    // MARK: - Default Appearance
-    
-    public class func initialAppearanceSetup(_ view: ChatChannelListItemView<ExtraData>) {
+open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View {
+    public func defaultAppearance() {
         if #available(iOS 13, *) {
-            view.backgroundColor = .systemBackground
+            backgroundColor = .systemBackground
         } else {
-            view.backgroundColor = .white // Should be add custom support for dark theme?
+            backgroundColor = .white // Should be add custom support for dark theme?
         }
     }
-    
+
     // MARK: - Properties
     
     public let uiConfig: UIConfig<ExtraData>
@@ -74,17 +72,12 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: UIView, Appeara
     }
     
     public func commonInit() {
-        embed(container)
-        
-        applyDefaultAppearance()
-        setupAppearance()
-        setupLayout()
         updateContent()
     }
     
     // MARK: - Public
     
-    open func setupAppearance() {
+    override open func setUpAppearance() {
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.font = .preferredFont(forTextStyle: .headline)
         
@@ -97,7 +90,8 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: UIView, Appeara
         timestampLabel.font = .preferredFont(forTextStyle: .subheadline)
     }
     
-    open func setupLayout() {
+    override open func setUpLayout() {
+        embed(container)
         container.preservesSuperviewLayoutMargins = true
         container.isLayoutMarginsRelativeArrangement = true
                 
@@ -152,7 +146,7 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: UIView, Appeara
         avatarView.widthAnchor.constraint(equalToConstant: avatarView.intrinsicContentSize.width).isActive = true
     }
     
-    open func updateContent() {
+    override open func updateContent() {
         // Title
         
         titleLabel.text = channel?.displayName
