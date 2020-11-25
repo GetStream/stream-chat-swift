@@ -5,24 +5,10 @@
 import StreamChat
 import UIKit
 
-open class ChatNavigationBar: UINavigationBar {
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        applyDefaultAppearance()
-    }
-    
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        applyDefaultAppearance()
-    }
-}
-
-// MARK: - AppearanceSetting
- 
-extension ChatNavigationBar: AppearanceSetting {
-    public static func initialAppearanceSetup(_ bar: ChatNavigationBar) {
+open class ChatNavigationBar: NavigationBar {
+    public func defaultAppearance() {
         let backIcon = UIImage(named: "icn_back", in: Bundle(for: Self.self), compatibleWith: nil)
-        bar.backIndicatorTransitionMaskImage = backIcon
-        bar.backIndicatorImage = backIcon
+        backIndicatorTransitionMaskImage = backIcon
+        backIndicatorImage = backIcon
     }
 }

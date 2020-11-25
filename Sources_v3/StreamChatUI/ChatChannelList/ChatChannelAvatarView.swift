@@ -18,14 +18,15 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
     
     // MARK: - Overrides
     
-    override open func setupLayout() {
+    override open func setUpLayout() {
+        super.setUpLayout()
+        
         widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
-        embed(imageView)
     }
     
     // MARK: - Public
     
-    open func updateContent() {
+    override open func updateContent() {
         guard let channel = channel else {
             imageView.image = nil
             return
