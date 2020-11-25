@@ -77,7 +77,7 @@ struct ChatScrollView<Content>: View where Content: View {
 struct ViewHeightKey: PreferenceKey {
     static var defaultValue: CGFloat { 0 }
     static func reduce(value: inout Value, nextValue: () -> Value) {
-        value = value + nextValue()
+        value += nextValue()
     }
 }
 
