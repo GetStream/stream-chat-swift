@@ -8,7 +8,8 @@ import UIKit
 ///
 /// # SimpleChatViewController
 ///
-/// A `UITableViewController` subclass that displays and manages a channel.  It uses the `ChannelController`  class to make calls to the Stream Chat API and listens to
+/// A `UITableViewController` subclass that displays and manages a channel.
+/// It uses the `ChannelController`  class to make calls to the Stream Chat API and listens to
 /// events by conforming to `ChannelControllerDelegate`.
 ///
 final class SimpleChatViewController: UITableViewController, ChatChannelControllerDelegate, UITextViewDelegate {
@@ -17,10 +18,13 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     ///
     /// # channelController
     ///
-    ///  The property below holds the `ChannelController` object.  It is used to make calls to the Stream Chat API and to listen to the events. After it is set,
-    ///  `channelController.delegate` needs to receive a reference to a `ChannelControllerDelegate`, which, in this case, is `self`. After the delegate is set,
-    ///  `channelController.synchronize()` must be called to start listening to events related to the channel. Additionally, `channelController.client` holds a
-    ///  reference to the `ChatClient` which created this instance. It can be used to create other controllers.
+    /// The property below holds the `ChannelController` object.
+    /// It is used to make calls to the Stream Chat API and to listen to the events. After it is set,
+    /// `channelController.delegate` needs to receive a reference to a `ChannelControllerDelegate`,
+    /// which, in this case, is `self`. After the delegate is set,
+    /// `channelController.synchronize()` must be called to start listening to events related to the channel.
+    /// Additionally, `channelController.client` holds a
+    /// reference to the `ChatClient` which created this instance. It can be used to create other controllers.
     ///
     var channelController: ChatChannelController! {
         didSet {
@@ -36,7 +40,8 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     // MARK: - ChannelControllerDelegate
 
     ///
-    /// The methods below are part of the `ChannelControllerDelegate` protocol and will be called when events happen in the channel. In order for these updates to happen,
+    /// The methods below are part of the `ChannelControllerDelegate` protocol and will be called
+    /// when events happen in the channel. In order for these updates to happen,
     /// `channelController.delegate` must be equal `self` and `channelController.synchronize()` must be called.
     ///
     
@@ -67,7 +72,8 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     ///
     /// # didUpdateChannel
     ///
-    /// The method below reacts to changes in the `Channel` entity. It updates the view controller's `title` and its `navigationItem.prompt` to display the count of channel
+    /// The method below reacts to changes in the `Channel` entity.
+    /// It updates the view controller's `title` and its `navigationItem.prompt` to display the count of channel
     /// members and the count of online members. When the channel is deleted, this view controller is dismissed.
     ///
     func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
@@ -96,14 +102,16 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     // MARK: - UITableViewDataSource
 
     ///
-    /// The methods below are part of the `UITableViewDataSource` protocol and will be called when the `UITableView` needs information which will be given by the
+    /// The methods below are part of the `UITableViewDataSource` protocol and will be called
+    /// when the `UITableView` needs information which will be given by the
     /// `channelController` object.
     ///
     
     ///
     /// # numberOfRowsInSection
     ///
-    /// The method below returns the current loaded message count `channelController.messages.count`. It will increase as more messages are loaded or decrease as
+    /// The method below returns the current loaded message count `channelController.messages.count`.
+    /// It will increase as more messages are loaded or decrease as
     /// messages are deleted.
     ///
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -113,8 +121,9 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     ///
     /// # cellForRowAt
     ///
-    /// The method below returns a cell configured based on the message in position `indexPath.row` of `channelController.messages`. It also highlights the cell based
-    /// on the message's `localState` which when different from `nil` means some local work is being done on it which is not completed yet.
+    /// The method below returns a cell configured based on the message in position `indexPath.row` of `channelController.messages`.
+    /// It also highlights the cell based on the message's `localState` which
+    /// when different from `nil` means some local work is being done on it which is not completed yet.
     ///
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let message = channelController.messages[indexPath.row]
@@ -145,14 +154,16 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     // MARK: - UITableViewDelegate
 
     ///
-    /// The methods below are part of the `UITableViewDelegate` protocol and will be called when some event happened in the `UITableView`  which will cause some action
+    /// The methods below are part of the `UITableViewDelegate` protocol and will be called
+    /// when some event happened in the `UITableView`  which will cause some action
     /// done by the `channelController` object.
     ///
     
     ///
     /// # willDisplay
     ///
-    /// The method below handles the case when the last cell in the message list is displayed by calling `channelController?.loadNextMessages()` to fetch more
+    /// The method below handles the case when the last cell in the message list is
+    /// displayed by calling `channelController?.loadNextMessages()` to fetch more
     /// messages.
     ///
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -224,8 +235,8 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     ///
     /// # contextMenuConfigurationForRowAt
     ///
-    /// The method below returns the context menu with actions that can be taken on the message such as deleting and editing, or on the message's author such as banning and
-    /// unbanning.
+    /// The method below returns the context menu with actions that can be taken on the message
+    /// such as deleting and editing, or on the message's author such as banning and unbanning.
     ///
     @available(iOS 13, *)
     override func tableView(
@@ -365,7 +376,8 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     ///
     /// # sendMessageButtonTapped
     ///
-    /// The method below is called when the user taps the send button. To send the message, `channelController?.createNewMessage(text:)` is called.
+    /// The method below is called when the user taps the send button. To send the message,
+    /// `channelController?.createNewMessage(text:)` is called.
     ///
     @objc func sendMessageButtonTapped(_ sender: Any) {
         guard let text = composerView.textView.text else {
@@ -380,7 +392,8 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     ///
     /// # showChannelActionsAlert
     ///
-    /// The method below displays a `UIAlertController` with many actions that can be taken on the `channelController` such as `addMembers`, `removeMembers`,
+    /// The method below displays a `UIAlertController` with many actions that can be taken on the
+    /// `channelController` such as `addMembers`, `removeMembers`,
     /// and `deleteChannel`.
     ///
     @objc func showChannelActionsAlert() {
@@ -421,14 +434,16 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     // MARK: - UITextViewDelegate
 
     ///
-    /// The methods below are part of the `UITextViewDelegate` protocol and will be called when some event happened in the  `ComposerView`'s `UITextView`  which will
+    /// The methods below are part of the `UITextViewDelegate` protocol
+    /// and will be called when some event happened in the  `ComposerView`'s `UITextView`  which will
     /// cause some action done by the `channelController` object.
     ///
     
     ///
     /// # textViewDidChange
     ///
-    /// The method below handles changes to the `ComposerView`'s `UITextView` by calling `channelController.keystroke()` to send typing events to the channel so
+    /// The method below handles changes to the `ComposerView`'s `UITextView`
+    /// by calling `channelController.keystroke()` to send typing events to the channel so
     /// other users will know the current user is typing.
     ///
     func textViewDidChange(_ textView: UITextView) {
@@ -438,7 +453,8 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     ///
     /// # textViewDidChange
     ///
-    /// The method below handles the end of `ComposerView`'s `UITextView` editing by calling `channelController.stopTyping()` to immediately stop the typing
+    /// The method below handles the end of `ComposerView`'s `UITextView` editing
+    /// by calling `channelController.stopTyping()` to immediately stop the typing
     /// events so other users will know the current user stopped typing.
     ///
     func textViewDidEndEditing(_ textView: UITextView) {

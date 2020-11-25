@@ -52,7 +52,7 @@ extension UITableViewController {
         return view.frame.intersection(keyboardView.frame).height
     }
     
-    private struct AssociatedKeys {
+    private enum AssociatedKeys {
         static var keyboardHeight = "keyboardHeight"
     }
 

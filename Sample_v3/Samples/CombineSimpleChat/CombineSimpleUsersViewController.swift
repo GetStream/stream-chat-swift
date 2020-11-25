@@ -9,7 +9,8 @@ import UIKit
 ///
 /// # CombineSimpleUsersViewController
 ///
-/// A `UITableViewController` subclass that displays and manages the list of users.  It uses the `ChatUserListController`  class to make calls to the Stream Chat API
+/// A `UITableViewController` subclass that displays and manages the list of users.
+/// It uses the `ChatUserListController`  class to make calls to the Stream Chat API
 /// and listens to events by conforming to `ChatUserListControllerDelegate`.
 ///
 @available(iOS 13, *)
@@ -19,10 +20,11 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
     ///
     /// # userListController
     ///
-    ///  The property below holds the `ChatUserListController` object.  It is used to make calls to the Stream Chat API and to listen to the events related to the users list.
-    ///  After it is set, we are subscribing to `Publishers` from `ChatUserListController.BasePublisher` to receive updates.
-    ///  `Publishers` functionality is identical to methods of `ChatUserListControllerDelegate`.
-    ///  Also we need to call `userListController.synchronize()` to update local data with remote one.
+    /// The property below holds the `ChatUserListController` object.
+    /// It is used to make calls to the Stream Chat API and to listen to the events related to the users list.
+    /// After it is set, we are subscribing to `Publishers` from `ChatUserListController.BasePublisher` to receive updates.
+    /// `Publishers` functionality is identical to methods of `ChatUserListControllerDelegate`.
+    /// Also we need to call `userListController.synchronize()` to update local data with remote one.
     ///
     var userListController: ChatUserListController! {
         didSet {
@@ -51,8 +53,10 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
         /// You can use it for presenting some loading indicator.
         /// While using `Combine` publishers, the initial `state` of the contraller will be `.localDataFetched`
         /// (or `localDataFetchFailed` in case of some internal error with DB, it should be very rare case).
-        /// It means that if there is some local data is stored in DB related to this controller, it will be available from the start. After calling `userListController.synchronize()`
-        /// the controller will try to update local data with remote one and change it's state to `.remoteDataFetched` (or `.remoteDataFetchFailed` in case of failed API request).
+        /// It means that if there is some local data is stored in DB related to this controller,
+        /// it will be available from the start. After calling `userListController.synchronize()`
+        /// the controller will try to update local data with remote one and change it's state to `.remoteDataFetched`
+        /// (or `.remoteDataFetchFailed` in case of failed API request).
         ///
         userListController
             .statePublisher
@@ -105,7 +109,8 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
     ///
     /// # handleLongPress
     ///
-    /// The method below handles long press on user cells by displaying a `UIAlertController` with actions that can be taken on the `userController`. (`mute` and `unmute`)
+    /// The method below handles long press on user cells by displaying a `UIAlertController`
+    /// with actions that can be taken on the `userController`. (`mute` and `unmute`)
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
         guard
             let indexPath = tableView.indexPathForRow(at: gestureRecognizer.location(in: tableView)),
@@ -135,14 +140,16 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
     // MARK: - UITableViewDataSource
 
     ///
-    /// The methods below are part of the `UITableViewDataSource` protocol and will be called when the `UITableView` needs information which will be given by the
+    /// The methods below are part of the `UITableViewDataSource` protocol and will be called when the `UITableView`
+    /// needs information which will be given by the
     /// `userListController` object.
     ///
     
     ///
     /// # numberOfRowsInSection
     ///
-    /// The method below returns the current loaded users count `userListController.users.count`. It will increase as more users are loaded or decrease as
+    /// The method below returns the current loaded users count `userListController.users.count`.
+    /// It will increase as more users are loaded or decrease as
     /// users are deleted.
     ///
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -159,7 +166,7 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
         
         var cell = tableView.dequeueReusableCell(withIdentifier: "Cell")
         
-        if (!(cell != nil)) {
+        if cell == nil {
             cell = UITableViewCell(style: .default, reuseIdentifier: "Cell")
         }
         
@@ -185,7 +192,8 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
     ///
     /// # willDisplay
     ///
-    /// The method below handles the case when the last cell in the users list is displayed by calling `userListController.loadNextChannels()` to fetch more
+    /// The method below handles the case when the last cell in the users list is displayed by
+    /// calling `userListController.loadNextChannels()` to fetch more
     /// users.
     ///
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -212,6 +220,7 @@ class CombineSimpleUsersViewController: UITableViewController, ChatUserListContr
     )
     
     override func viewDidLoad() {
+        super.viewDidLoad()
         tableView.addGestureRecognizer(longPressRecognizer)
         navigationItem.rightBarButtonItem = UIBarButtonItem(
             barButtonSystemItem: .done,

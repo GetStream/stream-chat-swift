@@ -40,7 +40,8 @@ class ConfigurationViewController: UITableViewController {
         case 2:
             tokenTypeSegmentedControl.selectedSegmentIndex = 2
             jwtTextField.isEnabled = false
-            if token != "" {
+            if let token = token,
+                !token.isEmpty {
                 tableView.deleteRows(at: [jwtCellIndexPath], with: .top)
             }
             jwtTextField.text = .development

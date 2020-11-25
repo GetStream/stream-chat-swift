@@ -9,7 +9,8 @@ import UIKit
 ///
 /// # CombineSimpleChannelsViewController
 ///
-/// A `UITableViewController` subclass that displays and manages the list of channels.  It uses the `ChannelListController`  class to make calls to the Stream Chat API
+/// A `UITableViewController` subclass that displays and manages the list of channels.
+/// It uses the `ChannelListController`  class to make calls to the Stream Chat API
 /// and listens to events by subscribing to its combine publishers.
 ///
 @available(iOS 13, *)
@@ -19,12 +20,13 @@ class CombineSimpleChannelsViewController: UITableViewController {
     ///
     /// # channelListController
     ///
-    ///  The property below holds the `ChannelListController` object.  It is used to make calls to the Stream Chat API and to listen to the events related to the channels list.
-    ///  After it is set, we are subscribing to `Publishers` from `ChannelListController.BasePublisher` to receive updates.
-    ///  `Publishers` functionality is identical to methods from `ChannelListControllerDelegate`.
-    ///  Also we need to call `channelListController.synchronize()` to update local data with remote one.
-    ///  Additionally, `channelListController.client` holds a reference to the `ChatClient` which created this instance.
-    ///  It can be used to create other controllers.
+    /// The property below holds the `ChannelListController` object.
+    /// It is used to make calls to the Stream Chat API and to listen to the events related to the channels list.
+    /// After it is set, we are subscribing to `Publishers` from `ChannelListController.BasePublisher` to receive updates.
+    /// `Publishers` functionality is identical to methods from `ChannelListControllerDelegate`.
+    /// Also we need to call `channelListController.synchronize()` to update local data with remote one.
+    /// Additionally, `channelListController.client` holds a reference to the `ChatClient` which created this instance.
+    /// It can be used to create other controllers.
     var channelListController: ChatChannelListController! {
         didSet {
             subscribeToCombinePublishers()
@@ -61,8 +63,10 @@ class CombineSimpleChannelsViewController: UITableViewController {
         /// You can use it for presenting some loading indicator.
         /// While using `Combine` publishers, the initial `state` of the contraller will be `.localDataFetched`
         /// (or `localDataFetchFailed` in case of some internal error with DB, it should be very rare case).
-        /// It means that if there is some local data is stored in DB related to this controller, it will be available from the start. After calling `channelListController.synchronize()`
-        /// the controller will try to update local data with remote one and change it's state to `.remoteDataFetched` (or `.remoteDataFetchFailed` in case of failed API request).
+        /// It means that if there is some local data is stored in DB related to this controller,
+        ///  it will be available from the start. After calling `channelListController.synchronize()`
+        /// the controller will try to update local data with remote one and change it's state to `.remoteDataFetched`
+        /// (or `.remoteDataFetchFailed` in case of failed API request).
         ///
         channelListController
             .statePublisher
@@ -105,14 +109,16 @@ class CombineSimpleChannelsViewController: UITableViewController {
     // MARK: - UITableViewDataSource
 
     ///
-    /// The methods below are part of the `UITableViewDataSource` protocol and will be called when the `UITableView` needs information which will be given by the
+    /// The methods below are part of the `UITableViewDataSource` protocol and will be called when
+    /// the `UITableView` needs information which will be given by the
     /// `channelListController` object.
     ///
     
     ///
     /// # numberOfRowsInSection
     ///
-    /// The method below returns the current loaded channels count `channelListController.channels.count`. It will increase as more channels are loaded or decrease as
+    /// The method below returns the current loaded channels count `channelListController.channels.count`.
+    /// It will increase as more channels are loaded or decrease as
     /// channels are deleted.
     ///
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -122,7 +128,8 @@ class CombineSimpleChannelsViewController: UITableViewController {
     ///
     /// # cellForRowAt
     ///
-    /// The method below returns a cell configured based on the channel in position `indexPath.row` of `channelListController.channels`.
+    /// The method below returns a cell configured based on the channel in
+    /// position `indexPath.row` of `channelListController.channels`.
     ///
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let channel = channelListController.channels[indexPath.row]
@@ -147,14 +154,16 @@ class CombineSimpleChannelsViewController: UITableViewController {
     // MARK: - UITableViewDelegate
 
     ///
-    /// The methods below are part of the `UITableViewDelegate` protocol and will be called when some event happened in the `UITableView`  which will cause some action
+    /// The methods below are part of the `UITableViewDelegate` protocol and will be called when
+    /// some event happened in the `UITableView`  which will cause some action
     /// done by the `channelController` object.
     ///
     
     ///
     /// # willDisplay
     ///
-    /// The method below handles the case when the last cell in the channels list is displayed by calling `channelListController.loadNextChannels()` to fetch more
+    /// The method below handles the case when the last cell in the channels list is displayed by
+    /// calling `channelListController.loadNextChannels()` to fetch more
     /// channels.
     ///
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -177,7 +186,8 @@ class CombineSimpleChannelsViewController: UITableViewController {
         switch editingStyle {
         case .delete:
             let channelId = channelListController.channels[indexPath.row].cid
-            /// After successful channel deletion you will receive updates from `channelsChangesPublisher` and channel will be removed from `tableView`.
+            /// After successful channel deletion you will receive updates from `channelsChangesPublisher`
+            /// and channel will be removed from `tableView`.
             chatClient.channelController(for: channelId).deleteChannel()
         default: return
         }
@@ -186,13 +196,15 @@ class CombineSimpleChannelsViewController: UITableViewController {
     // MARK: - Actions
 
     ///
-    /// The methods below are called when the user presses some button to open the settings screen or create a channel, or long presses a channel cell in the table view.
+    /// The methods below are called when the user presses some button to open
+    /// the settings screen or create a channel, or long presses a channel cell in the table view.
     ///
     
     ///
     /// # handleSettingsButton
     ///
-    /// The method below is called when the user taps the settings button. Before presenting the view controller, `settingsViewController.currentUserController` is set
+    /// The method below is called when the user taps the settings button.
+    /// Before presenting the view controller, `settingsViewController.currentUserController` is set
     /// so that view controller can get information and take actions that affect the current user.
     ///
     @objc
@@ -211,7 +223,8 @@ class CombineSimpleChannelsViewController: UITableViewController {
     ///
     /// # handleAddChannelButton
     ///
-    /// The method below is called when the user taps the add channel button. It creates the channel by calling `chatClient.channelController(createChannelWithId: ...)`
+    /// The method below is called when the user taps the add channel button. It creates the channel
+    /// by calling `chatClient.channelController(createChannelWithId: ...)`
     ///
     @objc
     func handleAddChannelButton(_ sender: Any) {
@@ -272,9 +285,11 @@ class CombineSimpleChannelsViewController: UITableViewController {
     ///
     /// # handleLongPress
     ///
-    /// The method below handles long press on channel cells by displaying a `UIAlertController` with many actions that can be taken on the `channelController` such
-    /// as `updateChannel`, `muteChannel`, `unmuteChannel`, ``showChannel`, and `hideChannel`.
-    /// After succesfull channel modifcation you will receive updates from `channelsChangesPublisher` so you will be able to update your UI.
+    /// The method below handles long press on channel cells by displaying a `UIAlertController` with many
+    /// actions that can be taken on the `channelController`
+    /// such as `updateChannel`, `muteChannel`, `unmuteChannel`, ``showChannel`, and `hideChannel`.
+    /// After succesfull channel modifcation you will receive updates from `channelsChangesPublisher`
+    /// so you will be able to update your UI.
     /// (e.g. show "mute" icon in `UITableViewCell`)
     ///
     @objc
@@ -322,7 +337,8 @@ class CombineSimpleChannelsViewController: UITableViewController {
     ///
     /// # prepareForSegue
     ///
-    /// The method below handles the segue to `CombineSimpleChatViewController`. It passes down to it a reference to a `ChannelController` for the respective channel so it
+    /// The method below handles the segue to `CombineSimpleChatViewController`.
+    /// It passes down to it a reference to a `ChannelController` for the respective channel so it
     /// can display and manage it.
     ///
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

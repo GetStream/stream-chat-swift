@@ -67,7 +67,7 @@ final class Channel_SetupTests: XCTestCase {
     }
 }
 
-fileprivate struct MockNamingStrategy: ChannelNamingStrategy {
+private struct MockNamingStrategy: ChannelNamingStrategy {
     func name(for currentUser: User, members: [User]) -> String? {
         "\(members.count)"
     }
