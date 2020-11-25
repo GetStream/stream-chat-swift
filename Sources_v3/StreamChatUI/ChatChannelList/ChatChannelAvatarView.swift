@@ -8,7 +8,7 @@ import UIKit
 open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
     // MARK: - Properties
 
-    lazy var onlineIndicatorView = OnlineIndicatorView().withoutAutoresizingMaskConstraints
+    public lazy var onlineIndicatorView = OnlineIndicatorView().withoutAutoresizingMaskConstraints
 
     public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContent() }
@@ -41,6 +41,15 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
             let currentUserId = channelAndUserId.currentUserId,
             let otherMember = channel.cachedMembers.first(where: { $0.id == currentUserId}),
             otherMember.isOnline {
+
+            let fallbackBackgroundColor: UIColor
+            if #available(iOS 13.0, *) {
+                fallbackBackgroundColor = UIColor.systemBackground
+            } else {
+                fallbackBackgroundColor = .white
+            }
+
+            onlineIndicatorView.borderColor = backgroundColor ?? fallbackBackgroundColor
             onlineIndicatorView.isHidden = false
         } else {
             onlineIndicatorView.isHidden = true
