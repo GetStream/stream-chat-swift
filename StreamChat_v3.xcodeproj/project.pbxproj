@@ -2317,6 +2317,7 @@
 				792A4F1F247FF01800EAF71D /* Frameworks */,
 				792A4F20247FF01800EAF71D /* Resources */,
 				79200D48250140BB002F4EB1 /* Embed Frameworks */,
+				7990A5DD256BE4CC00389DF7 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -2546,7 +2547,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint lint ./Sources_v3/StreamChatUI ./Tests_v3/StreamChatUI --config .swiftlint.yml\nelse\n  echo \"warning: SwiftLint not installed, (homebrew install swiftlint)\"\nfi\n";
+			shellScript = "mint run swiftlint lint ./Sources_v3/StreamChatUI ./Tests_v3/StreamChatUI --config .swiftlint.yml \n\n";
+		};
+		7990A5DD256BE4CC00389DF7 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mint run swiftlint lint ./Sample_v3 --config .swiftlint.yml\n";
 		};
 		8ABC329924EAC40700CFC920 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -2565,7 +2584,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint lint ./Sources_v3/StreamChat ./Tests_v3/StreamChat --config .swiftlint.yml  \nelse\n  echo \"warning: SwiftLint not installed, (homebrew install swiftlint)\"\nfi\n";
+			shellScript = "mint run swiftlint lint ./Sources_v3/StreamChat ./Tests_v3/StreamChat --config .swiftlint.yml \n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
