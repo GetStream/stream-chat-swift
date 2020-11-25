@@ -8,6 +8,8 @@ import UIKit
 open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
     // MARK: - Properties
 
+    lazy var onlineIndicatorView = OnlineIndicatorView().withoutAutoresizingMaskConstraints
+
     public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContent() }
     }
@@ -22,6 +24,9 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
         super.setUpLayout()
         
         widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        embed(imageView)
+        addSubview(onlineIndicatorView)
+        onlineIndicatorView.pin(anchors: [.top, .right], to: self)
     }
     
     // MARK: - Public
@@ -32,6 +37,15 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
             return
         }
 
+        if  channel.isDirectMessageChannel,
+            let currentUserId = channelAndUserId.currentUserId,
+            let otherMember = channel.cachedMembers.first(where: { $0.id == currentUserId}),
+            otherMember.isOnline {
+            onlineIndicatorView.isHidden = false
+        } else {
+            onlineIndicatorView.isHidden = true
+        }
+        
         if let imageURL = channel.imageURL {
             imageView.setImage(from: imageURL)
         } else {

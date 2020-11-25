@@ -21,6 +21,10 @@ class OnlineIndicatorView: UIView {
         layer.cornerRadius = bounds.width / 2
         layer.borderWidth = 2
         layer.backgroundColor = fillColor.cgColor
-        layer.borderColor = UIColor.white.cgColor
+        if #available(iOS 13.0, *) {
+            layer.borderColor = UIColor.systemBackground.cgColor
+        } else {
+            layer.borderColor = UIColor.white.cgColor
+        }
     }
 }
