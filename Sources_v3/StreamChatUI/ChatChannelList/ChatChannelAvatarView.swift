@@ -31,7 +31,7 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
     
     // MARK: - Public
     
-    open func updateContent() {
+    open override func updateContent() {
         guard let channel = channelAndUserId.channel else {
             imageView.image = nil
             return

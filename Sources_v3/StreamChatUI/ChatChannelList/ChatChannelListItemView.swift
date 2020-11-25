@@ -16,7 +16,7 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
 
     // MARK: - Properties
     
-    public let uiConfig: UIConfig<ExtraData>
+    public var uiConfig: UIConfig<ExtraData>
 
     public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet {
