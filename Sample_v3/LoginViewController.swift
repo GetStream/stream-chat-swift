@@ -127,14 +127,20 @@ extension LoginViewController {
             alert(title: "Swift 5.3 required", message: "The app needs to be compiled with Swift 5.3 or above.")
             #endif
         case streamDesignCell:
+            
             let channelList = ChatChannelListVC<DefaultExtraData>()
+            
             channelList.controller = channelListController
-        
+            
             // An example of change default appearance
-            ChatChannelListItemView<DefaultExtraData>.defaultAppearance.addRule {
-                $0.unreadCountView.backgroundColor = .systemPink
+            ChatChannelListItemView<DefaultExtraData>.defaultAppearance {
+                $0.backgroundColor = .yellow
             }
 
+            ChatChannelListVC<DefaultExtraData>.defaultAppearance {
+                $0.title = "Custom title"
+            }
+            
             let navigation = UINavigationController(
                 navigationBarClass: channelList.uiConfig.navigation.navigationBar.self,
                 toolbarClass: nil

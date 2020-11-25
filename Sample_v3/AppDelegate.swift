@@ -27,7 +27,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         LogStore.registerShared()
         
-        setupAppearance()
+        setUpAppearance()
 
         return true
     }
@@ -52,7 +52,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
     
-    private func setupAppearance() {
+    private func setUpAppearance() {
         UIConfig<DefaultExtraData>.default.navigation.channelListRouter = MyChatChannelListRouter.self
         ChatChannelListCollectionView.appearance().backgroundColor = .white
     }
