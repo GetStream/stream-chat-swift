@@ -22,11 +22,9 @@ open class CreateNewChannelButton: Button {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-//        applyDefaultAppearance()
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-//        applyDefaultAppearance()
     }
 }

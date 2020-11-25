@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View {
+open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
     public func defaultAppearance() {
         if #available(iOS 13, *) {
             backgroundColor = .systemBackground
@@ -15,8 +15,6 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View {
     }
 
     // MARK: - Properties
-    
-    public let uiConfig: UIConfig<ExtraData>
     
     public var channel: _ChatChannel<ExtraData>? {
         didSet {
@@ -55,24 +53,16 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View {
         uiConfig: UIConfig<ExtraData> = .default
     ) {
         self.channel = channel
-        self.uiConfig = uiConfig
         
         super.init(frame: .zero)
         
-        commonInit()
+        self.uiConfig = uiConfig
     }
     
     public required init?(coder: NSCoder) {
-        uiConfig = .default
         channel = nil
         
         super.init(coder: coder)
-        
-        commonInit()
-    }
-    
-    public func commonInit() {
-        updateContent()
     }
     
     // MARK: - Public
