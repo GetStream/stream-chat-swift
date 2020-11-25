@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         LogConfig.showDate = false
         LogConfig.showFunctionName = false
         
-        LogConfig.level = .debug
+        LogConfig.level = .warning
         
         LogStore.registerShared()
         
