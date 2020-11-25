@@ -4,7 +4,7 @@
 
 import UIKit
 
-open class AvatarView: UIView {
+open class AvatarView: View {
     // MARK: - Subviews
     
     public let imageView: UIImageView = {
@@ -20,24 +20,6 @@ open class AvatarView: UIView {
         defaultIntrinsicContentSize ?? imageView.intrinsicContentSize
     }
     
-    // MARK: - Init
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        commonInit()
-    }
-    
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        commonInit()
-    }
-    
-    private func commonInit() {
-        applyDefaultAppearance()
-        setupLayout()
-        setupAppearance()
-    }
-    
     // MARK: - Layout
     
     override open func layoutSubviews() {
@@ -47,23 +29,19 @@ open class AvatarView: UIView {
     }
     
     // MARK: - Public
+
+    public func defaultAppearance() {
+        defaultIntrinsicContentSize = .init(width: 40, height: 40)
+    }
     
-    open func setupAppearance() {
+    override open func setUpAppearance() {
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
     }
     
-    open func setupLayout() {
+    override open func setUpLayout() {
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         embed(imageView)
-    }
-}
-
-// MARK: - AppearanceSetting
-
-extension AvatarView: AppearanceSetting {
-    public class func initialAppearanceSetup(_ view: AvatarView) {
-        view.defaultIntrinsicContentSize = .init(width: 40, height: 40)
     }
 }

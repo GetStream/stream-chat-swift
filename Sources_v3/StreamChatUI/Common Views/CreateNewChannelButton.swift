@@ -5,9 +5,14 @@
 import StreamChat
 import UIKit
 
-open class CreateNewChannelButton: UIButton {
+open class CreateNewChannelButton: Button {
     // MARK: - Overrides
     
+    public func defaultAppearance() {
+        defaultIntrinsicContentSize = .init(width: 44, height: 44)
+        setImage(UIImage(named: "icn_new_chat", in: Bundle(for: Self.self), compatibleWith: nil), for: .normal)
+    }
+
     open var defaultIntrinsicContentSize: CGSize?
     override open var intrinsicContentSize: CGSize {
         defaultIntrinsicContentSize ?? super.intrinsicContentSize
@@ -17,20 +22,11 @@ open class CreateNewChannelButton: UIButton {
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
-        applyDefaultAppearance()
+//        applyDefaultAppearance()
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        applyDefaultAppearance()
-    }
-}
-
-// MARK: - AppearanceSetting
-
-extension CreateNewChannelButton: AppearanceSetting {
-    public static func initialAppearanceSetup(_ button: CreateNewChannelButton) {
-        button.defaultIntrinsicContentSize = .init(width: 44, height: 44)
-        button.setImage(UIImage(named: "icn_new_chat", in: Bundle(for: Self.self), compatibleWith: nil), for: .normal)
+//        applyDefaultAppearance()
     }
 }

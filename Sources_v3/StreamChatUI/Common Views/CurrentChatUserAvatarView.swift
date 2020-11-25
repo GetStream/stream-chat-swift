@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: UIControl {
+open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: Control {
     // MARK: - Properties
     
     public let uiConfig: UIConfig<ExtraData>
@@ -26,6 +26,10 @@ open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: UIControl {
     }()
     
     // MARK: - Overrides
+    
+    public func defaultAppearance() {
+        defaultIntrinsicContentSize = .init(width: 28, height: 28)
+    }
     
     open var defaultIntrinsicContentSize: CGSize?
     override open var intrinsicContentSize: CGSize {
@@ -62,26 +66,23 @@ open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: UIControl {
     }
     
     private func commonInit() {
-        applyDefaultAppearance()
-        setupAppearance()
-        setupLayout()
         updateContent()
     }
 
     // MARK: - Content
     
-    open func setupAppearance() {
+    override open func setUpAppearance() {
         avatarView.isUserInteractionEnabled = false
     }
     
-    open func setupLayout() {
+    override open func setUpLayout() {
         widthAnchor.constraint(equalTo: heightAnchor).isActive = true
         avatarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         avatarView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         embed(avatarView)
     }
     
-    @objc open func updateContent() {
+    @objc override open func updateContent() {
         if let imageURL = controller?.currentUser?.imageURL {
             avatarView.imageView.setImage(from: imageURL)
         } else {
@@ -89,14 +90,6 @@ open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: UIControl {
         }
         
         alpha = state == .normal ? 1 : 0.5
-    }
-}
-
-// MARK: - AppearanceSetting
-
-extension CurrentChatUserAvatarView: AppearanceSetting {
-    public static func initialAppearanceSetup(_ view: CurrentChatUserAvatarView<ExtraData>) {
-        view.defaultIntrinsicContentSize = .init(width: 28, height: 28)
     }
 }
 

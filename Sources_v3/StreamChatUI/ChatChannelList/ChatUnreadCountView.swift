@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatUnreadCountView: UIView {
+open class ChatUnreadCountView: View {
     // MARK: - Properties
     
     public var inset: CGFloat = 3
@@ -39,8 +39,6 @@ open class ChatUnreadCountView: UIView {
     }
     
     private func commonInit() {
-        setupLayout()
-        setupAppearance()
         updateContent()
     }
     
@@ -62,7 +60,7 @@ open class ChatUnreadCountView: UIView {
     
     // MARK: - Public
     
-    open func setupAppearance() {
+    override open func setUpAppearance() {
         layer.masksToBounds = true
         backgroundColor = .systemRed
         unreadCountLabel.textColor = .white
@@ -71,12 +69,12 @@ open class ChatUnreadCountView: UIView {
         unreadCountLabel.textAlignment = .center
     }
     
-    open func setupLayout() {
+    override open func setUpLayout() {
         embed(unreadCountLabel, insets: .init(top: inset, leading: inset, bottom: inset, trailing: inset))
         setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
     }
     
-    open func updateContent() {
+    override open func updateContent() {
         isHidden = unreadCount.mentionedMessages == 0 && unreadCount.messages == 0
         unreadCountLabel.text = String(unreadCount.messages)
     }
