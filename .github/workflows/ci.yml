@@ -33,9 +33,15 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh    
     - name: Install Carthage dependencies
       run: bundle exec fastlane carthage_bootstrap
     - name: Build all targets
@@ -55,9 +61,15 @@ jobs:
           path: vendor/bundle
           key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
           restore-keys: ${{ runner.os }}-gem-
-      - name: Install RubyGems
-        if: steps.rubygem-cache.outputs.cache-hit != 'true'
-        run: bundle install
+      - name: Cache Mint
+        uses: actions/cache@v2
+        id: mint-cache
+        with:
+          path: /usr/local/lib/mint
+          key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+          restore-keys: ${{ runner.os }}-mint-
+      - name: Run bootstrap.sh
+        run: ./bootstrap.sh
       - name: Run Danger
         run: bundle exec danger
         env:
@@ -81,9 +93,15 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Test Carthage integration
       run: bundle exec fastlane test_carthage_integration
 
@@ -99,9 +117,15 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Test Cocoapods integration
       run: bundle exec fastlane test_cocoapods_integration
 
@@ -117,9 +141,15 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Test SPM integration
       run: bundle exec fastlane test_spm_integration  
       
@@ -135,9 +165,15 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Run v3 Tests (Debug)
       run: bundle exec fastlane test_v3
     - name: Post Codecov report
@@ -155,9 +191,15 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Run v3 Tests (Release)
       run: bundle exec fastlane test_v3_release
 
@@ -173,9 +215,15 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Prepare iOS 12 simulator
       run: |
         sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
@@ -198,9 +246,15 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Build v3 Sample
       run: bundle exec fastlane build_sample_v3
 
@@ -216,9 +270,15 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Prepare iOS 12 simulator
       run: |
         sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
