@@ -7,8 +7,8 @@ import UIKit
 
 open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
     // MARK: - Properties
-    
-    public var channel: _ChatChannel<ExtraData>? {
+
+    public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContent() }
     }
     
@@ -26,12 +26,12 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
     
     // MARK: - Public
     
-    override open func updateContent() {
-        guard let channel = channel else {
+    open func updateContent() {
+        guard let channel = channelAndUserId.channel else {
             imageView.image = nil
             return
         }
-        
+
         if let imageURL = channel.imageURL {
             imageView.setImage(from: imageURL)
         } else {

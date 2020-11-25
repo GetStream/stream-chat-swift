@@ -16,7 +16,9 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
 
     // MARK: - Properties
     
-    public var channel: _ChatChannel<ExtraData>? {
+    public let uiConfig: UIConfig<ExtraData>
+
+    public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet {
             updateContent()
         }
@@ -50,9 +52,11 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
     
     public required init(
         channel: _ChatChannel<ExtraData>? = nil,
+        userId: UserId? = nil,
         uiConfig: UIConfig<ExtraData> = .default
     ) {
-        self.channel = channel
+        self.channelAndUserId = (channel, userId)
+        self.uiConfig = uiConfig
         
         super.init(frame: .zero)
         
@@ -60,7 +64,8 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
     }
     
     public required init?(coder: NSCoder) {
-        channel = nil
+        uiConfig = .default
+        channelAndUserId = (nil, nil)
         
         super.init(coder: coder)
     }
@@ -139,7 +144,7 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
     override open func updateContent() {
         // Title
         
-        titleLabel.text = channel?.displayName
+        titleLabel.text = channelAndUserId.channel?.displayName
         
         // Subtitle
         
@@ -147,17 +152,17 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
         
         // Avatar
         
-        avatarView.channel = channel
+        avatarView.channelAndUserId = channelAndUserId
         
         // UnreadCount
         
         // Mock test code
-        unreadCountView.unreadCount = channel?.unreadCount ?? .noUnread
+        unreadCountView.unreadCount = channelAndUserId.channel?.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
         
         // Timestamp
         
-        timestampLabel.text = channel?.lastMessageAt?.getFormattedDate(format: "hh:mm a")
+        timestampLabel.text = channelAndUserId.channel?.lastMessageAt?.getFormattedDate(format: "hh:mm a")
         
         // TODO: ReadStatusView
         // Missing LLC API
@@ -166,7 +171,7 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
     open func resetContent() {
         titleLabel.text = ""
         subtitleLabel.text = ""
-        avatarView.channel = nil
+        avatarView.channelAndUserId = (nil, nil)
         unreadCountView.unreadCount = .noUnread
         timestampLabel.text = ""
         readStatusView.status = .empty
@@ -175,13 +180,13 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
 
 extension ChatChannelListItemView {
     var typingMemberString: String? {
-        guard let members = channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
+        guard let members = channelAndUserId.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
         let names = members.map(\.displayName).sorted()
         return names.joined(separator: ", ") + " \(names.count == 1 ? "is" : "are") typing..."
     }
     
     var typingMemberOrLastMessageString: String? {
-        guard let channel = channel else { return nil }
+        guard let channel = channelAndUserId.channel else { return nil }
         if let typingMembersInfo = typingMemberString {
             return typingMembersInfo
         } else if let latestMessage = channel.latestMessages.first {

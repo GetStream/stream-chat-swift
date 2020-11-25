@@ -72,7 +72,7 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: ViewController,
         ) as! ChatChannelListCollectionViewCell<ExtraData>
     
         cell.uiConfig = uiConfig
-        cell.channelView.channel = controller.channels[indexPath.row]
+        cell.channelView.channelAndUserId = (controller.channels[indexPath.row], controller.client.currentUserId)
         
         return cell
     }
