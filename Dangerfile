@@ -43,6 +43,5 @@ end
 # to 50 and GitHub has the limit 80.
 commit_lint.check disable: [:subject_length]
 
-swiftlint.config_file = '.swiftlint.yml'
-swiftlint.directory = 'Sources'
 swiftlint.lint_files inline_mode: true
+
