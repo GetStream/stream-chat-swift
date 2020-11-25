@@ -7,8 +7,8 @@ import UIKit
 
 open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: ViewController,
     UICollectionViewDataSource,
-    UICollectionViewDelegate {
-    
+    UICollectionViewDelegate,
+    UIConfigProvider {
     public func defaultAppearance() {
         title = "Stream Chat"
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
@@ -18,7 +18,6 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: ViewController,
     // MARK: - Properties
     
     public var controller: _ChatChannelListController<ExtraData>!
-    public var uiConfig: UIConfig<ExtraData> = .default
     
     public private(set) lazy var router = uiConfig.navigation.channelListRouter.init(rootViewController: self)
     

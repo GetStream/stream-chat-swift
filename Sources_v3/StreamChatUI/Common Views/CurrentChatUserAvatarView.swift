@@ -5,10 +5,8 @@
 import StreamChat
 import UIKit
 
-open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: Control {
+open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: Control, UIConfigProvider {
     // MARK: - Properties
-    
-    public let uiConfig: UIConfig<ExtraData>
     
     public var controller: _CurrentChatUserController<ExtraData>? {
         didSet {
@@ -54,19 +52,12 @@ open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: Control {
     // MARK: - Init
     
     public required init(uiConfig: UIConfig<ExtraData> = .default) {
-        self.uiConfig = uiConfig
         super.init(frame: .zero)
-        commonInit()
+        self.uiConfig = uiConfig
     }
     
     public required init?(coder: NSCoder) {
-        uiConfig = .default
         super.init(coder: coder)
-        commonInit()
-    }
-    
-    private func commonInit() {
-        updateContent()
     }
 
     // MARK: - Content
