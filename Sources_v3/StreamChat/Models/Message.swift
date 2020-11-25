@@ -109,6 +109,8 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     
     /// The entire list of reactions to the message left by the current user.
     public let currentUserReactions: Set<_ChatMessageReaction<ExtraData>>
+    
+    public let isSentByCurrentUser: Bool
 }
 
 extension _ChatMessage: Hashable {

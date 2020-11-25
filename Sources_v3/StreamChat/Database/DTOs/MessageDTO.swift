@@ -330,8 +330,10 @@ private extension _ChatMessage {
                     .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
                     .map { $0.asModel() }
             )
+            isSentByCurrentUser = currentUser.user.id == dto.user.id
         } else {
             currentUserReactions = []
+            isSentByCurrentUser = false
         }
         
         attachments = Set(dto.attachments.map { $0.asModel() })
