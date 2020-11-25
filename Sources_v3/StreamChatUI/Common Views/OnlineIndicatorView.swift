@@ -9,18 +9,11 @@
 import UIKit
 
 open class OnlineIndicatorView: UIView {
-    static var greenColor: UIColor {
-        if #available(iOS 13.0, *) {
-            return .systemGreen
-        } else {
-            return .green
-        }
-    }
 
     public var borderColor: UIColor = .white {
         didSet { layer.borderColor = borderColor.cgColor }
     }
-    public var fillColor: UIColor = OnlineIndicatorView.greenColor {
+    public var fillColor: UIColor = .systemGreen {
         didSet { layer.backgroundColor = fillColor.cgColor }
     }
     public var defaultDiameter: CGFloat = 14
