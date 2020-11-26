@@ -247,7 +247,7 @@ public protocol _ChatUserListControllerDelegate: DataControllerStateDelegate {
 
 public extension _ChatUserListControllerDelegate {
     func controller(
-        _ controller: _ChatUserListController<DefaultExtraData>,
+        _ controller: _ChatUserListController<ExtraData>,
         didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
     ) {}
 }
