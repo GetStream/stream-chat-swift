@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.5.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.5.0)
+_November 26, 2020_
+
 ### ✅ Added
 - `notificationChannelDeleted` to be received when a channel is deleted while not being watched [#608](https://github.com/GetStream/stream-chat-swift/issues/608)
 
