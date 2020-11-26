@@ -12,6 +12,8 @@ public class ContainerStackView: UIStackView {
     public let leftStackView = UIStackView()
     public let rightStackView = UIStackView()
     public let centerStackView = UIStackView()
+    
+    public let centerContainerStackView = UIStackView()
         
     // MARK: - Init
 
@@ -31,7 +33,6 @@ public class ContainerStackView: UIStackView {
         alignment = .fill
         translatesAutoresizingMaskIntoConstraints = false
         
-        let centerContainerStackView = UIStackView()
         centerContainerStackView.distribution = .fill
         centerContainerStackView.axis = .horizontal
         centerContainerStackView.alignment = .fill
