@@ -105,7 +105,7 @@
 		792DD9FB256E67C6001DB91B /* UIConfigProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792DD9FA256E67C6001DB91B /* UIConfigProvider.swift */; };
 		792DDA5A256FB69E001DB91B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792DDA59256FB69E001DB91B /* AppDelegate.swift */; };
 		792DDA5C256FB69E001DB91B /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792DDA5B256FB69E001DB91B /* SceneDelegate.swift */; };
-		792DDA5E256FB69E001DB91B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792DDA5D256FB69E001DB91B /* ViewController.swift */; };
+		792DDA5E256FB69E001DB91B /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792DDA5D256FB69E001DB91B /* LoginViewController.swift */; };
 		792DDA61256FB69E001DB91B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 792DDA5F256FB69E001DB91B /* Main.storyboard */; };
 		792DDA63256FB69F001DB91B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 792DDA62256FB69F001DB91B /* Assets.xcassets */; };
 		792DDA66256FB69F001DB91B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 792DDA64256FB69F001DB91B /* LaunchScreen.storyboard */; };
@@ -116,6 +116,9 @@
 		792FCB4D24A3D56D000290C7 /* DatabaseSession_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792FCB4C24A3D56D000290C7 /* DatabaseSession_Tests.swift */; };
 		7931818C24FD2660002F8C84 /* ChannelListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7931818B24FD2660002F8C84 /* ChannelListController+Combine.swift */; };
 		7931818E24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7931818D24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift */; };
+		793305F3256FD24500FBB586 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 793305F2256FD24500FBB586 /* Nuke */; settings = {ATTRIBUTES = (Required, ); }; };
+		79330604256FEBE600FBB586 /* AdvancedOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79330603256FEBE600FBB586 /* AdvancedOptionsViewController.swift */; };
+		7933060B256FF94800FBB586 /* ChatPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933060A256FF94800FBB586 /* ChatPresenter.swift */; };
 		7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793728292498FFD300E13FE5 /* MemberPayload.swift */; };
 		7937282C249900CB00E13FE5 /* MemberPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7937282B249900CB00E13FE5 /* MemberPayload_Tests.swift */; };
 		793C14DC24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793C14DB24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift */; };
@@ -690,7 +693,7 @@
 		792DDA57256FB69E001DB91B /* DemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		792DDA59256FB69E001DB91B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		792DDA5B256FB69E001DB91B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		792DDA5D256FB69E001DB91B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		792DDA5D256FB69E001DB91B /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		792DDA60256FB69E001DB91B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		792DDA62256FB69F001DB91B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		792DDA65256FB69F001DB91B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -702,6 +705,8 @@
 		792FCB4C24A3D56D000290C7 /* DatabaseSession_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseSession_Tests.swift; sourceTree = "<group>"; };
 		7931818B24FD2660002F8C84 /* ChannelListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListController+Combine.swift"; sourceTree = "<group>"; };
 		7931818D24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListController+Combine_Tests.swift"; sourceTree = "<group>"; };
+		79330603256FEBE600FBB586 /* AdvancedOptionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdvancedOptionsViewController.swift; sourceTree = "<group>"; };
+		7933060A256FF94800FBB586 /* ChatPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatPresenter.swift; sourceTree = "<group>"; };
 		793728292498FFD300E13FE5 /* MemberPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberPayload.swift; sourceTree = "<group>"; };
 		7937282B249900CB00E13FE5 /* MemberPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberPayload_Tests.swift; sourceTree = "<group>"; };
 		793C14DB24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserver_Tests.swift; sourceTree = "<group>"; };
@@ -1158,6 +1163,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				793305F3256FD24500FBB586 /* Nuke in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1470,7 +1476,9 @@
 			children = (
 				792DDA59256FB69E001DB91B /* AppDelegate.swift */,
 				792DDA5B256FB69E001DB91B /* SceneDelegate.swift */,
-				792DDA5D256FB69E001DB91B /* ViewController.swift */,
+				792DDA5D256FB69E001DB91B /* LoginViewController.swift */,
+				7933060A256FF94800FBB586 /* ChatPresenter.swift */,
+				79330603256FEBE600FBB586 /* AdvancedOptionsViewController.swift */,
 				792DDA5F256FB69E001DB91B /* Main.storyboard */,
 				792DDA62256FB69F001DB91B /* Assets.xcassets */,
 				792DDA64256FB69F001DB91B /* LaunchScreen.storyboard */,
@@ -2398,6 +2406,9 @@
 				792DDA72256FB6AD001DB91B /* PBXTargetDependency */,
 			);
 			name = DemoApp;
+			packageProductDependencies = (
+				793305F2256FD24500FBB586 /* Nuke */,
+			);
 			productName = DemoApp;
 			productReference = 792DDA57256FB69E001DB91B /* DemoApp.app */;
 			productType = "com.apple.product-type.application";
@@ -2792,9 +2803,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				792DDA5E256FB69E001DB91B /* ViewController.swift in Sources */,
+				792DDA5E256FB69E001DB91B /* LoginViewController.swift in Sources */,
 				792DDA5A256FB69E001DB91B /* AppDelegate.swift in Sources */,
 				792DDA5C256FB69E001DB91B /* SceneDelegate.swift in Sources */,
+				7933060B256FF94800FBB586 /* ChatPresenter.swift in Sources */,
+				79330604256FEBE600FBB586 /* AdvancedOptionsViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3988,6 +4001,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		793305F2256FD24500FBB586 /* Nuke */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */;
+			productName = Nuke;
+		};
 		799ADAAE2563FFA1006D43F9 /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */;
