@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
-    public func defaultAppearance() {
+    override public func defaultAppearance() {
         if #available(iOS 13, *) {
             backgroundColor = .systemBackground
         } else {
@@ -55,7 +55,7 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
         userId: UserId? = nil,
         uiConfig: UIConfig<ExtraData> = .default
     ) {
-        self.channelAndUserId = (channel, userId)
+        channelAndUserId = (channel, userId)
         self.uiConfig = uiConfig
         
         super.init(frame: .zero)
