@@ -22,6 +22,7 @@
 		228190EB256733420048D7C6 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228190EA256733420048D7C6 /* UIFont+Extensions.swift */; };
 		228DC80E25704B410080A49F /* MessageComposerAttachmentCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DC80D25704B410080A49F /* MessageComposerAttachmentCellView.swift */; };
 		22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0921625682880001FE9F0 /* ChatNavigationBar.swift */; };
+		22ADD67C256BF1550098EFEB /* ChatChannelMessageInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ADD67B256BF1550098EFEB /* ChatChannelMessageInputView.swift */; };
 		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
 		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		7908821225432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -615,6 +616,7 @@
 		228190EA256733420048D7C6 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		228DC80D25704B410080A49F /* MessageComposerAttachmentCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerAttachmentCellView.swift; sourceTree = "<group>"; };
 		22A0921625682880001FE9F0 /* ChatNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatNavigationBar.swift; sourceTree = "<group>"; };
+		22ADD67B256BF1550098EFEB /* ChatChannelMessageInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelMessageInputView.swift; sourceTree = "<group>"; };
 		7900452525374CA20096ECA1 /* User+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+SwiftUI.swift"; sourceTree = "<group>"; };
 		790881FD25432B7200896F03 /* StreamChatUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7908820525432B7200896F03 /* StreamChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1300,6 +1302,7 @@
 				88BC8907256E90A1009C5554 /* ChatRepliedMessageContentView.swift */,
 				DB70D001257119C500DDF436 /* ChatMessageReactionsView.swift */,
 				79088333254876C200896F03 /* ChatChannelNavigationBar.swift */,
+				22ADD67B256BF1550098EFEB /* ChatChannelMessageInputView.swift */,
 				221742D4256DC97F005B257C /* MessageComposerAttachmentsView.swift */,
 				228DC80D25704B410080A49F /* MessageComposerAttachmentCellView.swift */,
 				2210525E256FE16600A5F0DB /* MessageInputSlashCommandView.swift */,
@@ -2786,6 +2789,7 @@
 				79088339254876F200896F03 /* ChatChannelCollectionView.swift in Sources */,
 				2210525F256FE16600A5F0DB /* MessageInputSlashCommandView.swift in Sources */,
 				224FF6972562F5AE00725DD1 /* Bundle+Extensions.swift in Sources */,
+				22ADD67C256BF1550098EFEB /* ChatChannelMessageInputView.swift in Sources */,
 				224FF69D2562F5D100725DD1 /* UIImage+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
