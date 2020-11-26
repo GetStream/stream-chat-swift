@@ -40,6 +40,37 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
 
         controller.setDelegate(self)
         controller.synchronize()
+        navigationItem.largeTitleDisplayMode = .never
+
+        setupNavigationItem()
+    }
+
+    func setupNavigationItem() {
+        let title = UILabel()
+        title.textAlignment = .center
+        title.font = .preferredFont(forTextStyle: .headline)
+
+        let subtitle = UILabel()
+        subtitle.textAlignment = .center
+        subtitle.font = .preferredFont(forTextStyle: .subheadline)
+        subtitle.textColor = .lightGray
+
+        let titleView = UIStackView(arrangedSubviews: [title, subtitle])
+        titleView.axis = .vertical
+        navigationItem.titleView = titleView
+
+        guard let channel = controller.channel else { return }
+        navbarListener = ChatChannelNavigationBarListener.make(for: channel.cid, in: controller.client)
+        navbarListener?.onDataChange = { data in
+            title.text = data.title
+            subtitle.text = data.subtitle
+        }
+
+        let avatar = ChatChannelAvatarView<ExtraData>()
+        avatar.translatesAutoresizingMaskIntoConstraints = false
+        avatar.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        avatar.channelAndUserId = (channel, controller.client.currentUserId)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatar)
     }
 
     override open func setUpLayout() {
