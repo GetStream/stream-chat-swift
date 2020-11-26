@@ -26,7 +26,7 @@ struct Keyboard {
             .panGesture()
             .when(.began, .changed, .ended)
             .withLatestFrom(keyboardNotifications) { ($0, $1) }
-            .filter { $1.height > 0 }
+            .filter { $1.height > 0 && $1.isDocked }
             .compactMap { KeyboardNotification(panGesture: $0, with: $1) }
         
         notification = Observable.merge(viewPan, keyboardNotifications)
@@ -72,11 +72,15 @@ struct KeyboardNotification: Equatable {
     }
     
     var isFloating: Bool {
-        return height > (frame?.height ?? 0)
+        return UIDevice.current.userInterfaceIdiom == .pad && height > (frame?.height ?? 0)
     }
     
     var isHidden: Bool {
         return !isVisible
+    }
+    
+    var isDocked: Bool {
+        return !isFloating
     }
     
     init(_ notification: Notification) {
