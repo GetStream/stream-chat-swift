@@ -12,10 +12,6 @@ public protocol AppearanceSetting: AnyObject {
 }
 
 public extension AppearanceSetting {
-    func defaultAppearance() { /* default empty implementation */ }
-}
-
-public extension AppearanceSetting {
     /// Applies the default appearance specified by the type, including the custom rules set using the `defaultAppearance` API.
     func applyDefaultAppearance() {
         defaultAppearance()

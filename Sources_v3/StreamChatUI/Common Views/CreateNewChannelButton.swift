@@ -8,7 +8,7 @@ import UIKit
 open class CreateNewChannelButton: Button {
     // MARK: - Overrides
     
-    public func defaultAppearance() {
+    override public func defaultAppearance() {
         defaultIntrinsicContentSize = .init(width: 44, height: 44)
         setImage(UIImage(named: "icn_new_chat", in: Bundle(for: Self.self), compatibleWith: nil), for: .normal)
     }

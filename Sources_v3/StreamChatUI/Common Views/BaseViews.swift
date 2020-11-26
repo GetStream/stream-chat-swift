@@ -33,6 +33,7 @@ open class View: UIView, AppearanceSetting, Customizable {
         updateContent()
     }
     
+    public func defaultAppearance() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
@@ -51,6 +52,7 @@ open class Control: UIControl, AppearanceSetting, Customizable {
         updateContent()
     }
     
+    public func defaultAppearance() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
@@ -69,6 +71,7 @@ open class Button: UIButton, AppearanceSetting, Customizable {
         updateContent()
     }
     
+    public func defaultAppearance() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
@@ -87,6 +90,7 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
         updateContent()
     }
     
+    public func defaultAppearance() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
@@ -102,6 +106,7 @@ open class ViewController: UIViewController, AppearanceSetting, Customizable {
         updateContent()
     }
     
+    public func defaultAppearance() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }

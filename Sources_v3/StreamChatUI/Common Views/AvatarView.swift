@@ -30,7 +30,7 @@ open class AvatarView: View {
     
     // MARK: - Public
 
-    public func defaultAppearance() {
+    override public func defaultAppearance() {
         defaultIntrinsicContentSize = .init(width: 40, height: 40)
     }
     
