@@ -259,7 +259,7 @@ public protocol _ChatChannelListControllerDelegate: DataControllerStateDelegate 
 
 public extension _ChatChannelListControllerDelegate {
     func controller(
-        _ controller: _ChatChannelListController<DefaultExtraData>,
+        _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {}
 }

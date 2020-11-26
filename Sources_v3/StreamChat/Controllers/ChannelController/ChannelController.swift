@@ -874,7 +874,7 @@ public extension _ChatChannelControllerDelegate {
     ) {}
     
     func channelController(
-        _ channelController: ChatChannelController,
+        _ channelController: _ChatChannelController<ExtraData>,
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {}
 
