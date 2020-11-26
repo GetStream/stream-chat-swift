@@ -25,7 +25,8 @@ mint bootstrap
 # Symlink hooks folder to .git/hooks folder
 echo
 echo -e "👉 Create symlink for pre-commit hooks"
-ln -sf ./hooks/pre-commit.sh .git/hooks/pre-commit
+# Symlink needs to be ../../hooks and not ./hooks because git evaluates them in .git/hooks
+ln -sf ../../hooks/pre-commit.sh .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 chmod +x ./hooks/git-format-staged
 
