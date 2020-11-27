@@ -5,47 +5,6 @@
 import Nuke
 import UIKit
 
-struct UserCredentials {
-    let id: String
-    let name: String
-    let description: String
-    let token: String
-}
-
-extension UserCredentials {
-    var avatarURL: URL {
-        URL(
-            string: "https://getstream.io/random_png/?name=\(name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!)"
-        )!
-    }
-}
-
-let builtInUsers: [UserCredentials] = [
-    UserCredentials(
-        id: "broken-waterfall-5",
-        name: "Broken Waterfall",
-        description: "Stream test user",
-        // swiftlint:disable:next line_length
-        token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
-    ),
-    
-    UserCredentials(
-        id: "suspicious-coyote-3",
-        name: "Suspicious Coyote",
-        description: "Stream test user",
-        // swiftlint:disable:next line_length
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3VzcGljaW91cy1jb3lvdGUtMyJ9.xVaBHFTexlYPEymPmlgIYCM5M_iQVHrygaGS1QhkaEE"
-    ),
-    
-    UserCredentials(
-        id: "steep-moon-9",
-        name: "Steep Moon",
-        description: "Stream test user",
-        // swiftlint:disable:next line_length
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RlZXAtbW9vbi05In0.xwGjOwnTy3r4o2owevNTyzZLWMsMh_bK7e5s1OQ2zXU"
-    )
-]
-
 class AvatarView: UIImageView {
     override func updateConstraints() {
         super.updateConstraints()
@@ -76,6 +35,8 @@ class UserCredentialsCell: UITableViewCell {
 
 class LoginViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
+    
+    let builtInUsers = UserCredentials.builtInUsers
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -119,7 +80,7 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
             Nuke.loadImage(with: user.avatarURL, into: cell.avatarView)
             cell.avatarView.backgroundColor = .clear
             cell.nameLabel.text = user.name
-            cell.descriptionLabel.text = user.description
+            cell.descriptionLabel.text = "Stream test user"
         }
                 
         return cell
@@ -132,6 +93,6 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
             return
         }
         
-        presentChat(apiKey: "qk4nn7rpcn75", userCredentials: builtInUsers[indexPath.row])
+        presentChat(userCredentials: builtInUsers[indexPath.row])
     }
 }
