@@ -18,10 +18,14 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
     ///
     /// # memberListController
     ///
-    ///  The property below holds the `ChatChannelMemberListController` object.  It is used to make calls to the Stream Chat API and to listen to the events related to the users list.
-    ///  After it is set, `memberListController.delegate` needs to receive a reference to a `ChatChannelMemberListControllerDelegate`, which, in this case, is `self`. After the
-    ///  delegate is set,`memberListController.synchronize()` must be called to start listening to events related to the users list. Additionally,
-    ///  `memberListController.client` holds a reference to the `ChatClient` which created this instance. It can be used to create other controllers.
+    /// The property below holds the `ChatChannelMemberListController` object.
+    /// It is used to make calls to the Stream Chat API and to listen to the events related to the users list.
+    /// After it is set, `memberListController.delegate` needs to receive a reference to a
+    /// `ChatChannelMemberListControllerDelegate`, which, in this case, is `self`.
+    /// After the delegate is set,`memberListController.synchronize()` must be called to start listening to
+    ///  events related to the users list. Additionally,
+    /// `memberListController.client` holds a reference to the `ChatClient`
+    /// which created this instance. It can be used to create other controllers.
     ///
     var memberListController: ChatChannelMemberListController! {
         didSet {
@@ -33,14 +37,16 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
     // MARK: - ChatChannelMemberListControllerDelegate
 
     ///
-    /// The methods below are part of the `ChatChannelMemberListControllerDelegate` protocol and will be called when events happen in the channel member list. In order for these updates to
+    /// The methods below are part of the `ChatChannelMemberListControllerDelegate`
+    /// protocol and will be called when events happen in the channel member list. In order for these updates to
     /// happen, `memberListController.delegate` must be equal `self` and `memberListController.synchronize()` must be called.
     ///
     
     ///
     /// # didChangeMembers
     ///
-    /// The method below receives the `changes` that happen in the list of channel members and updates the `UITableView` accordingly.
+    /// The method below receives the `changes` that happen in
+    /// the list of channel members and updates the `UITableView` accordingly.
     ///
     func memberListController(
         _ controller: ChatChannelMemberListController,
@@ -134,7 +140,8 @@ class SimpleChannelMembersViewController: UITableViewController, ChatChannelMemb
     ///
     /// # cellForRowAt
     ///
-    /// The method below returns a cell configured based on the member in position `indexPath.row` of `memberListController.members`.
+    /// The method below returns a cell configured based on the member in position `indexPath.row`
+    /// of `memberListController.members`.
     ///
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let member = memberListController.members[indexPath.row]

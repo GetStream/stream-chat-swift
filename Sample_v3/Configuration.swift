@@ -5,8 +5,8 @@
 import Foundation
 import StreamChat
 
-struct Configuration {
-    struct PersistenceKeys {
+enum Configuration {
+    enum PersistenceKeys {
         static let apiKey = "apiKey"
         static let userId = "userId"
         static let userName = "userName"
@@ -16,7 +16,7 @@ struct Configuration {
         static let shouldFlushLocalStorageOnStart = "shouldFlushLocalStorageOnStart"
     }
     
-    struct DefaultValues {
+    enum DefaultValues {
         static let apiKey = "qk4nn7rpcn75"
         static let userId = TestUser.defaults[0].id
         static let userName = TestUser.defaults[0].name
@@ -35,17 +35,17 @@ struct Configuration {
             [
                 TestUser(
                     name: "Broken Waterfall",
-                    id: "broken-waterfall-5",
+                    id: "broken-waterfall-5", // swiftlint:disable:next line_length
                     token: "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.d1xKTlD_D0G-VsBoDBNbaLjO-2XWNA8rlTm4ru4sMHg"
                 ),
                 TestUser(
                     name: "Suspicious Coyote",
-                    id: "suspicious-coyote-3",
+                    id: "suspicious-coyote-3", // swiftlint:disable:next line_length
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3VzcGljaW91cy1jb3lvdGUtMyJ9.xVaBHFTexlYPEymPmlgIYCM5M_iQVHrygaGS1QhkaEE"
                 ),
                 TestUser(
                     name: "Steep Moon",
-                    id: "steep-moon-9",
+                    id: "steep-moon-9", // swiftlint:disable:next line_length
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoic3RlZXAtbW9vbi05In0.xwGjOwnTy3r4o2owevNTyzZLWMsMh_bK7e5s1OQ2zXU"
                 )
             ]

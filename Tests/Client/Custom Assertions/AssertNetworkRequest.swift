@@ -8,7 +8,6 @@
 import XCTest
 @testable import StreamChatClient
 
-
 extension AssertAsync {
     /// Synchronously waits for a network request that matches its properties with the given parameters.
     ///
@@ -75,14 +74,12 @@ extension Assert {
                                file: StaticString = #file,
                                line: UInt = #line) -> Assertion {
         
-        
         return Assert.willBeTrue(RequestRecorderURLProtocol.recordedRequests.contains {
             $0.matches(method, path, headers, queryParameters, body).isSuccess
         }, message: failureMessage(method, path, headers, queryParameters, body),
            file: file,
            line: line)
     }
-    
     
     /// Failure message displayed in the network request assertion
     private static func failureMessage(_ method: Endpoint.Method,
@@ -274,7 +271,7 @@ private extension Data {
         let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
         while input.hasBytesAvailable {
             let read = input.read(buffer, maxLength: bufferSize)
-            if (read == 0) {
+            if read == 0 {
                 break  // added
             }
             append(buffer, count: read)

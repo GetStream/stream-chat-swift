@@ -111,7 +111,7 @@ class AtomicTests: XCTestCase {
         atomicValue.set("Luke")
         XCTAssertEqual(atomicValue.get(), "Luke")
         
-        atomicValue.update { (current) -> String? in
+        atomicValue.update { (_) -> String? in
             XCTAssertEqual(atomicValue.get(), "Luke")
             return nil
         }

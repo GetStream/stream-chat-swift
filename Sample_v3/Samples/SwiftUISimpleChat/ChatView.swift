@@ -85,7 +85,7 @@ struct ChatView: View {
             }
             /// Load next more messages when the last is shown.
             .onAppear {
-                if (self.channel.messages.first == message) {
+                if self.channel.messages.first == message {
                     self.channel.controller.loadPreviousMessages()
                 }
             }

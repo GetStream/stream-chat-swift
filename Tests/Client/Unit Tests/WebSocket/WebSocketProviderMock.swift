@@ -15,7 +15,7 @@ final class WebSocketProviderMock: WebSocketProvider {
     
     var callbackQueue: DispatchQueue
     
-    var delegate: WebSocketProviderDelegate?
+    weak var delegate: WebSocketProviderDelegate?
 
     /// How many times was `connect()` called
     var connectCalledCount = 0

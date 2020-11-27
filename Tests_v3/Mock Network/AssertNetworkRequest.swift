@@ -133,7 +133,7 @@ private extension Data {
         let buffer = UnsafeMutablePointer<UInt8>.allocate(capacity: bufferSize)
         while input.hasBytesAvailable {
             let read = input.read(buffer, maxLength: bufferSize)
-            if (read == 0) {
+            if read == 0 {
                 break // added
             }
             append(buffer, count: read)
