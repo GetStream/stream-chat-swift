@@ -7,15 +7,18 @@ import UIKit
 
 public struct UIConfig<ExtraData: UIExtraDataTypes> {
     public var channelList: ChannelListUI
+    public var messageList: MessageListUI
     public var currentUser: CurrentUserUI
     public var navigation: Navigation
     
     public init(
         channelList: ChannelListUI = .init(),
+        messageList: MessageListUI = .init(),
         currentUser: CurrentUserUI = .init(),
         navigation: Navigation = .init()
     ) {
         self.channelList = channelList
+        self.messageList = messageList
         self.currentUser = currentUser
         self.navigation = navigation
     }
@@ -119,6 +122,51 @@ public extension UIConfig {
         ) {
             self.currentUserViewAvatarView = currentUserViewAvatarView
             self.avatarView = avatarView
+        }
+    }
+}
+
+// MARK: - MessageListUI
+
+public extension UIConfig {
+    struct MessageListUI {
+        public var collectionView: ChatChannelCollectionView.Type
+        public var collectionLayout: UICollectionViewLayout.Type
+        public var minTimeInvteralBetweenMessagesInGroup: TimeInterval
+        public var messageContentView: ChatMessageContentView<ExtraData>.Type
+        public var messageContentSubviews: MessageContentViewSubviews
+
+        public init(
+            collectionView: ChatChannelCollectionView.Type = ChatChannelCollectionView.self,
+            collectionLayout: UICollectionViewLayout.Type = ChatChannelCollectionViewLayout.self,
+            minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10,
+            messageContentView: ChatMessageContentView<ExtraData>.Type = ChatMessageContentView<ExtraData>.self,
+            messageContentSubviews: MessageContentViewSubviews = .init()
+        ) {
+            self.collectionView = collectionView
+            self.collectionLayout = collectionLayout
+            self.minTimeInvteralBetweenMessagesInGroup = minTimeInvteralBetweenMessagesInGroup
+            self.messageContentView = messageContentView
+            self.messageContentSubviews = messageContentSubviews
+        }
+    }
+
+    struct MessageContentViewSubviews {
+        public var authorAvatarView: AvatarView.Type
+        public var bubbleView: ChatMessageBubbleView<ExtraData>.Type
+        public var metadataView: ChatMessageMetadataView<ExtraData>.Type
+        public var repliedMessageContentView: ChatRepliedMessageContentView<ExtraData>.Type
+
+        public init(
+            authorAvatarView: AvatarView.Type = AvatarView.self,
+            bubbleView: ChatMessageBubbleView<ExtraData>.Type = ChatMessageBubbleView<ExtraData>.self,
+            metadataView: ChatMessageMetadataView<ExtraData>.Type = ChatMessageMetadataView<ExtraData>.self,
+            repliedMessageContentView: ChatRepliedMessageContentView<ExtraData>.Type = ChatRepliedMessageContentView<ExtraData>.self
+        ) {
+            self.authorAvatarView = authorAvatarView
+            self.bubbleView = bubbleView
+            self.metadataView = metadataView
+            self.repliedMessageContentView = repliedMessageContentView
         }
     }
 }
