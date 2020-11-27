@@ -159,7 +159,8 @@ extension _ChatMessage {
             localState: nil,
             isFlaggedByCurrentUser: false,
             latestReactions: [],
-            currentUserReactions: []
+            currentUserReactions: [],
+            isSentByCurrentUser: false
         )
     }
 }

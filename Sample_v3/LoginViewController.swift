@@ -158,10 +158,8 @@ extension LoginViewController {
 
 final class MyChatChannelListRouter: ChatChannelListRouter<DefaultExtraData> {
     override func openChat(for channel: _ChatChannel<DefaultExtraData>) {
-        let chatStoryboard = UIStoryboard(name: "SimpleChat", bundle: nil)
-        let chatScreen = chatStoryboard
-            .instantiateViewController(withIdentifier: "SimpleChatViewController") as! SimpleChatViewController
-        chatScreen.channelController = rootViewController?.controller.client.channelController(for: channel.cid)
+        let chatScreen = ChatChannelVC<DefaultExtraData>()
+        chatScreen.controller = rootViewController?.controller.client.channelController(for: channel.cid)
         navigationController?.pushViewController(chatScreen, animated: true)
     }
 }
