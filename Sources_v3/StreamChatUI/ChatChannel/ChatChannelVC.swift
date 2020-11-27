@@ -32,6 +32,7 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     }()
 
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
+    private var activePopup: ChatMessagePopupViewController<ExtraData>?
     
     // MARK: - Life Cycle
     
@@ -42,35 +43,7 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         controller.synchronize()
         navigationItem.largeTitleDisplayMode = .never
 
-        setupNavigationItem()
-    }
-
-    func setupNavigationItem() {
-        let title = UILabel()
-        title.textAlignment = .center
-        title.font = .preferredFont(forTextStyle: .headline)
-
-        let subtitle = UILabel()
-        subtitle.textAlignment = .center
-        subtitle.font = .preferredFont(forTextStyle: .subheadline)
-        subtitle.textColor = .lightGray
-
-        let titleView = UIStackView(arrangedSubviews: [title, subtitle])
-        titleView.axis = .vertical
-        navigationItem.titleView = titleView
-
-        guard let channel = controller.channel else { return }
-        navbarListener = ChatChannelNavigationBarListener.make(for: channel.cid, in: controller.client)
-        navbarListener?.onDataChange = { data in
-            title.text = data.title
-            subtitle.text = data.subtitle
-        }
-
-        let avatar = ChatChannelAvatarView<ExtraData>()
-        avatar.translatesAutoresizingMaskIntoConstraints = false
-        avatar.heightAnchor.constraint(equalToConstant: 32).isActive = true
-        avatar.channelAndUserId = (channel, controller.client.currentUserId)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatar)
+        installLongPress()
     }
 
     override open func setUpLayout() {
@@ -112,6 +85,30 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         avatar.channelAndUserId = (channel, controller.client.currentUserId)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatar)
         navigationItem.largeTitleDisplayMode = .never
+    }
+
+    func installLongPress() {
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
+        collectionView.addGestureRecognizer(longPress)
+    }
+
+    // MARK: - Actions
+
+    @objc func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+        guard gesture.state == .began else { return }
+        let location = gesture.location(in: collectionView)
+        guard let ip = collectionView.indexPathForItem(at: location) else { return }
+        guard let cell = collectionView.cellForItem(at: ip) as? СhatMessageCollectionViewCell<ExtraData> else { return }
+        guard let cid = controller.cid else { return }
+
+        activePopup = ChatMessagePopupViewController(
+            cell.messageView,
+            for: controller.messages[ip.row],
+            in: cid,
+            with: controller.client
+        ) { [weak self] in
+            self?.activePopup = nil
+        }
     }
     
     // MARK: - UICollectionViewDataSource
