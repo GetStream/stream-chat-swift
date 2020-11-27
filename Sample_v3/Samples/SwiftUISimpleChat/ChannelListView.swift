@@ -100,7 +100,8 @@ struct ChannelListView: View {
         ])
     }
     
-    /// Add channel button. To create new channel we need to get a new `ChannelController` with `chatClient.channelController(createChannelWithId: ...)`
+    /// Add channel button. To create new channel we need to get a new `ChannelController`
+    /// with `chatClient.channelController(createChannelWithId: ...)`
     /// and call `synchronize()` on it.
     var addChannelButton: some View {
         Button(action: {

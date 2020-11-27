@@ -106,7 +106,7 @@ extension ComposerView: UICollectionViewDataSource, UICollectionViewDelegate {
             
             uploadManager?.startUploading(item: item)
                 .observeOn(MainScheduler.instance)
-                .do(onError: { [weak cell] error in cell?.updateForError() },
+                .do(onError: { [weak cell] _ in cell?.updateForError() },
                     onCompleted: { [weak self, weak cell] in
                         cell?.updateForProgress(1)
                         self?.updateSendButton()

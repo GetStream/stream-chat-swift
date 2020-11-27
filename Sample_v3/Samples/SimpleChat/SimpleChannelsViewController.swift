@@ -9,7 +9,8 @@ import UIKit
 ///
 /// # SimpleChannelsViewController
 ///
-/// A `UITableViewController` subclass that displays and manages the list of channels.  It uses the `ChannelListController`  class to make calls to the Stream Chat API
+/// A `UITableViewController` subclass that displays and manages the list of channels.
+/// It uses the `ChannelListController`  class to make calls to the Stream Chat API
 /// and listens to events by conforming to `ChannelListControllerDelegate`.
 ///
 class SimpleChannelsViewController: UITableViewController, ChatChannelListControllerDelegate {
@@ -18,10 +19,13 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     ///
     /// # channelListController
     ///
-    ///  The property below holds the `ChannelListController` object.  It is used to make calls to the Stream Chat API and to listen to the events related to the channels list.
-    ///  After it is set, `channelListController.delegate` needs to receive a reference to a `ChannelListControllerDelegate`, which, in this case, is `self`. After the
-    ///  delegate is set,`channelListController.synchronize()` must be called to start listening to events related to the channel list. Additionally,
-    ///  `channelListController.client` holds a reference to the `ChatClient` which created this instance. It can be used to create other controllers.
+    /// The property below holds the `ChannelListController` object.
+    /// It is used to make calls to the Stream Chat API and to listen to the events related to the channels list.
+    /// After it is set, `channelListController.delegate` needs to receive a reference to a `ChannelListControllerDelegate`,
+    /// which, in this case, is `self`. After the delegate is set,`channelListController.synchronize()`
+    /// must be called to start listening to events related to the channel list.
+    ///  Additionally, `channelListController.client` holds a reference to the
+    /// `ChatClient` which created this instance. It can be used to create other controllers.
     ///
     var channelListController: ChatChannelListController! {
         didSet {
@@ -42,7 +46,8 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     // MARK: - ChannelControllerDelegate
 
     ///
-    /// The methods below are part of the `ChannelListControllerDelegate` protocol and will be called when events happen in the channel list. In order for these updates to
+    /// The methods below are part of the `ChannelListControllerDelegate` protocol and will be called
+    /// when events happen in the channel list. In order for these updates to
     /// happen, `channelListController.delegate` must be equal `self` and `channelListController.synchronize()` must be called.
     ///
     
@@ -76,14 +81,16 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     // MARK: - UITableViewDataSource
 
     ///
-    /// The methods below are part of the `UITableViewDataSource` protocol and will be called when the `UITableView` needs information which will be given by the
+    /// The methods below are part of the `UITableViewDataSource` protocol and will be called when the
+    /// `UITableView` needs information which will be given by the
     /// `channelListController` object.
     ///
     
     ///
     /// # numberOfRowsInSection
     ///
-    /// The method below returns the current loaded channels count `channelListController.channels.count`. It will increase as more channels are loaded or decrease as
+    /// The method below returns the current loaded channels count `channelListController.channels.count`.
+    /// It will increase as more channels are loaded or decrease as
     /// channels are deleted.
     ///
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -93,7 +100,8 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     ///
     /// # cellForRowAt
     ///
-    /// The method below returns a cell configured based on the channel in position `indexPath.row` of `channelListController.channels`.
+    /// The method below returns a cell configured based on the channel in position `indexPath.row`
+    /// of `channelListController.channels`.
     ///
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let channel = channelListController.channels[indexPath.row]
@@ -118,14 +126,16 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     // MARK: - UITableViewDelegate
 
     ///
-    /// The methods below are part of the `UITableViewDelegate` protocol and will be called when some event happened in the `UITableView`  which will cause some action
+    /// The methods below are part of the `UITableViewDelegate` protocol and will be called
+    /// when some event happened in the `UITableView`  which will cause some action
     /// done by the `channelController` object.
     ///
     
     ///
     /// # willDisplay
     ///
-    /// The method below handles the case when the last cell in the channels list is displayed by calling `channelListController.loadNextChannels()` to fetch more
+    /// The method below handles the case when the last cell in the channels list is displayed by
+    /// calling `channelListController.loadNextChannels()` to fetch more
     /// channels.
     ///
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
@@ -157,13 +167,15 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     // MARK: - Actions
 
     ///
-    /// The methods below are called when the user presses some button to open the settings screen or create a channel, or long presses a channel cell in the table view.
+    /// The methods below are called when the user presses some button to open the settings screen or create a channel,
+    /// or long presses a channel cell in the table view.
     ///
     
     ///
     /// # handleSettingsButton
     ///
-    /// The method below is called when the user taps the settings button. Before presenting the view controller, `settingsViewController.currentUserController` is set
+    /// The method below is called when the user taps the settings button.
+    /// Before presenting the view controller, `settingsViewController.currentUserController` is set
     /// so that view controller can get information and take actions that affect the current user.
     ///
     @objc func handleSettingsButton(_ sender: Any) {
@@ -181,7 +193,8 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     ///
     /// # handleAddChannelButton
     ///
-    /// The method below is called when the user taps the add channel button. It creates the channel by calling `chatClient.channelController(createChannelWithId: ...)`
+    /// The method below is called when the user taps the add channel button.
+    /// It creates the channel by calling `chatClient.channelController(createChannelWithId: ...)`
     ///
     @objc func handleAddChannelButton(_ sender: Any) {
         let id = UUID().uuidString
@@ -241,7 +254,8 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     ///
     /// # handleLongPress
     ///
-    /// The method below handles long press on channel cells by displaying a `UIAlertController` with many actions that can be taken on the `channelController` such
+    /// The method below handles long press on channel cells by displaying a `UIAlertController`
+    /// with many actions that can be taken on the `channelController` such
     /// as `updateChannel`, `muteChannel`, `unmuteChannel`, ``showChannel`, and `hideChannel`.
     ///
     @objc func handleLongPress(_ gestureRecognizer: UILongPressGestureRecognizer) {
@@ -286,7 +300,8 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     ///
     /// # prepareForSegue
     ///
-    /// The method below handles the segue to `SimpleChatViewController`. It passes down to it a reference to a `ChannelController` for the respective channel so it
+    /// The method below handles the segue to `SimpleChatViewController`.
+    /// It passes down to it a reference to a `ChannelController` for the respective channel so it
     /// can display and manage it.
     ///
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

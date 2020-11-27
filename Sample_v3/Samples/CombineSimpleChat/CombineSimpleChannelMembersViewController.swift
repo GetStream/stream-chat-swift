@@ -21,11 +21,12 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
     /// # memberListController
     ///
     ///
-    ///  The property below holds the `ChatChannelMemberListController` object.
-    ///  It is used to make calls to the Stream Chat API and to listen to the events.
-    ///  After it is set, we are subscribing to `Publishers` from `ChatChannelMemberListController.BasePublisher` to receive updates.
-    ///  Publishers functionality is identical to methods of `ChatChannelMemberListControllerDelegate`.
-    ///  Also we need to call `memberListController.synchronize()` to update local data with remote one.
+    /// The property below holds the `ChatChannelMemberListController` object.
+    /// It is used to make calls to the Stream Chat API and to listen to the events.
+    /// After it is set, we are subscribing to `Publishers` from `ChatChannelMemberListController.BasePublisher`
+    /// to receive updates.
+    /// Publishers functionality is identical to methods of `ChatChannelMemberListControllerDelegate`.
+    /// Also we need to call `memberListController.synchronize()` to update local data with remote one.
     ///
     var memberListController: ChatChannelMemberListController! {
         didSet {
@@ -54,8 +55,10 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
         /// You can use it for presenting some loading indicator.
         /// While using `Combine` publishers, the initial `state` of the contraller will be `.localDataFetched`
         /// (or `localDataFetchFailed` in case of some internal error with DB, it should be very rare case).
-        /// It means that if there is some local data is stored in DB related to this controller, it will be available from the start. After calling `memberListController.synchronize()`
-        /// the controller will try to update local data with remote one and change it's state to `.remoteDataFetched` (or `.remoteDataFetchFailed` in case of failed API request).
+        /// It means that if there is some local data is stored in DB related to this controller,
+        /// it will be available from the start. After calling `memberListController.synchronize()`
+        /// the controller will try to update local data with remote one and change it's state to `.remoteDataFetched`
+        /// (or `.remoteDataFetchFailed` in case of failed API request).
         ///
         memberListController
             .statePublisher
@@ -165,7 +168,8 @@ class CombineSimpleChannelMembersViewController: UITableViewController {
     ///
     /// # cellForRowAt
     ///
-    /// The method below returns a cell configured based on the member in position `indexPath.row` of `memberListController.members`.
+    /// The method below returns a cell configured based on the member in
+    /// position `indexPath.row` of `memberListController.members`.
     ///
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let member = memberListController.members[indexPath.row]
