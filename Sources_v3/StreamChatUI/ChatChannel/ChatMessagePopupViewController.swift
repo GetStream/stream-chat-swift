@@ -16,14 +16,19 @@ class ChatMessagePopupViewController<ExtraData: UIExtraDataTypes>: NSObject {
     let onComplete: () -> Void
 
     init?(
-        _ view: UIView,
+        _ view: ChatMessageContentView<ExtraData>,
         for message: _ChatMessage<ExtraData>,
         in channel: ChannelId,
         with client: _ChatClient<ExtraData>,
         onComplete: @escaping () -> Void
     ) {
         guard let window = view.window else { return nil }
-        guard let snapshot = view.snapshotView(afterScreenUpdates: false) else { return nil }
+        /// this one is dirty, we leaking implementation detail and hierarchy
+        view.messageReactionsView.isHidden = true
+        defer { view.messageReactionsView.isHidden = false }
+        let adjustConstraint = view.messageBubbleView.frame.origin.y
+
+        guard let snapshot = view.snapshotView(afterScreenUpdates: true) else { return nil }
 
         originalView = view
         self.window = window
@@ -53,7 +58,7 @@ class ChatMessagePopupViewController<ExtraData: UIExtraDataTypes>: NSObject {
         let reactionView = reactionsController.view
         reactionView.translatesAutoresizingMaskIntoConstraints = false
         overlay.addSubview(reactionView)
-        reactionView.bottomAnchor.constraint(equalTo: snapshot.topAnchor).isActive = true
+        reactionView.bottomAnchor.constraint(equalTo: snapshot.topAnchor, constant: adjustConstraint).isActive = true
         let centerToMessage: NSLayoutConstraint
         if message.isSentByCurrentUser {
             reactionView.style = .bigOutgoing
