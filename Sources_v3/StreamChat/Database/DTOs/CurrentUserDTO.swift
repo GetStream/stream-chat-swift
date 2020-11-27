@@ -82,8 +82,9 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
             throw ClientError.CurrentUserDoesNotExist()
         }
         
-        dto.unreadChannelsCount = Int16(count.channels)
-        dto.unreadMessagesCount = Int16(count.messages)
+        // TODO: Fix this properly in CIS-431
+        dto.unreadChannelsCount = Int16(clamping: count.channels)
+        dto.unreadMessagesCount = Int16(clamping: count.messages)
     }
     
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws {
