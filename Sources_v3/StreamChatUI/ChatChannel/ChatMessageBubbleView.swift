@@ -31,6 +31,7 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
+        textView.isUserInteractionEnabled = false
         return textView
     }()
 
@@ -89,6 +90,7 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
 
         borderLayer.maskedCorners = corners
         borderLayer.isHidden = message == nil
+
         borderLayer.borderColor = message?.isSentByCurrentUser == true ?
             UIColor.outgoingMessageBubbleBorder.cgColor :
             UIColor.incomingMessageBubbleBorder.cgColor
