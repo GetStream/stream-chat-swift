@@ -8,9 +8,9 @@ import UIKit
 
 extension UIViewController {
     // TODO: Where to put this???
-    func presentChat(apiKey: String, userCredentials: UserCredentials) {
+    func presentChat(userCredentials: UserCredentials) {
         // Create client
-        let config = ChatClientConfig(apiKey: .init(apiKey))
+        let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
         let client = ChatClient(config: config)
         
         // Log in the current user
