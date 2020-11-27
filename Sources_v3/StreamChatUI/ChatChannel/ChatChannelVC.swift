@@ -8,6 +8,8 @@ import UIKit
 open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
+    UIImagePickerControllerDelegate,
+    UINavigationControllerDelegate,
     UIConfigProvider {
     // MARK: - Properties
     
@@ -44,6 +46,7 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         navigationItem.largeTitleDisplayMode = .never
 
         installLongPress()
+        setupMessageComposer()
     }
 
     override open func setUpLayout() {
@@ -91,6 +94,11 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
         collectionView.addGestureRecognizer(longPress)
     }
+    
+    func setupMessageComposer() {
+        composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
+        composerView.imagePicker.delegate = self
+    }
 
     // MARK: - Actions
 
@@ -108,6 +116,62 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
             with: controller.client
         ) { [weak self] in
             self?.activePopup = nil
+        }
+    }
+    
+    @objc func sendMessage(_ sender: Any) {
+        guard let text = composerView.messageInputView.textView.text else {
+            return
+        }
+        
+        controller?.createNewMessage(text: text)
+        
+        composerView.messageInputView.textView.text = ""
+    }
+    
+    // MARK: - ChatChannelMessageComposerView
+    
+    override open var canBecomeFirstResponder: Bool { true }
+    
+    var composerView = ChatChannelMessageComposerView<DefaultUIExtraData>(uiConfig: .default)
+
+    override open var inputAccessoryView: UIView? {
+        guard presentedViewController?.isBeingDismissed != false else {
+            return nil
+        }
+        
+        composerView.translatesAutoresizingMaskIntoConstraints = false
+        composerView.layoutMargins = view.layoutMargins
+        composerView.directionalLayoutMargins = systemMinimumLayoutMargins
+        
+        composerView.owningVC = self
+        composerView.suggestionsViewController.owningViewController = self
+        
+        composerView.messageInputView.textViewDidChange = { [weak self] text in
+            self?.controller.sendKeystrokeEvent()
+            if text?.first == "\\" || text?.first == "@" {
+                self?.composerView.suggestionsViewController.show()
+            } else {
+                self?.composerView.suggestionsViewController.dismiss()
+            }
+        }
+        
+        composerView.messageInputView.textViewDidEndEditing = { [weak self] _ in
+            self?.controller.sendStopTypingEvent()
+        }
+        
+        return composerView
+    }
+    
+    public func imagePickerController(
+        _ picker: UIImagePickerController,
+        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
+    ) {
+        guard let selectedImage = info[.originalImage] as? UIImage else { return }
+        
+        composerView.attachmentsView.insertNewItem(with: selectedImage)
+        picker.dismiss(animated: true) {
+            self.composerView.attachmentsView.isHidden = false
         }
     }
     
