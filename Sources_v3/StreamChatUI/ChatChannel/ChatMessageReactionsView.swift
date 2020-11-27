@@ -10,16 +10,30 @@ import UIKit
 class MessageReactionView: UIView {
     var reaction: MessageReactionType? { didSet { updateReaction() } }
     var madeByCurrentUser: Bool = false { didSet { updateTints() } }
-    private let imageView = UIImageView()
+    private let imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFill
+        return imageView
+    }()
+
     private let emojiView: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .largeTitle)
+        label.adjustsFontSizeToFitWidth = true
         return label
     }()
 
     var selectedByUserTintColor: UIColor = .systemBlue { didSet { updateTints() } }
     var notSelectedByUserTintColor: UIColor = .systemGray { didSet { updateTints() } }
     var onTap: (MessageReactionType) -> Void = { _ in }
+    var isBig: Bool = true {
+        didSet {
+            /// I don't think we should scale reactions size according to system font
+            emojiView.font = isBig
+                ? .preferredFont(forTextStyle: .largeTitle)
+                : .preferredFont(forTextStyle: .body)
+        }
+    }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -173,14 +187,19 @@ class ChatMessageReactionsView: UIView {
             layer.backgroundColor = UIColor.incomingMessageBubbleBorder.cgColor
             reactionTint = .darkGray
         }
+        if isHidden {
+            heightConstraint.constant = 0
+        }
         content.arrangedSubviews.forEach { view in
             (view as? MessageReactionView)?.selectedByUserTintColor = .systemBlue
             (view as? MessageReactionView)?.notSelectedByUserTintColor = reactionTint
+            (view as? MessageReactionView)?.isBig = style ~= .bigIncoming || style ~= .bigOutgoing
         }
     }
 
-    func update(with reactions: [Reaction]) {
+    private func update(with reactions: [Reaction]) {
         content.arrangedSubviews.forEach { $0.removeFromSuperview() }
+        isHidden = reactions.isEmpty
         reactions.forEach { reaction in
             let view = MessageReactionView()
             view.reaction = reaction.type
@@ -189,6 +208,19 @@ class ChatMessageReactionsView: UIView {
             content.addArrangedSubview(view)
         }
         updateStyle()
+    }
+
+    func reload<T>(from message: _ChatMessage<T>?, with allReactions: [MessageReactionType]? = nil) {
+        guard let message = message else {
+            update(with: [])
+            return
+        }
+        let userReactions = Set(message.currentUserReactions.map(\.type))
+        let rawReactions = allReactions ?? Array(message.reactionScores.keys)
+        let reactions: [ChatMessageReactionsView.Reaction] = rawReactions
+            .sorted { $0.rawValue < $1.rawValue }
+            .map { ($0, userReactions.contains($0)) }
+        update(with: reactions)
     }
 }
 
@@ -210,10 +242,11 @@ class ChatMessageReactionViewController<ExtraData: UIExtraDataTypes> {
 
     func reloadView() {
         guard let message = controller.message else { return }
-        let userReactions = Set(message.currentUserReactions.map(\.type))
-        let reactions: [ChatMessageReactionsView.Reaction] = getReactions(for: message)
-            .map { ($0, userReactions.contains($0)) }
-        view.update(with: reactions)
+        var allReactions: [MessageReactionType]?
+        if showAllAvailableReactions {
+            allReactions = ["like", "haha", "facepalm", "roar", "You not expected this"].map(MessageReactionType.init(rawValue:))
+        }
+        view.reload(from: message, with: allReactions)
     }
 
     func toggleReaction(_ reaction: MessageReactionType) {
@@ -224,13 +257,6 @@ class ChatMessageReactionViewController<ExtraData: UIExtraDataTypes> {
         shouldRemove
             ? controller.deleteReaction(reaction)
             : controller.addReaction(reaction)
-    }
-
-    private func getReactions(for message: _ChatMessage<ExtraData>) -> [MessageReactionType] {
-        if showAllAvailableReactions {
-            return ["like", "haha", "facepalm", "roar", "You not expected this"].map(MessageReactionType.init(rawValue:))
-        }
-        return Array(message.reactionScores.keys)
     }
 }
 
