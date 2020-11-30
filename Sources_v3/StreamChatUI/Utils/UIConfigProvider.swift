@@ -7,11 +7,11 @@ import UIKit
 
 // MARK: - Stored property in UIView required to make this work
 
-private extension UIView {
+private extension UIResponder {
     static var anyUIConfigKey: UInt8 = 0
     
     var anyUIConfig: Any? {
-        get { objc_getAssociatedObject(self, &Self.anyUIConfigKey) as? String }
+        get { objc_getAssociatedObject(self, &Self.anyUIConfigKey) }
         set { objc_setAssociatedObject(self, &Self.anyUIConfigKey, newValue, .OBJC_ASSOCIATION_RETAIN) }
     }
 }
@@ -30,7 +30,7 @@ public protocol UIConfigProvider: GenericUIConfigProvider {
 
 // MARK: - Protocol extensions for UIView
 
-public extension GenericUIConfigProvider where Self: UIView {
+public extension GenericUIConfigProvider where Self: UIResponder {
     func register<T: ExtraDataTypes>(config: UIConfig<T>) {
         anyUIConfig = config
     }
@@ -43,12 +43,12 @@ public extension GenericUIConfigProvider where Self: UIView {
         
         // Walk up the superview chain until we find a config provider
         // Skip non-providers
-        var _superview = superview
-        while _superview != nil {
-            if let _superview = _superview as? GenericUIConfigProvider {
-                return _superview.uiConfig(type)
+        var _next = next
+        while _next != nil {
+            if let _next = _next as? GenericUIConfigProvider {
+                return _next.uiConfig(type)
             } else {
-                _superview = _superview?.superview
+                _next = _next?.next
             }
         }
         
@@ -57,47 +57,7 @@ public extension GenericUIConfigProvider where Self: UIView {
     }
 }
 
-extension UIConfigProvider where Self: UIView {
-    public var uiConfig: UIConfig<ExtraData> {
-        get {
-            uiConfig(ExtraData.self)
-        }
-        set {
-            register(config: newValue)
-        }
-    }
-}
-
-// MARK: - Protocol extensions for UIViewController
-
-public extension GenericUIConfigProvider where Self: UIViewController {
-    func register<T: ExtraDataTypes>(config: UIConfig<T>) {
-        view.anyUIConfig = config
-    }
-    
-    func uiConfig<T: ExtraDataTypes>(_ type: T.Type = T.self) -> UIConfig<T> {
-        // We have a config registered, return it
-        if let config = view.anyUIConfig as? UIConfig<T> {
-            return config
-        }
-        
-        // Walk up the superview chain until we find a config provider
-        // Skip non-providers
-        var _superview = view.superview
-        while _superview != nil {
-            if let _superview = _superview as? GenericUIConfigProvider {
-                return _superview.uiConfig(type)
-            } else {
-                _superview = _superview?.superview
-            }
-        }
-        
-        // No parent provider found, return default config
-        return .default
-    }
-}
-
-extension UIConfigProvider where Self: UIViewController {
+extension UIConfigProvider where Self: UIResponder {
     public var uiConfig: UIConfig<ExtraData> {
         get {
             uiConfig(ExtraData.self)

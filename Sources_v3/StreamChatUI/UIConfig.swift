@@ -12,6 +12,8 @@ public struct UIConfig<ExtraData: ExtraDataTypes> {
     public var currentUser = CurrentUserUI()
     public var navigation = Navigation()
     public var colorPalette = ColorPalette()
+    
+    public init() {}
 }
 
 // MARK: - UIConfig + Default
