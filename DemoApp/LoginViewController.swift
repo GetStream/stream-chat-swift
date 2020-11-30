@@ -3,6 +3,7 @@
 //
 
 import Nuke
+import StreamChat
 import UIKit
 
 class AvatarView: UIImageView {
@@ -31,6 +32,9 @@ class UserCredentialsCell: UITableViewCell {
     @IBOutlet var descriptionLabel: UILabel!
     
     @IBOutlet var avatarView: AvatarView!
+    @IBOutlet var accessoryImageView: UIImageView!
+    
+    var user: ChatUser?
 }
 
 class LoginViewController: UIViewController {

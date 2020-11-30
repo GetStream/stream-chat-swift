@@ -9,6 +9,8 @@ import UIKit
 extension UIViewController {
     // TODO: Where to put this???
     func presentChat(userCredentials: UserCredentials) {
+        LogConfig.level = .debug
+        
         // Create client
         let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
         let client = ChatClient(config: config)
@@ -26,15 +28,33 @@ extension UIViewController {
             }
         }
         
+        // Config
+        var uiConfig = UIConfig<DefaultExtraData>()
+        uiConfig.navigation.channelListRouter = DemoChatChannelListRouter.self
+        
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
         let chatList = ChatChannelListVC<DefaultExtraData>()
         chatList.controller = controller
+        chatList.uiConfig = uiConfig
         
         let chatNavigationController = UINavigationController(rootViewController: chatList)
         
         UIView.transition(with: view.window!, duration: 0.3, options: .transitionFlipFromRight, animations: {
             self.view.window!.rootViewController = chatNavigationController
         })
+    }
+}
+
+class DemoChatChannelListRouter: ChatChannelListRouter<DefaultExtraData> {
+    override func openCreateNewChannel() {
+        let client = rootViewController?.controller.client
+        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+        
+        let chatViewController = storyboard.instantiateViewController(withIdentifier: "CreateChatViewController")
+            as! CreateChatViewController
+        chatViewController.searchController = client?.userSearchController()
+        
+        rootViewController?.navigationController?.pushViewController(chatViewController, animated: true)
     }
 }
