@@ -14,6 +14,7 @@ extension _ChatMessageAttachment {
         type: AttachmentType = .image,
         url: URL? = URL(string: "https://getstream.io/some.jpg"),
         imageURL: URL? = URL(string: "https://getstream.io/some.jpg"),
+        imagePreviewURL: URL? = URL(string: "https://getstream.io/some_preview.jpg"),
         file: AttachmentFile? = .init(type: .gif, size: 1024, mimeType: "image/gif"),
         extraData: T.Attachment = .defaultValue
     ) -> _ChatMessageAttachment<T> {
@@ -23,8 +24,9 @@ extension _ChatMessageAttachment {
             text: .unique,
             type: .image,
             actions: [],
-            url: URL(string: "https://getstream.io/some.jpg"),
-            imageURL: URL(string: "https://getstream.io/some.jpg"),
+            url: url,
+            imageURL: imageURL,
+            imagePreviewURL: imagePreviewURL,
             file: nil,
             extraData: .defaultValue
         )
