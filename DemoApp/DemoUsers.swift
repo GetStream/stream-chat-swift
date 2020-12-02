@@ -4,8 +4,6 @@
 
 import Foundation
 
-// swiftlint:disable line_length
-
 let apiKeyString = "q95x9hkbyd6p"
 
 struct UserCredentials {
