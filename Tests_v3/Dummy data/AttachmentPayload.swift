@@ -12,6 +12,7 @@ extension AttachmentPayload {
         title: String = .unique,
         url: URL? = URL(string: "https://getstream.io/some.jpg"),
         imageURL: URL? = URL(string: "https://getstream.io/some.jpg"),
+        imagePreviewURL: URL? = URL(string: "https://getstream.io/some_preview.jpg"),
         file: AttachmentFile? = .init(type: .gif, size: 1024, mimeType: "image/gif"),
         extraData: T = .defaultValue
     ) -> AttachmentPayload<T> {
@@ -20,6 +21,7 @@ extension AttachmentPayload {
             title: title,
             url: url,
             imageURL: imageURL,
+            imagePreviewURL: imagePreviewURL,
             file: file,
             extraData: extraData
         )

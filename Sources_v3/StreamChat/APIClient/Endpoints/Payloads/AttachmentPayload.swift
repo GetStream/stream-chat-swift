@@ -35,8 +35,10 @@ struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
     let actions: [AttachmentAction]
     /// A URL. Depends on type of the attachment (e.g. some asset URL, enriched URL, tappable title URL)
     let url: URL?
-    /// An image preview URL.
+    /// An image URL.
     let imageURL: URL?
+    /// An image preview URL.
+    let imagePreviewURL: URL?
     /// A file description (see `AttachmentFile`).
     let file: AttachmentFile?
     /// An extra data for the attachment.
@@ -63,12 +65,14 @@ struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
         title: String,
         url: URL? = nil,
         imageURL: URL? = nil,
+        imagePreviewURL: URL?,
         file: AttachmentFile? = nil,
         extraData: ExtraData = .defaultValue
     ) {
         self.type = type
         self.url = url
         self.imageURL = imageURL
+        self.imagePreviewURL = imagePreviewURL
         self.title = title
         self.file = file
         self.extraData = extraData
@@ -95,6 +99,10 @@ struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
             try container.decodeIfPresent(String.self, forKey: .image)
                 ?? container.decodeIfPresent(String.self, forKey: .imageURL)
                 ?? container.decodeIfPresent(String.self, forKey: .thumbURL)
+        )
+
+        imagePreviewURL = AttachmentPayload.fixedURL(
+            try container.decodeIfPresent(String.self, forKey: .thumbURL)
         )
         
         // Parse URL.
