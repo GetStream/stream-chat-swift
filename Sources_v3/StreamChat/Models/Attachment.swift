@@ -37,8 +37,10 @@ public struct _ChatMessageAttachment<ExtraData: ExtraDataTypes>: Hashable {
     public let actions: [AttachmentAction]
     /// A URL. Depends on type of the attachment (e.g. some asset URL, enriched URL, title URL)
     public let url: URL?
-    /// An image preview URL.
+    /// An image URL.
     public let imageURL: URL?
+    /// An image preview URL.
+    public let imagePreviewURL: URL?
     /// A file description (see `AttachmentFile`).
     public let file: AttachmentFile?
     /// An extra data for the attachment.
@@ -52,6 +54,7 @@ public struct _ChatMessageAttachment<ExtraData: ExtraDataTypes>: Hashable {
         actions: [AttachmentAction],
         url: URL?,
         imageURL: URL?,
+        imagePreviewURL: URL?,
         file: AttachmentFile?,
         extraData: ExtraData.Attachment
     ) {
@@ -62,6 +65,7 @@ public struct _ChatMessageAttachment<ExtraData: ExtraDataTypes>: Hashable {
         self.actions = actions
         self.url = url
         self.imageURL = imageURL
+        self.imagePreviewURL = imagePreviewURL
         self.file = file
         self.extraData = extraData
     }
