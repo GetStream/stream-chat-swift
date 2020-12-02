@@ -6,6 +6,7 @@
         <attribute name="author" optional="YES" attributeType="String"/>
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
         <attribute name="file" optional="YES" attributeType="Binary"/>
+        <attribute name="imagePreviewURL" optional="YES" attributeType="URI"/>
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
