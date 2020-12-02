@@ -30,6 +30,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(attachment.title, loadedAttachment?.title)
         XCTAssertEqual(attachment.author, loadedAttachment?.author)
         XCTAssertEqual(attachment.imageURL, loadedAttachment?.imageURL)
+        XCTAssertEqual(attachment.imagePreviewURL, loadedAttachment?.imagePreviewURL)
         XCTAssertEqual(attachment.url, loadedAttachment?.url)
     }
     
@@ -66,6 +67,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(attachment.title, loadedAttachment?.title)
         XCTAssertEqual(attachment.author, loadedAttachment?.author)
         XCTAssertEqual(attachment.imageURL, loadedAttachment?.imageURL)
+        XCTAssertEqual(attachment.imagePreviewURL, loadedAttachment?.imagePreviewURL)
         XCTAssertEqual(attachment.url, loadedAttachment?.url)
         
         // Assert extra data is saved correctly

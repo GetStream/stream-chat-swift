@@ -21,8 +21,10 @@ class AttachmentDTO: NSManagedObject {
     @NSManaged var actions: Data?
     /// A URL.
     @NSManaged var url: URL?
-    /// An image preview URL.
+    /// An image URL.
     @NSManaged var imageURL: URL?
+    /// An image preview URL.
+    @NSManaged var imagePreviewURL: URL?
     /// A file description (see `AttachmentFile`).
     @NSManaged var file: Data?
     /// An extra data for the attachment.
@@ -64,6 +66,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.actions = payload.actions.isEmpty ? nil : try JSONEncoder.stream.encode(payload.actions)
         dto.url = payload.url
         dto.imageURL = payload.imageURL
+        dto.imagePreviewURL = payload.imagePreviewURL
         dto.file = payload.file == nil ? nil : try JSONEncoder.stream.encode(payload.file)
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         
