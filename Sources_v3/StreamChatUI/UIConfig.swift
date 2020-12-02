@@ -78,7 +78,7 @@ public extension UIConfig {
 public extension UIConfig {
     struct MessageListUI {
         public var collectionView: ChatChannelCollectionView.Type = ChatChannelCollectionView.self
-        public var collectionLayout: UICollectionViewLayout.Type = ChatChannelCollectionViewLayout.self
+        public var collectionLayout: ChatChannelCollectionViewLayout.Type = ChatChannelCollectionViewLayout.self
         public var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
         public var messageContentView: ChatMessageContentView<ExtraData>.Type = ChatMessageContentView<ExtraData>.self
         public var messageContentSubviews = MessageContentViewSubviews()
