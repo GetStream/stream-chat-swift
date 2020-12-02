@@ -17,6 +17,7 @@ final class AttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.type, .youtube)
         XCTAssertEqual(payload.url, URL(string: "https://www.youtube.com/embed/ZXBcwyMUrcU"))
         XCTAssertEqual(payload.imageURL, URL(string: "https://i.ytimg.com/vi/ZXBcwyMUrcU/maxresdefault.jpg"))
+        XCTAssertEqual(payload.imagePreviewURL, URL(string: "https://i.ytimg.com/vi/ZXBcwyMUrcU/maxresdefault_preview.jpg"))
         XCTAssertEqual(payload.extraData, .defaultValue)
     }
 
@@ -31,6 +32,7 @@ final class AttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.type, .youtube)
         XCTAssertEqual(payload.url, URL(string: "https://www.youtube.com/embed/ZXBcwyMUrcU"))
         XCTAssertEqual(payload.imageURL, URL(string: "https://i.ytimg.com/vi/ZXBcwyMUrcU/maxresdefault.jpg"))
+        XCTAssertEqual(payload.imagePreviewURL, URL(string: "https://i.ytimg.com/vi/ZXBcwyMUrcU/maxresdefault_preview.jpg"))
         
         // Assert `AttachmentPayload`s `ExtraData` is deserialized correctly
         XCTAssertEqual(payload.extraData.countdown, 120)
