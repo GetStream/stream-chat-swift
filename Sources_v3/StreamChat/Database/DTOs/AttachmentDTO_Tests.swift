@@ -120,6 +120,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(attachment.actions, modelAttachment?.actions)
         XCTAssertEqual(attachment.author, modelAttachment?.author)
         XCTAssertEqual(attachment.imageURL, modelAttachment?.imageURL)
+        XCTAssertEqual(attachment.imagePreviewURL, modelAttachment?.imagePreviewURL)
         XCTAssertEqual(attachment.url, modelAttachment?.url)
         XCTAssertEqual(attachment.extraData, modelAttachment?.extraData)
     }

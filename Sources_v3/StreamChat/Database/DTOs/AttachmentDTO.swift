@@ -101,6 +101,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.actions = attachment.actions.isEmpty ? nil : try JSONEncoder.stream.encode(attachment.actions)
         dto.url = attachment.url
         dto.imageURL = attachment.imageURL
+        dto.imagePreviewURL = attachment.imagePreviewURL
         dto.file = attachment.file == nil ? nil : try JSONEncoder.stream.encode(attachment.file)
         dto.extraData = try JSONEncoder.default.encode(attachment.extraData)
         
@@ -152,6 +153,7 @@ private extension _ChatMessageAttachment {
             actions: dto.decoded([AttachmentAction].self, from: dto.actions) ?? [],
             url: dto.url,
             imageURL: dto.imageURL,
+            imagePreviewURL: dto.imagePreviewURL,
             file: dto.decoded(AttachmentFile.self, from: dto.file),
             extraData: extraData
         )
