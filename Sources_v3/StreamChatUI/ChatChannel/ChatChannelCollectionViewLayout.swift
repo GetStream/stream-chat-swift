@@ -7,9 +7,9 @@ import UIKit
 
 public struct ChatChannelCollectionViewLayoutModel {
     public var forWidth: CGFloat
-    public var itemHeights: [CGFloat]
+    public var itemsData: [(height: CGFloat, bottomMargin: CGFloat)]
 
-    public static let zero = ChatChannelCollectionViewLayoutModel(forWidth: 0, itemHeights: [])
+    public static let zero = ChatChannelCollectionViewLayoutModel(forWidth: 0, itemsData: [])
 }
 
 public protocol ChatChannelCollectionViewLayoutDelegate: AnyObject {
@@ -20,7 +20,6 @@ open class ChatChannelCollectionViewLayout: UICollectionViewLayout {
     var layoutModel: ChatChannelCollectionViewLayoutModel = .zero
     var contentSize: CGSize = .zero
     var attributes: [UICollectionViewLayoutAttributes] = []
-    var interItemSpacing: CGFloat = 8
 
     open weak var delegate: ChatChannelCollectionViewLayoutDelegate?
 
@@ -54,14 +53,12 @@ open class ChatChannelCollectionViewLayout: UICollectionViewLayout {
         var offset: CGFloat = 0
         var attributes: [UICollectionViewLayoutAttributes] = []
         // latest message has ip = {0;0}, but must be bottom one, so we iterate in reverse order
-        for (idx, height) in layoutModel.itemHeights.enumerated().reversed() {
+        for (idx, (height, bottomMargin)) in layoutModel.itemsData.enumerated().reversed() {
             let attribute = UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: idx, section: 0))
             attribute.frame = CGRect(x: 0, y: offset, width: width, height: height)
             attributes.append(attribute)
             offset += height
-            if idx > 0 {
-                offset += interItemSpacing
-            }
+            offset += bottomMargin
         }
         // attributes are added from old message to new message, need to reverse it to achieve
         // `attributes[idx].indexPath.item == idx`

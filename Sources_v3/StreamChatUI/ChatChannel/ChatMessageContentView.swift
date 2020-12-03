@@ -6,6 +6,19 @@ import StreamChat
 import UIKit
 
 open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
+    struct Layout {
+        let messageBubble: CGRect?
+        let messageBubbleLayout: ChatMessageBubbleView<ExtraData>.Layout?
+        let messageMetadata: CGRect?
+        let messageMetadataLayout: ChatMessageMetadataView<ExtraData>.Layout?
+        let authorAvatar: CGRect?
+        let reactions: CGRect?
+    }
+
+    var layout: Layout? {
+        didSet { setNeedsLayout() }
+    }
+
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContent() }
     }
@@ -17,28 +30,20 @@ open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigPr
         .messageContentSubviews
         .bubbleView
         .init(showRepliedMessage: true)
-        .withoutAutoresizingMaskConstraints
 
     public private(set) lazy var messageMetadataView = uiConfig
         .messageList
         .messageContentSubviews
         .metadataView
         .init()
-        .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var authorAvatarView = uiConfig
         .messageList
         .messageContentSubviews
         .authorAvatarView
         .init()
-        .withoutAutoresizingMaskConstraints
 
     let messageReactionsView = ChatMessageReactionsView().withoutAutoresizingMaskConstraints
-
-    private var incomingMessageGroupPartConstraints: [NSLayoutConstraint] = []
-    private var incomingMessageGroupFooterConstraints: [NSLayoutConstraint] = []
-    private var outgoingMessageGroupPartConstraints: [NSLayoutConstraint] = []
-    private var outgoingMessageGroupFooterConstraints: [NSLayoutConstraint] = []
 
     // MARK: - Overrides
 
@@ -47,61 +52,33 @@ open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigPr
         addSubview(messageMetadataView)
         addSubview(authorAvatarView)
         addSubview(messageReactionsView)
+    }
 
-        incomingMessageGroupPartConstraints = [
-            messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
-            messageReactionsView.bottomAnchor.constraint(equalTo: messageBubbleView.topAnchor),
-            messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.trailingAnchor),
-            messageReactionsView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor)
-        ]
+    override open func layoutSubviews() {
+        super.layoutSubviews()
+        guard let layout = layout else { return }
 
-        incomingMessageGroupFooterConstraints = [
-            authorAvatarView.widthAnchor.constraint(equalToConstant: 32),
-            authorAvatarView.heightAnchor.constraint(equalToConstant: 32),
-            authorAvatarView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            authorAvatarView.bottomAnchor.constraint(equalTo: bottomAnchor),
+        messageBubbleView.isHidden = layout.messageBubble == nil
+        if let frame = layout.messageBubble {
+            messageBubbleView.frame = frame
+        }
+        messageBubbleView.layout = layout.messageBubbleLayout
 
-            messageBubbleView.leadingAnchor.constraint(equalToSystemSpacingAfter: authorAvatarView.trailingAnchor, multiplier: 1),
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
-            messageMetadataView.topAnchor.constraint(equalToSystemSpacingBelow: messageBubbleView.bottomAnchor, multiplier: 1),
-            messageMetadataView.leadingAnchor.constraint(equalTo: messageBubbleView.leadingAnchor),
-            messageMetadataView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
-            messageReactionsView.bottomAnchor.constraint(equalTo: messageBubbleView.topAnchor),
-            messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.trailingAnchor),
-            messageReactionsView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor)
-        ]
+        messageMetadataView.isHidden = layout.messageMetadata == nil
+        if let frame = layout.messageMetadata {
+            messageMetadataView.frame = frame
+        }
+        messageMetadataView.layout = layout.messageMetadataLayout
 
-        outgoingMessageGroupPartConstraints = [
-            messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
-            messageReactionsView.bottomAnchor.constraint(equalTo: messageBubbleView.topAnchor),
-            messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.leadingAnchor),
-            messageReactionsView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
-        ]
+        authorAvatarView.isHidden = layout.authorAvatar == nil
+        if let frame = layout.authorAvatar {
+            authorAvatarView.frame = frame
+        }
 
-        outgoingMessageGroupFooterConstraints = [
-            messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
-            messageMetadataView.topAnchor.constraint(equalToSystemSpacingBelow: messageBubbleView.bottomAnchor, multiplier: 1),
-            messageMetadataView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            messageMetadataView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
-            messageReactionsView.bottomAnchor.constraint(equalTo: messageBubbleView.topAnchor),
-            messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.leadingAnchor),
-            messageReactionsView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
-        ]
+        messageReactionsView.isHidden = layout.reactions == nil
+        if let frame = layout.reactions {
+            messageReactionsView.frame = frame
+        }
     }
 
     override open func updateContent() {
@@ -120,53 +97,104 @@ open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigPr
         } else {
             authorAvatarView.imageView.image = placeholder
         }
+    }
+}
 
-        authorAvatarView.isHidden = message?.isSentByCurrentUser == true || message?.isLastInGroup == false
-        messageMetadataView.isHidden = message?.isLastInGroup == false
-        activateNecessaryConstraints()
+class ChatMessageContentViewLayoutManager<ExtraData: UIExtraDataTypes> {
+    let bubbleSizer = ChatMessageBubbleViewLayoutManager<ExtraData>()
+    let metadataSizer = ChatMessageMetadataViewLayoutManager<ExtraData>()
+    private let reactions = ChatMessageReactionsView()
+
+    func heightForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGFloat {
+        sizeForView(with: data, limitedBy: width).height
     }
 
-    // MARK: - Private
-    
-    private func activateNecessaryConstraints() {
-        let constraintsToDeactivate: [NSLayoutConstraint]
-        let constraintsToActivate: [NSLayoutConstraint]
+    func sizeForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize {
+        let isSentByCurrentUser = data.isSentByCurrentUser
+        let avatarSize = isSentByCurrentUser ? .zero : CGSize(width: 32, height: 32)
+        let reactionsSize = sizeForReactions(with: data, limitedBy: width)
+        let bubbleLeading: CGFloat = isSentByCurrentUser ? 0 : 40
 
-        switch (message?.isSentByCurrentUser, message?.isLastInGroup) {
-        case (true, true):
-            constraintsToDeactivate =
-                outgoingMessageGroupPartConstraints +
-                incomingMessageGroupPartConstraints +
-                incomingMessageGroupFooterConstraints
-            constraintsToActivate = outgoingMessageGroupFooterConstraints
-        case (true, false):
-            constraintsToDeactivate =
-                outgoingMessageGroupFooterConstraints +
-                incomingMessageGroupPartConstraints +
-                incomingMessageGroupFooterConstraints
-            constraintsToActivate = outgoingMessageGroupPartConstraints
-        case (false, true):
-            constraintsToDeactivate =
-                outgoingMessageGroupPartConstraints +
-                outgoingMessageGroupFooterConstraints +
-                incomingMessageGroupPartConstraints
-            constraintsToActivate = incomingMessageGroupFooterConstraints
-        case (false, false):
-            constraintsToDeactivate =
-                outgoingMessageGroupPartConstraints +
-                outgoingMessageGroupFooterConstraints +
-                incomingMessageGroupFooterConstraints
-            constraintsToActivate = incomingMessageGroupPartConstraints
-        default:
-            constraintsToDeactivate =
-                incomingMessageGroupPartConstraints +
-                incomingMessageGroupFooterConstraints +
-                outgoingMessageGroupPartConstraints +
-                outgoingMessageGroupFooterConstraints
-            constraintsToActivate = []
+        var height = reactionsSize?.height ?? 0
+
+        let bubbleSize = bubbleSizer.sizeForView(with: data, limitedBy: width - bubbleLeading)
+        var nonAvatarWidth = bubbleSize.width
+        height += bubbleSize.height
+
+        let metadataSize = metadataSizer.sizeForView(with: data, limitedBy: width - bubbleLeading)
+        if data.isLastInGroup {
+            height += 8
+            height += metadataSize.height
+            nonAvatarWidth = max(nonAvatarWidth, metadataSize.width)
         }
-        
-        constraintsToDeactivate.forEach { $0.isActive = false }
-        constraintsToActivate.forEach { $0.isActive = true }
+
+        height = max(avatarSize.height, height)
+        let width = bubbleLeading + nonAvatarWidth
+        return CGSize(width: width, height: height)
+    }
+
+    func layoutForView(
+        with data: _ChatMessageGroupPart<ExtraData>,
+        of size: CGSize
+    ) -> ChatMessageContentView<ExtraData>.Layout {
+        let width = size.width
+        let height = size.height
+
+        let isSentByCurrentUser = data.isSentByCurrentUser
+        let isLastInGroup = data.isLastInGroup
+        let spacing: CGFloat = 8
+
+        // sizes
+        let avatarSize = isSentByCurrentUser ? .zero : CGSize(width: 32, height: 32)
+        let reactionsSize = sizeForReactions(with: data, limitedBy: width)
+        let avatarMaxX = isSentByCurrentUser ? 0 : avatarSize.width + spacing
+        let bubbleSize = bubbleSizer.sizeForView(with: data, limitedBy: width - avatarMaxX)
+        let metadataSize = metadataSizer.sizeForView(with: data, limitedBy: width - avatarMaxX)
+
+        // frames
+        let avatarFrame: CGRect? = {
+            guard !isSentByCurrentUser, isLastInGroup else { return nil }
+            return CGRect(origin: CGPoint(x: 0, y: height - avatarSize.height), size: avatarSize)
+        }()
+
+        let reactionsBottom: CGFloat = reactionsSize?.height ?? 0
+        let bubbleLeading = isSentByCurrentUser
+            ? width - bubbleSize.width
+            : avatarMaxX
+        let bubbleFrame = CGRect(origin: CGPoint(x: bubbleLeading, y: reactionsBottom), size: bubbleSize)
+
+        let reactionFrame: CGRect? = reactionsSize.map { size in
+            let originX: CGFloat = isSentByCurrentUser
+                ? min(bubbleFrame.minX - size.width / 2, width - size.width)
+                : max(bubbleFrame.maxX - size.width / 2, 0)
+            return CGRect(origin: CGPoint(x: originX, y: 0), size: size)
+        }
+
+        let metadataFrame: CGRect? = {
+            guard isLastInGroup else { return nil }
+            let originX = isSentByCurrentUser
+                ? width - metadataSize.width
+                : bubbleLeading
+            return CGRect(
+                origin: CGPoint(x: originX, y: bubbleFrame.maxY + 8),
+                size: metadataSize
+            )
+        }()
+
+        return ChatMessageContentView.Layout(
+            messageBubble: bubbleFrame,
+            messageBubbleLayout: bubbleSizer.layoutForView(with: data, of: bubbleSize),
+            messageMetadata: metadataFrame,
+            messageMetadataLayout: metadataFrame == nil ? nil : metadataSizer.layoutForView(with: data, of: metadataSize),
+            authorAvatar: avatarFrame,
+            reactions: reactionFrame
+        )
+    }
+
+    func sizeForReactions(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize? {
+        guard !data.message.reactionScores.isEmpty else { return nil }
+        reactions.style = data.isSentByCurrentUser ? .smallOutgoing : .smallIncoming
+        reactions.reload(from: data.message)
+        return reactions.systemLayoutSizeFitting(CGSize(width: width, height: 300))
     }
 }

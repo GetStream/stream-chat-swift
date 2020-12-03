@@ -35,7 +35,7 @@ extension UIColor {
     static let outgoingMessageBubbleBackground = UIColor(rgb: 0xe5e5e5)
     static let outgoingMessageBubbleBorder = outgoingMessageBubbleBackground
     static let incomingMessageBubbleBackground = white
-    static let incomingMessageBubbleBorder = UIColor.black.withAlphaComponent(0.08)
+    static let incomingMessageBubbleBorder = UIColor(red: 20, green: 20, blue: 20)
     static let chatBackground = UIColor(rgb: 0xfcfcfc)
     static let messageTimestamp = UIColor.lightGray
 }

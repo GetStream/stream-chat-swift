@@ -150,7 +150,9 @@ class ChatMessageReactionsView: UIView {
         content.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
         content.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
         content.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor).isActive = true
-        content.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
+        let bottom = content.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+        bottom.priority = UILayoutPriority(999)
+        bottom.isActive = true
         layer.borderWidth = 1
         updateStyle()
     }

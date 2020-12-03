@@ -280,10 +280,13 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
 extension ChatChannelVC: ChatChannelCollectionViewLayoutDelegate {
     public func createLayoutModel() -> ChatChannelCollectionViewLayoutModel {
         let width = collectionView.bounds.width
-        let heights = (0..<controller.messages.count)
+        let data = (0..<controller.messages.count)
             .map { messageGroupPart(at: IndexPath(item: $0, section: 0)) }
-            .map { cellSizer.heightForCell(with: $0, limitedBy: width) }
-        return ChatChannelCollectionViewLayoutModel(forWidth: width, itemHeights: heights)
+            .map { (
+                height: cellSizer.heightForCell(with: $0, limitedBy: width),
+                bottomMargin: $0.isLastInGroup ? CGFloat(8) : CGFloat(2)
+            ) }
+        return ChatChannelCollectionViewLayoutModel(forWidth: width, itemsData: data)
     }
 }
 
