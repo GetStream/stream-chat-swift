@@ -15,7 +15,9 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     
     public var controller: _ChatChannelController<ExtraData>!
 
-    lazy var messageInputAccessoryViewController = { MessageComposerInputAccessoryViewController() }()
+    public private(set) lazy var messageInputAccessoryViewController: MessageComposerInputAccessoryViewController<ExtraData> = {
+        .init()
+    }()
         
     public private(set) lazy var collectionView: UICollectionView = {
         let layout = uiConfig.messageList.collectionLayout.init()
@@ -48,7 +50,7 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         navigationItem.largeTitleDisplayMode = .never
 
         installLongPress()
-        setupMessageComposer()
+        messageInputAccessoryViewController.controller = controller
     }
 
     override open func setUpLayout() {
@@ -96,11 +98,6 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
         collectionView.addGestureRecognizer(longPress)
     }
-    
-    func setupMessageComposer() {
-        composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-        composerView.imagePicker.delegate = self
-    }
 
     // MARK: - Actions
 
@@ -121,36 +118,12 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         }
     }
     
-    @objc func sendMessage(_ sender: Any) {
-        guard let text = composerView.messageInputView.textView.text else {
-            return
-        }
-        
-        controller?.createNewMessage(text: text)
-        
-        composerView.messageInputView.textView.text = ""
-    }
-    
     // MARK: - ChatChannelMessageComposerView
     
     override open var canBecomeFirstResponder: Bool { true }
     
-    var composerView = ChatChannelMessageComposerView<DefaultUIExtraData>(uiConfig: .default)
-
     override open var inputAccessoryViewController: UIInputViewController? {
         messageInputAccessoryViewController
-    }
-
-    public func imagePickerController(
-        _ picker: UIImagePickerController,
-        didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
-    ) {
-        guard let selectedImage = info[.originalImage] as? UIImage else { return }
-        
-        composerView.attachmentsView.insertNewItem(with: selectedImage)
-        picker.dismiss(animated: true) {
-            self.composerView.attachmentsView.isHidden = false
-        }
     }
     
     // MARK: - UICollectionViewDataSource

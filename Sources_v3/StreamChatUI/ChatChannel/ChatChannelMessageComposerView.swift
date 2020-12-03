@@ -10,17 +10,8 @@ open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIInputV
     public var buttonHeight: CGFloat = 20
     
     public let uiConfig: UIConfig<ExtraData>
-    
-    public weak var owningVC: UIViewController?
-    
+        
     // MARK: - Subviews
-    
-    public lazy var imagePicker: UIImagePickerController = {
-        let picker = UIImagePickerController()
-        picker.mediaTypes = ["public.image", "public.movie"]
-        picker.sourceType = .photoLibrary
-        return picker
-    }()
 
     public private(set) lazy var container = ContainerStackView().withoutAutoresizingMaskConstraints
     
@@ -53,17 +44,10 @@ open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIInputV
         if #available(iOS 13.0, *) {
             button.setImage(UIImage(systemName: "paperclip"), for: .normal)
         }
-        button.addTarget(self, action: #selector(attachmentButtonHandler), for: .touchUpInside)
         button.widthAnchor.constraint(equalTo: button.heightAnchor, multiplier: 1).isActive = true
         return button
     }()
-    
-    @objc func attachmentButtonHandler() {
-        invalidateIntrinsicContentSize()
 
-        owningVC?.present(imagePicker, animated: true)
-    }
-    
     public private(set) lazy var boltButton: UIButton = {
         let button = UIButton().withoutAutoresizingMaskConstraints
         if #available(iOS 13.0, *) {
@@ -71,10 +55,6 @@ open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIInputV
         }
         button.widthAnchor.constraint(equalTo: button.heightAnchor, multiplier: 1).isActive = true
         return button
-    }()
-    
-    public private(set) lazy var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData> = {
-        .init(uiConfig: uiConfig)
     }()
     
     // MARK: - Init
@@ -151,7 +131,6 @@ open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIInputV
         boltButton.widthAnchor.constraint(equalToConstant: buttonHeight).isActive = true
 
         attachmentsView.isHidden = true
-        attachmentsView.composer = self
 
         addObserver(self, forKeyPath: "safeAreaInsets", options: .new, context: nil)
         messageInputView.textView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
@@ -161,7 +140,7 @@ open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIInputV
     
     override open var intrinsicContentSize: CGSize {
         let size = CGSize(
-            width: superview?.bounds.width ?? super.intrinsicContentSize.width,
+            width: .zero,
             height: container.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
         )
         return size
