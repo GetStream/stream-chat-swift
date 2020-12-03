@@ -4,7 +4,7 @@
 
 import UIKit
 
-open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIView {
+open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIInputView {
     // MARK: - Properties
     
     public var buttonHeight: CGFloat = 20
@@ -84,7 +84,7 @@ open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIView {
     ) {
         self.uiConfig = uiConfig
         
-        super.init(frame: .zero)
+        super.init(frame: .zero, inputViewStyle: .default)
         
         commonInit()
     }

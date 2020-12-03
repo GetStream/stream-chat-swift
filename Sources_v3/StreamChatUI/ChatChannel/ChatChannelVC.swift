@@ -14,6 +14,8 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     // MARK: - Properties
     
     public var controller: _ChatChannelController<ExtraData>!
+
+    lazy var messageInputAccessoryViewController = { MessageComposerInputAccessoryViewController() }()
         
     public private(set) lazy var collectionView: UICollectionView = {
         let layout = uiConfig.messageList.collectionLayout.init()
@@ -135,34 +137,10 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     
     var composerView = ChatChannelMessageComposerView<DefaultUIExtraData>(uiConfig: .default)
 
-    override open var inputAccessoryView: UIView? {
-        guard presentedViewController?.isBeingDismissed != false else {
-            return nil
-        }
-        
-        composerView.translatesAutoresizingMaskIntoConstraints = false
-        composerView.layoutMargins = view.layoutMargins
-        composerView.directionalLayoutMargins = systemMinimumLayoutMargins
-        
-        composerView.owningVC = self
-        composerView.suggestionsViewController.owningViewController = self
-        
-        composerView.messageInputView.textViewDidChange = { [weak self] text in
-            self?.controller.sendKeystrokeEvent()
-            if text?.first == "\\" || text?.first == "@" {
-                self?.composerView.suggestionsViewController.show()
-            } else {
-                self?.composerView.suggestionsViewController.dismiss()
-            }
-        }
-        
-        composerView.messageInputView.textViewDidEndEditing = { [weak self] _ in
-            self?.controller.sendStopTypingEvent()
-        }
-        
-        return composerView
+    override open var inputAccessoryViewController: UIInputViewController? {
+        messageInputAccessoryViewController
     }
-    
+
     public func imagePickerController(
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
