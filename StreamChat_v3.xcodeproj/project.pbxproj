@@ -365,6 +365,7 @@
 		88F6DF91252C8845009A8AF0 /* ChannelMemberUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF90252C8845009A8AF0 /* ChannelMemberUpdater.swift */; };
 		88F6DF94252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */; };
 		88F6DF97252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */; };
+		88F836612578D1A80039AEC8 /* ChatMessageActionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F836602578D1A80039AEC8 /* ChatMessageActionItem.swift */; };
 		88F896F92541AC0900DE517D /* FlagMessagePayload+NoExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 88F896F62541AC0900DE517D /* FlagMessagePayload+NoExtraData.json */; };
 		88F896FA2541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 88F896F72541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json */; };
 		88F896FB2541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 88F896F82541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json */; };
@@ -987,6 +988,7 @@
 		88F6DF90252C8845009A8AF0 /* ChannelMemberUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater.swift; sourceTree = "<group>"; };
 		88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Tests.swift; sourceTree = "<group>"; };
 		88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Mock.swift; sourceTree = "<group>"; };
+		88F836602578D1A80039AEC8 /* ChatMessageActionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionItem.swift; sourceTree = "<group>"; };
 		88F896F62541AC0900DE517D /* FlagMessagePayload+NoExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagMessagePayload+NoExtraData.json"; sourceTree = "<group>"; };
 		88F896F72541AC0900DE517D /* FlagMessagePayload+DefaultExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagMessagePayload+DefaultExtraData.json"; sourceTree = "<group>"; };
 		88F896F82541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagMessagePayload+CustomExtraData.json"; sourceTree = "<group>"; };
@@ -1294,6 +1296,7 @@
 				888123E5255D51BD00070D5A /* Common Views */,
 				7908830C2548707B00896F03 /* ChatChannel */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
+				88F8364E2578D1590039AEC8 /* MessageActionsPopup */,
 				7908823125432C6400896F03 /* StreamChatUI.h */,
 				7908823225432C6400896F03 /* Info.plist */,
 				79D86E822562BAB900DCD1D2 /* AppearanceSetting.swift */,
@@ -2134,6 +2137,14 @@
 			path = MessageReaction;
 			sourceTree = "<group>";
 		};
+		88F8364E2578D1590039AEC8 /* MessageActionsPopup */ = {
+			isa = PBXGroup;
+			children = (
+				88F836602578D1A80039AEC8 /* ChatMessageActionItem.swift */,
+			);
+			path = MessageActionsPopup;
+			sourceTree = "<group>";
+		};
 		88F896F52541AC0900DE517D /* FlagMessage */ = {
 			isa = PBXGroup;
 			children = (
@@ -2941,6 +2952,7 @@
 				885B3D7D25642B88003E6BDF /* CreateNewChannelButton.swift in Sources */,
 				792DD9D9256BC542001DB91B /* BaseViews.swift in Sources */,
 				79088334254876EA00896F03 /* ChatChannelVC.swift in Sources */,
+				88F836612578D1A80039AEC8 /* ChatMessageActionItem.swift in Sources */,
 				228DC80E25704B410080A49F /* MessageComposerAttachmentCellView.swift in Sources */,
 				790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */,
 				79D86E832562BAB900DCD1D2 /* AppearanceSetting.swift in Sources */,
