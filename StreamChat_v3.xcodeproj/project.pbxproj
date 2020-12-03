@@ -1355,7 +1355,6 @@
 			children = (
 				7908832D254876C100896F03 /* ChatChannelVC.swift */,
 				793061812577C557005CF846 /* ChatChannelVC_Tests.swift */,
-				DB70CFFA25702EB900DDF436 /* ChatMessagePopupViewController.swift */,
 				DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */,
 				79088331254876C100896F03 /* ChatChannelCollectionView.swift */,
 				79088330254876C100896F03 /* ChatChannelCollectionViewLayout.swift */,
@@ -2144,6 +2143,7 @@
 		88F8364E2578D1590039AEC8 /* MessageActionsPopup */ = {
 			isa = PBXGroup;
 			children = (
+				DB70CFFA25702EB900DDF436 /* ChatMessagePopupViewController.swift */,
 				88F8366C2578D1C60039AEC8 /* MessageActionsView.swift */,
 				88F8364F2578D16D0039AEC8 /* MessageActionsView+ActionButton.swift */,
 				88F836602578D1A80039AEC8 /* ChatMessageActionItem.swift */,
