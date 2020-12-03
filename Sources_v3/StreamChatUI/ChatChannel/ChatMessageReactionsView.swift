@@ -226,48 +226,62 @@ open class ChatMessageReactionsView: UIView {
 
 // MARK: - Controller
 
-class ChatMessageReactionViewController<ExtraData: UIExtraDataTypes> {
-    private let controller: _ChatMessageController<ExtraData>
+open class ChatMessageReactionViewController<ExtraData: UIExtraDataTypes>: ViewController, UIConfigProvider {
+    public var messageController: _ChatMessageController<ExtraData>!
 
-    let view = ChatMessageReactionsView()
-    let showAllAvailableReactions: Bool
+    // MARK: - Subviews
 
-    init(showAllAvailableReactions: Bool, messageID: MessageId, channel: ChannelId, client: _ChatClient<ExtraData>) {
-        self.showAllAvailableReactions = showAllAvailableReactions
-        controller = client.messageController(cid: channel, messageId: messageID)
-        controller.setDelegate(self)
-        view.onTap = { [weak self] in self?.toggleReaction($0) }
-        reloadView()
+    private lazy var reactionsView = uiConfig
+        .messageList
+        .messageReactionsView.init()
+        .withoutAutoresizingMaskConstraints
+
+    // MARK: - Life Cycle
+
+    override open func setUp() {
+        super.setUp()
+
+        messageController.setDelegate(self)
+        reactionsView.onTap = { [weak self] in self?.toggleReaction($0) }
     }
 
-    func reloadView() {
-        guard let message = controller.message else { return }
-        var allReactions: [MessageReactionType]?
-        if showAllAvailableReactions {
-            allReactions = ["like", "haha", "facepalm", "roar", "You not expected this"].map(MessageReactionType.init(rawValue:))
-        }
-        view.reload(from: message, with: allReactions)
+    override public func defaultAppearance() {
+        reactionsView.style = messageController.message?.isSentByCurrentUser == true ? .bigOutgoing : .bigIncoming
     }
 
-    func toggleReaction(_ reaction: MessageReactionType) {
-        var a = [1]
-        a.append(contentsOf: [2])
-        guard let message = controller.message else { return }
+    override open func setUpLayout() {
+        view.embed(reactionsView)
+    }
+
+    override open func updateContent() {
+        reactionsView.reload(
+            from: messageController.message,
+            with: uiConfig.messageList.messageAvailableReactions
+        )
+    }
+
+    // MARK: - Actions
+
+    public func toggleReaction(_ reaction: MessageReactionType) {
+        guard let message = messageController.message else { return }
+
         let shouldRemove = message.currentUserReactions.contains { $0.type == reaction }
         shouldRemove
-            ? controller.deleteReaction(reaction)
-            : controller.addReaction(reaction)
+            ? messageController.deleteReaction(reaction)
+            : messageController.addReaction(reaction)
     }
 }
 
+// MARK: - _MessageControllerDelegate
+
 extension ChatMessageReactionViewController: _MessageControllerDelegate {
-    func messageController(
+    public func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) {
         switch change {
         case .create, .remove: break
-        case .update: reloadView()
+        case .update: updateContentIfNeeded()
         }
     }
 }
