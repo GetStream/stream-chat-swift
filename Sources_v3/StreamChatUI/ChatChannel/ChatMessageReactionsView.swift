@@ -99,7 +99,7 @@ class MessageReactionView: UIView {
 
 // MARK: - Reactions
 
-class ChatMessageReactionsView: UIView {
+open class ChatMessageReactionsView: UIView {
     private enum Height {
         static let small: CGFloat = 24
         static let big: CGFloat = 40
@@ -133,12 +133,12 @@ class ChatMessageReactionsView: UIView {
         return stack
     }()
 
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
     }
 
-    required init?(coder: NSCoder) {
+    public required init?(coder: NSCoder) {
         super.init(coder: coder)
         commonInit()
     }
