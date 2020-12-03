@@ -33,21 +33,20 @@ open class ChatRepliedMessageContentView<ExtraData: UIExtraDataTypes>: View {
 
     override open func layoutSubviews() {
         super.layoutSubviews()
-        guard let layout = layout else { return }
 
-        messageBubbleView.isHidden = layout.messageBubble == nil
-        if let frame = layout.messageBubble {
+        messageBubbleView.isHidden = layout?.messageBubble == nil
+        if let frame = layout?.messageBubble {
             messageBubbleView.frame = frame
         }
-        messageBubbleView.layout = layout.messageBubbleLayout
+        messageBubbleView.layout = layout?.messageBubbleLayout
 
-        authorAvatarView.isHidden = layout.authorAvatar == nil
-        if let frame = layout.authorAvatar {
+        authorAvatarView.isHidden = layout?.authorAvatar == nil
+        if let frame = layout?.authorAvatar {
             authorAvatarView.frame = frame
         }
 
-        loadingView.isHidden = layout.loading == nil
-        if let frame = layout.loading {
+        loadingView.isHidden = layout?.loading == nil
+        if let frame = layout?.loading {
             loadingView.frame = frame
         }
     }

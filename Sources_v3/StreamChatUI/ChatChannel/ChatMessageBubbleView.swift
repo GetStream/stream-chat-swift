@@ -70,21 +70,21 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
 
         borderLayer.frame = layer.bounds
 
-        guard let layout = layout else { return }
-
-        textView.isHidden = layout.text == nil
-        if let frame = layout.text {
+        textView.isHidden = layout?.text == nil
+        if let frame = layout?.text {
             textView.frame = frame
         }
 
-        repliedMessageView?.isHidden = layout.repliedMessage == nil
-        if let frame = layout.repliedMessage {
+        repliedMessageView?.isHidden = layout?.repliedMessage == nil
+        if let frame = layout?.repliedMessage {
             repliedMessageView?.frame = frame
         }
-        repliedMessageView?.layout = layout.repliesMessageLayout as? ChatRepliedMessageContentView<ExtraData>.Layout
+        repliedMessageView?.layout = layout?.repliesMessageLayout as? ChatRepliedMessageContentView<ExtraData>.Layout
 
-        zip(attachments, layout.attachments).forEach {
-            $0.frame = $1
+        if let attachmentFrames = layout?.attachments {
+            zip(attachments, attachmentFrames).forEach {
+                $0.frame = $1
+            }
         }
     }
 

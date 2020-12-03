@@ -56,27 +56,26 @@ open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigPr
 
     override open func layoutSubviews() {
         super.layoutSubviews()
-        guard let layout = layout else { return }
 
-        messageBubbleView.isHidden = layout.messageBubble == nil
-        if let frame = layout.messageBubble {
+        messageBubbleView.isHidden = layout?.messageBubble == nil
+        if let frame = layout?.messageBubble {
             messageBubbleView.frame = frame
         }
-        messageBubbleView.layout = layout.messageBubbleLayout
+        messageBubbleView.layout = layout?.messageBubbleLayout
 
-        messageMetadataView.isHidden = layout.messageMetadata == nil
-        if let frame = layout.messageMetadata {
+        messageMetadataView.isHidden = layout?.messageMetadata == nil
+        if let frame = layout?.messageMetadata {
             messageMetadataView.frame = frame
         }
-        messageMetadataView.layout = layout.messageMetadataLayout
+        messageMetadataView.layout = layout?.messageMetadataLayout
 
-        authorAvatarView.isHidden = layout.authorAvatar == nil
-        if let frame = layout.authorAvatar {
+        authorAvatarView.isHidden = layout?.authorAvatar == nil
+        if let frame = layout?.authorAvatar {
             authorAvatarView.frame = frame
         }
 
-        messageReactionsView.isHidden = layout.reactions == nil
-        if let frame = layout.reactions {
+        messageReactionsView.isHidden = layout?.reactions == nil
+        if let frame = layout?.reactions {
             messageReactionsView.frame = frame
         }
     }
