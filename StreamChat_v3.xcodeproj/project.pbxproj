@@ -646,7 +646,6 @@
 		7908823125432C6400896F03 /* StreamChatUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamChatUI.h; sourceTree = "<group>"; };
 		7908823225432C6400896F03 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7908823A25432C9000896F03 /* StreamChatUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamChatUITests.swift; sourceTree = "<group>"; };
-		7908823B25432C9000896F03 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7908824725432CC600896F03 /* StreamChatStressTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChatStressTestPlan.xctestplan; sourceTree = "<group>"; };
 		7908824825432CC600896F03 /* StreamChatTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChatTestPlan.xctestplan; sourceTree = "<group>"; };
 		7908824925432CC600896F03 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -743,7 +742,6 @@
 		793060E825778896005CF846 /* StreamChatTestTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChatTestTools.h; sourceTree = "<group>"; };
 		793060E925778896005CF846 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		793060EE25778897005CF846 /* StreamChatTestToolsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatTestToolsTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		793060F525778897005CF846 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7930610E25778C37005CF846 /* ChannelListController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListController_Mock.swift; sourceTree = "<group>"; };
 		79306135257798FC005CF846 /* ChatChannel_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannel_Mock.swift; sourceTree = "<group>"; };
 		7930614D2577A1AE005CF846 /* ChatUser_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUser_Mock.swift; sourceTree = "<group>"; };
@@ -1306,7 +1304,6 @@
 			isa = PBXGroup;
 			children = (
 				7908823A25432C9000896F03 /* StreamChatUITests.swift */,
-				7908823B25432C9000896F03 /* Info.plist */,
 			);
 			path = StreamChatUITests;
 			sourceTree = "<group>";
@@ -1320,7 +1317,6 @@
 				79280F7E24891C6A00CDEB89 /* Virtual Time */,
 				7908824725432CC600896F03 /* StreamChatStressTestPlan.xctestplan */,
 				7908824825432CC600896F03 /* StreamChatTestPlan.xctestplan */,
-				7908824925432CC600896F03 /* Info.plist */,
 				F69C4BC524F66CC200A3D740 /* EventLogger.swift */,
 				79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */,
 			);
@@ -1620,7 +1616,6 @@
 		793060F225778897005CF846 /* StreamChatTestToolsTests */ = {
 			isa = PBXGroup;
 			children = (
-				793060F525778897005CF846 /* Info.plist */,
 			);
 			path = StreamChatTestToolsTests;
 			sourceTree = "<group>";
@@ -1940,6 +1935,7 @@
 				793060F225778897005CF846 /* StreamChatTestToolsTests */,
 				7908823925432C9000896F03 /* StreamChatUITests */,
 				792A71F22578EFBB0082498D /* Shared */,
+				7908824925432CC600896F03 /* Info.plist */,
 			);
 			indentWidth = 4;
 			path = Tests_v3;
@@ -2943,7 +2939,6 @@
 				792DD9D9256BC542001DB91B /* BaseViews.swift in Sources */,
 				79088334254876EA00896F03 /* ChatChannelVC.swift in Sources */,
 				228DC80E25704B410080A49F /* MessageComposerAttachmentCellView.swift in Sources */,
-				79088334254876EA00896F03 /* ChatChannelVC.swift in Sources */,
 				790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */,
 				79D86E832562BAB900DCD1D2 /* AppearanceSetting.swift in Sources */,
 				792DD9FB256E67C6001DB91B /* UIConfigProvider.swift in Sources */,
@@ -3603,8 +3598,8 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = Tests_v3/StreamChatUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				INFOPLIST_FILE = Tests_v3/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3625,8 +3620,8 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = Tests_v3/StreamChatUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				INFOPLIST_FILE = Tests_v3/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3646,8 +3641,8 @@
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = Tests_v3/StreamChatUITests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
+				INFOPLIST_FILE = Tests_v3/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3668,7 +3663,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Sample_v3/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3692,7 +3687,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Sample_v3/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3855,8 +3850,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = StreamChatTestToolsTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				INFOPLIST_FILE = Tests_v3/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3876,8 +3871,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = StreamChatTestToolsTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				INFOPLIST_FILE = Tests_v3/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3896,8 +3891,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = StreamChatTestToolsTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
+				INFOPLIST_FILE = Tests_v3/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3968,8 +3963,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D48F367GRM;
-				INFOPLIST_FILE = Tests_v3/StreamChatTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				INFOPLIST_FILE = Tests_v3/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -3987,8 +3982,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D48F367GRM;
-				INFOPLIST_FILE = Tests_v3/StreamChatTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				INFOPLIST_FILE = Tests_v3/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4262,8 +4257,8 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = D48F367GRM;
-				INFOPLIST_FILE = Tests_v3/StreamChatTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				INFOPLIST_FILE = Tests_v3/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -4284,7 +4279,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				INFOPLIST_FILE = Sample_v3/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
