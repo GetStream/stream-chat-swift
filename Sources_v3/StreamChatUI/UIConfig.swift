@@ -80,6 +80,9 @@ public extension UIConfig {
         public var collectionView: ChatChannelCollectionView.Type = ChatChannelCollectionView.self
         public var collectionLayout: ChatChannelCollectionViewLayout.Type = ChatChannelCollectionViewLayout.self
         public var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
+        public var defaultMargins: CGFloat = 8
+        /// in (0;1] range
+        public var maxMessageWidth: CGFloat = 0.75
         public var messageContentView: ChatMessageContentView<ExtraData>.Type = ChatMessageContentView<ExtraData>.self
         public var messageContentSubviews = MessageContentViewSubviews()
     }

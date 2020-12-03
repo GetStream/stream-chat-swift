@@ -100,101 +100,104 @@ open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigPr
     }
 }
 
-class ChatMessageContentViewLayoutManager<ExtraData: UIExtraDataTypes> {
-    let bubbleSizer = ChatMessageBubbleViewLayoutManager<ExtraData>()
-    let metadataSizer = ChatMessageMetadataViewLayoutManager<ExtraData>()
-    private let reactions = ChatMessageReactionsView()
+extension ChatMessageContentView {
+    class LayoutProvider: ConfiguredLayoutProvider<ExtraData> {
+        lazy var bubbleSizer = ChatMessageBubbleView<ExtraData>.LayoutProvider(parent: self)
+        lazy var metadataSizer = ChatMessageMetadataView<ExtraData>.LayoutProvider(parent: self)
+        private let reactions = ChatMessageReactionsView()
 
-    func heightForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGFloat {
-        sizeForView(with: data, limitedBy: width).height
-    }
-
-    func sizeForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize {
-        let isSentByCurrentUser = data.isSentByCurrentUser
-        let avatarSize = isSentByCurrentUser ? .zero : CGSize(width: 32, height: 32)
-        let reactionsSize = sizeForReactions(with: data, limitedBy: width)
-        let bubbleLeading: CGFloat = isSentByCurrentUser ? 0 : 40
-
-        var height = reactionsSize?.height ?? 0
-
-        let bubbleSize = bubbleSizer.sizeForView(with: data, limitedBy: width - bubbleLeading)
-        var nonAvatarWidth = bubbleSize.width
-        height += bubbleSize.height
-
-        let metadataSize = metadataSizer.sizeForView(with: data, limitedBy: width - bubbleLeading)
-        if data.isLastInGroup {
-            height += 8
-            height += metadataSize.height
-            nonAvatarWidth = max(nonAvatarWidth, metadataSize.width)
+        func heightForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGFloat {
+            sizeForView(with: data, limitedBy: width).height
         }
 
-        height = max(avatarSize.height, height)
-        let width = bubbleLeading + nonAvatarWidth
-        return CGSize(width: width, height: height)
-    }
+        func sizeForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize {
+            let margins = uiConfig.messageList.defaultMargins
+            let isSentByCurrentUser = data.isSentByCurrentUser
+            let avatarSize = isSentByCurrentUser ? .zero : CGSize(width: 32, height: 32)
+            let reactionsSize = sizeForReactions(with: data, limitedBy: width)
+            let bubbleLeading: CGFloat = isSentByCurrentUser ? 0 : (avatarSize.width + margins)
 
-    func layoutForView(
-        with data: _ChatMessageGroupPart<ExtraData>,
-        of size: CGSize
-    ) -> ChatMessageContentView<ExtraData>.Layout {
-        let width = size.width
-        let height = size.height
+            var height = reactionsSize?.height ?? 0
 
-        let isSentByCurrentUser = data.isSentByCurrentUser
-        let isLastInGroup = data.isLastInGroup
-        let spacing: CGFloat = 8
+            let bubbleSize = bubbleSizer.sizeForView(with: data, limitedBy: width - bubbleLeading)
+            var nonAvatarWidth = bubbleSize.width
+            height += bubbleSize.height
 
-        // sizes
-        let avatarSize = isSentByCurrentUser ? .zero : CGSize(width: 32, height: 32)
-        let reactionsSize = sizeForReactions(with: data, limitedBy: width)
-        let avatarMaxX = isSentByCurrentUser ? 0 : avatarSize.width + spacing
-        let bubbleSize = bubbleSizer.sizeForView(with: data, limitedBy: width - avatarMaxX)
-        let metadataSize = metadataSizer.sizeForView(with: data, limitedBy: width - avatarMaxX)
+            let metadataSize = metadataSizer.sizeForView(with: data, limitedBy: width - bubbleLeading)
+            if data.isLastInGroup {
+                height += margins
+                height += metadataSize.height
+                nonAvatarWidth = max(nonAvatarWidth, metadataSize.width)
+            }
 
-        // frames
-        let avatarFrame: CGRect? = {
-            guard !isSentByCurrentUser, isLastInGroup else { return nil }
-            return CGRect(origin: CGPoint(x: 0, y: height - avatarSize.height), size: avatarSize)
-        }()
-
-        let reactionsBottom: CGFloat = reactionsSize?.height ?? 0
-        let bubbleLeading = isSentByCurrentUser
-            ? width - bubbleSize.width
-            : avatarMaxX
-        let bubbleFrame = CGRect(origin: CGPoint(x: bubbleLeading, y: reactionsBottom), size: bubbleSize)
-
-        let reactionFrame: CGRect? = reactionsSize.map { size in
-            let originX: CGFloat = isSentByCurrentUser
-                ? min(bubbleFrame.minX - size.width / 2, width - size.width)
-                : max(bubbleFrame.maxX - size.width / 2, 0)
-            return CGRect(origin: CGPoint(x: originX, y: 0), size: size)
+            height = max(avatarSize.height, height)
+            let width = bubbleLeading + nonAvatarWidth
+            return CGSize(width: width, height: height)
         }
 
-        let metadataFrame: CGRect? = {
-            guard isLastInGroup else { return nil }
-            let originX = isSentByCurrentUser
-                ? width - metadataSize.width
-                : bubbleLeading
-            return CGRect(
-                origin: CGPoint(x: originX, y: bubbleFrame.maxY + 8),
-                size: metadataSize
+        func layoutForView(
+            with data: _ChatMessageGroupPart<ExtraData>,
+            of size: CGSize
+        ) -> Layout {
+            let width = size.width
+            let height = size.height
+
+            let isSentByCurrentUser = data.isSentByCurrentUser
+            let isLastInGroup = data.isLastInGroup
+            let spacing: CGFloat = uiConfig.messageList.defaultMargins
+
+            // sizes
+            let avatarSize = isSentByCurrentUser ? .zero : CGSize(width: 32, height: 32)
+            let reactionsSize = sizeForReactions(with: data, limitedBy: width)
+            let avatarMaxX = isSentByCurrentUser ? 0 : avatarSize.width + spacing
+            let bubbleSize = bubbleSizer.sizeForView(with: data, limitedBy: width - avatarMaxX)
+            let metadataSize = metadataSizer.sizeForView(with: data, limitedBy: width - avatarMaxX)
+
+            // frames
+            let avatarFrame: CGRect? = {
+                guard !isSentByCurrentUser, isLastInGroup else { return nil }
+                return CGRect(origin: CGPoint(x: 0, y: height - avatarSize.height), size: avatarSize)
+            }()
+
+            let reactionsBottom: CGFloat = reactionsSize?.height ?? 0
+            let bubbleLeading = isSentByCurrentUser
+                ? width - bubbleSize.width
+                : avatarMaxX
+            let bubbleFrame = CGRect(origin: CGPoint(x: bubbleLeading, y: reactionsBottom), size: bubbleSize)
+
+            let reactionFrame: CGRect? = reactionsSize.map { size in
+                let originX: CGFloat = isSentByCurrentUser
+                    ? min(bubbleFrame.minX - size.width / 2, width - size.width)
+                    : max(bubbleFrame.maxX - size.width / 2, 0)
+                return CGRect(origin: CGPoint(x: originX, y: 0), size: size)
+            }
+
+            let metadataFrame: CGRect? = {
+                guard isLastInGroup else { return nil }
+                let originX = isSentByCurrentUser
+                    ? width - metadataSize.width
+                    : bubbleLeading
+                return CGRect(
+                    origin: CGPoint(x: originX, y: bubbleFrame.maxY + 8),
+                    size: metadataSize
+                )
+            }()
+
+            return Layout(
+                messageBubble: bubbleFrame,
+                messageBubbleLayout: bubbleSizer.layoutForView(with: data, of: bubbleSize),
+                messageMetadata: metadataFrame,
+                messageMetadataLayout: metadataFrame == nil ? nil : metadataSizer.layoutForView(with: data, of: metadataSize),
+                authorAvatar: avatarFrame,
+                reactions: reactionFrame
             )
-        }()
+        }
 
-        return ChatMessageContentView.Layout(
-            messageBubble: bubbleFrame,
-            messageBubbleLayout: bubbleSizer.layoutForView(with: data, of: bubbleSize),
-            messageMetadata: metadataFrame,
-            messageMetadataLayout: metadataFrame == nil ? nil : metadataSizer.layoutForView(with: data, of: metadataSize),
-            authorAvatar: avatarFrame,
-            reactions: reactionFrame
-        )
-    }
-
-    func sizeForReactions(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize? {
-        guard !data.message.reactionScores.isEmpty else { return nil }
-        reactions.style = data.isSentByCurrentUser ? .smallOutgoing : .smallIncoming
-        reactions.reload(from: data.message)
-        return reactions.systemLayoutSizeFitting(CGSize(width: width, height: 300))
+        func sizeForReactions(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize? {
+            guard !data.message.reactionScores.isEmpty else { return nil }
+            reactions.style = data.isSentByCurrentUser ? .smallOutgoing : .smallIncoming
+            reactions.reload(from: data.message)
+            return reactions.systemLayoutSizeFitting(CGSize(width: width, height: 300))
+        }
     }
 }

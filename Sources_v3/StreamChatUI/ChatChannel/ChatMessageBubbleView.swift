@@ -143,90 +143,83 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
     }
 }
 
-class ChatMessageBubbleViewLayoutManager<ExtraData: UIExtraDataTypes> {
-    let textView: UITextView = {
-        let textView = UITextView()
-        textView.isEditable = false
-        textView.isScrollEnabled = false
-        textView.font = .preferredFont(forTextStyle: .body)
-        textView.adjustsFontForContentSizeCategory = true
-        textView.textContainerInset = .zero
-        textView.textContainer.lineFragmentPadding = 0
-        return textView
-    }()
+extension ChatMessageBubbleView {
+    class LayoutProvider: ConfiguredLayoutProvider<ExtraData> {
+        let textView: UITextView = ChatMessageBubbleView(showRepliedMessage: false).textView
 
-    /// reply sizer depends on bubble sizer, circle dependency
-    /// but bubble inside reply don't need reply sizer so it should be fine as long as you not access it unless needed
-    lazy var replySizer = ChatRepliedMessageContentViewLayoutManager<ExtraData>()
+        /// reply sizer depends on bubble sizer, circle dependency
+        /// but bubble inside reply don't need reply sizer so it should be fine as long as you not access it unless needed
+        lazy var replySizer = ChatRepliedMessageContentView<ExtraData>.LayoutProvider(parent: self)
 
-    func heightForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGFloat {
-        sizeForView(with: data, limitedBy: width).height
-    }
-
-    func sizeForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize {
-        let margins: CGFloat = 8
-        let workWidth = width - 2 * margins
-
-        var spacings = margins
-
-        var replySize: CGSize = .zero
-        if data.parentMessageState != nil {
-            replySize = replySizer.sizeForView(with: data.parentMessage, limitedBy: workWidth)
-            spacings += margins
+        func heightForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGFloat {
+            sizeForView(with: data, limitedBy: width).height
         }
 
-        // put attachments here
+        func sizeForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize {
+            let margins = uiConfig.messageList.defaultMargins
+            let workWidth = width - 2 * margins
 
-        var textSize: CGSize = .zero
-        if !data.text.isEmpty {
-            textSize = {
+            var spacings = margins
+
+            var replySize: CGSize = .zero
+            if data.parentMessageState != nil {
+                replySize = replySizer.sizeForView(with: data.parentMessage, limitedBy: workWidth)
+                spacings += margins
+            }
+
+            // put attachments here
+
+            var textSize: CGSize = .zero
+            if !data.text.isEmpty {
+                textSize = {
+                    textView.text = data.message.text
+                    return textView.sizeThatFits(CGSize(width: workWidth, height: .greatestFiniteMagnitude))
+                }()
+                spacings += margins
+            }
+
+            let width = 2 * margins + max(replySize.width, textSize.width)
+            let height = spacings + replySize.height + textSize.height
+            return CGSize(width: max(width, 32), height: max(height, 32))
+        }
+
+        func layoutForView(
+            with data: _ChatMessageGroupPart<ExtraData>,
+            of size: CGSize
+        ) -> Layout {
+            let margins = uiConfig.messageList.defaultMargins
+            let workWidth = size.width - 2 * margins
+            var offsetY = margins
+
+            var replyFrame: CGRect?
+            var replyLayout: ChatRepliedMessageContentView<ExtraData>.Layout?
+            if data.parentMessageState != nil {
+                let replySize = replySizer.sizeForView(with: data.parentMessage, limitedBy: workWidth)
+                replyLayout = replySizer.layoutForView(with: data.parentMessage, of: replySize)
+                replyFrame = CGRect(origin: CGPoint(x: margins, y: offsetY), size: replySize)
+                offsetY += replySize.height
+                offsetY += margins
+            }
+
+            // put attachments here
+
+            let textSize: CGSize = {
                 textView.text = data.message.text
                 return textView.sizeThatFits(CGSize(width: workWidth, height: .greatestFiniteMagnitude))
             }()
-            spacings += margins
+            var textFrame: CGRect?
+            if !data.text.isEmpty {
+                textFrame = CGRect(origin: CGPoint(x: margins, y: offsetY), size: textSize)
+                offsetY += textSize.height
+                offsetY += margins
+            }
+
+            return Layout(
+                text: textFrame,
+                repliedMessage: replyFrame,
+                repliesMessageLayout: replyLayout,
+                attachments: []
+            )
         }
-        
-        let width = 2 * margins + max(replySize.width, textSize.width)
-        let height = spacings + replySize.height + textSize.height
-        return CGSize(width: max(width, 32), height: max(height, 32))
-    }
-
-    func layoutForView(
-        with data: _ChatMessageGroupPart<ExtraData>,
-        of size: CGSize
-    ) -> ChatMessageBubbleView<ExtraData>.Layout {
-        let margins: CGFloat = 8
-        let workWidth = size.width - 2 * margins
-        var offsetY = margins
-
-        var replyFrame: CGRect?
-        var replyLayout: ChatRepliedMessageContentView<ExtraData>.Layout?
-        if data.parentMessageState != nil {
-            let replySize = replySizer.sizeForView(with: data.parentMessage, limitedBy: workWidth)
-            replyLayout = replySizer.layoutForView(with: data.parentMessage, of: replySize)
-            replyFrame = CGRect(origin: CGPoint(x: margins, y: offsetY), size: replySize)
-            offsetY += replySize.height
-            offsetY += margins
-        }
-
-        // put attachments here
-
-        let textSize: CGSize = {
-            textView.text = data.message.text
-            return textView.sizeThatFits(CGSize(width: workWidth, height: .greatestFiniteMagnitude))
-        }()
-        var textFrame: CGRect?
-        if !data.text.isEmpty {
-            textFrame = CGRect(origin: CGPoint(x: margins, y: offsetY), size: textSize)
-            offsetY += textSize.height
-            offsetY += margins
-        }
-
-        return ChatMessageBubbleView.Layout(
-            text: textFrame,
-            repliedMessage: replyFrame,
-            repliesMessageLayout: replyLayout,
-            attachments: []
-        )
     }
 }

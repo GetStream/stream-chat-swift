@@ -120,65 +120,67 @@ extension ChatRepliedMessageContentView {
     }
 }
 
-class ChatRepliedMessageContentViewLayoutManager<ExtraData: UIExtraDataTypes> {
-    let bubbleSizer = ChatMessageBubbleViewLayoutManager<ExtraData>()
+extension ChatRepliedMessageContentView {
+    class LayoutProvider: ConfiguredLayoutProvider<ExtraData> {
+        lazy var bubbleSizer = ChatMessageBubbleView<ExtraData>.LayoutProvider(parent: self)
 
-    func heightForView(with data: _ChatMessage<ExtraData>?, limitedBy width: CGFloat) -> CGFloat {
-        sizeForView(with: data, limitedBy: width).height
-    }
-
-    func sizeForView(with data: _ChatMessage<ExtraData>?, limitedBy width: CGFloat) -> CGSize {
-        guard let message = data else {
-            return CGSize(width: width, height: 60)
+        func heightForView(with data: _ChatMessage<ExtraData>?, limitedBy width: CGFloat) -> CGFloat {
+            sizeForView(with: data, limitedBy: width).height
         }
-        let spacing: CGFloat = 8
-        let avatarSize = CGSize(width: 24, height: 24)
-        let group = _ChatMessageGroupPart(message: message, parentMessageState: nil, isLastInGroup: true)
-        let bubbleSize = bubbleSizer.sizeForView(with: group, limitedBy: width - avatarSize.width - spacing)
-        let height = max(avatarSize.height, bubbleSize.height)
-        return CGSize(width: avatarSize.width + spacing + bubbleSize.width, height: height)
-    }
 
-    func layoutForView(
-        with data: _ChatMessage<ExtraData>?,
-        of size: CGSize
-    ) -> ChatRepliedMessageContentView<ExtraData>.Layout {
-        let width = size.width
-        let height = size.height
-        guard let message = data else {
-            let loadingFrame = CGRect(x: (width - 60) / 2, y: 0, width: 60, height: 60)
-            return ChatRepliedMessageContentView.Layout(
-                messageBubble: nil,
-                messageBubbleLayout: nil,
-                authorAvatar: nil,
-                loading: loadingFrame
+        func sizeForView(with data: _ChatMessage<ExtraData>?, limitedBy width: CGFloat) -> CGSize {
+            guard let message = data else {
+                return CGSize(width: width, height: 60)
+            }
+            let spacing: CGFloat = uiConfig.messageList.defaultMargins
+            let avatarSize = CGSize(width: 24, height: 24)
+            let group = _ChatMessageGroupPart(message: message, parentMessageState: nil, isLastInGroup: true)
+            let bubbleSize = bubbleSizer.sizeForView(with: group, limitedBy: width - avatarSize.width - spacing)
+            let height = max(avatarSize.height, bubbleSize.height)
+            return CGSize(width: avatarSize.width + spacing + bubbleSize.width, height: height)
+        }
+
+        func layoutForView(
+            with data: _ChatMessage<ExtraData>?,
+            of size: CGSize
+        ) -> Layout {
+            let width = size.width
+            let height = size.height
+            guard let message = data else {
+                let loadingFrame = CGRect(x: (width - 60) / 2, y: 0, width: 60, height: 60)
+                return Layout(
+                    messageBubble: nil,
+                    messageBubbleLayout: nil,
+                    authorAvatar: nil,
+                    loading: loadingFrame
+                )
+            }
+            let spacing: CGFloat = uiConfig.messageList.defaultMargins
+            let avatarSize = CGSize(width: 24, height: 24)
+            let isSentByCurrentUser = message.isSentByCurrentUser
+            let avatarOffsetX = isSentByCurrentUser
+                ? width - avatarSize.width
+                : 0
+
+            let group = _ChatMessageGroupPart(message: message, parentMessageState: nil, isLastInGroup: true)
+            let bubbleSize = bubbleSizer.sizeForView(with: group, limitedBy: width - avatarSize.width - spacing)
+
+            let avatarFrame = CGRect(origin: CGPoint(x: avatarOffsetX, y: height - avatarSize.height), size: avatarSize)
+
+            let bubbleOffsetX = isSentByCurrentUser
+                ? 0
+                : avatarFrame.maxX + spacing
+            let bubbleFrame = CGRect(
+                origin: CGPoint(x: bubbleOffsetX, y: max(0, height - bubbleSize.height)),
+                size: bubbleSize
+            )
+
+            return Layout(
+                messageBubble: bubbleFrame,
+                messageBubbleLayout: bubbleSizer.layoutForView(with: group, of: bubbleSize),
+                authorAvatar: avatarFrame,
+                loading: nil
             )
         }
-        let spacing: CGFloat = 8
-        let avatarSize = CGSize(width: 24, height: 24)
-        let isSentByCurrentUser = message.isSentByCurrentUser
-        let avatarOffsetX = isSentByCurrentUser
-            ? width - avatarSize.width
-            : 0
-
-        let group = _ChatMessageGroupPart(message: message, parentMessageState: nil, isLastInGroup: true)
-        let bubbleSize = bubbleSizer.sizeForView(with: group, limitedBy: width - avatarSize.width - spacing)
-
-        let avatarFrame = CGRect(origin: CGPoint(x: avatarOffsetX, y: height - avatarSize.height), size: avatarSize)
-
-        let bubbleOffsetX = isSentByCurrentUser
-            ? 0
-            : avatarFrame.maxX + spacing
-        let bubbleFrame = CGRect(
-            origin: CGPoint(x: bubbleOffsetX, y: max(0, height - bubbleSize.height)),
-            size: bubbleSize
-        )
-
-        return ChatRepliedMessageContentView.Layout(
-            messageBubble: bubbleFrame,
-            messageBubbleLayout: bubbleSizer.layoutForView(with: group, of: bubbleSize),
-            authorAvatar: avatarFrame,
-            loading: nil
-        )
     }
 }

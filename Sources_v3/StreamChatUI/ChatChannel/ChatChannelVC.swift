@@ -20,12 +20,8 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         layout.delegate = self
         let collection = uiConfig.messageList.collectionView.init(layout: layout)
         collection.register(
-            СhatIncomingMessageCollectionViewCell<ExtraData>.self,
-            forCellWithReuseIdentifier: СhatIncomingMessageCollectionViewCell<ExtraData>.reuseId
-        )
-        collection.register(
-            СhatOutgoingMessageCollectionViewCell<ExtraData>.self,
-            forCellWithReuseIdentifier: СhatOutgoingMessageCollectionViewCell<ExtraData>.reuseId
+            СhatMessageCollectionViewCell<ExtraData>.self,
+            forCellWithReuseIdentifier: СhatMessageCollectionViewCell<ExtraData>.reuseId
         )
         collection.showsHorizontalScrollIndicator = false
         collection.dataSource = self
@@ -34,7 +30,7 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         return collection
     }()
 
-    let cellSizer = СhatMessageCollectionViewCellLayoutManager<ExtraData>()
+    lazy var cellSizer = СhatMessageCollectionViewCell<ExtraData>.LayoutProvider(uiConfig: uiConfig, parent: nil)
 
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
     private var activePopup: ChatMessagePopupViewController<ExtraData>?
@@ -196,18 +192,10 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     ) -> UICollectionViewCell {
         let message = messageGroupPart(at: indexPath)
 
-        let cell: СhatMessageCollectionViewCell<ExtraData>
-        if message.isSentByCurrentUser {
-            cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: СhatOutgoingMessageCollectionViewCell<ExtraData>.reuseId,
-                for: indexPath
-            ) as! СhatOutgoingMessageCollectionViewCell<ExtraData>
-        } else {
-            cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: СhatIncomingMessageCollectionViewCell<ExtraData>.reuseId,
-                for: indexPath
-            ) as! СhatIncomingMessageCollectionViewCell<ExtraData>
-        }
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: СhatMessageCollectionViewCell<ExtraData>.reuseId,
+            for: indexPath
+        ) as! СhatMessageCollectionViewCell<ExtraData>
 
         cell.layout = cellSizer.layoutForCell(with: message, limitedBy: collectionView.bounds.width)
         cell.message = message

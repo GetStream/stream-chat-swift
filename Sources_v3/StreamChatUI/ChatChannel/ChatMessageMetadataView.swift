@@ -53,29 +53,24 @@ open class ChatMessageMetadataView<ExtraData: UIExtraDataTypes>: View {
     }
 }
 
-class ChatMessageMetadataViewLayoutManager<ExtraData: UIExtraDataTypes> {
-    let label: UILabel = {
-        let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .footnote)
-        label.adjustsFontForContentSizeCategory = true
-        return label
-    }()
+extension ChatMessageMetadataView {
+    class LayoutProvider: ConfiguredLayoutProvider<ExtraData> {
+        let label: UILabel = ChatMessageMetadataView().timestampLabel
 
-    func heightForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGFloat {
-        sizeForView(with: data, limitedBy: width).height
-    }
+        func heightForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGFloat {
+            sizeForView(with: data, limitedBy: width).height
+        }
 
-    func sizeForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize {
-        label.text = data.message.createdAt.getFormattedDate(format: "hh:mm a")
-        return label.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
-    }
+        func sizeForView(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize {
+            label.text = data.message.createdAt.getFormattedDate(format: "hh:mm a")
+            return label.sizeThatFits(CGSize(width: width, height: .greatestFiniteMagnitude))
+        }
 
-    func layoutForView(
-        with data: _ChatMessageGroupPart<ExtraData>,
-        of size: CGSize
-    ) -> ChatMessageMetadataView<ExtraData>.Layout {
-        ChatMessageMetadataView.Layout(
-            timestamp: CGRect(origin: .zero, size: size)
-        )
+        func layoutForView(
+            with data: _ChatMessageGroupPart<ExtraData>,
+            of size: CGSize
+        ) -> Layout {
+            Layout(timestamp: CGRect(origin: .zero, size: size))
+        }
     }
 }

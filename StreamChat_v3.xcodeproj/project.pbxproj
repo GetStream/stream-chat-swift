@@ -498,6 +498,7 @@
 		DB70CFF425701FE500DDF436 /* ChatChannelNavigationBarListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */; };
 		DB70CFFB25702EB900DDF436 /* ChatMessagePopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB70CFFA25702EB900DDF436 /* ChatMessagePopupViewController.swift */; };
 		DB70D002257119C500DDF436 /* ChatMessageReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB70D001257119C500DDF436 /* ChatMessageReactionsView.swift */; };
+		DB781C9825790A1B00E5FDB5 /* ConfiguredLayoutProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB781C9725790A1B00E5FDB5 /* ConfiguredLayoutProvider.swift */; };
 		E759AC4D256E694F00341865 /* OnlineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E759AC4C256E694F00341865 /* OnlineIndicatorView.swift */; };
 		F61D7C3124FF9D1F00188A0E /* MessageEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */; };
 		F61D7C3324FFA60600188A0E /* MessageUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */; };
@@ -1115,6 +1116,7 @@
 		DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelNavigationBarListener.swift; sourceTree = "<group>"; };
 		DB70CFFA25702EB900DDF436 /* ChatMessagePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagePopupViewController.swift; sourceTree = "<group>"; };
 		DB70D001257119C500DDF436 /* ChatMessageReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionsView.swift; sourceTree = "<group>"; };
+		DB781C9725790A1B00E5FDB5 /* ConfiguredLayoutProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfiguredLayoutProvider.swift; sourceTree = "<group>"; };
 		E759AC4C256E694F00341865 /* OnlineIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineIndicatorView.swift; sourceTree = "<group>"; };
 		F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEndpoints_Tests.swift; sourceTree = "<group>"; };
 		F61D7C3224FFA60600188A0E /* MessageUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageUpdater_Mock.swift; sourceTree = "<group>"; };
@@ -1299,13 +1301,13 @@
 				79088331254876C100896F03 /* ChatChannelCollectionView.swift */,
 				79088330254876C100896F03 /* ChatChannelCollectionViewLayout.swift */,
 				7908832E254876C100896F03 /* ChatMessageCollectionViewCell.swift */,
+				DB781C9725790A1B00E5FDB5 /* ConfiguredLayoutProvider.swift */,
 				88A8CF15256E7BDA004EA4C7 /* ChatMessageContentView.swift */,
 				88A8CF1F256E7C06004EA4C7 /* ChatMessageBubbleView.swift */,
 				88A8CF25256E7C31004EA4C7 /* ChatMessageMetadataView.swift */,
 				88A8CF0A256E7AC8004EA4C7 /* ChatMessageGroupPart.swift */,
 				88BC8907256E90A1009C5554 /* ChatRepliedMessageContentView.swift */,
 				DB70D001257119C500DDF436 /* ChatMessageReactionsView.swift */,
-				79088333254876C200896F03 /* ChatChannelNavigationBar.swift */,
 				22ADD67B256BF1550098EFEB /* ChatChannelMessageInputView.swift */,
 				22ADD681256C40410098EFEB /* ChatChannelMessageComposerView.swift */,
 				221742D4256DC97F005B257C /* MessageComposerAttachmentsView.swift */,
@@ -2753,13 +2755,11 @@
 				228190EB256733420048D7C6 /* UIFont+Extensions.swift in Sources */,
 				888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */,
 				224FF6872562F55F00725DD1 /* Date+Extensions.swift in Sources */,
-				7908833E254876F900896F03 /* ChatChannelCollectionViewDataSource.swift in Sources */,
 				22ADD682256C40410098EFEB /* ChatChannelMessageComposerView.swift in Sources */,
 				8850FE91256558B200C8D534 /* ChatRouter.swift in Sources */,
 				DB70CFF425701FE500DDF436 /* ChatChannelNavigationBarListener.swift in Sources */,
 				88A8CF0B256E7AC8004EA4C7 /* ChatMessageGroupPart.swift in Sources */,
 				88BC8908256E90A1009C5554 /* ChatRepliedMessageContentView.swift in Sources */,
-				790883522548771100896F03 /* ChatChannelNavigationBar.swift in Sources */,
 				22FF4365256E943F00133910 /* MessageComposerSuggestionsViewController.swift in Sources */,
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
 				7952764A255D86BD008531E8 /* UIExtraData.swift in Sources */,
@@ -2773,9 +2773,10 @@
 				221742D5256DC97F005B257C /* MessageComposerAttachmentsView.swift in Sources */,
 				885B3D7D25642B88003E6BDF /* CreateNewChannelButton.swift in Sources */,
 				792DD9D9256BC542001DB91B /* BaseViews.swift in Sources */,
+				DB781C9825790A1B00E5FDB5 /* ConfiguredLayoutProvider.swift in Sources */,
 				79088334254876EA00896F03 /* ChatChannelVC.swift in Sources */,
 				228DC80E25704B410080A49F /* MessageComposerAttachmentCellView.swift in Sources */,
-				79088334254876EA00896F03 /* ChatChannelViewController.swift in Sources */,
+				79088334254876EA00896F03 /* ChatChannelVC.swift in Sources */,
 				790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */,
 				79D86E832562BAB900DCD1D2 /* AppearanceSetting.swift in Sources */,
 				792DD9FB256E67C6001DB91B /* UIConfigProvider.swift in Sources */,

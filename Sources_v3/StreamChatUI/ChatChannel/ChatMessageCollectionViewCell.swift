@@ -6,6 +6,8 @@ import StreamChat
 import UIKit
 
 class СhatMessageCollectionViewCell<ExtraData: UIExtraDataTypes>: UICollectionViewCell, UIConfigProvider {
+    static var reuseId: String { String(describing: self) }
+
     struct Layout {
         let messageView: CGRect?
         let messageViewLayout: ChatMessageContentView<ExtraData>.Layout?
@@ -36,12 +38,12 @@ class СhatMessageCollectionViewCell<ExtraData: UIExtraDataTypes>: UICollectionV
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        guard let layout = layout else { return }
-        messageView.isHidden = layout.messageView == nil
-        if let messageFrame = layout.messageView {
+
+        messageView.isHidden = layout?.messageView == nil
+        if let messageFrame = layout?.messageView {
             messageView.frame = messageFrame
         }
-        messageView.layout = layout.messageViewLayout
+        messageView.layout = layout?.messageViewLayout
     }
 
     func setUpLayout() {
@@ -61,41 +63,35 @@ class СhatMessageCollectionViewCell<ExtraData: UIExtraDataTypes>: UICollectionV
     }
 }
 
-class СhatIncomingMessageCollectionViewCell<ExtraData: UIExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
-    static var reuseId: String { String(describing: self) }
-}
+extension СhatMessageCollectionViewCell {
+    class LayoutProvider: ConfiguredLayoutProvider<ExtraData> {
+        lazy var contentSizer = ChatMessageContentView<ExtraData>.LayoutProvider(parent: self)
 
-class СhatOutgoingMessageCollectionViewCell<ExtraData: UIExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
-    static var reuseId: String { String(describing: self) }
-}
+        func heightForCell(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGFloat {
+            sizeForCell(with: data, limitedBy: width).height
+        }
 
-class СhatMessageCollectionViewCellLayoutManager<ExtraData: UIExtraDataTypes> {
-    let contentSizer = ChatMessageContentViewLayoutManager<ExtraData>()
+        func sizeForCell(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize {
+            let workWidth = width * uiConfig.messageList.maxMessageWidth
+            let height = contentSizer.heightForView(with: data, limitedBy: workWidth)
+            return CGSize(width: width, height: height)
+        }
 
-    func heightForCell(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGFloat {
-        sizeForCell(with: data, limitedBy: width).height
-    }
-
-    func sizeForCell(with data: _ChatMessageGroupPart<ExtraData>, limitedBy width: CGFloat) -> CGSize {
-        let workWidth = width * 0.75
-        let height = contentSizer.heightForView(with: data, limitedBy: workWidth)
-        return CGSize(width: width, height: height)
-    }
-
-    func layoutForCell(
-        with data: _ChatMessageGroupPart<ExtraData>,
-        limitedBy width: CGFloat
-    ) -> СhatMessageCollectionViewCell<ExtraData>.Layout {
-        let workWidth = width * 0.75
-        let margin: CGFloat = 8
-        let size = contentSizer.sizeForView(with: data, limitedBy: workWidth)
-        let layout = contentSizer.layoutForView(with: data, of: size)
-        let originX = data.isSentByCurrentUser
-            ? width - size.width - margin
-            : margin
-        return СhatMessageCollectionViewCell.Layout(
-            messageView: CGRect(origin: CGPoint(x: originX, y: 0), size: size),
-            messageViewLayout: layout
-        )
+        func layoutForCell(
+            with data: _ChatMessageGroupPart<ExtraData>,
+            limitedBy width: CGFloat
+        ) -> Layout {
+            let workWidth = width * uiConfig.messageList.maxMessageWidth
+            let margin: CGFloat = uiConfig.messageList.defaultMargins
+            let size = contentSizer.sizeForView(with: data, limitedBy: workWidth)
+            let layout = contentSizer.layoutForView(with: data, of: size)
+            let originX = data.isSentByCurrentUser
+                ? width - size.width - margin
+                : margin
+            return Layout(
+                messageView: CGRect(origin: CGPoint(x: originX, y: 0), size: size),
+                messageViewLayout: layout
+            )
+        }
     }
 }
