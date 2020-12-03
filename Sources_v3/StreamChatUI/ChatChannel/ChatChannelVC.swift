@@ -38,7 +38,6 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     }()
 
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
-    private var activePopup: ChatMessagePopupViewController<ExtraData>?
     
     // MARK: - Life Cycle
     
@@ -106,16 +105,8 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         let location = gesture.location(in: collectionView)
         guard let ip = collectionView.indexPathForItem(at: location) else { return }
         guard let cell = collectionView.cellForItem(at: ip) as? СhatMessageCollectionViewCell<ExtraData> else { return }
-        guard let cid = controller.cid else { return }
 
-        activePopup = ChatMessagePopupViewController(
-            cell.messageView,
-            for: controller.messages[ip.row],
-            in: cid,
-            with: controller.client
-        ) { [weak self] in
-            self?.activePopup = nil
-        }
+        showActionsPopUp(forMessageIn: cell)
     }
     
     // MARK: - ChatChannelMessageComposerView
@@ -213,6 +204,100 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
             parentMessageState: parentMessageState,
             isLastInGroup: isLastInGroup
         )
+    }
+
+    private func actionsController(
+        for message: _ChatMessageGroupPart<ExtraData>,
+        messageController: _ChatMessageController<ExtraData>
+    ) -> ChatMessageActionsViewController<ExtraData> {
+        var messageActions: [ChatMessageActionItem] {
+            guard
+                let message = messageController.message,
+                let currentUser = messageController.client.currentUserController().currentUser
+            else { return [] }
+
+            var actions: [ChatMessageActionItem] = []
+
+            actions.append(.inlineReply { [weak self] in
+                debugPrint("inline reply")
+                self?.dismiss(animated: true)
+            })
+
+            actions.append(.threadReply { [weak self] in
+                debugPrint("thread reply")
+                self?.dismiss(animated: true)
+            })
+
+            actions.append(.copy { [weak self] in
+                UIPasteboard.general.string = message.text
+                self?.dismiss(animated: true)
+            })
+
+            if message.isSentByCurrentUser {
+                actions.append(.edit { [weak self] in
+                    debugPrint("edit")
+                    self?.dismiss(animated: true)
+                })
+                actions.append(.delete { [weak self] in
+                    debugPrint("delete")
+                    messageController.deleteMessage { [messageController] _ in
+                        self?.dismiss(animated: true)
+                        _ = messageController
+                    }
+                })
+            } else {
+                if currentUser.mutedUsers.contains(message.author) {
+                    actions.append(.unmuteUser { [weak self] in
+                        let userController = messageController.client.userController(userId: message.author.id)
+                        userController.unmute { [userController] _ in
+                            self?.dismiss(animated: true)
+                            _ = userController
+                        }
+                    })
+                } else {
+                    actions.append(.muteUser { [weak self] in
+                        let userController = messageController.client.userController(userId: message.author.id)
+                        userController.mute { [userController] _ in
+                            self?.dismiss(animated: true)
+                            _ = userController
+                        }
+                    })
+                }
+            }
+
+            return actions
+        }
+
+        return .init(
+            view: uiConfig.messageList.messageActionsView.init().withoutAutoresizingMaskConstraints,
+            availableActions: messageActions
+        )
+    }
+
+    private func showActionsPopUp(forMessageIn cell: СhatMessageCollectionViewCell<ExtraData>) {
+        guard let cid = controller.cid, let messageData = cell.message else { return }
+
+        let messageController = controller.client.messageController(
+            cid: cid,
+            messageId: messageData.message.id
+        )
+
+        let popup = ChatMessagePopupViewController<ExtraData>(
+            message: messageData,
+            messageFrameToFit: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
+            messageActionsController: actionsController(
+                for: messageData,
+                messageController: messageController
+            ),
+            messageReactionsController: .init(
+                view: uiConfig.messageList.messageReactionsView.init().withoutAutoresizingMaskConstraints,
+                allReactions: uiConfig.messageList.messageAvailableReactions,
+                messageController: messageController
+            )
+        )
+        popup.modalPresentationStyle = .overFullScreen
+        popup.modalTransitionStyle = .crossDissolve
+        present(popup, animated: true)
     }
 }
 
