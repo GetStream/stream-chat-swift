@@ -8,8 +8,6 @@ open class MessageComposerSuggestionsViewController<ExtraData: UIExtraDataTypes>
     UITableViewDelegate,
     UITableViewDataSource {
     // MARK: - Property
-    
-    public weak var owningViewController: UIViewController?
 
     public let uiConfig: UIConfig<ExtraData>
     
@@ -157,18 +155,6 @@ open class MessageComposerSuggestionsViewController<ExtraData: UIExtraDataTypes>
         
         view.setNeedsUpdateConstraints()
         view.layoutIfNeeded()
-    }
-        
-    public func show() {
-        guard let owner = owningViewController else { return }
-        owningViewController?.addChild(self)
-        owner.view.addSubview(view)
-        didMove(toParent: owner)
-    }
-    
-    public func dismiss() {
-        removeFromParent()
-        view.removeFromSuperview()
     }
     
     // MARK: - UITableView

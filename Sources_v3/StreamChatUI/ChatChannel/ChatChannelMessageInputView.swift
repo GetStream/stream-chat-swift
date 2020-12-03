@@ -4,14 +4,10 @@
 
 import UIKit
 
-open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView, UITextViewDelegate {
+open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView {
     // MARK: - Properties
     
     public let uiConfig: UIConfig<ExtraData>
-    
-    public var textViewDidChange: ((String?) -> Void)?
-    
-    public var textViewDidEndEditing: ((String?) -> Void)?
     
     var numberOfLines: Int {
         guard let font = textView.font else { return 0 }
@@ -36,15 +32,9 @@ open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView, UIT
         if #available(iOS 13.0, *) {
             button.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
         }
-        button.addTarget(self, action: #selector(hideSlashCommand), for: .touchUpInside)
         button.widthAnchor.constraint(equalTo: button.heightAnchor, multiplier: 1).isActive = true
         return button
     }()
-    
-    @objc func hideSlashCommand() {
-        rightAccessoryButton.isHidden = true
-        container.leftStackView.isHidden = true
-    }
     
     // MARK: - Init
     
@@ -83,7 +73,6 @@ open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView, UIT
     
     open func setupAppearance() {
         textView.text = "Hi"
-        textView.delegate = self
     }
     
     open func setupLayout() {
@@ -107,21 +96,5 @@ open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView, UIT
         rightAccessoryButton.widthAnchor.constraint(equalToConstant: 20).isActive = true
         
         rightAccessoryButton.isHidden = true
-    }
-    
-    // MARK: - UITextViewDelegate
-    
-    public func textViewDidChange(_ textView: UITextView) {
-        textViewDidChange?(textView.text)
-        if textView.text == "\\giphy" {
-            textView.text = ""
-            slashCommandView.command = .giphy
-            container.leftStackView.isHidden = false
-            rightAccessoryButton.isHidden = false
-        }
-    }
-    
-    public func textViewDidEndEditing(_ textView: UITextView) {
-        textViewDidEndEditing?(textView.text)
     }
 }
