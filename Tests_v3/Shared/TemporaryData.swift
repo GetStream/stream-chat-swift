@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamChat
 
 extension URL {
     /// Returns a unique random URL
@@ -34,8 +33,4 @@ extension String {
 extension Date {
     /// Returns a new random date
     static var unique: Date { Date(timeIntervalSince1970: .random(in: 1...1_500_000_000)) }
-}
-
-extension ChannelId {
-    static var unique: ChannelId { ChannelId(type: .custom(.unique), id: .unique) }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1140"
+   LastUpgradeVersion = "1220"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -29,11 +29,11 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests_v3/StreamChatTests/StreamChatStressTestPlan.xctestplan"
-            default = "YES">
+            reference = "container:Tests_v3/StreamChatTests/StreamChatStressTestPlan.xctestplan">
          </TestPlanReference>
          <TestPlanReference
-            reference = "container:Tests_v3/StreamChatTests/StreamChatTestPlan.xctestplan">
+            reference = "container:Tests_v3/StreamChatTests/StreamChatTestPlan.xctestplan"
+            default = "YES">
          </TestPlanReference>
       </TestPlans>
       <Testables>
