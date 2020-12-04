@@ -13,14 +13,14 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
     public let showRepliedMessage: Bool
     
     // MARK: - Subviews
-    
-    public private(set) lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = UIStackView.spacingUseSystem
-        return stack
-    }()
-    
+
+    public private(set) lazy var imageGallery = uiConfig
+        .messageList
+        .messageContentSubviews
+        .imageGallery
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     public private(set) lazy var textView: UITextView = {
         let textView = UITextView()
         textView.isEditable = false
@@ -32,7 +32,7 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
         textView.isUserInteractionEnabled = false
-        return textView
+        return textView.withoutAutoresizingMaskConstraints
     }()
 
     public private(set) lazy var repliedMessageView = showRepliedMessage ?
@@ -40,6 +40,8 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
         nil
     
     public private(set) lazy var borderLayer = CAShapeLayer()
+
+    private var layoutConstraints: [LayoutOptions: [NSLayoutConstraint]] = [:]
 
     // MARK: - Init
     
@@ -65,6 +67,7 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
 
     override public func defaultAppearance() {
         layer.cornerRadius = 16
+        layer.masksToBounds = true
         borderLayer.cornerRadius = 16
         borderLayer.borderWidth = 1 / UIScreen.main.scale
     }
@@ -72,13 +75,92 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
     override open func setUpLayout() {
         layer.addSublayer(borderLayer)
 
-        addSubview(stackView)
-        stackView.pin(to: layoutMarginsGuide)
-
         if let repliedMessageView = repliedMessageView {
-            stackView.addArrangedSubview(repliedMessageView)
+            addSubview(repliedMessageView)
         }
-        stackView.addArrangedSubview(textView)
+        addSubview(imageGallery)
+        addSubview(textView)
+
+        layoutConstraints[.text] = [
+            textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+            textView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+            textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+        ]
+
+        layoutConstraints[.images] = [
+            imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageGallery.trailingAnchor.constraint(equalTo: trailingAnchor),
+            imageGallery.topAnchor.constraint(equalTo: topAnchor),
+            imageGallery.bottomAnchor.constraint(equalTo: bottomAnchor),
+            imageGallery.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6)
+        ]
+
+        layoutConstraints[.inlineReply] = repliedMessageView.flatMap {
+            return [
+                $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+                $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+                $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+                $0.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+            ]
+        }
+
+        layoutConstraints[[.text, .images]] = [
+            imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
+            imageGallery.trailingAnchor.constraint(equalTo: trailingAnchor),
+            imageGallery.topAnchor.constraint(equalTo: topAnchor),
+            imageGallery.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
+            
+            textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+            textView.topAnchor.constraint(equalToSystemSpacingBelow: imageGallery.bottomAnchor, multiplier: 1),
+            textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+        ]
+
+        layoutConstraints[[.text, .inlineReply]] = repliedMessageView.flatMap {
+            return [
+                $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+                $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+                $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+                
+                textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+                textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+                textView.topAnchor.constraint(equalToSystemSpacingBelow: imageGallery.bottomAnchor, multiplier: 1),
+                textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+            ]
+        } ?? layoutConstraints[.text]
+
+        layoutConstraints[[.images, .inlineReply]] = repliedMessageView.flatMap {
+            return [
+                $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+                $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+                $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+                
+                imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
+                imageGallery.trailingAnchor.constraint(equalTo: trailingAnchor),
+                imageGallery.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
+                imageGallery.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
+                imageGallery.bottomAnchor.constraint(equalTo: bottomAnchor)
+            ]
+        } ?? layoutConstraints[.images]
+
+        layoutConstraints[[.text, .images, .inlineReply]] = repliedMessageView.flatMap {
+            return [
+                $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+                $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+                $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+                
+                imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
+                imageGallery.trailingAnchor.constraint(equalTo: trailingAnchor),
+                imageGallery.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
+                imageGallery.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
+                
+                textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+                textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+                textView.topAnchor.constraint(equalToSystemSpacingBelow: imageGallery.bottomAnchor, multiplier: 1),
+                textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+            ]
+        } ?? layoutConstraints[[.text, .images]]
     }
 
     override open func updateContent() {
@@ -97,6 +179,19 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
 
         backgroundColor = message?.isSentByCurrentUser == true ? .outgoingMessageBubbleBackground : .incomingMessageBubbleBackground
         layer.maskedCorners = corners
+
+        imageGallery.data = message.flatMap {
+            .init(
+                attachments: $0.attachments.filter { $0.type == .image },
+                didTapOnAttachment: message?.didTapOnAttachment
+            )
+        }
+        imageGallery.isHidden = imageGallery.data?.attachments.isEmpty ?? true
+
+        layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
+        if let layout = message?.layoutOptions {
+            layoutConstraints[layout]?.forEach { $0.isActive = true }
+        }
     }
     
     // MARK: - Private
@@ -119,5 +214,37 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
         }
         
         return roundedCorners
+    }
+}
+
+// MARK: - LayoutOptions
+
+private struct LayoutOptions: OptionSet, Hashable {
+    let rawValue: Int
+
+    static let text = Self(rawValue: 1 << 0)
+    static let images = Self(rawValue: 1 << 1)
+    static let inlineReply = Self(rawValue: 1 << 2)
+
+    static let all: Self = [.text, .images, .inlineReply]
+}
+
+private extension _ChatMessageGroupPart {
+    var layoutOptions: LayoutOptions {
+        var options: LayoutOptions = .all
+        
+        if self.text.isEmpty {
+            options.remove(.text)
+        }
+
+        if !self.attachments.contains(where: { $0.type == .image && $0.imageURL != nil }) {
+            options.remove(.images)
+        }
+
+        if parentMessageState == nil {
+            options.remove(.inlineReply)
+        }
+
+        return options
     }
 }
