@@ -255,9 +255,13 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
                 self?.dismiss(animated: true)
             })
             actions.append(.delete { [weak self] in
-                messageController.deleteMessage { [messageController] _ in
-                    self?.dismiss(animated: true)
-                    _ = messageController
+                self?.router.showMessageDeletionConfirmationAlert { confirmed in
+                    guard confirmed else { return }
+
+                    messageController.deleteMessage { [messageController] _ in
+                        self?.dismiss(animated: true)
+                        _ = messageController
+                    }
                 }
             })
         } else {
