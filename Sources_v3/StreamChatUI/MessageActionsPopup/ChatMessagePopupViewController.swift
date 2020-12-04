@@ -33,17 +33,11 @@ open class ChatMessagePopupViewController<ExtraData: UIExtraDataTypes>: ViewCont
     }
 
     override open func setUpLayout() {
-        addChild(reactionsController)
-        reactionsController.willMove(toParent: self)
         reactionsController.view.translatesAutoresizingMaskIntoConstraints = false
-        scrollContentView.addSubview(reactionsController.view)
-        reactionsController.didMove(toParent: self)
+        addChildViewController(reactionsController, targetView: scrollContentView)
 
-        addChild(actionsController)
-        actionsController.willMove(toParent: self)
-        scrollContentView.addSubview(actionsController.view)
         actionsController.view.translatesAutoresizingMaskIntoConstraints = false
-        actionsController.didMove(toParent: self)
+        addChildViewController(actionsController, targetView: scrollContentView)
 
         scrollContentView.addSubview(messageContentView)
         scrollView.embed(scrollContentView)
