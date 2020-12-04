@@ -38,6 +38,8 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     }()
 
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
+
+    public private(set) lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
     
     // MARK: - Life Cycle
     
@@ -101,12 +103,27 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     // MARK: - Actions
 
     @objc func didLongPress(_ gesture: UILongPressGestureRecognizer) {
-        guard gesture.state == .began else { return }
         let location = gesture.location(in: collectionView)
+
+        guard gesture.state == .began else { return }
         guard let ip = collectionView.indexPathForItem(at: location) else { return }
         guard let cell = collectionView.cellForItem(at: ip) as? СhatMessageCollectionViewCell<ExtraData> else { return }
+        guard let cid = controller.cid, let messageData = cell.message else { return }
 
-        showActionsPopUp(forMessageIn: cell)
+        let messageController = controller.client.messageController(
+            cid: cid,
+            messageId: messageData.message.id
+        )
+
+        router.showMessageActionsPopUp(
+            messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
+            messageData: messageData,
+            messageController: messageController,
+            messageActions: messageActions(
+                for: messageData,
+                messageController: messageController
+            )
+        )
     }
     
     // MARK: - ChatChannelMessageComposerView
@@ -206,98 +223,64 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         )
     }
 
-    private func actionsController(
+    private func messageActions(
         for message: _ChatMessageGroupPart<ExtraData>,
         messageController: _ChatMessageController<ExtraData>
-    ) -> ChatMessageActionsViewController<ExtraData> {
-        var messageActions: [ChatMessageActionItem] {
-            guard
-                let message = messageController.message,
-                let currentUser = messageController.client.currentUserController().currentUser
-            else { return [] }
+    ) -> [ChatMessageActionItem] {
+        guard
+            let message = messageController.message,
+            let currentUser = messageController.client.currentUserController().currentUser
+        else { return [] }
 
-            var actions: [ChatMessageActionItem] = []
+        var actions: [ChatMessageActionItem] = []
 
-            actions.append(.inlineReply { [weak self] in
-                debugPrint("inline reply")
+        actions.append(.inlineReply { [weak self] in
+            debugPrint("inline reply")
+            self?.dismiss(animated: true)
+        })
+
+        actions.append(.threadReply { [weak self] in
+            debugPrint("thread reply")
+            self?.dismiss(animated: true)
+        })
+
+        actions.append(.copy { [weak self] in
+            UIPasteboard.general.string = message.text
+            self?.dismiss(animated: true)
+        })
+
+        if message.isSentByCurrentUser {
+            actions.append(.edit { [weak self] in
+                debugPrint("edit")
                 self?.dismiss(animated: true)
             })
-
-            actions.append(.threadReply { [weak self] in
-                debugPrint("thread reply")
-                self?.dismiss(animated: true)
-            })
-
-            actions.append(.copy { [weak self] in
-                UIPasteboard.general.string = message.text
-                self?.dismiss(animated: true)
-            })
-
-            if message.isSentByCurrentUser {
-                actions.append(.edit { [weak self] in
-                    debugPrint("edit")
+            actions.append(.delete { [weak self] in
+                messageController.deleteMessage { [messageController] _ in
                     self?.dismiss(animated: true)
-                })
-                actions.append(.delete { [weak self] in
-                    debugPrint("delete")
-                    messageController.deleteMessage { [messageController] _ in
+                    _ = messageController
+                }
+            })
+        } else {
+            if currentUser.mutedUsers.contains(message.author) {
+                actions.append(.unmuteUser { [weak self] in
+                    let userController = messageController.client.userController(userId: message.author.id)
+                    userController.unmute { [userController] _ in
                         self?.dismiss(animated: true)
-                        _ = messageController
+                        _ = userController
                     }
                 })
             } else {
-                if currentUser.mutedUsers.contains(message.author) {
-                    actions.append(.unmuteUser { [weak self] in
-                        let userController = messageController.client.userController(userId: message.author.id)
-                        userController.unmute { [userController] _ in
-                            self?.dismiss(animated: true)
-                            _ = userController
-                        }
-                    })
-                } else {
-                    actions.append(.muteUser { [weak self] in
-                        let userController = messageController.client.userController(userId: message.author.id)
-                        userController.mute { [userController] _ in
-                            self?.dismiss(animated: true)
-                            _ = userController
-                        }
-                    })
-                }
+                actions.append(.muteUser { [weak self] in
+                    let userController = messageController.client.userController(userId: message.author.id)
+                    userController.mute { [userController] _ in
+                        self?.dismiss(animated: true)
+                        _ = userController
+                    }
+                })
             }
-
-            return actions
         }
 
-        return .init(
-            view: uiConfig.messageList.messageActionsView.init().withoutAutoresizingMaskConstraints,
-            availableActions: messageActions
-        )
-    }
-
-    private func showActionsPopUp(forMessageIn cell: СhatMessageCollectionViewCell<ExtraData>) {
-        guard let cid = controller.cid, let messageData = cell.message else { return }
-
-        let messageController = controller.client.messageController(
-            cid: cid,
-            messageId: messageData.message.id
-        )
-
-        let popup = ChatMessagePopupViewController<ExtraData>(
-            message: messageData,
-            messageFrameToFit: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
-            messageActionsController: actionsController(
-                for: messageData,
-                messageController: messageController
-            ),
-            messageReactionsController: .init(
-                view: uiConfig.messageList.messageReactionsView.init().withoutAutoresizingMaskConstraints,
-                allReactions: uiConfig.messageList.messageAvailableReactions,
-                messageController: messageController
-            )
-        )
-        popup.modalPresentationStyle = .overFullScreen
-        popup.modalTransitionStyle = .crossDissolve
-        present(popup, animated: true)
+        return actions
     }
 }
 
