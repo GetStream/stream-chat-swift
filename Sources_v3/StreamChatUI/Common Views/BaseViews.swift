@@ -7,16 +7,20 @@ import UIKit
 
 // Just a protocol to formalize the methods required
 public protocol Customizable {
+    /// Main point of customization for the view functionality.
+    /// Calling super implementation is required.
+    func setUp()
+    
     /// Main point of customization for appearance.
-    ////Calling super implementation is not necessary nor encouraged.
+    /// Calling super is usually not needed.
     func setUpAppearance()
     
     /// Main point of customization for appearance.
-    /// Calling super implementation is not necessary nor encouraged.
+    /// Calling super implementation is not necessary if you provide complete layout for all elements.
     func setUpLayout()
     
     /// Main point of updating views with the latest data.
-    /// Calling super implementation is not necessary nor encouraged.
+    /// Calling super is recommended in most of the cases.
     func updateContent()
 }
 
@@ -45,6 +49,7 @@ open class View: UIView, AppearanceSetting, Customizable {
         super.didMoveToSuperview()
         guard superview != nil else { return }
         
+        setUp()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         setUpLayout()
@@ -52,6 +57,7 @@ open class View: UIView, AppearanceSetting, Customizable {
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
+    open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
@@ -64,6 +70,7 @@ open class Control: UIControl, AppearanceSetting, Customizable {
         super.didMoveToSuperview()
         guard superview != nil else { return }
         
+        setUp()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         setUpLayout()
@@ -71,6 +78,7 @@ open class Control: UIControl, AppearanceSetting, Customizable {
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
+    open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
@@ -83,6 +91,7 @@ open class Button: UIButton, AppearanceSetting, Customizable {
         super.didMoveToSuperview()
         guard superview != nil else { return }
         
+        setUp()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         setUpLayout()
@@ -90,6 +99,7 @@ open class Button: UIButton, AppearanceSetting, Customizable {
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
+    open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
@@ -102,6 +112,7 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
         super.didMoveToSuperview()
         guard superview != nil else { return }
         
+        setUp()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         setUpLayout()
@@ -109,6 +120,7 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
+    open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
@@ -118,6 +130,7 @@ open class ViewController: UIViewController, AppearanceSetting, Customizable {
     override open func viewDidLoad() {
         super.viewDidLoad()
         
+        setUp()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         setUpLayout()
@@ -125,6 +138,7 @@ open class ViewController: UIViewController, AppearanceSetting, Customizable {
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
+    open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
