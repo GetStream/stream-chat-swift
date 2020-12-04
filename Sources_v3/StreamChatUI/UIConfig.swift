@@ -104,5 +104,9 @@ public extension UIConfig {
         public var metadataView: ChatMessageMetadataView<ExtraData>.Type = ChatMessageMetadataView<ExtraData>.self
         public var repliedMessageContentView: ChatRepliedMessageContentView<ExtraData>.Type =
             ChatRepliedMessageContentView<ExtraData>.self
+        public var imageGallery: ChatMessageImageGallery<ExtraData>.Type = ChatMessageImageGallery<ExtraData>.self
+        public var imageGalleryItem: ChatMessageImageGallery<ExtraData>.ImagePreview.Type =
+            ChatMessageImageGallery<ExtraData>.ImagePreview.self
+        public var imageGalleryInteritemSpacing: CGFloat = 2
     }
 }
