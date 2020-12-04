@@ -18,10 +18,13 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     public private(set) lazy var messageInputAccessoryViewController: MessageComposerInputAccessoryViewController<ExtraData> = {
         .init()
     }()
-        
+
+    public private(set) lazy var collectionViewLayout: ChatChannelCollectionViewLayout = uiConfig
+        .messageList
+        .collectionLayout
+        .init()
     public private(set) lazy var collectionView: UICollectionView = {
-        let layout = uiConfig.messageList.collectionLayout.init()
-        let collection = uiConfig.messageList.collectionView.init(layout: layout)
+        let collection = uiConfig.messageList.collectionView.init(layout: collectionViewLayout)
         collection.register(
             СhatIncomingMessageCollectionViewCell<ExtraData>.self,
             forCellWithReuseIdentifier: СhatIncomingMessageCollectionViewCell<ExtraData>.reuseId
@@ -172,11 +175,12 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     }
     
     // MARK: - UIScrollViewDelegate
-    
+
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
-        guard scrollView.contentOffset.y <= 0 else { return }
-        
-        controller.loadNextMessages()
+        let realOffset = collectionView.contentOffset.y - collectionViewLayout.zeroOffset.y
+        if realOffset < uiConfig.messageList.offsetToPreloadMoreMessages {
+            controller.loadNextMessages()
+        }
     }
     
     // MARK: - Private
