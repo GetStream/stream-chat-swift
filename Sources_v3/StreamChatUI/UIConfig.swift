@@ -79,8 +79,10 @@ public extension UIConfig {
 public extension UIConfig {
     struct MessageListUI {
         public var collectionView: ChatChannelCollectionView.Type = ChatChannelCollectionView.self
-        public var collectionLayout: UICollectionViewLayout.Type = ChatChannelCollectionViewLayout.self
+        public var collectionLayout: ChatChannelCollectionViewLayout.Type = ChatChannelCollectionViewLayout.self
         public var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
+        /// Vertical contentOffset for message list, when next message batch should be requested
+        public var offsetToPreloadMoreMessages: CGFloat = 100
         public var messageContentView: ChatMessageContentView<ExtraData>.Type = ChatMessageContentView<ExtraData>.self
         public var messageContentSubviews = MessageContentViewSubviews()
         public var messageAvailableReactions: [MessageReactionType] = [
