@@ -20,6 +20,24 @@ public protocol Customizable {
     func updateContent()
 }
 
+public extension Customizable where Self: UIView {
+    /// If the view is already in the view hierarchy it calls `updateContent()`, otherwise does nothing.
+    func updateContentIfNeeded() {
+        if superview != nil {
+            updateContent()
+        }
+    }
+}
+
+public extension Customizable where Self: UIViewController {
+    /// If the view is already loaded it calls `updateContent()`, otherwise does nothing.
+    func updateContentIfNeeded() {
+        if isViewLoaded {
+            updateContent()
+        }
+    }
+}
+
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class View: UIView, AppearanceSetting, Customizable {
