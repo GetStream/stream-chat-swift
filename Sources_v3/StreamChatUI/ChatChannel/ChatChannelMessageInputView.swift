@@ -17,14 +17,18 @@ open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView {
     
     public let uiConfig: UIConfig<ExtraData>
     
-    var numberOfLines: Int {
-        guard let font = textView.font else { return 0 }
-        let textHeight = textView.contentSize.height - textView.textContainerInset.top - textView.textContainerInset.bottom
-        return Int(textHeight / font.lineHeight)
-    }
-    
-    var calculatedHeight: CGFloat {
-        textView.contentSize.height // + safeAreaInsets.bottom
+    public var textViewHeight: CGFloat {
+        guard let font = textView.font, let text = textView.text else { return 0 }
+
+        let width = textView.frame.width - textView.textContainerInset.right - textView.textContainerInset.left
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = text.boundingRect(
+            with: constraintRect,
+            options: .usesLineFragmentOrigin,
+            attributes: [.font: font],
+            context: nil
+        )
+        return boundingBox.height
     }
     
     // MARK: - Subviews
@@ -76,7 +80,7 @@ open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView {
     // MARK: - Overrides
     
     override open var intrinsicContentSize: CGSize {
-        CGSize(width: super.intrinsicContentSize.width, height: calculatedHeight)
+        CGSize(width: UIView.noIntrinsicMetric, height: textViewHeight)
     }
     
     // MARK: - Public
