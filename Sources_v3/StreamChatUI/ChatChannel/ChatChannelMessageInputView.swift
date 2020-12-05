@@ -72,8 +72,7 @@ open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView {
     
     public func commonInit() {
         embed(container)
-        
-        setupAppearance()
+
         setupLayout()
     }
     
@@ -84,10 +83,6 @@ open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView {
     }
     
     // MARK: - Public
-    
-    open func setupAppearance() {
-        textView.text = "Hi"
-    }
     
     open func setupLayout() {
         container.preservesSuperviewLayoutMargins = true
@@ -104,11 +99,13 @@ open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView {
         container.centerStackView.isHidden = false
         container.centerStackView.addArrangedSubview(textView)
         
-        container.rightStackView.isHidden = false
         container.rightStackView.alignment = .center
         container.rightStackView.addArrangedSubview(rightAccessoryButton)
         rightAccessoryButton.widthAnchor.constraint(equalToConstant: 20).isActive = true
-        
-        rightAccessoryButton.isHidden = true
+    }
+
+    public func setSlashCommandViews(hidden: Bool) {
+        container.rightStackView.isHidden = hidden
+        container.leftStackView.isHidden = hidden
     }
 }
