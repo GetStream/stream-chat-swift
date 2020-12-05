@@ -21,3 +21,6 @@
 
 "message.only-visible-to-you" = "Only visible to you";
 "message.deleted-message-placeholder" = "Message deleted";
+
+"composer.title.edit" = "Edit Message";
+"composer.title.reply" = "Reply to Message";

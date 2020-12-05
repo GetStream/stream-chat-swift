@@ -20,6 +20,15 @@ internal enum L10n {
     }
   }
 
+  internal enum Composer {
+    internal enum Title {
+      /// Edit Message
+      internal static let edit = L10n.tr("Localizable", "composer.title.edit")
+      /// Reply to Message
+      internal static let reply = L10n.tr("Localizable", "composer.title.reply")
+    }
+  }
+
   internal enum Message {
     /// Message deleted
     internal static let deletedMessagePlaceholder = L10n.tr("Localizable", "message.deleted-message-placeholder")
