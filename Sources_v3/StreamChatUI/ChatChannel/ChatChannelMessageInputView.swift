@@ -4,6 +4,14 @@
 
 import UIKit
 
+open class ChatChannelMessageInputTextView: UITextView {
+    override public var text: String? {
+        didSet {
+            delegate?.textViewDidChange?(self)
+        }
+    }
+}
+
 open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView {
     // MARK: - Properties
     
@@ -23,7 +31,9 @@ open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView {
     
     public private(set) lazy var container = ContainerStackView().withoutAutoresizingMaskConstraints
         
-    public private(set) lazy var textView = UITextView().withoutAutoresizingMaskConstraints
+    public private(set) lazy var textView: ChatChannelMessageInputTextView = {
+        uiConfig.messageComposer.textView.init().withoutAutoresizingMaskConstraints
+    }()
     
     public private(set) lazy var slashCommandView: MessageInputSlashCommandView = .init()
     
