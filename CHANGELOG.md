@@ -17,6 +17,9 @@ _November 26, 2020_
 ### 🔄 Changed
 - `showWebView` function in `ChatViewController` can be overridden. 
   This function will be called when a user taps on a link in a message, or an attachment which isn't an image (such as a video or a file) [#589](https://github.com/GetStream/stream-chat-swift/issues/589)
+  
+### 🐞 Fixed
+- Fixed floating / undocked keyboard in iPad causing message composer to take a wrong height. Now it stays at the bottom. [#597](https://github.com/GetStream/stream-chat-swift/pull/597)
 
 # [2.4.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.4.2)
 _November 13, 2020_

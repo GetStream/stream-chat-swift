@@ -26,7 +26,7 @@ struct Keyboard {
             .panGesture()
             .when(.began, .changed, .ended)
             .withLatestFrom(keyboardNotifications) { ($0, $1) }
-            .filter { $1.height > 0 }
+            .filter { $1.height > 0 && $1.isDocked }
             .compactMap { KeyboardNotification(panGesture: $0, with: $1) }
         
         notification = Observable.merge(viewPan, keyboardNotifications)
@@ -56,12 +56,13 @@ struct KeyboardNotification: Equatable {
         }
     }
     
+    let screenBounds = UIScreen.main.bounds
     let frame: CGRect?
     let animation: Animation?
     
     var height: CGFloat {
         if let frame = frame {
-            return UIScreen.main.bounds.height - frame.origin.y
+            return screenBounds.height - frame.origin.y
         }
         
         return 0
@@ -71,15 +72,23 @@ struct KeyboardNotification: Equatable {
         return height > 0
     }
     
+    var isFloating: Bool {
+        return UIDevice.current.userInterfaceIdiom == .pad && height > (frame?.height ?? 0)
+    }
+    
     var isHidden: Bool {
         return !isVisible
+    }
+    
+    var isDocked: Bool {
+        return !isFloating
     }
     
     init(_ notification: Notification) {
         if let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
             if frame.origin.y < 0 {
                 var newFrame = frame
-                newFrame.origin.y = UIScreen.main.bounds.height - newFrame.height
+                newFrame.origin.y = screenBounds.height - newFrame.height
                 self.frame = newFrame
             } else {
                 self.frame = frame
@@ -98,14 +107,14 @@ struct KeyboardNotification: Equatable {
         
         guard case .changed = panGesture.state,
             let window = UIApplication.shared.windows.first,
-            frame.origin.y < UIScreen.main.bounds.height else {
+            frame.origin.y < screenBounds.height else {
                 return nil
                 
         }
         
         let origin = panGesture.location(in: window)
         var newFrame = frame
-        newFrame.origin.y = max(origin.y, UIScreen.main.bounds.height - frame.height)
+        newFrame.origin.y = max(origin.y, screenBounds.height - frame.height)
         
         self.frame = newFrame
         animation = nil
