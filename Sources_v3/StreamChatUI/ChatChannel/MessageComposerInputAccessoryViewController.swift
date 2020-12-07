@@ -7,19 +7,57 @@ import UIKit
 
 open class MessageComposerInputAccessoryViewController<ExtraData: UIExtraDataTypes>: UIInputViewController,
     UIConfigProvider,
+    Customizable,
+    AppearanceSetting,
     UITextViewDelegate,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate {
+    // MARK: - Underlying types
+    
+    public enum State {
+        case initial
+        case empty(isEmpty: Bool)
+        case slashCommand(MessageInputSlashCommandView.Command)
+        case suggestions
+        case forceShrinkedInput
+        case reply
+        case edit
+    }
+    
     // MARK: - Properties
     
     var controller: _ChatChannelController<ExtraData>!
     
+    public var state: State = .initial {
+        didSet {
+            updateContent()
+        }
+    }
+    
+    public var replyMessage: _ChatMessage<ExtraData>? {
+        didSet {
+            state = .reply
+        }
+    }
+    
+    public var messageToEdit: _ChatMessage<ExtraData>? {
+        didSet {
+            state = .edit
+        }
+    }
+    
     // MARK: - Subviews
         
-    public private(set) lazy var composerView: ChatChannelMessageComposerView<ExtraData> = {
-        ChatChannelMessageComposerView<ExtraData>(uiConfig: uiConfig).withoutAutoresizingMaskConstraints
-    }()
+    public private(set) lazy var composerView: ChatChannelMessageComposerView<ExtraData> = uiConfig
+        .messageComposer
+        .messageComposerView.init()
+        .withoutAutoresizingMaskConstraints
+    
+    /// Convenience getter for underlying `textView`.
+    public var textView: UITextView {
+        composerView.messageInputView.textView
+    }
     
     public private(set) lazy var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData> = {
         .init(uiConfig: uiConfig)
@@ -38,32 +76,106 @@ open class MessageComposerInputAccessoryViewController<ExtraData: UIExtraDataTyp
     override open func viewDidLoad() {
         super.viewDidLoad()
         
-        setupInputView()
+        setUp()
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
         setUpLayout()
+        updateContent()
+    }
+    
+    open func setUp() {
+        setupInputView()
+        observeSizeChanges()
+    }
+    
+    open func defaultAppearance() {}
+    
+    open func setUpAppearance() {}
+    
+    open func updateContent() {
+        switch state {
+        case .initial:
+            textView.text = ""
+            state = .empty(isEmpty: true)
+            messageToEdit = nil
+            replyMessage = nil
+            composerView.sendButton.mode = .new
+            composerView.attachmentsView.isHidden = true
+            composerView.replyView.isHidden = true
+            composerView.container.topStackView.isHidden = true
+            composerView.messageInputView.setSlashCommandViews(hidden: true)
+        case let .empty(isEmpty):
+            composerView.sendButton.isEnabled = !isEmpty
+            composerView.attachmentButton.isHidden = !isEmpty
+            composerView.commandsButton.isHidden = !isEmpty
+            composerView.shrinkInputButton.isHidden = isEmpty
+        case let .slashCommand(command):
+            textView.text = ""
+            composerView.messageInputView.slashCommandView.command = command
+            composerView.messageInputView.setSlashCommandViews(hidden: false)
+            dismissSuggestionsViewController()
+        case .suggestions:
+            showSuggestionsViewController()
+        case .forceShrinkedInput:
+            composerView.attachmentButton.isHidden = false
+            composerView.commandsButton.isHidden = false
+            composerView.shrinkInputButton.isHidden = true
+        case .reply:
+            composerView.titleLabel.text = L10n.Composer.Title.reply
+            let image = UIImage(named: "replyArrow", in: .streamChatUI)?
+                .tinted(with: uiConfig.colorPalette.messageComposerStateIcon)
+            composerView.stateIcon.image = image
+            composerView.container.topStackView.isHidden = false
+        // set reply message to reply view
+        case .edit:
+            composerView.sendButton.mode = .edit
+            composerView.titleLabel.text = L10n.Composer.Title.edit
+            let image = UIImage(named: "editPencil", in: .streamChatUI)?
+                .tinted(with: uiConfig.colorPalette.messageComposerStateIcon)
+            composerView.stateIcon.image = image
+            composerView.container.topStackView.isHidden = false
+            // update ui with message to edit
+        }
     }
     
     func setupInputView() {
         inputView = composerView
         
         composerView.messageInputView.textView.delegate = self
+        
         composerView.attachmentButton.addTarget(self, action: #selector(showImagePicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
+        composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         composerView.messageInputView.rightAccessoryButton.addTarget(
             self,
             action: #selector(dismissSlashCommand),
             for: .touchUpInside
         )
+        composerView.dismissButton.addTarget(self, action: #selector(resetState), for: .touchUpInside)
         
         composerView.attachmentsView.didTapRemoveItemButton = { [weak self] index in self?.imageAttachments.remove(at: index) }
     }
     
-    public func setUpLayout() {
-        guard let inputView = inputView else { return }
-        
-        composerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        composerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        composerView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        composerView.topAnchor.constraint(equalTo: inputView.topAnchor).isActive = true
+    open func setUpLayout() {}
+    
+    public func observeSizeChanges() {
+        composerView.addObserver(self, forKeyPath: "safeAreaInsets", options: .new, context: nil)
+        textView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
+    }
+    
+    // There are some issues with new-style KVO so that is something that will need attention later.
+    // swiftlint:disable block_based_kvo
+    override open func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey: Any]?,
+        context: UnsafeMutableRawPointer?
+    ) {
+        if object as AnyObject? === textView, keyPath == "contentSize" {
+            composerView.invalidateIntrinsicContentSize()
+        } else if object as AnyObject? === composerView, keyPath == "safeAreaInsets" {
+            composerView.invalidateIntrinsicContentSize()
+        }
     }
     
     // MARK: Button actions
@@ -74,7 +186,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: UIExtraDataTyp
         else { return }
         
         controller?.createNewMessage(text: text)
-        composerView.messageInputView.textView.text = ""
+        textView.text = ""
     }
     
     @objc func showImagePicker() {
@@ -82,8 +194,15 @@ open class MessageComposerInputAccessoryViewController<ExtraData: UIExtraDataTyp
     }
     
     @objc func dismissSlashCommand() {
-        composerView.messageInputView.rightAccessoryButton.isHidden = true
-        composerView.messageInputView.container.leftStackView.isHidden = true
+        composerView.messageInputView.setSlashCommandViews(hidden: true)
+    }
+    
+    @objc func shrinkInput() {
+        state = .forceShrinkedInput
+    }
+    
+    @objc func resetState() {
+        state = .initial
     }
     
     // MARK: Suggestions
@@ -115,22 +234,18 @@ open class MessageComposerInputAccessoryViewController<ExtraData: UIExtraDataTyp
     
     // MARK: UITextView
     
-    func promptSuggestionIfNeeded(for textView: UITextView) {
-        if textView.text == "\\" {
+    func promptSuggestionIfNeeded() {
+        if textView.text == "/" {
             showSuggestionsViewController()
         }
     }
     
-    func replaceTextWithSlashCommandViewIfNeeded(for textView: UITextView) {
-        if textView.text == "\\giphy" {
-            textView.text = ""
-            composerView.messageInputView.slashCommandView.command = .giphy
-            composerView.messageInputView.container.leftStackView.isHidden = false
-            composerView.messageInputView.rightAccessoryButton.isHidden = false
-            dismissSuggestionsViewController()
+    func replaceTextWithSlashCommandViewIfNeeded() {
+        if textView.text == "/giphy" {
+            state = .slashCommand(.giphy)
         }
     }
-    
+
     // MARK: - UITextViewDelegate
     
     public func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
@@ -144,8 +259,9 @@ open class MessageComposerInputAccessoryViewController<ExtraData: UIExtraDataTyp
     }
     
     public func textViewDidChange(_ textView: UITextView) {
-        promptSuggestionIfNeeded(for: textView)
-        replaceTextWithSlashCommandViewIfNeeded(for: textView)
+        state = .empty(isEmpty: textView.text.isEmpty)
+        replaceTextWithSlashCommandViewIfNeeded()
+        promptSuggestionIfNeeded()
     }
 
     // MARK: - UIImagePickerControllerDelegate

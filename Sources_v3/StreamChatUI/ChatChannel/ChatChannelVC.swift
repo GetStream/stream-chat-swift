@@ -16,7 +16,13 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     public var controller: _ChatChannelController<ExtraData>!
 
     public private(set) lazy var messageInputAccessoryViewController: MessageComposerInputAccessoryViewController<ExtraData> = {
-        .init()
+        let inputAccessoryVC = MessageComposerInputAccessoryViewController<ExtraData>()
+        
+        // `inputAccessoryViewController` is part of `_UIKeyboardWindowScene` so we need to manually pass
+        // tintColor down that `inputAccessoryViewController` view hierarchy.
+        inputAccessoryVC.view.tintColor = view.tintColor
+        
+        return inputAccessoryVC
     }()
 
     public private(set) lazy var collectionViewLayout: ChatChannelCollectionViewLayout = uiConfig
