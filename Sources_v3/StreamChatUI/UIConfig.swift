@@ -8,6 +8,7 @@ import UIKit
 public struct UIConfig<ExtraData: UIExtraDataTypes> {
     public var channelList = ChannelListUI()
     public var messageList = MessageListUI()
+    public var messageComposer = MessageComposer()
     public var currentUser = CurrentUserUI()
     public var navigation = Navigation()
     public var colorPalette = ColorPalette()
@@ -49,8 +50,10 @@ public extension UIConfig {
         public var incomingMessageBubbleBackground: UIColor = .white
         public var incomingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
 
-        public var messageComposerBorder: UIColor = .systemGray
+        public var messageComposerBorder: UIColor = .streamGrayGainsboro
         public var messageComposerBackground: UIColor = .white
+        public var messageComposerButton: UIColor = .streamGray
+        public var messageComposerStateIcon: UIColor = .streamGrayGainsboro
 
         public var generalBackground: UIColor = UIColor(rgb: 0xfcfcfc)
         public var popupDimmedBackground: UIColor = UIColor.black.withAlphaComponent(0.2)
@@ -138,6 +141,20 @@ public extension UIConfig {
             ChatMessageOnlyVisibleForCurrentUserIndicator.self
         public var threadArrowView: ChatMessageThreadArrowView.Type = ChatMessageThreadArrowView.self
         public var threadInfoView: ChatMessageThreadInfoView<ExtraData>.Type = ChatMessageThreadInfoView<ExtraData>.self
+    }
+}
+
+// MARK: - MessageComposer
+
+public extension UIConfig {
+    struct MessageComposer {
+        public var messageComposerView: ChatChannelMessageComposerView<ExtraData>.Type =
+            ChatChannelMessageComposerView<ExtraData>.self
+        public var messageInputView: ChatChannelMessageInputView<ExtraData>.Type = ChatChannelMessageInputView<ExtraData>.self
+        public var attachmentsView: MessageComposerAttachmentsView<ExtraData>.Type = MessageComposerAttachmentsView<ExtraData>.self
+        public var sendButton: MessageComposerSendButton<ExtraData>.Type = MessageComposerSendButton<ExtraData>.self
+        public var composerButton: ChatSquareButton<ExtraData>.Type = ChatSquareButton<ExtraData>.self
+        public var textView: ChatChannelMessageInputTextView.Type = ChatChannelMessageInputTextView.self
     }
 }
 
