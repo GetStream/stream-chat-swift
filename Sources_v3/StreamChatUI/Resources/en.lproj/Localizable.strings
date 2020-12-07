@@ -1,0 +1,18 @@
+//
+// Copyright © 2020 Stream.io Inc. All rights reserved.
+//
+
+"message.actions.inline-reply" = "Reply";
+"message.actions.thread-reply" = "Thread Reply";
+"message.actions.edit" = "Edit Message";
+"message.actions.copy" = "Copy Message";
+"message.actions.delete" = "Delete Message";
+"message.actions.delete.confirmation-title" = "Delete Message";
+"message.actions.delete.confirmation-message" = "Are you sure you want to permanently delete this message?";
+"message.actions.user-unblock" = "Unblock User";
+"message.actions.user-block" = "Block User";
+"message.actions.user-unmute" = "Unmute User";
+"message.actions.user-mute" = "Mute User";
+
+"alert.actions.cancel" = "Cancel";
+"alert.actions.delete" = "Delete";
