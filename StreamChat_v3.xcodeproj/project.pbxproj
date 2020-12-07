@@ -1306,6 +1306,7 @@
 				790882BE25486AB000896F03 /* ChatChannelList */,
 				88F8364E2578D1590039AEC8 /* MessageActionsPopup */,
 				88F0D6ED257E446800F4B050 /* Resources */,
+				88F0D6EA257E409E00F4B050 /* Generated */,
 				7908823125432C6400896F03 /* StreamChatUI.h */,
 				7908823225432C6400896F03 /* Info.plist */,
 				79D86E822562BAB900DCD1D2 /* AppearanceSetting.swift */,
@@ -2146,6 +2147,13 @@
 			path = MessageReaction;
 			sourceTree = "<group>";
 		};
+		88F0D6EA257E409E00F4B050 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Generated;
+			sourceTree = "<group>";
+		};
 		88F0D6ED257E446800F4B050 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -2516,6 +2524,7 @@
 			buildConfigurationList = 7908821425432B7200896F03 /* Build configuration list for PBXNativeTarget "StreamChatUI" */;
 			buildPhases = (
 				790881F825432B7200896F03 /* Headers */,
+				88F0D6EB257E40B300F4B050 /* SwiftGen */,
 				790881F925432B7200896F03 /* Sources */,
 				790881FA25432B7200896F03 /* Frameworks */,
 				790881FB25432B7200896F03 /* Resources */,
@@ -2923,6 +2932,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "mint run swiftlint lint ./Sample_v3 --config .swiftlint.yml\n";
+		};
+		88F0D6EB257E40B300F4B050 /* SwiftGen */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftGen;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "mint run swiftgen config run --config ./Sources_v3/StreamChatUI/.swiftgen.yml\n";
 		};
 		8ABC329924EAC40700CFC920 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
