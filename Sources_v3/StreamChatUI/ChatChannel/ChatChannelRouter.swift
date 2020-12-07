@@ -33,17 +33,21 @@ open class ChatChannelRouter<ExtraData: UIExtraDataTypes>: ChatRouter<ChatChanne
 
     open func showMessageDeletionConfirmationAlert(confirmed: @escaping (Bool) -> Void) {
         let alert = UIAlertController(
-            title: "Delete message",
-            message: "Are you sure you want to permanently delete this message?",
+            title: L10n.Message.Actions.Delete.confirmationTitle,
+            message: L10n.Message.Actions.Delete.confirmationMessage,
             preferredStyle: .alert
         )
 
-        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel) { _ in
-            confirmed(false)
-        })
-        alert.addAction(UIAlertAction(title: "Delete", style: .destructive) { _ in
-            confirmed(true)
-        })
+        alert.addAction(UIAlertAction(
+            title: L10n.Alert.Actions.cancel,
+            style: .cancel,
+            handler: { _ in confirmed(false) }
+        ))
+        alert.addAction(UIAlertAction(
+            title: L10n.Alert.Actions.delete,
+            style: .destructive,
+            handler: { _ in confirmed(true) }
+        ))
 
         let presenter = rootViewController?.presentedViewController ?? rootViewController
         presenter?.present(alert, animated: true)
