@@ -520,6 +520,7 @@
 		DB70CFFB25702EB900DDF436 /* ChatMessagePopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB70CFFA25702EB900DDF436 /* ChatMessagePopupViewController.swift */; };
 		DB70D002257119C500DDF436 /* ChatMessageReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB70D001257119C500DDF436 /* ChatMessageReactionsView.swift */; };
 		DBC8A4BB257E5BFB00B20A82 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = DBC8A4BD257E5BFB00B20A82 /* Localizable.stringsdict */; };
+		DBC8A4C6257E696900B20A82 /* ChatMessageThreadInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC8A4C5257E696900B20A82 /* ChatMessageThreadInfoView.swift */; };
 		E73A8B2B2578EB2B00FBDC56 /* MessageComposerInputAccessoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73A8B2A2578EB2B00FBDC56 /* MessageComposerInputAccessoryViewController.swift */; };
 		E759AC4D256E694F00341865 /* OnlineIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E759AC4C256E694F00341865 /* OnlineIndicatorView.swift */; };
 		F61D7C3124FF9D1F00188A0E /* MessageEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */; };
@@ -1167,6 +1168,7 @@
 		DB70CFFA25702EB900DDF436 /* ChatMessagePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagePopupViewController.swift; sourceTree = "<group>"; };
 		DB70D001257119C500DDF436 /* ChatMessageReactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionsView.swift; sourceTree = "<group>"; };
 		DBC8A4BC257E5BFB00B20A82 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
+		DBC8A4C5257E696900B20A82 /* ChatMessageThreadInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageThreadInfoView.swift; sourceTree = "<group>"; };
 		E73A8B2A2578EB2B00FBDC56 /* MessageComposerInputAccessoryViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageComposerInputAccessoryViewController.swift; sourceTree = "<group>"; };
 		E759AC4C256E694F00341865 /* OnlineIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlineIndicatorView.swift; sourceTree = "<group>"; };
 		F61D7C3024FF9D1F00188A0E /* MessageEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEndpoints_Tests.swift; sourceTree = "<group>"; };
@@ -1374,6 +1376,7 @@
 				79088330254876C100896F03 /* ChatChannelCollectionViewLayout.swift */,
 				7908832E254876C100896F03 /* ChatMessageCollectionViewCell.swift */,
 				88A8CF15256E7BDA004EA4C7 /* ChatMessageContentView.swift */,
+				DBC8A4C5257E696900B20A82 /* ChatMessageThreadInfoView.swift */,
 				88A8CF1F256E7C06004EA4C7 /* ChatMessageBubbleView.swift */,
 				88A8CF25256E7C31004EA4C7 /* ChatMessageMetadataView.swift */,
 				88A8CF0A256E7AC8004EA4C7 /* ChatMessageGroupPart.swift */,
@@ -3039,6 +3042,7 @@
 				790882ED25486B6D00896F03 /* ChatChannelListCollectionViewDataSource.swift in Sources */,
 				E73A8B2B2578EB2B00FBDC56 /* MessageComposerInputAccessoryViewController.swift in Sources */,
 				885B3D7725642B3D003E6BDF /* CurrentChatUserAvatarView.swift in Sources */,
+				DBC8A4C6257E696900B20A82 /* ChatMessageThreadInfoView.swift in Sources */,
 				224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */,
 				79088339254876F200896F03 /* ChatChannelCollectionView.swift in Sources */,
 				883998212576397900294DB9 /* ChatMessageImageGallery.swift in Sources */,
