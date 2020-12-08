@@ -32,7 +32,7 @@ extension MessageActionsView {
 
             let titleColor: UIColor = actionItem?.isDestructive == true ? .systemRed : .black
             setTitle(actionItem?.title, for: .normal)
-            titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline).bold()
+            titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline).bold
             setTitleColor(titleColor, for: .normal)
         }
 
