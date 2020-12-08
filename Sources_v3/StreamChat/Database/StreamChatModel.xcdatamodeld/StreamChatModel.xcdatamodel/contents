@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17192" systemVersion="19G2021" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17511" systemVersion="20B50" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="actions" optional="YES" attributeType="Binary"/>
         <attribute name="attachmentHash" attributeType="String"/>
@@ -161,6 +161,7 @@
         <relationship name="parentMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="replies" inverseEntity="MessageDTO"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionDTO" inverseName="message" inverseEntity="MessageReactionDTO"/>
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="parentMessage" inverseEntity="MessageDTO"/>
+        <relationship name="threadParticipants" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="participatedThreads" inverseEntity="UserDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="messages" inverseEntity="UserDTO"/>
         <fetchIndex name="id">
             <fetchIndexElement property="id" type="Binary" order="ascending"/>
@@ -216,6 +217,7 @@
         <relationship name="mentionedMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="mentionedUsers" inverseEntity="MessageDTO"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="user" inverseEntity="MessageDTO"/>
         <relationship name="mutedBy" toMany="YES" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="mutedUsers" inverseEntity="CurrentUserDTO"/>
+        <relationship name="participatedThreads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="threadParticipants" inverseEntity="MessageDTO"/>
         <relationship name="queries" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserListQueryDTO" inverseName="users" inverseEntity="UserListQueryDTO"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionDTO" inverseName="user" inverseEntity="MessageReactionDTO"/>
         <relationship name="teams" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="TeamDTO" inverseName="users" inverseEntity="TeamDTO"/>
@@ -251,10 +253,10 @@
         <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="148"/>
         <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="193"/>
-        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="373"/>
+        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="419"/>
         <element name="MessageReactionDTO" positionX="9" positionY="153" width="128" height="163"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
-        <element name="UserDTO" positionX="0" positionY="0" width="128" height="313"/>
+        <element name="UserDTO" positionX="0" positionY="0" width="128" height="344"/>
         <element name="UserListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
     </elements>
 </model>
