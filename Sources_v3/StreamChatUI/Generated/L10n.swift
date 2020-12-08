@@ -21,6 +21,8 @@ internal enum L10n {
   }
 
   internal enum Message {
+    /// Message deleted
+    internal static let deletedMessagePlaceholder = L10n.tr("Localizable", "message.deleted-message-placeholder")
     /// Only visible to you
     internal static let onlyVisibleToYou = L10n.tr("Localizable", "message.only-visible-to-you")
     internal enum Actions {

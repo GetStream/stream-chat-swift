@@ -7,7 +7,7 @@ import UIKit
 
 open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
-        didSet { updateContent() }
+        didSet { updateContentIfNeeded() }
     }
 
     public let showRepliedMessage: Bool
@@ -164,11 +164,17 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
     }
 
     override open func updateContent() {
-        repliedMessageView?.message = message?.parentMessage
-        repliedMessageView?.isHidden = message?.parentMessageState == nil
+        let layoutOptions = message?.layoutOptions ?? []
 
-        textView.text = message?.text
-        textView.isHidden = message?.text.isEmpty ?? true
+        repliedMessageView?.message = message?.parentMessage
+        repliedMessageView?.isVisible = layoutOptions.contains(.inlineReply)
+        
+        let font = UIFont.preferredFont(forTextStyle: .body)
+        textView.attributedText = .init(string: message?.textContent ?? "", attributes: [
+            .foregroundColor: message?.deletedAt == nil ? UIColor.black : uiConfig.colorPalette.messageTimestampText,
+            .font: message?.deletedAt == nil ? font : font.italic
+        ])
+        textView.isVisible = layoutOptions.contains(.text)
 
         borderLayer.maskedCorners = corners
         borderLayer.isHidden = message == nil
@@ -188,12 +194,10 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
                 didTapOnAttachment: message?.didTapOnAttachment
             )
         }
-        imageGallery.isHidden = imageGallery.data?.attachments.isEmpty ?? true
+        imageGallery.isVisible = layoutOptions.contains(.images)
 
         layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
-        if let layout = message?.layoutOptions {
-            layoutConstraints[layout]?.forEach { $0.isActive = true }
-        }
+        layoutConstraints[layoutOptions]?.forEach { $0.isActive = true }
     }
     
     // MARK: - Private
@@ -233,9 +237,13 @@ private struct LayoutOptions: OptionSet, Hashable {
 
 private extension _ChatMessageGroupPart {
     var layoutOptions: LayoutOptions {
+        guard message.deletedAt == nil else {
+            return [.text]
+        }
+
         var options: LayoutOptions = .all
-        
-        if message.text.isEmpty {
+
+        if textContent.isEmpty {
             options.remove(.text)
         }
 
@@ -248,5 +256,13 @@ private extension _ChatMessageGroupPart {
         }
 
         return options
+    }
+}
+
+// MARK: - Extensions
+
+private extension _ChatMessageGroupPart {
+    var textContent: String {
+        message.deletedAt == nil ? message.text : L10n.Message.deletedMessagePlaceholder
     }
 }
