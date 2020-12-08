@@ -19,6 +19,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey {
     case parentId = "parent_id"
     case showReplyInChannel = "show_in_channel"
     case mentionedUsers = "mentioned_users"
+    case threadParticipants = "thread_participants"
     case replyCount = "reply_count"
     case latestReactions = "latest_reactions"
     case ownReactions = "own_reactions"
@@ -41,6 +42,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let parentId: String?
     let showReplyInChannel: Bool
     let mentionedUsers: [UserPayload<ExtraData.User>]
+    let threadParticipants: [UserPayload<ExtraData.User>]
     let replyCount: Int
     let extraData: ExtraData.Message
     
@@ -68,6 +70,8 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
         mentionedUsers = try container.decode([UserPayload<ExtraData.User>].self, forKey: .mentionedUsers)
+        // backend returns `thread_participants` only if message is a thread, we are fine with to have it on all messages
+        threadParticipants = try container.decodeIfPresent([UserPayload<ExtraData.User>].self, forKey: .threadParticipants) ?? []
         replyCount = try container.decode(Int.self, forKey: .replyCount)
         latestReactions = try container.decode([MessageReactionPayload<ExtraData>].self, forKey: .latestReactions)
         ownReactions = try container.decode([MessageReactionPayload<ExtraData>].self, forKey: .ownReactions)
@@ -91,6 +95,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         parentId: String? = nil,
         showReplyInChannel: Bool,
         mentionedUsers: [UserPayload<ExtraData.User>],
+        threadParticipants: [UserPayload<ExtraData.User>] = [],
         replyCount: Int,
         extraData: ExtraData.Message,
         latestReactions: [MessageReactionPayload<ExtraData>] = [],
@@ -111,6 +116,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.parentId = parentId
         self.showReplyInChannel = showReplyInChannel
         self.mentionedUsers = mentionedUsers
+        self.threadParticipants = threadParticipants
         self.replyCount = replyCount
         self.extraData = extraData
         self.latestReactions = latestReactions
