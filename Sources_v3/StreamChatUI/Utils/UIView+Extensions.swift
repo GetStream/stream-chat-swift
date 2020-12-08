@@ -46,6 +46,11 @@ extension UIView {
         translatesAutoresizingMaskIntoConstraints = false
         return self
     }
+
+    var isVisible: Bool {
+        get { !isHidden }
+        set { isHidden = !newValue }
+    }
 }
 
 enum LayoutAnchorName {
