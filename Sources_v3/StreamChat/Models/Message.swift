@@ -82,6 +82,9 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     
     /// A list of users that are mentioned in this message.
     public let mentionedUsers: Set<_ChatUser<ExtraData.User>>
+
+    /// A list of users that participated in this message thread
+    public let threadParticipants: Set<UserId>
     
     /// A list of attachments in this message.
     public let attachments: Set<_ChatMessageAttachment<ExtraData>>
