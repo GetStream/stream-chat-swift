@@ -21,6 +21,8 @@ internal enum L10n {
   }
 
   internal enum Message {
+    /// Only visible to you
+    internal static let onlyVisibleToYou = L10n.tr("Localizable", "message.only-visible-to-you")
     internal enum Actions {
       /// Copy Message
       internal static let copy = L10n.tr("Localizable", "message.actions.copy")

@@ -16,3 +16,5 @@
 
 "alert.actions.cancel" = "Cancel";
 "alert.actions.delete" = "Delete";
+
+"message.only-visible-to-you" = "Only visible to you";
