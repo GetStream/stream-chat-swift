@@ -18,7 +18,7 @@ extension MessagePayload {
         latestReactions: [MessageReactionPayload<T>] = [],
         ownReactions: [MessageReactionPayload<T>] = [],
         deletedAt: Date? = nil
-    ) -> MessagePayload<T> where T.User == NameAndImageExtraData {
+    ) -> MessagePayload<T> where T.User == DefaultExtraData.User {
         .init(
             id: messageId,
             type: parentId == nil ? .regular : .reply,

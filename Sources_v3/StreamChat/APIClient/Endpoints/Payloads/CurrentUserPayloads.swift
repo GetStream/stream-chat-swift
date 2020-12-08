@@ -15,6 +15,8 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
     
     init(
         id: String,
+        name: String?,
+        imageURL: URL?,
         role: UserRole,
         createdAt: Date,
         updatedAt: Date,
@@ -34,6 +36,8 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
         
         super.init(
             id: id,
+            name: name,
+            imageURL: imageURL,
             role: role,
             createdAt: createdAt,
             updatedAt: updatedAt,

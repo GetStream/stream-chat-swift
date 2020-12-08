@@ -63,8 +63,10 @@ class DatabaseSession_Tests: StressTestCase {
         
         let channelPayload: ChannelDetailPayload<DefaultExtraData> = dummyPayload(with: channelId).channel
         
-        let userPayload: UserPayload<NameAndImageExtraData> = .init(
+        let userPayload: UserPayload<DefaultExtraData.User> = .init(
             id: .unique,
+            name: .unique,
+            imageURL: .unique(),
             role: .admin,
             createdAt: .unique,
             updatedAt: .unique,
@@ -72,10 +74,7 @@ class DatabaseSession_Tests: StressTestCase {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
-            extraData: .init(
-                name: "Anakin",
-                imageURL: URL(string: UUID().uuidString)
-            )
+            extraData: .defaultValue
         )
         
         let messagePayload = MessagePayload<DefaultExtraData>(

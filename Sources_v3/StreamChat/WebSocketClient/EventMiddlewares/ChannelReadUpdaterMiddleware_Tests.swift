@@ -87,7 +87,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Unfortunately, ChannelDetailPayload is needed for NotificationMarkReadEvent...
         let channelDetailPayload = ChannelDetailPayload<DefaultExtraData>(
             cid: channelId,
-            extraData: lukeExtraData,
+            extraData: .init(name: .unique, imageURL: .unique()),
             typeRawValue: "",
             lastMessageAt: nil,
             createdAt: .unique,

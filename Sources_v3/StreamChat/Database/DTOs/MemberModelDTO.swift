@@ -127,6 +127,8 @@ extension _ChatChannelMember {
         
         return _ChatChannelMember(
             id: dto.user.id,
+            name: dto.user.name,
+            imageURL: dto.user.imageURL,
             isOnline: dto.user.isOnline,
             isBanned: dto.user.isBanned,
             userRole: UserRole(rawValue: dto.user.userRoleRaw)!,

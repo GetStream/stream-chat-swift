@@ -119,7 +119,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 try session.saveCurrentUser(payload: .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                    extraData: DefaultExtraData.User.defaultValue
                 ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
@@ -176,7 +176,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 try session.saveCurrentUser(payload: .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                    extraData: DefaultExtraData.User.defaultValue
                 ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))

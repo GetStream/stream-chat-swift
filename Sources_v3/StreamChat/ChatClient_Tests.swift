@@ -290,7 +290,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNil(client.provideToken())
         
         // Set a new user without an explicit token
-        client.currentUserController().setUser(userId: newUserId)
+        client.currentUserController().setUser(userId: newUserId, name: nil, imageURL: nil)
         
         AssertAsync.willBeEqual(client.provideToken(), newToken)
     }
@@ -391,13 +391,13 @@ class ChatClient_Tests: StressTestCase {
         let oldUserToken: Token = .unique
         
         // Set a user
-        currentUserController.setUser(userId: oldUserId, token: oldUserToken)
+        currentUserController.setUser(userId: oldUserId, name: nil, imageURL: nil, token: oldUserToken)
 
         // Save worker's UUID
         let oldWorkerUUID = (client.backgroundWorkers.first as! TestWorker).id
         
         // Set the same user again
-        currentUserController.setUser(userId: oldUserId, token: oldUserToken)
+        currentUserController.setUser(userId: oldUserId, name: nil, imageURL: nil, token: oldUserToken)
 
         // .. to make sure worker's are not re-created for the same user
         XCTAssertEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)
@@ -407,7 +407,7 @@ class ChatClient_Tests: StressTestCase {
         let newUserToken: Token = .unique
         
         // Set a user
-        currentUserController.setUser(userId: newUserId, token: newUserToken)
+        currentUserController.setUser(userId: newUserId, name: nil, imageURL: nil, token: newUserToken)
 
         // Check if the worker is re-created
         XCTAssertNotEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)

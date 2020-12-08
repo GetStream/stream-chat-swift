@@ -22,7 +22,7 @@ import Foundation
 ///
 public protocol ExtraDataTypes {
     /// An extra data type for `ChatUser`.
-    associatedtype User: UserExtraData = NameAndImageExtraData
+    associatedtype User: UserExtraData = NoExtraData
     
     /// An extra data type for `ChatMessage`.
     associatedtype Message: MessageExtraData = NoExtraData
@@ -122,6 +122,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         // Create a connection request
         let webSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
             userId: self.currentUserId,
+            name: nil,
+            imageURL: nil,
             extraData: nil as ExtraData.User?
         )
         

@@ -79,6 +79,8 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         
         let typingMember = ChatChannelMember(
             id: .unique,
+            name: .unique,
+            imageURL: .unique(),
             isOnline: true,
             isBanned: false,
             userRole: .user,

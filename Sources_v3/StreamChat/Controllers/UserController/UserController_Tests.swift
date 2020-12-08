@@ -319,7 +319,7 @@ final class UserController_Tests: StressTestCase {
         controller.delegate = delegate
         
         // Create user in the database.
-        let initialExtraData: NameAndImageExtraData = .dummy
+        let initialExtraData: DefaultExtraData.User = .defaultValue
         try client.databaseContainer.createUser(id: userId, extraData: initialExtraData)
         
         // Assert `create` entity change is received by the delegate
@@ -332,17 +332,17 @@ final class UserController_Tests: StressTestCase {
         controller.synchronize()
                 
         // Simulate response from a backend with updated user
-        let updatedExtraData: NameAndImageExtraData = .dummy
+        let newName = String.unique
         try client.databaseContainer.writeSynchronously { session in
             let dto = try XCTUnwrap(session.user(id: self.userId))
-            dto.extraData = try JSONEncoder.stream.encode(updatedExtraData)
+            dto.name = newName
         }
         env.userUpdater!.loadUser_completion!(nil)
         
         // Assert `update` entity change is received by the delegate
         AssertAsync {
             Assert.willBeEqual(delegate.didUpdateUser_change?.fieldChange(\.id), .update(self.userId))
-            Assert.willBeEqual(delegate.didUpdateUser_change?.fieldChange(\.extraData), .update(updatedExtraData))
+            Assert.willBeEqual(delegate.didUpdateUser_change?.fieldChange(\.name), .update(newName))
         }
     }
     

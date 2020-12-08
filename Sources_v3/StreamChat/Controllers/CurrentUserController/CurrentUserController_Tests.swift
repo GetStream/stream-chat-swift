@@ -141,7 +141,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_delegate_isNotifiedAboutCreatedUser() throws {
-        let extraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
+        let extraData = DefaultExtraData.User.defaultValue
         let currentUserPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(
             userId: .unique,
             role: .user,
@@ -165,7 +165,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_delegate_isNotifiedAboutUpdatedUser() throws {
-        var extraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
+        var extraData = DefaultExtraData.User.defaultValue
         var currentUserPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(
             userId: .unique,
             role: .user,
@@ -182,7 +182,7 @@ final class CurrentUserController_Tests: StressTestCase {
         }
         
         // Update current user data
-        extraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
+        extraData = DefaultExtraData.User.defaultValue
         currentUserPayload = .dummy(
             userId: currentUserPayload.id,
             role: currentUserPayload.role,
@@ -226,7 +226,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_setUser_updatesClientToken() {
         let newToken: Token = .unique
-        controller.setUser(userId: .unique, token: newToken)
+        controller.setUser(userId: .unique, name: nil, imageURL: nil, token: newToken)
         AssertAsync.willBeEqual(client.provideToken(), newToken)
     }
     
@@ -286,7 +286,7 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Set up a new anonymous user and wait for the completion
         let completionError = try await {
-            controller.setUser(userId: .unique, token: .unique, completion: $0)
+            controller.setUser(userId: .unique, name: nil, imageURL: nil, token: .unique, completion: $0)
         }
         
         // Assert error is forwarded
@@ -303,7 +303,7 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Set a new user without a token and capture the error
         var completionError: Error?
-        client.currentUserController().setUser(userId: .unique, token: nil) {
+        client.currentUserController().setUser(userId: .unique, name: nil, imageURL: nil, token: nil) {
             completionError = $0
         }
         
@@ -325,7 +325,13 @@ final class CurrentUserController_Tests: StressTestCase {
 
         // Set up a new user
         var setUserCompletionCalled = false
-        controller.setUser(userId: newUserId, token: newUserToken, completion: { _ in setUserCompletionCalled = true })
+        controller.setUser(
+            userId: newUserId,
+            name: nil,
+            imageURL: nil,
+            token: newUserToken,
+            completion: { _ in setUserCompletionCalled = true }
+        )
 
         AssertAsync {
             // New user id is set
@@ -378,7 +384,7 @@ final class CurrentUserController_Tests: StressTestCase {
         let newUserToken: Token = .unique
 
         // Set a new user
-        controller.setUser(userId: newUserId, token: newUserToken)
+        controller.setUser(userId: newUserId, name: nil, imageURL: nil, token: newUserToken)
 
         // Assert flush was called initially
         XCTAssert(client.mockDatabaseContainer.flush_called == true)
@@ -390,7 +396,7 @@ final class CurrentUserController_Tests: StressTestCase {
         controller.disconnect()
 
         // Set the same user again
-        controller.setUser(userId: newUserId, token: newUserToken)
+        controller.setUser(userId: newUserId, name: nil, imageURL: nil, token: newUserToken)
 
         // Assert DB flush wasn't called
         XCTAssert(client.mockDatabaseContainer.flush_called == false)
@@ -403,7 +409,7 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Set up a new guest user and wait for the completion
         let completionError = try await {
-            controller.setGuestUser(userId: .unique, extraData: .defaultValue, completion: $0)
+            controller.setGuestUser(userId: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue, completion: $0)
         }
         
         // Assert error is forwarded
@@ -413,7 +419,7 @@ final class CurrentUserController_Tests: StressTestCase {
     func test_setGuestUser_forwardsNetworkError() throws {
         // Set up a new anonymous user and wait for the completion
         var completionError: Error?
-        controller.setGuestUser(userId: .unique, extraData: .defaultValue) {
+        controller.setGuestUser(userId: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue) {
             completionError = $0
         }
         
@@ -421,7 +427,7 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Set the error to be thrown on database write
         let networkError = TestError()
-        let networkResponse: Result<GuestUserTokenPayload<NameAndImageExtraData>, Error> = .failure(networkError)
+        let networkResponse: Result<GuestUserTokenPayload<DefaultExtraData.User>, Error> = .failure(networkError)
         client.mockAPIClient.test_simulateResponse(networkResponse)
         
         // Assert error is forwarded
@@ -432,13 +438,15 @@ final class CurrentUserController_Tests: StressTestCase {
         let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
 
         let newUserToken: Token = .unique
-        let newUserExtraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
-        let newUser = GuestUserTokenRequestPayload(userId: .unique, extraData: newUserExtraData)
+        let newUserExtraData = DefaultExtraData.User.defaultValue
+        let newUser = GuestUserTokenRequestPayload(userId: .unique, name: .unique, imageURL: .unique(), extraData: newUserExtraData)
 
         // Set up a new guest user
         var setUserCompletionCalled = false
         controller.setGuestUser(
             userId: newUser.userId,
+            name: newUser.name,
+            imageURL: newUser.imageURL,
             extraData: newUserExtraData,
             completion: { _ in setUserCompletionCalled = true }
         )
@@ -464,7 +472,12 @@ final class CurrentUserController_Tests: StressTestCase {
             // Make sure `guest` endpoint is called
             Assert.willBeEqual(
                 self.client.mockAPIClient.request_endpoint,
-                AnyEndpoint(.guestUserToken(userId: newUser.userId, extraData: newUserExtraData))
+                AnyEndpoint(.guestUserToken(
+                    userId: newUser.userId,
+                    name: newUser.name,
+                    imageURL: newUser.imageURL,
+                    extraData: newUserExtraData
+                ))
             )
         }
 
@@ -555,7 +568,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_addDevice_makesCorrectAPICall() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -574,7 +587,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_addDevice_forwardsNetworkError() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -596,7 +609,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_addDevice_forwardsDatabaseError() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -620,8 +633,8 @@ final class CurrentUserController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
-    func test_addDevice_successfullResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+    func test_addDevice_successfulResponse_isSavedToDB() throws {
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -656,7 +669,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_removeDevice_makesCorrectAPICall() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -675,7 +688,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_removeDevice_forwardsNetworkError() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -697,7 +710,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_removeDevice_forwardsDatabaseError() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         let deviceId = userPayload.devices.first!.id
         
         // Save user to the db
@@ -723,7 +736,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_removeDevice_successfullResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         let deviceId = userPayload.devices.first!.id
         
         // Save user to the db
@@ -759,7 +772,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_updateDevices_makesCorrectAPICall() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -778,7 +791,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_updateDevices_forwardsNetworkError() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -800,7 +813,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_updateDevices_forwardsDatabaseError() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -825,7 +838,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_updateDevices_successfullResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload<NameAndImageExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {

@@ -47,8 +47,8 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     }
     
     func test_update_called_forEachQuery() throws {
-        let filter1: Filter<UserListFilterScope<NameAndImageExtraData>> = .equal(.id, to: .unique)
-        let filter2: Filter<UserListFilterScope<NameAndImageExtraData>> = .notEqual(.id, to: .unique)
+        let filter1: Filter<UserListFilterScope<DefaultExtraData.User>> = .equal(.id, to: .unique)
+        let filter2: Filter<UserListFilterScope<DefaultExtraData.User>> = .notEqual(.id, to: .unique)
         
         try database.createUserListQuery(filter: filter1)
         try database.createUserListQuery(filter: filter2)
@@ -66,7 +66,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         // Deinitialize newUserQueryUpdater
         newUserQueryUpdater = nil
         
-        let filter: Filter<UserListFilterScope<NameAndImageExtraData>> = .notEqual(.id, to: .unique)
+        let filter: Filter<UserListFilterScope<DefaultExtraData.User>> = .notEqual(.id, to: .unique)
         try database.createUserListQuery(filter: filter)
         try database.createUser(id: .unique)
         
@@ -87,7 +87,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     
     func test_filter_isModified() throws {
         let id: UserId = .unique
-        let filter: Filter<UserListFilterScope<NameAndImageExtraData>> = .notEqual(.id, to: .unique)
+        let filter: Filter<UserListFilterScope<DefaultExtraData.User>> = .notEqual(.id, to: .unique)
         
         try database.createUserListQuery(filter: filter)
         try database.createUser(id: id)
@@ -102,7 +102,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     }
     
     func test_newUserQueryUpdater_doesNotRetainItself() throws {
-        let filter: Filter<UserListFilterScope<NameAndImageExtraData>> = .notEqual(.id, to: .unique)
+        let filter: Filter<UserListFilterScope<DefaultExtraData.User>> = .notEqual(.id, to: .unique)
         try database.createUserListQuery(filter: filter)
         try database.createUser()
         

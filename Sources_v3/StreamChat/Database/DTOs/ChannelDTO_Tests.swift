@@ -236,7 +236,7 @@ class ChannelDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let channelDTO = try session.saveChannel(payload: payload)
             // Make the extra data JSON invalid
-            channelDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
+            channelDTO.extraData = #"{"invalid": json}"# .data(using: .utf8)!
         }
         
         // Load the channel from the db and check the fields are correct
@@ -418,11 +418,11 @@ class ChannelDTO_Tests: XCTestCase {
 extension XCTestCase {
     // MARK: - Dummy data with extra data
     
-    var lukeExtraData: NameAndImageExtraData { NameAndImageExtraData(name: "Luke", imageURL: URL(string: UUID().uuidString)) }
-    
-    var dummyCurrentUser: CurrentUserPayload<NameAndImageExtraData> {
+    var dummyCurrentUser: CurrentUserPayload<DefaultExtraData.User> {
         CurrentUserPayload(
             id: "dummyCurrentUser",
+            name: .unique,
+            imageURL: nil,
             role: .user,
             createdAt: .unique,
             updatedAt: .unique,
@@ -430,17 +430,19 @@ extension XCTestCase {
             isOnline: true,
             isInvisible: false,
             isBanned: false,
-            extraData: lukeExtraData
+            extraData: .defaultValue
         )
     }
     
-    var dummyUser: UserPayload<NameAndImageExtraData> {
+    var dummyUser: UserPayload<DefaultExtraData.User> {
         dummyUser(id: .unique)
     }
     
-    func dummyUser(id: String) -> UserPayload<NameAndImageExtraData> {
+    func dummyUser(id: String) -> UserPayload<DefaultExtraData.User> {
         UserPayload(
             id: id,
+            name: .unique,
+            imageURL: nil,
             role: .user,
             createdAt: .unique,
             updatedAt: .unique,
@@ -449,7 +451,7 @@ extension XCTestCase {
             isInvisible: true,
             isBanned: true,
             teams: [],
-            extraData: lukeExtraData
+            extraData: .defaultValue
         )
     }
     
@@ -468,7 +470,7 @@ extension XCTestCase {
             showReplyInChannel: false,
             mentionedUsers: [dummyCurrentUser],
             replyCount: 0,
-            extraData: NoExtraData(),
+            extraData: .defaultValue,
             reactionScores: ["like": 1],
             isSilent: false,
             attachments: []
@@ -480,10 +482,12 @@ extension XCTestCase {
     }
     
     func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultExtraData> {
-        let member: MemberPayload<NameAndImageExtraData> =
+        let member: MemberPayload<DefaultExtraData.User> =
             .init(
                 user: .init(
                     id: .unique,
+                    name: .unique,
+                    imageURL: nil,
                     role: .admin,
                     createdAt: .unique,
                     updatedAt: .unique,
@@ -492,7 +496,7 @@ extension XCTestCase {
                     isInvisible: true,
                     isBanned: true,
                     teams: [],
-                    extraData: lukeExtraData
+                    extraData: .defaultValue
                 ),
                 role: .moderator,
                 createdAt: .unique,
@@ -559,26 +563,11 @@ extension XCTestCase {
         typealias Attachment = NoExtraData
     }
     
-    var dummyUserWithNoExtraData: UserPayload<NoExtraData> {
-        .init(
-            id: .unique,
-            role: .user,
-            createdAt: .unique,
-            updatedAt: .unique,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
-            teams: [],
-            extraData: NoExtraData()
-        )
-    }
-    
     var dummyMessageWithNoExtraData: MessagePayload<NoExtraDataTypes> {
         MessagePayload(
             id: .unique,
             type: .regular,
-            user: dummyUserWithNoExtraData,
+            user: dummyUser,
             createdAt: .unique,
             updatedAt: .unique,
             deletedAt: nil,
@@ -597,7 +586,7 @@ extension XCTestCase {
     }
     
     var dummyChannelReadWithNoExtraData: ChannelReadPayload<NoExtraDataTypes> {
-        ChannelReadPayload(user: dummyUserWithNoExtraData, lastReadAt: .unique, unreadMessagesCount: .random(in: 0...10))
+        ChannelReadPayload(user: dummyUser, lastReadAt: .unique, unreadMessagesCount: .random(in: 0...10))
     }
     
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload<NoExtraDataTypes> {
@@ -605,6 +594,8 @@ extension XCTestCase {
             .init(
                 user: .init(
                     id: .unique,
+                    name: .unique,
+                    imageURL: nil,
                     role: .admin,
                     createdAt: .unique,
                     updatedAt: .unique,
@@ -630,7 +621,7 @@ extension XCTestCase {
                     createdAt: .unique,
                     deletedAt: .unique,
                     updatedAt: .unique,
-                    createdBy: dummyUserWithNoExtraData,
+                    createdBy: dummyUser,
                     config: .init(
                         reactionsEnabled: true,
                         typingEventsEnabled: true,

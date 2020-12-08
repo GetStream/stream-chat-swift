@@ -45,7 +45,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_editMessage_buildsCorrectly() {
         let payload = MessageRequestBody<DefaultExtraData>(
             id: .unique,
-            user: .init(id: .unique, extraData: .init()),
+            user: .init(id: .unique, name: .unique, imageURL: .unique(), extraData: .init()),
             text: .unique,
             extraData: .init()
         )

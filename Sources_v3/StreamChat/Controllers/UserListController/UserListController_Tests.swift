@@ -11,7 +11,7 @@ class UserListController_Tests: StressTestCase {
     
     var client: ChatClient!
     
-    var query: UserListQuery<NameAndImageExtraData>!
+    var query: UserListQuery<DefaultExtraData.User>!
     
     var controller: ChatUserListController!
     var controllerCallbackQueueID: UUID!

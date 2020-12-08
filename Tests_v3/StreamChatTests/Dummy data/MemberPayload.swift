@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension MemberPayload where ExtraData == NameAndImageExtraData {
+extension MemberPayload where ExtraData == DefaultExtraData.User {
     /// Returns a dummy member payload with the given `userId` and `role`
     static func dummy(
         userId: UserId = .unique,

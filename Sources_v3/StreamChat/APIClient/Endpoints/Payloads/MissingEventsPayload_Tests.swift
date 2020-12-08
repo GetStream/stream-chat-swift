@@ -13,6 +13,8 @@ final class MissingEventsPayload_Tests: XCTestCase {
         
         let expectedUser = UserPayload(
             id: "broken-waterfall-5",
+            name: "Broken Waterfall",
+            imageURL: URL(string: "https://api.adorable.io/avatars/285/broken-waterfall-5.png"),
             role: .user,
             createdAt: "2019-12-12T15:33:46.488935Z".toDate(),
             updatedAt: "2020-09-07T12:27:43.096437Z".toDate(),
@@ -20,10 +22,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
             isOnline: true,
             isInvisible: false,
             isBanned: false,
-            extraData: NameAndImageExtraData(
-                name: "Broken Waterfall",
-                imageURL: URL(string: "https://api.adorable.io/avatars/285/broken-waterfall-5.png")
-            )
+            extraData: DefaultExtraData.User.defaultValue
         )
         
         let event = try XCTUnwrap(payload.eventPayloads.first)
@@ -46,6 +45,8 @@ final class MissingEventsPayload_Tests: XCTestCase {
 
         let messageUser = try XCTUnwrap(message.user)
         XCTAssertEqual(messageUser.id, expectedUser.id)
+        XCTAssertEqual(messageUser.name, expectedUser.name)
+        XCTAssertEqual(messageUser.imageURL, expectedUser.imageURL)
         XCTAssertEqual(messageUser.role, expectedUser.role)
         XCTAssertEqual(messageUser.createdAt, expectedUser.createdAt)
         XCTAssertEqual(messageUser.updatedAt, expectedUser.updatedAt)

@@ -6,13 +6,8 @@
 import XCTest
 
 final class GuestEndpoints_Tests: XCTestCase {
-    func test_token_buildsCorrectly_withNoExtraData() {
-        let extraData = NoExtraData()
-        verifyEndpointBuildsCorrectly(with: extraData)
-    }
-    
     func test_token_buildsCorrectly_withDefaultExtraData() {
-        let extraData = NameAndImageExtraData(name: .unique, imageURL: .unique())
+        let extraData = DefaultExtraData.User.defaultValue
         verifyEndpointBuildsCorrectly(with: extraData)
     }
     
@@ -24,7 +19,7 @@ final class GuestEndpoints_Tests: XCTestCase {
     // MARK: - Private
     
     private func verifyEndpointBuildsCorrectly<ExtraData: UserExtraData>(with extraData: ExtraData) {
-        let payload = GuestUserTokenRequestPayload(userId: .unique, extraData: extraData)
+        let payload = GuestUserTokenRequestPayload(userId: .unique, name: .unique, imageURL: .unique(), extraData: extraData)
         let expectedEndpoint = Endpoint<GuestUserTokenPayload<ExtraData>>(
             path: "guest",
             method: .post,
@@ -34,7 +29,15 @@ final class GuestEndpoints_Tests: XCTestCase {
         )
         
         // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(.guestUserToken(userId: payload.userId, extraData: extraData)))
+        XCTAssertEqual(
+            AnyEndpoint(expectedEndpoint),
+            AnyEndpoint(.guestUserToken(
+                userId: payload.userId,
+                name: payload.name,
+                imageURL: payload.imageURL,
+                extraData: extraData
+            ))
+        )
     }
 }
 

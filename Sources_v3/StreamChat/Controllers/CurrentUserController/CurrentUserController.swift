@@ -127,6 +127,8 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, 
     
     private func prepareEnvironmentForNewUser(
         userId: UserId,
+        name: String?,
+        imageURL: URL?,
         role: UserRole,
         extraData: ExtraData.User? = nil,
         completion: @escaping (Error?) -> Void
@@ -138,7 +140,13 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, 
         client.currentUserId = userId
         
         // Set a new WebSocketClient connect endpoint
-        client.webSocketClient.connectEndpoint = .webSocketConnect(userId: userId, role: role, extraData: extraData)
+        client.webSocketClient.connectEndpoint = .webSocketConnect(
+            userId: userId,
+            name: name,
+            imageURL: imageURL,
+            role: role,
+            extraData: extraData
+        )
         
         // Reset all existing data if the new user is not the same as the last logged-in one
         if client.databaseContainer.viewContext.currentUser()?.user.id != userId {
@@ -217,7 +225,7 @@ public extension _CurrentChatUserController {
     ///
     func setAnonymousUser(completion: ((Error?) -> Void)? = nil) {
         disconnect()
-        prepareEnvironmentForNewUser(userId: .anonymous, role: .anonymous, extraData: nil) { error in
+        prepareEnvironmentForNewUser(userId: .anonymous, name: nil, imageURL: nil, role: .anonymous, extraData: nil) { error in
             guard error == nil else {
                 completion?(error)
                 return
@@ -236,23 +244,30 @@ public extension _CurrentChatUserController {
     ///   - extraData: The extra data of the new guest-user.
     ///   - completion: The completion. Will be called when the new guest user is set.
     ///                 If setting up the new user fails the completion will be called with an error.
-    func setGuestUser(userId: UserId, extraData: ExtraData.User = .defaultValue, completion: ((Error?) -> Void)? = nil) {
+    func setGuestUser(
+        userId: UserId,
+        name: String?,
+        imageURL: URL?,
+        extraData: ExtraData.User = .defaultValue,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         disconnect()
-        prepareEnvironmentForNewUser(userId: userId, role: .guest, extraData: extraData) { error in
+        prepareEnvironmentForNewUser(userId: userId, name: name, imageURL: imageURL, role: .guest, extraData: extraData) { error in
             guard error == nil else {
                 completion?(error)
                 return
             }
             
-            self.client.apiClient.request(endpoint: .guestUserToken(userId: userId, extraData: extraData)) {
-                switch $0 {
-                case let .success(payload):
-                    self.client.currentToken = payload.token
-                    self.connect(completion: completion)
-                case let .failure(error):
-                    completion?(error)
+            self.client.apiClient
+                .request(endpoint: .guestUserToken(userId: userId, name: name, imageURL: imageURL, extraData: extraData)) {
+                    switch $0 {
+                    case let .success(payload):
+                        self.client.currentToken = payload.token
+                        self.connect(completion: completion)
+                    case let .failure(error):
+                        completion?(error)
+                    }
                 }
-            }
         }
     }
     
@@ -273,6 +288,8 @@ public extension _CurrentChatUserController {
     ///
     func setUser(
         userId: UserId,
+        name: String?,
+        imageURL: URL?,
         userExtraData: ExtraData.User? = nil,
         token: Token? = nil,
         completion: ((Error?) -> Void)? = nil
@@ -294,7 +311,13 @@ public extension _CurrentChatUserController {
         
         disconnect()
         
-        prepareEnvironmentForNewUser(userId: userId, role: .user, extraData: userExtraData) { error in
+        prepareEnvironmentForNewUser(
+            userId: userId,
+            name: name,
+            imageURL: imageURL,
+            role: .user,
+            extraData: userExtraData
+        ) { error in
             guard error == nil else {
                 completion?(error)
                 return
