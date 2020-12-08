@@ -10,7 +10,7 @@ extension UIFont {
         return UIFont(descriptor: descriptor!, size: pointSize)
     }
 
-    func bold() -> UIFont {
+    var bold: UIFont {
         withTraits(traits: .traitBold)
     }
 }
