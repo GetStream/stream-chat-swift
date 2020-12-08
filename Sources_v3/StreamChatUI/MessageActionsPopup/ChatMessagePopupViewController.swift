@@ -48,9 +48,8 @@ open class ChatMessagePopupViewController<ExtraData: UIExtraDataTypes>: ViewCont
             scrollContentView.widthAnchor.constraint(equalTo: view.widthAnchor),
             scrollContentView.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor),
             
-            messageContentView.topAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: messageViewFrame.origin.y),
+            messageContentView.bottomAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: messageViewFrame.maxY),
             messageContentView.widthAnchor.constraint(equalToConstant: messageViewFrame.width),
-            messageContentView.heightAnchor.constraint(equalToConstant: messageViewFrame.height),
             
             reactionsController.view.bottomAnchor.constraint(equalTo: messageContentView.messageBubbleView.topAnchor, constant: -8),
             reactionsController.view.leadingAnchor.constraint(greaterThanOrEqualTo: scrollContentView.leadingAnchor),
