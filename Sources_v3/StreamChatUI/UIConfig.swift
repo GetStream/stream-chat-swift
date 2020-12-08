@@ -10,6 +10,7 @@ public struct UIConfig<ExtraData: UIExtraDataTypes> {
     public var messageList = MessageListUI()
     public var currentUser = CurrentUserUI()
     public var navigation = Navigation()
+    public var colorPalette = ColorPalette()
 }
 
 // MARK: - UIConfig + Default
@@ -32,6 +33,31 @@ public extension UIConfig {
             let key = String(describing: ExtraData.self)
             defaults[key] = newValue
         }
+    }
+}
+
+// MARK: - Color Palette
+
+public extension UIConfig {
+    struct ColorPalette {
+        public var highlightedColorForColor: (UIColor) -> UIColor = { $0.withAlphaComponent(0.5) }
+        public var disabledColorForColor: (UIColor) -> UIColor = { _ in .lightGray }
+        public var unselectedColorForColor: (UIColor) -> UIColor = { _ in .lightGray }
+
+        public var outgoingMessageBubbleBackground: UIColor = UIColor(rgb: 0xe5e5e5)
+        public var outgoingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
+        public var incomingMessageBubbleBackground: UIColor = .white
+        public var incomingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
+
+        public var messageComposerBorder: UIColor = .systemGray
+        public var messageComposerBackground: UIColor = .white
+
+        public var generalBackground: UIColor = UIColor(rgb: 0xfcfcfc)
+        public var popupDimmedBackground: UIColor = UIColor.black.withAlphaComponent(0.2)
+        public var galleryMoreImagesOverlayBackground: UIColor = UIColor.black.withAlphaComponent(0.4)
+        public var messageTimestampText: UIColor = .lightGray
+        public var subtitleText: UIColor = .lightGray
+        public var unreadChatTint: UIColor = .systemGray
     }
 }
 
@@ -109,4 +135,21 @@ public extension UIConfig {
             ChatMessageImageGallery<ExtraData>.ImagePreview.self
         public var imageGalleryInteritemSpacing: CGFloat = 2
     }
+}
+
+// MARK: - Steam constants
+
+private extension UIColor {
+    /// This is color palette used by design team.
+    /// It's not fully used in figma yet, but we should stick with this colors if possible.
+    static let streamBlack = UIColor(rgb: 0x000000)
+    static let streamGray = UIColor(rgb: 0x7a7a7a)
+    static let streamGrayGainsboro = UIColor(rgb: 0xdbdbdb)
+    static let streamGrayWhisper = UIColor(rgb: 0xecebeb)
+    static let streamWhiteSmoke = UIColor(rgb: 0xf2f2f2)
+    static let streamWhiteSnow = UIColor(rgb: 0xfcfcfc)
+    static let streamWhite = UIColor(rgb: 0xffffff)
+    static let streamAccentBlue = UIColor(rgb: 0x005fff)
+    static let streamAccentRed = UIColor(rgb: 0xff3742)
+    static let streamAccentGreen = UIColor(rgb: 0x20e070)
 }

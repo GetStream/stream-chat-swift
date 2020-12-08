@@ -7,11 +7,7 @@ import UIKit
 
 open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
     override public func defaultAppearance() {
-        if #available(iOS 13, *) {
-            backgroundColor = .systemBackground
-        } else {
-            backgroundColor = .white // Should be add custom support for dark theme?
-        }
+        backgroundColor = uiConfig.colorPalette.generalBackground
     }
 
     // MARK: - Properties
@@ -76,11 +72,11 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.font = .preferredFont(forTextStyle: .headline)
         
-        subtitleLabel.textColor = .systemGray
+        subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
         subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.font = .preferredFont(forTextStyle: .subheadline)
         
-        timestampLabel.textColor = .systemGray
+        timestampLabel.textColor = uiConfig.colorPalette.subtitleText
         timestampLabel.adjustsFontForContentSizeCategory = true
         timestampLabel.font = .preferredFont(forTextStyle: .subheadline)
     }
