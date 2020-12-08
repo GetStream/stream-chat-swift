@@ -12,7 +12,7 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
     
     func test_guestUserDefaultExtraData_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(
-            GuestUserTokenPayload<NameAndImageExtraData>.self,
+            GuestUserTokenPayload<DefaultExtraData.User>.self,
             from: guestUserDefaultExtraDataJSON
         )
         
@@ -22,9 +22,9 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
         XCTAssertFalse(payload.user.isBanned)
         XCTAssertEqual(payload.user.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.user.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
-        XCTAssertEqual(payload.user.extraData.name, "Broken Waterfall")
+        XCTAssertEqual(payload.user.name, "Broken Waterfall")
         XCTAssertEqual(
-            payload.user.extraData.imageURL,
+            payload.user.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
         XCTAssertEqual(payload.user.role, .guest)

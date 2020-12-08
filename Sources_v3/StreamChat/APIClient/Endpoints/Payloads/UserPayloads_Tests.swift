@@ -10,15 +10,15 @@ class UserPayload_Tests: XCTestCase {
     let otherUserJSON = XCTestCase.mockData(fromFile: "OtherUser")
     
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserPayload<NameAndImageExtraData>.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(UserPayload<DefaultExtraData.User>.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
-        XCTAssertEqual(payload.extraData.name, "Broken Waterfall")
+        XCTAssertEqual(payload.name, "Broken Waterfall")
         XCTAssertEqual(
-            payload.extraData.imageURL,
+            payload.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
         XCTAssertEqual(payload.role, .user)
@@ -48,30 +48,18 @@ class UserPayload_Tests: XCTestCase {
     }
     
     func test_otherUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserPayload<NameAndImageExtraData>.self, from: otherUserJSON)
+        let payload = try JSONDecoder.default.decode(UserPayload<DefaultExtraData.User>.self, from: otherUserJSON)
         XCTAssertEqual(payload.id, "bitter-cloud-0")
         XCTAssertEqual(payload.isBanned, true)
         XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.extraData.name, "Bitter cloud")
+        XCTAssertEqual(payload.name, "Bitter cloud")
         XCTAssertEqual(payload.createdAt, "2020-06-09T18:33:04.070518Z".toDate())
         XCTAssertEqual(payload.lastActiveAt, "2020-06-09T18:33:04.075114Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-09T18:33:04.078929Z".toDate())
         XCTAssertEqual(
-            payload.extraData.imageURL,
+            payload.imageURL,
             URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!
         )
-        XCTAssertEqual(payload.role, .guest)
-        XCTAssertEqual(payload.isOnline, true)
-    }
-    
-    func test_otherUserJSON_isSerialized_withNoExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserPayload<NoExtraData>.self, from: otherUserJSON)
-        XCTAssertEqual(payload.id, "bitter-cloud-0")
-        XCTAssertEqual(payload.isBanned, true)
-        XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.createdAt, "2020-06-09T18:33:04.070518Z".toDate())
-        XCTAssertEqual(payload.lastActiveAt, "2020-06-09T18:33:04.075114Z".toDate())
-        XCTAssertEqual(payload.updatedAt, "2020-06-09T18:33:04.078929Z".toDate())
         XCTAssertEqual(payload.role, .guest)
         XCTAssertEqual(payload.isOnline, true)
     }
@@ -79,16 +67,18 @@ class UserPayload_Tests: XCTestCase {
 
 class UserRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
-        let payload: UserRequestBody<NameAndImageExtraData> = .init(
+        let payload: UserRequestBody<DefaultExtraData.User> = .init(
             id: .unique,
-            extraData: .init(name: .unique, imageURL: .unique())
+            name: .unique,
+            imageURL: .unique(),
+            extraData: .defaultValue
         )
         
         let serialized = try JSONEncoder.stream.encode(payload)
         let expected: [String: Any] = [
             "id": payload.id,
-            "name": payload.extraData.name!,
-            "image": payload.extraData.imageURL!.absoluteString
+            "name": payload.name!,
+            "image": payload.imageURL!.absoluteString
         ]
         
         AssertJSONEqual(serialized, expected)

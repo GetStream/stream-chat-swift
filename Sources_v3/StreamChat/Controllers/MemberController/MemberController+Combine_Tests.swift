@@ -80,6 +80,8 @@ extension _ChatChannelMember {
     static var dummy: _ChatChannelMember {
         .init(
             id: .unique,
+            name: .unique,
+            imageURL: .unique(),
             isOnline: true,
             isBanned: false,
             userRole: .user,

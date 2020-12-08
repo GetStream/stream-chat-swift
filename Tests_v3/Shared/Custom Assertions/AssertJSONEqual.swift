@@ -101,7 +101,10 @@ func CompareJSONEqual(
         let json2 = try expression2()
         
         guard json1.keys == json2.keys else {
-            throw error(domain: "CompareJSONEqual", message: "JSON keys do not match")
+            throw error(
+                domain: "CompareJSONEqual",
+                message: "JSON keys do not match. Expression 1 keys: \(json1.keys), Expression 2 keys: \(json2.keys)"
+            )
         }
         
         try json1.forEach { key, value in

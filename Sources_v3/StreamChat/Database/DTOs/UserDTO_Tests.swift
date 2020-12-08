@@ -16,7 +16,7 @@ class UserDTO_Tests: XCTestCase {
     func test_userPayload_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<NameAndImageExtraData> = .dummy(userId: userId)
+        let payload: UserPayload<DefaultExtraData.User> = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -30,6 +30,8 @@ class UserDTO_Tests: XCTestCase {
         
         AssertAsync {
             Assert.willBeEqual(payload.id, loadedUserDTO?.id)
+            Assert.willBeEqual(payload.name, loadedUserDTO?.name)
+            Assert.willBeEqual(payload.imageURL, loadedUserDTO?.imageURL)
             Assert.willBeEqual(payload.isOnline, loadedUserDTO?.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedUserDTO?.isBanned)
             Assert.willBeEqual(payload.role.rawValue, loadedUserDTO?.userRoleRaw)
@@ -37,47 +39,7 @@ class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.updatedAt, loadedUserDTO?.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO?.lastActivityAt)
             Assert.willBeEqual(payload.extraData, loadedUserDTO.map {
-                try? JSONDecoder.default.decode(NameAndImageExtraData.self, from: $0.extraData)
-            })
-        }
-    }
-    
-    func test_userPayload_withNoExtraData_isStoredAndLoadedFromDB() {
-        let userId = UUID().uuidString
-        
-        let payload: UserPayload<NoExtraData> = .init(
-            id: userId,
-            role: .admin,
-            createdAt: .unique,
-            updatedAt: .unique,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
-            teams: [],
-            extraData: .defaultValue
-        )
-        
-        // Asynchronously save the payload to the db
-        database.write { session in
-            try! session.saveUser(payload: payload)
-        }
-        
-        // Load the user from the db and check the fields are correct
-        var loadedUserDTO: UserDTO? {
-            database.viewContext.user(id: userId)
-        }
-        
-        AssertAsync {
-            Assert.willBeEqual(payload.id, loadedUserDTO?.id)
-            Assert.willBeEqual(payload.isOnline, loadedUserDTO?.isOnline)
-            Assert.willBeEqual(payload.isBanned, loadedUserDTO?.isBanned)
-            Assert.willBeEqual(payload.role.rawValue, loadedUserDTO?.userRoleRaw)
-            Assert.willBeEqual(payload.createdAt, loadedUserDTO?.userCreatedAt)
-            Assert.willBeEqual(payload.updatedAt, loadedUserDTO?.userUpdatedAt)
-            Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO?.lastActivityAt)
-            Assert.willBeEqual(payload.extraData, loadedUserDTO.map {
-                try? JSONDecoder.default.decode(NoExtraData.self, from: $0.extraData)
+                try? JSONDecoder.default.decode(DefaultExtraData.User.self, from: $0.extraData)
             })
         }
     }
@@ -87,6 +49,8 @@ class UserDTO_Tests: XCTestCase {
         
         let payload: UserPayload<DefaultExtraData.User> = .init(
             id: userId,
+            name: .unique,
+            imageURL: .unique(),
             role: .admin,
             createdAt: .unique,
             updatedAt: .unique,
@@ -112,7 +76,7 @@ class UserDTO_Tests: XCTestCase {
     func test_DTO_asModel() {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<NameAndImageExtraData> = .dummy(userId: userId)
+        let payload: UserPayload<DefaultExtraData.User> = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -120,12 +84,14 @@ class UserDTO_Tests: XCTestCase {
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedUserModel: _ChatUser<NameAndImageExtraData>? {
+        var loadedUserModel: _ChatUser<DefaultExtraData.User>? {
             database.viewContext.user(id: userId)?.asModel()
         }
         
         AssertAsync {
             Assert.willBeEqual(payload.id, loadedUserModel?.id)
+            Assert.willBeEqual(payload.name, loadedUserModel?.name)
+            Assert.willBeEqual(payload.imageURL, loadedUserModel?.imageURL)
             Assert.willBeEqual(payload.isOnline, loadedUserModel?.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedUserModel?.isBanned)
             Assert.willBeEqual(payload.role, loadedUserModel?.userRole)
@@ -140,7 +106,7 @@ class UserDTO_Tests: XCTestCase {
     func test_DTO_asPayload() {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<NameAndImageExtraData> = .dummy(userId: userId)
+        let payload: UserPayload<DefaultExtraData.User> = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -148,7 +114,7 @@ class UserDTO_Tests: XCTestCase {
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedUserPayload: UserRequestBody<NameAndImageExtraData>? {
+        var loadedUserPayload: UserRequestBody<DefaultExtraData.User>? {
             database.viewContext.user(id: userId)?.asRequestBody()
         }
         
@@ -176,7 +142,7 @@ class UserDTO_Tests: XCTestCase {
     }
     
     func test_userWithUserListQuery_isSavedAndLoaded() {
-        let query = UserListQuery(filter: .query(.name, text: "a"))
+        let query = UserListQuery<DefaultExtraData.User>(filter: .query(.name, text: "a"))
         
         // Create user
         let payload1 = dummyUser
@@ -220,7 +186,7 @@ class UserDTO_Tests: XCTestCase {
 
     func test_userListQuery_withSorting() {
         // Create two user queries with different sortings.
-        let filter = Filter<UserListFilterScope<NameAndImageExtraData>>.query(.name, text: "a")
+        let filter = Filter<UserListFilterScope<DefaultExtraData.User>>.query(.name, text: "a")
         let queryWithLastActiveAtSorting = UserListQuery(filter: filter, sort: [.init(key: .lastActivityAt, isAscending: false)])
         let queryWithIdSorting = UserListQuery(filter: filter, sort: [.init(key: .id, isAscending: false)])
 

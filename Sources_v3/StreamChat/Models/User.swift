@@ -11,7 +11,7 @@ import Foundation
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatUser = _ChatUser<NameAndImageExtraData>
+public typealias ChatUser = _ChatUser<DefaultExtraData.User>
 
 /// A unique identifier of a user.
 public typealias UserId = String
@@ -27,6 +27,12 @@ public typealias UserId = String
 public class _ChatUser<ExtraData: UserExtraData> {
     /// The unique identifier of the user.
     public let id: UserId
+    
+    /// Name for this user.
+    public let name: String?
+    
+    /// Image (avatar) url for this user.
+    public let imageURL: URL?
     
     /// An indicator whether the user is online.
     public let isOnline: Bool
@@ -66,6 +72,8 @@ public class _ChatUser<ExtraData: UserExtraData> {
     
     init(
         id: UserId,
+        name: String? = nil,
+        imageURL: URL? = nil,
         isOnline: Bool = false,
         isBanned: Bool = false,
         isFlaggedByCurrentUser: Bool = false,
@@ -77,6 +85,8 @@ public class _ChatUser<ExtraData: UserExtraData> {
         extraData: ExtraData = .defaultValue
     ) {
         self.id = id
+        self.name = name
+        self.imageURL = imageURL
         self.isOnline = isOnline
         self.isBanned = isBanned
         self.isFlaggedByCurrentUser = isFlaggedByCurrentUser
@@ -117,19 +127,6 @@ public enum UserRole: String, Codable, Hashable {
     
     /// A user that connected using anonymous authentication.
     case anonymous
-}
-
-public extension ChatUser {
-    /// Creates a new `ChatUser` object.
-    ///
-    /// - Parameters:
-    ///   - id: The id of the user
-    ///   - name: The name of the user
-    ///   - imageURL: The URL of the user's avatar
-    ///
-    convenience init(id: String, name: String?, imageURL: URL?) {
-        self.init(id: id, extraData: NameAndImageExtraData(name: name, imageURL: imageURL))
-    }
 }
 
 /// You need to make your custom type conforming to this protocol if you want to use it for extending `ChatUser` entity with your

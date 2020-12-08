@@ -63,6 +63,8 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
     
     public init(
         id: String,
+        name: String? = nil,
+        imageURL: URL? = nil,
         isOnline: Bool = false,
         isBanned: Bool = false,
         userRole: UserRole = .user,
@@ -86,6 +88,8 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
         
         super.init(
             id: id,
+            name: name,
+            imageURL: imageURL,
             isOnline: isOnline,
             isBanned: isBanned,
             userRole: userRole,

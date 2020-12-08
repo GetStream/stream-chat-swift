@@ -10,15 +10,15 @@ class CurrentUserPayload_Tests: XCTestCase {
     let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser")
     
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(CurrentUserPayload<NameAndImageExtraData>.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(CurrentUserPayload<DefaultExtraData.User>.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
-        XCTAssertEqual(payload.extraData.name, "Broken Waterfall")
+        XCTAssertEqual(payload.name, "Broken Waterfall")
         XCTAssertEqual(
-            payload.extraData.imageURL,
+            payload.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
         XCTAssertEqual(payload.role, .user)
