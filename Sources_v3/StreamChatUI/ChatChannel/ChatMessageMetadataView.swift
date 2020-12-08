@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageMetadataView<ExtraData: UIExtraDataTypes>: View {
+open class ChatMessageMetadataView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContent() }
     }
@@ -22,7 +22,7 @@ open class ChatMessageMetadataView<ExtraData: UIExtraDataTypes>: View {
     // MARK: - Overrides
 
     override public func defaultAppearance() {
-        timestampLabel.textColor = .messageTimestamp
+        timestampLabel.textColor = uiConfig.colorPalette.messageTimestampText
     }
 
     override open func setUpLayout() {

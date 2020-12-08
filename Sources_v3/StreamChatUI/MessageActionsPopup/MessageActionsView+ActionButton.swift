@@ -5,7 +5,7 @@
 import UIKit
 
 extension MessageActionsView {
-    open class ActionButton: Button {
+    open class ActionButton: Button, UIConfigProvider {
         public var actionItem: ChatMessageActionItem? {
             didSet { updateContentIfNeeded() }
         }
@@ -13,7 +13,7 @@ extension MessageActionsView {
         // MARK: Overrides
 
         override open func defaultAppearance() {
-            backgroundColor = .chatBackground
+            backgroundColor = uiConfig.colorPalette.generalBackground
             contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
             titleEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
             contentHorizontalAlignment = .left

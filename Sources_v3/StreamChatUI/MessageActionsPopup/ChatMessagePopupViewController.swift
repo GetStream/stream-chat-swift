@@ -29,7 +29,7 @@ open class ChatMessagePopupViewController<ExtraData: UIExtraDataTypes>: ViewCont
     }
 
     override public func defaultAppearance() {
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.2)
+        view.backgroundColor = uiConfig.colorPalette.popupDimmedBackground
     }
 
     override open func setUpLayout() {
