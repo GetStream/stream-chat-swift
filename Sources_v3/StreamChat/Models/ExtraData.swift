@@ -16,30 +16,3 @@ public struct NoExtraData: Codable, Hashable, UserExtraData, ChannelExtraData, M
     /// Returns a concrete `NoExtraData` instance.
     public static var defaultValue: Self { .init() }
 }
-
-/// The extra data type with `name` and `imageURL` properties.
-public struct NameAndImageExtraData: ChannelExtraData {
-    enum CodingKeys: String, CodingKey {
-        case name
-        case imageURL = "image"
-    }
-    
-    /// Returns a concrete `NameAndImageExtraData` instance with default data.
-    public static var defaultValue: Self { .init() }
-    
-    public let name: String?
-    public let imageURL: URL?
-    
-    public init(name: String? = nil, imageURL: URL? = nil) {
-        self.name = name
-        self.imageURL = imageURL
-    }
-    
-    public init(from decoder: Decoder) throws {
-        // Unfortunately, the built-in URL decoder fails, if the string is empty. We need to
-        // provide custom decoding to handle URL? as expected.
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
-    }
-}
