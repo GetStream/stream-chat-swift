@@ -16,7 +16,8 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
     
     func test_controllerInitialValuesAreLoaded() {
         channelListController.state_simulated = .localDataFetched
-        channelListController.channels_simulated = [.init(cid: .unique, extraData: .defaultValue)]
+        channelListController
+            .channels_simulated = [.init(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)]
         
         let observableObject = channelListController.observableObject
         
@@ -28,7 +29,7 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = channelListController.observableObject
         
         // Simulate channel change
-        let newChannel: ChatChannel = .init(cid: .unique, extraData: .defaultValue)
+        let newChannel: ChatChannel = .init(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
         channelListController.channels_simulated = [newChannel]
         channelListController.delegateCallback {
             $0.controller(

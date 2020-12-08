@@ -58,6 +58,10 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
 struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     let cid: ChannelId
     
+    let name: String?
+    
+    let imageURL: URL?
+    
     let extraData: ExtraData.Channel
     
     /// A channel type.
@@ -94,6 +98,10 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         let container = try decoder.container(keyedBy: ChannelCodingKeys.self)
         typeRawValue = try container.decode(String.self, forKey: .typeRawValue)
         cid = try container.decode(ChannelId.self, forKey: .cid)
+        // Unfortunately, the built-in URL decoder fails, if the string is empty. We need to
+        // provide custom decoding to handle URL? as expected.
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
         let config = try container.decode(ChannelConfig.self, forKey: .config)
         self.config = config
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt) ?? config.createdAt
@@ -114,6 +122,8 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     internal init(
         cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
         extraData: ExtraData.Channel,
         typeRawValue: String,
         lastMessageAt: Date?,
@@ -128,6 +138,8 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         members: [MemberPayload<ExtraData.User>]?
     ) {
         self.cid = cid
+        self.name = name
+        self.imageURL = imageURL
         self.extraData = extraData
         self.typeRawValue = typeRawValue
         self.lastMessageAt = lastMessageAt

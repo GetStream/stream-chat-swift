@@ -74,7 +74,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
         // Simulate WebSocket successfully connected
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
-        let query: ChannelListQuery<NameAndImageExtraData> = .init(
+        let query: ChannelListQuery<DefaultExtraData.Channel> = .init(
             filter: .in(.cid, values: [cid]),
             pageSize: 1
         )
