@@ -209,7 +209,9 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
             .layerMaxXMinYCorner,
             .layerMaxXMaxYCorner
         ]
-        
+
+        guard message?.isPartOfThread == false else { return roundedCorners }
+
         switch (message?.isLastInGroup, message?.isSentByCurrentUser) {
         case (true, true):
             roundedCorners.remove(.layerMaxXMaxYCorner)
