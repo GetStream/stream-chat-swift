@@ -5,6 +5,59 @@
 import StreamChat
 import UIKit
 
+open class ChatMessageThreadArrowView: View, UIConfigProvider {
+    public typealias ExtraData = DefaultUIExtraData
+
+    public enum Direction {
+        case toTrailing
+        case toLeading
+    }
+
+    override public class var layerClass: AnyClass {
+        CAShapeLayer.self
+    }
+
+    public var shape: CAShapeLayer {
+        layer as! CAShapeLayer
+    }
+
+    public var direction: Direction = .toTrailing {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+
+    override open func defaultAppearance() {
+        shape.strokeColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
+        shape.fillColor = nil
+        shape.lineWidth = 1.0 / UIScreen.main.scale
+    }
+
+    public var isLeftToRight: Bool {
+        let isLeftToRightWithTrailing = direction == .toTrailing && traitCollection.layoutDirection == .leftToRight
+        let isRightToLeftWithLeading = direction == .toLeading && traitCollection.layoutDirection == .rightToLeft
+        return isLeftToRightWithTrailing || isRightToLeftWithLeading
+    }
+
+    override open func draw(_ rect: CGRect) {
+        let corner: CGFloat = 16
+        let height = bounds.height
+
+        let startX = isLeftToRight ? 0 : bounds.width
+        let endX = isLeftToRight ? corner : (bounds.width - corner)
+
+        let path = CGMutablePath()
+        path.move(to: CGPoint(x: startX, y: 0))
+        path.addLine(to: CGPoint(x: startX, y: height - corner))
+        path.addQuadCurve(
+            to: CGPoint(x: endX, y: height),
+            control: CGPoint(x: startX, y: height)
+        )
+        shape.path = path
+        super.draw(rect)
+    }
+}
+
 open class ChatMessageThreadInfoView<ExtraData: UIExtraDataTypes>: Control, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
