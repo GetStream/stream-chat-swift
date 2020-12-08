@@ -64,7 +64,7 @@ open class ChatUnreadCountView: View {
         layer.masksToBounds = true
         backgroundColor = .systemRed
         unreadCountLabel.textColor = .white
-        unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .caption1).bold()
+        unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .caption1).bold
         unreadCountLabel.adjustsFontForContentSizeCategory = true
         unreadCountLabel.textAlignment = .center
     }

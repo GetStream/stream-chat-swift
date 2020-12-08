@@ -73,7 +73,7 @@ open class MessageInputSlashCommandView: UIView {
         layer.masksToBounds = true
         backgroundColor = .systemPurple
         commandLabel.textColor = .white
-        commandLabel.font = UIFont.preferredFont(forTextStyle: .caption1).bold()
+        commandLabel.font = UIFont.preferredFont(forTextStyle: .caption1).bold
         commandLabel.adjustsFontForContentSizeCategory = true
         commandLabel.textAlignment = .center
         

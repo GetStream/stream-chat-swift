@@ -22,7 +22,7 @@ open class ChatMessageImageGallery<ExtraData: UIExtraDataTypes>: View, UIConfigP
 
     public private(set) lazy var moreImagesOverlay: UILabel = {
         let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .largeTitle).bold()
+        label.font = UIFont.preferredFont(forTextStyle: .largeTitle).bold
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center
         return label.withoutAutoresizingMaskConstraints
