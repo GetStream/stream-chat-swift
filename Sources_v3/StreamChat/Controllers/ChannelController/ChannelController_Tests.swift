@@ -311,6 +311,38 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(controller.messages.map(\.id), messagesWithReply)
     }
 
+    func test_deletedMessages_areShownCorrectly() throws {
+        let currentUserID: UserId = .unique
+
+        // Create current user
+        try client.databaseContainer.createCurrentUser(id: currentUserID)
+
+        // Create a channel
+        try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
+
+        // Create incoming deleted message
+        let incomingDeletedMessage: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            deletedAt: .unique
+        )
+
+        // Create outgoing deleted message
+        let outgoingDeletedMessage: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: currentUserID,
+            deletedAt: .unique
+        )
+
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveMessage(payload: incomingDeletedMessage, for: self.channelId)
+            try $0.saveMessage(payload: outgoingDeletedMessage, for: self.channelId)
+        }
+
+        // Only outgoing deleted messages are returned by controller
+        XCTAssertEqual(controller.messages.map(\.id), [outgoingDeletedMessage.id])
+    }
+
     // MARK: - Delegate tests
     
     func test_settingDelegate_leadsToFetchingLocalData() {

@@ -16,7 +16,8 @@ extension MessagePayload {
         text: String = .unique,
         extraData: T.Message = .defaultValue,
         latestReactions: [MessageReactionPayload<T>] = [],
-        ownReactions: [MessageReactionPayload<T>] = []
+        ownReactions: [MessageReactionPayload<T>] = [],
+        deletedAt: Date? = nil
     ) -> MessagePayload<T> where T.User == NameAndImageExtraData {
         .init(
             id: messageId,
@@ -24,7 +25,7 @@ extension MessagePayload {
             user: UserPayload.dummy(userId: authorUserId) as UserPayload<T.User>,
             createdAt: .unique,
             updatedAt: .unique,
-            deletedAt: .unique,
+            deletedAt: deletedAt,
             text: text,
             command: .unique,
             args: .unique,
