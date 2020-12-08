@@ -194,7 +194,6 @@ open class ChatMessageReactionsView: View, UIConfigProvider {
 
     private func update(with reactions: [Reaction]) {
         content.arrangedSubviews.forEach { $0.removeFromSuperview() }
-        isHidden = reactions.isEmpty
         reactions.forEach { reaction in
             let view = MessageReactionView()
             view.reaction = reaction.type

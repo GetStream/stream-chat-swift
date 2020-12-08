@@ -7,7 +7,7 @@ import UIKit
 
 open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
-        didSet { updateContent() }
+        didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
@@ -35,10 +35,10 @@ open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigPr
 
     let messageReactionsView = ChatMessageReactionsView().withoutAutoresizingMaskConstraints
 
-    private var incomingMessageGroupPartConstraints: [NSLayoutConstraint] = []
-    private var incomingMessageGroupFooterConstraints: [NSLayoutConstraint] = []
-    private var outgoingMessageGroupPartConstraints: [NSLayoutConstraint] = []
-    private var outgoingMessageGroupFooterConstraints: [NSLayoutConstraint] = []
+    private var incomingMessageConstraints: [NSLayoutConstraint] = []
+    private var outgoingMessageConstraints: [NSLayoutConstraint] = []
+    private var bubbleToReactionsConstraint: NSLayoutConstraint?
+    private var bubbleToMetadataConstraint: NSLayoutConstraint?
 
     // MARK: - Overrides
 
@@ -48,60 +48,45 @@ open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigPr
         addSubview(authorAvatarView)
         addSubview(messageReactionsView)
 
-        incomingMessageGroupPartConstraints = [
-            messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 40),
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
-            messageReactionsView.bottomAnchor.constraint(equalTo: messageBubbleView.topAnchor),
-            messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.trailingAnchor),
-            messageReactionsView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor)
-        ]
-
-        incomingMessageGroupFooterConstraints = [
+        NSLayoutConstraint.activate([
             authorAvatarView.widthAnchor.constraint(equalToConstant: 32),
             authorAvatarView.heightAnchor.constraint(equalToConstant: 32),
             authorAvatarView.leadingAnchor.constraint(equalTo: leadingAnchor),
             authorAvatarView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
-            messageBubbleView.leadingAnchor.constraint(equalToSystemSpacingAfter: authorAvatarView.trailingAnchor, multiplier: 1),
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
-            messageMetadataView.topAnchor.constraint(equalToSystemSpacingBelow: messageBubbleView.bottomAnchor, multiplier: 1),
-            messageMetadataView.leadingAnchor.constraint(equalTo: messageBubbleView.leadingAnchor),
-            messageMetadataView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
             messageReactionsView.bottomAnchor.constraint(equalTo: messageBubbleView.topAnchor),
+            
+            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            messageBubbleView.topAnchor.constraint(equalTo: topAnchor).with(priority: .defaultHigh),
+            messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor).with(priority: .defaultHigh),
+
+            messageMetadataView.heightAnchor.constraint(equalToConstant: 16),
+            messageMetadataView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
+
+        incomingMessageConstraints = [
             messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.trailingAnchor),
-            messageReactionsView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor)
+            messageMetadataView.leadingAnchor.constraint(equalTo: messageBubbleView.leadingAnchor),
+            messageBubbleView.leadingAnchor.constraint(
+                equalToSystemSpacingAfter: authorAvatarView.trailingAnchor,
+                multiplier: 1
+            )
         ]
 
-        outgoingMessageGroupPartConstraints = [
-            messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
-            messageReactionsView.bottomAnchor.constraint(equalTo: messageBubbleView.topAnchor),
+        outgoingMessageConstraints = [
             messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.leadingAnchor),
-            messageReactionsView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
+            messageMetadataView.trailingAnchor.constraint(equalTo: messageBubbleView.trailingAnchor),
+            messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor)
         ]
 
-        outgoingMessageGroupFooterConstraints = [
-            messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
-            messageMetadataView.topAnchor.constraint(equalToSystemSpacingBelow: messageBubbleView.bottomAnchor, multiplier: 1),
-            messageMetadataView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            messageMetadataView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            
-            messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
-            messageReactionsView.bottomAnchor.constraint(equalTo: messageBubbleView.topAnchor),
-            messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.leadingAnchor),
-            messageReactionsView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor)
-        ]
+        bubbleToReactionsConstraint = messageBubbleView.topAnchor.constraint(
+            equalTo: messageReactionsView.bottomAnchor
+        )
+        bubbleToMetadataConstraint = messageMetadataView.topAnchor.constraint(
+            equalToSystemSpacingBelow: messageBubbleView.bottomAnchor,
+            multiplier: 1
+        )
     }
 
     override open func updateContent() {
@@ -121,52 +106,13 @@ open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigPr
             authorAvatarView.imageView.image = placeholder
         }
 
-        authorAvatarView.isHidden = message?.isSentByCurrentUser == true || message?.isLastInGroup == false
-        messageMetadataView.isHidden = message?.isLastInGroup == false
-        activateNecessaryConstraints()
-    }
+        incomingMessageConstraints.forEach { $0.isActive = message?.isSentByCurrentUser == false }
+        outgoingMessageConstraints.forEach { $0.isActive = message?.isSentByCurrentUser == true }
+        bubbleToReactionsConstraint?.isActive = message?.deletedAt == nil && !(message?.reactionScores.isEmpty ?? true)
+        bubbleToMetadataConstraint?.isActive = message?.isLastInGroup == true
 
-    // MARK: - Private
-    
-    private func activateNecessaryConstraints() {
-        let constraintsToDeactivate: [NSLayoutConstraint]
-        let constraintsToActivate: [NSLayoutConstraint]
-
-        switch (message?.isSentByCurrentUser, message?.isLastInGroup) {
-        case (true, true):
-            constraintsToDeactivate =
-                outgoingMessageGroupPartConstraints +
-                incomingMessageGroupPartConstraints +
-                incomingMessageGroupFooterConstraints
-            constraintsToActivate = outgoingMessageGroupFooterConstraints
-        case (true, false):
-            constraintsToDeactivate =
-                outgoingMessageGroupFooterConstraints +
-                incomingMessageGroupPartConstraints +
-                incomingMessageGroupFooterConstraints
-            constraintsToActivate = outgoingMessageGroupPartConstraints
-        case (false, true):
-            constraintsToDeactivate =
-                outgoingMessageGroupPartConstraints +
-                outgoingMessageGroupFooterConstraints +
-                incomingMessageGroupPartConstraints
-            constraintsToActivate = incomingMessageGroupFooterConstraints
-        case (false, false):
-            constraintsToDeactivate =
-                outgoingMessageGroupPartConstraints +
-                outgoingMessageGroupFooterConstraints +
-                incomingMessageGroupFooterConstraints
-            constraintsToActivate = incomingMessageGroupPartConstraints
-        default:
-            constraintsToDeactivate =
-                incomingMessageGroupPartConstraints +
-                incomingMessageGroupFooterConstraints +
-                outgoingMessageGroupPartConstraints +
-                outgoingMessageGroupFooterConstraints
-            constraintsToActivate = []
-        }
-        
-        constraintsToDeactivate.forEach { $0.isActive = false }
-        constraintsToActivate.forEach { $0.isActive = true }
+        authorAvatarView.isVisible = message?.isSentByCurrentUser == false && message?.isLastInGroup == true
+        messageMetadataView.isVisible = bubbleToMetadataConstraint?.isActive ?? false
+        messageReactionsView.isVisible = bubbleToReactionsConstraint?.isActive ?? false
     }
 }
