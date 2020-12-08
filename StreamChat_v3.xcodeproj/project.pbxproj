@@ -354,6 +354,7 @@
 		88D85DA7252F3C1D00AE1030 /* MemberListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D85DA6252F3C1D00AE1030 /* MemberListController.swift */; };
 		88D85DAB252F3C2A00AE1030 /* MemberListController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D85DAA252F3C2A00AE1030 /* MemberListController_Tests.swift */; };
 		88D85DAE252F468B00AE1030 /* ListDatabaseObserver_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D85DAD252F468B00AE1030 /* ListDatabaseObserver_Mock.swift */; };
+		88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D88F85257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift */; };
 		88EA9AD825470F6A007EE76B /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EA9AD725470F6A007EE76B /* Dictionary+Extensions.swift */; };
 		88EA9AE225471999007EE76B /* Dictionary_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EA9AE125471999007EE76B /* Dictionary_Tests.swift */; };
 		88EA9AE825471EF4007EE76B /* MessageReactionRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EA9AE725471EF4007EE76B /* MessageReactionRequestPayload_Tests.swift */; };
@@ -984,6 +985,7 @@
 		88D85DA6252F3C1D00AE1030 /* MemberListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListController.swift; sourceTree = "<group>"; };
 		88D85DAA252F3C2A00AE1030 /* MemberListController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListController_Tests.swift; sourceTree = "<group>"; };
 		88D85DAD252F468B00AE1030 /* ListDatabaseObserver_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserver_Mock.swift; sourceTree = "<group>"; };
+		88D88F85257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Extensions.swift"; sourceTree = "<group>"; };
 		88E779B12563FA6B00BA79B6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		88EA9AD725470F6A007EE76B /* Dictionary+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extensions.swift"; sourceTree = "<group>"; };
 		88EA9AE125471999007EE76B /* Dictionary_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary_Tests.swift; sourceTree = "<group>"; };
@@ -2097,6 +2099,7 @@
 				792DD9FA256E67C6001DB91B /* UIConfigProvider.swift */,
 				88EF29FE2571288600B06EF1 /* Array+Extensions.swift */,
 				882AE123257A7FFE004095B3 /* UIViewController+Extensions.swift */,
+				88D88F85257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2999,6 +3002,7 @@
 				7952764A255D86BD008531E8 /* UIExtraData.swift in Sources */,
 				88A8CF20256E7C06004EA4C7 /* ChatMessageBubbleView.swift in Sources */,
 				88A8CF16256E7BDA004EA4C7 /* ChatMessageContentView.swift in Sources */,
+				88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */,
 				88F8366D2578D1C60039AEC8 /* MessageActionsView.swift in Sources */,
 				8850FE87256558A200C8D534 /* ChatChannelListRouter.swift in Sources */,
 				88BD82B02549D18F00369074 /* ChatChannelListItemView.swift in Sources */,
