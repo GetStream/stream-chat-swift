@@ -112,6 +112,7 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         guard let ip = collectionView.indexPathForItem(at: location) else { return }
         guard let cell = collectionView.cellForItem(at: ip) as? СhatMessageCollectionViewCell<ExtraData> else { return }
         guard let cid = controller.cid, let messageData = cell.message else { return }
+        guard messageData.deletedAt == nil else { return }
 
         let messageController = controller.client.messageController(
             cid: cid,
