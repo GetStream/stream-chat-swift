@@ -12,7 +12,7 @@ import Foundation
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatChannelMember = _ChatChannelMember<NameAndImageExtraData>
+public typealias ChatChannelMember = _ChatChannelMember<DefaultExtraData.User>
 
 /// A type representing a chat channel member. `_ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
 ///
@@ -44,6 +44,8 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
     
     public init(
         id: String,
+        name: String?,
+        imageURL: URL?,
         isOnline: Bool,
         isBanned: Bool,
         userRole: UserRole,
@@ -67,6 +69,8 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
         
         super.init(
             id: id,
+            name: name,
+            imageURL: imageURL,
             isOnline: isOnline,
             isBanned: isBanned,
             userRole: userRole,

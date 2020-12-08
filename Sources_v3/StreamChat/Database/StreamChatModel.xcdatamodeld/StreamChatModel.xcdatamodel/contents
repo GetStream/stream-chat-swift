@@ -203,9 +203,11 @@
     <entity name="UserDTO" representedClassName="UserDTO" syncable="YES">
         <attribute name="extraData" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
+        <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="isBanned" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="isOnline" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastActivityAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="userCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="userRoleRaw" attributeType="String"/>
         <attribute name="userUpdatedAt" attributeType="Date" usesScalarValueType="NO"/>

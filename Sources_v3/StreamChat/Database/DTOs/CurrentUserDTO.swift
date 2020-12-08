@@ -145,6 +145,8 @@ extension _CurrentChatUser {
 
         return _CurrentChatUser(
             id: user.id,
+            name: user.name,
+            imageURL: user.imageURL,
             isOnline: user.isOnline,
             isBanned: user.isBanned,
             userRole: UserRole(rawValue: user.userRoleRaw)!,

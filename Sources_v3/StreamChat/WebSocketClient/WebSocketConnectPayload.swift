@@ -16,8 +16,8 @@ struct WebSocketConnectPayload<ExtraData: UserExtraData>: Encodable {
     
     let serverDeterminesConnectionId = true
     
-    init(userId: UserId, userRole: UserRole? = nil, extraData: ExtraData? = nil) {
-        userDetails = UserWebSocketPayload(id: userId, userRole: userRole, extraData: extraData)
+    init(userId: UserId, name: String?, imageURL: URL?, userRole: UserRole? = nil, extraData: ExtraData? = nil) {
+        userDetails = UserWebSocketPayload(id: userId, name: name, imageURL: imageURL, userRole: userRole, extraData: extraData)
         self.userId = userId
     }
 }
@@ -26,15 +26,21 @@ struct UserWebSocketPayload<ExtraData: UserExtraData>: Encodable {
     let userRoleRaw: String?
     let extraData: ExtraData?
     let id: String
+    let name: String?
+    let imageURL: URL?
     
-    init(id: UserId, userRole: UserRole? = nil, extraData: ExtraData? = nil) {
+    init(id: UserId, name: String?, imageURL: URL?, userRole: UserRole? = nil, extraData: ExtraData? = nil) {
         self.id = id
+        self.name = name
+        self.imageURL = imageURL
         userRoleRaw = userRole?.rawValue
         self.extraData = extraData
     }
     
     private enum CodingKeys: String, CodingKey {
         case id
+        case name
+        case imageURL = "image"
         case userRoleRaw = "role"
     }
     
@@ -42,6 +48,8 @@ struct UserWebSocketPayload<ExtraData: UserExtraData>: Encodable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(userRoleRaw, forKey: .userRoleRaw)
         try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try extraData?.encode(to: encoder)
     }
 }

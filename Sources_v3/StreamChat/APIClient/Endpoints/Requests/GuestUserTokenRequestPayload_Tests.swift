@@ -7,27 +7,29 @@ import XCTest
 
 final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     func test_guestUserTokenRequestPayload_isEncodedCorrectly_withDefaultExtraData() throws {
-        let name = String.unique
-        let imageURL = URL.unique()
         let payload = GuestUserTokenRequestPayload(
             userId: .unique,
-            extraData: NameAndImageExtraData(name: name, imageURL: imageURL)
+            name: .unique,
+            imageURL: .unique(),
+            extraData: DefaultExtraData.User.defaultValue
         )
         
-        try verify(payload, isEncodedAs: ["id": payload.userId, "name": name, "image": imageURL])
-    }
-    
-    func test_guestUserTokenRequestPayload_isEncodedCorrectly_withNoExtraData() throws {
-        let payload = GuestUserTokenRequestPayload(userId: .unique, extraData: NoExtraData())
-        
-        try verify(payload, isEncodedAs: ["id": payload.userId])
+        try verify(payload, isEncodedAs: ["id": payload.userId, "name": payload.name!, "image": payload.imageURL!])
     }
     
     func test_guestUserTokenRequestPayload_isEncodedCorrectly_withCustomExtraData() throws {
         let company = "getstream.io"
-        let payload = GuestUserTokenRequestPayload(userId: .unique, extraData: TestExtraData(company: company))
+        let payload = GuestUserTokenRequestPayload(
+            userId: .unique,
+            name: .unique,
+            imageURL: .unique(),
+            extraData: TestExtraData(company: company)
+        )
         
-        try verify(payload, isEncodedAs: ["id": payload.userId, "company": company])
+        try verify(
+            payload,
+            isEncodedAs: ["id": payload.userId, "name": payload.name!, "image": payload.imageURL!, "company": company]
+        )
     }
     
     // MARK: - Private

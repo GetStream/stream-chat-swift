@@ -353,7 +353,7 @@ class MessageDTO_Tests: XCTestCase {
                 try session.saveCurrentUser(payload: .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                    extraData: DefaultExtraData.User.defaultValue
                 ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
@@ -428,7 +428,7 @@ class MessageDTO_Tests: XCTestCase {
                 try session.saveCurrentUser(payload: .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                    extraData: DefaultExtraData.User.defaultValue
                 ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
@@ -502,7 +502,7 @@ class MessageDTO_Tests: XCTestCase {
                 try $0.saveCurrentUser(payload: .dummy(
                     userId: .unique,
                     role: .admin,
-                    extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                    extraData: DefaultExtraData.User.defaultValue
                 ))
             }, completion: $0)
         }

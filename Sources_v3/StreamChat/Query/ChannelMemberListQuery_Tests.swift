@@ -14,6 +14,8 @@ final class MemberListFilterScope_Tests: XCTestCase {
         
         // User-related coding keys
         XCTAssertEqual(Key<UserId>.id.rawValue, UserPayloadsCodingKeys.id.rawValue)
+        XCTAssertEqual(Key<String>.name.rawValue, UserPayloadsCodingKeys.name.rawValue)
+        XCTAssertEqual(Key<URL>.imageURL.rawValue, UserPayloadsCodingKeys.imageURL.rawValue)
         XCTAssertEqual(Key<UserRole>.role.rawValue, UserPayloadsCodingKeys.role.rawValue)
         XCTAssertEqual(Key<Bool>.isOnline.rawValue, UserPayloadsCodingKeys.isOnline.rawValue)
         XCTAssertEqual(Key<Bool>.isBanned.rawValue, UserPayloadsCodingKeys.isBanned.rawValue)
@@ -24,17 +26,6 @@ final class MemberListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Int>.unreadChannelsCount.rawValue, UserPayloadsCodingKeys.unreadChannelsCount.rawValue)
         XCTAssertEqual(Key<Int>.unreadMessagesCount.rawValue, UserPayloadsCodingKeys.unreadMessagesCount.rawValue)
         XCTAssertEqual(Key<Bool>.isAnonymous.rawValue, UserPayloadsCodingKeys.isAnonymous.rawValue)
-    }
-    
-    func test_filterKeys_matchNameAndImageExtraDataCodingKeys() {
-        XCTAssertEqual(
-            FilterKey<MemberListFilterScope<NameAndImageExtraData>, String>.name.rawValue,
-            NameAndImageExtraData.CodingKeys.name.rawValue
-        )
-        XCTAssertEqual(
-            FilterKey<MemberListFilterScope<NameAndImageExtraData>, URL>.imageURL.rawValue,
-            NameAndImageExtraData.CodingKeys.imageURL.rawValue
-        )
     }
 }
 

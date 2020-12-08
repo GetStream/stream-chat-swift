@@ -9,6 +9,8 @@ import Foundation
 class UserDTO: NSManagedObject {
     @NSManaged var extraData: Data
     @NSManaged var id: String
+    @NSManaged var name: String?
+    @NSManaged var imageURL: URL?
     @NSManaged var isBanned: Bool
     @NSManaged var isOnline: Bool
     @NSManaged var lastActivityAt: Date?
@@ -76,6 +78,8 @@ extension NSManagedObjectContext: UserDatabaseSession {
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
         
+        dto.name = payload.name
+        dto.imageURL = payload.imageURL
         dto.isBanned = payload.isBanned
         dto.isOnline = payload.isOnline
         dto.lastActivityAt = payload.lastActiveAt
@@ -111,7 +115,7 @@ extension UserDTO {
             )
         }
         
-        return .init(id: id, extraData: extraData ?? .defaultValue)
+        return .init(id: id, name: name, imageURL: imageURL, extraData: extraData ?? .defaultValue)
     }
 }
 
@@ -151,6 +155,8 @@ extension _ChatUser {
         
         return _ChatUser(
             id: dto.id,
+            name: dto.name,
+            imageURL: dto.imageURL,
             isOnline: dto.isOnline,
             isBanned: dto.isBanned,
             isFlaggedByCurrentUser: dto.flaggedBy != nil,

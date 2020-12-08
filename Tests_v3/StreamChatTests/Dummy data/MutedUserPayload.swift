@@ -14,6 +14,8 @@ extension MutedUserPayload {
         .init(
             mutedUser: .init(
                 id: userId,
+                name: .unique,
+                imageURL: .unique(),
                 role: .user,
                 createdAt: .unique,
                 updatedAt: .unique,

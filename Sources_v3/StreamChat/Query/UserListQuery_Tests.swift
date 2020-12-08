@@ -6,10 +6,12 @@
 import XCTest
 
 final class UserListFilterScope_Tests: XCTestCase {
-    typealias Key<T: FilterValue> = FilterKey<UserListFilterScope<NoExtraData>, T>
+    typealias Key<T: FilterValue> = FilterKey<UserListFilterScope<DefaultExtraData.User>, T>
     
     func test_filterKeys_matchChannelCodingKeys() {
         XCTAssertEqual(Key<UserId>.id.rawValue, UserPayloadsCodingKeys.id.rawValue)
+        XCTAssertEqual(Key<String>.name.rawValue, UserPayloadsCodingKeys.name.rawValue)
+        XCTAssertEqual(Key<URL>.imageURL.rawValue, UserPayloadsCodingKeys.imageURL.rawValue)
         XCTAssertEqual(Key<UserRole>.role.rawValue, UserPayloadsCodingKeys.role.rawValue)
         XCTAssertEqual(Key<Bool>.isOnline.rawValue, UserPayloadsCodingKeys.isOnline.rawValue)
         XCTAssertEqual(Key<Bool>.isBanned.rawValue, UserPayloadsCodingKeys.isBanned.rawValue)
@@ -21,23 +23,12 @@ final class UserListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Int>.unreadMessagesCount.rawValue, UserPayloadsCodingKeys.unreadMessagesCount.rawValue)
         XCTAssertEqual(Key<Bool>.isAnonymous.rawValue, UserPayloadsCodingKeys.isAnonymous.rawValue)
     }
-    
-    func test_filterKeys_matchNameAndImageExtraDataCodingKeys() {
-        XCTAssertEqual(
-            FilterKey<UserListFilterScope<NameAndImageExtraData>, String>.name.rawValue,
-            NameAndImageExtraData.CodingKeys.name.rawValue
-        )
-        XCTAssertEqual(
-            FilterKey<UserListFilterScope<NameAndImageExtraData>, URL>.imageURL.rawValue,
-            NameAndImageExtraData.CodingKeys.imageURL.rawValue
-        )
-    }
 }
 
 class UserListQuery_Tests: XCTestCase {
     // Test UserListQuery encoded correctly
     func test_UserListQuery_encodedCorrectly() throws {
-        let filter: Filter<UserListFilterScope<NameAndImageExtraData>> = .equal(.id, to: "luke")
+        let filter: Filter<UserListFilterScope<DefaultExtraData.User>> = .equal(.id, to: "luke")
         let sort: [Sorting<UserListSortingKey>] = [.init(key: .lastActivityAt)]
 
         // Create UserListQuery

@@ -6,6 +6,8 @@ import Foundation
 
 enum UserPayloadsCodingKeys: String, CodingKey {
     case id
+    case name
+    case imageURL = "image"
     case role
     case isOnline = "online"
     case isBanned = "banned"
@@ -24,6 +26,8 @@ enum UserPayloadsCodingKeys: String, CodingKey {
 /// An object describing the incoming user JSON payload.
 class UserPayload<ExtraData: UserExtraData>: Decodable {
     let id: String
+    let name: String?
+    let imageURL: URL?
     let role: UserRole
     let createdAt: Date
     let updatedAt: Date
@@ -36,6 +40,8 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     
     init(
         id: String,
+        name: String?,
+        imageURL: URL?,
         role: UserRole,
         createdAt: Date,
         updatedAt: Date,
@@ -47,6 +53,8 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         extraData: ExtraData
     ) {
         self.id = id
+        self.name = name
+        self.imageURL = imageURL
         self.role = role
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -61,6 +69,10 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
+        // Unfortunately, the built-in URL decoder fails, if the string is empty. We need to
+        // provide custom decoding to handle URL? as expected.
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
         role = try container.decode(UserRole.self, forKey: .role)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
@@ -76,16 +88,22 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
 /// An object describing the outgoing user JSON payload.
 class UserRequestBody<ExtraData: UserExtraData>: Encodable {
     let id: String
+    let name: String?
+    let imageURL: URL?
     let extraData: ExtraData
     
-    init(id: String, extraData: ExtraData) {
+    init(id: String, name: String?, imageURL: URL?, extraData: ExtraData) {
         self.id = id
+        self.name = name
+        self.imageURL = imageURL
         self.extraData = extraData
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: UserPayloadsCodingKeys.self)
         try container.encode(id, forKey: .id)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try extraData.encode(to: encoder)
     }
 }

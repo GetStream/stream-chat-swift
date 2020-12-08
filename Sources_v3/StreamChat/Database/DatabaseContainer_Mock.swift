@@ -66,7 +66,7 @@ extension DatabaseContainer {
     }
 
     /// Synchronously creates a new UserDTO in the DB with the given id.
-    func createUser(id: UserId = .unique, extraData: NameAndImageExtraData = .dummy) throws {
+    func createUser(id: UserId = .unique, extraData: DefaultExtraData.User = .defaultValue) throws {
         try writeSynchronously { session in
             try session.saveUser(payload: .dummy(userId: id, extraData: extraData))
         }
@@ -78,7 +78,7 @@ extension DatabaseContainer {
             try session.saveCurrentUser(payload: .dummy(
                 userId: id,
                 role: .admin,
-                extraData: NameAndImageExtraData(name: nil, imageURL: nil)
+                extraData: DefaultExtraData.User.defaultValue
             ))
         }
     }
@@ -110,7 +110,7 @@ extension DatabaseContainer {
         }
     }
     
-    func createUserListQuery(filter: Filter<UserListFilterScope<NameAndImageExtraData>> = .query(.id, text: .unique)) throws {
+    func createUserListQuery(filter: Filter<UserListFilterScope<DefaultExtraData.User>> = .query(.id, text: .unique)) throws {
         try writeSynchronously { session in
             let dto = NSEntityDescription
                 .insertNewObject(
@@ -156,7 +156,7 @@ extension DatabaseContainer {
         userId: UserId = .unique,
         role: MemberRole = .member,
         cid: ChannelId,
-        query: ChannelMemberListQuery<NameAndImageExtraData>? = nil
+        query: ChannelMemberListQuery<DefaultExtraData.User>? = nil
     ) throws {
         try writeSynchronously { session in
             try session.saveMember(

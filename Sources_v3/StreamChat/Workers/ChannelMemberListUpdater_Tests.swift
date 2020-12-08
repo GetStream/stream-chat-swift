@@ -9,7 +9,7 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
-    var query: ChannelMemberListQuery<NameAndImageExtraData>!
+    var query: ChannelMemberListQuery<DefaultExtraData.User>!
 
     var listUpdater: ChannelMemberListUpdater<DefaultExtraData>!
     

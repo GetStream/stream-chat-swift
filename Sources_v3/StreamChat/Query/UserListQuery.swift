@@ -15,6 +15,12 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
     /// A filter key for matching the `id` value.
     static var id: FilterKey<Scope, UserId> { "id" }
     
+    /// A filter key for matching the `name` value.
+    static var name: FilterKey<Scope, String> { "name" }
+    
+    /// A filter key for matching the `image` value.
+    static var imageURL: FilterKey<Scope, URL> { "image" }
+    
     /// A filter key for matching the `role` value.
     static var role: FilterKey<Scope, UserRole> { "role" }
     
@@ -46,15 +52,6 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
     static var isAnonymous: FilterKey<Scope, Bool> { "anon" }
     
     //    static var team: FilterKey<Scope, > { "team" }
-}
-
-/// Channel list filter keys for `NameAndImageExtraData`.
-public extension FilterKey where Scope: UserListFilterScope<NameAndImageExtraData> {
-    /// A filter key for matching the `name` value.
-    static var name: FilterKey<Scope, String> { "name" }
-    
-    /// A filter key for matching the `image` value.
-    static var imageURL: FilterKey<Scope, URL> { "image" }
 }
 
 /// A query is used for querying specific users from backend.

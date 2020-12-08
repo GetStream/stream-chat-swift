@@ -23,27 +23,6 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     // MARK: - Save
     
-    func test_messageReactionPayload_withNoExtraData_isStoredAndLoadedFromDB() throws {
-        // Create message reaction payload with `NoExtraDataTypes`.
-        let payload: MessageReactionPayload<NoExtraDataTypes> = .dummy(
-            messageId: .unique,
-            user: .init(
-                id: .unique,
-                role: .user,
-                createdAt: .unique,
-                updatedAt: .unique,
-                lastActiveAt: .unique,
-                isOnline: true,
-                isInvisible: true,
-                isBanned: true,
-                extraData: .defaultValue
-            )
-        )
-        
-        // Assert message reaction is saved and loaded correctly.
-        try assert_messageReaction_isStoredAndLoadedFromDB(payload)
-    }
-    
     func test_messageReactionPayload_withDefaultExtraData_isStoredAndLoadedFromDB() throws {
         // Create message reaction payload with `DefaultExtraData`.
         let payload: MessageReactionPayload<DefaultExtraData> = .dummy(

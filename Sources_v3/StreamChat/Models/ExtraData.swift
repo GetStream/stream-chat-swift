@@ -18,7 +18,7 @@ public struct NoExtraData: Codable, Hashable, UserExtraData, ChannelExtraData, M
 }
 
 /// The extra data type with `name` and `imageURL` properties.
-public struct NameAndImageExtraData: ChannelExtraData, UserExtraData {
+public struct NameAndImageExtraData: ChannelExtraData {
     enum CodingKeys: String, CodingKey {
         case name
         case imageURL = "image"

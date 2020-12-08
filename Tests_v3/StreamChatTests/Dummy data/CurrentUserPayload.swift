@@ -17,6 +17,8 @@ extension CurrentUserPayload {
     ) -> CurrentUserPayload<T> {
         .init(
             id: userId,
+            name: .unique,
+            imageURL: nil,
             role: role,
             createdAt: .unique,
             updatedAt: .unique,
