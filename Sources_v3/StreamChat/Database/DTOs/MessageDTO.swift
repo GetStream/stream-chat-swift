@@ -70,13 +70,25 @@ class MessageDTO: NSManagedObject {
     
     /// Returns predicate with channel messages and replies that should be shown in channel.
     static func channelMessagesPredicate(for cid: String) -> NSCompoundPredicate {
-        /// Channel messages.
-        let messagesPredicate = NSPredicate(format: "channel.cid == %@ AND type != %@", cid, MessageType.reply.rawValue)
-        /// Replies that should be shown in channel.
-        let repliesPredicate = NSPredicate(
-            format: "channel.cid == %@ AND type == %@ AND showReplyInChannel == 1", cid, MessageType.reply.rawValue
+        let channelMessage = NSPredicate(
+            format: "channel.cid == %@", cid
         )
-        return .init(orPredicateWithSubpredicates: [messagesPredicate, repliesPredicate])
+
+        let messageTypePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "type != %@", MessageType.reply.rawValue),
+            .init(format: "type == %@ AND showReplyInChannel == 1", MessageType.reply.rawValue)
+        ])
+
+        let deletedMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "deletedAt == nil"),
+            .init(format: "deletedAt != nil AND user.currentUser != nil", MessageType.reply.rawValue)
+        ])
+
+        return .init(andPredicateWithSubpredicates: [
+            channelMessage,
+            messageTypePredicate,
+            deletedMessagePredicate
+        ])
     }
     
     /// Returns a fetch request for messages from the channel with the provided `cid`.
