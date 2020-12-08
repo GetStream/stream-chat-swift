@@ -24,3 +24,5 @@
 
 "composer.title.edit" = "Edit Message";
 "composer.title.reply" = "Reply to Message";
+"composer.placeholder.message" = "Send a message";
+"composer.placeholder.giphy" = "Search GIFs";

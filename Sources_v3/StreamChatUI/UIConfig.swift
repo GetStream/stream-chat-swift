@@ -54,6 +54,7 @@ public extension UIConfig {
         public var messageComposerBackground: UIColor = .white
         public var messageComposerButton: UIColor = .streamGray
         public var messageComposerStateIcon: UIColor = .streamGrayGainsboro
+        public var messageComposerPlaceholder: UIColor = .streamGray
 
         public var generalBackground: UIColor = UIColor(rgb: 0xfcfcfc)
         public var popupDimmedBackground: UIColor = UIColor.black.withAlphaComponent(0.2)
@@ -154,7 +155,7 @@ public extension UIConfig {
         public var attachmentsView: MessageComposerAttachmentsView<ExtraData>.Type = MessageComposerAttachmentsView<ExtraData>.self
         public var sendButton: MessageComposerSendButton<ExtraData>.Type = MessageComposerSendButton<ExtraData>.self
         public var composerButton: ChatSquareButton<ExtraData>.Type = ChatSquareButton<ExtraData>.self
-        public var textView: ChatChannelMessageInputTextView.Type = ChatChannelMessageInputTextView.self
+        public var textView: ChatChannelMessageInputTextView<ExtraData>.Type = ChatChannelMessageInputTextView<ExtraData>.self
     }
 }
 
