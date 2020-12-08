@@ -28,6 +28,12 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// A filter key for matching the `cid` value.
     static var cid: FilterKey<Scope, ChannelId> { "cid" }
     
+    /// A filter key for matching the `name` value.
+    static var name: FilterKey<Scope, String> { "name" }
+    
+    /// A filter key for matching the `image` value.
+    static var imageURL: FilterKey<Scope, URL> { "image" }
+    
     /// A filter key for matching the `type` value.
     static var type: FilterKey<Scope, ChannelType> { "type" }
     
@@ -53,15 +59,6 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     static var memberCount: FilterKey<Scope, Int> { "member_count" }
     
     //    static var team: FilterKey<Scope, > { "team" }
-}
-
-/// Channel list filter keys for `NameAndImageExtraData`.
-public extension FilterKey where Scope == ChannelListFilterScope<NameAndImageExtraData> {
-    /// A filter key for matching the `name` value.
-    static var name: FilterKey<Scope, String> { "name" }
-
-    /// A filter key for matching the `image` value.
-    static var imageURL: FilterKey<Scope, URL> { "image" }
 }
 
 /// A query is used for querying specific channels from backend.

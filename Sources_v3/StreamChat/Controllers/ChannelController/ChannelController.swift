@@ -40,6 +40,8 @@ public extension _ChatClient {
     ///
     func channelController(
         createChannelWithId cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
         team: String? = nil,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
@@ -47,6 +49,8 @@ public extension _ChatClient {
     ) -> _ChatChannelController<ExtraData> {
         let payload = ChannelEditDetailPayload<ExtraData>(
             cid: cid,
+            name: name,
+            imageURL: imageURL,
             team: team,
             members: members,
             invites: invites,
@@ -69,12 +73,16 @@ public extension _ChatClient {
     ///
     func channelController(
         createDirectMessageChannelWith members: Set<UserId>,
+        name: String?,
+        imageURL: URL?,
         team: String? = nil,
         extraData: ExtraData.Channel
     ) throws -> _ChatChannelController<ExtraData> {
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
         let payload = ChannelEditDetailPayload<ExtraData>(
             type: .messaging,
+            name: name,
+            imageURL: imageURL,
             team: team,
             members: members,
             invites: [],
@@ -400,6 +408,8 @@ public extension _ChatChannelController {
     ///                 If request fails, the completion will be called with an error.
     ///
     func updateChannel(
+        name: String?,
+        imageURL: URL?,
         team: String?,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
@@ -414,6 +424,8 @@ public extension _ChatChannelController {
 
         let payload: ChannelEditDetailPayload<ExtraData> = .init(
             cid: cid,
+            name: name,
+            imageURL: imageURL,
             team: team,
             members: members,
             invites: invites,

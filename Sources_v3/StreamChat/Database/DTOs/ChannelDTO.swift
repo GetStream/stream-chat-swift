@@ -8,6 +8,8 @@ import Foundation
 @objc(ChannelDTO)
 class ChannelDTO: NSManagedObject {
     @NSManaged var cid: String
+    @NSManaged var name: String?
+    @NSManaged var imageURL: URL?
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
     @NSManaged var config: Data
@@ -79,6 +81,8 @@ extension NSManagedObjectContext {
         query: ChannelListQuery<ExtraData.Channel>?
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self)
+        dto.name = payload.name
+        dto.imageURL = payload.imageURL
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.typeRawValue = payload.typeRawValue
         dto.config = try JSONEncoder().encode(payload.config)
@@ -218,6 +222,8 @@ extension _ChatChannel {
         
         return _ChatChannel(
             cid: cid,
+            name: dto.name,
+            imageURL: dto.imageURL,
             lastMessageAt: dto.lastMessageAt,
             createdAt: dto.createdAt,
             updatedAt: dto.updatedAt,

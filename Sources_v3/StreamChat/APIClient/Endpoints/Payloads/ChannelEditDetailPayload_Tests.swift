@@ -13,11 +13,13 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         let imageURL: URL = .unique()
         let team: String = .unique
         let invite: UserId = .unique
-        let extraData: NameAndImageExtraData = .init(name: name, imageURL: imageURL)
-
+        let extraData: DefaultExtraData.Channel = .defaultValue
+        
         // Create ChannelEditDetailPayload
         let payload = ChannelEditDetailPayload<DefaultExtraData>(
             cid: cid,
+            name: name,
+            imageURL: imageURL,
             team: team,
             members: [invite],
             invites: [invite],
@@ -43,6 +45,8 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         // Create payload without id specified
         let payload1: ChannelEditDetailPayload<DefaultExtraData> = .init(
             type: .messaging,
+            name: .unique,
+            imageURL: .unique(),
             team: nil,
             members: [.unique],
             invites: [],
@@ -56,6 +60,8 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let payload2: ChannelEditDetailPayload<DefaultExtraData> = .init(
             cid: cid,
+            name: .unique,
+            imageURL: .unique(),
             team: nil,
             members: [],
             invites: [],

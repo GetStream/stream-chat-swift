@@ -97,7 +97,7 @@ extension DatabaseContainer {
     }
     
     func createChannelListQuery(
-        filter: Filter<ChannelListFilterScope<NameAndImageExtraData>> = .query(.cid, text: .unique)
+        filter: Filter<ChannelListFilterScope<DefaultExtraData.Channel>> = .query(.cid, text: .unique)
     ) throws {
         try writeSynchronously { session in
             let dto = NSEntityDescription

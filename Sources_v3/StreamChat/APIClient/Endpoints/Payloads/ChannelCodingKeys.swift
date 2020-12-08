@@ -8,6 +8,10 @@ import Foundation
 public enum ChannelCodingKeys: String, CodingKey {
     /// A combination of channel id and type.
     case cid
+    /// Name for the channel.
+    case name
+    /// Optional image URL for the channel.
+    case imageURL = "image"
     /// A type.
     case typeRawValue = "type"
     /// A last message date.

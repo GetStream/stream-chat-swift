@@ -10,6 +10,8 @@ final class ChannelListFilterScope_Tests: XCTestCase {
     
     func test_filterKeys_matchChannelCodingKeys() {
         XCTAssertEqual(Key<ChannelId>.cid.rawValue, ChannelCodingKeys.cid.rawValue)
+        XCTAssertEqual(Key<String>.name.rawValue, ChannelCodingKeys.name.rawValue)
+        XCTAssertEqual(Key<URL>.imageURL.rawValue, ChannelCodingKeys.imageURL.rawValue)
         XCTAssertEqual(Key<ChannelType>.type.rawValue, ChannelCodingKeys.typeRawValue.rawValue)
         XCTAssertEqual(Key<Date>.lastMessageAt.rawValue, ChannelCodingKeys.lastMessageAt.rawValue)
         XCTAssertEqual(Key<UserId>.createdBy.rawValue, ChannelCodingKeys.createdBy.rawValue)
@@ -18,17 +20,6 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Date>.deletedAt.rawValue, ChannelCodingKeys.deletedAt.rawValue)
         XCTAssertEqual(Key<Bool>.frozen.rawValue, ChannelCodingKeys.frozen.rawValue)
         XCTAssertEqual(Key<Int>.memberCount.rawValue, ChannelCodingKeys.memberCount.rawValue)
-    }
-
-    func test_filterKeys_matchNameAndImageExtraDataCodingKeys() {
-        XCTAssertEqual(
-            FilterKey<ChannelListFilterScope<NameAndImageExtraData>, String>.name.rawValue,
-            NameAndImageExtraData.CodingKeys.name.rawValue
-        )
-        XCTAssertEqual(
-            FilterKey<ChannelListFilterScope<NameAndImageExtraData>, URL>.imageURL.rawValue,
-            NameAndImageExtraData.CodingKeys.imageURL.rawValue
-        )
     }
 
     func test_containMembersHelper() {

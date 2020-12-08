@@ -47,8 +47,8 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
     }
     
     func test_update_called_forEachQuery() throws {
-        let filter1: Filter<ChannelListFilterScope<NameAndImageExtraData>> = .equal(.frozen, to: true)
-        let filter2: Filter<ChannelListFilterScope<NameAndImageExtraData>> = .equal(.cid, to: .unique)
+        let filter1: Filter<ChannelListFilterScope<DefaultExtraData.Channel>> = .equal(.frozen, to: true)
+        let filter2: Filter<ChannelListFilterScope<DefaultExtraData.Channel>> = .equal(.cid, to: .unique)
         
         try database.createChannelListQuery(filter: filter1)
         try database.createChannelListQuery(filter: filter2)
@@ -66,7 +66,7 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         // Deinitialize newChannelQueryUpdater
         newChannelQueryUpdater = nil
         
-        let filter: Filter<ChannelListFilterScope<NameAndImageExtraData>> = .equal(.cid, to: .unique)
+        let filter: Filter<ChannelListFilterScope<DefaultExtraData.Channel>> = .equal(.cid, to: .unique)
         try database.createChannelListQuery(filter: filter)
         try database.createChannel(cid: .unique)
         
@@ -87,7 +87,7 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
     
     func test_filter_isModified() throws {
         let cid: ChannelId = .unique
-        let filter: Filter<ChannelListFilterScope<NameAndImageExtraData>> = .equal(.cid, to: .unique)
+        let filter: Filter<ChannelListFilterScope<DefaultExtraData.Channel>> = .equal(.cid, to: .unique)
         
         try database.createChannelListQuery(filter: filter)
         try database.createChannel(cid: cid)
@@ -102,7 +102,7 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
     }
     
     func test_newChannelQueryUpdater_doesNotRetainItself() throws {
-        let filter: Filter<ChannelListFilterScope<NameAndImageExtraData>> = .equal(.cid, to: .unique)
+        let filter: Filter<ChannelListFilterScope<DefaultExtraData.Channel>> = .equal(.cid, to: .unique)
         try database.createChannelListQuery(filter: filter)
         try database.createChannel()
         

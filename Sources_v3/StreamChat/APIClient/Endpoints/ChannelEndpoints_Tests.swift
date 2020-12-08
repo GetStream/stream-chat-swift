@@ -7,15 +7,15 @@ import XCTest
 
 final class ChannelEndpoints_Tests: XCTestCase {
     func test_channels_buildsCorrectly() {
-        let filter: Filter<ChannelListFilterScope<NameAndImageExtraData>> = .containMembers(userIds: [.unique])
+        let filter: Filter<ChannelListFilterScope<DefaultExtraData.Channel>> = .containMembers(userIds: [.unique])
         
-        func channelListQuery(options: QueryOptions) -> ChannelListQuery<NameAndImageExtraData> {
-            var query: ChannelListQuery<NameAndImageExtraData> = .init(filter: filter)
+        func channelListQuery(options: QueryOptions) -> ChannelListQuery<DefaultExtraData.Channel> {
+            var query: ChannelListQuery<DefaultExtraData.Channel> = .init(filter: filter)
             query.options = options
             return query
         }
         
-        let testCases: [(ChannelListQuery<NameAndImageExtraData>, Bool)] = [
+        let testCases: [(ChannelListQuery<DefaultExtraData.Channel>, Bool)] = [
             (channelListQuery(options: .state), true),
             (channelListQuery(options: .presence), true),
             (channelListQuery(options: .watch), true),
@@ -297,6 +297,8 @@ extension ChannelEditDetailPayload where ExtraData == DefaultExtraData {
     static var unique: Self {
         Self(
             cid: .unique,
+            name: .unique,
+            imageURL: .unique(),
             team: .unique,
             members: [],
             invites: [],

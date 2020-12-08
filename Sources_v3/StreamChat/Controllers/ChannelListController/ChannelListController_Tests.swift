@@ -11,7 +11,7 @@ class ChannelListController_Tests: StressTestCase {
     
     var client: ChatClient!
     
-    var query: ChannelListQuery<NameAndImageExtraData>!
+    var query: ChannelListQuery<DefaultExtraData.Channel>!
     
     var controller: ChatChannelListController!
     var controllerCallbackQueueID: UUID!
