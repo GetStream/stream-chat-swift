@@ -26,6 +26,7 @@ class MessageDTO: NSManagedObject {
     
     @NSManaged var user: UserDTO
     @NSManaged var mentionedUsers: Set<UserDTO>
+    @NSManaged var threadParticipants: Set<UserDTO>
     @NSManaged var channel: ChannelDTO
     @NSManaged var replies: Set<MessageDTO>
     @NSManaged var flaggedBy: CurrentUserDTO?
@@ -205,7 +206,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.channel = channelDTO
         
         if let parentMessageId = parentMessageId,
-           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(message)
         }
         
@@ -240,6 +241,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             let user = try saveUser(payload: userPayload)
             dto.mentionedUsers.insert(user)
         }
+
+        // If user participated in thread, but deleted message later, we needs to get rid of it if backends does
+        dto.threadParticipants = try Set(
+            payload.threadParticipants.map { try saveUser(payload: $0) }
+        )
         
         try payload.attachments.forEach { attachmentPayload in
             let attachment = try saveAttachment(payload: attachmentPayload, messageId: payload.id, cid: cid)
@@ -247,7 +253,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         if let parentMessageId = payload.parentId,
-           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(dto)
         }
         
