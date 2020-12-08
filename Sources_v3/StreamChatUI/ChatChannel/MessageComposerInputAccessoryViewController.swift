@@ -55,7 +55,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: UIExtraDataTyp
         .withoutAutoresizingMaskConstraints
     
     /// Convenience getter for underlying `textView`.
-    public var textView: UITextView {
+    public var textView: ChatChannelMessageInputTextView<ExtraData> {
         composerView.messageInputView.textView
     }
     
@@ -96,6 +96,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: UIExtraDataTyp
         switch state {
         case .initial:
             textView.text = ""
+            textView.placeholderLabel.text = L10n.Composer.Placeholder.message
             state = .empty(isEmpty: true)
             messageToEdit = nil
             replyMessage = nil
@@ -111,6 +112,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: UIExtraDataTyp
             composerView.shrinkInputButton.isHidden = isEmpty
         case let .slashCommand(command):
             textView.text = ""
+            textView.placeholderLabel.text = L10n.Composer.Placeholder.giphy
             composerView.messageInputView.slashCommandView.command = command
             composerView.messageInputView.setSlashCommandViews(hidden: false)
             dismissSuggestionsViewController()
