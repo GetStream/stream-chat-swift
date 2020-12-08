@@ -13,12 +13,8 @@ open class ChatChannelListVC<ExtraData: UIExtraDataTypes>: ViewController,
         title = "Stream Chat"
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
-        
-        if #available(iOS 13.0, *) {
-            collectionView.backgroundColor = .systemBackground
-        } else {
-            collectionView.backgroundColor = .white
-        }
+
+        collectionView.backgroundColor = uiConfig.colorPalette.generalBackground
     }
     
     // MARK: - Properties

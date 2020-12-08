@@ -174,10 +174,12 @@ open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigPro
         borderLayer.isHidden = message == nil
 
         borderLayer.borderColor = message?.isSentByCurrentUser == true ?
-            UIColor.outgoingMessageBubbleBorder.cgColor :
-            UIColor.incomingMessageBubbleBorder.cgColor
+            uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor :
+            uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
 
-        backgroundColor = message?.isSentByCurrentUser == true ? .outgoingMessageBubbleBackground : .incomingMessageBubbleBackground
+        backgroundColor = message?.isSentByCurrentUser == true ?
+            uiConfig.colorPalette.outgoingMessageBubbleBackground :
+            uiConfig.colorPalette.incomingMessageBubbleBackground
         layer.maskedCorners = corners
 
         imageGallery.data = message.flatMap {
@@ -233,11 +235,11 @@ private extension _ChatMessageGroupPart {
     var layoutOptions: LayoutOptions {
         var options: LayoutOptions = .all
         
-        if self.text.isEmpty {
+        if message.text.isEmpty {
             options.remove(.text)
         }
 
-        if !self.attachments.contains(where: { $0.type == .image && $0.imageURL != nil }) {
+        if !message.attachments.contains(where: { $0.type == .image && $0.imageURL != nil }) {
             options.remove(.images)
         }
 

@@ -99,7 +99,9 @@ class MessageReactionView: UIView {
 
 // MARK: - Reactions
 
-open class ChatMessageReactionsView: UIView {
+open class ChatMessageReactionsView: View, UIConfigProvider {
+    public typealias ExtraData = DefaultUIExtraData
+
     private enum Height {
         static let small: CGFloat = 24
         static let big: CGFloat = 40
@@ -133,17 +135,7 @@ open class ChatMessageReactionsView: UIView {
         return stack
     }()
 
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        commonInit()
-    }
-
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        commonInit()
-    }
-
-    func commonInit() {
+    override open func setUpLayout() {
         heightConstraint.isActive = true
         addSubview(content)
         content.translatesAutoresizingMaskIntoConstraints = false
@@ -151,6 +143,9 @@ open class ChatMessageReactionsView: UIView {
         content.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
         content.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor).isActive = true
         content.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
+    }
+
+    override public func defaultAppearance() {
         layer.borderWidth = 1
         updateStyle()
     }
@@ -162,29 +157,29 @@ open class ChatMessageReactionsView: UIView {
         case .bigIncoming:
             heightConstraint.constant = Height.big
             layer.cornerRadius = Height.big / 2
-            backgroundColor = .outgoingMessageBubbleBackground
-            layer.backgroundColor = UIColor.outgoingMessageBubbleBorder.cgColor
+            backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBackground
+            layer.backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor
             reactionTint = .lightGray
 
         case .bigOutgoing:
             heightConstraint.constant = Height.big
             layer.cornerRadius = Height.big / 2
-            backgroundColor = .incomingMessageBubbleBackground
-            layer.backgroundColor = UIColor.incomingMessageBubbleBorder.cgColor
+            backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
+            layer.backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
             reactionTint = .darkGray
 
         case .smallIncoming:
             heightConstraint.constant = Height.small
             layer.cornerRadius = Height.small / 2
-            backgroundColor = .outgoingMessageBubbleBackground
-            layer.backgroundColor = UIColor.outgoingMessageBubbleBorder.cgColor
+            backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBackground
+            layer.backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor
             reactionTint = .lightGray
 
         case .smallOutgoing:
             heightConstraint.constant = Height.small
             layer.cornerRadius = Height.small / 2
-            backgroundColor = .incomingMessageBubbleBackground
-            layer.backgroundColor = UIColor.incomingMessageBubbleBorder.cgColor
+            backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
+            layer.backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
             reactionTint = .darkGray
         }
         if isHidden {

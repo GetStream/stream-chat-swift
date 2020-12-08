@@ -4,7 +4,9 @@
 
 import UIKit
 
-open class ChatReadStatusCheckmarkView: View {
+open class ChatReadStatusCheckmarkView: View, UIConfigProvider {
+    public typealias ExtraData = DefaultUIExtraData
+
     public enum Status {
         case read, unread, empty
     }
@@ -13,19 +15,7 @@ open class ChatReadStatusCheckmarkView: View {
     
     public var status: Status = .empty {
         didSet {
-            updateContent()
-        }
-    }
-    
-    public var readTintColor: UIColor = .systemBlue {
-        didSet {
-            updateContent()
-        }
-    }
-    
-    public var unreadTintColor: UIColor = .systemGray {
-        didSet {
-            updateContent()
+            updateContentIfNeeded()
         }
     }
     
@@ -33,28 +23,12 @@ open class ChatReadStatusCheckmarkView: View {
     
     private lazy var imageView = UIImageView().withoutAutoresizingMaskConstraints
     
-    // MARK: - Init
-    
-    public required init() {
-        super.init(frame: .zero)
-        commonInit()
-    }
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-        commonInit()
-    }
-    
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        commonInit()
-    }
-    
-    private func commonInit() {
-        updateContent()
-    }
-    
     // MARK: - Public
+
+    override open func tintColorDidChange() {
+        super.tintColorDidChange()
+        updateContentIfNeeded()
+    }
     
     override open func setUpAppearance() {
         imageView.contentMode = .scaleAspectFit
@@ -71,10 +45,10 @@ open class ChatReadStatusCheckmarkView: View {
             imageView.image = nil
         case .read:
             imageView.image = UIImage(named: "doubleCheckmark", in: .streamChatUI)
-            imageView.tintColor = readTintColor
+            imageView.tintColor = tintColor
         case .unread:
             imageView.image = UIImage(named: "checkmark", in: .streamChatUI)
-            imageView.tintColor = unreadTintColor
+            imageView.tintColor = uiConfig.colorPalette.unreadChatTint
         }
     }
 }

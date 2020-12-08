@@ -87,11 +87,7 @@ open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIInputV
     // MARK: - Public
     
     open func setupAppearance() {
-        if #available(iOS 13.0, *) {
-            backgroundColor = .systemBackground
-        } else {
-            backgroundColor = .white
-        }
+        backgroundColor = uiConfig.colorPalette.messageComposerBackground
     }
     
     open func setupLayout() {
@@ -152,7 +148,7 @@ open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIInputV
         container.centerStackView.clipsToBounds = true
         container.centerStackView.layer.cornerRadius = 20
         container.centerStackView.layer.borderWidth = 2
-        container.centerStackView.layer.borderColor = UIColor.systemGray.cgColor
+        container.centerStackView.layer.borderColor = uiConfig.colorPalette.messageComposerBorder.cgColor
     }
     
     // There are some issues with new-style KVO so that is something that will need attention later.

@@ -26,7 +26,7 @@ open class MessageActionsView<ExtraData: UIExtraDataTypes>: View, UIConfigProvid
     override open func defaultAppearance() {
         layer.cornerRadius = 16
         layer.masksToBounds = true
-        backgroundColor = .outgoingMessageBubbleBorder
+        backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBorder
     }
 
     override open func setUpLayout() {

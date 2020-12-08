@@ -67,7 +67,7 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
     override public func defaultAppearance() {
         super.defaultAppearance()
 
-        view.backgroundColor = .chatBackground
+        view.backgroundColor = uiConfig.colorPalette.generalBackground
         collectionView.backgroundColor = .clear
 
         let title = UILabel()
@@ -77,7 +77,7 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
         let subtitle = UILabel()
         subtitle.textAlignment = .center
         subtitle.font = .preferredFont(forTextStyle: .subheadline)
-        subtitle.textColor = .lightGray
+        subtitle.textColor = uiConfig.colorPalette.subtitleText
 
         let titleView = UIStackView(arrangedSubviews: [title, subtitle])
         titleView.axis = .vertical
