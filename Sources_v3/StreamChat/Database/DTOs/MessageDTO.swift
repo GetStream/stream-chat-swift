@@ -327,6 +327,7 @@ private extension _ChatMessage {
         
         author = dto.user.asModel()
         mentionedUsers = Set(dto.mentionedUsers.map { $0.asModel() })
+        threadParticipants = Set(dto.threadParticipants.map(\.id))
 
         latestReplies = MessageDTO
             .loadReplies(for: dto.id, limit: 25, context: context)

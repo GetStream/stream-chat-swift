@@ -254,6 +254,7 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.parentMessageId, messagePayload.parentId)
             Assert.willBeEqual(loadedMessage?.showReplyInChannel, messagePayload.showReplyInChannel)
             Assert.willBeEqual(loadedMessage?.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
+            Assert.willBeEqual(loadedMessage.map { Array($0.threadParticipants) }, messagePayload.threadParticipants.map(\.id))
             Assert.willBeEqual(loadedMessage?.replyCount, messagePayload.replyCount)
             Assert.willBeEqual(loadedMessage?.extraData, messagePayload.extraData)
             Assert.willBeEqual(loadedMessage?.reactionScores, messagePayload.reactionScores)
