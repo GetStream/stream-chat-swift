@@ -15,16 +15,4 @@ class EventPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(DefaultEventPayload.self, from: eventJSON)
         XCTAssertNotNil(payload.channel)
     }
-    
-    func test_eventJSON_isSerialized_withNoExtraData() throws {
-        enum NoExtraDataTypes: ExtraDataTypes {
-            typealias User = NoExtraData
-            typealias Channel = NoExtraData
-            typealias Message = NoExtraData
-        }
-        
-        let payload = try JSONDecoder.default.decode(EventPayload<NoExtraDataTypes>.self, from: eventJSON)
-        
-        XCTAssertNotNil(payload.channel)
-    }
 }

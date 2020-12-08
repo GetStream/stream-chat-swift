@@ -28,7 +28,7 @@ public protocol ExtraDataTypes {
     associatedtype Message: MessageExtraData = NoExtraData
     
     /// An extra data type for `ChatChannel`.
-    associatedtype Channel: ChannelExtraData = NameAndImageExtraData
+    associatedtype Channel: ChannelExtraData = NoExtraData
     
     /// An extra data type for `ChatMessageReaction`.
     associatedtype MessageReaction: MessageReactionExtraData = NoExtraData
@@ -39,11 +39,11 @@ public protocol ExtraDataTypes {
 
 /// A concrete implementation of `ExtraDataTypes` with the default extra data type values.
 ///
-/// `ChatUser` extra data type: `NameAndImageExtraData`
+/// `ChatUser` extra data type: `NoExtraData`
 ///
 /// `ChatMessage` extra data type: `NoExtraData`
 ///
-/// `ChatChannel` extra data type: `NameAndImageExtraData`
+/// `ChatChannel` extra data type: `NoExtraData`
 ///
 public struct DefaultExtraData: ExtraDataTypes {}
 

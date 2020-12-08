@@ -41,6 +41,8 @@ class ChannelQuery_Tests: XCTestCase {
         // Create query without id specified
         let query1: ChannelQuery<DefaultExtraData> = .init(channelPayload: .init(
             type: .messaging,
+            name: .unique,
+            imageURL: .unique(),
             team: nil,
             members: [.unique],
             invites: [],

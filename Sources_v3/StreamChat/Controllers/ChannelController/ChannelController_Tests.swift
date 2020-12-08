@@ -140,11 +140,13 @@ class ChannelController_Tests: StressTestCase {
         let team: String = .unique
         let members: Set<UserId> = [.unique]
         let invites: Set<UserId> = [.unique]
-        let extraData: NameAndImageExtraData = .init(name: .unique, imageURL: .unique())
+        let extraData: DefaultExtraData.Channel = .defaultValue
 
         // Create a new `ChannelController`
         let controller = client.channelController(
             createChannelWithId: cid,
+            name: .unique,
+            imageURL: .unique(),
             team: team,
             members: members,
             invites: invites,
@@ -162,10 +164,16 @@ class ChannelController_Tests: StressTestCase {
     func test_channelControllerForNew1on1Channel_createdCorrectly() throws {
         let team: String = .unique
         let members: Set<UserId> = [.unique]
-        let extraData: NameAndImageExtraData = .init(name: .unique, imageURL: .unique())
+        let extraData: DefaultExtraData.Channel = .defaultValue
 
         // Create a new `ChannelController`
-        let controller = try client.channelController(createDirectMessageChannelWith: members, team: team, extraData: extraData)
+        let controller = try client.channelController(
+            createDirectMessageChannelWith: members,
+            name: .unique,
+            imageURL: .unique(),
+            team: team,
+            extraData: extraData
+        )
 
         // Assert `ChannelQuery` created correctly
         XCTAssertEqual(team, controller.channelQuery.channelPayload?.team)
@@ -178,7 +186,13 @@ class ChannelController_Tests: StressTestCase {
 
         // Create a new `ChannelController`
         do {
-            _ = try client.channelController(createDirectMessageChannelWith: members, team: .unique, extraData: .init())
+            _ = try client.channelController(
+                createDirectMessageChannelWith: members,
+                name: .unique,
+                imageURL: .unique(),
+                team: .unique,
+                extraData: .init()
+            )
         } catch {
             XCTAssert(error is ClientError.ChannelEmptyMembers)
         }
@@ -186,7 +200,12 @@ class ChannelController_Tests: StressTestCase {
     
     func test_channelController_returnsNilCID_forNewDirectMessageChannel() throws {
         // Create ChatChannelController for new channel
-        controller = try client.channelController(createDirectMessageChannelWith: [.unique], extraData: .defaultValue)
+        controller = try client.channelController(
+            createDirectMessageChannelWith: [.unique],
+            name: .unique,
+            imageURL: .unique(),
+            extraData: .defaultValue
+        )
         
         // Assert cid is nil
         XCTAssertNil(controller.cid)
@@ -619,7 +638,7 @@ class ChannelController_Tests: StressTestCase {
 
         // Simulate `updateChannel` call and assert the error is returned
         var error: Error? = try await { [callbackQueueID] completion in
-            controller.updateChannel(team: nil, extraData: .init()) { error in
+            controller.updateChannel(name: .unique, imageURL: .unique(), team: nil, extraData: .init()) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
             }
@@ -631,7 +650,7 @@ class ChannelController_Tests: StressTestCase {
 
         // Simulate `updateChannel` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
-            controller.updateChannel(team: nil, extraData: .init()) { error in
+            controller.updateChannel(name: .unique, imageURL: .unique(), team: nil, extraData: .init()) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
             }
@@ -643,7 +662,7 @@ class ChannelController_Tests: StressTestCase {
     func test_updateChannel_callsChannelUpdater() {
         // Simulate `updateChannel` call and catch the completion
         var completionCalled = false
-        controller.updateChannel(team: .unique, extraData: .init()) { [callbackQueueID] error in
+        controller.updateChannel(name: .unique, imageURL: .unique(), team: .unique, extraData: .init()) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             XCTAssertNil(error)
             completionCalled = true
@@ -662,7 +681,7 @@ class ChannelController_Tests: StressTestCase {
     func test_updateChannel_propagesErrorFromUpdater() {
         // Simulate `updateChannel` call and catch the completion
         var completionCalledError: Error?
-        controller.updateChannel(team: .unique, extraData: .init()) { [callbackQueueID] in
+        controller.updateChannel(name: .unique, imageURL: .unique(), team: .unique, extraData: .init()) { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0
         }

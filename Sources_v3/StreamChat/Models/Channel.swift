@@ -25,6 +25,12 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// The `ChannelId` of the channel.
     public let cid: ChannelId
     
+    /// Name for this channel.
+    public let name: String?
+    
+    /// Image (avatar) url for this channel.
+    public let imageURL: URL?
+    
     /// The date of the last message in the channel.
     public let lastMessageAt: Date?
     
@@ -110,6 +116,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     
     init(
         cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
         lastMessageAt: Date? = nil,
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
@@ -131,6 +139,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         latestMessages: [_ChatMessage<ExtraData>] = []
     ) {
         self.cid = cid
+        self.name = name
+        self.imageURL = imageURL
         self.lastMessageAt = lastMessageAt
         self.createdAt = createdAt
         self.updatedAt = updatedAt

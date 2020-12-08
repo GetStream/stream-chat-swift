@@ -6,6 +6,8 @@ import Foundation
 
 struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
     let id: String?
+    let name: String?
+    let imageURL: URL?
     let type: ChannelType
     let team: String?
     let members: Set<UserId>
@@ -14,12 +16,16 @@ struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
 
     init(
         cid: ChannelId,
+        name: String?,
+        imageURL: URL?,
         team: String?,
         members: Set<UserId>,
         invites: Set<UserId>,
         extraData: ExtraData.Channel
     ) {
         id = cid.id
+        self.name = name
+        self.imageURL = imageURL
         type = cid.type
         self.team = team
         self.members = members
@@ -29,12 +35,16 @@ struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
     
     init(
         type: ChannelType,
+        name: String?,
+        imageURL: URL?,
         team: String?,
         members: Set<UserId>,
         invites: Set<UserId>,
         extraData: ExtraData.Channel
     ) {
         id = nil
+        self.name = name
+        self.imageURL = imageURL
         self.type = type
         self.team = team
         self.members = members
@@ -57,6 +67,9 @@ struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
         if !allMembers.isEmpty {
             try container.encode(allMembers, forKey: .members)
         }
+        
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
 
         try extraData.encode(to: encoder)
     }
