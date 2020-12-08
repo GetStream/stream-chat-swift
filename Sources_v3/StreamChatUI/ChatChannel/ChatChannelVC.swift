@@ -129,6 +129,10 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
             )
         )
     }
+
+    func showThread(for message: _ChatMessageGroupPart<ExtraData>?) {
+        debugPrint(message as Any)
+    }
     
     // MARK: - ChatChannelMessageComposerView
     
@@ -163,6 +167,7 @@ open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
             ) as! СhatIncomingMessageCollectionViewCell<ExtraData>
         }
 
+        cell.messageView.onThreadTap = { [weak self] in self?.showThread(for: $0) }
         cell.message = message
 
         return cell

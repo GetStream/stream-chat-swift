@@ -136,6 +136,8 @@ public extension UIConfig {
         public var imageGalleryInteritemSpacing: CGFloat = 2
         public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator.Type =
             ChatMessageOnlyVisibleForCurrentUserIndicator.self
+        public var threadArrowView: ChatMessageThreadArrowView.Type = ChatMessageThreadArrowView.self
+        public var threadInfoView: ChatMessageThreadInfoView<ExtraData>.Type = ChatMessageThreadInfoView<ExtraData>.self
     }
 }
 

@@ -19,6 +19,12 @@ public struct _ChatMessageGroupPart<ExtraData: ExtraDataTypes> {
             return nil
         }
     }
+
+    public var isPartOfThread: Bool {
+        let isThreadStart = message.replyCount > 0
+        let isReplyInChannel = message.parentMessageId != nil && message.showReplyInChannel
+        return isThreadStart || isReplyInChannel
+    }
 }
 
 extension _ChatMessageGroupPart {
