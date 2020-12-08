@@ -13,4 +13,8 @@ extension UIFont {
     var bold: UIFont {
         withTraits(traits: .traitBold)
     }
+
+    var italic: UIFont {
+        withTraits(traits: .traitItalic)
+    }
 }
