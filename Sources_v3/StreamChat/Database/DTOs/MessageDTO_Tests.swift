@@ -69,6 +69,10 @@ class MessageDTO_Tests: XCTestCase {
                 messagePayload.mentionedUsers.map(\.id),
                 loadedMessage?.mentionedUsers.map(\.id)
             )
+            Assert.willBeEqual(
+                messagePayload.threadParticipants.map(\.id),
+                loadedMessage?.threadParticipants.map(\.id)
+            )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
                 try? JSONDecoder.default.decode(NoExtraData.self, from: $0.extraData)
@@ -145,6 +149,10 @@ class MessageDTO_Tests: XCTestCase {
                 messagePayload.mentionedUsers.map(\.id),
                 loadedMessage?.mentionedUsers.map(\.id)
             )
+            Assert.willBeEqual(
+                messagePayload.threadParticipants.map(\.id),
+                loadedMessage?.threadParticipants.map(\.id)
+            )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
                 try? JSONDecoder.default.decode(DeathStarMetadata.self, from: $0.extraData)
@@ -170,7 +178,7 @@ class MessageDTO_Tests: XCTestCase {
             // Save the message
             let messageDTO = try! session.saveMessage(payload: messagePayload, for: channelId)
             // Make the extra data JSON invalid
-            messageDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
+            messageDTO.extraData = #"{"invalid": json}"# .data(using: .utf8)!
         }
         
         let loadedMessage: ChatMessage? = database.viewContext.message(id: messageId)?.asModel()
