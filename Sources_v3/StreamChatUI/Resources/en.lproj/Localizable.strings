@@ -18,3 +18,4 @@
 "alert.actions.delete" = "Delete";
 
 "message.only-visible-to-you" = "Only visible to you";
+"message.deleted-message-placeholder" = "Message deleted";
