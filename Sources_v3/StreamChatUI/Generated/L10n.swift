@@ -51,6 +51,14 @@ internal enum L10n {
         internal static let confirmationTitle = L10n.tr("Localizable", "message.actions.delete.confirmation-title")
       }
     }
+    internal enum Threads {
+      /// Plural format key: "%#@replies@"
+      internal static func count(_ p1: Int) -> String {
+        return L10n.tr("Localizable", "message.threads.count", p1)
+      }
+      /// Thread Reply
+      internal static let reply = L10n.tr("Localizable", "message.threads.reply")
+    }
   }
 }
 // swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length

@@ -14,6 +14,8 @@
 "message.actions.user-unmute" = "Unmute User";
 "message.actions.user-mute" = "Mute User";
 
+"message.threads.reply" = "Thread Reply";
+
 "alert.actions.cancel" = "Cancel";
 "alert.actions.delete" = "Delete";
 
