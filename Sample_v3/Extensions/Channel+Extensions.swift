@@ -25,7 +25,7 @@ func createTypingMemberString(for channel: ChatChannel?) -> String? {
 /// Example result: `"Luke Skywalker"`
 func createChannelTitle(for channel: ChatChannel?, _ currentUserId: UserId?) -> String {
     guard let channel = channel, let currentUserId = currentUserId else { return "Unnamed channel" }
-    let channelName = channel.extraData.name ?? channel.cid.description
+    let channelName = channel.name ?? channel.cid.description
     if channel.isDirectMessageChannel {
         let otherMember = Array(channel.cachedMembers).first(where: { member in member.id != currentUserId })
         // Naming priority for a DM:

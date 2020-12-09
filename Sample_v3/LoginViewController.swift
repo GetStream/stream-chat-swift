@@ -24,7 +24,6 @@ class LoginViewController: UITableViewController {
         let chatClient = ChatClient(config: config)
         
         let currentUserController = chatClient.currentUserController()
-        let extraData = NameAndImageExtraData(name: Configuration.userName, imageURL: nil)
         
         func setUserCompletion(_ error: Error?) {
             guard let error = error else { return }
@@ -40,14 +39,18 @@ class LoginViewController: UITableViewController {
         if let token = Configuration.token {
             currentUserController.setUser(
                 userId: Configuration.userId,
-                userExtraData: extraData,
+                name: Configuration.userName,
+                imageURL: nil,
+                userExtraData: nil,
                 token: token,
                 completion: setUserCompletion
             )
         } else {
             currentUserController.setGuestUser(
                 userId: Configuration.userId,
-                extraData: extraData,
+                name: Configuration.userName,
+                imageURL: nil,
+                extraData: .defaultValue,
                 completion: setUserCompletion
             )
         }

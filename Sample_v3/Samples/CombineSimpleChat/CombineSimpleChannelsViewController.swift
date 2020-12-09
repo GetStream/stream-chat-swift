@@ -234,8 +234,10 @@ class CombineSimpleChannelsViewController: UITableViewController {
         alertTextField(title: "Create channel", placeholder: defaultName) { name in
             let controller = self.chatClient.channelController(
                 createChannelWithId: .init(type: .messaging, id: id),
+                name: name,
+                imageURL: nil,
                 members: [self.chatClient.currentUserId],
-                extraData: .init(name: name, imageURL: nil)
+                extraData: .defaultValue
             )
             controller.synchronize()
         }
@@ -263,7 +265,9 @@ class CombineSimpleChannelsViewController: UITableViewController {
                 let newChatMemebers = [userId, chatClient.currentUserId]
                 let controller = try! chatClient.channelController(
                     createDirectMessageChannelWith: Set(newChatMemebers),
-                    extraData: .init()
+                    name: nil,
+                    imageURL: nil,
+                    extraData: .defaultValue
                 )
                 chatVC.channelController = controller
                 self.navigationController?.pushViewController(chatVC, animated: true)
@@ -307,7 +311,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
                 let alert = UIAlertController(title: "Change channel name", message: "", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Confirm", style: .default, handler: { _ in
                     guard let newName = alert.textFields?.first?.text else { return }
-                    channelController.updateChannel(team: nil, extraData: .init(name: newName, imageURL: nil))
+                    channelController.updateChannel(name: newName, imageURL: nil, team: nil, extraData: .defaultValue)
                 }))
                 alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
                 alert.addTextField(configurationHandler: nil)
