@@ -29,8 +29,10 @@ struct ChannelListView: View {
         return TextAlert(title: "Create channel", placeholder: defaultName) { name in
             let controller = self.channelList.controller.client.channelController(
                 createChannelWithId: .init(type: .messaging, id: id),
+                name: name,
+                imageURL: nil,
                 members: [self.channelList.controller.client.currentUserId],
-                extraData: .init(name: name, imageURL: nil)
+                extraData: .defaultValue
             )
             controller.synchronize()
         }
@@ -234,10 +236,6 @@ struct ChannelListView: View {
 /// We need to conform to this protocol for displaying ActionSheet for specific item.
 /// ChannelId already conforms to protocol cause it has `id` property.
 extension ChannelId: Identifiable {}
-
-private extension ChatChannel {
-    var name: String { extraData.name ?? cid.description }
-}
 
 enum ActiveSheet: Identifiable {
     case settings, users
