@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public struct UIConfig<ExtraData: UIExtraDataTypes> {
+public struct UIConfig<ExtraData: ExtraDataTypes> {
     public var channelList = ChannelListUI()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()
@@ -91,7 +91,7 @@ public extension UIConfig {
     struct ChannelListItemSubviews {
         public var avatarView: ChatChannelAvatarView<ExtraData>.Type = ChatChannelAvatarView.self
         public var unreadCountView: ChatUnreadCountView.Type = ChatUnreadCountView.self
-        public var readStatusView: ChatReadStatusCheckmarkView.Type = ChatReadStatusCheckmarkView.self
+        public var readStatusView: ChatReadStatusCheckmarkView<ExtraData>.Type = ChatReadStatusCheckmarkView<ExtraData>.self
     }
 }
 
@@ -125,7 +125,7 @@ public extension UIConfig {
             MessageActionsView<ExtraData>.self
         public var messageActionButton: MessageActionsView<ExtraData>.ActionButton.Type =
             MessageActionsView<ExtraData>.ActionButton.self
-        public var messageReactionsView: ChatMessageReactionsView.Type = ChatMessageReactionsView.self
+        public var messageReactionsView: ChatMessageReactionsView<ExtraData>.Type = ChatMessageReactionsView<ExtraData>.self
     }
 
     struct MessageContentViewSubviews {
@@ -140,7 +140,7 @@ public extension UIConfig {
         public var imageGalleryInteritemSpacing: CGFloat = 2
         public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator.Type =
             ChatMessageOnlyVisibleForCurrentUserIndicator.self
-        public var threadArrowView: ChatMessageThreadArrowView.Type = ChatMessageThreadArrowView.self
+        public var threadArrowView: ChatMessageThreadArrowView<ExtraData>.Type = ChatMessageThreadArrowView<ExtraData>.self
         public var threadInfoView: ChatMessageThreadInfoView<ExtraData>.Type = ChatMessageThreadInfoView<ExtraData>.self
     }
 }

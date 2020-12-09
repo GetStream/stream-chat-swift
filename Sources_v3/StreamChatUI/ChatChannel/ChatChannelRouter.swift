@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelRouter<ExtraData: UIExtraDataTypes>: ChatRouter<ChatChannelVC<ExtraData>> {
+open class ChatChannelRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelVC<ExtraData>> {
     open func showMessageActionsPopUp(
         messageContentFrame: CGRect,
         messageData: _ChatMessageGroupPart<ExtraData>,

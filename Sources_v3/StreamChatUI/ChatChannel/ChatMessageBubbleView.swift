@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageBubbleView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
+open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }

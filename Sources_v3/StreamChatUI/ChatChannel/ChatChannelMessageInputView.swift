@@ -2,9 +2,10 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
-open class ChatChannelMessageInputView<ExtraData: UIExtraDataTypes>: UIView {
+open class ChatChannelMessageInputView<ExtraData: ExtraDataTypes>: UIView {
     // MARK: - Properties
     
     public let uiConfig: UIConfig<ExtraData>

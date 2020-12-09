@@ -3,9 +3,10 @@
 //
 
 import Foundation
+import StreamChat
 import UIKit
 
-open class ChatChannelListCollectionViewCell<ExtraData: UIExtraDataTypes>: UICollectionViewCell {
+open class ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionViewCell {
     // MARK: - Properties
     
     var uiConfig: UIConfig<ExtraData> = .default

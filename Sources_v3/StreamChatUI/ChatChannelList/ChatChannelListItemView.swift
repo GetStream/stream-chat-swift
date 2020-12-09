@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
+open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     override public func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.generalBackground
     }
@@ -140,7 +140,7 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
     override open func updateContent() {
         // Title
         
-        titleLabel.text = channelAndUserId.channel?.displayName
+        titleLabel.text = channelAndUserId.channel?.name
         
         // Subtitle
         
@@ -177,7 +177,7 @@ open class ChatChannelListItemView<ExtraData: UIExtraDataTypes>: View, UIConfigP
 extension ChatChannelListItemView {
     var typingMemberString: String? {
         guard let members = channelAndUserId.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
-        let names = members.map(\.displayName).sorted()
+        let names = members.compactMap(\.name).sorted()
         return names.joined(separator: ", ") + " \(names.count == 1 ? "is" : "are") typing..."
     }
     
@@ -186,7 +186,7 @@ extension ChatChannelListItemView {
         if let typingMembersInfo = typingMemberString {
             return typingMembersInfo
         } else if let latestMessage = channel.latestMessages.first {
-            return "\(latestMessage.author.displayName): \(latestMessage.text)"
+            return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.text)"
         } else {
             return "No messages"
         }

@@ -7,7 +7,7 @@ import UIKit
 
 // MARK: - Main listener
 
-class ChatChannelNavigationBarListener<ExtraData: UIExtraDataTypes> {
+class ChatChannelNavigationBarListener<ExtraData: ExtraDataTypes> {
     typealias NavbarData = (title: String?, subtitle: String?)
 
     let channelController: _ChatChannelController<ExtraData>
@@ -47,10 +47,10 @@ extension ChatChannelNavigationBarListener: _ChatChannelControllerDelegate {
 
 // MARK: - Group child
 
-private class GroupChatChannelNavigationBarListener<ExtraData: UIExtraDataTypes>: ChatChannelNavigationBarListener<ExtraData> {
+private class GroupChatChannelNavigationBarListener<ExtraData: ExtraDataTypes>: ChatChannelNavigationBarListener<ExtraData> {
     override func makeNavbarData() -> NavbarData {
         guard let channel = channelController.channel else { return (nil, nil) }
-        let title = channel.extraData.displayName
+        let title = channel.name
         let subtitle = "\(channel.memberCount) members, \(channel.watcherCount) online"
         return (title, subtitle)
     }
@@ -58,7 +58,7 @@ private class GroupChatChannelNavigationBarListener<ExtraData: UIExtraDataTypes>
 
 // MARK: - Direct child
 
-private class DirectChatChannelNavigationBarListener<ExtraData: UIExtraDataTypes>: ChatChannelNavigationBarListener<ExtraData> {
+private class DirectChatChannelNavigationBarListener<ExtraData: ExtraDataTypes>: ChatChannelNavigationBarListener<ExtraData> {
     let memberController: _ChatChannelMemberController<ExtraData>?
     let df: DateComponentsFormatter = {
         let df = DateComponentsFormatter()
@@ -85,7 +85,7 @@ private class DirectChatChannelNavigationBarListener<ExtraData: UIExtraDataTypes
 
     override func makeNavbarData() -> NavbarData {
         guard let channel = channelController.channel else { return (nil, nil) }
-        let title = channel.extraData.displayName
+        let title = channel.name
         guard let member = memberController?.member else { return (title, nil) }
         let subtitle: String
         if member.isOnline {
