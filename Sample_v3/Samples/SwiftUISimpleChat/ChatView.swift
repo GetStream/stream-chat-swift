@@ -66,7 +66,7 @@ struct ChatView: View {
     }
     
     func messageView(for message: ChatMessage) -> some View {
-        let username = message.author.extraData.name ?? message.author.id
+        let username = message.author.name ?? message.author.id
         let text: Text
         
         switch message.type {

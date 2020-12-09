@@ -83,7 +83,7 @@ final class CombineSimpleChatViewController: UITableViewController, UITextViewDe
             .share()
         
         updatedChannel
-            .map { $0.extraData.name ?? $0.cid.description }
+            .map { $0.name ?? $0.cid.description }
             .assign(to: \.title, on: self)
             .store(in: &cancellables)
         
