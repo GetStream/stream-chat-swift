@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class MessageActionsView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
+open class MessageActionsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var actionItems: [ChatMessageActionItem] = [] {
         didSet { updateContentIfNeeded() }
     }
@@ -49,7 +49,7 @@ open class MessageActionsView<ExtraData: UIExtraDataTypes>: View, UIConfigProvid
 
 // MARK: - Controller
 
-open class ChatMessageActionsViewController<ExtraData: UIExtraDataTypes>: ViewController, UIConfigProvider {
+open class ChatMessageActionsViewController<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
     public var messageActions: [ChatMessageActionItem] = [] {
         didSet { updateContentIfNeeded() }
     }

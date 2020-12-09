@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageThreadArrowView: View, UIConfigProvider {
-    public typealias ExtraData = DefaultUIExtraData
-
+open class ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public enum Direction {
         case toTrailing
         case toLeading
@@ -58,7 +56,7 @@ open class ChatMessageThreadArrowView: View, UIConfigProvider {
     }
 }
 
-open class ChatMessageThreadInfoView<ExtraData: UIExtraDataTypes>: Control, UIConfigProvider {
+open class ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }

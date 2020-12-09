@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatRepliedMessageContentView<ExtraData: UIExtraDataTypes>: View {
+open class ChatRepliedMessageContentView<ExtraData: ExtraDataTypes>: View {
     public var message: _ChatMessage<ExtraData>? {
         didSet { updateContent() }
     }

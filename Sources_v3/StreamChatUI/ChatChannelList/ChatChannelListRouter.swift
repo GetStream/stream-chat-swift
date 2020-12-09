@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListRouter<ExtraData: UIExtraDataTypes>: ChatRouter<ChatChannelListVC<ExtraData>> {
+open class ChatChannelListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelListVC<ExtraData>> {
     open func openCurrentUserProfile(for currentUser: _CurrentChatUser<ExtraData.User>) {
         debugPrint(currentUser)
     }

@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerInputAccessoryViewController<ExtraData: UIExtraDataTypes>: UIInputViewController,
+open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes>: UIInputViewController,
     UIConfigProvider,
     Customizable,
     AppearanceSetting,
