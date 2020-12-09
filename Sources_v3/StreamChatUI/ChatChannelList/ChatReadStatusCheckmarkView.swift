@@ -2,11 +2,10 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
-open class ChatReadStatusCheckmarkView: View, UIConfigProvider {
-    public typealias ExtraData = DefaultUIExtraData
-
+open class ChatReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public enum Status {
         case read, unread, empty
     }

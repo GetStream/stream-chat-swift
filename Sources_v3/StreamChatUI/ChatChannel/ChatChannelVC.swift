@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelVC<ExtraData: UIExtraDataTypes>: ViewController,
+open class ChatChannelVC<ExtraData: ExtraDataTypes>: ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UIImagePickerControllerDelegate,

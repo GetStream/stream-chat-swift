@@ -6,7 +6,7 @@ import Nuke
 import StreamChat
 import UIKit
 
-open class ChatMessageImageGallery<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
+open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var data: Data? {
         didSet { updateContentIfNeeded() }
     }

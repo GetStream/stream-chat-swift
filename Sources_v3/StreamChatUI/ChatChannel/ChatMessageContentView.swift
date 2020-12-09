@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigProvider {
+open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
@@ -35,7 +35,7 @@ open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigPr
         .init()
         .withoutAutoresizingMaskConstraints
 
-    let messageReactionsView = ChatMessageReactionsView().withoutAutoresizingMaskConstraints
+    let messageReactionsView = ChatMessageReactionsView<ExtraData>().withoutAutoresizingMaskConstraints
 
     public private(set) lazy var threadArrowView = uiConfig
         .messageList
@@ -96,7 +96,7 @@ open class ChatMessageContentView<ExtraData: UIExtraDataTypes>: View, UIConfigPr
             messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
             messageBubbleView.topAnchor.constraint(equalTo: topAnchor).with(priority: .defaultHigh),
             messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor).with(priority: .defaultHigh),
-
+            
             messageMetadataView.heightAnchor.constraint(equalToConstant: 16),
             messageMetadataView.bottomAnchor.constraint(equalTo: bottomAnchor),
 

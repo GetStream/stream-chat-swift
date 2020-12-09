@@ -2,9 +2,10 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
-open class ChatChannelMessageComposerView<ExtraData: UIExtraDataTypes>: UIInputView,
+open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: UIInputView,
     UIConfigProvider,
     Customizable,
     AppearanceSetting {

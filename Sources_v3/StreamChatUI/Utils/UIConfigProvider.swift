@@ -2,6 +2,7 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
 // MARK: - Stored property in UIView required to make this work
@@ -18,23 +19,23 @@ private extension UIView {
 // MARK: - Protocols
 
 public protocol GenericUIConfigProvider: AnyObject {
-    func register<T: UIExtraDataTypes>(config: UIConfig<T>)
-    func uiConfig<T: UIExtraDataTypes>(_ type: T.Type) -> UIConfig<T>
+    func register<T: ExtraDataTypes>(config: UIConfig<T>)
+    func uiConfig<T: ExtraDataTypes>(_ type: T.Type) -> UIConfig<T>
 }
 
 public protocol UIConfigProvider: GenericUIConfigProvider {
-    associatedtype ExtraData: UIExtraDataTypes
+    associatedtype ExtraData: ExtraDataTypes
     var uiConfig: UIConfig<ExtraData> { get set }
 }
 
 // MARK: - Protocol extensions for UIView
 
 public extension GenericUIConfigProvider where Self: UIView {
-    func register<T: UIExtraDataTypes>(config: UIConfig<T>) {
+    func register<T: ExtraDataTypes>(config: UIConfig<T>) {
         anyUIConfig = config
     }
     
-    func uiConfig<T: UIExtraDataTypes>(_ type: T.Type = T.self) -> UIConfig<T> {
+    func uiConfig<T: ExtraDataTypes>(_ type: T.Type = T.self) -> UIConfig<T> {
         // We have a config registered, return it
         if let config = anyUIConfig as? UIConfig<T> {
             return config
@@ -70,11 +71,11 @@ extension UIConfigProvider where Self: UIView {
 // MARK: - Protocol extensions for UIViewController
 
 public extension GenericUIConfigProvider where Self: UIViewController {
-    func register<T: UIExtraDataTypes>(config: UIConfig<T>) {
+    func register<T: ExtraDataTypes>(config: UIConfig<T>) {
         view.anyUIConfig = config
     }
     
-    func uiConfig<T: UIExtraDataTypes>(_ type: T.Type = T.self) -> UIConfig<T> {
+    func uiConfig<T: ExtraDataTypes>(_ type: T.Type = T.self) -> UIConfig<T> {
         // We have a config registered, return it
         if let config = view.anyUIConfig as? UIConfig<T> {
             return config

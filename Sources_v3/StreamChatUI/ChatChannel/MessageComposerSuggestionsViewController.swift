@@ -2,9 +2,10 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
-open class MessageComposerSuggestionsViewController<ExtraData: UIExtraDataTypes>: UIViewController,
+open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: UIViewController,
     UITableViewDelegate,
     UITableViewDataSource {
     // MARK: - Property

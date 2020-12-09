@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
+open class ChatChannelAvatarView<ExtraData: ExtraDataTypes>: AvatarView {
     // MARK: - Properties
 
     public lazy var onlineIndicatorView = OnlineIndicatorView().withoutAutoresizingMaskConstraints
@@ -37,11 +37,10 @@ open class ChatChannelAvatarView<ExtraData: UIExtraDataTypes>: AvatarView {
             return
         }
 
-        if  channel.isDirectMessageChannel,
+        if channel.isDirectMessageChannel,
             let currentUserId = channelAndUserId.currentUserId,
-            let otherMember = channel.cachedMembers.first(where: { $0.id == currentUserId}),
+            let otherMember = channel.cachedMembers.first(where: { $0.id == currentUserId }),
             otherMember.isOnline {
-
             let fallbackBackgroundColor: UIColor
             if #available(iOS 13.0, *) {
                 fallbackBackgroundColor = UIColor.systemBackground

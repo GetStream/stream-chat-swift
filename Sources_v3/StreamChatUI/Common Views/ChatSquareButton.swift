@@ -2,9 +2,10 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
-open class ChatSquareButton<ExtraData: UIExtraDataTypes>: Button, UIConfigProvider {
+open class ChatSquareButton<ExtraData: ExtraDataTypes>: Button, UIConfigProvider {
     // MARK: - Properties
     
     public var defaultIntrinsicContentSize: CGSize?

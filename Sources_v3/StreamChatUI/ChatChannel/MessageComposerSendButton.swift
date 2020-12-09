@@ -2,9 +2,10 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
-open class MessageComposerSendButton<ExtraData: UIExtraDataTypes>: ChatSquareButton<ExtraData> {
+open class MessageComposerSendButton<ExtraData: ExtraDataTypes>: ChatSquareButton<ExtraData> {
     // MARK: Underlying types
     
     public enum Mode {

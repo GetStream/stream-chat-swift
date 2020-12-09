@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatMessagePopupViewController<ExtraData: UIExtraDataTypes>: ViewController, UIConfigProvider {
+open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
     public private(set) lazy var scrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints
     public private(set) lazy var scrollContentView = UIView()

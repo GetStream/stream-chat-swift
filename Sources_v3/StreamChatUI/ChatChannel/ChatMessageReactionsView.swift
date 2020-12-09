@@ -99,12 +99,10 @@ class MessageReactionView: UIView {
 
 // MARK: - Reactions
 
-open class ChatMessageReactionsView: View, UIConfigProvider {
-    public typealias ExtraData = DefaultUIExtraData
-
+open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     private enum Height {
-        static let small: CGFloat = 24
-        static let big: CGFloat = 40
+        static var small: CGFloat { 24 }
+        static var big: CGFloat { 40 }
     }
 
     enum Style {
@@ -220,7 +218,7 @@ open class ChatMessageReactionsView: View, UIConfigProvider {
 
 // MARK: - Controller
 
-open class ChatMessageReactionViewController<ExtraData: UIExtraDataTypes>: ViewController, UIConfigProvider {
+open class ChatMessageReactionViewController<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
     public var messageController: _ChatMessageController<ExtraData>!
 
     // MARK: - Subviews

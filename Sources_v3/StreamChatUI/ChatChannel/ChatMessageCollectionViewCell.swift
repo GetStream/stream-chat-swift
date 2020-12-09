@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-class СhatMessageCollectionViewCell<ExtraData: UIExtraDataTypes>: UICollectionViewCell, UIConfigProvider {
+class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionViewCell, UIConfigProvider {
     var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContent() }
     }
@@ -67,7 +67,7 @@ class СhatMessageCollectionViewCell<ExtraData: UIExtraDataTypes>: UICollectionV
     }
 }
 
-class СhatIncomingMessageCollectionViewCell<ExtraData: UIExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
+class СhatIncomingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
     static var reuseId: String { String(describing: self) }
 
     override func setUpLayout() {
@@ -77,7 +77,7 @@ class СhatIncomingMessageCollectionViewCell<ExtraData: UIExtraDataTypes>: Сhat
     }
 }
 
-class СhatOutgoingMessageCollectionViewCell<ExtraData: UIExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
+class СhatOutgoingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
     static var reuseId: String { String(describing: self) }
 
     override func setUpLayout() {

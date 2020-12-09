@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class CurrentChatUserAvatarView<ExtraData: UIExtraDataTypes>: Control, UIConfigProvider {
+open class CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
     // MARK: - Properties
     
     public var controller: _CurrentChatUserController<ExtraData>? {
