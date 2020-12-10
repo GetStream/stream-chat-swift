@@ -25,6 +25,9 @@ class AttachmentDTO: NSManagedObject {
         }
     }
 
+    /// An attachment local url.
+    @NSManaged var localURL: URL?
+
     /// A title.
     @NSManaged var title: String
     /// An author.
@@ -82,6 +85,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         }
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
+        dto.localURL = dto.localURL ?? nil
         dto.localState = nil
         dto.title = payload.title
         dto.author = payload.author
@@ -156,6 +160,7 @@ private extension _ChatMessageAttachment {
         
         return .init(
             id: dto.attachmentID,
+            localURL: dto.localURL,
             localState: dto.localState,
             title: dto.title,
             author: dto.author,

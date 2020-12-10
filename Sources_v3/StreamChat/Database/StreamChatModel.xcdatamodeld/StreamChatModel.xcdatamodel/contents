@@ -10,6 +10,7 @@
         <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="localProgress" optional="YES" attributeType="Double" minValueString="0" maxValueString="1" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="localStateRaw" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="localURL" optional="YES" attributeType="URI"/>
         <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
