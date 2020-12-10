@@ -8,6 +8,7 @@ import XCTest
 
 extension _ChatMessageAttachment {
     static func dummy<T: ExtraDataTypes>(
+        id: AttachmentId = .unique,
         title: String = .unique,
         author: String? = .unique,
         text: String? = .unique,
@@ -19,6 +20,7 @@ extension _ChatMessageAttachment {
         extraData: T.Attachment = .defaultValue
     ) -> _ChatMessageAttachment<T> {
         .init(
+            id: id,
             title: .unique,
             author: .unique,
             text: .unique,

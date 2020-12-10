@@ -44,13 +44,6 @@ struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
     /// An extra data for the attachment.
     let extraData: ExtraData
     
-    /// Hash used to uniquely identify an object to store it in DB.
-    var customHash: String {
-        [title, author, text, type.rawValue, url?.absoluteString, imageURL?.absoluteString]
-            .compactMap { $0 }
-            .reduce("", +)
-    }
-    
     /// Init an attachment.
     ///
     /// - Parameters:
