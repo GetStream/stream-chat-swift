@@ -316,6 +316,7 @@
 		88381E65258258C20047A6A3 /* FileUploadPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88381E64258258C20047A6A3 /* FileUploadPayload.swift */; };
 		88381E6E258259310047A6A3 /* FileUploadPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88381E6D258259310047A6A3 /* FileUploadPayload_Tests.swift */; };
 		88381E77258259C70047A6A3 /* FileUploadPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 88381E76258259C70047A6A3 /* FileUploadPayload.json */; };
+		88381E8725825A240047A6A3 /* AttachmentEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88381E8625825A240047A6A3 /* AttachmentEndpoints_Tests.swift */; };
 		883998212576397900294DB9 /* ChatMessageImageGallery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883998202576397900294DB9 /* ChatMessageImageGallery.swift */; };
 		8850B92A255C286B003AED69 /* UIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850B929255C286B003AED69 /* UIConfig.swift */; };
 		8850B93C255C3168003AED69 /* ContainerStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850B93B255C3168003AED69 /* ContainerStackView.swift */; };
@@ -367,6 +368,7 @@
 		88D85DAE252F468B00AE1030 /* ListDatabaseObserver_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D85DAD252F468B00AE1030 /* ListDatabaseObserver_Mock.swift */; };
 		88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D88F85257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift */; };
 		88E26D5E2580E92000F55AB5 /* AttachmentId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E26D5D2580E92000F55AB5 /* AttachmentId.swift */; };
+		88E26D7D2580F95300F55AB5 /* AttachmentEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E26D7C2580F95300F55AB5 /* AttachmentEndpoints.swift */; };
 		88EA9AD825470F6A007EE76B /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EA9AD725470F6A007EE76B /* Dictionary+Extensions.swift */; };
 		88EA9AE225471999007EE76B /* Dictionary_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EA9AE125471999007EE76B /* Dictionary_Tests.swift */; };
 		88EA9AE825471EF4007EE76B /* MessageReactionRequestPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EA9AE725471EF4007EE76B /* MessageReactionRequestPayload_Tests.swift */; };
@@ -988,6 +990,7 @@
 		88381E64258258C20047A6A3 /* FileUploadPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUploadPayload.swift; sourceTree = "<group>"; };
 		88381E6D258259310047A6A3 /* FileUploadPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileUploadPayload_Tests.swift; sourceTree = "<group>"; };
 		88381E76258259C70047A6A3 /* FileUploadPayload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FileUploadPayload.json; sourceTree = "<group>"; };
+		88381E8625825A240047A6A3 /* AttachmentEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentEndpoints_Tests.swift; sourceTree = "<group>"; };
 		883998202576397900294DB9 /* ChatMessageImageGallery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageImageGallery.swift; sourceTree = "<group>"; };
 		8850B929255C286B003AED69 /* UIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIConfig.swift; sourceTree = "<group>"; };
 		8850B93B255C3168003AED69 /* ContainerStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStackView.swift; sourceTree = "<group>"; };
@@ -1039,6 +1042,7 @@
 		88D85DAD252F468B00AE1030 /* ListDatabaseObserver_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserver_Mock.swift; sourceTree = "<group>"; };
 		88D88F85257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSLayoutConstraint+Extensions.swift"; sourceTree = "<group>"; };
 		88E26D5D2580E92000F55AB5 /* AttachmentId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentId.swift; sourceTree = "<group>"; };
+		88E26D7C2580F95300F55AB5 /* AttachmentEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentEndpoints.swift; sourceTree = "<group>"; };
 		88E779B12563FA6B00BA79B6 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		88EA9AD725470F6A007EE76B /* Dictionary+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Dictionary+Extensions.swift"; sourceTree = "<group>"; };
 		88EA9AE125471999007EE76B /* Dictionary_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary_Tests.swift; sourceTree = "<group>"; };
@@ -1868,6 +1872,8 @@
 				882C5758252C794900E60C44 /* MemberEndpoints.swift */,
 				882C575B252C79E900E60C44 /* MemberEndpoints_Tests.swift */,
 				790A4C47252DDD1A001F4A23 /* DeviceEndpoints_Tests.swift */,
+				88E26D7C2580F95300F55AB5 /* AttachmentEndpoints.swift */,
+				88381E8625825A240047A6A3 /* AttachmentEndpoints_Tests.swift */,
 			);
 			path = Endpoints;
 			sourceTree = "<group>";
@@ -3309,6 +3315,7 @@
 				79CD959224F9380B00E87377 /* MulticastDelegate.swift in Sources */,
 				7964F3BC249A5E60002A09EC /* RequestEncoder.swift in Sources */,
 				79896D64250A63A200BA8F1C /* ChannelReadUpdaterMiddleware.swift in Sources */,
+				88E26D7D2580F95300F55AB5 /* AttachmentEndpoints.swift in Sources */,
 				F6D61D9B2510B3FC00EB0624 /* NSManagedObject+Extensions.swift in Sources */,
 				DA4AA3B8250271BD00FAAF6E /* CurrentUserController+Combine.swift in Sources */,
 				79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */,
@@ -3483,6 +3490,7 @@
 				88F6DF97252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift in Sources */,
 				7991D83F24F8F1BF00D21BA3 /* ChatClient_Mock.swift in Sources */,
 				DA4EE5BB252B69FD00CB26D4 /* UserListController+Combine_Tests.swift in Sources */,
+				88381E8725825A240047A6A3 /* AttachmentEndpoints_Tests.swift in Sources */,
 				792921CB24C077B400116BBB /* TestDispatchQueue.swift in Sources */,
 				79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */,
 				79280F8324891C6A00CDEB89 /* VirtualTime_Tests.swift in Sources */,
