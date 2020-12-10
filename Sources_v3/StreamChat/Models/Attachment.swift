@@ -14,6 +14,35 @@ import Foundation
 ///
 public typealias ChatMessageAttachment = _ChatMessageAttachment<DefaultExtraData>
 
+extension _ChatMessageAttachment {
+    /// A type designed to combine all the information required to create `_ChatMessageAttachment`.
+    public struct Seed: Hashable {
+        /// A local url the data for uploading will be taken from.
+        /// When an attachment in uploaded and a message is sent the `localURL` of resulting
+        /// `_ChatMessageAttachment` will be equal to this value.
+        public let localURL: URL
+        /// When the attachment is created the filename will be available under `_ChatMessageAttachment.title` field.
+        /// A `localURL.lastPathComponent` might be a good option.
+        public let fileName: String
+        /// An attachment type (see `AttachmentType`).
+        public let type: AttachmentType
+        /// An extra data for the attachment.
+        public let extraData: ExtraData.Attachment
+
+        public init(
+            localURL: URL,
+            fileName: String,
+            type: AttachmentType,
+            extraData: ExtraData.Attachment
+        ) {
+            self.localURL = localURL
+            self.fileName = fileName
+            self.type = type
+            self.extraData = extraData
+        }
+    }
+}
+
 /// A type representing a chat message attachment. `_ChatMessageAttachment` is an immutable snapshot of a
 /// chat message attachment entity at the given time.
 ///
