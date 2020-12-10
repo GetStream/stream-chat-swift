@@ -7,8 +7,13 @@ import Foundation
 
 @objc(AttachmentDTO)
 class AttachmentDTO: NSManagedObject {
-    /// An attachment hash.
-    @NSManaged var attachmentHash: String
+    /// An attachment id.
+    @NSManaged private var id: String
+    var attachmentID: AttachmentId {
+        get { AttachmentId(rawValue: id)! }
+        set { id = newValue.rawValue }
+    }
+
     /// A title.
     @NSManaged var title: String
     /// An author.
@@ -35,18 +40,19 @@ class AttachmentDTO: NSManagedObject {
     @NSManaged var message: MessageDTO
     @NSManaged var channel: ChannelDTO
     
-    static func load(hash: String, context: NSManagedObjectContext) -> AttachmentDTO? {
+    static func load(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO? {
         let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
-        request.predicate = NSPredicate(format: "attachmentHash == %@", hash)
+        request.predicate = NSPredicate(format: "id == %@", id.rawValue)
         return try? context.fetch(request).first
     }
     
-    static func loadOrCreate(queryHash: String, context: NSManagedObjectContext) -> AttachmentDTO {
-        if let existing = Self.load(hash: queryHash, context: context) {
+    static func loadOrCreate(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO {
+        if let existing = Self.load(id: id, context: context) {
             return existing
         }
         
         let new = AttachmentDTO(context: context)
+        new.attachmentID = id
         return new
     }
 }
@@ -54,11 +60,17 @@ class AttachmentDTO: NSManagedObject {
 extension NSManagedObjectContext: AttachmentDatabaseSession {
     func saveAttachment<ExtraData: AttachmentExtraData>(
         payload: AttachmentPayload<ExtraData>,
-        messageId: MessageId,
-        cid: ChannelId
+        id: AttachmentId
     ) throws -> AttachmentDTO {
-        let dto = AttachmentDTO.loadOrCreate(queryHash: payload.customHash, context: self)
-        dto.attachmentHash = payload.customHash
+        guard let messageDTO = message(id: id.messageId) else {
+            throw ClientError.MessageDoesNotExist(messageId: id.messageId)
+        }
+
+        guard let channelDTO = channel(cid: id.cid) else {
+            throw ClientError.ChannelDoesNotExist(cid: id.cid)
+        }
+
+        let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         dto.title = payload.title
         dto.author = payload.author
         dto.text = payload.text
@@ -69,29 +81,24 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.imagePreviewURL = payload.imagePreviewURL
         dto.file = payload.file == nil ? nil : try JSONEncoder.stream.encode(payload.file)
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-        
-        if let messageDTO = MessageDTO.load(id: messageId, context: self) {
-            dto.message = messageDTO
-            messageDTO.attachments.insert(dto)
-        } else {
-            throw ClientError.MessageDoesNotExist(messageId: messageId)
-        }
-        
-        if let channelDTO = ChannelDTO.load(cid: cid, context: self) {
-            dto.channel = channelDTO
-            channelDTO.attachments.insert(dto)
-        } else {
-            throw ClientError.ChannelDoesNotExist(cid: cid)
-        }
+        dto.channel = channelDTO
+        dto.message = messageDTO
         
         return dto
     }
     
     func saveAttachment<ExtraData: ExtraDataTypes>(
         attachment: _ChatMessageAttachment<ExtraData>,
-        messageId: MessageId,
-        cid: ChannelId
+        id: AttachmentId
     ) throws -> AttachmentDTO {
+        guard let messageDTO = message(id: id.messageId) else {
+            throw ClientError.MessageDoesNotExist(messageId: id.messageId)
+        }
+
+        guard let channelDTO = channel(cid: id.cid) else {
+            throw ClientError.ChannelDoesNotExist(cid: id.cid)
+        }
+
         let dto = AttachmentDTO.loadOrCreate(queryHash: attachment.hash, context: self)
         dto.attachmentHash = attachment.hash
         dto.title = attachment.title
@@ -104,20 +111,9 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.imagePreviewURL = attachment.imagePreviewURL
         dto.file = attachment.file == nil ? nil : try JSONEncoder.stream.encode(attachment.file)
         dto.extraData = try JSONEncoder.default.encode(attachment.extraData)
-        
-        if let messageDTO = MessageDTO.load(id: messageId, context: self) {
-            dto.message = messageDTO
-            messageDTO.attachments.insert(dto)
-        } else {
-            throw ClientError.MessageDoesNotExist(messageId: messageId)
-        }
-        
-        if let channelDTO = ChannelDTO.load(cid: cid, context: self) {
-            dto.channel = channelDTO
-            channelDTO.attachments.insert(dto)
-        } else {
-            throw ClientError.ChannelDoesNotExist(cid: cid)
-        }
+
+        dto.channel = channelDTO
+        dto.message = messageDTO
         
         return dto
     }
@@ -139,13 +135,14 @@ private extension _ChatMessageAttachment {
             extraData = try JSONDecoder.default.decode(ExtraData.Attachment.self, from: dto.extraData)
         } catch {
             log.error(
-                "Failed to decode extra data for Attachment with hash: <\(dto.attachmentHash)>, using default value instead. "
+                "Failed to decode extra data for Attachment with hash: <\(dto.attachmentID)>, using default value instead. "
                     + "Error: \(error)"
             )
             extraData = .defaultValue
         }
         
         return .init(
+            id: dto.attachmentID,
             title: dto.title,
             author: dto.author,
             text: dto.text,
@@ -168,7 +165,7 @@ private extension AttachmentRequestBody {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: dto.extraData)
         } catch {
             log.error(
-                "Failed to decode extra data for Attachment with hash: <\(dto.attachmentHash)>, using default value instead. "
+                "Failed to decode extra data for Attachment with hash: <\(dto.attachmentID)>, using default value instead. "
                     + "Error: \(error)"
             )
             extraData = .defaultValue
@@ -199,7 +196,7 @@ private extension AttachmentDTO {
                 return object
             } catch {
                 log.error(
-                    "Failed to decode \(type) for attachment with hash: <\(attachmentHash)>, using default value instead. "
+                    "Failed to decode \(type) for attachment with hash: <\(id)>, using default value instead. "
                         + "Error: \(error)"
                 )
                 return nil

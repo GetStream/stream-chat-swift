@@ -171,8 +171,7 @@ protocol AttachmentDatabaseSession {
     @discardableResult
     func saveAttachment<ExtraData: AttachmentExtraData>(
         payload: AttachmentPayload<ExtraData>,
-        messageId: MessageId,
-        cid: ChannelId
+        id: AttachmentId
     ) throws -> AttachmentDTO
     
     /// Creates a new `AttachmentDTO` object in the database from the given model for the message
@@ -180,8 +179,7 @@ protocol AttachmentDatabaseSession {
     @discardableResult
     func saveAttachment<ExtraData: AttachmentExtraData>(
         attachment: _ChatMessageAttachment<ExtraData>,
-        messageId: MessageId,
-        cid: ChannelId
+        id: AttachmentId
     ) throws -> AttachmentDTO
 }
 
