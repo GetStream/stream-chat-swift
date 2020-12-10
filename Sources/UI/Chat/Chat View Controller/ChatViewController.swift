@@ -63,7 +63,8 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     var canScroll: Bool { reactionsView == nil && (isAtBottom || scrollOnNewData) }
     /// Whether the table view is scrolled all the way down
     var isAtBottom: Bool { tableView.contentOffset.y >= (tableView.contentSize.height - tableView.frame.size.height) }
-    /// Whether to scroll to bottom when any new data is added to the bottom of the table view. Defaults to `true`. `false` will still scroll when data is authored by the current user.
+    /// Whether to scroll to bottom when any new data is added to the bottom of the table view. Defaults to `true`.
+    /// `false` will still scroll when data is authored by the current user.
     public var scrollOnNewData: Bool = true
     
     /// A composer view.
