@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamChat
 
 extension URL {
     /// Returns a unique random URL
@@ -28,6 +29,13 @@ extension URL {
 extension String {
     /// Returns a new unique string
     static var unique: String { UUID().uuidString }
+}
+
+extension AttachmentId {
+    /// Returns a new unique id
+    static var unique: Self {
+        .init(cid: .unique, messageId: .unique, index: .random(in: 1..<1000))
+    }
 }
 
 extension Date {
