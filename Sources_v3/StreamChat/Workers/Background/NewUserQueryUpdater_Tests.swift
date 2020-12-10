@@ -112,6 +112,27 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         // Assert `newUserQueryUpdater` can be released even though network response hasn't come yet
         AssertAsync.canBeReleased(&newUserQueryUpdater)
     }
+    
+    func test_updater_ignoresNonObservedQueries() throws {
+        let filter1: Filter<UserListFilterScope<DefaultExtraData.User>> = .equal(.id, to: .unique)
+        
+        try database.createUserListQuery(filter: filter1)
+        
+        var nonObservedQuery = UserListQuery<DefaultExtraData.User>(filter: .equal(.name, to: .unique))
+        nonObservedQuery.shouldBeUpdatedInBackground = false
+        
+        try database.writeSynchronously { session in
+            try session.saveQuery(query: nonObservedQuery)
+        }
+        
+        try database.createUser()
+        
+        // Assert `update(userListQuery` called for only observed query in DB
+        AssertAsync.willBeEqual(
+            env!.userQueryUpdater?.update_queries.compactMap(\.filter?.filterHash).sorted(),
+            [filter1].map(\.filterHash).sorted()
+        )
+    }
 }
 
 private class TestEnvironment {
