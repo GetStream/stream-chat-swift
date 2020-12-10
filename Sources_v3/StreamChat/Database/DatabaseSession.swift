@@ -19,6 +19,9 @@ protocol UserDatabaseSession {
     
     /// Fetches `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
     func user(id: UserId) -> UserDTO?
+    
+    /// Removes the specified query from DB.
+    func deleteQuery<ExtraData: UserExtraData>(_ query: UserListQuery<ExtraData>)
 }
 
 protocol CurrentUserDatabaseSession {

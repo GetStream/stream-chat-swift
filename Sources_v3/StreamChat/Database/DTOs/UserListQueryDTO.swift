@@ -61,4 +61,18 @@ extension NSManagedObjectContext {
         
         return newDTO
     }
+    
+    func deleteQuery<ExtraData: UserExtraData>(_ query: UserListQuery<ExtraData>) {
+        guard let filterHash = query.filter?.filterHash else {
+            // A query without a filter is not saved in DB.
+            return
+        }
+        
+        guard let existingDTO = UserListQueryDTO.load(filterHash: filterHash, context: self) else {
+            // This query doesn't exist in DB.
+            return
+        }
+        
+        delete(existingDTO)
+    }
 }
