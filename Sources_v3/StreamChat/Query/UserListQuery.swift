@@ -64,7 +64,7 @@ public struct UserListQuery<ExtraData: UserExtraData>: Encodable {
     }
     
     /// A filter for the query (see `Filter`).
-    public let filter: Filter<UserListFilterScope<ExtraData>>?
+    public var filter: Filter<UserListFilterScope<ExtraData>>?
     
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<UserListSortingKey>]
