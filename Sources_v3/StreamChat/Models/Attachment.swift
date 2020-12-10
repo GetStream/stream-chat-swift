@@ -56,6 +56,10 @@ extension _ChatMessageAttachment {
 public struct _ChatMessageAttachment<ExtraData: ExtraDataTypes>: Hashable {
     /// A unique identifier of the attachment.
     public let id: AttachmentId
+    /// When a new attachment is created, this value contains the URL of the source from which the attachment
+    /// data are uploaded to the server. For already sent attachments this value is usually `nil`. This value is
+    /// device-specific and is not synced with other devices.
+    public let localURL: URL?
     /// A local attachment state
     public let localState: LocalAttachmentState?
     /// A title for the attachment.
@@ -81,6 +85,7 @@ public struct _ChatMessageAttachment<ExtraData: ExtraDataTypes>: Hashable {
     
     public init(
         id: AttachmentId,
+        localURL: URL?,
         localState: LocalAttachmentState?,
         title: String,
         author: String?,
@@ -94,6 +99,7 @@ public struct _ChatMessageAttachment<ExtraData: ExtraDataTypes>: Hashable {
         extraData: ExtraData.Attachment
     ) {
         self.id = id
+        self.localURL = localURL
         self.localState = localState
         self.title = title
         self.author = author
