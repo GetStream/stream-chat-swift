@@ -14,6 +14,17 @@ class AttachmentDTO: NSManagedObject {
         set { id = newValue.rawValue }
     }
 
+    /// An attachment local state.
+    @NSManaged private var localStateRaw: String
+    @NSManaged private var localProgress: Double
+    var localState: LocalAttachmentState? {
+        get { LocalAttachmentState(rawValue: localStateRaw, progress: localProgress) }
+        set {
+            localStateRaw = newValue?.rawValue ?? ""
+            localProgress = newValue?.progress ?? 0
+        }
+    }
+
     /// A title.
     @NSManaged var title: String
     /// An author.
@@ -71,6 +82,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         }
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
+        dto.localState = nil
         dto.title = payload.title
         dto.author = payload.author
         dto.text = payload.text
@@ -111,6 +123,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.imagePreviewURL = attachment.imagePreviewURL
         dto.file = attachment.file == nil ? nil : try JSONEncoder.stream.encode(attachment.file)
         dto.extraData = try JSONEncoder.default.encode(attachment.extraData)
+        dto.localURL = seed.localURL
 
         dto.channel = channelDTO
         dto.message = messageDTO
@@ -143,6 +156,7 @@ private extension _ChatMessageAttachment {
         
         return .init(
             id: dto.attachmentID,
+            localState: dto.localState,
             title: dto.title,
             author: dto.author,
             text: dto.text,
@@ -202,6 +216,45 @@ private extension AttachmentDTO {
                 return nil
             }
         } else {
+            return nil
+        }
+    }
+}
+
+extension LocalAttachmentState {
+    var rawValue: String {
+        switch self {
+        case .pendingUpload:
+            return "pendingUpload"
+        case .uploading:
+            return "uploading"
+        case .uploadingFailed:
+            return "uploadingFailed"
+        case .uploaded:
+            return "uploaded"
+        }
+    }
+
+    var progress: Double {
+        switch self {
+        case let .uploading(progress):
+            return progress
+        default:
+            return 0
+        }
+    }
+
+    init?(rawValue: String, progress: Double) {
+        switch rawValue {
+        case LocalAttachmentState.pendingUpload.rawValue:
+            self = .pendingUpload
+        case LocalAttachmentState.uploading(progress: 0).rawValue:
+            self = .uploading(progress: progress)
+        case LocalAttachmentState.uploadingFailed.rawValue:
+            self = .uploadingFailed
+        case LocalAttachmentState.uploaded.rawValue:
+            self = .uploaded
+        default:
             return nil
         }
     }

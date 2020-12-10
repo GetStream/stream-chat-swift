@@ -9,6 +9,7 @@ import XCTest
 extension _ChatMessageAttachment {
     static func dummy<T: ExtraDataTypes>(
         id: AttachmentId = .unique,
+        localState: LocalAttachmentState? = nil,
         title: String = .unique,
         author: String? = .unique,
         text: String? = .unique,
@@ -21,6 +22,7 @@ extension _ChatMessageAttachment {
     ) -> _ChatMessageAttachment<T> {
         .init(
             id: id,
+            localState: localState,
             title: .unique,
             author: .unique,
             text: .unique,
