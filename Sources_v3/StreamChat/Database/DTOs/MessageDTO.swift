@@ -199,7 +199,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.extraData = try JSONEncoder.default.encode(extraData)
         message.isSilent = false
         message.reactionScores = [:]
-        message.attachments = try Set(attachments.map { try saveAttachment(attachment: $0, messageId: message.id, cid: cid) })
+        message.attachments = try Set(
+            attachments.enumerated().map { index, seed in
+                let id = AttachmentId(cid: cid, messageId: message.id, index: index)
+                let dto = try createNewAttachment(seed: seed, id: id)
+                return dto
+            }
+        )
         message.showReplyInChannel = showReplyInChannel
         
         message.user = currentUserDTO.user
@@ -247,10 +253,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             payload.threadParticipants.map { try saveUser(payload: $0) }
         )
         
-        try payload.attachments.forEach { attachmentPayload in
-            let attachment = try saveAttachment(payload: attachmentPayload, messageId: payload.id, cid: cid)
-            dto.attachments.insert(attachment)
-        }
+        dto.attachments = try Set(
+            payload.attachments.enumerated().map { index, attachment in
+                let id = AttachmentId(cid: cid, messageId: payload.id, index: index)
+                let dto = try saveAttachment(payload: attachment, id: id)
+                return dto
+            }
+        )
         
         if let parentMessageId = payload.parentId,
             let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {

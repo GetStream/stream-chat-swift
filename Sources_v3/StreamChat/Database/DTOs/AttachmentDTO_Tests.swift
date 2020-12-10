@@ -90,7 +90,7 @@ class AttachmentDTO_Tests: XCTestCase {
             // Save the message
             let messageDTO = try! session.saveMessage(payload: messagePayload, for: cid)
             // Make the extra data JSON of the attachment invalid
-            messageDTO.attachments.first?.extraData = #"{"invalid": json}"#.data(using: .utf8)!
+            messageDTO.attachments.first?.extraData = #"{"invalid": json}"# .data(using: .utf8)!
         }
         
         // Load the attachment for the message from the db
@@ -156,7 +156,8 @@ class AttachmentDTO_Tests: XCTestCase {
         // Try to save an attachment and catch an error
         let error = try await {
             database.write({ session in
-                try session.saveAttachment(payload: payload, messageId: messageId, cid: .unique)
+                let id = AttachmentId(cid: .unique, messageId: messageId, index: 0)
+                try session.saveAttachment(payload: payload, id: id)
             }, completion: $0)
         }
         
@@ -174,7 +175,8 @@ class AttachmentDTO_Tests: XCTestCase {
         // Try to save an attachment and catch an error
         let error = try await {
             database.write({ session in
-                try session.saveAttachment(payload: payload, messageId: .unique, cid: cid)
+                let id = AttachmentId(cid: cid, messageId: .unique, index: 0)
+                try session.saveAttachment(payload: payload, id: id)
             }, completion: $0)
         }
         
