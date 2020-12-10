@@ -75,6 +75,10 @@ public struct UserListQuery<ExtraData: UserExtraData>: Encodable {
     /// Query options. By default the query options contain `presence`.
     var options: QueryOptions = [.presence]
     
+    /// Indicates if the query should be observed for new users.
+    /// If set to true, newly created users in the database are automatically included in the query if they fit the predicate.
+    var shouldBeUpdatedInBackground = true
+    
     /// Init a users query.
     /// - Parameters:
     ///   - filter: a users filter. Empty filter will return all users.

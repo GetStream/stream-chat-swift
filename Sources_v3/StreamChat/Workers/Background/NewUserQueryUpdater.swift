@@ -30,7 +30,7 @@ final class NewUserQueryUpdater<ExtraData: UserExtraData>: Worker {
     private var queries: [UserListQueryDTO] {
         do {
             let queries = try database.backgroundReadOnlyContext
-                .fetch(NSFetchRequest<UserListQueryDTO>(entityName: UserListQueryDTO.entityName))
+                .fetch(UserListQueryDTO.observedQueries())
             return queries
         } catch {
             log.error("Internal error: Failed to fetch [UserListQueryDTO]: \(error)")

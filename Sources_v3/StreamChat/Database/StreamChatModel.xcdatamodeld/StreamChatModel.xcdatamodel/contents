@@ -243,6 +243,7 @@
     <entity name="UserListQueryDTO" representedClassName="UserListQueryDTO" syncable="YES">
         <attribute name="filterHash" attributeType="String"/>
         <attribute name="filterJSONData" attributeType="Binary"/>
+        <attribute name="shouldBeUpdatedInBackground" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <relationship name="users" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="queries" inverseEntity="UserDTO"/>
         <fetchIndex name="filterHash">
             <fetchIndexElement property="filterHash" type="Binary" order="ascending"/>
@@ -266,6 +267,6 @@
         <element name="MessageReactionDTO" positionX="9" positionY="153" width="128" height="163"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="UserDTO" positionX="0" positionY="0" width="128" height="344"/>
-        <element name="UserListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
+        <element name="UserListQueryDTO" positionX="9" positionY="153" width="128" height="103"/>
     </elements>
 </model>

@@ -12,9 +12,19 @@ class UserListQueryDTO: NSManagedObject {
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated.
     @NSManaged var filterJSONData: Data
     
+    /// Indicates if the query should be observed by background workers.
+    /// If set to true, newly created users in the database are automatically included in the query if they fit the predicate.
+    @NSManaged var shouldBeUpdatedInBackground: Bool
+    
     // MARK: - Relationships
     
     @NSManaged var users: Set<UserDTO>
+    
+    static func observedQueries() -> NSFetchRequest<UserListQueryDTO> {
+        let fetchRequest = NSFetchRequest<UserListQueryDTO>(entityName: UserListQueryDTO.entityName)
+        fetchRequest.predicate = NSPredicate(format: "shouldBeUpdatedInBackground == YES")
+        return fetchRequest
+    }
     
     static func load(filterHash: String, context: NSManagedObjectContext) -> UserListQueryDTO? {
         let request = NSFetchRequest<UserListQueryDTO>(entityName: UserListQueryDTO.entityName)
@@ -41,6 +51,7 @@ extension NSManagedObjectContext {
         let newDTO = NSEntityDescription
             .insertNewObject(forEntityName: UserListQueryDTO.entityName, into: self) as! UserListQueryDTO
         newDTO.filterHash = filterHash
+        newDTO.shouldBeUpdatedInBackground = query.shouldBeUpdatedInBackground
         
         do {
             newDTO.filterJSONData = try JSONEncoder.default.encode(query.filter)
