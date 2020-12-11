@@ -81,7 +81,7 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
             Assert.willBeEqual(
-                messagePayload.attachmentIDs(cid: channelId),
+                Set(messagePayload.attachmentIDs(cid: channelId)),
                 loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
             )
         }
@@ -165,7 +165,7 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
             Assert.willBeEqual(
-                messagePayload.attachmentIDs(cid: channelId),
+                Set(messagePayload.attachmentIDs(cid: channelId)),
                 loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
             )
         }
@@ -494,11 +494,9 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.updatedAt)
         XCTAssertEqual(
             loadedMessage.attachments,
-            Set(
-                newMessageAttachmentSeeds.enumerated().map { index, seed in
-                    .init(cid: cid, messageId: newMessageId, index: index, seed: seed, localState: .pendingUpload)
-                }
-            )
+            newMessageAttachmentSeeds.enumerated().map { index, seed in
+                .init(cid: cid, messageId: newMessageId, index: index, seed: seed, localState: .pendingUpload)
+            }
         )
     }
     
