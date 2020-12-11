@@ -12,6 +12,12 @@ class APIClientMock: APIClient {
     /// The last endpoint `request` function was called with.
     @Atomic var request_endpoint: AnyEndpoint?
     @Atomic var request_completion: Any?
+
+    /// The last endpoint `uploadFile` function was called with.
+    @Atomic var uploadFile_endpoint: Endpoint<FileUploadPayload>?
+    @Atomic var uploadFile_multipartFormData: MultipartFormData?
+    @Atomic var uploadFile_progress: ((Double) -> Void)?
+    @Atomic var uploadFile_completion: ((Result<FileUploadPayload, Error>) -> Void)?
     
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
     @Atomic var init_requestEncoder: RequestEncoder
@@ -45,6 +51,19 @@ class APIClientMock: APIClient {
         request_endpoint = AnyEndpoint(endpoint)
         request_completion = completion
         request_allRecordedCalls.append((request_endpoint!, request_completion!))
+    }
+
+    override func uploadFile(
+        endpoint: Endpoint<FileUploadPayload>,
+        multipartFormData: MultipartFormData,
+        progress: ((Double) -> Void)? = nil,
+        completion: @escaping (Result<FileUploadPayload, Error>) -> Void
+    ) {
+        uploadFile_endpoint = endpoint
+        uploadFile_multipartFormData = multipartFormData
+        uploadFile_progress = progress
+        uploadFile_completion = completion
+        request_allRecordedCalls.append((AnyEndpoint(uploadFile_endpoint!), uploadFile_completion!))
     }
 }
 
