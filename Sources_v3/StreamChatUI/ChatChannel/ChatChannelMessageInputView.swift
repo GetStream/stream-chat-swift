@@ -10,20 +10,6 @@ open class ChatChannelMessageInputView<ExtraData: ExtraDataTypes>: UIView {
     
     public let uiConfig: UIConfig<ExtraData>
     
-    public var textViewHeight: CGFloat {
-        guard let font = textView.font, let text = textView.text else { return 0 }
-
-        let width = textView.frame.width - textView.textContainerInset.right - textView.textContainerInset.left
-        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
-        let boundingBox = text.boundingRect(
-            with: constraintRect,
-            options: .usesLineFragmentOrigin,
-            attributes: [.font: font],
-            context: nil
-        )
-        return boundingBox.height
-    }
-    
     // MARK: - Subviews
     
     public private(set) lazy var container = ContainerStackView().withoutAutoresizingMaskConstraints
@@ -72,7 +58,7 @@ open class ChatChannelMessageInputView<ExtraData: ExtraDataTypes>: UIView {
     // MARK: - Overrides
     
     override open var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: textViewHeight)
+        CGSize(width: UIView.noIntrinsicMetric, height: textView.calculatedTextHeight())
     }
     
     // MARK: - Public
