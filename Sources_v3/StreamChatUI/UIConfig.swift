@@ -171,6 +171,8 @@ public extension UIConfig {
         public var sendButton: MessageComposerSendButton<ExtraData>.Type = MessageComposerSendButton<ExtraData>.self
         public var composerButton: ChatSquareButton<ExtraData>.Type = ChatSquareButton<ExtraData>.self
         public var textView: ChatChannelMessageInputTextView<ExtraData>.Type = ChatChannelMessageInputTextView<ExtraData>.self
+        public var replyBubbleView: ChatReplyBubbleView<ExtraData>.Type = ChatReplyBubbleView.self
+        public var replyBubbleAvatarView: AvatarView.Type = AvatarView.self
         public var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData>.Type =
             MessageComposerSuggestionsViewController<ExtraData>.self
         public var suggestionsCollectionView: MessageComposerSuggestionsCollectionView.Type =
