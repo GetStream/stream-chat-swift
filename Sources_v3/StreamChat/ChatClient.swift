@@ -223,7 +223,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             NewUserQueryUpdater<ExtraData.User>.init,
             ChannelWatchStateUpdater<ExtraData>.init,
             MessageEditor<ExtraData>.init,
-            MissingEventsPublisher<ExtraData>.init
+            MissingEventsPublisher<ExtraData>.init,
+            AttachmentUploader<ExtraData>.init
         ]
         
         self.init(
