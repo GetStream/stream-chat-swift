@@ -1047,7 +1047,11 @@ class ChannelController_Tests: StressTestCase {
         let message = try session.createNewMessage(
             in: channelId,
             text: "Message",
-            attachments: [dummyNoExtraDataAttachment],
+            attachments: [
+                ChatMessageAttachment.Seed.dummy(),
+                ChatMessageAttachment.Seed.dummy(),
+                ChatMessageAttachment.Seed.dummy()
+            ],
             extraData: DefaultExtraData.Message.defaultValue
         )
         return message.id
@@ -1275,6 +1279,11 @@ class ChannelController_Tests: StressTestCase {
 //        let command: String = .unique
 //        let arguments: String = .unique
         let extraData: DefaultExtraData.Message = .defaultValue
+        let attachments: [ChatMessageAttachment.Seed] = [
+            .dummy(),
+            .dummy(),
+            .dummy()
+        ]
         
         // Simulate `createNewMessage` calls and catch the completion
         var completionCalled = false
@@ -1282,6 +1291,7 @@ class ChannelController_Tests: StressTestCase {
             text: text,
 //            command: command,
 //            arguments: arguments,
+            attachments: attachments,
             extraData: extraData
         ) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
@@ -1303,6 +1313,7 @@ class ChannelController_Tests: StressTestCase {
 //        XCTAssertEqual(env.channelUpdater?.createNewMessage_command, command)
 //        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, attachments)
     }
     
     func test_createNewMessage_failsForNewChannels() throws {
