@@ -16,9 +16,13 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: UIInputVie
     
     // MARK: - Subviews
 
-    public private(set) lazy var container = ContainerStackView().withoutAutoresizingMaskConstraints
+    public private(set) lazy var container = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var replyView: UIView = .init()
+    public private(set) lazy var replyView = uiConfig
+        .messageComposer
+        .replyBubbleView.init()
+        .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var attachmentsView: MessageComposerAttachmentsView<ExtraData> = uiConfig
         .messageComposer
@@ -155,8 +159,9 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: UIInputVie
         container.centerStackView.isHidden = false
         container.centerStackView.axis = .vertical
         container.centerStackView.alignment = .fill
-        container.centerStackView.addArrangedSubview(replyView)
         
+        replyView.isHidden = true
+        container.centerStackView.addArrangedSubview(replyView)
         container.centerStackView.addArrangedSubview(attachmentsView)
         attachmentsView.heightAnchor.constraint(equalToConstant: attachmentsViewHeight).isActive = true
         
@@ -173,6 +178,12 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: UIInputVie
         container.leftStackView.addArrangedSubview(shrinkInputButton)
         container.leftStackView.addArrangedSubview(attachmentButton)
         container.leftStackView.addArrangedSubview(commandsButton)
+        
+        [shrinkInputButton, attachmentButton, commandsButton, sendButton, dismissButton]
+            .forEach { button in
+                button.pin(anchors: [.width], to: button.intrinsicContentSize.width)
+                button.pin(anchors: [.height], to: button.intrinsicContentSize.height)
+            }
 
         attachmentsView.isHidden = true
         shrinkInputButton.isHidden = true
