@@ -58,7 +58,15 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
     private var needsToReload = true
     /// A reaction view.
     weak var reactionsView: ReactionsView?
-    var scrollEnabled: Bool { reactionsView == nil }
+
+    /// Whether the table view should scroll when data is added to the table view
+    var canScroll: Bool { reactionsView == nil && (isAtBottom || scrollOnNewData) }
+    /// Whether the table view is scrolled all the way down
+    var isAtBottom: Bool { tableView.contentOffset.y >= (tableView.contentSize.height - tableView.frame.size.height) }
+    /// Whether to scroll to bottom when any new data is added to the bottom of the table view. Defaults to `true`.
+    /// `false` will still scroll when data is authored by the current user.
+    public var scrollOnNewData: Bool = true
+    
     /// A composer view.
     public private(set) lazy var composerView = createComposerView()
     var keyboardIsVisible = false
@@ -206,7 +214,7 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         markReadIfPossible()
         
         if let presenter = presenter, (needsToReload || presenter.items != items) {
-            let scrollToBottom = items.isEmpty || (scrollEnabled && tableView.bottomContentOffset < bottomThreshold)
+            let scrollToBottom = items.isEmpty || (canScroll && tableView.bottomContentOffset < bottomThreshold)
             refreshTableView(scrollToBottom: scrollToBottom, animated: false)
         }
     }
@@ -457,7 +465,7 @@ extension ChatViewController {
             
             tableView.reloadData()
             
-            if scrollToRow >= 0 && (isLoading || scrollEnabled) {
+            if scrollToRow >= 0 && (isLoading || canScroll) {
                 tableView.scrollToRowIfPossible(at: scrollToRow, animated: false)
             }
             
@@ -493,7 +501,7 @@ extension ChatViewController {
                     + minMessageHeight
             }
             
-            let needsToScroll = forceToScroll || (scrollEnabled && (effectiveContentHeight >= tableView.frame.height))
+            let needsToScroll = forceToScroll || (canScroll && (effectiveContentHeight >= tableView.frame.height))
             
             if forceToScroll {
                 reactionsView?.dismiss()
