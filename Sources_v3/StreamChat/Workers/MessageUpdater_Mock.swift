@@ -23,7 +23,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var createNewReply_command: String?
     @Atomic var createNewReply_arguments: String?
     @Atomic var createNewReply_parentMessageId: MessageId?
-    @Atomic var createNewReply_attachments: [_ChatMessageAttachment<ExtraData>]?
+    @Atomic var createNewReply_attachments: [_ChatMessageAttachment<ExtraData>.Seed]?
     @Atomic var createNewReply_showReplyInChannel: Bool?
     @Atomic var createNewReply_extraData: ExtraData.Message?
     @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
@@ -115,7 +115,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
-        attachments: [_ChatMessageAttachment<ExtraData>],
+        attachments: [_ChatMessageAttachment<ExtraData>.Seed],
         showReplyInChannel: Bool,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
