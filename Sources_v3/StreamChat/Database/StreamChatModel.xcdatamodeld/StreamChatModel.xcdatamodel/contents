@@ -12,7 +12,7 @@
         <attribute name="localStateRaw" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="localURL" optional="YES" attributeType="URI"/>
         <attribute name="text" optional="YES" attributeType="String"/>
-        <attribute name="title" attributeType="String"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
         <attribute name="url" optional="YES" attributeType="URI"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="attachments" inverseEntity="ChannelDTO"/>

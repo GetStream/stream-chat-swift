@@ -52,7 +52,7 @@ protocol MessageDatabaseSession {
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
-        attachments: [_ChatMessageAttachment<ExtraData>],
+        attachments: [_ChatMessageAttachment<ExtraData>.Seed],
         showReplyInChannel: Bool,
         extraData: ExtraData.Message
     ) throws -> MessageDTO
@@ -92,7 +92,7 @@ extension MessageDatabaseSession {
     func createNewMessage<ExtraData: ExtraDataTypes>(
         in cid: ChannelId,
         text: String,
-        attachments: [_ChatMessageAttachment<ExtraData>] = [],
+        attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
         extraData: ExtraData.Message = .defaultValue
     ) throws -> MessageDTO {
         try createNewMessage(
@@ -180,8 +180,8 @@ protocol AttachmentDatabaseSession {
     /// Creates a new `AttachmentDTO` object in the database from the given model for the message
     /// with the given `messageId` in the channel with the given `cid`.
     @discardableResult
-    func saveAttachment<ExtraData: AttachmentExtraData>(
-        attachment: _ChatMessageAttachment<ExtraData>,
+    func createNewAttachment<ExtraData: ExtraDataTypes>(
+        seed: _ChatMessageAttachment<ExtraData>.Seed,
         id: AttachmentId
     ) throws -> AttachmentDTO
 }
