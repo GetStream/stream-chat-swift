@@ -31,7 +31,7 @@ func AssertNetworkRequest(
     path: String,
     headers: [String: String]?,
     queryParameters: [String: String]?,
-    body: [String: Any]?,
+    body: Data?,
     timeout: TimeInterval = assertNetworkRequestTimeout,
     file: StaticString = #file,
     line: UInt = #line
@@ -114,13 +114,14 @@ func AssertNetworkRequest(
         errorMessage += "\n  - Incorrect body. Expected `nil`, got: \(bodyData.description)"
         return
     }
-    
-    guard let assertingBodyData = try? JSONSerialization.data(withJSONObject: assertingBody) else {
-        errorMessage += "\n  - Asserting body is not a valid JSON object"
-        return
+
+    do {
+        try CompareJSONEqual(assertingBody, bodyData)
+    } catch {
+        if assertingBody != bodyData {
+            errorMessage += "\n  - Incorrect body. Expected: \(assertingBody.description), got: \(bodyData.description)"
+        }
     }
-    
-    AssertJSONEqual(assertingBodyData, bodyData)
 }
 
 private extension Data {
