@@ -57,7 +57,21 @@ class MessageDTO: NSManagedObject {
     static func messagesPendingSendFetchRequest() -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.locallyCreatedAt, ascending: true)]
-        request.predicate = NSPredicate(format: "localMessageStateRaw == %@", LocalMessageState.pendingSend.rawValue)
+
+        let pendingSendMessage = NSPredicate(
+            format: "localMessageStateRaw == %@", LocalMessageState.pendingSend.rawValue
+        )
+
+        let allAttachmentsAreUploadedOrEmpty = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "NOT (ANY attachments.localStateRaw != %@)", LocalAttachmentState.uploaded.rawValue),
+            .init(format: "attachments.@count == 0")
+        ])
+
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            pendingSendMessage,
+            allAttachmentsAreUploadedOrEmpty
+        ])
+
         return request
     }
     

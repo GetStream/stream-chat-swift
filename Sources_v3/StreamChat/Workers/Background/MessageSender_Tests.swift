@@ -44,28 +44,45 @@ class MessageSender_Tests: StressTestCase {
         super.tearDown()
     }
     
-    func test_senderSendsMessage_withPendingSendLocalState() throws {
+    func test_senderSendsMessage_withPendingSendLocalState_and_uploadedOrEmptyAttachments() throws {
         var message1Id: MessageId!
         var message2Id: MessageId!
+        var message3Id: MessageId!
                 
-        // Create 2 messages in the DB, only message 1 has `.pendingSend` local state
+        // Create 3 messages in the DB:
+        //  - message in .pendingSend without attachments
+        //  - message in .pendingSend with attachments
+        //  - message without local state
         try database.writeSynchronously { session in
             let message1 = try session.createNewMessage(
                 in: self.cid,
-                text: "Message pending send",
-                attachments: [ExtraData.dummyAttachment],
+                text: "Message pending send without attachments",
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
             message1Id = message1.id
-            
+
             let message2 = try session.createNewMessage(
                 in: self.cid,
-                text: "Message without local state",
-                attachments: [ExtraData.dummyAttachment],
+                text: "Message pending send with attachments",
+                attachments: [
+                    _ChatMessageAttachment<ExtraData>.Seed.dummy(),
+                    _ChatMessageAttachment<ExtraData>.Seed.dummy(),
+                    _ChatMessageAttachment<ExtraData>.Seed.dummy()
+                ],
                 extraData: ExtraData.Message.defaultValue
             )
+            message2.localMessageState = .pendingSend
             message2Id = message2.id
+            
+            let message3 = try session.createNewMessage(
+                in: self.cid,
+                text: "Message without local state",
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                extraData: ExtraData.Message.defaultValue
+            )
+            message3Id = message3.id
         }
         
         let message1Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
@@ -76,15 +93,41 @@ class MessageSender_Tests: StressTestCase {
             database.viewContext.message(id: message2Id)?
                 .asRequestBody()
         )
+        let message3Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: message3Id)?
+                .asRequestBody()
+        )
 
         // Check only the message1 was sent
         AssertAsync {
             Assert.willBeTrue(self.apiClient.request_allRecordedCalls.contains(where: {
                 $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: message1Payload))
             }))
-            
             Assert.staysFalse(self.apiClient.request_allRecordedCalls.contains(where: {
                 $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: message2Payload))
+            }))
+            Assert.staysFalse(self.apiClient.request_allRecordedCalls.contains(where: {
+                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: message3Payload))
+            }))
+        }
+
+        // Simulate successful response for message1.
+        apiClient.test_simulateResponse(.success(EmptyResponse()))
+
+        // Simulate all message2 attachments are uploaded.
+        try database.writeSynchronously { session in
+            let message2 = try XCTUnwrap(session.message(id: message2Id))
+            message2.attachments.forEach { $0.localState = .uploaded }
+            message2.id = message2Id
+        }
+
+        // Check message2 was sent.
+        AssertAsync {
+            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.contains(where: {
+                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: message2Payload))
+            }))
+            Assert.staysFalse(self.apiClient.request_allRecordedCalls.contains(where: {
+                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: message3Payload))
             }))
         }
     }
@@ -97,7 +140,7 @@ class MessageSender_Tests: StressTestCase {
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send",
-                attachments: [ExtraData.dummyAttachment],
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -126,7 +169,7 @@ class MessageSender_Tests: StressTestCase {
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send",
-                attachments: [ExtraData.dummyAttachment],
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -154,7 +197,7 @@ class MessageSender_Tests: StressTestCase {
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send 1",
-                attachments: [ExtraData.dummyAttachment],
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -163,7 +206,7 @@ class MessageSender_Tests: StressTestCase {
             let message2 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send 2",
-                attachments: [ExtraData.dummyAttachment],
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message2.localMessageState = .pendingSend
@@ -172,7 +215,7 @@ class MessageSender_Tests: StressTestCase {
             let message3 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send 3",
-                attachments: [ExtraData.dummyAttachment],
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message3.localMessageState = .pendingSend
@@ -238,7 +281,7 @@ class MessageSender_Tests: StressTestCase {
             let messageA1 = try session.createNewMessage(
                 in: cidA,
                 text: "Channel A message 1",
-                attachments: [ExtraData.dummyAttachment],
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageA1.localMessageState = .pendingSend
@@ -247,7 +290,7 @@ class MessageSender_Tests: StressTestCase {
             let messageA2 = try session.createNewMessage(
                 in: cidA,
                 text: "Channel A message 2",
-                attachments: [ExtraData.dummyAttachment],
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageA2.localMessageState = .pendingSend
@@ -256,7 +299,7 @@ class MessageSender_Tests: StressTestCase {
             let messageB1 = try session.createNewMessage(
                 in: cidB,
                 text: "Channel B message 1",
-                attachments: [ExtraData.dummyAttachment],
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageB1.localMessageState = .pendingSend
@@ -265,7 +308,7 @@ class MessageSender_Tests: StressTestCase {
             let messageB2 = try session.createNewMessage(
                 in: cidB,
                 text: "Channel B message 2",
-                attachments: [ExtraData.dummyAttachment],
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageB2.localMessageState = .pendingSend
