@@ -72,6 +72,10 @@ class AttachmentDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext: AttachmentDatabaseSession {
+    func attachment(id: AttachmentId) -> AttachmentDTO? {
+        AttachmentDTO.load(id: id, context: self)
+    }
+
     func saveAttachment<ExtraData: AttachmentExtraData>(
         payload: AttachmentPayload<ExtraData>,
         id: AttachmentId
