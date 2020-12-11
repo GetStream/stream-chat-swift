@@ -102,7 +102,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.author = payload.author
         dto.text = payload.text
         dto.type = payload.type.rawValue
-        dto.actions = payload.actions.isEmpty ? nil : try JSONEncoder.stream.encode(payload.actions)
+        dto.actions = try JSONEncoder.stream.encode(payload.actions)
         dto.url = payload.url
         dto.imageURL = payload.imageURL
         dto.imagePreviewURL = payload.imagePreviewURL
@@ -114,8 +114,8 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         return dto
     }
     
-    func saveAttachment<ExtraData: ExtraDataTypes>(
-        attachment: _ChatMessageAttachment<ExtraData>,
+    func createNewAttachment<ExtraData: ExtraDataTypes>(
+        seed: _ChatMessageAttachment<ExtraData>.Seed,
         id: AttachmentId
     ) throws -> AttachmentDTO {
         guard let messageDTO = message(id: id.messageId) else {
@@ -126,19 +126,20 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
             throw ClientError.ChannelDoesNotExist(cid: id.cid)
         }
 
-        let dto = AttachmentDTO.loadOrCreate(queryHash: attachment.hash, context: self)
-        dto.attachmentHash = attachment.hash
-        dto.title = attachment.title
-        dto.author = attachment.author
-        dto.text = attachment.text
-        dto.type = attachment.type.rawValue
-        dto.actions = attachment.actions.isEmpty ? nil : try JSONEncoder.stream.encode(attachment.actions)
-        dto.url = attachment.url
-        dto.imageURL = attachment.imageURL
-        dto.imagePreviewURL = attachment.imagePreviewURL
-        dto.file = attachment.file == nil ? nil : try JSONEncoder.stream.encode(attachment.file)
-        dto.extraData = try JSONEncoder.default.encode(attachment.extraData)
+        let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         dto.localURL = seed.localURL
+        dto.localState = .pendingUpload
+        dto.type = seed.type.rawValue
+        dto.extraData = try JSONEncoder.default.encode(seed.extraData)
+        dto.title = seed.fileName
+        
+        dto.author = nil
+        dto.text = nil
+        dto.actions = nil
+        dto.url = nil
+        dto.imageURL = nil
+        dto.imagePreviewURL = nil
+        dto.file = nil
 
         dto.channel = channelDTO
         dto.message = messageDTO
