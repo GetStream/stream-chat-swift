@@ -37,6 +37,46 @@ extension _ChatMessageAttachment {
             extraData: .defaultValue
         )
     }
+
+    init(
+        cid: ChannelId,
+        messageId: MessageId,
+        index: Int,
+        seed: Seed,
+        localState: LocalAttachmentState? = .pendingUpload
+    ) {
+        self.init(
+            id: .init(cid: cid, messageId: messageId, index: index),
+            localURL: seed.localURL,
+            localState: localState,
+            title: seed.fileName,
+            author: nil,
+            text: nil,
+            type: .image,
+            actions: [],
+            url: nil,
+            imageURL: nil,
+            imagePreviewURL: nil,
+            file: nil,
+            extraData: .defaultValue
+        )
+    }
+}
+
+extension _ChatMessageAttachment.Seed {
+    static func dummy(
+        localURL: URL = .unique(),
+        fileName: String = .unique,
+        type: AttachmentType = .image,
+        extraData: ExtraData.Attachment = .defaultValue
+    ) -> Self {
+        .init(
+            localURL: localURL,
+            fileName: fileName,
+            type: type,
+            extraData: extraData
+        )
+    }
 }
 
 extension DefaultExtraData {
