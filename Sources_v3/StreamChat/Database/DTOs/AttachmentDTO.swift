@@ -69,6 +69,13 @@ class AttachmentDTO: NSManagedObject {
         new.attachmentID = id
         return new
     }
+
+    static func pendingUploadFetchRequest() -> NSFetchRequest<AttachmentDTO> {
+        let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \AttachmentDTO.id, ascending: true)]
+        request.predicate = NSPredicate(format: "localStateRaw == %@", LocalAttachmentState.pendingUpload.rawValue)
+        return request
+    }
 }
 
 extension NSManagedObjectContext: AttachmentDatabaseSession {
