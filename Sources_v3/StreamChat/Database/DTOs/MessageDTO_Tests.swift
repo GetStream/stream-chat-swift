@@ -80,6 +80,10 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys(MessageReactionType.init))
             Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
+            Assert.willBeEqual(
+                messagePayload.attachmentIDs(cid: channelId),
+                loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
+            )
         }
     }
     
@@ -160,6 +164,10 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys(MessageReactionType.init))
             Assert.willBeEqual(loadedMessage?.reactions, loadedReactions)
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
+            Assert.willBeEqual(
+                messagePayload.attachmentIDs(cid: channelId),
+                loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
+            )
         }
     }
     
@@ -261,6 +269,7 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.isSilent, messagePayload.isSilent)
             Assert.willBeEqual(loadedMessage?.latestReactions, latestReactions)
             Assert.willBeEqual(loadedMessage?.currentUserReactions, currentUserReactions)
+            Assert.willBeEqual(loadedMessage?.attachments, messagePayload.attachments(cid: channelId))
         }
     }
     
@@ -283,20 +292,25 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         // Load the message from the db and check the fields are correct
-        var loadedMessage: MessageRequestBody<DefaultExtraData>? {
-            database.viewContext.message(id: messageId)?.asRequestBody()
+        var loadedMessage: MessageDTO? {
+            database.viewContext.message(id: messageId)
+        }
+
+        var requestBody: MessageRequestBody<DefaultExtraData>? {
+            loadedMessage?.asRequestBody()
         }
         
         AssertAsync {
-            Assert.willBeEqual(loadedMessage?.id, messagePayload.id)
-            Assert.willBeEqual(loadedMessage?.user.id, messagePayload.user.id)
-            Assert.willBeEqual(loadedMessage?.text, messagePayload.text)
-            Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
-            Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
-            Assert.willBeEqual(loadedMessage?.parentId, messagePayload.parentId)
-            Assert.willBeEqual(loadedMessage?.showReplyInChannel, messagePayload.showReplyInChannel)
+            Assert.willBeEqual(requestBody?.id, messagePayload.id)
+            Assert.willBeEqual(requestBody?.user.id, messagePayload.user.id)
+            Assert.willBeEqual(requestBody?.text, messagePayload.text)
+            Assert.willBeEqual(requestBody?.command, messagePayload.command)
+            Assert.willBeEqual(requestBody?.args, messagePayload.args)
+            Assert.willBeEqual(requestBody?.parentId, messagePayload.parentId)
+            Assert.willBeEqual(requestBody?.showReplyInChannel, messagePayload.showReplyInChannel)
 //            Assert.willBeEqual(loadedMessage?.mentionedUsers.map { $0.id }, messagePayload.mentionedUsers.map { $0.id })
-            Assert.willBeEqual(loadedMessage?.extraData, messagePayload.extraData)
+            Assert.willBeEqual(requestBody?.extraData, messagePayload.extraData)
+            Assert.willBeEqual(requestBody?.attachments.count, loadedMessage?.attachments.count)
         }
     }
     
@@ -374,7 +388,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
-                    attachments: [self.dummyNoExtraDataAttachment],
+                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
                     showReplyInChannel: false,
                     extraData: NoExtraData.defaultValue
                 )
@@ -388,7 +402,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
-                    attachments: [self.dummyNoExtraDataAttachment],
+                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
                     showReplyInChannel: false,
                     extraData: NoExtraData.defaultValue
                 )
@@ -443,6 +457,10 @@ class MessageDTO_Tests: XCTestCase {
         let newMessageCommand: String = .unique
         let newMessageArguments: String = .unique
         let newMessageParentMessageId: String = .unique
+        let newMessageAttachmentSeeds: [_ChatMessageAttachment<NoExtraDataTypes>.Seed] = [
+            .dummy(),
+            .dummy()
+        ]
                 
         _ = try await { completion in
             database.write({
@@ -452,7 +470,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: newMessageCommand,
                     arguments: newMessageArguments,
                     parentMessageId: newMessageParentMessageId,
-                    attachments: [self.dummyNoExtraDataAttachment],
+                    attachments: newMessageAttachmentSeeds,
                     showReplyInChannel: true,
                     extraData: NoExtraData.defaultValue
                 )
@@ -460,7 +478,7 @@ class MessageDTO_Tests: XCTestCase {
             }, completion: completion)
         }
         
-        let loadedMessage: _ChatMessage<DefaultExtraData> = try unwrapAsync(
+        let loadedMessage: _ChatMessage<NoExtraDataTypes> = try unwrapAsync(
             database.viewContext.message(id: newMessageId)?
                 .asModel()
         )
@@ -474,6 +492,14 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertLessThan(loadedMessage.createdAt.timeIntervalSince(Date()), 0.1)
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.locallyCreatedAt)
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.updatedAt)
+        XCTAssertEqual(
+            loadedMessage.attachments,
+            Set(
+                newMessageAttachmentSeeds.enumerated().map { index, seed in
+                    .init(cid: cid, messageId: newMessageId, index: index, seed: seed, localState: .pendingUpload)
+                }
+            )
+        )
     }
     
     func test_creatingNewMessage_withoutExistingCurrentUser_throwsError() throws {
@@ -485,7 +511,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
-                    attachments: [self.dummyNoExtraDataAttachment],
+                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
                     showReplyInChannel: true,
                     extraData: NoExtraData.defaultValue
                 )
@@ -516,7 +542,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
-                    attachments: [self.dummyNoExtraDataAttachment],
+                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
                     showReplyInChannel: true,
                     extraData: NoExtraData.defaultValue
                 )
@@ -547,7 +573,7 @@ class MessageDTO_Tests: XCTestCase {
                 command: nil,
                 arguments: nil,
                 parentMessageId: messageId,
-                attachments: [self.dummyNoExtraDataAttachment],
+                attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
                 showReplyInChannel: false,
                 extraData: NoExtraData.defaultValue
             )
