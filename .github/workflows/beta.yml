@@ -1,5 +1,5 @@
-name: Firebase Testing Build (v2)
-    
+name: Firebase Test Builds
+
 on:
   push:
     branches:
@@ -9,7 +9,8 @@ env:
   carthage-cache-dir: 'carthage-cache-29102020' # When you change carthage cache directory, please append the date
 
 jobs:
-  beta:
+  beta_v2:
+    name: Distribute v2 Sample App
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -37,3 +38,33 @@ jobs:
         MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
       run: bundle exec fastlane beta
+
+  demo_v3:
+    name: Distribute Demo App
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh    
+    - name: Install firebase-tools
+      run: npm install -g firebase-tools
+    - name: Distribute Demo app
+      env:
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      run: bundle exec fastlane distribute_demo_app
