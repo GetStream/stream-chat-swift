@@ -43,14 +43,27 @@ public extension UIConfig {
 
 public extension UIConfig {
     struct ColorPalette {
+        // MARK: - General
+
+        public var subtitleText: UIColor = .streamGray
+        public var text: UIColor = .streamBlack
+        public var generalBackground: UIColor = UIColor(rgb: 0xfcfcfc)
+        public var shadow: UIColor = .streamGray
+
+        // MARK: - Text interactions
+
         public var highlightedColorForColor: (UIColor) -> UIColor = { $0.withAlphaComponent(0.5) }
         public var disabledColorForColor: (UIColor) -> UIColor = { _ in .lightGray }
         public var unselectedColorForColor: (UIColor) -> UIColor = { _ in .lightGray }
+
+        // MARK: - Message Bubbles
 
         public var outgoingMessageBubbleBackground: UIColor = UIColor(rgb: 0xe5e5e5)
         public var outgoingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
         public var incomingMessageBubbleBackground: UIColor = .white
         public var incomingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
+
+        // MARK: - Message Composer
 
         public var messageComposerBorder: UIColor = .streamGrayGainsboro
         public var messageComposerBackground: UIColor = .white
@@ -58,11 +71,11 @@ public extension UIConfig {
         public var messageComposerStateIcon: UIColor = .streamGrayGainsboro
         public var messageComposerPlaceholder: UIColor = .streamGray
 
-        public var generalBackground: UIColor = UIColor(rgb: 0xfcfcfc)
+        // MARK: - Message interaction
+
         public var popupDimmedBackground: UIColor = UIColor.black.withAlphaComponent(0.2)
         public var galleryMoreImagesOverlayBackground: UIColor = UIColor.black.withAlphaComponent(0.4)
         public var messageTimestampText: UIColor = .lightGray
-        public var subtitleText: UIColor = .lightGray
         public var unreadChatTint: UIColor = .systemGray
     }
 }
@@ -158,6 +171,32 @@ public extension UIConfig {
         public var sendButton: MessageComposerSendButton<ExtraData>.Type = MessageComposerSendButton<ExtraData>.self
         public var composerButton: ChatSquareButton<ExtraData>.Type = ChatSquareButton<ExtraData>.self
         public var textView: ChatChannelMessageInputTextView<ExtraData>.Type = ChatChannelMessageInputTextView<ExtraData>.self
+        public var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData>.Type =
+            MessageComposerSuggestionsViewController<ExtraData>.self
+        public var suggestionsCollectionView: MessageComposerSuggestionsCollectionView.Type =
+            MessageComposerSuggestionsCollectionView<ExtraData>.self
+        public var suggestionsMentionCollectionViewCell: MessageComposerMentionCollectionViewCell<ExtraData>.Type =
+            MessageComposerMentionCollectionViewCell<ExtraData>.self
+        public var suggestionsCommandCollectionViewCell: MessageComposerCommandCollectionViewCell<ExtraData>.Type =
+            MessageComposerCommandCollectionViewCell<ExtraData>.self
+        public var suggestionsMentionCellView: MessageComposerMentionCellView<ExtraData>.Type =
+            MessageComposerMentionCellView<ExtraData>.self
+        public var suggestionsCommandCellView: MessageComposerCommandCellView<ExtraData>.Type =
+            MessageComposerCommandCellView<ExtraData>.self
+        public var suggestionsCollectionViewLayout: MessageComposerSuggestionsCollectionViewLayout.Type =
+            MessageComposerSuggestionsCollectionViewLayout.self
+        public var mentionAvatarView: ChatChannelAvatarView<ExtraData>.Type = ChatChannelAvatarView<ExtraData>.self
+        public var commandIcons: [String: UIImage] = [
+            "ban": UIImage(named: "command_ban", in: .streamChatUI)!,
+            "fallback": UIImage(named: "command_fallback", in: .streamChatUI)!,
+            "flag": UIImage(named: "command_flag", in: .streamChatUI)!,
+            "giphy": UIImage(named: "command_giphy", in: .streamChatUI)!,
+            "imgur": UIImage(named: "command_imgur", in: .streamChatUI)!,
+            "mention": UIImage(named: "command_mention", in: .streamChatUI)!,
+            "mute": UIImage(named: "command_mute", in: .streamChatUI)!,
+            "unban": UIImage(named: "command_unban", in: .streamChatUI)!,
+            "unmute": UIImage(named: "command_unmute", in: .streamChatUI)!
+        ]
     }
 }
 
