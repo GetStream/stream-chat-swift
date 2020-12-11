@@ -160,9 +160,9 @@ class ChannelUpdater_Tests: StressTestCase {
             Assert.willBeEqual(message?.text, text)
             Assert.willBeEqual(message?.command, command)
             Assert.willBeEqual(message?.arguments, arguments)
-            Assert.willBeEqual(message?.attachments, Set(attachments.enumerated().map { index, seed in
+            Assert.willBeEqual(message?.attachments, attachments.enumerated().map { index, seed in
                 .init(cid: cid, messageId: newMessageId, index: index, seed: seed, localState: .pendingUpload)
-            }))
+            })
             Assert.willBeEqual(message?.extraData, extraData)
             Assert.willBeEqual(message?.localState, .pendingSend)
         }

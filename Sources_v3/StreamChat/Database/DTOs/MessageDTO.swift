@@ -378,7 +378,9 @@ private extension _ChatMessage {
             isSentByCurrentUser = false
         }
         
-        attachments = Set(dto.attachments.map { $0.asModel() })
+        attachments = dto.attachments
+            .map { $0.asModel() }
+            .sorted { $0.id.index < $1.id.index }
     }
 }
 
