@@ -451,6 +451,8 @@ extension ChatViewController {
 extension ChatViewController {
     
     func updateTableView(with changes: ViewChanges) {
+        let previousRowCount = tableView.numberOfRows(inSection: 0)
+
         switch changes {
         case .none, .itemMoved:
             return
@@ -508,14 +510,20 @@ extension ChatViewController {
             }
             
             UIView.performWithoutAnimation {
-                tableView.performBatchUpdates({
-                    tableView.insertRows(at: rows.map(IndexPath.row), with: .none)
+                let rowsToInsert = rows.map(IndexPath.row)
+                if previousRowCount + rowsToInsert.count == items.count {
+                    tableView.performBatchUpdates({
+                        tableView.insertRows(at: rowsToInsert, with: .none)
+                        
+                        if let reloadRow = reloadRow {
+                            tableView.reloadRows(at: [.row(reloadRow)], with: .none)
+                        }
+                    })
+                } else {
+                    ClientLogger.log("⚠️", level: .error, "Found inconsistency in table view update. Recovering by reloading the table view...")
+                    tableView.reloadData()
+                }
                     
-                    if let reloadRow = reloadRow {
-                        tableView.reloadRows(at: [.row(reloadRow)], with: .none)
-                    }
-                })
-                
                 if let maxRow = rows.max(), needsToScroll {
                     tableView.scrollToRowIfPossible(at: maxRow, animated: false)
                 }
