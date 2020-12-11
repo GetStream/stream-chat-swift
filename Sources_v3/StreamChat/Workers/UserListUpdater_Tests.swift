@@ -80,4 +80,100 @@ class UserListUpdater_Tests: StressTestCase {
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+    
+    func test_mergePolicy_takesAffect() throws {
+        // Simulate `update` call
+        let query = UserListQuery<DefaultExtraData.User>(filter: .equal(.id, to: "Luke"))
+        listUpdater.update(userListQuery: query)
+        
+        // Simulate API response with user data
+        let userId = UserId.unique
+        let payload = UserListPayload<DefaultExtraData.User>(users: [.dummy(userId: userId)])
+        apiClient.test_simulateResponse(.success(payload))
+        
+        // Assert the data is stored in the DB
+        var user: ChatUser? {
+            database.viewContext.user(id: userId)?.asModel()
+        }
+        
+        // Assert user is inserted into DB
+        AssertAsync.willBeTrue(user != nil)
+        
+        // Simulate consequent `update` call with new users and `.merge` policy
+        // We don't pass the `policy` argument since we expect it's `merge` by default
+        listUpdater.update(userListQuery: query)
+        
+        // Simulate API response with user data
+        let newUserId = UserId.unique
+        let newPayload = UserListPayload<DefaultExtraData.User>(users: [.dummy(userId: newUserId)])
+        apiClient.test_simulateResponse(.success(newPayload))
+        
+        // Assert the data is stored in the DB
+        var newUser: ChatUser? {
+            database.viewContext.user(id: newUserId)?.asModel()
+        }
+        
+        // Assert new user is inserted into DB
+        AssertAsync.willBeTrue(newUser != nil)
+        
+        // Assert both users are linked to the same query now
+        try database.writeSynchronously { session in
+            do {
+                let dto = try session.saveQuery(query: query)
+                XCTAssertEqual(dto!.users.count, 2)
+                XCTAssertEqual(
+                    dto!.users.map(\.id).sorted(),
+                    [user!, newUser!].map(\.id).sorted()
+                )
+            } catch {
+                XCTFail("Error trying to get query: \(error)")
+            }
+        }
+    }
+    
+    func test_removePolicy_takesAffect() throws {
+        // Simulate `update` call
+        let query = UserListQuery<DefaultExtraData.User>(filter: .equal(.id, to: "Luke"))
+        listUpdater.update(userListQuery: query)
+        
+        // Simulate API response with user data
+        let userId = UserId.unique
+        let payload = UserListPayload<DefaultExtraData.User>(users: [.dummy(userId: userId)])
+        apiClient.test_simulateResponse(.success(payload))
+        
+        // Assert the data is stored in the DB
+        var user: ChatUser? {
+            database.viewContext.user(id: userId)?.asModel()
+        }
+        
+        // Assert user is inserted into DB
+        AssertAsync.willBeTrue(user != nil)
+        
+        // Simulate consequent `update` call with new users and `.merge` policy
+        listUpdater.update(userListQuery: query, policy: .replace)
+        
+        // Simulate API response with user data
+        let newUserId = UserId.unique
+        let newPayload = UserListPayload<DefaultExtraData.User>(users: [.dummy(userId: newUserId)])
+        apiClient.test_simulateResponse(.success(newPayload))
+        
+        // Assert the data is stored in the DB
+        var newUser: ChatUser? {
+            database.viewContext.user(id: newUserId)?.asModel()
+        }
+        
+        // Assert new user is inserted into DB
+        AssertAsync.willBeTrue(newUser != nil)
+        
+        // Assert first user is not linked to the query anymore
+        try database.writeSynchronously { session in
+            do {
+                let dto = try session.saveQuery(query: query)
+                XCTAssertEqual(dto!.users.count, 1)
+                XCTAssertEqual(dto!.users.map(\.id), [newUser!].map(\.id))
+            } catch {
+                XCTFail("Error trying to get query: \(error)")
+            }
+        }
+    }
 }
