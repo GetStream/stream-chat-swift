@@ -15,7 +15,12 @@ extension UIViewController {
         
         // Log in the current user
         let currentUserController = client.currentUserController()
-        currentUserController.setUser(userId: userCredentials.id, token: userCredentials.token) { error in
+        currentUserController.setUser(
+            userId: userCredentials.id,
+            name: userCredentials.name,
+            imageURL: userCredentials.avatarURL,
+            token: userCredentials.token
+        ) { error in
             if let error = error {
                 print("User login failed: \(error)")
             }

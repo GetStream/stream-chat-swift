@@ -133,7 +133,6 @@
 		793061A12577C8B4005CF846 /* ChatClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793061A02577C8B4005CF846 /* ChatClient_Mock.swift */; };
 		7931818C24FD2660002F8C84 /* ChannelListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7931818B24FD2660002F8C84 /* ChannelListController+Combine.swift */; };
 		7931818E24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7931818D24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift */; };
-		793305F3256FD24500FBB586 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 793305F2256FD24500FBB586 /* Nuke */; settings = {ATTRIBUTES = (Required, ); }; };
 		79330604256FEBE600FBB586 /* AdvancedOptionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79330603256FEBE600FBB586 /* AdvancedOptionsViewController.swift */; };
 		7933060B256FF94800FBB586 /* ChatPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933060A256FF94800FBB586 /* ChatPresenter.swift */; };
 		7933064925712C8B00FBB586 /* DemoUsers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7933064825712C8B00FBB586 /* DemoUsers.swift */; };
@@ -199,6 +198,11 @@
 		7991D83B24F5427E00D21BA3 /* EphemeralValuesContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83A24F5427E00D21BA3 /* EphemeralValuesContainer.swift */; };
 		7991D83D24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83C24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift */; };
 		7991D83F24F8F1BF00D21BA3 /* ChatClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7991D83E24F8F1BF00D21BA3 /* ChatClient_Mock.swift */; };
+		79940B88258398A500791EAE /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		79940B89258398A500791EAE /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		79940B8C258398A500791EAE /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
+		79940B8D258398A500791EAE /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		79940B98258398D200791EAE /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 79940B97258398D200791EAE /* Nuke */; settings = {ATTRIBUTES = (Weak, ); }; };
 		799ADAAF2563FFA1006D43F9 /* Nuke in Frameworks */ = {isa = PBXBuildFile; productRef = 799ADAAE2563FFA1006D43F9 /* Nuke */; };
 		799B5DC5253081C900C108FB /* DevicePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799B5DC4253081C900C108FB /* DevicePayloads.swift */; };
 		799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799BE2E9248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift */; };
@@ -610,6 +614,20 @@
 			remoteGlobalIDString = 793060E525778896005CF846;
 			remoteInfo = StreamChatTestTools;
 		};
+		79940B8A258398A500791EAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
+		};
+		79940B8E258398A500791EAE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 790881FC25432B7200896F03;
+			remoteInfo = StreamChatUI;
+		};
 		799C9457247D59B1001F1104 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
@@ -628,6 +646,18 @@
 			files = (
 				7908821325432B7200896F03 /* StreamChatUI.framework in Embed Frameworks */,
 				79200D47250140BB002F4EB1 /* StreamChat.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		79940B90258398A500791EAE /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				79940B8D258398A500791EAE /* StreamChatUI.framework in Embed Frameworks */,
+				79940B89258398A500791EAE /* StreamChat.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -740,7 +770,7 @@
 		792B805324D95FC700C2963E /* RandomDispatchQueue.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomDispatchQueue.swift; sourceTree = "<group>"; };
 		792DD9D8256BC542001DB91B /* BaseViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViews.swift; sourceTree = "<group>"; };
 		792DD9FA256E67C6001DB91B /* UIConfigProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIConfigProvider.swift; sourceTree = "<group>"; };
-		792DDA57256FB69E001DB91B /* DemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		792DDA57256FB69E001DB91B /* ChatSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChatSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		792DDA59256FB69E001DB91B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		792DDA5B256FB69E001DB91B /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		792DDA5D256FB69E001DB91B /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
@@ -1246,7 +1276,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				793305F3256FD24500FBB586 /* Nuke in Frameworks */,
+				79940B98258398D200791EAE /* Nuke in Frameworks */,
+				79940B88258398A500791EAE /* StreamChat.framework in Frameworks */,
+				79940B8C258398A500791EAE /* StreamChatUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2320,7 +2352,7 @@
 				792A4F22247FF01800EAF71D /* Sample.app */,
 				790881FD25432B7200896F03 /* StreamChatUI.framework */,
 				7908820525432B7200896F03 /* StreamChatUITests.xctest */,
-				792DDA57256FB69E001DB91B /* DemoApp.app */,
+				792DDA57256FB69E001DB91B /* ChatSample.app */,
 				793060E625778896005CF846 /* StreamChatTestTools.framework */,
 				793060EE25778897005CF846 /* StreamChatTestToolsTests.xctest */,
 			);
@@ -2608,18 +2640,21 @@
 				792DDA54256FB69E001DB91B /* Frameworks */,
 				792DDA55256FB69E001DB91B /* Resources */,
 				792DDA73256FB723001DB91B /* SwiftLint */,
+				79940B90258398A500791EAE /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 				792DDA72256FB6AD001DB91B /* PBXTargetDependency */,
+				79940B8B258398A500791EAE /* PBXTargetDependency */,
+				79940B8F258398A500791EAE /* PBXTargetDependency */,
 			);
 			name = DemoApp;
 			packageProductDependencies = (
-				793305F2256FD24500FBB586 /* Nuke */,
+				79940B97258398D200791EAE /* Nuke */,
 			);
 			productName = DemoApp;
-			productReference = 792DDA57256FB69E001DB91B /* DemoApp.app */;
+			productReference = 792DDA57256FB69E001DB91B /* ChatSample.app */;
 			productType = "com.apple.product-type.application";
 		};
 		793060E525778896005CF846 /* StreamChatTestTools */ = {
@@ -3555,6 +3590,16 @@
 			target = 793060E525778896005CF846 /* StreamChatTestTools */;
 			targetProxy = 793060F025778897005CF846 /* PBXContainerItemProxy */;
 		};
+		79940B8B258398A500791EAE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = 79940B8A258398A500791EAE /* PBXContainerItemProxy */;
+		};
+		79940B8F258398A500791EAE /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 790881FC25432B7200896F03 /* StreamChatUI */;
+			targetProxy = 79940B8E258398A500791EAE /* PBXContainerItemProxy */;
+		};
 		799C9458247D59B1001F1104 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
@@ -3817,18 +3862,20 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES;
 				INFOPLIST_FILE = DemoApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.stream.DemoApp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp;
+				PRODUCT_NAME = ChatSample;
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.ChatDemoApp";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -3840,18 +3887,22 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES;
 				INFOPLIST_FILE = DemoApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.stream.DemoApp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp;
+				PRODUCT_NAME = ChatSample;
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc io.getstream.iOS.ChatDemoApp";
+				SKIP_INSTALL = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -3862,18 +3913,20 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES;
 				INFOPLIST_FILE = DemoApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = io.stream.DemoApp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
 				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp;
+				PRODUCT_NAME = ChatSample;
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.ChatDemoApp";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -4525,7 +4578,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		793305F2256FD24500FBB586 /* Nuke */ = {
+		79940B97258398D200791EAE /* Nuke */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */;
 			productName = Nuke;
