@@ -166,6 +166,9 @@ protocol MemberListQueryDatabaseSession {
 }
 
 protocol AttachmentDatabaseSession {
+    /// Fetches `AttachmentDTO`entity for the given `id`.
+    func attachment(id: AttachmentId) -> AttachmentDTO?
+
     /// Creates a new `AttachmentDTO` object in the database with the given `payload` for the message
     /// with the given `messageId` in the channel with the given `cid`.
     @discardableResult
