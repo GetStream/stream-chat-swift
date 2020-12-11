@@ -580,13 +580,19 @@ final class MessageController_Tests: StressTestCase {
 //        let arguments: String = .unique
         let showReplyInChannel = true
         let extraData: DefaultExtraData.Message = .defaultValue
-        
+        let attachments: [ChatMessageAttachment.Seed] = [
+            .dummy(),
+            .dummy(),
+            .dummy()
+        ]
+
         // Simulate `createNewReply` calls and catch the completion
         var completionCalled = false
         controller.createNewReply(
             text: text,
 //            command: command,
 //            arguments: arguments,
+            attachments: attachments,
             showReplyInChannel: showReplyInChannel,
             extraData: extraData
         ) { [callbackQueueID] result in
@@ -611,6 +617,7 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(env.messageUpdater?.createNewReply_parentMessageId, messageId)
         XCTAssertEqual(env.messageUpdater?.createNewReply_showReplyInChannel, showReplyInChannel)
         XCTAssertEqual(env.messageUpdater?.createNewReply_extraData, extraData)
+        XCTAssertEqual(env.messageUpdater?.createNewReply_attachments, attachments)
     }
     
     func test_createNewReply_keepsControllerAlive() {
