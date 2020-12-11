@@ -143,7 +143,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         command: String?,
         arguments: String?,
         parentMessageId: MessageId,
-        attachments: [_ChatMessageAttachment<ExtraData>],
+        attachments: [_ChatMessageAttachment<ExtraData>.Seed],
         showReplyInChannel: Bool,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
