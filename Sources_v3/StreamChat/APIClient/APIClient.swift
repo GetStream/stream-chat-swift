@@ -15,6 +15,8 @@ class APIClient {
     /// `APIClient` uses this object to decode the results of network requests.
     let decoder: RequestDecoder
     
+    @Atomic private var taskProgressObservers: [Int: NSKeyValueObservation] = [:]
+    
     /// Creates a new `APIClient`.
     ///
     /// - Parameters:
@@ -60,6 +62,58 @@ class APIClient {
                 }
             }
             
+            task.resume()
+        }
+    }
+
+    func uploadFile(
+        endpoint: Endpoint<FileUploadPayload>,
+        multipartFormData: MultipartFormData,
+        progress: ((Double) -> Void)? = nil,
+        completion: @escaping (Result<FileUploadPayload, Error>) -> Void
+    ) {
+        encoder.encodeRequest(for: endpoint) { [unowned self] (requestResult) in
+            var urlRequest: URLRequest
+            do {
+                urlRequest = try requestResult.get()
+            } catch {
+                log.error(error)
+                completion(.failure(error))
+                return
+            }
+
+            let data = multipartFormData.getMultipartFormData()
+            urlRequest.addValue("multipart/form-data; boundary=\(multipartFormData.boundary)", forHTTPHeaderField: "Content-Type")
+            urlRequest.httpBody = data
+
+            let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
+                do {
+                    let decodedResponse: FileUploadPayload = try decoder.decodeRequestResponse(
+                        data: data,
+                        response: response,
+                        error: error
+                    )
+                    completion(.success(decodedResponse))
+                } catch {
+                    completion(.failure(error))
+                }
+            }
+
+            if let progressListener = progress {
+                let taskID = task.taskIdentifier
+                self._taskProgressObservers.mutate { observers in
+                    observers[taskID] = task.progress.observe(\.fractionCompleted) { [weak self] progress, _ in
+                        progressListener(progress.fractionCompleted)
+                        if progress.isFinished || progress.isCancelled {
+                            self?._taskProgressObservers.mutate { observers in
+                                observers[taskID]?.invalidate()
+                                observers[taskID] = nil
+                            }
+                        }
+                    }
+                }
+            }
+
             task.resume()
         }
     }
