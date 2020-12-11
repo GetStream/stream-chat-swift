@@ -520,7 +520,7 @@ extension ChatViewController {
                         }
                     })
                 } else {
-                    ClientLogger.log("⚠️", level: .error, "Found inconsistency in table view update. Recovering by reloading the table view...")
+                    ClientLogger.log("⚠️", level: .error, "Inconsistent table view update. Recovering by reloading the table view.")
                     tableView.reloadData()
                 }
                     
