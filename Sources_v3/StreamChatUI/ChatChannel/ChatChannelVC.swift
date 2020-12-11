@@ -63,6 +63,11 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: ViewController,
         messageInputAccessoryViewController.controller = controller
     }
 
+    override open func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        resignFirstResponder()
+    }
+    
     override open func setUpLayout() {
         super.setUpLayout()
 
