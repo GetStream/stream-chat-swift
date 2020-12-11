@@ -108,7 +108,8 @@ lane :match_me do
       "io.getstream.ChatExample",
       "io.getstream.StreamChatClient",
       "io.getstream.StreamChatCore",
-      "io.getstream.StreamChat"
+      "io.getstream.StreamChat",
+      "io.getstream.iOS.ChatDemoApp",
     ],
     readonly: true,
     force_for_new_devices: !is_ci
@@ -120,7 +121,8 @@ lane :match_me do
       "io.getstream.ChatExample",
       "io.getstream.StreamChatClient",
       "io.getstream.StreamChatCore",
-      "io.getstream.StreamChat"
+      "io.getstream.StreamChat",
+      "io.getstream.iOS.ChatDemoApp",
     ],
     readonly: true,
     force_for_new_devices: !is_ci
@@ -154,6 +156,38 @@ lane :beta do
   
   firebase_app_distribution(
       app: "1:674907137625:ios:10131789dab2e7cad7f348",
+      groups: "ios-stream-testers",
+      release_notes: message
+  )
+end
+
+desc "Builds the latest version of Demo app and uploads it to Firebase"
+lane :distribute_demo_app do
+
+  increment_build_number_in_plist(
+    xcodeproj: "StreamChat_v3.xcodeproj",
+    target: "DemoApp",
+    build_number: ENV["GITHUB_SHA"][0...7],
+  )
+
+  match_me  
+
+  gym(
+    project: "StreamChat_v3.xcodeproj",
+    scheme: "DemoApp",
+    configuration: "Release",
+    export_method: "ad-hoc",
+    export_options: "./fastlane/demo_app_export_options.plist",
+    silent: true,
+    clean: true,
+    include_symbols: true,
+    output_directory: "./dist"
+  )
+  
+  message = changelog_from_git_commits(commits_count: 10)
+  
+  firebase_app_distribution(
+      app: "1:674907137625:ios:9e7b1074941f8728d7f348",
       groups: "ios-stream-testers",
       release_notes: message
   )
