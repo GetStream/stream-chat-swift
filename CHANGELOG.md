@@ -6,8 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.6.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.0)
+_December 11, 2020_
+
 ### ✅ Added
-- `ChatViewController.scrollOnNewData` to specify whether the messages table view should scroll down on any new message. Defaults to `true`. `false` will still scroll down when data is authored by the current user.
+- `ChatViewController.scrollOnNewData` to specify whether the messages table view should scroll down on any new message. Defaults to `true`. `false` will still scroll down when data is authored by the current user. [#638](https://github.com/GetStream/stream-chat-swift/issues/638)
 
 # [2.5.0](https://github.com/GetStream/stream-chat-swift/releases/tag/2.5.0)
 _November 26, 2020_
