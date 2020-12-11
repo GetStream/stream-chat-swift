@@ -172,7 +172,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
-        attachments: [_ChatMessageAttachment<ExtraData>],
+        attachments: [_ChatMessageAttachment<ExtraData>.Seed],
         showReplyInChannel: Bool,
         extraData: ExtraData.Message
     ) throws -> MessageDTO {
