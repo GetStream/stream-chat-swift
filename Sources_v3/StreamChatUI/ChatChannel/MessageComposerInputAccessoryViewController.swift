@@ -18,7 +18,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     public enum State {
         case initial
         case empty(isEmpty: Bool)
-        case slashCommand(MessageInputSlashCommandView.Command)
+        case slashCommand
         case suggestions
         case forceShrinkedInput
         case reply
@@ -26,7 +26,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     }
     
     // MARK: - Properties
-    
+
     var controller: _ChatChannelController<ExtraData>!
     
     public var state: State = .initial {
@@ -60,7 +60,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     }
     
     public private(set) lazy var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData> = {
-        .init(uiConfig: uiConfig)
+        uiConfig.messageComposer.suggestionsViewController.init()
     }()
     
     public private(set) lazy var imagePicker: UIImagePickerController = {
@@ -110,10 +110,9 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
             composerView.attachmentButton.isHidden = !isEmpty
             composerView.commandsButton.isHidden = !isEmpty
             composerView.shrinkInputButton.isHidden = isEmpty
-        case let .slashCommand(command):
+        case .slashCommand:
             textView.text = ""
             textView.placeholderLabel.text = L10n.Composer.Placeholder.giphy
-            composerView.messageInputView.slashCommandView.command = command
             composerView.messageInputView.setSlashCommandViews(hidden: false)
             dismissSuggestionsViewController()
         case .suggestions:
@@ -138,6 +137,11 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
             composerView.container.topStackView.isHidden = false
             // update ui with message to edit
         }
+    }
+
+    override open func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        dismissSuggestionsViewController()
     }
     
     func setupInputView() {
@@ -210,11 +214,18 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     // MARK: Suggestions
     
     func showSuggestionsViewController() {
-        addChild(suggestionsViewController)
-        view.addSubview(suggestionsViewController.view)
-        suggestionsViewController.didMove(toParent: self)
+        guard let parent = parent else { return }
+        parent.addChild(suggestionsViewController)
+        parent.view.addSubview(suggestionsViewController.view)
+        suggestionsViewController.didMove(toParent: parent)
+
+        guard let suggestionView = suggestionsViewController.view else { return }
+        suggestionView.bottomAnchor.constraint(equalTo: composerView.topAnchor).isActive = true
+        suggestionView.centerXAnchor.constraint(equalTo: composerView.centerXAnchor).isActive = true
+        suggestionView.leadingAnchor.constraint(equalTo: composerView.layoutMarginsGuide.leadingAnchor).isActive = true
+        suggestionView.trailingAnchor.constraint(equalTo: composerView.layoutMarginsGuide.trailingAnchor).isActive = true
     }
-    
+
     func dismissSuggestionsViewController() {
         suggestionsViewController.removeFromParent()
         suggestionsViewController.view.removeFromSuperview()
@@ -244,7 +255,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     
     func replaceTextWithSlashCommandViewIfNeeded() {
         if textView.text == "/giphy" {
-            state = .slashCommand(.giphy)
+            state = .slashCommand
         }
     }
 

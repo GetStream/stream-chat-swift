@@ -5,24 +5,12 @@
 import UIKit
 
 open class MessageInputSlashCommandView: UIView {
-    // MARK: - Underlying types
-    
-    public enum Command: String {
-        case giphy
-    }
-    
     // MARK: - Properties
         
     override open var intrinsicContentSize: CGSize {
         container.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
-    
-    public var command: Command = .giphy {
-        didSet {
-            updateContent()
-        }
-    }
-    
+
     // MARK: - Subviews
     
     private lazy var container = ContainerStackView().withoutAutoresizingMaskConstraints
@@ -100,6 +88,6 @@ open class MessageInputSlashCommandView: UIView {
     }
     
     open func updateContent() {
-        commandLabel.text = command.rawValue.uppercased()
+        commandLabel.text = "GIPHY"
     }
 }
