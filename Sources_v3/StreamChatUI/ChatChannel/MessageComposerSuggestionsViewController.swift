@@ -5,169 +5,105 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: UIViewController,
-    UITableViewDelegate,
-    UITableViewDataSource {
+open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: ViewController,
+    UIConfigProvider,
+    UICollectionViewDelegate,
+    UICollectionViewDataSource {
+    var heightConstraint: NSLayoutConstraint?
+
     // MARK: - Property
 
-    public let uiConfig: UIConfig<ExtraData>
-    
-    public var suggestions: [String] = ["Brian", "David", "Pavel"] {
-        didSet {
-            updateContent()
-        }
-    }
-    
-    public var position: CGPoint = CGPoint(x: 0, y: 300) {
-        didSet {
-            updateContent()
-        }
-    }
-    
-    public var maxHeight: CGFloat = 300.0 {
-        didSet {
-            updateContent()
-        }
-    }
-    
-    public var calculatedHeight: CGFloat {
-        min(CGFloat(40 * suggestions.count), maxHeight)
-    }
-    
-    // MARK: - Subviews
-    
-    public private(set) lazy var tableView = UITableView().withoutAutoresizingMaskConstraints
-    
-    // MARK: - Init
-    
-    public required init(
-        uiConfig: UIConfig<ExtraData> = .default
-    ) {
-        self.uiConfig = uiConfig
+    private var collectionViewHeightObserver: NSKeyValueObservation?
 
-        super.init(nibName: nil, bundle: nil)
-        
-        commonInit()
-    }
-    
-    public required init?(coder: NSCoder) {
-        uiConfig = .default
-        
-        super.init(coder: coder)
-        
-        commonInit()
-    }
-    
-    public func commonInit() {
-        tableView.dataSource = self
-        tableView.delegate = self
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
-        modalPresentationStyle = .custom
-        modalTransitionStyle = .crossDissolve
-    }
-    
+    // MARK: - Subviews
+
+    open private(set) lazy var collectionView = uiConfig
+        .messageComposer
+        .suggestionsCollectionView
+        .init(layout: uiConfig.messageComposer.suggestionsCollectionViewLayout.init())
+        .withoutAutoresizingMaskConstraints
+
     // MARK: - Overrides
-    
+
     override open func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.embed(tableView)
-        
-        setupAppearance()
-        setupLayout()
+        view.embed(collectionView)
     }
-    
-    override open func updateViewConstraints() {
-        widthConstraint?.constant = UIScreen.main.bounds.width
-        heightConstraint?.constant = calculatedHeight
+
+    override open func setUp() {
+        super.setUp()
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(
+            uiConfig.messageComposer.suggestionsCommandCollectionViewCell,
+            forCellWithReuseIdentifier: uiConfig.messageComposer.suggestionsCommandCollectionViewCell.reuseId
+        )
+        collectionView.register(
+            uiConfig.messageComposer.suggestionsMentionCollectionViewCell,
+            forCellWithReuseIdentifier: uiConfig.messageComposer.suggestionsMentionCollectionViewCell.reuseId
+        )
         
-        positionXConstraint?.constant = position.x
-        positionYConstraint?.constant = position.y
-        
-        super.updateViewConstraints()
+        collectionViewHeightObserver = collectionView.observe(
+            \.contentSize,
+            options: [.new],
+            changeHandler: { [weak self] _, change in
+                DispatchQueue.main.async {
+                    guard let self = self, let newSize = change.newValue else { return }
+                    self.heightConstraint?.constant = newSize.height
+                    self.view.setNeedsLayout()
+                }
+            }
+        )
     }
-    
-    // MARK: - Public
-    
-    open func setupAppearance() {
+
+    override public func setUpAppearance() {
         view.backgroundColor = .clear
-        tableView.backgroundColor = .white
-        tableView.estimatedRowHeight = 40
-        tableView.showsVerticalScrollIndicator = false
+        view.layer.addShadow(color: uiConfig.colorPalette.shadow)
     }
-    
-    var heightConstraint: NSLayoutConstraint?
-    var widthConstraint: NSLayoutConstraint?
-    var positionXConstraint: NSLayoutConstraint?
-    var positionYConstraint: NSLayoutConstraint?
-    
-    open func setupLayout() {
+
+    override public func setUpLayout() {
         view.translatesAutoresizingMaskIntoConstraints = false
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        heightConstraint = .init(
-            item: tableView,
-            attribute: .height,
-            relatedBy: .equal,
-            toItem: nil,
-            attribute: .notAnAttribute,
-            multiplier: 1,
-            constant: 300
-        )
-        
-        widthConstraint = .init(
-            item: tableView,
-            attribute: .width,
-            relatedBy: .equal,
-            toItem: nil,
-            attribute: .notAnAttribute,
-            multiplier: 1,
-            constant: UIScreen.main.bounds.width
-        )
-        
-        positionXConstraint = .init(
-            item: tableView,
-            attribute: .centerX,
-            relatedBy: .equal,
-            toItem: view,
-            attribute: .centerX,
-            multiplier: 1,
-            constant: 200
-        )
-        
-        positionYConstraint = .init(
-            item: tableView,
-            attribute: .centerY,
-            relatedBy: .equal,
-            toItem: view,
-            attribute: .centerY,
-            multiplier: 1,
-            constant: 200
-        )
-        
-        let constraints = [heightConstraint, widthConstraint, positionXConstraint, positionYConstraint].compactMap { $0 }
+
+        heightConstraint = collectionView.heightAnchor.constraint(equalToConstant: 0)
+
+        let constraints = [heightConstraint].compactMap { $0 }
+
         NSLayoutConstraint.activate(constraints)
-        
         updateContent()
     }
-    
-    open func updateContent() {
-        tableView.reloadData()
-        
-        view.setNeedsUpdateConstraints()
-        view.layoutIfNeeded()
+
+    override open func updateViewConstraints() {
+        super.updateViewConstraints()
+        heightConstraint?.constant = collectionView.contentSize.height
     }
-    
-    // MARK: - UITableView
-    
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        suggestions.count
+
+    override open func updateContent() {
+        collectionView.reloadData()
     }
-    
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell")!
-        cell.textLabel?.text = suggestions[indexPath.row]
-        
+
+    // MARK: - UICollectionView
+
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        3 // uiConfig.commandIcons.count
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+//        let cell = collectionView.dequeueReusableCell(
+//            withReuseIdentifier: MessageComposerCommandCollectionViewCell<ExtraData>.reuseId,
+//            for: indexPath
+//        ) as! MessageComposerCommandCollectionViewCell<ExtraData>
+//
+//        cell.uiConfig = uiConfig
+//        cell.commandView.content = ("Giphy", "/giphy [query]", UIImage(named: "command_giphy", in: .streamChatUI))
+
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MessageComposerMentionCollectionViewCell<ExtraData>.reuseId,
+            for: indexPath
+        ) as! MessageComposerMentionCollectionViewCell<ExtraData>
+
+        cell.uiConfig = uiConfig
+        cell.mentionView.content = ("Damian", "@damian", UIImage(named: "pattern1", in: .streamChatUI), false)
+
         return cell
     }
 }
