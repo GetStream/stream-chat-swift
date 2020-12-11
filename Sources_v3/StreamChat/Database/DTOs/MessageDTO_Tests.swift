@@ -622,4 +622,44 @@ class MessageDTO_Tests: XCTestCase {
         // Assert reply linked to parent message
         XCTAssert(parentMessage?.replies.first!.id == replyMessageId)
     }
+
+    func test_attachmentsAreDeleted_whenMessageIsDeleted() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let attachmentIDs: [AttachmentId] = (0..<5).map {
+            .init(cid: cid, messageId: messageId, index: $0)
+        }
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid)
+
+        // Create message in the database.
+        try database.createMessage(id: messageId, cid: cid)
+
+        // Create message attachments in the database.
+        try database.writeSynchronously { session in
+            for id in attachmentIDs {
+                try session.createNewAttachment(
+                    seed: ChatMessageAttachment.Seed.dummy(),
+                    id: id
+                )
+            }
+        }
+
+        var loadedAttachments: [AttachmentDTO] {
+            attachmentIDs.compactMap {
+                database.viewContext.attachment(id: $0)
+            }
+        }
+
+        XCTAssertEqual(loadedAttachments.count, attachmentIDs.count)
+
+        // Create message attachments in the database.
+        try database.writeSynchronously { session in
+            let message = try XCTUnwrap(session.message(id: messageId))
+            session.delete(message: message)
+        }
+
+        XCTAssertEqual(loadedAttachments.count, 0)
+    }
 }
