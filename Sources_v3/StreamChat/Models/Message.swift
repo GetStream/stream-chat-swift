@@ -87,7 +87,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     public let threadParticipants: Set<UserId>
     
     /// A list of attachments in this message.
-    public let attachments: Set<_ChatMessageAttachment<ExtraData>>
+    public let attachments: [_ChatMessageAttachment<ExtraData>]
         
     /// A list of latest 25 replies to this message.
     public let latestReplies: [_ChatMessage<ExtraData>]
