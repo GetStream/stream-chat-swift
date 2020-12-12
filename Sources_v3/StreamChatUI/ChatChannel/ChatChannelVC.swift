@@ -259,8 +259,8 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: ViewController,
         var actions: [ChatMessageActionItem] = []
 
         actions.append(.inlineReply { [weak self] in
-            debugPrint("inline reply")
             self?.dismiss(animated: true)
+            self?.messageInputAccessoryViewController.state = .reply(message)
         })
 
         actions.append(.threadReply { [weak self] in
