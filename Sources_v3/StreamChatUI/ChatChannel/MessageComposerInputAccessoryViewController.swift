@@ -17,12 +17,10 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     
     public enum State {
         case initial
-        case empty(isEmpty: Bool)
         case slashCommand
         case suggestions
-        case forceShrinkedInput
-        case reply
-        case edit
+        case reply(_ChatMessage<ExtraData>)
+        case edit(_ChatMessage<ExtraData>)
     }
     
     // MARK: - Properties
@@ -35,15 +33,12 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
         }
     }
     
-    public var replyMessage: _ChatMessage<ExtraData>? {
+    var isEmpty: Bool = true {
         didSet {
-            state = .reply
-        }
-    }
-    
-    public var messageToEdit: _ChatMessage<ExtraData>? {
-        didSet {
-            state = .edit
+            composerView.attachmentButton.isHidden = !isEmpty
+            composerView.commandsButton.isHidden = !isEmpty
+            composerView.shrinkInputButton.isHidden = isEmpty
+            composerView.sendButton.isEnabled = !isEmpty
         }
     }
     
@@ -97,19 +92,12 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
         case .initial:
             textView.text = ""
             textView.placeholderLabel.text = L10n.Composer.Placeholder.message
-            state = .empty(isEmpty: true)
-            messageToEdit = nil
-            replyMessage = nil
+            composerView.replyView.message = nil
             composerView.sendButton.mode = .new
             composerView.attachmentsView.isHidden = true
             composerView.replyView.isHidden = true
             composerView.container.topStackView.isHidden = true
             composerView.messageInputView.setSlashCommandViews(hidden: true)
-        case let .empty(isEmpty):
-            composerView.sendButton.isEnabled = !isEmpty
-            composerView.attachmentButton.isHidden = !isEmpty
-            composerView.commandsButton.isHidden = !isEmpty
-            composerView.shrinkInputButton.isHidden = isEmpty
         case .slashCommand:
             textView.text = ""
             textView.placeholderLabel.text = L10n.Composer.Placeholder.giphy
@@ -117,17 +105,14 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
             dismissSuggestionsViewController()
         case .suggestions:
             showSuggestionsViewController()
-        case .forceShrinkedInput:
-            composerView.attachmentButton.isHidden = false
-            composerView.commandsButton.isHidden = false
-            composerView.shrinkInputButton.isHidden = true
-        case .reply:
+        case let .reply(messageToReply):
             composerView.titleLabel.text = L10n.Composer.Title.reply
             let image = UIImage(named: "replyArrow", in: .streamChatUI)?
                 .tinted(with: uiConfig.colorPalette.messageComposerStateIcon)
             composerView.stateIcon.image = image
             composerView.container.topStackView.isHidden = false
-        // set reply message to reply view
+            composerView.replyView.isHidden = false
+            composerView.replyView.message = messageToReply
         case .edit:
             composerView.sendButton.mode = .edit
             composerView.titleLabel.text = L10n.Composer.Title.edit
@@ -187,12 +172,40 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     // MARK: Button actions
     
     @objc func sendMessage() {
-        guard let text = composerView.messageInputView.textView.text,
+        guard
+            let controller = controller,
+            let cid = controller.cid,
+            let text = composerView.messageInputView.textView.text,
             !text.replacingOccurrences(of: " ", with: "").isEmpty
         else { return }
         
-        controller?.createNewMessage(text: text)
-        textView.text = ""
+        switch state {
+        case .initial:
+            // TODO: Attachments
+            controller.createNewMessage(text: text)
+        case let .reply(messageToReply):
+            let messageController = controller.client.messageController(
+                cid: cid,
+                messageId: messageToReply.id
+            )
+            // TODO:
+            // 1. Attachments
+            // 2. Should be inline reply after backend implementation.
+            messageController.createNewReply(text: textView.text, showReplyInChannel: true)
+        case let .edit(messageToEdit):
+            let messageController = controller.client.messageController(
+                cid: cid,
+                messageId: messageToEdit.id
+            )
+            // TODO: Adjust LLC to edit attachments also
+            messageController.editMessage(text: textView.text)
+        case .suggestions:
+            // TODO: `createNewMessage` with `commands` value should be called.
+            print("Send suggestions message")
+        default: return
+        }
+        
+        state = .initial
     }
     
     @objc func showImagePicker() {
@@ -204,7 +217,9 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     }
     
     @objc func shrinkInput() {
-        state = .forceShrinkedInput
+        composerView.attachmentButton.isHidden = false
+        composerView.commandsButton.isHidden = false
+        composerView.shrinkInputButton.isHidden = true
     }
     
     @objc func resetState() {
@@ -272,7 +287,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     }
     
     public func textViewDidChange(_ textView: UITextView) {
-        state = .empty(isEmpty: textView.text.isEmpty)
+        isEmpty = textView.text.replacingOccurrences(of: " ", with: "").isEmpty
         replaceTextWithSlashCommandViewIfNeeded()
         promptSuggestionIfNeeded()
     }
