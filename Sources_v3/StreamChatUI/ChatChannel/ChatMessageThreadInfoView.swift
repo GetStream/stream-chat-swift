@@ -77,6 +77,7 @@ open class ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: Control, UIConf
         stack.alignment = .center
         stack.axis = .horizontal
         stack.spacing = UIStackView.spacingUseSystem
+        stack.isUserInteractionEnabled = false
         return stack
     }()
 

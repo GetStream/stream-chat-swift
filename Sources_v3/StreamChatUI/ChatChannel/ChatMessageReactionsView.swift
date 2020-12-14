@@ -140,7 +140,7 @@ open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigPr
         content.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
         content.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
         content.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor).isActive = true
-        content.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
+        content.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor).with(priority: .defaultHigh).isActive = true
     }
 
     override public func defaultAppearance() {
