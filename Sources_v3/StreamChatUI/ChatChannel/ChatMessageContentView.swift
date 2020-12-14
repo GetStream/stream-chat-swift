@@ -89,21 +89,21 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
             authorAvatarView.heightAnchor.constraint(equalToConstant: 32),
             authorAvatarView.leadingAnchor.constraint(equalTo: leadingAnchor),
             authorAvatarView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
+            
             messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
             messageReactionsView.bottomAnchor.constraint(equalTo: messageBubbleView.topAnchor),
-
+            
             messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
             messageBubbleView.topAnchor.constraint(equalTo: topAnchor).with(priority: .defaultHigh),
             messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor).with(priority: .defaultHigh),
             
             messageMetadataView.heightAnchor.constraint(equalToConstant: 16),
             messageMetadataView.bottomAnchor.constraint(equalTo: bottomAnchor),
-
+            
             threadArrowView.widthAnchor.constraint(equalToConstant: 16),
             threadArrowView.topAnchor.constraint(equalTo: messageBubbleView.centerYAnchor),
             threadArrowView.bottomAnchor.constraint(equalTo: threadView.centerYAnchor),
-
+            
             threadView.topAnchor.constraint(equalToSystemSpacingBelow: messageBubbleView.bottomAnchor, multiplier: 1)
         ])
 
@@ -136,6 +136,9 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
     }
 
     override open func updateContent() {
+        var toActivate: [NSLayoutConstraint] = []
+        var toDeactivate: [NSLayoutConstraint] = []
+
         let isOutgoing = message?.isSentByCurrentUser ?? false
         let isPartOfThread = message?.isPartOfThread ?? false
 
@@ -154,8 +157,18 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
 
         threadView.isHidden = !isPartOfThread
         threadArrowView.isHidden = !isPartOfThread
-        outgoingMessageIsThreadConstraints.forEach { $0.isActive = isPartOfThread && isOutgoing }
-        incomingMessageIsThreadConstraints.forEach { $0.isActive = isPartOfThread && !isOutgoing }
+        if isPartOfThread {
+            if isOutgoing {
+                toActivate.append(contentsOf: outgoingMessageIsThreadConstraints)
+                toDeactivate.append(contentsOf: incomingMessageIsThreadConstraints)
+            } else {
+                toActivate.append(contentsOf: incomingMessageIsThreadConstraints)
+                toDeactivate.append(contentsOf: outgoingMessageIsThreadConstraints)
+            }
+        } else {
+            toDeactivate.append(contentsOf: outgoingMessageIsThreadConstraints)
+            toDeactivate.append(contentsOf: incomingMessageIsThreadConstraints)
+        }
 
         let placeholder = UIImage(named: "pattern1", in: .streamChatUI)
         if let imageURL = message?.author.imageURL {
@@ -164,10 +177,28 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
             authorAvatarView.imageView.image = placeholder
         }
 
-        incomingMessageConstraints.forEach { $0.isActive = !isOutgoing }
-        outgoingMessageConstraints.forEach { $0.isActive = isOutgoing }
-        bubbleToReactionsConstraint?.isActive = message?.deletedAt == nil && !(message?.reactionScores.isEmpty ?? true)
-        bubbleToMetadataConstraint?.isActive = message?.isLastInGroup == true
+        if isOutgoing {
+            toActivate.append(contentsOf: outgoingMessageConstraints)
+            toDeactivate.append(contentsOf: incomingMessageConstraints)
+        } else {
+            toActivate.append(contentsOf: incomingMessageConstraints)
+            toDeactivate.append(contentsOf: outgoingMessageConstraints)
+        }
+
+        if message?.deletedAt == nil, !(message?.reactionScores.isEmpty ?? true) {
+            toActivate.append(bubbleToReactionsConstraint!)
+        } else {
+            toDeactivate.append(bubbleToReactionsConstraint!)
+        }
+        
+        if message?.isLastInGroup == true {
+            toActivate.append(bubbleToMetadataConstraint!)
+        } else {
+            toDeactivate.append(bubbleToMetadataConstraint!)
+        }
+
+        NSLayoutConstraint.deactivate(toDeactivate)
+        NSLayoutConstraint.activate(toActivate)
 
         authorAvatarView.isVisible = !isOutgoing && message?.isLastInGroup == true
         messageMetadataView.isVisible = bubbleToMetadataConstraint?.isActive ?? false
