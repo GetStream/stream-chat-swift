@@ -5,8 +5,9 @@
 import StreamChat
 import UIKit
 
-class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionViewCell, UIConfigProvider {
-    var message: _ChatMessageGroupPart<ExtraData>? {
+open class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionViewCell, UIConfigProvider {
+    class var reuseId: String { String(describing: self) }
+    public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContent() }
     }
     
@@ -16,7 +17,7 @@ class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionVie
     
     // MARK: - Lifecycle
 
-    override func didMoveToSuperview() {
+    override open func didMoveToSuperview() {
         super.didMoveToSuperview()
 
         guard superview != nil else { return }
@@ -25,7 +26,7 @@ class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionVie
         updateContent()
     }
 
-    func setUpLayout() {
+    open func setUpLayout() {
         contentView.addSubview(messageView)
 
         NSLayoutConstraint.activate([
@@ -35,19 +36,19 @@ class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionVie
         ])
     }
 
-    func updateContent() {
+    open func updateContent() {
         messageView.message = message
     }
 
     // MARK: - Overrides
 
-    override func prepareForReuse() {
+    override open func prepareForReuse() {
         super.prepareForReuse()
 
         message = nil
     }
     
-    override func preferredLayoutAttributesFitting(
+    override open func preferredLayoutAttributesFitting(
         _ layoutAttributes: UICollectionViewLayoutAttributes
     ) -> UICollectionViewLayoutAttributes {
         let preferredAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
@@ -68,21 +69,15 @@ class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionVie
 }
 
 class СhatIncomingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
-    static var reuseId: String { String(describing: self) }
-
     override func setUpLayout() {
         super.setUpLayout()
-
         messageView.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
     }
 }
 
 class СhatOutgoingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
-    static var reuseId: String { String(describing: self) }
-
     override func setUpLayout() {
         super.setUpLayout()
-
         messageView.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
     }
 }
