@@ -76,9 +76,10 @@ open class ChatChannelCollectionViewLayout: UICollectionViewFlowLayout {
     override open func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
         // Content offset may be zero only when view just loaded for first time and needs to be scrolled to bottom
         if proposedContentOffset == .zero {
+            let insets = collectionView?.contentInset ?? .zero
             return CGPoint(
                 x: 0,
-                y: collectionViewContentSize.height - (collectionView?.bounds.height ?? 0)
+                y: collectionViewContentSize.height - (collectionView?.bounds.height ?? 0) + insets.top + insets.bottom
             )
         }
         if proposedContentOffset.y < zeroOffset.y {
