@@ -17,7 +17,7 @@ open class ChatChannelListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChan
         }
         
         let vc = ChatChannelVC<ExtraData>()
-        vc.controller = client.channelController(for: channel.cid)
+        vc.channelController = client.channelController(for: channel.cid)
         
         guard let navController = rootViewController?.navigationController else {
             log.error("Can't push chat detail, no navigation controller available")
