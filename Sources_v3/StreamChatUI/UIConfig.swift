@@ -86,6 +86,7 @@ public extension UIConfig {
     struct Navigation {
         public var navigationBar: ChatNavigationBar.Type = ChatNavigationBar.self
         public var channelListRouter: ChatChannelListRouter<ExtraData>.Type = ChatChannelListRouter<ExtraData>.self
+        public var messageListRouter: ChatMessageListRouter<ExtraData>.Type = ChatMessageListRouter<ExtraData>.self
         public var channelDetailRouter: ChatChannelRouter<ExtraData>.Type = ChatChannelRouter<ExtraData>.self
     }
 }
@@ -123,6 +124,12 @@ public extension UIConfig {
 
 public extension UIConfig {
     struct MessageListUI {
+        public var messageListVC: ChatMessageListVC<ExtraData>.Type = ChatMessageListVC<ExtraData>.self
+        public var incomingMessageCell: СhatMessageCollectionViewCell<ExtraData>.Type =
+            СhatIncomingMessageCollectionViewCell<ExtraData>.self
+        public var outgoingMessageCell: СhatMessageCollectionViewCell<ExtraData>.Type =
+            СhatOutgoingMessageCollectionViewCell<ExtraData>.self
+
         public var collectionView: ChatChannelCollectionView.Type = ChatChannelCollectionView.self
         public var collectionLayout: ChatChannelCollectionViewLayout.Type = ChatChannelCollectionViewLayout.self
         public var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
