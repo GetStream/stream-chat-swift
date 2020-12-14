@@ -314,7 +314,9 @@ extension MessageDTO {
             args: args,
             parentId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
-            attachments: attachments.map { $0.asRequestPayload() },
+            attachments: attachments
+                .sorted { $0.attachmentID.index < $1.attachmentID.index }
+                .map { $0.asRequestPayload() },
             extraData: extraData ?? .defaultValue
         )
     }
