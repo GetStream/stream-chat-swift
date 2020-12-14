@@ -20,3 +20,7 @@ enum EndpointMethod: String {
 
 /// A type representing empty response of an Endpoint.
 public struct EmptyResponse: Decodable {}
+
+/// A type representing empty body for `.post` Endpoints.
+/// Our backend currently expects a body (not `nil`), even if it's empty.
+struct EmptyBody: Codable, Equatable {}

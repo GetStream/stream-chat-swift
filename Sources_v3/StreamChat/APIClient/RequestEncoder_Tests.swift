@@ -139,6 +139,29 @@ class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual(serializedBody, endpoint.body as! TestUser)
     }
     
+    func test_encodingRequestWithoutBody_POST() throws {
+        // Our backend expects all POST requests will have a body, even if empty
+        // nil body is not acceptable (causes invalid json - 400 error)
+        
+        // Prepare a POST endpoint with JSON body
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+        
+        // Encode the request and wait for the result
+        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        
+        // Check the body is present (and empty)
+        let body = try XCTUnwrap(request.httpBody)
+        let serializedBody = try JSONDecoder.stream.decode(EmptyBody.self, from: body)
+        
+        XCTAssertEqual(serializedBody, EmptyBody())
+    }
+    
     func test_encodingRequestBody_GET() throws {
         // Prepare a GET endpoint with JSON body
         let endpoint = Endpoint<Data>(
