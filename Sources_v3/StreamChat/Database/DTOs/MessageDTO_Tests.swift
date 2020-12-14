@@ -193,125 +193,126 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage?.extraData, .defaultValue)
     }
     
-    func test_messagePayload_asModel() {
+    func test_messagePayload_asModel() throws {
         let currentUserId: UserId = .unique
         let messageAuthorId: UserId = .unique
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
-        
-        let currentUserPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: currentUserId, role: .user)
-    
-        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
+
+        try database.createCurrentUser(id: currentUserId)
+        try database.createChannel(cid: channelId, withMessages: false)
         
         let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
             messageId: messageId,
             authorUserId: messageAuthorId,
-            latestReactions: (0..<20).map { _ in
-                .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
+            latestReactions: (0..<3).map { _ in
+                .dummy(messageId: messageId, user: .dummy(userId: .unique))
             },
-            ownReactions: (0..<5).map { _ in
-                .dummy(messageId: messageId, user: UserPayload.dummy(userId: messageAuthorId))
+            ownReactions: (0..<2).map { _ in
+                .dummy(messageId: messageId, user: .dummy(userId: messageAuthorId))
             }
         )
         
         // Asynchronously save the payload to the db
-        database.write { session in
-            // Create the current user first.
-            try! session.saveCurrentUser(payload: currentUserPayload)
-            
-            // Create the channel first
-            try! session.saveChannel(payload: channelPayload, query: nil)
-            
+        try database.writeSynchronously { session in
             // Save the message
-            try! session.saveMessage(payload: messagePayload, for: channelId)
+            try session.saveMessage(payload: messagePayload, for: channelId)
         }
         
         // Load the message from the db and check the fields are correct
-        var loadedMessage: _ChatMessage<DefaultExtraData>? {
+        let loadedMessage: ChatMessage = try XCTUnwrap(
             database.viewContext.message(id: messageId)?.asModel()
-        }
+        )
         
-        // Load 10 latest reactions for the message.
-        var latestReactions: Set<_ChatMessageReaction<DefaultExtraData>> {
-            Set(
-                MessageReactionDTO
-                    .loadLatestReactions(for: messageId, limit: 10, context: database.viewContext)
-                    .map { $0.asModel() }
-            )
-        }
-        
+        // Load 3 latest reactions for the message.
+        let latestReactions = Set<ChatMessageReaction>(
+            MessageReactionDTO
+                .loadLatestReactions(for: messageId, limit: 10, context: database.viewContext)
+                .map { $0.asModel() }
+        )
+
         // Load message reactions left by the current user.
-        var currentUserReactions: Set<_ChatMessageReaction<DefaultExtraData>> {
-            Set(
-                MessageReactionDTO
-                    .loadReactions(for: messageId, authoredBy: currentUserId, context: database.viewContext)
-                    .map { $0.asModel() }
-            )
-        }
-        
-        AssertAsync {
-            Assert.willBeEqual(loadedMessage?.id, messagePayload.id)
-            Assert.willBeEqual(loadedMessage?.type, messagePayload.type)
-            Assert.willBeEqual(loadedMessage?.author.id, messagePayload.user.id)
-            Assert.willBeEqual(loadedMessage?.createdAt, messagePayload.createdAt)
-            Assert.willBeEqual(loadedMessage?.updatedAt, messagePayload.updatedAt)
-            Assert.willBeEqual(loadedMessage?.deletedAt, messagePayload.deletedAt)
-            Assert.willBeEqual(loadedMessage?.text, messagePayload.text)
-            Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
-            Assert.willBeEqual(loadedMessage?.arguments, messagePayload.args)
-            Assert.willBeEqual(loadedMessage?.parentMessageId, messagePayload.parentId)
-            Assert.willBeEqual(loadedMessage?.showReplyInChannel, messagePayload.showReplyInChannel)
-            Assert.willBeEqual(loadedMessage?.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
-            Assert.willBeEqual(loadedMessage.map { Array($0.threadParticipants) }, messagePayload.threadParticipants.map(\.id))
-            Assert.willBeEqual(loadedMessage?.replyCount, messagePayload.replyCount)
-            Assert.willBeEqual(loadedMessage?.extraData, messagePayload.extraData)
-            Assert.willBeEqual(loadedMessage?.reactionScores, messagePayload.reactionScores)
-            Assert.willBeEqual(loadedMessage?.isSilent, messagePayload.isSilent)
-            Assert.willBeEqual(loadedMessage?.latestReactions, latestReactions)
-            Assert.willBeEqual(loadedMessage?.currentUserReactions, currentUserReactions)
-            Assert.willBeEqual(loadedMessage?.attachments, messagePayload.attachments(cid: channelId))
-        }
+        let currentUserReactions = Set<ChatMessageReaction>(
+            MessageReactionDTO
+                .loadReactions(for: messageId, authoredBy: currentUserId, context: database.viewContext)
+                .map { $0.asModel() }
+        )
+
+        XCTAssertEqual(loadedMessage.id, messagePayload.id)
+        XCTAssertEqual(loadedMessage.type, messagePayload.type)
+        XCTAssertEqual(loadedMessage.author.id, messagePayload.user.id)
+        XCTAssertEqual(loadedMessage.createdAt, messagePayload.createdAt)
+        XCTAssertEqual(loadedMessage.updatedAt, messagePayload.updatedAt)
+        XCTAssertEqual(loadedMessage.deletedAt, messagePayload.deletedAt)
+        XCTAssertEqual(loadedMessage.text, messagePayload.text)
+        XCTAssertEqual(loadedMessage.command, messagePayload.command)
+        XCTAssertEqual(loadedMessage.arguments, messagePayload.args)
+        XCTAssertEqual(loadedMessage.parentMessageId, messagePayload.parentId)
+        XCTAssertEqual(loadedMessage.showReplyInChannel, messagePayload.showReplyInChannel)
+        XCTAssertEqual(loadedMessage.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
+        XCTAssertEqual(loadedMessage.threadParticipants, Set(messagePayload.threadParticipants.map(\.id)))
+        XCTAssertEqual(loadedMessage.replyCount, messagePayload.replyCount)
+        XCTAssertEqual(loadedMessage.extraData, messagePayload.extraData)
+        XCTAssertEqual(loadedMessage.reactionScores, messagePayload.reactionScores)
+        XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
+        XCTAssertEqual(loadedMessage.latestReactions, latestReactions)
+        XCTAssertEqual(loadedMessage.currentUserReactions, currentUserReactions)
+        XCTAssertEqual(loadedMessage.attachments, messagePayload.attachments(cid: channelId))
     }
     
-    func test_messagePayload_asRequestBody() {
-        let userId: UserId = .unique
-        let messageId: MessageId = .unique
-        let channelId: ChannelId = .unique
-        
-        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
-        
-        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: messageId, authorUserId: userId)
-        
-        // Asynchronously save the payload to the db
-        database.write { session in
-            // Create the channel first
-            try! session.saveChannel(payload: channelPayload, query: nil)
-            
-            // Save the message
-            try! session.saveMessage(payload: messagePayload, for: channelId)
-        }
-        
-        // Load the message from the db and check the fields are correct
-        var loadedMessage: MessageDTO? {
-            database.viewContext.message(id: messageId)
-        }
+    func test_newMessage_asRequestBody() throws {
+        let currentUserId: UserId = .unique
+        let cid: ChannelId = .unique
+        let parentMessageId: MessageId = .unique
 
-        var requestBody: MessageRequestBody<DefaultExtraData>? {
-            loadedMessage?.asRequestBody()
+        // Create current user in the database.
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+
+        // Create parent message in the database.
+        try database.createMessage(id: parentMessageId, cid: cid)
+
+        var messageId: MessageId!
+        let messageText: String = .unique
+        let messageCommand: String = .unique
+        let messageArguments: String = .unique
+        let messageAttachmentSeeds: [ChatMessageAttachment.Seed] = [.dummy(), .dummy(), .dummy()]
+        let messageShowReplyInChannel = true
+        let messageExtraData: DefaultExtraData.Message = .defaultValue
+
+        // Create message with attachments in the database.
+        try database.writeSynchronously { session in
+            messageId = try session.createNewMessage(
+                in: cid,
+                text: messageText,
+                command: messageCommand,
+                arguments: messageArguments,
+                parentMessageId: parentMessageId,
+                attachments: messageAttachmentSeeds,
+                showReplyInChannel: true,
+                extraData: messageExtraData
+            ).id
         }
         
-        AssertAsync {
-            Assert.willBeEqual(requestBody?.id, messagePayload.id)
-            Assert.willBeEqual(requestBody?.user.id, messagePayload.user.id)
-            Assert.willBeEqual(requestBody?.text, messagePayload.text)
-            Assert.willBeEqual(requestBody?.command, messagePayload.command)
-            Assert.willBeEqual(requestBody?.args, messagePayload.args)
-            Assert.willBeEqual(requestBody?.parentId, messagePayload.parentId)
-            Assert.willBeEqual(requestBody?.showReplyInChannel, messagePayload.showReplyInChannel)
-//            Assert.willBeEqual(loadedMessage?.mentionedUsers.map { $0.id }, messagePayload.mentionedUsers.map { $0.id })
-            Assert.willBeEqual(requestBody?.extraData, messagePayload.extraData)
-            Assert.willBeEqual(requestBody?.attachments.count, loadedMessage?.attachments.count)
-        }
+        // Load the message from the database and convert to request body.
+        let requestBody: MessageRequestBody<DefaultExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: messageId)?.asRequestBody()
+        )
+
+        // Assert request body has correct fields.
+        XCTAssertEqual(requestBody.id, messageId)
+        XCTAssertEqual(requestBody.user.id, currentUserId)
+        XCTAssertEqual(requestBody.text, messageText)
+        XCTAssertEqual(requestBody.command, messageCommand)
+        XCTAssertEqual(requestBody.args, messageArguments)
+        XCTAssertEqual(requestBody.parentId, parentMessageId)
+        XCTAssertEqual(requestBody.showReplyInChannel, messageShowReplyInChannel)
+        XCTAssertEqual(requestBody.extraData, messageExtraData)
+
+        // Assert attachments are in correct order.
+        XCTAssertEqual(requestBody.attachments.map(\.title), messageAttachmentSeeds.map(\.fileName))
     }
     
     func test_additionalLocalState_isStored() {
