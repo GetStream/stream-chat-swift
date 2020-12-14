@@ -167,9 +167,10 @@ struct DefaultRequestEncoder: RequestEncoder {
     
     private func encodePOSTRequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
         log.assert(endpoint.method == .post, "Request method is \(endpoint.method) but must be POST.")
-        guard let body = endpoint.body else { return }
-        
-        request.httpBody = try JSONEncoder.stream.encode(AnyEncodable(body))
+        // If the endpoint doesn't contain a body, we should encode an empty body
+        // since backends expects it
+        let body = try JSONEncoder.stream.encode(AnyEncodable(endpoint.body ?? EmptyBody()))
+        request.httpBody = body
     }
     
     private func encodeJSONToQueryItems(request: inout URLRequest, data: Encodable) throws {

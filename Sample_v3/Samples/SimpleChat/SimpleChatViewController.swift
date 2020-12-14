@@ -37,6 +37,16 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
         }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        channelController.markRead { error in
+            if let error = error {
+                print("Error marking the channel read:", error)
+            }
+        }
+    }
+    
     // MARK: - ChannelControllerDelegate
 
     ///
