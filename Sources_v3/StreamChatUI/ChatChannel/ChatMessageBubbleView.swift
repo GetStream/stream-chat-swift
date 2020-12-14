@@ -125,7 +125,7 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
                 
                 textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
                 textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                textView.topAnchor.constraint(equalToSystemSpacingBelow: imageGallery.bottomAnchor, multiplier: 1),
+                textView.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
                 textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
             ]
         } ?? layoutConstraints[.text]
