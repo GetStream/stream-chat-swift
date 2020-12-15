@@ -929,4 +929,114 @@ final class MessageUpdater_Tests: StressTestCase {
         // Assert the completion is called with the error.
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+
+    // MARK: - Restart failed attachment uploading
+    
+    func test_restartFailedAttachmentUploading_propagatesAttachmentDoesNotExistError() throws {
+        let error = try await {
+            messageUpdater.restartFailedAttachmentUploading(with: .unique, completion: $0)
+        }
+
+        // Assert `ClientError.AttachmentDoesNotExist` is propagated.
+        XCTAssertTrue(error is ClientError.AttachmentDoesNotExist)
+    }
+
+    func test_restartFailedAttachmentUploading_propagatesAttachmentEditingError() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
+
+        // Create channel in database.
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create message in database.
+        try database.createMessage(id: messageId, cid: cid)
+        // Create attachment in database.
+        try database.writeSynchronously {
+            try $0.createNewAttachment(
+                seed: ChatMessageAttachment.Seed.dummy(),
+                id: attachmentId
+            )
+        }
+
+        let rejectedStates: [LocalAttachmentState?] = [
+            .pendingUpload,
+            .uploading(progress: .random(in: 0...1)),
+            .uploaded,
+            nil
+        ]
+
+        // Iterate through rejected for uploading restart states.
+        for state in rejectedStates {
+            // Apply rejected state.
+            try database.writeSynchronously {
+                $0.attachment(id: attachmentId)?.localState = state
+            }
+
+            // Try to restart uploading and catch the error.
+            let error = try await {
+                messageUpdater.restartFailedAttachmentUploading(with: attachmentId, completion: $0)
+            }
+
+            // Assert `ClientError.AttachmentEditing` is propagated.
+            XCTAssertTrue(error is ClientError.AttachmentEditing)
+        }
+    }
+
+    func test_restartFailedAttachmentUploading_propagatesDatabaseError() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
+
+        // Create channel in database.
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create message in database.
+        try database.createMessage(id: messageId, cid: cid)
+        // Create attachment in database in `.uploadingFailed` state.
+        try database.writeSynchronously {
+            let attachmentDTO = try $0.createNewAttachment(
+                seed: ChatMessageAttachment.Seed.dummy(),
+                id: attachmentId
+            )
+            attachmentDTO.localState = .uploadingFailed
+        }
+
+        // Make database throw error on write.
+        let databaseError = TestError()
+        database.write_errorResponse = databaseError
+
+        // Try to restart uploading and catch the error.
+        let error = try await {
+            messageUpdater.restartFailedAttachmentUploading(with: attachmentId, completion: $0)
+        }
+
+        // Assert database error is propagated.
+        XCTAssertEqual(error as? TestError, databaseError)
+    }
+
+    func test_restartFailedAttachmentUploading_propagatesNilError() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
+
+        // Create channel in database.
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create message in database.
+        try database.createMessage(id: messageId, cid: cid)
+        // Create attachment in database in `.uploadingFailed` state.
+        try database.writeSynchronously {
+            let attachmentDTO = try $0.createNewAttachment(
+                seed: ChatMessageAttachment.Seed.dummy(),
+                id: attachmentId
+            )
+            attachmentDTO.localState = .uploadingFailed
+        }
+
+        // Try to restart uploading and catch the error.
+        let error = try await {
+            messageUpdater.restartFailedAttachmentUploading(with: attachmentId, completion: $0)
+        }
+
+        // Assert successful result is propagated.
+        XCTAssertNil(error)
+    }
 }
