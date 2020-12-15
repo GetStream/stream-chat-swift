@@ -9,6 +9,8 @@ on:
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'Sources/**' # Only run if a file outside /Sources changes (anything outside v2 is assumed to be v3)
   release:
     types:
       - created
