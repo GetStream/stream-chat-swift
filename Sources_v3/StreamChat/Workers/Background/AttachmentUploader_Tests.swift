@@ -81,12 +81,6 @@ final class AttachmentUploader_Tests: StressTestCase {
             let payload = FileUploadPayload(file: .unique())
             apiClient.uploadFile_completion?(.success(payload))
 
-            let fileData = try JSONEncoder().encode(AttachmentFile(
-                type: AttachmentFileType(ext: attachmentSeed.localURL.pathExtension),
-                size: try Int64(Data(contentsOf: attachmentSeed.localURL).count),
-                mimeType: AttachmentFileType(ext: attachmentSeed.localURL.pathExtension).mimeType
-            ))
-
             AssertAsync {
                 // Assert attachment state eventually becomes `.uploaded`.
                 Assert.willBeEqual(attachment.localState, .uploaded)
@@ -94,8 +88,6 @@ final class AttachmentUploader_Tests: StressTestCase {
                 Assert.willBeEqual(attachment.imageURL, attachmentType == .image ? payload.file : nil)
                 // Assert `attachment.url` is set if attachment type is not `.image`.
                 Assert.willBeEqual(attachment.url, attachmentType == .image ? nil : payload.file)
-                // Assert `attachment.file` is set if attachment type is not `.image`.
-                Assert.willBeEqual(attachment.file, attachmentType == .image ? nil : fileData)
             }
         }
     }

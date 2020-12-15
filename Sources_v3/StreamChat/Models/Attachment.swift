@@ -29,6 +29,15 @@ extension _ChatMessageAttachment {
         /// An extra data for the attachment.
         public let extraData: ExtraData.Attachment
 
+        var file: AttachmentFile {
+            let fileType = AttachmentFileType(ext: localURL.pathExtension)
+            return .init(
+                type: fileType,
+                size: localURL.fileSize,
+                mimeType: fileType.mimeType
+            )
+        }
+
         public init(
             localURL: URL,
             fileName: String,
@@ -372,5 +381,12 @@ public protocol AttachmentExtraData: ExtraData {}
 public extension _ChatMessageAttachment {
     subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.Attachment, T>) -> T {
         extraData[keyPath: keyPath]
+    }
+}
+
+private extension URL {
+    var fileSize: Int64 {
+        let attributes = try? FileManager.default.attributesOfItem(atPath: path)
+        return attributes?[.size] as? Int64 ?? 0
     }
 }
