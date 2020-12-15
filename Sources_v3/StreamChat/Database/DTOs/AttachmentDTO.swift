@@ -132,14 +132,14 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.type = seed.type.rawValue
         dto.extraData = try JSONEncoder.default.encode(seed.extraData)
         dto.title = seed.fileName
-        
+        dto.file = try JSONEncoder.default.encode(seed.file)
+
         dto.author = nil
         dto.text = nil
         dto.actions = nil
         dto.url = nil
         dto.imageURL = nil
         dto.imagePreviewURL = nil
-        dto.file = nil
 
         dto.channel = channelDTO
         dto.message = messageDTO
@@ -201,13 +201,15 @@ private extension AttachmentRequestBody {
             )
             extraData = .defaultValue
         }
+
+        let type = AttachmentType(rawValue: dto.type)
         
         return .init(
-            type: .init(rawValue: dto.type),
+            type: type,
             title: dto.title,
             url: dto.url,
             imageURL: dto.imageURL,
-            file: dto.decoded(AttachmentFile.self, from: dto.file),
+            file: type == .image ? nil : dto.decoded(AttachmentFile.self, from: dto.file),
             extraData: extraData
         )
     }
