@@ -854,6 +854,58 @@ final class MessageController_Tests: StressTestCase {
         // Assert controller is kept alive.
         AssertAsync.staysTrue(weakController != nil)
     }
+
+    // MARK: - Restart uploading for failed attachment
+
+    func test_restartFailedAttachmentUploading_callsChannelUpdater() {
+        let attachmentId: AttachmentId = .unique
+
+        // Simulate `restartFailedAttachmentUploading` call and catch the completion
+        var completionCalled = false
+        controller.restartFailedAttachmentUploading(with: attachmentId) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert `id` is passed to `messageUpdater`, completion is not called yet
+        XCTAssertEqual(env.messageUpdater!.restartFailedAttachmentUploading_id, attachmentId)
+        XCTAssertFalse(completionCalled)
+
+        // Simulate successful database operation.
+        env.messageUpdater!.restartFailedAttachmentUploading_completion?(nil)
+
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_restartFailedAttachmentUploading_propagatesErrorFromUpdater() {
+        // Simulate `restartFailedAttachmentUploading` call and catch the error.
+        var completionCalledError: Error?
+        controller.restartFailedAttachmentUploading(with: .unique) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+
+        // Simulate failed restart.
+        let restartError = TestError()
+        env.messageUpdater?.restartFailedAttachmentUploading_completion?(restartError)
+
+        // Assert error is propagated.
+        AssertAsync.willBeEqual(completionCalledError as? TestError, restartError)
+    }
+
+    func test_restartFailedAttachmentUploading_keepsControllerAlive() {
+        // Simulate `restartFailedAttachmentUploading` call.
+        controller.restartFailedAttachmentUploading(with: .unique)
+
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+
+        // Assert controller is kept alive.
+        AssertAsync.staysTrue(weakController != nil)
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {

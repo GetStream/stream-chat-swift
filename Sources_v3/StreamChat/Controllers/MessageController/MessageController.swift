@@ -336,6 +336,22 @@ public extension _ChatMessageController {
             }
         }
     }
+    
+    /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
+    /// - Parameters:
+    ///   - id: The attachment identifier.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the database operation is finished.
+    ///                 If operation fails, the completion will be called with an error.
+    func restartFailedAttachmentUploading(
+        with id: AttachmentId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        messageUpdater.restartFailedAttachmentUploading(with: id) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
