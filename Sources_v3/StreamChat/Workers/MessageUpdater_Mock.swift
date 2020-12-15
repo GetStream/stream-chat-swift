@@ -47,6 +47,9 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var deleteReaction_type: MessageReactionType?
     @Atomic var deleteReaction_messageId: MessageId?
     @Atomic var deleteReaction_completion: ((Error?) -> Void)?
+
+    @Atomic var restartFailedAttachmentUploading_id: AttachmentId?
+    @Atomic var restartFailedAttachmentUploading_completion: ((Error?) -> Void)?
     
     // Cleans up all recorded values
     func cleanUp() {
@@ -90,6 +93,9 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         deleteReaction_type = nil
         deleteReaction_messageId = nil
         deleteReaction_completion = nil
+
+        restartFailedAttachmentUploading_id = nil
+        restartFailedAttachmentUploading_completion = nil
     }
     
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
@@ -172,5 +178,13 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         deleteReaction_type = type
         deleteReaction_messageId = messageId
         deleteReaction_completion = completion
+    }
+
+    override func restartFailedAttachmentUploading(
+        with id: AttachmentId,
+        completion: @escaping (Error?) -> Void
+    ) {
+        restartFailedAttachmentUploading_id = id
+        restartFailedAttachmentUploading_completion = completion
     }
 }

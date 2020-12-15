@@ -280,6 +280,30 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
+
+    /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
+    /// - Parameters:
+    ///   - id: The attachment identifier.
+    ///   - completion: Called when the attachment database entity is updated. Called with `Error` if update fails.
+    func restartFailedAttachmentUploading(
+        with id: AttachmentId,
+        completion: @escaping (Error?) -> Void
+    ) {
+        database.write({
+            guard let attachmentDTO = $0.attachment(id: id) else {
+                throw ClientError.AttachmentDoesNotExist(id: id)
+            }
+
+            guard case .uploadingFailed = attachmentDTO.localState else {
+                throw ClientError.AttachmentEditing(
+                    id: id,
+                    reason: "uploading can be restarted for attachments in `.uploadingFailed` state only"
+                )
+            }
+
+            attachmentDTO.localState = .pendingUpload
+        }, completion: completion)
+    }
 }
 
 // MARK: - Private
