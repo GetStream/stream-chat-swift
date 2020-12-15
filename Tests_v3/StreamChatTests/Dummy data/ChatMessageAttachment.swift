@@ -57,7 +57,7 @@ extension _ChatMessageAttachment {
             url: nil,
             imageURL: nil,
             imagePreviewURL: nil,
-            file: nil,
+            file: seed.file,
             extraData: .defaultValue
         )
     }

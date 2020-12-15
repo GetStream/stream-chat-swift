@@ -16,35 +16,43 @@ class AttachmentDTO_Tests: XCTestCase {
     func test_attachmentSeed_isStoredAndLoadedFromDB() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let attachmentSeed: ChatMessageAttachment.Seed = .dummy()
-        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
-        // Create channel, message and attachment in the database.
+        // Create channel and message in the database.
         try database.createChannel(cid: cid, withMessages: false)
         try database.createMessage(id: messageId, cid: cid)
-        try database.writeSynchronously { session in
-            try session.createNewAttachment(seed: attachmentSeed, id: attachmentId)
-        }
 
-        // Load the attachment from the database.
-        let loadedAttachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
-        
-        // Assert attachment has correct values.
-        XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
-        XCTAssertEqual(loadedAttachment.localURL, attachmentSeed.localURL)
-        XCTAssertEqual(loadedAttachment.localState, .pendingUpload)
-        XCTAssertEqual(loadedAttachment.type, attachmentSeed.type.rawValue)
-        XCTAssertEqual(loadedAttachment.extraData, try JSONEncoder().encode(attachmentSeed.extraData))
-        XCTAssertEqual(loadedAttachment.message.id, messageId)
-        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
-        XCTAssertEqual(loadedAttachment.title, attachmentSeed.fileName)
-        XCTAssertNil(loadedAttachment.author)
-        XCTAssertNil(loadedAttachment.text)
-        XCTAssertNil(loadedAttachment.actions)
-        XCTAssertNil(loadedAttachment.url)
-        XCTAssertNil(loadedAttachment.imageURL)
-        XCTAssertNil(loadedAttachment.imagePreviewURL)
-        XCTAssertNil(loadedAttachment.file)
+        // Iterate through attachment types.
+        for (index, type) in [AttachmentType.image, .file].enumerated() {
+            // Create attachment with provided type in the database.
+            let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: index)
+            let attachmentSeed: ChatMessageAttachment.Seed = .dummy(type: type)
+            try database.writeSynchronously { session in
+                try session.createNewAttachment(seed: attachmentSeed, id: attachmentId)
+            }
+
+            // Load the attachment from the database.
+            let loadedAttachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
+
+            // Assert attachment has correct values.
+            XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
+            XCTAssertEqual(loadedAttachment.localURL, attachmentSeed.localURL)
+            XCTAssertEqual(loadedAttachment.localState, .pendingUpload)
+            XCTAssertEqual(loadedAttachment.type, attachmentSeed.type.rawValue)
+            XCTAssertEqual(loadedAttachment.extraData, try JSONEncoder().encode(attachmentSeed.extraData))
+            XCTAssertEqual(loadedAttachment.message.id, messageId)
+            XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
+            XCTAssertEqual(loadedAttachment.title, attachmentSeed.fileName)
+            XCTAssertEqual(
+                try loadedAttachment.file.flatMap { try JSONDecoder.default.decode(AttachmentFile.self, from: $0) },
+                attachmentSeed.file
+            )
+            XCTAssertNil(loadedAttachment.author)
+            XCTAssertNil(loadedAttachment.text)
+            XCTAssertNil(loadedAttachment.actions)
+            XCTAssertNil(loadedAttachment.url)
+            XCTAssertNil(loadedAttachment.imageURL)
+            XCTAssertNil(loadedAttachment.imagePreviewURL)
+        }
     }
     
     func test_attachmentPayload_isStoredAndLoadedFromDB() throws {
@@ -192,31 +200,35 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.file, attachment.file)
     }
     
-    func test_messagePayload_asRequestPayload() throws {
+    func test_createNewAttachment_asRequestPayload() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let attachment: AttachmentPayload<DefaultExtraData.Attachment> = .dummy()
-        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
-        // Prepare channel and message with the attachment in DB
-        try database.createChannel(cid: cid, withMessages: false)
-        try database.createMessage(id: messageId, cid: cid)
-        try database.writeSynchronously { session in
-            try session.saveAttachment(payload: attachment, id: attachmentId)
+        for (index, type) in [AttachmentType.image, .file].enumerated() {
+            let attachmentSeed: ChatMessageAttachment.Seed = .dummy(type: type)
+            let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: index)
+
+            // Prepare channel and message with the attachment in DB
+            try database.createChannel(cid: cid, withMessages: false)
+            try database.createMessage(id: messageId, cid: cid)
+            try database.writeSynchronously { session in
+                try session.createNewAttachment(seed: attachmentSeed, id: attachmentId)
+            }
+
+            // Load the attachment for the message from the db
+            let requestBody: AttachmentRequestBody<DefaultExtraData.Attachment>? = database
+                .viewContext
+                .attachment(id: attachmentId)?
+                .asRequestPayload()
+
+            // Assert request object is created correctly
+            XCTAssertEqual(attachmentSeed.type, requestBody?.type)
+            XCTAssertEqual(attachmentSeed.fileName, requestBody?.title)
+            XCTAssertEqual(attachmentSeed.extraData, requestBody?.extraData)
+            XCTAssertEqual(nil, requestBody?.imageURL)
+            XCTAssertEqual(nil, requestBody?.url)
+            XCTAssertEqual(type == .image ? nil : attachmentSeed.file, requestBody?.file)
         }
-        
-        // Load the attachment for the message from the db
-        let requestBody: AttachmentRequestBody<DefaultExtraData.Attachment>? = database
-            .viewContext
-            .attachment(id: attachmentId)?
-            .asRequestPayload()
-        
-        // Assert request object is created correctly
-        XCTAssertEqual(attachment.type, requestBody?.type)
-        XCTAssertEqual(attachment.title, requestBody?.title)
-        XCTAssertEqual(attachment.imageURL, requestBody?.imageURL)
-        XCTAssertEqual(attachment.url, requestBody?.url)
-        XCTAssertEqual(attachment.extraData, requestBody?.extraData)
     }
     
     func test_saveAttachment_throws_whenChannelDoesNotExist() throws {

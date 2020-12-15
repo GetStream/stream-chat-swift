@@ -112,12 +112,6 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
                             if attachmentDTO.type == AttachmentType.image.rawValue {
                                 attachmentDTO.imageURL = payload.file
                             } else {
-                                let file = AttachmentFile(
-                                    type: fileType,
-                                    size: Int64(fileData.count),
-                                    mimeType: fileType.mimeType
-                                )
-                                attachmentDTO.file = try JSONEncoder().encode(file)
                                 attachmentDTO.url = payload.file
                             }
                         },
