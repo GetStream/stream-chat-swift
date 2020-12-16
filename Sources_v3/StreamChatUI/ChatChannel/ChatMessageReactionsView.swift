@@ -19,7 +19,7 @@ class MessageReactionView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     var selectedByUserTintColor: UIColor { tintColor }
     var notSelectedByUserTintColor: UIColor = .systemGray { didSet { updateContentIfNeeded() } }
     var onTap: (MessageReactionType) -> Void = { _ in }
-    var isBig: Bool = true
+    var isBig: Bool = true { didSet { updateContentIfNeeded() } }
 
     override func setUp() {
         super.setUp()
@@ -95,11 +95,7 @@ open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigPr
     override open func setUpLayout() {
         heightConstraint.isActive = true
         addSubview(content)
-        content.translatesAutoresizingMaskIntoConstraints = false
-        content.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
-        content.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
-        content.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor).isActive = true
-        content.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor).with(priority: .defaultHigh).isActive = true
+        content.pin(to: layoutMarginsGuide)
     }
 
     override public func defaultAppearance() {
@@ -117,6 +113,7 @@ open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigPr
             backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBackground
             layer.backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor
             reactionTint = .lightGray
+            directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
 
         case .bigOutgoing:
             heightConstraint.constant = Height.big
@@ -124,6 +121,7 @@ open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigPr
             backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
             layer.backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
             reactionTint = .darkGray
+            directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
 
         case .smallIncoming:
             heightConstraint.constant = Height.small
@@ -131,6 +129,7 @@ open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigPr
             backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBackground
             layer.backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor
             reactionTint = .lightGray
+            directionalLayoutMargins = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
 
         case .smallOutgoing:
             heightConstraint.constant = Height.small
@@ -138,9 +137,7 @@ open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigPr
             backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
             layer.backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
             reactionTint = .darkGray
-        }
-        if isHidden {
-            heightConstraint.constant = 0
+            directionalLayoutMargins = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
         }
         content.arrangedSubviews.forEach { view in
             (view as? MessageReactionView<ExtraData>)?.notSelectedByUserTintColor = reactionTint

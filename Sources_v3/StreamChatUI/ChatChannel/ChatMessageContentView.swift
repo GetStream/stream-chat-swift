@@ -91,7 +91,6 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
             authorAvatarView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
-            messageReactionsView.bottomAnchor.constraint(equalTo: messageBubbleView.topAnchor),
             
             messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
             messageBubbleView.topAnchor.constraint(equalTo: topAnchor).with(priority: .defaultHigh),
@@ -107,8 +106,18 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
             threadView.topAnchor.constraint(equalToSystemSpacingBelow: messageBubbleView.bottomAnchor, multiplier: 1)
         ])
 
+        // this one is ugly: reactions view is part of message content, but is not part of it frame horizontally.
+        // In same time we want to prevent reactions view to slip out of screen / cell.
+        // We maybe should rethink layout of content view and make reactions part of frame horizontally as well.
+        // This will solve superview access hack
+        if let superview = self.superview {
+            messageReactionsView.trailingAnchor.constraint(lessThanOrEqualTo: superview.trailingAnchor).isActive = true
+            messageReactionsView.leadingAnchor.constraint(greaterThanOrEqualTo: superview.leadingAnchor).isActive = true
+        }
+
         incomingMessageConstraints = [
             messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.trailingAnchor),
+            messageReactionsView.leadingAnchor.constraint(greaterThanOrEqualTo: leadingAnchor),
             messageMetadataView.leadingAnchor.constraint(equalTo: messageBubbleView.leadingAnchor).with(priority: .defaultHigh),
             messageBubbleView.leadingAnchor.constraint(
                 equalToSystemSpacingAfter: authorAvatarView.trailingAnchor,
@@ -120,6 +129,7 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
 
         outgoingMessageConstraints = [
             messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.leadingAnchor),
+            messageReactionsView.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor),
             messageMetadataView.trailingAnchor.constraint(equalTo: messageBubbleView.trailingAnchor).with(priority: .defaultHigh),
             messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor),
             threadArrowView.trailingAnchor.constraint(equalTo: messageBubbleView.trailingAnchor),
@@ -127,7 +137,7 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         ]
 
         bubbleToReactionsConstraint = messageBubbleView.topAnchor.constraint(
-            equalTo: messageReactionsView.bottomAnchor
+            equalTo: messageReactionsView.centerYAnchor
         )
         bubbleToMetadataConstraint = messageMetadataView.topAnchor.constraint(
             equalToSystemSpacingBelow: messageBubbleView.bottomAnchor,
