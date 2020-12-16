@@ -8,6 +8,8 @@ import Foundation
 public enum UserListSortingKey: String, SortingKey {
     /// Sort users by id.
     case id
+    /// Sort users by name.
+    case name
     /// Sort users by role. (`user`, `admin`, `guest`, `anonymous`)
     case role = "userRoleRaw"
     /// Sort users by ban status.
@@ -21,6 +23,7 @@ public enum UserListSortingKey: String, SortingKey {
         
         switch self {
         case .id: value = "id"
+        case .name: value = "name"
         case .role: value = "role"
         case .isBanned: value = "banned"
         case .lastActivityAt: value = "last_active"
