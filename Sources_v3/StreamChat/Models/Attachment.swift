@@ -320,7 +320,7 @@ public struct AttachmentFile: Codable, Hashable {
 }
 
 /// An attachment file type.
-public enum AttachmentFileType: String, Codable, Equatable {
+public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     /// A file attachment type.
     case generic, csv, doc, pdf, ppt, tar, xls, zip, mp3, mp4, mov, jpeg, png, gif
     

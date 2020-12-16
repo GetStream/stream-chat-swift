@@ -36,7 +36,7 @@ open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPro
         previews.forEach(addSubview)
         addSubview(moreImagesOverlay)
 
-        let anchorSpacing = -uiConfig.messageList.messageContentSubviews.imageGalleryInteritemSpacing / 2
+        let anchorSpacing = -uiConfig.messageList.messageContentSubviews.attachmentSubviews.imageGalleryInteritemSpacing / 2
 
         layouts = [
             [
@@ -137,6 +137,7 @@ open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPro
         uiConfig
             .messageList
             .messageContentSubviews
+            .attachmentSubviews
             .imageGalleryItem
             .init()
             .withoutAutoresizingMaskConstraints
