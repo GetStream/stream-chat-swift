@@ -114,7 +114,7 @@ open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPro
             let attachment = content?.attachments[safe: index]
 
             itemPreview.isHidden = attachment == nil
-            itemPreview.previewURL = attachment?.imagePreviewURL ?? attachment?.imageURL
+            itemPreview.previewURL = attachment?.localURL ?? attachment?.imagePreviewURL ?? attachment?.imageURL
             itemPreview.didTap = attachment.flatMap { image in
                 { [weak self] in
                     self?.content?.didTapOnAttachment?(image)
