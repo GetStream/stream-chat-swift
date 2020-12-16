@@ -37,7 +37,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     
     lazy var query: UserListQuery<ExtraData.User> = {
         // Filter is just a mock, explicit hash will override it
-        var query = UserListQuery<ExtraData.User>(filter: .exists(.id))
+        var query = UserListQuery<ExtraData.User>(filter: .exists(.id), sort: [.init(key: .name, isAscending: true)])
         // Setting `shouldBeObserved` to false prevents NewUserQueryUpdater to pick this query up
         query.shouldBeUpdatedInBackground = false
         // The initial DB fetch will return 0 users and this is expected
@@ -145,17 +145,23 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     /// - Note: Currently, no local data will be searched, only remote data will be queried.
     ///
     /// - Parameters:
-    ///   - term: Search term.
+    ///   - term: Search term. If empty string or `nil`, all users are fetched.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(term: String, completion: ((_ error: Error?) -> Void)? = nil) {
-        var query = UserListQuery<ExtraData.User>(filter: .or([
-            .autocomplete(.name, text: term),
-            .autocomplete(.id, text: term)
-        ]))
+    public func search(term: String?, completion: ((_ error: Error?) -> Void)? = nil) {
+        var query = UserListQuery<ExtraData.User>(sort: [.init(key: .name, isAscending: true)])
+        if let term = term, !term.isEmpty {
+            query.filter = .or([
+                .autocomplete(.name, text: term),
+                .autocomplete(.id, text: term)
+            ])
+        } else {
+            query.filter = .exists(.id) // Pseudo-filter to fetch all users
+        }
+        // Backend suggest not sorting by name
+        // so we only sort client-side
         query.filter?.explicitHash = explicitFilterHash
-        // We don't need to set `shouldBeObserved = false` since this is done when we first init the query
-        // with this filter hash (see `userListQueryUpdater` above)
+        query.shouldBeUpdatedInBackground = false
         
         lastQuery = query
         
@@ -173,7 +179,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func loadNextUsers(
+    public func loadNextUsers(
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
