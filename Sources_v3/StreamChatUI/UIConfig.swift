@@ -80,6 +80,9 @@ public extension UIConfig {
         public var galleryMoreImagesOverlayBackground: UIColor = UIColor.black.withAlphaComponent(0.4)
         public var messageTimestampText: UIColor = .lightGray
         public var unreadChatTint: UIColor = .systemGray
+        public var galleryImageBackground: UIColor = .streamWhiteSmoke
+        public var galleryUploadingOverlayBackground: UIColor = UIColor.black.withAlphaComponent(0.5)
+        public var galleryUploadingProgressBackground: UIColor = UIColor.black.withAlphaComponent(0.6)
     }
 }
 
@@ -164,14 +167,38 @@ public extension UIConfig {
         public var metadataView: ChatMessageMetadataView<ExtraData>.Type = ChatMessageMetadataView<ExtraData>.self
         public var repliedMessageContentView: ChatRepliedMessageContentView<ExtraData>.Type =
             ChatRepliedMessageContentView<ExtraData>.self
-        public var imageGallery: ChatMessageImageGallery<ExtraData>.Type = ChatMessageImageGallery<ExtraData>.self
-        public var imageGalleryItem: ChatMessageImageGallery<ExtraData>.ImagePreview.Type =
-            ChatMessageImageGallery<ExtraData>.ImagePreview.self
-        public var imageGalleryInteritemSpacing: CGFloat = 2
+        public var attachmentSubviews = MessageAttachmentViewSubviews()
         public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator.Type =
             ChatMessageOnlyVisibleForCurrentUserIndicator.self
         public var threadArrowView: ChatMessageThreadArrowView<ExtraData>.Type = ChatMessageThreadArrowView<ExtraData>.self
         public var threadInfoView: ChatMessageThreadInfoView<ExtraData>.Type = ChatMessageThreadInfoView<ExtraData>.self
+    }
+
+    struct MessageAttachmentViewSubviews {
+        public var attachmentsView: ChatMessageAttachmentsView<ExtraData>.Type = ChatMessageAttachmentsView<ExtraData>.self
+        // Files
+        public var fileAttachmentListView: ChatFileAttachmentListView<ExtraData>.Type = ChatFileAttachmentListView<ExtraData>.self
+        public var fileAttachmentItemView: ChatFileAttachmentListView<ExtraData>.ItemView.Type =
+            ChatFileAttachmentListView<ExtraData>.ItemView.self
+        public var fileFallbackIcon = UIImage(named: "generic", in: .streamChatUI)!
+        public var fileIcons = [AttachmentFileType: UIImage](
+            uniqueKeysWithValues: AttachmentFileType.allCases.compactMap {
+                guard let icon = UIImage(named: $0.rawValue, in: .streamChatUI) else { return nil }
+                return ($0, icon)
+            }
+        )
+        public var fileAttachmentActionIcons: [LocalAttachmentState?: UIImage] = [
+            .uploaded: UIImage(named: "uploaded", in: .streamChatUI)!,
+            .uploadingFailed: UIImage(named: "restart", in: .streamChatUI)!,
+            nil: UIImage(named: "download_and_open", in: .streamChatUI)!
+        ]
+        // Images
+        public var imageGallery: ChatMessageImageGallery<ExtraData>.Type = ChatMessageImageGallery<ExtraData>.self
+        public var imageGalleryItem: ChatMessageImageGallery<ExtraData>.ImagePreview.Type =
+            ChatMessageImageGallery<ExtraData>.ImagePreview.self
+        public var imageGalleryInteritemSpacing: CGFloat = 2
+        public var imageGalleryItemUploadingOverlay: ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
+            ChatMessageImageGallery<ExtraData>.UploadingOverlay.self
     }
 }
 
