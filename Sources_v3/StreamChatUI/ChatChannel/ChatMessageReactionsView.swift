@@ -104,39 +104,40 @@ open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigPr
     }
 
     func updateStyle() {
-        /// for incoming message reactions we use outgoing message colors, and vice versa
+        // for incoming message reactions we use outgoing message colors, and vice versa
+        // in big state we always use incoming colors
         let reactionTint: UIColor
         switch style {
         case .bigIncoming:
             heightConstraint.constant = Height.big
             layer.cornerRadius = Height.big / 2
-            backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBackground
-            layer.backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor
-            reactionTint = .lightGray
+            backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
+            layer.borderColor = uiConfig.colorPalette.incomingMessageBubbleBackground.cgColor
+            reactionTint = uiConfig.colorPalette.incomingMessageInactiveReaction
             directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
 
         case .bigOutgoing:
             heightConstraint.constant = Height.big
             layer.cornerRadius = Height.big / 2
             backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
-            layer.backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
-            reactionTint = .darkGray
+            layer.borderColor = uiConfig.colorPalette.incomingMessageBubbleBackground.cgColor
+            reactionTint = uiConfig.colorPalette.outgoingMessageInactiveReaction
             directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
 
         case .smallIncoming:
             heightConstraint.constant = Height.small
             layer.cornerRadius = Height.small / 2
             backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBackground
-            layer.backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor
-            reactionTint = .lightGray
+            layer.borderColor = uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor
+            reactionTint = uiConfig.colorPalette.incomingMessageInactiveReaction
             directionalLayoutMargins = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
 
         case .smallOutgoing:
             heightConstraint.constant = Height.small
             layer.cornerRadius = Height.small / 2
             backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
-            layer.backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
-            reactionTint = .darkGray
+            layer.borderColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
+            reactionTint = uiConfig.colorPalette.outgoingMessageInactiveReaction
             directionalLayoutMargins = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
         }
         content.arrangedSubviews.forEach { view in

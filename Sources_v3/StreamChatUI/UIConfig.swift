@@ -58,10 +58,12 @@ public extension UIConfig {
 
         // MARK: - Message Bubbles
 
-        public var outgoingMessageBubbleBackground: UIColor = UIColor(rgb: 0xe5e5e5)
-        public var outgoingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
-        public var incomingMessageBubbleBackground: UIColor = .white
-        public var incomingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
+        public var outgoingMessageBubbleBackground: UIColor = .streamGrayGainsboro
+        public var outgoingMessageBubbleBorder: UIColor = .streamGrayGainsboro
+        public var incomingMessageBubbleBackground: UIColor = .streamWhite
+        public var incomingMessageBubbleBorder: UIColor = .streamGrayGainsboro
+        public var outgoingMessageInactiveReaction: UIColor = .streamGray
+        public var incomingMessageInactiveReaction: UIColor = .streamGray
 
         // MARK: - Message Composer
 
