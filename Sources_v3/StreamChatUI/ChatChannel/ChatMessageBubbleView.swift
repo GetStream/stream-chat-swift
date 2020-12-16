@@ -14,10 +14,11 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
     
     // MARK: - Subviews
 
-    public private(set) lazy var imageGallery = uiConfig
+    public private(set) lazy var attachmentsView = uiConfig
         .messageList
         .messageContentSubviews
-        .imageGallery
+        .attachmentSubviews
+        .attachmentsView
         .init()
         .withoutAutoresizingMaskConstraints
 
@@ -78,7 +79,7 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         if let repliedMessageView = repliedMessageView {
             addSubview(repliedMessageView)
         }
-        addSubview(imageGallery)
+        addSubview(attachmentsView)
         addSubview(textView)
 
         layoutConstraints[.text] = [
@@ -88,12 +89,12 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
         ]
 
-        layoutConstraints[.images] = [
-            imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageGallery.trailingAnchor.constraint(equalTo: trailingAnchor),
-            imageGallery.topAnchor.constraint(equalTo: topAnchor),
-            imageGallery.bottomAnchor.constraint(equalTo: bottomAnchor),
-            imageGallery.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6)
+        layoutConstraints[.attachments] = [
+            attachmentsView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            attachmentsView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            attachmentsView.topAnchor.constraint(equalTo: topAnchor),
+            attachmentsView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            attachmentsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6)
         ]
 
         layoutConstraints[.inlineReply] = repliedMessageView.flatMap {
@@ -105,15 +106,15 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             ]
         }
 
-        layoutConstraints[[.text, .images]] = [
-            imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageGallery.trailingAnchor.constraint(equalTo: trailingAnchor),
-            imageGallery.topAnchor.constraint(equalTo: topAnchor),
-            imageGallery.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
+        layoutConstraints[[.text, .attachments]] = [
+            attachmentsView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            attachmentsView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            attachmentsView.topAnchor.constraint(equalTo: topAnchor),
+            attachmentsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
             
             textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
             textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.constraint(equalToSystemSpacingBelow: imageGallery.bottomAnchor, multiplier: 1),
+            textView.topAnchor.constraint(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
             textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
         ]
 
@@ -130,37 +131,37 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             ]
         } ?? layoutConstraints[.text]
 
-        layoutConstraints[[.images, .inlineReply]] = repliedMessageView.flatMap {
+        layoutConstraints[[.attachments, .inlineReply]] = repliedMessageView.flatMap {
             return [
                 $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
                 $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
                 $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
                 
-                imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
-                imageGallery.trailingAnchor.constraint(equalTo: trailingAnchor),
-                imageGallery.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
-                imageGallery.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
-                imageGallery.bottomAnchor.constraint(equalTo: bottomAnchor)
+                attachmentsView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                attachmentsView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                attachmentsView.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
+                attachmentsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
+                attachmentsView.bottomAnchor.constraint(equalTo: bottomAnchor)
             ]
-        } ?? layoutConstraints[.images]
+        } ?? layoutConstraints[.attachments]
 
-        layoutConstraints[[.text, .images, .inlineReply]] = repliedMessageView.flatMap {
+        layoutConstraints[[.text, .attachments, .inlineReply]] = repliedMessageView.flatMap {
             return [
                 $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
                 $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
                 $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
                 
-                imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
-                imageGallery.trailingAnchor.constraint(equalTo: trailingAnchor),
-                imageGallery.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
-                imageGallery.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
+                attachmentsView.leadingAnchor.constraint(equalTo: leadingAnchor),
+                attachmentsView.trailingAnchor.constraint(equalTo: trailingAnchor),
+                attachmentsView.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
+                attachmentsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
                 
                 textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
                 textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                textView.topAnchor.constraint(equalToSystemSpacingBelow: imageGallery.bottomAnchor, multiplier: 1),
+                textView.topAnchor.constraint(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
                 textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
             ]
-        } ?? layoutConstraints[[.text, .images]]
+        } ?? layoutConstraints[[.text, .attachments]]
     }
 
     override open func updateContent() {
@@ -188,13 +189,13 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             uiConfig.colorPalette.incomingMessageBubbleBackground
         layer.maskedCorners = corners
 
-        imageGallery.data = message.flatMap {
+        attachmentsView.content = message.flatMap {
             .init(
-                attachments: $0.attachments.filter { $0.type == .image },
+                attachments: $0.attachments,
                 didTapOnAttachment: message?.didTapOnAttachment
             )
         }
-        imageGallery.isVisible = layoutOptions.contains(.images)
+        attachmentsView.isVisible = layoutOptions.contains(.attachments)
 
         layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
         layoutConstraints[layoutOptions]?.forEach { $0.isActive = true }
@@ -231,10 +232,10 @@ private struct LayoutOptions: OptionSet, Hashable {
     let rawValue: Int
 
     static let text = Self(rawValue: 1 << 0)
-    static let images = Self(rawValue: 1 << 1)
+    static let attachments = Self(rawValue: 1 << 1)
     static let inlineReply = Self(rawValue: 1 << 2)
 
-    static let all: Self = [.text, .images, .inlineReply]
+    static let all: Self = [.text, .attachments, .inlineReply]
 }
 
 private extension _ChatMessageGroupPart {
@@ -249,8 +250,8 @@ private extension _ChatMessageGroupPart {
             options.remove(.text)
         }
 
-        if !message.attachments.contains(where: { $0.type == .image && $0.imageURL != nil }) {
-            options.remove(.images)
+        if message.attachments.isEmpty {
+            options.remove(.attachments)
         }
 
         if parentMessageState == nil {
