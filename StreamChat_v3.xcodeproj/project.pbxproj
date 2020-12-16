@@ -1464,6 +1464,7 @@
 		7908830C2548707B00896F03 /* ChatChannel */ = {
 			isa = PBXGroup;
 			children = (
+				886BDE68258A501E00E1CD00 /* Attachments */,
 				DB9A3D652582783F00555D36 /* ChatVC.swift */,
 				7908832D254876C100896F03 /* ChatChannelVC.swift */,
 				DBC8A5752581476E00B20A82 /* ChatMessageListVC.swift */,
@@ -1489,7 +1490,6 @@
 				2210525E256FE16600A5F0DB /* MessageInputSlashCommandView.swift */,
 				22FF4364256E943F00133910 /* MessageComposerSuggestionsViewController.swift */,
 				E73A8B2A2578EB2B00FBDC56 /* MessageComposerInputAccessoryViewController.swift */,
-				883998202576397900294DB9 /* ChatMessageImageGallery.swift */,
 				E79AC10725831A1500C3CE5D /* MessageComposerCommandCollectionViewCell.swift */,
 				E79AC10625831A1100C3CE5D /* MessageComposerMentionCollectionViewCell.swift */,
 				E79AC10825831A1500C3CE5D /* MessageComposerSuggestionsCollectionView.swift */,
@@ -1497,11 +1497,6 @@
 				22753598257C442300D1FDB6 /* MessageComposerSendButton.swift */,
 				226C438C25802AAD008B3648 /* ChatChannelMessageInputTextView.swift */,
 				228C7F012584132F00AAE9E3 /* ChatReplyBubbleView.swift */,
-				88AD1D6C2588D7D300ECED5B /* ChatMessageAttachmentsView.swift */,
-				8800A28B258A1924006D64C4 /* ChatFileAttachmentListView.swift */,
-				88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */,
-				8800A277258A17DD006D64C4 /* AttachmentListViewData.swift */,
-				8800A26E258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift */,
 			);
 			path = ChatChannel;
 			sourceTree = "<group>";
@@ -2220,6 +2215,19 @@
 				8836FFD2254082FF009FDF73 /* FlagUserPayload+NoExtraData.json */,
 			);
 			path = FlagUser;
+			sourceTree = "<group>";
+		};
+		886BDE68258A501E00E1CD00 /* Attachments */ = {
+			isa = PBXGroup;
+			children = (
+				88AD1D6C2588D7D300ECED5B /* ChatMessageAttachmentsView.swift */,
+				883998202576397900294DB9 /* ChatMessageImageGallery.swift */,
+				8800A28B258A1924006D64C4 /* ChatFileAttachmentListView.swift */,
+				88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */,
+				8800A277258A17DD006D64C4 /* AttachmentListViewData.swift */,
+				8800A26E258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift */,
+			);
+			path = Attachments;
 			sourceTree = "<group>";
 		};
 		888123D0255D42F000070D5A /* Utils */ = {
