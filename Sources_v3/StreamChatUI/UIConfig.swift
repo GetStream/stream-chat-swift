@@ -142,9 +142,33 @@ public extension UIConfig {
         public var messageAvailableReactions: [MessageReactionType] = [
             .init(rawValue: "like"),
             .init(rawValue: "haha"),
-            .init(rawValue: "facepalm"),
-            .init(rawValue: "roar")
+            .init(rawValue: "thumbsup"),
+            .init(rawValue: "thumbsdown"),
+            .init(rawValue: "wut")
         ]
+
+        public var smallIconForMessageReaction: (MessageReactionType) -> UIImage? = { reaction in
+            switch reaction.rawValue {
+            case "like": return UIImage(named: "reaction_love_small", in: .streamChatUI)
+            case "haha": return UIImage(named: "reaction_lol_small", in: .streamChatUI)
+            case "thumbsup": return UIImage(named: "reaction_thumbsup_small", in: .streamChatUI)
+            case "thumbsdown": return UIImage(named: "reaction_thumbsdown_small", in: .streamChatUI)
+            case "wut": return UIImage(named: "reaction_wut_small", in: .streamChatUI)
+            default: return nil
+            }
+        }
+
+        public var bigIconForMessageReaction: (MessageReactionType) -> UIImage? = { reaction in
+            switch reaction.rawValue {
+            case "like": return UIImage(named: "reaction_love_big", in: .streamChatUI)
+            case "haha": return UIImage(named: "reaction_lol_big", in: .streamChatUI)
+            case "thumbsup": return UIImage(named: "reaction_thumbsup_big", in: .streamChatUI)
+            case "thumbsdown": return UIImage(named: "reaction_thumbsdown_big", in: .streamChatUI)
+            case "wut": return UIImage(named: "reaction_wut_big", in: .streamChatUI)
+            default: return nil
+            }
+        }
+
         public var messageActionsView: MessageActionsView<ExtraData>.Type =
             MessageActionsView<ExtraData>.self
         public var messageActionButton: MessageActionsView<ExtraData>.ActionButton.Type =

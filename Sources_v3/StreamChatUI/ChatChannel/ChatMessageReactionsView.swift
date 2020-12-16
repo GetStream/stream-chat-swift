@@ -7,88 +7,47 @@ import UIKit
 
 // MARK: - Reaction
 
-class MessageReactionView: UIView {
-    var reaction: MessageReactionType? { didSet { updateReaction() } }
-    var madeByCurrentUser: Bool = false { didSet { updateTints() } }
+class MessageReactionView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+    var reaction: MessageReactionType? { didSet { updateContentIfNeeded() } }
+    var madeByCurrentUser: Bool = false { didSet { updateContentIfNeeded() } }
     private let imageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .center
         return imageView
     }()
 
-    private let emojiView: UILabel = {
-        let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .largeTitle)
-        label.adjustsFontSizeToFitWidth = true
-        return label
-    }()
-
-    var selectedByUserTintColor: UIColor = .systemBlue { didSet { updateTints() } }
-    var notSelectedByUserTintColor: UIColor = .systemGray { didSet { updateTints() } }
+    var selectedByUserTintColor: UIColor { tintColor }
+    var notSelectedByUserTintColor: UIColor = .systemGray { didSet { updateContentIfNeeded() } }
     var onTap: (MessageReactionType) -> Void = { _ in }
-    var isBig: Bool = true {
-        didSet {
-            /// I don't think we should scale reactions size according to system font
-            emojiView.font = isBig
-                ? .preferredFont(forTextStyle: .largeTitle)
-                : .preferredFont(forTextStyle: .body)
-        }
-    }
+    var isBig: Bool = true
 
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        commonInit()
-    }
-
-    required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        commonInit()
-    }
-
-    func commonInit() {
-        embed(imageView)
-        embed(emojiView)
-        updateTints()
+    override func setUp() {
+        super.setUp()
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTap))
         addGestureRecognizer(tap)
     }
 
-    private func image(for reaction: MessageReactionType) -> UIImage? {
-        if reaction.rawValue == "like", #available(iOS 13.0, *) {
-            return UIImage(systemName: "hand.thumbsup.fill")
-        }
-        return nil
+    override func setUpLayout() {
+        super.setUpLayout()
+        embed(imageView)
     }
 
-    private func emoji(for reaction: MessageReactionType) -> String {
-        ["like": "👍", "haha": "🙂", "facepalm": "🤦‍♀️", "roar": "🦁"][reaction.rawValue] ?? "🤷‍♀️"
-    }
+    override func updateContent() {
+        super.updateContent()
+        guard let reaction = self.reaction else { return }
 
-    private func updateReaction() {
-        guard let reaction = self.reaction else {
-            imageView.isHidden = true
-            emojiView.isHidden = true
-            return
-        }
+        imageView.image = isBig
+            ? uiConfig.messageList.bigIconForMessageReaction(reaction)
+            : uiConfig.messageList.smallIconForMessageReaction(reaction)
 
-        if let image = self.image(for: reaction) {
-            imageView.isHidden = false
-            imageView.image = image
-            emojiView.isHidden = true
-            return
-        }
-
-        imageView.isHidden = true
-        emojiView.isHidden = false
-        emojiView.text = emoji(for: reaction)
-    }
-
-    private func updateTints() {
-        let tint = madeByCurrentUser
+        imageView.tintColor = madeByCurrentUser
             ? selectedByUserTintColor
             : notSelectedByUserTintColor
-        imageView.tintColor = tint
-        emojiView.tintColor = tint
+    }
+
+    override func tintColorDidChange() {
+        super.tintColorDidChange()
+        updateContentIfNeeded()
     }
 
     @objc private func didTap() {
@@ -121,7 +80,7 @@ open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigPr
 
     var onTap: (MessageReactionType) -> Void = { _ in } {
         didSet {
-            content.arrangedSubviews.forEach { ($0 as? MessageReactionView)?.onTap = onTap }
+            content.arrangedSubviews.forEach { ($0 as? MessageReactionView<ExtraData>)?.onTap = onTap }
         }
     }
 
@@ -184,16 +143,15 @@ open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigPr
             heightConstraint.constant = 0
         }
         content.arrangedSubviews.forEach { view in
-            (view as? MessageReactionView)?.selectedByUserTintColor = .systemBlue
-            (view as? MessageReactionView)?.notSelectedByUserTintColor = reactionTint
-            (view as? MessageReactionView)?.isBig = style ~= .bigIncoming || style ~= .bigOutgoing
+            (view as? MessageReactionView<ExtraData>)?.notSelectedByUserTintColor = reactionTint
+            (view as? MessageReactionView<ExtraData>)?.isBig = style ~= .bigIncoming || style ~= .bigOutgoing
         }
     }
 
     private func update(with reactions: [Reaction]) {
         content.arrangedSubviews.forEach { $0.removeFromSuperview() }
         reactions.forEach { reaction in
-            let view = MessageReactionView()
+            let view = MessageReactionView<ExtraData>()
             view.reaction = reaction.type
             view.madeByCurrentUser = reaction.isSelectedByCurrentUser
             view.onTap = onTap
