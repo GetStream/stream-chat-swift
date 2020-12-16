@@ -52,4 +52,12 @@ open class ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMess
         let presenter = rootViewController?.presentedViewController ?? rootViewController
         presenter?.present(alert, animated: true)
     }
+    
+    open func showPreview(for attachment: _ChatMessageAttachment<ExtraData>) {
+        let preview = ChatAttachmentPreviewVC()
+        preview.content = attachment.type == .file ? attachment.url : attachment.imageURL
+
+        let navigation = UINavigationController(rootViewController: preview)
+        rootViewController?.present(navigation, animated: true)
+    }
 }

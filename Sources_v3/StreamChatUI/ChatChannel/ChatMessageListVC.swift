@@ -27,7 +27,6 @@ public protocol ChatMessageListVCDelegate: AnyObject {
 
     func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didSelectMessageAt index: Int)
     func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>)
-    func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOn attachment: _ChatMessageAttachment<ExtraData>)
     func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>)
     func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>)
 }
@@ -47,7 +46,6 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     public struct Delegate {
         public var didSelectMessageAtIndex: ((ChatMessageListVC, Int) -> Void)?
         public var didTapOnRepliesForMessage: ((ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
-        public var didTapOnAttachment: ((ChatMessageListVC, _ChatMessageAttachment<ExtraData>) -> Void)?
         public var didTapOnInlineReply: ((ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
         public var didTapOnEdit: ((ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
     }
@@ -224,8 +222,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
             parentMessageState: parentMessageState,
             isLastInGroup: isLastInGroup,
             didTapOnAttachment: { [weak self] attachment in
-                guard let self = self else { return }
-                self.delegate?.didTapOnAttachment?(self, attachment)
+                self?.didTapOnAttachment(attachment, in: message)
             }
         )
     }
@@ -292,6 +289,16 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
 
         return actions
     }
+
+    private func didTapOnAttachment(_ attachment: _ChatMessageAttachment<ExtraData>, in message: _ChatMessage<ExtraData>) {
+        switch attachment.localState {
+        case .uploadingFailed:
+            let messageController = dataSource.controllerForMessage(self, message)
+            messageController.restartFailedAttachmentUploading(with: attachment.id)
+        default:
+            self.router.showPreview(for: attachment)
+        }
+    }
 }
 
 public extension ChatMessageListVC.DataSource {
@@ -325,7 +332,6 @@ public extension ChatMessageListVC.Delegate {
         ChatMessageListVC.Delegate(
             didSelectMessageAtIndex: { [weak delegate] in delegate?.chatMessageListVC($0, didSelectMessageAt: $1) },
             didTapOnRepliesForMessage: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnRepliesFor: $1) },
-            didTapOnAttachment: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOn: $1) },
             didTapOnInlineReply: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnInlineReplyFor: $1) },
             didTapOnEdit: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnEdit: $1) }
         )

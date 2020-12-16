@@ -148,11 +148,7 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     }
 
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>) {}
-
-    public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOn attachment: _ChatMessageAttachment<ExtraData>) {
-        debugPrint(attachment)
-    }
-
+    
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>) {
         messageInputAccessoryViewController.state = .reply(message)
     }
