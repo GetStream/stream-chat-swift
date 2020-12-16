@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    public var data: Data? {
+    public var content: AttachmentListViewData<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -111,13 +111,13 @@ open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPro
 
     override open func updateContent() {
         for (index, itemPreview) in previews.enumerated() {
-            let attachment = data?.attachments[safe: index]
+            let attachment = content?.attachments[safe: index]
 
             itemPreview.isHidden = attachment == nil
             itemPreview.previewURL = attachment?.imagePreviewURL ?? attachment?.imageURL
             itemPreview.didTap = attachment.flatMap { image in
                 { [weak self] in
-                    self?.data?.didTapOnAttachment?(image)
+                    self?.content?.didTapOnAttachment?(image)
                 }
             }
         }
@@ -126,7 +126,7 @@ open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPro
         layouts.flatMap { $0 }.forEach { $0.isActive = false }
         layouts[max(visiblePreviewsCount - 1, 0)].forEach { $0.isActive = true }
 
-        let otherImagesCount = (data?.attachments.count ?? 0) - previews.count
+        let otherImagesCount = (content?.attachments.count ?? 0) - previews.count
         moreImagesOverlay.isHidden = otherImagesCount <= 0
         moreImagesOverlay.text = "+\(otherImagesCount)"
     }
@@ -140,23 +140,6 @@ open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPro
             .imageGalleryItem
             .init()
             .withoutAutoresizingMaskConstraints
-    }
-}
-
-// MARK: - Data
-
-extension ChatMessageImageGallery {
-    public struct Data {
-        public let attachments: [_ChatMessageAttachment<ExtraData>]
-        public let didTapOnAttachment: ((_ChatMessageAttachment<ExtraData>) -> Void)?
-
-        public init(
-            attachments: [_ChatMessageAttachment<ExtraData>],
-            didTapOnAttachment: ((_ChatMessageAttachment<ExtraData>) -> Void)?
-        ) {
-            self.attachments = attachments
-            self.didTapOnAttachment = didTapOnAttachment
-        }
     }
 }
 
