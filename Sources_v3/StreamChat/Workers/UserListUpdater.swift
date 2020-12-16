@@ -27,21 +27,20 @@ class UserListUpdater<ExtraData: UserExtraData>: Worker {
                 switch result {
                 case let .success(userListPayload):
                     self.database.write { session in
-                        do {
-                            if case .replace = policy {
-                                let dto = try session.saveQuery(query: userListQuery)
-                                dto?.users.removeAll()
-                            }
-                            
-                            try userListPayload.users.forEach {
-                                try session.saveUser(payload: $0, query: userListQuery)
-                            }
-                            
-                            completion?(nil)
-                            
-                        } catch {
+                        if case .replace = policy {
+                            let dto = try session.saveQuery(query: userListQuery)
+                            dto?.users.removeAll()
+                        }
+                        
+                        try userListPayload.users.forEach {
+                            try session.saveUser(payload: $0, query: userListQuery)
+                        }
+                    } completion: { error in
+                        if let error = error {
                             log.error("Failed to save `UserListPayload` to the database. Error: \(error)")
                             completion?(error)
+                        } else {
+                            completion?(nil)
                         }
                     }
                     

@@ -176,4 +176,29 @@ class UserListUpdater_Tests: StressTestCase {
             }
         }
     }
+    
+    func test_updateCompletion_calledAfterDBWriteCompletes() {
+        let dummyUserId = UserId.unique
+        
+        // Simulate `update` call
+        let query = UserListQuery<DefaultExtraData.User>(filter: .equal(.id, to: "Luke"))
+        var completionCalled = false
+        listUpdater.update(userListQuery: query, completion: { _ in
+            // At this point, DB write should have completed
+            
+            // Assert the data is stored in the DB
+            let user: ChatUser? = self.database.viewContext.user(id: dummyUserId)?.asModel()
+        
+            XCTAssert(user != nil)
+            
+            completionCalled = true
+        })
+        
+        // Simulate API response with user data
+        let user = dummyUser(id: dummyUserId)
+        let payload = UserListPayload<DefaultExtraData.User>(users: [user])
+        apiClient.test_simulateResponse(.success(payload))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
 }
