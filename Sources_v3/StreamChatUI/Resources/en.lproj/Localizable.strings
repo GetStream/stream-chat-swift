@@ -26,3 +26,5 @@
 "composer.title.reply" = "Reply to Message";
 "composer.placeholder.message" = "Send a message";
 "composer.placeholder.giphy" = "Search GIFs";
+
+"message.sending.attachment-uploading-failed" = "UPLOADING FAILED";

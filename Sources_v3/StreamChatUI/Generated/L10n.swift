@@ -66,6 +66,10 @@ internal enum L10n {
         internal static let confirmationTitle = L10n.tr("Localizable", "message.actions.delete.confirmation-title")
       }
     }
+    internal enum Sending {
+      /// UPLOADING FAILED
+      internal static let attachmentUploadingFailed = L10n.tr("Localizable", "message.sending.attachment-uploading-failed")
+    }
     internal enum Threads {
       /// Plural format key: "%#@replies@"
       internal static func count(_ p1: Int) -> String {
