@@ -70,6 +70,8 @@ public extension UIConfig {
         public var messageComposerButton: UIColor = .streamGray
         public var messageComposerStateIcon: UIColor = .streamGrayGainsboro
         public var messageComposerPlaceholder: UIColor = .streamGray
+        public var slashCommandViewBackground: UIColor = .streamAccentBlue
+        public var slashCommandViewText: UIColor = .white
 
         // MARK: - Message interaction
 
@@ -180,6 +182,7 @@ public extension UIConfig {
         public var textView: ChatChannelMessageInputTextView<ExtraData>.Type = ChatChannelMessageInputTextView<ExtraData>.self
         public var replyBubbleView: ChatReplyBubbleView<ExtraData>.Type = ChatReplyBubbleView.self
         public var replyBubbleAvatarView: AvatarView.Type = AvatarView.self
+        public var slashCommandView: MessageInputSlashCommandView<ExtraData>.Type = MessageInputSlashCommandView<ExtraData>.self
         public var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData>.Type =
             MessageComposerSuggestionsViewController<ExtraData>.self
         public var suggestionsCollectionView: MessageComposerSuggestionsCollectionView.Type =

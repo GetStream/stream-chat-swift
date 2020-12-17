@@ -18,7 +18,10 @@ open class ChatChannelMessageInputView<ExtraData: ExtraDataTypes>: UIView {
         uiConfig.messageComposer.textView.init().withoutAutoresizingMaskConstraints
     }()
     
-    public private(set) lazy var slashCommandView: MessageInputSlashCommandView = .init()
+    public private(set) lazy var slashCommandView: MessageInputSlashCommandView<ExtraData> = uiConfig
+        .messageComposer
+        .slashCommandView.init()
+        .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var rightAccessoryButton: UIButton = {
         let button = UIButton().withoutAutoresizingMaskConstraints
