@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.6.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.1)
+_December 17, 2020_
+
 ### 🐞 Fixed
 - Fixed rare crash when recovering connection in a channel (inconsistent table view update) [#643](https://github.com/GetStream/stream-chat-swift/pull/643)
 
