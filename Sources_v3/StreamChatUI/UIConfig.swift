@@ -12,7 +12,8 @@ public struct UIConfig<ExtraData: ExtraDataTypes> {
     public var currentUser = CurrentUserUI()
     public var navigation = Navigation()
     public var colorPalette = ColorPalette()
-    
+    public var loadingIndicator = LoadingIndicatorUI()
+
     public init() {}
 }
 
@@ -125,6 +126,11 @@ public extension UIConfig {
 // MARK: - MessageListUI
 
 public extension UIConfig {
+    struct LoadingIndicatorUI {
+        public var image = UIImage(named: "loading_indicator", in: .streamChatUI)!
+        public var rotationPeriod: TimeInterval = 1
+    }
+
     struct MessageListUI {
         public var messageListVC: ChatMessageListVC<ExtraData>.Type = ChatMessageListVC<ExtraData>.self
         public var incomingMessageCell: СhatMessageCollectionViewCell<ExtraData>.Type =
