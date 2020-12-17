@@ -12,6 +12,7 @@
 		2229C6D9256562AC00C56B63 /* ChatMessageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */; };
 		2229C6DF256562DB00C56B63 /* AttachmentPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2229C6DE256562DB00C56B63 /* AttachmentPayload.swift */; };
 		22411680258A91280034184D /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241167F258A91280034184D /* String+Extensions.swift */; };
+		224116B2258BACF90034184D /* WrappedMessage.json in Resources */ = {isa = PBXBuildFile; fileRef = 224116B1258BACF90034184D /* WrappedMessage.json */; };
 		2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2245B2B525602465006A612D /* ChatChannelAvatarView.swift */; };
 		224FF67B2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF67A2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift */; };
 		224FF6812562F2E900725DD1 /* ChatUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6802562F2E900725DD1 /* ChatUnreadCountView.swift */; };
@@ -694,6 +695,7 @@
 		2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachment.swift; sourceTree = "<group>"; };
 		2229C6DE256562DB00C56B63 /* AttachmentPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPayload.swift; sourceTree = "<group>"; };
 		2241167F258A91280034184D /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		224116B1258BACF90034184D /* WrappedMessage.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = WrappedMessage.json; sourceTree = "<group>"; };
 		2245B2B525602465006A612D /* ChatChannelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelAvatarView.swift; sourceTree = "<group>"; };
 		224FF67A2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReadStatusCheckmarkView.swift; sourceTree = "<group>"; };
 		224FF6802562F2E900725DD1 /* ChatUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUnreadCountView.swift; sourceTree = "<group>"; };
@@ -1868,6 +1870,7 @@
 				790A4C50252E0957001F4A23 /* Devices.json */,
 				798779F72498E47700015F8B /* Channel.json */,
 				79F3ABE924EAB9CD00AB9505 /* Message.json */,
+				224116B1258BACF90034184D /* WrappedMessage.json */,
 				DA653BB9253F47EB00B448A0 /* Messages.json */,
 				798779F82498E47700015F8B /* OtherUser.json */,
 				798779F92498E47700015F8B /* CurrentUser.json */,
@@ -2981,6 +2984,7 @@
 				8A0C3BC724C0AEDB00CAFD19 /* UserBanned.json in Resources */,
 				88EA9B112547271B007EE76B /* MessageReactionPayload+DefaultExtraData.json in Resources */,
 				8A0D64A424E57A260017A3C0 /* GuestUser+CustomExtraData.json in Resources */,
+				224116B2258BACF90034184D /* WrappedMessage.json in Resources */,
 				8AC9CBDE24C74DD0006E236C /* NotificationMutesUpdated.json in Resources */,
 				798779FF2498E47700015F8B /* ChannelsQuery.json in Resources */,
 				8A0C3BC024C0ACAB00CAFD19 /* UserUnbanned.json in Resources */,
