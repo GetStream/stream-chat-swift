@@ -111,14 +111,14 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
             composerView.container.topStackView.isHidden = false
             composerView.replyView.isHidden = false
             composerView.replyView.message = messageToReply
-        case .edit:
+        case let .edit(message):
             composerView.sendButton.mode = .edit
             composerView.titleLabel.text = L10n.Composer.Title.edit
             let image = UIImage(named: "editPencil", in: .streamChatUI)?
                 .tinted(with: uiConfig.colorPalette.messageComposerStateIcon)
             composerView.stateIcon.image = image
             composerView.container.topStackView.isHidden = false
-            // update ui with message to edit
+            textView.text = message.text
         }
     }
 
