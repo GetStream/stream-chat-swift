@@ -360,6 +360,7 @@
 		88AA928E254735CF00BFA0C3 /* MessageReactionDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AA928D254735CF00BFA0C3 /* MessageReactionDTO_Tests.swift */; };
 		88AD1D5E2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */; };
 		88AD1D6D2588D7D300ECED5B /* ChatMessageAttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AD1D6C2588D7D300ECED5B /* ChatMessageAttachmentsView.swift */; };
+		88BA7F5D258B6953006CE0C5 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BA7F5C258B6953006CE0C5 /* LoadingIndicator.swift */; };
 		88BC8908256E90A1009C5554 /* ChatRepliedMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BC8907256E90A1009C5554 /* ChatRepliedMessageContentView.swift */; };
 		88BD82B02549D18F00369074 /* ChatChannelListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BD82AF2549D18F00369074 /* ChatChannelListItemView.swift */; };
 		88BEBCD32536FD7600D9E8B7 /* MemberListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BEBCD22536FD7600D9E8B7 /* MemberListController+Combine.swift */; };
@@ -1050,6 +1051,7 @@
 		88AA928D254735CF00BFA0C3 /* MessageReactionDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionDTO_Tests.swift; sourceTree = "<group>"; };
 		88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatFileAttachmentListView+ItemView.swift"; sourceTree = "<group>"; };
 		88AD1D6C2588D7D300ECED5B /* ChatMessageAttachmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachmentsView.swift; sourceTree = "<group>"; };
+		88BA7F5C258B6953006CE0C5 /* LoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
 		88BC8907256E90A1009C5554 /* ChatRepliedMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRepliedMessageContentView.swift; sourceTree = "<group>"; };
 		88BD82AF2549D18F00369074 /* ChatChannelListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListItemView.swift; sourceTree = "<group>"; };
 		88BEBCD22536FD7600D9E8B7 /* MemberListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListController+Combine.swift"; sourceTree = "<group>"; };
@@ -2252,6 +2254,7 @@
 				792DD9D8256BC542001DB91B /* BaseViews.swift */,
 				E759AC4C256E694F00341865 /* OnlineIndicatorView.swift */,
 				225DDDFB25799270009C280A /* ChatSquareButton.swift */,
+				88BA7F5C258B6953006CE0C5 /* LoadingIndicator.swift */,
 			);
 			path = "Common Views";
 			sourceTree = "<group>";
@@ -3150,6 +3153,7 @@
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
 				22753599257C442300D1FDB6 /* MessageComposerSendButton.swift in Sources */,
 				88F836502578D16D0039AEC8 /* MessageActionsView+ActionButton.swift in Sources */,
+				88BA7F5D258B6953006CE0C5 /* LoadingIndicator.swift in Sources */,
 				88A8CF20256E7C06004EA4C7 /* ChatMessageBubbleView.swift in Sources */,
 				DBC8A5762581476E00B20A82 /* ChatMessageListVC.swift in Sources */,
 				8800A28C258A1924006D64C4 /* ChatFileAttachmentListView.swift in Sources */,
