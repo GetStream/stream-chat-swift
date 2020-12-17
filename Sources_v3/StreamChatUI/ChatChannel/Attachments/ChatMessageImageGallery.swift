@@ -2,7 +2,6 @@
 // Copyright © 2020 Stream.io Inc. All rights reserved.
 //
 
-import Nuke
 import StreamChat
 import UIKit
 
@@ -110,16 +109,10 @@ open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPro
     }
 
     override open func updateContent() {
+        let items = content?.items
         for (index, itemPreview) in previews.enumerated() {
-            let attachment = content?.attachments[safe: index]
-
-            itemPreview.isHidden = attachment == nil
-            itemPreview.previewURL = attachment?.localURL ?? attachment?.imagePreviewURL ?? attachment?.imageURL
-            itemPreview.didTap = attachment.flatMap { image in
-                { [weak self] in
-                    self?.content?.didTapOnAttachment?(image)
-                }
-            }
+            itemPreview.content = items?[safe: index]
+            itemPreview.isHidden = itemPreview.content == nil
         }
 
         let visiblePreviewsCount = previews.filter { !$0.isHidden }.count
@@ -141,85 +134,5 @@ open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPro
             .imageGalleryItem
             .init()
             .withoutAutoresizingMaskConstraints
-    }
-}
-
-// MARK: - ImagePreview
-
-extension ChatMessageImageGallery {
-    open class ImagePreview: View {
-        public var previewURL: URL? {
-            didSet { updateContentIfNeeded() }
-        }
-
-        public var didTap: (() -> Void)?
-
-        private var imageTask: ImageTask? {
-            didSet { oldValue?.cancel() }
-        }
-
-        // MARK: - Subviews
-
-        public private(set) lazy var imageView: UIImageView = {
-            let imageView = UIImageView()
-            imageView.contentMode = .scaleAspectFill
-            imageView.layer.masksToBounds = true
-            return imageView.withoutAutoresizingMaskConstraints
-        }()
-
-        public private(set) lazy var loadingIndicator = uiConfig
-            .messageList
-            .messageContentSubviews
-            .attachmentSubviews
-            .imageGalleryLoadingIndicator
-            .init()
-            .withoutAutoresizingMaskConstraints
-
-        // MARK: - Overrides
-
-        override public func defaultAppearance() {
-            imageView.backgroundColor = uiConfig.colorPalette.galleryImageBackground
-        }
-
-        override open func setUp() {
-            super.setUp()
-            
-            let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapHandler(_:)))
-            addGestureRecognizer(tapRecognizer)
-        }
-
-        override open func setUpLayout() {
-            embed(imageView)
-
-            addSubview(loadingIndicator)
-            loadingIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-            loadingIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
-        }
-
-        override open func updateContent() {
-            if let url = previewURL {
-                loadingIndicator.isVisible = true
-                imageTask = loadImage(with: url, options: .shared, into: imageView, completion: { [weak self] _ in
-                    self?.loadingIndicator.isVisible = false
-                    self?.imageTask = nil
-                })
-            } else {
-                loadingIndicator.isVisible = false
-                imageView.image = nil
-                imageTask = nil
-            }
-        }
-
-        // MARK: - Actions
-
-        @objc open func tapHandler(_ recognizer: UITapGestureRecognizer) {
-            didTap?()
-        }
-
-        // MARK: - Init & Deinit
-
-        deinit {
-            imageTask?.cancel()
-        }
     }
 }
