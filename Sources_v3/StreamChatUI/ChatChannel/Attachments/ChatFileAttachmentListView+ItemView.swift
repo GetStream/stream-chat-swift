@@ -6,61 +6,11 @@ import StreamChat
 import UIKit
 
 extension ChatFileAttachmentListView {
-    open class ItemView: View, UIConfigProvider {
-        public var content: _ChatMessageAttachment<ExtraData>? {
-            didSet { updateContentIfNeeded() }
-        }
-
-        public var tapHandler: () -> Void = {}
-
+    open class ItemView: ChatMessageAttachmentInfoView<ExtraData> {
         // MARK: - Subviews
 
-        public private(set) lazy var fileIconImageView: UIImageView = {
-            let imageView = UIImageView()
-            imageView.contentMode = .scaleAspectFit
-            return imageView.withoutAutoresizingMaskConstraints
-        }()
-
-        public private(set) lazy var fileNameLabel: UILabel = {
-            let label = UILabel()
-            label.font = UIFont.preferredFont(forTextStyle: .body).bold
-            label.adjustsFontForContentSizeCategory = true
-            return label.withoutAutoresizingMaskConstraints
-        }()
-
-        public private(set) lazy var fileSizeLabel: UILabel = {
-            let label = UILabel()
-            label.font = UIFont.preferredFont(forTextStyle: .footnote)
-            label.adjustsFontForContentSizeCategory = true
-            return label.withoutAutoresizingMaskConstraints
-        }()
-
-        public private(set) lazy var loadingIndicator = uiConfig
-            .messageList
-            .messageContentSubviews
-            .attachmentSubviews
-            .loadingIndicator
-            .init()
+        public private(set) lazy var fileIconImageView = UIImageView()
             .withoutAutoresizingMaskConstraints
-
-        public private(set) lazy var actionIconImageView: UIImageView = {
-            let imageView = UIImageView()
-            imageView.contentMode = .scaleAspectFit
-            return imageView.withoutAutoresizingMaskConstraints
-        }()
-
-        public private(set) lazy var spinnerAndSizeStack: UIStackView = {
-            let stack = UIStackView()
-            stack.axis = .horizontal
-            return stack.withoutAutoresizingMaskConstraints
-        }()
-
-        public private(set) lazy var fileNameAndSizeStack: UIStackView = {
-            let stack = UIStackView()
-            stack.axis = .vertical
-            stack.alignment = .leading
-            return stack.withoutAutoresizingMaskConstraints
-        }()
 
         // MARK: - Overrides
 
@@ -68,30 +18,14 @@ extension ChatFileAttachmentListView {
             backgroundColor = .white
             layer.cornerRadius = 12
             layer.masksToBounds = true
-            layer.borderWidth = 1 / UIScreen.main.scale
+            layer.borderWidth = 1
             layer.borderColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
-            fileSizeLabel.textColor = uiConfig.colorPalette.subtitleText
-            spinnerAndSizeStack.spacing = UIStackView.spacingUseSystem
-            fileNameAndSizeStack.spacing = 3
-        }
-
-        override open func setUp() {
-            super.setUp()
-
-            let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnAttachment(_:)))
-            addGestureRecognizer(tapRecognizer)
         }
 
         override open func setUpLayout() {
-            spinnerAndSizeStack.addArrangedSubview(loadingIndicator)
-            spinnerAndSizeStack.addArrangedSubview(fileSizeLabel)
-
-            fileNameAndSizeStack.addArrangedSubview(fileNameLabel)
-            fileNameAndSizeStack.addArrangedSubview(spinnerAndSizeStack)
-
-            addSubview(fileNameAndSizeStack)
             addSubview(fileIconImageView)
             addSubview(actionIconImageView)
+            addSubview(fileNameAndSizeStack)
 
             NSLayoutConstraint.activate([
                 fileIconImageView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
@@ -117,28 +51,15 @@ extension ChatFileAttachmentListView {
         }
 
         override open func updateContent() {
-            fileNameLabel.text = content?.title
+            super.updateContent()
+
             fileIconImageView.image = fileIcon
-            fileSizeLabel.text = content?.fileSize
-            actionIconImageView.image = fileAttachmentActionIcon
-
-            if case .uploading = content?.localState {
-                loadingIndicator.isVisible = true
-            } else {
-                loadingIndicator.isVisible = false
-            }
-        }
-
-        // MARK: - Actions
-
-        @objc open func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
-            tapHandler()
         }
 
         // MARK: - Private
 
         private var fileIcon: UIImage? {
-            guard let file = content?.file else { return nil }
+            guard let file = content?.attachment.file else { return nil }
 
             let config = uiConfig
                 .messageList
@@ -146,35 +67,6 @@ extension ChatFileAttachmentListView {
                 .attachmentSubviews
 
             return config.fileIcons[file.type] ?? config.fileFallbackIcon
-        }
-
-        private var fileAttachmentActionIcon: UIImage? {
-            guard let attachment = content else { return nil }
-
-            return uiConfig
-                .messageList
-                .messageContentSubviews
-                .attachmentSubviews
-                .fileAttachmentActionIcons[attachment.localState]
-        }
-    }
-}
-
-// MARK: - Private
-
-private extension _ChatMessageAttachment {
-    var fileSize: String? {
-        guard let file = file else { return nil }
-
-        switch localState {
-        case let .uploading(progress):
-            let uploadedByteCount = Int64(Double(file.size) * progress)
-            let uploadedSize = AttachmentFile.sizeFormatter.string(fromByteCount: uploadedByteCount)
-            return "\(uploadedSize)/\(file.sizeString)"
-        case .pendingUpload:
-            return "0/\(file.sizeString)"
-        case .uploaded, .uploadingFailed, nil:
-            return file.sizeString
         }
     }
 }
