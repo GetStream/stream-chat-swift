@@ -22,7 +22,7 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         .withoutAutoresizingMaskConstraints
 
     public private(set) lazy var textView: UITextView = {
-        let textView = UITextView()
+        let textView = OnlyLinkTappableTextView()
         textView.isEditable = false
         textView.dataDetectorTypes = .link
         textView.isScrollEnabled = false
@@ -31,7 +31,6 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
-        textView.isUserInteractionEnabled = false
         return textView.withoutAutoresizingMaskConstraints
     }()
 
