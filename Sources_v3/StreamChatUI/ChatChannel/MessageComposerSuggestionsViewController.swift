@@ -10,8 +10,27 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
     UICollectionViewDelegate,
     UICollectionViewDataSource {
     var heightConstraint: NSLayoutConstraint?
+    
+    // MARK: - Underlying types
+    
+    public enum State {
+        case commands([Command])
+        case mentions([String])
+    }
 
     // MARK: - Property
+    
+    public var state: State? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+    
+    public var didSelectItemAt: ((Int) -> Void)?
+    
+    public var isPresented: Bool {
+        view.superview != nil
+    }
 
     private var collectionViewHeightObserver: NSKeyValueObservation?
 
@@ -84,26 +103,46 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
     // MARK: - UICollectionView
 
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        3 // uiConfig.commandIcons.count
+        guard let state = state else { return 0 }
+        
+        switch state {
+        case let .commands(commands):
+            return commands.count
+        case let .mentions(users):
+            return users.count
+        }
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//        let cell = collectionView.dequeueReusableCell(
-//            withReuseIdentifier: MessageComposerCommandCollectionViewCell<ExtraData>.reuseId,
-//            for: indexPath
-//        ) as! MessageComposerCommandCollectionViewCell<ExtraData>
-//
-//        cell.uiConfig = uiConfig
-//        cell.commandView.content = ("Giphy", "/giphy [query]", UIImage(named: "command_giphy", in: .streamChatUI))
-
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MessageComposerMentionCollectionViewCell<ExtraData>.reuseId,
-            for: indexPath
-        ) as! MessageComposerMentionCollectionViewCell<ExtraData>
-
-        cell.uiConfig = uiConfig
-        cell.mentionView.content = ("Damian", "@damian", UIImage(named: "pattern1", in: .streamChatUI), false)
-
-        return cell
+        guard let state = state else { return UICollectionViewCell() }
+        
+        switch state {
+        case let .commands(commands):
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: MessageComposerCommandCollectionViewCell<ExtraData>.reuseId,
+                for: indexPath
+            ) as! MessageComposerCommandCollectionViewCell<ExtraData>
+            
+            cell.uiConfig = uiConfig
+            
+            cell.commandView.command = commands[indexPath.row]
+            
+            return cell
+        // TODO: mentions
+        case .mentions:
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: MessageComposerMentionCollectionViewCell<ExtraData>.reuseId,
+                for: indexPath
+            ) as! MessageComposerMentionCollectionViewCell<ExtraData>
+            
+            cell.uiConfig = uiConfig
+            cell.mentionView.content = ("Damian", "@damian", UIImage(named: "pattern1", in: .streamChatUI), false)
+            
+            return cell
+        }
+    }
+    
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        didSelectItemAt?(indexPath.row)
     }
 }

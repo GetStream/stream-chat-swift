@@ -8,7 +8,7 @@ import UIKit
 open class MessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: Properties
 
-    open var content: (title: String, subtitle: String, commandImage: UIImage?)? {
+    open var command: Command? {
         didSet {
             updateContentIfNeeded()
         }
@@ -41,9 +41,11 @@ open class MessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UICo
     }
 
     override open func updateContent() {
-        commandNameSubtitleLabel.text = content?.subtitle
-        commandNameLabel.text = content?.title
-        commandImageView.image = content?.commandImage
+        guard let command = command else { return }
+        commandNameSubtitleLabel.text = "/\(command.name) \(command.args)"
+        commandNameLabel.text = command.name.firstUppercased
+        commandImageView.image = uiConfig.messageComposer.commandIcons[command.name.lowercased()] ??
+            uiConfig.messageComposer.fallbackCommandIcon
     }
 
     // MARK: Private
