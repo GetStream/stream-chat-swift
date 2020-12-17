@@ -112,7 +112,11 @@ class MessageSender_Tests: StressTestCase {
         }
 
         // Simulate successful response for message1.
-        apiClient.test_simulateResponse(.success(EmptyResponse()))
+        let dummyPayload: WrappedMessagePayload<ExtraData> = .init(
+            message: .dummy(messageId: message1Id, authorUserId: .anonymous)
+        )
+        
+        apiClient.test_simulateResponse(.success(dummyPayload))
 
         // Simulate all message2 attachments are uploaded.
         try database.writeSynchronously { session in
@@ -154,8 +158,8 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate successfull API response
-        let callback = apiClient.request_completion as! (Result<EmptyResponse, Error>) -> Void
-        callback(.success(.init()))
+        let callback = apiClient.request_completion as! (Result<WrappedMessagePayload<ExtraData>, Error>) -> Void
+        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
         
         // Check the state is eventually changed to `nil`
         AssertAsync.willBeEqual(database.viewContext.message(id: message1Id)?.localMessageState, nil)
@@ -180,7 +184,7 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate error API response
-        let callback = apiClient.request_completion as! (Result<EmptyResponse, Error>) -> Void
+        let callback = apiClient.request_completion as! (Result<WrappedMessagePayload<ExtraData>, Error>) -> Void
         callback(.failure(TestError()))
         
         // Check the state is eventually changed to `sendingFailed`
@@ -233,10 +237,10 @@ class MessageSender_Tests: StressTestCase {
         )
         
         // Simulate the first call response
-        var callback: ((Result<EmptyResponse, Error>) -> Void) {
-            apiClient.request_completion as! (Result<EmptyResponse, Error>) -> Void
+        var callback: ((Result<WrappedMessagePayload<ExtraData>, Error>) -> Void) {
+            apiClient.request_completion as! (Result<WrappedMessagePayload<ExtraData>, Error>) -> Void
         }
-        callback(.success(.init()))
+        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
         
         // Check the 2nd API call
         let message2Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
@@ -249,7 +253,7 @@ class MessageSender_Tests: StressTestCase {
         )
         
         // Simulate the second call response
-        callback(.success(.init()))
+        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
 
         // Check the 3rd API call
         let message3Payload: MessageRequestBody<ExtraData> = try XCTUnwrap(
@@ -262,7 +266,7 @@ class MessageSender_Tests: StressTestCase {
         )
         
         // Simulate the second call response
-        callback(.success(.init()))
+        callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
     }
     
     func test_senderSendsMessages_forMultipleChannelsInParalel_butStillInTheCorrectOrder() throws {
@@ -337,8 +341,8 @@ class MessageSender_Tests: StressTestCase {
 
         // Simulate successfull responses for both API calls
         apiClient.request_allRecordedCalls.forEach {
-            let callback = $0.completion as! (Result<EmptyResponse, Error>) -> Void
-            callback(.success(.init()))
+            let callback = $0.completion as! (Result<WrappedMessagePayload<ExtraData>, Error>) -> Void
+            callback(.success(.init(message: .dummy(messageId: .unique, authorUserId: .anonymous))))
         }
                 
         // Wait for 2 more API calls to be made
@@ -360,6 +364,39 @@ class MessageSender_Tests: StressTestCase {
         XCTAssertTrue(apiClient.request_allRecordedCalls.contains(where: {
             $0.endpoint == AnyEndpoint(.sendMessage(cid: cidB, messagePayload: channelB_message2Payload))
         }))
+    }
+    
+    func test_messagePayloadResponse_savedAfterSuccessfulSending() throws {
+        var messageId: MessageId!
+                
+        // Create a message with pending state
+        try database.writeSynchronously { session in
+            let message = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send",
+                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                extraData: ExtraData.Message.defaultValue
+            )
+            message.localMessageState = .pendingSend
+            messageId = message.id
+        }
+        
+        // Wait for the API call to be initiated
+        AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
+        
+        // Simulate successful API response with assigned attachment
+        let callback = apiClient.request_completion as! (Result<WrappedMessagePayload<ExtraData>, Error>) -> Void
+        let attachment: AttachmentPayload<ExtraData.Attachment> = .init(type: .giphy, title: .unique, imagePreviewURL: nil)
+        let messagePayload: MessagePayload<ExtraData> = .dummy(
+            messageId: messageId,
+            attachments: [attachment],
+            authorUserId: .unique
+        )
+        
+        callback(.success(.init(message: messagePayload)))
+        
+        // Check the changes are reflected in DB
+        AssertAsync.willBeEqual(database.viewContext.message(id: messageId)?.attachments.first?.title, attachment.title)
     }
     
     // MARK: - Life cycle tests
