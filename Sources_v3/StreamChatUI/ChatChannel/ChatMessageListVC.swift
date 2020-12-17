@@ -28,7 +28,8 @@ public protocol ChatMessageListVCDelegate: AnyObject {
     func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didSelectMessageAt index: Int)
     func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>)
     func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOn attachment: _ChatMessageAttachment<ExtraData>)
-    func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didInlineRepliedTo message: _ChatMessage<ExtraData>)
+    func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>)
+    func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>)
 }
 
 open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
@@ -47,7 +48,8 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         public var didSelectMessageAtIndex: ((ChatMessageListVC, Int) -> Void)?
         public var didTapOnRepliesForMessage: ((ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
         public var didTapOnAttachment: ((ChatMessageListVC, _ChatMessageAttachment<ExtraData>) -> Void)?
-        public var didInlineRepliedTo: ((ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
+        public var didTapOnInlineReply: ((ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
+        public var didTapOnEdit: ((ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
     }
 
     public var dataSource: DataSource = .empty()
@@ -239,7 +241,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         actions.append(.inlineReply { [weak self] in
             self?.dismiss(animated: true)
             guard let self = self else { return }
-            self.delegate?.didInlineRepliedTo?(self, message)
+            self.delegate?.didTapOnInlineReply?(self, message)
         })
 
         actions.append(.threadReply { [weak self] in
@@ -254,8 +256,9 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
 
         if message.isSentByCurrentUser {
             actions.append(.edit { [weak self] in
-                debugPrint("edit")
                 self?.dismiss(animated: true)
+                guard let self = self else { return }
+                self.delegate?.didTapOnEdit?(self, message)
             })
             actions.append(.delete { [weak self] in
                 self?.router.showMessageDeletionConfirmationAlert { confirmed in
@@ -323,7 +326,8 @@ public extension ChatMessageListVC.Delegate {
             didSelectMessageAtIndex: { [weak delegate] in delegate?.chatMessageListVC($0, didSelectMessageAt: $1) },
             didTapOnRepliesForMessage: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnRepliesFor: $1) },
             didTapOnAttachment: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOn: $1) },
-            didInlineRepliedTo: { [weak delegate] in delegate?.chatMessageListVC($0, didInlineRepliedTo: $1) }
+            didTapOnInlineReply: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnInlineReplyFor: $1) },
+            didTapOnEdit: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnEdit: $1) }
         )
     }
 }
