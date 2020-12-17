@@ -192,7 +192,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
             extraData: .defaultValue
         )
         
-        let expectedEndpoint = Endpoint<EmptyResponse>(
+        let expectedEndpoint = Endpoint<WrappedMessagePayload<DefaultExtraData>>(
             path: "channels/\(cid.type)/\(cid.id)/message",
             method: .post,
             queryItems: nil,
@@ -201,7 +201,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .sendMessage(cid: cid, messagePayload: messageBody)
+        let endpoint: Endpoint<WrappedMessagePayload<DefaultExtraData>> = .sendMessage(cid: cid, messagePayload: messageBody)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
