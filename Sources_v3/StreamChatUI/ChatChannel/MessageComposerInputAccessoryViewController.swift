@@ -17,15 +17,14 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     
     public enum State {
         case initial
-        case slashCommand
-        case suggestions
+        case slashCommand(Command)
         case reply(_ChatMessage<ExtraData>)
         case edit(_ChatMessage<ExtraData>)
     }
     
     // MARK: - Properties
 
-    var controller: _ChatChannelController<ExtraData>!
+    var controller: _ChatChannelController<ExtraData>?
     
     public var state: State = .initial {
         didSet {
@@ -98,13 +97,12 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
             composerView.replyView.isHidden = true
             composerView.container.topStackView.isHidden = true
             composerView.messageInputView.setSlashCommandViews(hidden: true)
-        case .slashCommand:
+        case let .slashCommand(command):
             textView.text = ""
-            textView.placeholderLabel.text = L10n.Composer.Placeholder.giphy
+            textView.placeholderLabel.text = command.name.firstUppercased
             composerView.messageInputView.setSlashCommandViews(hidden: false)
+            composerView.messageInputView.slashCommandView.commandName = command.name.uppercased()
             dismissSuggestionsViewController()
-        case .suggestions:
-            showSuggestionsViewController()
         case let .reply(messageToReply):
             composerView.titleLabel.text = L10n.Composer.Title.reply
             let image = UIImage(named: "replyArrow", in: .streamChatUI)?
@@ -137,13 +135,13 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
         composerView.attachmentButton.addTarget(self, action: #selector(showImagePicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
+        composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
         composerView.messageInputView.rightAccessoryButton.addTarget(
             self,
-            action: #selector(dismissSlashCommand),
+            action: #selector(resetState),
             for: .touchUpInside
         )
         composerView.dismissButton.addTarget(self, action: #selector(resetState), for: .touchUpInside)
-        
         composerView.attachmentsView.didTapRemoveItemButton = { [weak self] index in self?.imageAttachments.remove(at: index) }
     }
     
@@ -199,10 +197,8 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
             )
             // TODO: Adjust LLC to edit attachments also
             messageController.editMessage(text: textView.text)
-        case .suggestions:
-            // TODO: `createNewMessage` with `commands` value should be called.
-            print("Send suggestions message")
-        default: return
+        case let .slashCommand(command):
+            controller.createNewMessage(text: "/\(command.name) " + text)
         }
         
         state = .initial
@@ -212,14 +208,18 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
         present(imagePicker, animated: true, completion: nil)
     }
     
-    @objc func dismissSlashCommand() {
-        composerView.messageInputView.setSlashCommandViews(hidden: true)
-    }
-    
     @objc func shrinkInput() {
         composerView.attachmentButton.isHidden = false
         composerView.commandsButton.isHidden = false
         composerView.shrinkInputButton.isHidden = true
+    }
+    
+    @objc func showAvailableCommands() {
+        if suggestionsViewController.isPresented {
+            dismissSuggestionsViewController()
+        } else {
+            promptSuggestionIfNeeded(for: "/")
+        }
     }
     
     @objc func resetState() {
@@ -262,15 +262,43 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     
     // MARK: UITextView
     
-    func promptSuggestionIfNeeded() {
-        if textView.text == "/" {
-            showSuggestionsViewController()
+    @objc func promptSuggestionIfNeeded(for text: String) {
+        // Check if first symbol is `/` and if there are available commands in `ChatConfig`.
+        guard text.trimmingCharacters(in: .whitespacesAndNewlines).first == "/",
+            let commands = controller?.channel?.config.commands
+        else {
+            dismissSuggestionsViewController()
+            return
         }
+        
+        // Get the command value without the `/`
+        let typedCommand = String(text.trimmingCharacters(in: .whitespacesAndNewlines).dropFirst())
+        
+        // Set all commands as hints initially
+        var commandHints: [Command] = commands
+        
+        // Filter commands when user is typing something after `/`
+        if !typedCommand.isEmpty {
+            commandHints = commands.filter { $0.name.range(of: typedCommand, options: .caseInsensitive) != nil }
+        }
+    
+        suggestionsViewController.state = .commands(commandHints)
+        suggestionsViewController.didSelectItemAt = { [weak self] index in
+            self?.state = .slashCommand(commandHints[index])
+        }
+        showSuggestionsViewController()
     }
     
     func replaceTextWithSlashCommandViewIfNeeded() {
-        if textView.text == "/giphy" {
-            state = .slashCommand
+        // Extract potential command name from input text
+        let potentialCommandNameFromInput = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).dropFirst()
+        
+        // Condition to check if input text matches any of the available commands
+        let commandMatches: ((Command) -> Bool) = { command in command.name == potentialCommandNameFromInput }
+        
+        // Update state if command detected
+        if let command = controller?.channel?.config.commands?.first(where: commandMatches) {
+            state = .slashCommand(command)
         }
     }
 
@@ -289,7 +317,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     public func textViewDidChange(_ textView: UITextView) {
         isEmpty = textView.text.replacingOccurrences(of: " ", with: "").isEmpty
         replaceTextWithSlashCommandViewIfNeeded()
-        promptSuggestionIfNeeded()
+        promptSuggestionIfNeeded(for: textView.text)
     }
 
     // MARK: - UIImagePickerControllerDelegate
