@@ -96,7 +96,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         }
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
-        dto.localURL = dto.localURL ?? nil
+        dto.localURL = nil
         dto.localState = nil
         dto.title = payload.title
         dto.author = payload.author
