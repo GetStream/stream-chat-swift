@@ -140,7 +140,17 @@ public extension UIConfig {
         /// Vertical contentOffset for message list, when next message batch should be requested
         public var offsetToPreloadMoreMessages: CGFloat = 100
         public var messageContentView: ChatMessageContentView<ExtraData>.Type = ChatMessageContentView<ExtraData>.self
+
         public var messageContentSubviews = MessageContentViewSubviews()
+        public var messageReactions = MessageReactions()
+
+        public var messageActionsView: MessageActionsView<ExtraData>.Type =
+            MessageActionsView<ExtraData>.self
+        public var messageActionButton: MessageActionsView<ExtraData>.ActionButton.Type =
+            MessageActionsView<ExtraData>.ActionButton.self
+    }
+
+    struct MessageReactions {
         public var messageAvailableReactions: [MessageReactionType] = [
             .init(rawValue: "like"),
             .init(rawValue: "haha"),
@@ -171,11 +181,29 @@ public extension UIConfig {
             }
         }
 
-        public var messageActionsView: MessageActionsView<ExtraData>.Type =
-            MessageActionsView<ExtraData>.self
-        public var messageActionButton: MessageActionsView<ExtraData>.ActionButton.Type =
-            MessageActionsView<ExtraData>.ActionButton.self
+        /// Generates tail images for chat message reactions view. This function going to be called a lot.
+        /// Consider either always returning same images or cache function results.
+        ///   - outlineColor: color around tail, it will be main background color most of the time to create
+        ///   effect of cut through message bubble
+        ///   - borderColor: color of tail border
+        ///   - innerColor: filling color of tail bubbles
+        ///   - flipped: `true` for incoming messages, `false` for outgoing messages
+        ///
+        /// Returns: 2 images, `bottom` image will lay under reaction view in hierarchy,
+        /// `top` will lay on top of reaction view in hierarchy
+        public var reactionViewTail: (
+            _ outlineColor: UIColor,
+            _ borderColor: UIColor,
+            _ innerColor: UIColor,
+            _ flipped: Bool
+        ) -> (bottom: UIImage, top: UIImage) = DaVinci.reactionTail(outlineColor:borderColor:innerColor:flipped:)
+
+        /// Generates tail image for big version of chat message reactions view.
+        ///   - flipped: `true` for incoming messages, `false` for outgoing messages
+        public var reactionViewHugeTail: (_ fillColor: UIColor, _ flipped: Bool) -> UIImage = DaVinci.reactionTail(color:flipped:)
+
         public var messageReactionsView: ChatMessageReactionsView<ExtraData>.Type = ChatMessageReactionsView<ExtraData>.self
+        public var messageReactionView: ChatMessageReactionView<ExtraData>.Type = ChatMessageReactionView<ExtraData>.self
     }
 
     struct MessageContentViewSubviews {

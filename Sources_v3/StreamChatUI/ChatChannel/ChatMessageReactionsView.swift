@@ -7,84 +7,88 @@ import UIKit
 
 // MARK: - Reaction
 
-class MessageReactionView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    var reaction: MessageReactionType? { didSet { updateContentIfNeeded() } }
-    var madeByCurrentUser: Bool = false { didSet { updateContentIfNeeded() } }
-    private let imageView: UIImageView = {
+open class ChatMessageReactionView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+    open var content: ChatMessageReactionsView<ExtraData>.Reaction? { didSet { updateContentIfNeeded() } }
+    public let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .center
         return imageView
     }()
 
-    var selectedByUserTintColor: UIColor { tintColor }
-    var notSelectedByUserTintColor: UIColor = .systemGray { didSet { updateContentIfNeeded() } }
-    var onTap: (MessageReactionType) -> Void = { _ in }
-    var isBig: Bool = true { didSet { updateContentIfNeeded() } }
+    open var notSelectedByUserTintColor: UIColor = .systemGray { didSet { updateContentIfNeeded() } }
+    open var onTap: (MessageReactionType) -> Void = { _ in }
+    open var isBig: Bool = true { didSet { updateContentIfNeeded() } }
 
-    override func setUp() {
+    override open func setUp() {
         super.setUp()
         let tap = UITapGestureRecognizer(target: self, action: #selector(didTap))
         addGestureRecognizer(tap)
     }
 
-    override func setUpLayout() {
+    override open func setUpLayout() {
         super.setUpLayout()
         embed(imageView)
     }
 
-    override func updateContent() {
+    override open func updateContent() {
         super.updateContent()
-        guard let reaction = self.reaction else { return }
+        guard let content = self.content else { return }
 
         imageView.image = isBig
-            ? uiConfig.messageList.bigIconForMessageReaction(reaction)
-            : uiConfig.messageList.smallIconForMessageReaction(reaction)
+            ? uiConfig.messageList.messageReactions.bigIconForMessageReaction(content.type)
+            : uiConfig.messageList.messageReactions.smallIconForMessageReaction(content.type)
 
-        imageView.tintColor = madeByCurrentUser
-            ? selectedByUserTintColor
+        imageView.tintColor = content.isSelectedByCurrentUser
+            ? tintColor
             : notSelectedByUserTintColor
     }
 
-    override func tintColorDidChange() {
+    override open func tintColorDidChange() {
         super.tintColorDidChange()
         updateContentIfNeeded()
     }
 
-    @objc private func didTap() {
-        guard let reaction = self.reaction else { return }
-        onTap(reaction)
+    @objc open func didTap() {
+        guard let content = self.content else { return }
+        onTap(content.type)
     }
 }
 
 // MARK: - Reactions
 
+/// Use `tailLeadingAnchor` and `tailTrailingAnchor` to snap bubble tail to reaction source.
+/// Otherwise tail is located in the middle of reaction bubble
 open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    private enum Height {
-        static var small: CGFloat { 24 }
-        static var big: CGFloat { 40 }
+    public enum Height {
+        public static var small: CGFloat { 24 }
+        public static var big: CGFloat { 40 }
     }
 
-    enum Style {
+    public enum Style {
         case bigIncoming
         case smallIncoming
         case bigOutgoing
         case smallOutgoing
     }
 
-    typealias Reaction = (type: MessageReactionType, isSelectedByCurrentUser: Bool)
+    public typealias Reaction = (type: MessageReactionType, isSelectedByCurrentUser: Bool)
 
-    private lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: Height.small)
-    var style: Style = .smallOutgoing {
+    public private(set) lazy var heightConstraint: NSLayoutConstraint = heightAnchor.constraint(equalToConstant: Height.small)
+    open var style: Style = .smallOutgoing {
         didSet { updateStyle() }
     }
 
-    var onTap: (MessageReactionType) -> Void = { _ in } {
+    public var reactionViewType: ChatMessageReactionView<ExtraData>.Type {
+        uiConfig.messageList.messageReactions.messageReactionView
+    }
+
+    open var onTap: (MessageReactionType) -> Void = { _ in } {
         didSet {
-            content.arrangedSubviews.forEach { ($0 as? MessageReactionView<ExtraData>)?.onTap = onTap }
+            content.arrangedSubviews.forEach { ($0 as? ChatMessageReactionView<ExtraData>)?.onTap = onTap }
         }
     }
 
-    let content: UIStackView = {
+    public let content: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.distribution = .fillEqually
@@ -92,73 +96,123 @@ open class ChatMessageReactionsView<ExtraData: ExtraDataTypes>: View, UIConfigPr
         return stack
     }()
 
+    public private(set) lazy var tailBehind = UIImageView().withoutAutoresizingMaskConstraints
+    public private(set) lazy var backgroundView = UIView().withoutAutoresizingMaskConstraints
+    public private(set) lazy var tailInFront = UIImageView().withoutAutoresizingMaskConstraints
+
+    public var tailLeadingAnchor: NSLayoutXAxisAnchor { tailBehind.leadingAnchor }
+    public var tailTrailingAnchor: NSLayoutXAxisAnchor { tailBehind.trailingAnchor }
+
     override open func setUpLayout() {
         heightConstraint.isActive = true
+        widthAnchor.constraint(greaterThanOrEqualTo: heightAnchor, multiplier: 1).isActive = true
+
+        addSubview(tailBehind)
+        embed(backgroundView)
+        tailBehind.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor).with(priority: .defaultLow).isActive = true
+        tailBehind.centerYAnchor.constraint(equalTo: backgroundView.bottomAnchor).isActive = true
+
+        addSubview(tailInFront)
+        tailInFront.centerYAnchor.constraint(equalTo: tailBehind.centerYAnchor).isActive = true
+        tailInFront.centerXAnchor.constraint(equalTo: tailBehind.centerXAnchor).isActive = true
+
         addSubview(content)
         content.pin(to: layoutMarginsGuide)
     }
 
-    override public func defaultAppearance() {
-        layer.borderWidth = 1
+    override open func defaultAppearance() {
+        backgroundColor = .clear
+        backgroundView.layer.borderWidth = 1
         updateStyle()
     }
 
-    func updateStyle() {
-        // for incoming message reactions we use outgoing message colors, and vice versa
-        // in big state we always use incoming colors
+    /// For incoming message reactions we use outgoing message colors, and vice versa.
+    /// In big state we always use incoming colors
+    open func updateStyle() {
         let reactionTint: UIColor
+        let screenBackground: UIColor
+        let borderColor: UIColor
+        let innerColor: UIColor
+        var isIncoming: Bool
+        let isBig = style ~= .bigIncoming || style ~= .bigOutgoing
+
         switch style {
         case .bigIncoming:
             heightConstraint.constant = Height.big
-            layer.cornerRadius = Height.big / 2
-            backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
-            layer.borderColor = uiConfig.colorPalette.incomingMessageBubbleBackground.cgColor
+            backgroundView.layer.cornerRadius = Height.big / 2
+            innerColor = uiConfig.colorPalette.incomingMessageBubbleBackground
+            borderColor = uiConfig.colorPalette.incomingMessageBubbleBackground
             reactionTint = uiConfig.colorPalette.incomingMessageInactiveReaction
             directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+            screenBackground = .clear
+            isIncoming = true
 
         case .bigOutgoing:
             heightConstraint.constant = Height.big
-            layer.cornerRadius = Height.big / 2
-            backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
-            layer.borderColor = uiConfig.colorPalette.incomingMessageBubbleBackground.cgColor
+            backgroundView.layer.cornerRadius = Height.big / 2
+            innerColor = uiConfig.colorPalette.incomingMessageBubbleBackground
+            borderColor = uiConfig.colorPalette.incomingMessageBubbleBackground
             reactionTint = uiConfig.colorPalette.outgoingMessageInactiveReaction
             directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+            screenBackground = .clear
+            isIncoming = false
 
         case .smallIncoming:
             heightConstraint.constant = Height.small
-            layer.cornerRadius = Height.small / 2
-            backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBackground
-            layer.borderColor = uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor
+            backgroundView.layer.cornerRadius = Height.small / 2
+            innerColor = uiConfig.colorPalette.outgoingMessageBubbleBackground
+            borderColor = uiConfig.colorPalette.outgoingMessageBubbleBorder
             reactionTint = uiConfig.colorPalette.incomingMessageInactiveReaction
             directionalLayoutMargins = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
+            screenBackground = uiConfig.colorPalette.generalBackground
+            isIncoming = true
 
         case .smallOutgoing:
             heightConstraint.constant = Height.small
-            layer.cornerRadius = Height.small / 2
-            backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
-            layer.borderColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
+            backgroundView.layer.cornerRadius = Height.small / 2
+            innerColor = uiConfig.colorPalette.incomingMessageBubbleBackground
+            borderColor = uiConfig.colorPalette.incomingMessageBubbleBorder
             reactionTint = uiConfig.colorPalette.outgoingMessageInactiveReaction
             directionalLayoutMargins = NSDirectionalEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4)
+            screenBackground = uiConfig.colorPalette.generalBackground
+            isIncoming = false
         }
+
+        if traitCollection.layoutDirection == .rightToLeft {
+            isIncoming.toggle()
+        }
+
+        backgroundView.backgroundColor = innerColor
+        backgroundView.layer.borderColor = borderColor.cgColor
+
+        if isBig {
+            tailBehind.image = uiConfig.messageList.messageReactions.reactionViewHugeTail(innerColor, isIncoming)
+            tailInFront.image = nil
+        } else {
+            let tails = uiConfig.messageList.messageReactions
+                .reactionViewTail(screenBackground, borderColor, innerColor, isIncoming)
+            tailBehind.image = tails.bottom
+            tailInFront.image = tails.top
+        }
+
         content.arrangedSubviews.forEach { view in
-            (view as? MessageReactionView<ExtraData>)?.notSelectedByUserTintColor = reactionTint
-            (view as? MessageReactionView<ExtraData>)?.isBig = style ~= .bigIncoming || style ~= .bigOutgoing
+            (view as? ChatMessageReactionView<ExtraData>)?.notSelectedByUserTintColor = reactionTint
+            (view as? ChatMessageReactionView<ExtraData>)?.isBig = isBig
         }
     }
 
-    private func update(with reactions: [Reaction]) {
+    open func update(with reactions: [Reaction]) {
         content.arrangedSubviews.forEach { $0.removeFromSuperview() }
         reactions.forEach { reaction in
-            let view = MessageReactionView<ExtraData>()
-            view.reaction = reaction.type
-            view.madeByCurrentUser = reaction.isSelectedByCurrentUser
+            let view = uiConfig.messageList.messageReactions.messageReactionView.init()
+            view.content = reaction
             view.onTap = onTap
             content.addArrangedSubview(view)
         }
         updateStyle()
     }
 
-    func reload<T>(from message: _ChatMessage<T>?, with allReactions: [MessageReactionType]? = nil) {
+    open func reload(from message: _ChatMessage<ExtraData>?, with allReactions: [MessageReactionType]? = nil) {
         guard let message = message else {
             update(with: [])
             return
@@ -179,9 +233,11 @@ open class ChatMessageReactionViewController<ExtraData: ExtraDataTypes>: ViewCon
 
     // MARK: - Subviews
 
-    private lazy var reactionsView = uiConfig
+    public private(set) lazy var reactionsView = uiConfig
         .messageList
-        .messageReactionsView.init()
+        .messageReactions
+        .messageReactionsView
+        .init()
         .withoutAutoresizingMaskConstraints
 
     // MARK: - Life Cycle
@@ -204,7 +260,7 @@ open class ChatMessageReactionViewController<ExtraData: ExtraDataTypes>: ViewCon
     override open func updateContent() {
         reactionsView.reload(
             from: messageController.message,
-            with: uiConfig.messageList.messageAvailableReactions
+            with: uiConfig.messageList.messageReactions.messageAvailableReactions
         )
     }
 

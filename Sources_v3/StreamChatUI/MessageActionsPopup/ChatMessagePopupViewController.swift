@@ -68,6 +68,8 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
                 ),
                 actionsController.view.trailingAnchor.constraint(equalTo: messageContentView.trailingAnchor),
                 reactionsController.view.centerXAnchor.constraint(equalTo: messageContentView.leadingAnchor)
+                    .with(priority: .defaultHigh),
+                reactionsController.reactionsView.tailTrailingAnchor.constraint(equalTo: messageContentView.leadingAnchor)
             ])
         } else {
             constraints.append(contentsOf: [
@@ -77,10 +79,11 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
                 ),
                 actionsController.view.leadingAnchor.constraint(equalTo: messageContentView.messageBubbleView.leadingAnchor),
                 reactionsController.view.centerXAnchor.constraint(equalTo: messageContentView.trailingAnchor)
+                    .with(priority: .defaultHigh),
+                reactionsController.reactionsView.tailLeadingAnchor.constraint(equalTo: messageContentView.trailingAnchor)
             ])
         }
 
-        constraints.last?.priority = .defaultHigh
         NSLayoutConstraint.activate(constraints)
     }
 
