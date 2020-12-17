@@ -57,6 +57,33 @@ class MessagePayload_Tests: XCTestCase {
     }
 }
 
+class WrappedMessagePayload_Tests: XCTestCase {
+    func test_wrappedMessagePayload_isSerialized() throws {
+        let payload = try JSONDecoder.default.decode(
+            WrappedMessagePayload<DefaultExtraData>.self,
+            from: XCTestCase.mockData(fromFile: "WrappedMessage")
+        )
+        
+        XCTAssertEqual(payload.message.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
+        XCTAssertEqual(payload.message.type.rawValue, "regular")
+        XCTAssertEqual(payload.message.user.id, "broken-waterfall-5")
+        XCTAssertEqual(payload.message.createdAt, "2020-07-16T15:39:03.010717Z".toDate())
+        XCTAssertEqual(payload.message.updatedAt, "2020-08-17T13:15:39.895109Z".toDate())
+        XCTAssertEqual(payload.message.deletedAt, "2020-07-16T15:55:03.010717Z".toDate())
+        XCTAssertEqual(payload.message.text, "No, I am your father!")
+        XCTAssertEqual(payload.message.command, nil)
+        XCTAssertEqual(payload.message.args, nil)
+        XCTAssertEqual(payload.message.parentId, "3294-4c0c-9a62-c9d0928bf733")
+        XCTAssertEqual(payload.message.showReplyInChannel, true)
+        XCTAssertEqual(payload.message.mentionedUsers.map(\.id), [])
+        XCTAssertEqual(payload.message.threadParticipants.map(\.id), ["josh"])
+        XCTAssertEqual(payload.message.replyCount, 0)
+        XCTAssertEqual(payload.message.extraData, .defaultValue)
+        XCTAssertEqual(payload.message.reactionScores, ["love": 1])
+        XCTAssertEqual(payload.message.isSilent, true)
+    }
+}
+
 class MessageRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
         let payload: MessageRequestBody<CustomData> = .init(

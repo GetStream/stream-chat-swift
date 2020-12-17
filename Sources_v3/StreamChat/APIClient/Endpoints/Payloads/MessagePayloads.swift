@@ -28,6 +28,11 @@ enum MessagePayloadsCodingKeys: String, CodingKey {
     //        case i18n
 }
 
+/// An object describing the wrapped incoming message JSON payload.
+struct WrappedMessagePayload<ExtraData: ExtraDataTypes>: Decodable {
+    let message: MessagePayload<ExtraData>
+}
+
 /// An object describing the incoming message JSON payload.
 struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let id: String
