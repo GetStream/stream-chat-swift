@@ -269,7 +269,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertTrue(error is ClientError.MessageDoesNotExist)
     }
 
-    func test_saveAttachment_doesNotOverrideLocalURL() throws {
+    func test_saveAttachment_resetsLocalURL() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
@@ -300,7 +300,7 @@ class AttachmentDTO_Tests: XCTestCase {
             try session.saveAttachment(payload: attachmentPayload, id: attachmentId)
         }
 
-        // Assert attachment local URL remains the same.
-        XCTAssertEqual(loadedAttachment?.localURL, attachmentSeed.localURL)
+        // Assert attachment local URL is nil.
+        XCTAssertNil(loadedAttachment?.localURL)
     }
 }
