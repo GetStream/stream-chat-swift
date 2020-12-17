@@ -162,11 +162,11 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
                         return
                     }
                     
-                    let endpoint: Endpoint<EmptyResponse> = .sendMessage(cid: cid, messagePayload: requestBody)
+                    let endpoint: Endpoint<WrappedMessagePayload<ExtraData>> = .sendMessage(cid: cid, messagePayload: requestBody)
                     self?.apiClient.request(endpoint: endpoint) {
                         switch $0 {
-                        case .success:
-                            self?.markMessageAsSent(id: request.messageId) {
+                        case let .success(payload):
+                            self?.saveSuccessfullySentMessage(cid: cid, message: payload.message) {
                                 self?.removeRequestAndContinue(request)
                             }
                             
@@ -187,15 +187,15 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
         sendNextMessage()
     }
     
-    private func markMessageAsSent(id: MessageId, completion: @escaping () -> Void) {
+    private func saveSuccessfullySentMessage(cid: ChannelId, message: MessagePayload<ExtraData>, completion: @escaping () -> Void) {
         database.write({
-            let dto = $0.message(id: id)
-            if dto?.localMessageState == .sending {
-                dto?.localMessageState = nil
+            let messageDTO = try $0.saveMessage(payload: message, for: cid)
+            if messageDTO.localMessageState == .sending {
+                messageDTO.localMessageState = nil
             }
         }, completion: {
             if let error = $0 {
-                log.error("Error changin localMessageState message with id \(id) to `nil`: \(error)")
+                log.error("Error saving sent message with id \(message.id): \(error)")
             }
             completion()
         })
