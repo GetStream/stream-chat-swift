@@ -167,14 +167,19 @@ extension ChatMessageImageGallery {
             return imageView.withoutAutoresizingMaskConstraints
         }()
 
-        public private(set) lazy var activityIndicator: UIActivityIndicatorView = {
-            let indicator = UIActivityIndicatorView()
-            indicator.hidesWhenStopped = true
-            indicator.style = .gray
-            return indicator.withoutAutoresizingMaskConstraints
-        }()
+        public private(set) lazy var loadingIndicator = uiConfig
+            .messageList
+            .messageContentSubviews
+            .attachmentSubviews
+            .imageGalleryLoadingIndicator
+            .init()
+            .withoutAutoresizingMaskConstraints
 
         // MARK: - Overrides
+
+        override public func defaultAppearance() {
+            imageView.backgroundColor = uiConfig.colorPalette.galleryImageBackground
+        }
 
         override open func setUp() {
             super.setUp()
@@ -185,18 +190,21 @@ extension ChatMessageImageGallery {
 
         override open func setUpLayout() {
             embed(imageView)
-            embed(activityIndicator)
+
+            addSubview(loadingIndicator)
+            loadingIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+            loadingIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
         }
 
         override open func updateContent() {
             if let url = previewURL {
-                activityIndicator.startAnimating()
+                loadingIndicator.isVisible = true
                 imageTask = loadImage(with: url, options: .shared, into: imageView, completion: { [weak self] _ in
-                    self?.activityIndicator.stopAnimating()
+                    self?.loadingIndicator.isVisible = false
                     self?.imageTask = nil
                 })
             } else {
-                activityIndicator.stopAnimating()
+                loadingIndicator.isVisible = false
                 imageView.image = nil
                 imageTask = nil
             }
