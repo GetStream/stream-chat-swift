@@ -200,7 +200,6 @@ public extension UIConfig {
         public var mentionAvatarView: ChatChannelAvatarView<ExtraData>.Type = ChatChannelAvatarView<ExtraData>.self
         public var commandIcons: [String: UIImage] = [
             "ban": UIImage(named: "command_ban", in: .streamChatUI)!,
-            "fallback": UIImage(named: "command_fallback", in: .streamChatUI)!,
             "flag": UIImage(named: "command_flag", in: .streamChatUI)!,
             "giphy": UIImage(named: "command_giphy", in: .streamChatUI)!,
             "imgur": UIImage(named: "command_imgur", in: .streamChatUI)!,
@@ -209,6 +208,7 @@ public extension UIConfig {
             "unban": UIImage(named: "command_unban", in: .streamChatUI)!,
             "unmute": UIImage(named: "command_unmute", in: .streamChatUI)!
         ]
+        public var fallbackCommandIcon: UIImage = UIImage(named: "command_fallback", in: .streamChatUI)!
     }
 }
 
