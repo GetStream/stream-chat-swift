@@ -26,9 +26,10 @@ open class ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: View, UIConfig
     }
 
     override open func defaultAppearance() {
+        shape.contentsScale = layer.contentsScale
         shape.strokeColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
         shape.fillColor = nil
-        shape.lineWidth = 1.0 / UIScreen.main.scale
+        shape.lineWidth = 1.0
     }
 
     public var isLeftToRight: Bool {
@@ -40,8 +41,9 @@ open class ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: View, UIConfig
     override open func draw(_ rect: CGRect) {
         let corner: CGFloat = 16
         let height = bounds.height
+        let lineCenter = shape.lineWidth / 2
 
-        let startX = isLeftToRight ? 0 : bounds.width
+        let startX = isLeftToRight ? lineCenter : (bounds.width - lineCenter)
         let endX = isLeftToRight ? corner : (bounds.width - corner)
 
         let path = CGMutablePath()

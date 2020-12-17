@@ -68,8 +68,9 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
     override public func defaultAppearance() {
         layer.cornerRadius = 16
         layer.masksToBounds = true
+        borderLayer.contentsScale = layer.contentsScale
         borderLayer.cornerRadius = 16
-        borderLayer.borderWidth = 1 / UIScreen.main.scale
+        borderLayer.borderWidth = 1
     }
 
     override open func setUpLayout() {
