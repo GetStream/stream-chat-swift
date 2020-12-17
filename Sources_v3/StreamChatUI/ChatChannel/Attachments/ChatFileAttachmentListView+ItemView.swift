@@ -35,11 +35,13 @@ extension ChatFileAttachmentListView {
             return label.withoutAutoresizingMaskConstraints
         }()
 
-        public private(set) lazy var activityIndicator: UIActivityIndicatorView = {
-            let indicator = UIActivityIndicatorView()
-            indicator.hidesWhenStopped = true
-            return indicator.withoutAutoresizingMaskConstraints
-        }()
+        public private(set) lazy var loadingIndicator = uiConfig
+            .messageList
+            .messageContentSubviews
+            .attachmentSubviews
+            .loadingIndicator
+            .init()
+            .withoutAutoresizingMaskConstraints
 
         public private(set) lazy var actionIconImageView: UIImageView = {
             let imageView = UIImageView()
@@ -71,7 +73,6 @@ extension ChatFileAttachmentListView {
             fileSizeLabel.textColor = uiConfig.colorPalette.subtitleText
             spinnerAndSizeStack.spacing = UIStackView.spacingUseSystem
             fileNameAndSizeStack.spacing = 3
-            activityIndicator.style = .gray
         }
 
         override open func setUp() {
@@ -82,7 +83,7 @@ extension ChatFileAttachmentListView {
         }
 
         override open func setUpLayout() {
-            spinnerAndSizeStack.addArrangedSubview(activityIndicator)
+            spinnerAndSizeStack.addArrangedSubview(loadingIndicator)
             spinnerAndSizeStack.addArrangedSubview(fileSizeLabel)
 
             fileNameAndSizeStack.addArrangedSubview(fileNameLabel)
@@ -122,9 +123,9 @@ extension ChatFileAttachmentListView {
             actionIconImageView.image = fileAttachmentActionIcon
 
             if case .uploading = content?.localState {
-                activityIndicator.startAnimating()
+                loadingIndicator.isVisible = true
             } else {
-                activityIndicator.stopAnimating()
+                loadingIndicator.isVisible = false
             }
         }
 
