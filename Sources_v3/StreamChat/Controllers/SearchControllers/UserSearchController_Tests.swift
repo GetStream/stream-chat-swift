@@ -218,12 +218,26 @@ class UserSearchController_Tests: StressTestCase {
         controller.search(term: "test")
         
         // Simulate DB update
-        // We use random character and not `.unique` for userId
-        // Since we'll generate a smaller id for next user's id
+        // `ChatUserSearchController` sorts the results by name and id
+        // We use random character and not `.unique` for userId and name
+        // Since we'll generate a bigger id for next user's id and name
         // so that insertion will be [0,1] and not [0,0]
-        let userId = "def".randomElement()!.description
+        let userId = "abc".randomElement()!.description
+        let dummyUser = UserPayload<DefaultExtraData.User>(
+            id: userId,
+            name: userId,
+            imageURL: .unique(),
+            role: .admin,
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: .unique,
+            isOnline: .random(),
+            isInvisible: .random(),
+            isBanned: .random(),
+            extraData: .defaultValue
+        )
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
+            try session.saveUser(payload: dummyUser, query: self.controller.query)
         }
         
         // Simulate update call response
@@ -238,9 +252,22 @@ class UserSearchController_Tests: StressTestCase {
         controller.loadNextUsers()
         
         // Simulate DB update
-        let newUserId = "abc".randomElement()!.description
+        let newUserId = "def".randomElement()!.description
+        let newDummyUser = UserPayload<DefaultExtraData.User>(
+            id: newUserId,
+            name: newUserId,
+            imageURL: .unique(),
+            role: .admin,
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: .unique,
+            isOnline: .random(),
+            isInvisible: .random(),
+            isBanned: .random(),
+            extraData: .defaultValue
+        )
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveUser(payload: self.dummyUser(id: newUserId), query: self.controller.query)
+            try session.saveUser(payload: newDummyUser, query: self.controller.query)
         }
         
         // Simulate network call response
@@ -299,6 +326,55 @@ class UserSearchController_Tests: StressTestCase {
         // Assert the user is still here
         AssertAsync.staysTrue(user != nil)
     }
+    
+    func test_emptySearch_returnsAllUsers() throws {
+        // Set the delegate
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        controller.delegate = delegate
+        
+        // Make a search
+        controller.search(term: "")
+        
+        // Simulate DB update
+        let userIds: [UserId] = (0..<10).map { _ in UserId.unique }
+        try client.databaseContainer.writeSynchronously { session in
+            try userIds.forEach { try session.saveUser(payload: self.dummyUser(id: $0), query: self.controller.query) }
+        }
+        
+        // Simulate network call response
+        env.userListUpdater?.update_completion?(nil)
+        
+        let users: [ChatUser] = userIds.map { client.databaseContainer.viewContext.user(id: $0)!.asModel() }
+        
+        AssertAsync.willBeEqual(controller.users.count, 10)
+        // Check if delegate method is called
+        // It's expected that users will be sorted by name (and id if name is nil)
+        let expectedChanges = users
+            .sorted { $0.name! < $1.name! } // This is correct but we can't guarantee index order
+            .enumerated()
+            .map { ListChange.insert($1, index: [0, $0]) }
+        // Since we can't guarantee ordering from DB reporter, we'll have to sort
+        // But we are sorting end results so it won't affect correction
+        AssertAsync.willBeEqual(
+            delegate.didChangeUsers_changes?.sorted { $0.item.id > $1.item.id },
+            expectedChanges.sorted { $0.item.id > $1.item.id }
+        )
+    }
+    
+    func test_genericDelegateMethodsAreCalled() throws {
+        // Set delegate
+        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
+        controller.setDelegate(delegate)
+        
+        // Simulate DB update
+        let id: UserId = .unique
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveUser(payload: self.dummyUser(id: id), query: self.controller.query)
+        }
+        
+        let user: ChatUser = client.databaseContainer.viewContext.user(id: id)!.asModel()
+        AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
+    }
 }
 
 private class TestEnvironment {
@@ -330,7 +406,6 @@ private class TestDelegate: QueueAwareDelegate, ChatUserSearchControllerDelegate
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         didChangeUsers_changes = changes
-        print("### CHANGE \(changes) ids \(changes.map(\.item.id))")
         validateQueue()
     }
 }
