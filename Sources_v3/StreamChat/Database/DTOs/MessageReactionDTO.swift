@@ -77,7 +77,7 @@ extension MessageReactionDTO {
             return existing
         }
         
-        let new = MessageReactionDTO(context: context)
+        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! MessageReactionDTO
         new.id = createId(userId: userId, messageId: messageId, type: type)
         return new
     }
