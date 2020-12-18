@@ -11,15 +11,21 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Cache RubyGems
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Run Stress Tests
       run: bundle exec fastlane stress_test_v3
 
@@ -29,15 +35,21 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Cache RubyGems
-      uses: actions/cache@v1
+      uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Run Stress Tests
       run: bundle exec fastlane stress_test_v3_release
 
@@ -53,9 +65,15 @@ jobs:
         path: vendor/bundle
         key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
         restore-keys: ${{ runner.os }}-gem-
-    - name: Install RubyGems
-      if: steps.rubygem-cache.outputs.cache-hit != 'true'
-      run: bundle install
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
     - name: Install iOS11.4 runtime
       run: bundle exec xcversion simulators --install='iOS 11.4'
     - name: Run v3 Tests (Debug - iOS 11.4)
