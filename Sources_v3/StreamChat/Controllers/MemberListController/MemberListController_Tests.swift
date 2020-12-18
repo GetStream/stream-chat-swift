@@ -28,6 +28,7 @@ final class MemberListController_Tests: StressTestCase {
     
     override func tearDown() {
         client.mockAPIClient.cleanUp()
+        env.memberListUpdater?.cleanUp()
         
         query = nil
         controllerCallbackQueueID = nil
@@ -83,18 +84,25 @@ final class MemberListController_Tests: StressTestCase {
         // Assert controller is in `localDataFetched` state.
         XCTAssertEqual(controller.state, .localDataFetched)
         
-        // Simulate successfull network call.
-        env.memberListUpdater!.load_completion!(nil)
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
         
-        AssertAsync {
-            // Assert controller is in `remoteDataFetched` state.
-            Assert.willBeEqual(self.controller.state, .remoteDataFetched)
-            // Assert completion is called
-            Assert.willBeTrue(completionIsCalled)
-        }
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Simulate successful network call.
+        env.memberListUpdater!.load_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.memberListUpdater!.load_completion = nil
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_synchronize_changesState_and_propogatesObserverErrorOnCallbackQueue() {
+    func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {
         // Update observer to throw the error.
         let observerError = TestError()
         env.memberListObserverSynchronizeError = observerError
@@ -113,7 +121,7 @@ final class MemberListController_Tests: StressTestCase {
         AssertAsync.willBeEqual(synchronizeError as? ClientError, ClientError(with: observerError))
     }
     
-    func test_synchronize_changesState_and_propogatesListUpdaterErrorOnCallbackQueue() {
+    func test_synchronize_changesState_and_propagatesListUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
         var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
@@ -376,7 +384,7 @@ final class MemberListController_Tests: StressTestCase {
     
     // MARK: - Load next members
     
-    func test_loadNextMembers_propogatesError() {
+    func test_loadNextMembers_propagatesError() {
         // Simulate `loadNextMembers` call and catch the completion.
         var completionError: Error?
         controller.loadNextMembers { [callbackQueueID] in
@@ -392,7 +400,7 @@ final class MemberListController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
     
-    func test_loadNextMembers_propogatesNilError() {
+    func test_loadNextMembers_propagatesNilError() {
         // Simulate `loadNextMembers` call and catch the completion.
         var completionIsCalled = false
         controller.loadNextMembers { [callbackQueueID] error in
@@ -403,11 +411,22 @@ final class MemberListController_Tests: StressTestCase {
             completionIsCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Simulate successful network response.
         env.memberListUpdater!.load_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.memberListUpdater!.load_completion = nil
         
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_loadNextMembers_callsUserUpdaterWithCorrectValues_and_updatesTheQuery() {
