@@ -118,8 +118,7 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        worker.update(userListQuery: query) { [weak self] error in
-            guard let self = self else { return }
+        worker.update(userListQuery: query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -163,8 +162,8 @@ public extension _ChatUserListController {
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)
-        worker.update(userListQuery: updatedQuery) { [weak self] error in
-            self?.callback { completion?(error) }
+        worker.update(userListQuery: updatedQuery) { error in
+            self.callback { completion?(error) }
         }
     }
 }
