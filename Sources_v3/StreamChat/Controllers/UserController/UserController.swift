@@ -104,8 +104,7 @@ public class _ChatUserController<ExtraData: ExtraDataTypes>: DataController, Del
             return
         }
         
-        userUpdater.loadUser(userId) { [weak self] error in
-            guard let self = self else { return }
+        userUpdater.loadUser(userId) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -164,8 +163,8 @@ public extension _ChatUserController {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     func mute(completion: ((Error?) -> Void)? = nil) {
-        userUpdater.muteUser(userId) { [weak self] error in
-            self?.callback {
+        userUpdater.muteUser(userId) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -175,8 +174,8 @@ public extension _ChatUserController {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
     func unmute(completion: ((Error?) -> Void)? = nil) {
-        userUpdater.unmuteUser(userId) { [weak self] error in
-            self?.callback {
+        userUpdater.unmuteUser(userId) { error in
+            self.callback {
                 completion?(error)
             }
         }
