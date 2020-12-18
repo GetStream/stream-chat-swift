@@ -15,7 +15,15 @@
 
 The **StreamChat SDK**  is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications.
 
-Use StreamChat **to build a fully custom UI on top of the Stream Chat services**. For the majority of use cases, using our highly composable and customizable [ChatUI Kit](#mac-catalyst) is preferable.
+--- 
+
+## Important ⚠️ 
+
+**StreamChat** is a low level client for Stream chat service and is meant to be used when you want to build a fully custom UI. 
+
+For the majority of common use cases, using our highly composable and customizable [**StreamChatUI**](#) is preferable.
+
+--- 
 
 ## Main Features
 
@@ -24,8 +32,8 @@ Use StreamChat **to build a fully custom UI on top of the Stream Chat services**
 - **Offline support:** Browse channels and send messages while offline.
 - **Uses `UIKit` patterns and paradigms:** The API follows the design of native system SKDs. It makes integration with your existing code easy and familiar.
 - **First-class support for `SwiftUI` and `Combine`:** Built-it wrappers make using the SDK with the latest Apple frameworks a seamless experience.
-- **Built-in support for testing:** TBD
 - **Supports iOS 11+, Swift 5.2:** We proudly support older versions of iOS, so your app can stay available to almost everyone.
+- **Built-in support for testing:** _Will be released Q1 2021_
 
 ## **Quick Links** (WIP)
 
@@ -44,27 +52,35 @@ Use StreamChat **to build a fully custom UI on top of the Stream Chat services**
 
 > If you prefer to learn about the API in a different form, you can follow our [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/) (WIP), which will guide you through the process of creating your chat app step by step.
 
-### `Client`
+### `ChatClient`
 
-`Client` is the root object of the SDK, and it represents the chat service. Typically, an app contains just one instance of `Client`. However, it's possible to have multiple instances if your use case requires it (i.e. more than one window with different workspaces in a Slack-like app).
+`ChatClient` is the root object of the SDK, and it represents the chat service. Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use case requires it (i.e. more than one window with different workspaces in a Slack-like app).
+
 ```swift
-import StreamChatClient
+import StreamChat
 
 /// The root object of the SDK
-let chatClient: ChatClient = {
+let chatClient: ChatClient = {    
     let config = ChatClientConfig(apiKey: APIKey("< YOU API KEY>"))
+    // If you don't have your API key yet, visit https://getstream.io/chat/trial to get it for free.
+
     return ChatClient(config: config)
 }()
 ```
 
-### `<xxx>Controller`
+### `Controller`s
 
-`Controller` objects are the primary way of interacting with the chat service. There are two main functionalities of `Controller`:
+`Controller` objects are the primary way of interacting with the chat service. There are two main functionalities of `Controller`s:
   - Observing changes in the system _(i.e., receiving a new message in a channel)_
-  - Mutating the system, like _(i.e., sending a new message to a channel)
+  - Mutating the system _(i.e., sending a new message to a channel)_
 
 **`Controller` objects are lightweight, and they can be used both for a continuous data observation, and for quick model mutations.**
 
+Check out [Controllers Overview](https://github.com/GetStream/stream-chat-swift/wiki/Controllers-Overview) to learn about all available controllers including a typical user-cases for them.
+
+For performance reasons, controllers don't load remote data until `synchronize()` is called. Typically, your `UIViewController` subclass has one (or more) controllers, and you'd call `synchronize()` in the `viewDidLoad` method.
+
+This method allows you to create the controller objects in advance and load and access their content lazily when needed.
 
 ```swift
 
@@ -102,20 +118,16 @@ class ViewController: ChannelListControllerDelegate {
 }
 ```
 
-For performance reasons, controllers don't load remote data until `synchronize()` is called. Typically, your `UIViewController` subclass has one (or more) controllers, and you'd call `synchronize()` in the `viewDidLoad` method.
+### Model Objects
 
-This method allows you to create the controller objects in advance and load and access their content lazily when needed.
-
-### `<xxx>Model`
-
-`Model` objects are immutable snapshots of chat entities at a certain point in time. They are lightweight, disposable objects, and their life-cycle is usually very short. 
+Model objects are immutable snapshots of chat entities at a certain point in time. They are lightweight, disposable objects, and their life-cycle is usually very short. 
 
 Typically, you'd ask a `Controller` object for the current state of its models, update your UI, and throw the model objects away.
 
 ```swift
 
 let controller = chatClient.currentUserController()
-let currenUser: CurrentUser = controller.currentUser
+let currenUser: CurrentChatUser = controller.currentUser
 
 print("Number of unread messages: \(currentUser.unreadCount.messages)")
 
