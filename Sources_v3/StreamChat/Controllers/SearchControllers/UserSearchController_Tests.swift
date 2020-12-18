@@ -29,6 +29,8 @@ class UserSearchController_Tests: StressTestCase {
     override func tearDown() {
         controllerCallbackQueueID = nil
         
+        env.userListUpdater?.cleanUp()
+        
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
@@ -73,11 +75,22 @@ class UserSearchController_Tests: StressTestCase {
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Simulate successful update
         env.userListUpdater!.update_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userListUpdater!.update_completion = nil
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_searchResult_isReported() throws {
@@ -211,6 +224,38 @@ class UserSearchController_Tests: StressTestCase {
         AssertAsync.willBeEqual(reportedError as? TestError, testError)
     }
     
+    func test_loadNextUsers_propagatesError() {
+        let testError = TestError()
+        var reportedError: Error?
+        
+        // Make a search so we can call `loadNextUsers`
+        controller.search(term: "test")
+        
+        // Simulate network call response
+        env.userListUpdater?.update_completion?(nil)
+        
+        // Call `loadNextUsers`
+        controller.loadNextUsers { error in
+            reportedError = error
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Simulate network call response
+        env.userListUpdater?.update_completion?(testError)
+        // Release reference of completion so we can deallocate stuff
+        env.userListUpdater!.update_completion = nil
+        
+        AssertAsync.willBeEqual(reportedError as? TestError, testError)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+    
     func test_nextResultPage_isLoaded() throws {
         // Set the delegate
         let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
@@ -312,6 +357,8 @@ class UserSearchController_Tests: StressTestCase {
         
         // Simulate network call response
         env.userListUpdater?.update_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userListUpdater!.update_completion = nil
         
         var user: ChatUser? { client.databaseContainer.viewContext.user(id: userId)!.asModel() }
         
