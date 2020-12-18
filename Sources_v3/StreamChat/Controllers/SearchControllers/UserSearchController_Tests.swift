@@ -93,7 +93,9 @@ class UserSearchController_Tests: StressTestCase {
         XCTAssert(controller.users.isEmpty)
         
         // Assert that state is updated
-        XCTAssertEqual(delegate.state, .localDataFetched)
+        XCTAssertEqual(controller.state, .localDataFetched)
+        // Delegate is updated on a different queue so we have to use AssertAsync
+        AssertAsync.willBeEqual(delegate.state, .localDataFetched)
         
         // Make a search
         controller.search(term: "test")
