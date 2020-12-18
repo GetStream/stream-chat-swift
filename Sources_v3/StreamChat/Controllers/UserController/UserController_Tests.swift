@@ -70,7 +70,7 @@ final class UserController_Tests: StressTestCase {
     
     // MARK: - Synchronize tests
         
-    func test_synchronize_changesStateand_and_callsCompletionOnCallbackQueue() {
+    func test_synchronize_changesState_and_callsCompletionOnCallbackQueue() {
         // Simulate `synchronize` call.
         var completionIsCalled = false
         controller.synchronize { [callbackQueueID] error in
@@ -84,18 +84,26 @@ final class UserController_Tests: StressTestCase {
         // Assert controller is in `localDataFetched` state.
         XCTAssertEqual(controller.state, .localDataFetched)
         
-        // Simulate successfull network call.
-        env.userUpdater!.loadUser_completion?(nil)
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
         
-        AssertAsync {
-            // Assert controller is in `remoteDataFetched` state.
-            Assert.willBeEqual(self.controller.state, .remoteDataFetched)
-            // Assert completion is called
-            Assert.willBeTrue(completionIsCalled)
-        }
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Simulate successful network call.
+        env.userUpdater!.loadUser_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userUpdater!.loadUser_completion = nil
+        
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionIsCalled)
+        
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_synchronize_changesState_and_propogatesObserverErrorOnCallbackQueue() {
+    func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {
         // Update observer to throw the error.
         let observerError = TestError()
         env.userObserverSynchronizeError = observerError
@@ -114,7 +122,7 @@ final class UserController_Tests: StressTestCase {
         AssertAsync.willBeEqual(synchronizeError as? ClientError, ClientError(with: observerError))
     }
     
-    func test_synchronize_changesState_and_propogatesUpdaterErrorOnCallbackQueue() {
+    func test_synchronize_changesState_and_propagatesUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
         var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
@@ -156,7 +164,7 @@ final class UserController_Tests: StressTestCase {
     
     // MARK: - Mute user
     
-    func test_muteUser_propogatesError() {
+    func test_muteUser_propagatesError() {
         // Simulate `mute` call and catch the completion.
         var completionError: Error?
         controller.mute { [callbackQueueID] in
@@ -172,7 +180,7 @@ final class UserController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
     
-    func test_muteUser_propogatesNilError() {
+    func test_muteUser_propagatesNilError() {
         // Simulate `mute` call and catch the completion.
         var completionIsCalled = false
         controller.mute { [callbackQueueID] error in
@@ -183,11 +191,22 @@ final class UserController_Tests: StressTestCase {
             completionIsCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Simulate successful network response.
         env.userUpdater!.muteUser_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userUpdater!.muteUser_completion = nil
         
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_muteUser_callsUserUpdater_withCorrectValues() {
@@ -352,7 +371,7 @@ final class UserController_Tests: StressTestCase {
     
     // MARK: - Unmute user
     
-    func test_unmuteUser_propogatesError() {
+    func test_unmuteUser_propagatesError() {
         // Simulate `unmute` call and catch the completion.
         var completionError: Error?
         controller.unmute { [callbackQueueID] in
@@ -368,7 +387,7 @@ final class UserController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
     
-    func test_unmuteUser_propogatesNilError() {
+    func test_unmuteUser_propagatesNilError() {
         // Simulate `unmute` call and catch the completion.
         var completionIsCalled = false
         controller.unmute { [callbackQueueID] error in
@@ -379,11 +398,22 @@ final class UserController_Tests: StressTestCase {
             completionIsCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Simulate successful network response.
         env.userUpdater!.unmuteUser_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userUpdater!.unmuteUser_completion = nil
         
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_unmuteUser_callsUserUpdater_withCorrectValues() {
@@ -396,7 +426,7 @@ final class UserController_Tests: StressTestCase {
     
     // MARK: - Flag user
     
-    func test_flagUser_propogatesError() {
+    func test_flagUser_propagatesError() {
         // Simulate `flag` call and catch the completion.
         var completionError: Error?
         controller.flag { [callbackQueueID] in
@@ -412,7 +442,7 @@ final class UserController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
     
-    func test_flagUser_propogatesNilError() {
+    func test_flagUser_propagatesNilError() {
         // Simulate `flag` call and catch the completion.
         var completionIsCalled = false
         controller.flag { [callbackQueueID] error in
@@ -423,11 +453,22 @@ final class UserController_Tests: StressTestCase {
             completionIsCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Simulate successful network response.
         env.userUpdater!.flagUser_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userUpdater!.flagUser_completion = nil
         
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_flagUser_callsUserUpdater_withCorrectValues() {
@@ -454,7 +495,7 @@ final class UserController_Tests: StressTestCase {
     
     // MARK: - Unlag user
     
-    func test_unflagUser_propogatesError() {
+    func test_unflagUser_propagatesError() {
         // Simulate `unflag` call and catch the completion.
         var completionError: Error?
         controller.unflag { [callbackQueueID] in
@@ -470,7 +511,7 @@ final class UserController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
     
-    func test_unflagUser_propogatesNilError() {
+    func test_unflagUser_propagatesNilError() {
         // Simulate `unflag` call and catch the completion.
         var completionIsCalled = false
         controller.unflag { [callbackQueueID] error in
@@ -481,11 +522,22 @@ final class UserController_Tests: StressTestCase {
             completionIsCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Simulate successful network response.
         env.userUpdater!.flagUser_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userUpdater!.flagUser_completion = nil
         
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_unflagUser_callsUserUpdater_withCorrectValues() {
