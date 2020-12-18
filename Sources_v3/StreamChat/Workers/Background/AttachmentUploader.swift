@@ -21,7 +21,9 @@ import Foundation
 ///
 class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
+
     private let observer: ListDatabaseObserver<AttachmentDTO, AttachmentDTO>
+
     var minSignificantUploadingProgressChange: Double = 0.05
 
     override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
@@ -50,8 +52,11 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
     }
 
     private func handleChanges(changes: [ListChange<AttachmentDTO>]) {
-        let wasEmpty = pendingAttachmentIDs.isEmpty
-        changes.pendingUploadAttachmentIDs.forEach { pendingAttachmentIDs.insert($0) }
+        var wasEmpty: Bool!
+        _pendingAttachmentIDs.mutate { pendingAttachmentIDs in
+            wasEmpty = pendingAttachmentIDs.isEmpty
+            changes.pendingUploadAttachmentIDs.forEach { pendingAttachmentIDs.insert($0) }
+        }
         if wasEmpty {
             uploadNextAttachment()
         }
@@ -107,7 +112,7 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
                         attachment.id,
                         newState: result.error == nil ? .uploaded : .uploadingFailed,
                         attachmentUpdates: { attachmentDTO in
-                            guard case .success(let payload) = result else { return }
+                            guard case let .success(payload) = result else { return }
 
                             if attachmentDTO.type == AttachmentType.image.rawValue {
                                 attachmentDTO.imageURL = payload.file
@@ -125,7 +130,7 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
     }
 
     private func removeAttachmentIDAndContinue(_ id: AttachmentId) {
-        pendingAttachmentIDs.remove(id)
+        _pendingAttachmentIDs.mutate { $0.remove(id) }
         uploadNextAttachment()
     }
 
@@ -143,8 +148,8 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
 
             var stateHasChanged: Bool {
                 guard
-                    case .uploading(let lastProgress) = attachmentDTO.localState,
-                    case .uploading(let currentProgress) = newState
+                    case let .uploading(lastProgress) = attachmentDTO.localState,
+                    case let .uploading(currentProgress) = newState
                 else {
                     return attachmentDTO.localState != newState
                 }

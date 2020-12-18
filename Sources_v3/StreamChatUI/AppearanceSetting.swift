@@ -30,18 +30,27 @@ public extension AppearanceSetting {
 /// An object describing the default appearance of the view. Be aware that the appearance object is generic-type-specific,
 /// in other words: `MyView<A>.defaultAppearance != MyView<V>.defaultAppearance`.
 private func fetchDefaultAppearance<T: AppearanceSetting>(_ key: String) -> Appearance<T> {
-    if let existing = _AppearanceStorage.shared.appearances[key] as? Appearance<T> {
+    if let existing = _AppearanceStorage.shared.appearance(for: key) as? Appearance<T> {
         return existing
     } else {
         let appearance = Appearance<T>()
-        _AppearanceStorage.shared.appearances[key] = appearance
+        _AppearanceStorage.shared.setAppearance(appearance, for: key)
         return appearance
     }
 }
 
 private class _AppearanceStorage {
     static let shared = _AppearanceStorage()
-    @Atomic var appearances: [String: Any] = [:]
+    
+    fileprivate func setAppearance(_ appearance: Any, for key: String) {
+        _appearances.mutate { $0[key] = appearance }
+    }
+    
+    fileprivate func appearance(for key: String) -> Any? {
+        appearances[key]
+    }
+    
+    @Atomic private var appearances: [String: Any] = [:]
 }
 
 public class Appearance<Root: AnyObject> {

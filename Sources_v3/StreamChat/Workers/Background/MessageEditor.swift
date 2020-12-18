@@ -8,10 +8,10 @@ import Foundation
 /// Observers the storage for messages in a `pendingSync` state and updates them on the backend.
 ///
 /// Sending of the message has the following phases:
-///     1. When a message with `pendingSync` state local state appears in the db, the editor enques it in the sending queue.
+///     1. When a message with `pendingSync` state local state appears in the db, the editor eques it in the sending queue.
 ///     2. The pending messages are edited one by one, the order doesn't matter here.
 ///     3. When the message is being sent, its local state is changed to `syncing`
-///     4. If the operation is successfull, the local state of the message is changed to `nil`. If the operation fails, the local
+///     4. If the operation is successful, the local state of the message is changed to `nil`. If the operation fails, the local
 ///     state of is changed to `syncingFailed`.
 ///
 // TODO:
@@ -20,6 +20,7 @@ import Foundation
 ///
 class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
     @Atomic private var pendingMessageIDs: Set<MessageId> = []
+    
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
 
     override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
@@ -48,10 +49,12 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
     }
     
     private func handleChanges(changes: [ListChange<MessageDTO>]) {
-        let wasEmpty = pendingMessageIDs.isEmpty
-        changes.pendingEditMessageIDs.forEach { pendingMessageIDs.insert($0) }
-        if wasEmpty {
-            processNextMessage()
+        _pendingMessageIDs.mutate { pendingMessageIDs in
+            let wasEmpty = pendingMessageIDs.isEmpty
+            changes.pendingEditMessageIDs.forEach { pendingMessageIDs.insert($0) }
+            if wasEmpty {
+                processNextMessage()
+            }
         }
     }
 
@@ -80,7 +83,7 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
     }
     
     private func removeMessageIDAndContinue(_ messageId: MessageId) {
-        pendingMessageIDs.remove(messageId)
+        _pendingMessageIDs.mutate { $0.remove(messageId) }
         processNextMessage()
     }
     
