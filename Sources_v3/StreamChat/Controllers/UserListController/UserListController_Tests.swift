@@ -33,6 +33,8 @@ class UserListController_Tests: StressTestCase {
         query = nil
         controllerCallbackQueueID = nil
         
+        env.userListUpdater?.cleanUp()
+        
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
@@ -129,19 +131,30 @@ class UserListController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Assert the updater is called with the query
         XCTAssertEqual(env.userListUpdater!.update_queries.first?.filter?.filterHash, query.filter?.filterHash)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.userListUpdater!.update_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userListUpdater!.update_completion = nil
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_synchronize_propagesErrorFromUpdater() {
+    func test_synchronize_propagatesErrorFromUpdater() {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
         // Simulate `synchronize` call and catch the completion
@@ -151,7 +164,7 @@ class UserListController_Tests: StressTestCase {
             AssertTestQueue(withId: queueId)
         }
         
-        // Simulate failed udpate
+        // Simulate failed update
         let testError = TestError()
         env.userListUpdater!.update_completion?(testError)
         
@@ -276,18 +289,28 @@ class UserListController_Tests: StressTestCase {
         
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        
-        // Simulate successfull udpate
-        env!.userListUpdater?.update_completion?(nil)
-        
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
-        
         // Assert correct `Pagination` is created
         XCTAssertEqual(
             env!.userListUpdater?.update_queries.first?.pagination,
             .init(pageSize: limit, offset: controller.users.count)
         )
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Simulate successful update
+        env!.userListUpdater?.update_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.userListUpdater!.update_completion = nil
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_loadNextUsers_callsUserUpdaterWithError() {
