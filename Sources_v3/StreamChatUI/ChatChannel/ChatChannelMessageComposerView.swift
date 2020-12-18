@@ -5,10 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: UIInputView,
-    UIConfigProvider,
-    Customizable,
-    AppearanceSetting {
+open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: - Properties
     
     public var attachmentsViewHeight: CGFloat = .zero
@@ -67,30 +64,9 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: UIInputVie
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var titleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    
-    // MARK: - Init
-    
-    public required init() {
-        super.init(frame: .zero, inputViewStyle: .default)
-    }
-    
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
-    }
-    
+
     // MARK: - Overrides
-    
-    override open func didMoveToSuperview() {
-        super.didMoveToSuperview()
-        guard superview != nil else { return }
-        
-        setUp()
-        (self as! Self).applyDefaultAppearance()
-        setUpAppearance()
-        setUpLayout()
-        updateContent()
-    }
-    
+
     override open var intrinsicContentSize: CGSize {
         let size = CGSize(
             width: UIView.noIntrinsicMetric,
@@ -98,12 +74,8 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: UIInputVie
         )
         return size
     }
-    
-    // MARK: - Public
 
-    open func setUp() {}
-    
-    open func defaultAppearance() {
+    override open func defaultAppearance() {
         attachmentsViewHeight = 80
         stateIconHeight = 40
         
@@ -136,10 +108,8 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: UIInputVie
         titleLabel.font = .preferredFont(forTextStyle: .headline)
         titleLabel.adjustsFontForContentSizeCategory = true
     }
-    
-    open func setUpAppearance() {}
-    
-    open func setUpLayout() {
+
+    override open func setUpLayout() {
         embed(container)
         
         preservesSuperviewLayoutMargins = true
@@ -167,6 +137,7 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: UIInputVie
         
         container.centerStackView.addArrangedSubview(messageInputView)
         messageInputView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        messageInputView.setContentCompressionResistancePriority(.required, for: .vertical)
         
         container.rightStackView.isHidden = false
         container.rightStackView.alignment = .center
@@ -188,6 +159,4 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: UIInputVie
         attachmentsView.isHidden = true
         shrinkInputButton.isHidden = true
     }
-    
-    open func updateContent() {}
 }
