@@ -10,6 +10,12 @@ class UserListUpdaterMock<ExtraData: UserExtraData>: UserListUpdater<ExtraData> 
     @Atomic var update_queries: [UserListQuery<ExtraData>] = []
     @Atomic var update_policy: UpdatePolicy?
     @Atomic var update_completion: ((Error?) -> Void)?
+    
+    func cleanUp() {
+        update_queries.removeAll()
+        update_policy = nil
+        update_completion = nil
+    }
         
     override func update(
         userListQuery: UserListQuery<ExtraData>,
