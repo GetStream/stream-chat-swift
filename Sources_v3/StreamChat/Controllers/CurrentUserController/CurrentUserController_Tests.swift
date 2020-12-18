@@ -71,7 +71,7 @@ final class CurrentUserController_Tests: StressTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
         
-        // Create environenment with observer thowing the error
+        // Create environment with observer throwing the error
         let env = TestEnvironment()
         env.currentUserObserverStartUpdatingError = TestError()
         
@@ -548,13 +548,21 @@ final class CurrentUserController_Tests: StressTestCase {
         var connectCompletionCalled = false
         controller.connect(completion: { _ in connectCompletionCalled = true })
         XCTAssertEqual(client.mockWebSocketClient.connect_calledCounter, 1)
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
 
         // Simulate successful connection
         client.webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        client.mockAPIClient.cleanUp()
         
-        AssertAsync {
-            Assert.willBeTrue(connectCompletionCalled)
-        }
+        AssertAsync.willBeTrue(connectCompletionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     // MARK: - Device endpoints
@@ -600,12 +608,22 @@ final class CurrentUserController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
         // Simulate API error
         let error = TestError()
         client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        client.mockAPIClient.cleanUp()
         
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_addDevice_forwardsDatabaseError() throws {
@@ -626,7 +644,7 @@ final class CurrentUserController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simluate successfull API response
+        // Simulate successful API response
         client.mockAPIClient.test_simulateResponse(.success(EmptyResponse()))
         
         // Check returned error
@@ -701,12 +719,22 @@ final class CurrentUserController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Simulate API error
         let error = TestError()
         client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        client.mockAPIClient.cleanUp()
         
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_removeDevice_forwardsDatabaseError() throws {
@@ -728,14 +756,14 @@ final class CurrentUserController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simluate successfull API response
+        // Simulate successful API response
         client.mockAPIClient.test_simulateResponse(.success(EmptyResponse()))
         
         // Check returned error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
-    func test_removeDevice_successfullResponse_isSavedToDB() throws {
+    func test_removeDevice_successfulResponse_isSavedToDB() throws {
         let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         let deviceId = userPayload.devices.first!.id
         
@@ -804,12 +832,22 @@ final class CurrentUserController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Simulate API error
         let error = TestError()
         client.mockAPIClient.test_simulateResponse(Result<DeviceListPayload, Error>.failure(error))
+        client.mockAPIClient.cleanUp()
         
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_updateDevices_forwardsDatabaseError() throws {
@@ -830,14 +868,14 @@ final class CurrentUserController_Tests: StressTestCase {
             completionCalledError = $0
         }
         
-        // Simluate successfull API response
+        // Simulate successful API response
         client.mockAPIClient.test_simulateResponse(.success(DeviceListPayload.dummy))
         
         // Check returned error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
-    func test_updateDevices_successfullResponse_isSavedToDB() throws {
+    func test_updateDevices_successfulResponse_isSavedToDB() throws {
         let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
