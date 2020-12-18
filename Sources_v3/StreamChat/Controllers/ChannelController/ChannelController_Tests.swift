@@ -33,6 +33,8 @@ class ChannelController_Tests: StressTestCase {
         channelId = nil
         controllerCallbackQueueID = nil
         
+        env.channelUpdater?.cleanUp()
+        
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
@@ -105,6 +107,13 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Assert the updater is called with the query
         XCTAssertEqual(env.channelUpdater!.update_channelQuery?.cid, channelId)
         // Completion shouldn't be called yet
@@ -112,9 +121,13 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate successful update
         env.channelUpdater!.update_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.update_completion = nil
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_synchronize_propagesErrorFromUpdater() {
@@ -668,14 +681,25 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Assert payload is passed to `channelUpdater`, completion is not called yet
         XCTAssertNotNil(env.channelUpdater!.updateChannel_payload)
         
         // Simulate successful update
         env.channelUpdater!.updateChannel_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.updateChannel_completion = nil
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_updateChannel_propagesErrorFromUpdater() {
@@ -734,6 +758,13 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Assert cid and muted state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.muteChannel_mute, true)
@@ -741,12 +772,16 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate successful update
         env.channelUpdater!.muteChannel_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.muteChannel_completion = nil
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_muteChannel_propagesErrorFromUpdater() {
+    func test_muteChannel_propagatesErrorFromUpdater() {
         // Simulate `muteChannel` call and catch the completion
         var completionCalledError: Error?
         controller.muteChannel { [callbackQueueID] in
@@ -802,6 +837,13 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Assert cid and muted state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.muteChannel_mute, false)
@@ -809,12 +851,16 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate successful update
         env.channelUpdater!.muteChannel_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.muteChannel_completion = nil
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_unmuteChannel_propagesErrorFromUpdater() {
+    func test_unmuteChannel_propagatesErrorFromUpdater() {
         // Simulate `unmuteChannel` call and catch the completion
         var completionCalledError: Error?
         controller.unmuteChannel { [callbackQueueID] in
@@ -870,16 +916,26 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
+        XCTAssertEqual(env.channelUpdater?.deleteChannel_cid, channelId)
         
         // Simulate successful update
         env.channelUpdater?.deleteChannel_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.deleteChannel_completion = nil
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
-        
-        XCTAssertEqual(env.channelUpdater?.deleteChannel_cid, channelId)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_deleteChannel_callsChannelUpdaterWithError() {
@@ -938,18 +994,28 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        
-        // Simulate successful update
-        env.channelUpdater?.hideChannel_completion?(nil)
-        
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
-        
         XCTAssertEqual(env.channelUpdater?.hideChannel_userId, client.currentUserId)
         XCTAssertEqual(env.channelUpdater?.hideChannel_cid, channelId)
         XCTAssertEqual(env.channelUpdater?.hideChannel_clearHistory, false)
+        
+        // Simulate successful update
+        env.channelUpdater?.hideChannel_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.hideChannel_completion = nil
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_hideChannel_callsChannelUpdaterWithError() {
@@ -1008,17 +1074,27 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
+        XCTAssertEqual(env.channelUpdater?.showChannel_cid, channelId)
+        XCTAssertNotNil(env.channelUpdater?.showChannel_userId)
         
         // Simulate successful update
         env.channelUpdater?.showChannel_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.showChannel_completion = nil
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
-        
-        XCTAssertEqual(env.channelUpdater?.showChannel_cid, channelId)
-        XCTAssertNotNil(env.channelUpdater?.showChannel_userId)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_showChannel_callsChannelUpdaterWithError() {
@@ -1057,6 +1133,8 @@ class ChannelController_Tests: StressTestCase {
         return message.id
     }
     
+    // MARK: - `loadPreviousMessages`
+    
     func test_loadPreviousMessages_callsChannelUpdater() throws {
         var error: Error?
         var messageId: MessageId?
@@ -1077,20 +1155,30 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        
-        // Simulate successful update
-        env.channelUpdater?.update_completion?(nil)
-        
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
-        
         // Assert correct `MessagesPagination` is created
         XCTAssertEqual(
             env!.channelUpdater?.update_channelQuery?.pagination,
             MessagesPagination(pageSize: 25, parameter: .lessThan(messageId!))
         )
+        
+        // Simulate successful update
+        env.channelUpdater?.update_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.update_completion = nil
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_loadPreviousMessages_throwsError_on_emptyMessages() throws {
@@ -1132,6 +1220,8 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
+    // MARK: - `loadNextMessages`
+    
     func test_loadNextMessages_callsChannelUpdate() throws {
         var error: Error?
         var messageId: MessageId?
@@ -1152,20 +1242,30 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        
-        // Simulate successful update
-        env.channelUpdater?.update_completion?(nil)
-        
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
-        
         // Assert correct `MessagesPagination` is created
         XCTAssertEqual(
             env!.channelUpdater?.update_channelQuery?.pagination,
             MessagesPagination(pageSize: 25, parameter: .greaterThan(messageId!))
         )
+        
+        // Simulate successful update
+        env.channelUpdater?.update_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.update_completion = nil
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_loadNextMessages_throwsError_on_emptyMessages() throws {
@@ -1218,15 +1318,26 @@ class ChannelController_Tests: StressTestCase {
         var completionCalledError: Error?
         controller.sendKeystrokeEvent { completionCalledError = $0 }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Check keystroke cid.
         XCTAssertEqual(env.eventSender!.keystroke_cid, channelId)
         
         // Simulate failed update
         let testError = TestError()
         env.eventSender!.keystroke_completion!(testError)
+        // Release reference of completion so we can deallocate stuff
+        env.eventSender!.keystroke_completion = nil
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_startTyping() {
@@ -1238,15 +1349,26 @@ class ChannelController_Tests: StressTestCase {
         var completionCalledError: Error?
         controller.sendStartTypingEvent { completionCalledError = $0 }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Check `startTyping` cid.
         XCTAssertEqual(env.eventSender!.startTyping_cid, channelId)
         
         // Simulate failed update
         let testError = TestError()
         env.eventSender!.startTyping_completion!(testError)
+        // Release reference of completion so we can deallocate stuff
+        env.eventSender!.startTyping_completion = nil
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_stopTyping() {
@@ -1258,15 +1380,26 @@ class ChannelController_Tests: StressTestCase {
         var completionCalledError: Error?
         controller.sendStopTypingEvent { completionCalledError = $0 }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Check `stopTyping` cid.
         XCTAssertEqual(env.eventSender!.stopTyping_cid, channelId)
         
         // Simulate failed update
         let testError = TestError()
         env.eventSender!.stopTyping_completion!(testError)
+        // Release reference of completion so we can deallocate stuff
+        env.eventSender!.stopTyping_completion = nil
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     // MARK: - Message sending
@@ -1299,21 +1432,31 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_cid, channelId)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_text, text)
+        //        XCTAssertEqual(env.channelUpdater?.createNewMessage_command, command)
+        //        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, attachments)
         
         // Simulate successful update
         env.channelUpdater?.createNewMessage_completion?(.success(newMessageId))
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.createNewMessage_completion = nil
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
-        
-        XCTAssertEqual(env.channelUpdater?.createNewMessage_cid, channelId)
-        XCTAssertEqual(env.channelUpdater?.createNewMessage_text, text)
-//        XCTAssertEqual(env.channelUpdater?.createNewMessage_command, command)
-//        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
-        XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
-        XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, attachments)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_createNewMessage_failsForNewChannels() throws {
@@ -1384,6 +1527,13 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.addMembers_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.addMembers_userIds, members)
@@ -1391,9 +1541,13 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate successful update
         env.channelUpdater!.addMembers_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.addMembers_completion = nil
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_addMembers_propagatesErrorFromUpdater() {
@@ -1457,6 +1611,13 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Assert cid and members state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.removeMembers_cid, channelId)
         XCTAssertEqual(env.channelUpdater!.removeMembers_userIds, members)
@@ -1464,12 +1625,16 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate successful update
         env.channelUpdater!.removeMembers_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.removeMembers_completion = nil
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_removeMembers_propagesErrorFromUpdater() {
+    func test_removeMembers_propagatesErrorFromUpdater() {
         let members: Set<UserId> = [.unique]
         
         // Simulate `removeMembers` call and catch the completion
@@ -1527,15 +1692,26 @@ class ChannelController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Assert cid is passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.markRead_cid, channelId)
         XCTAssertFalse(completionCalled)
         
         // Simulate successful update
         env.channelUpdater!.markRead_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.markRead_completion = nil
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_markRead_propagatesErrorFromUpdater() {

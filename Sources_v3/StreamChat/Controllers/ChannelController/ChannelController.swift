@@ -307,8 +307,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
         updater.update(
             channelQuery: channelQuery,
             channelCreatedCallback: channelCreatedCallback
-        ) { [weak self] error in
-            guard let self = self else { return }
+        ) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -432,8 +431,8 @@ public extension _ChatChannelController {
             extraData: extraData
         )
         
-        updater.updateChannel(channelPayload: payload) { [weak self] error in
-            self?.callback {
+        updater.updateChannel(channelPayload: payload) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -451,8 +450,8 @@ public extension _ChatChannelController {
             return
         }
         
-        updater.muteChannel(cid: cid, mute: true) { [weak self] error in
-            self?.callback {
+        updater.muteChannel(cid: cid, mute: true) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -471,8 +470,8 @@ public extension _ChatChannelController {
             return
         }
         
-        updater.muteChannel(cid: cid, mute: false) { [weak self] error in
-            self?.callback {
+        updater.muteChannel(cid: cid, mute: false) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -489,8 +488,8 @@ public extension _ChatChannelController {
             return
         }
         
-        updater.deleteChannel(cid: cid) { [weak self] error in
-            self?.callback {
+        updater.deleteChannel(cid: cid) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -510,8 +509,8 @@ public extension _ChatChannelController {
             return
         }
         
-        updater.hideChannel(cid: cid, userId: client.currentUserId, clearHistory: clearHistory) { [weak self] error in
-            self?.callback {
+        updater.hideChannel(cid: cid, userId: client.currentUserId, clearHistory: clearHistory) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -529,8 +528,8 @@ public extension _ChatChannelController {
             return
         }
         
-        updater.showChannel(cid: cid, userId: client.currentUserId) { [weak self] error in
-            self?.callback {
+        updater.showChannel(cid: cid, userId: client.currentUserId) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -563,8 +562,8 @@ public extension _ChatChannelController {
         
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
     
-        updater.update(channelQuery: channelQuery, completion: { [weak self] error in
-            self?.callback { completion?(error) }
+        updater.update(channelQuery: channelQuery, completion: { error in
+            self.callback { completion?(error) }
         })
     }
     
@@ -595,8 +594,8 @@ public extension _ChatChannelController {
         
         channelQuery.pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
         
-        updater.update(channelQuery: channelQuery, completion: { [weak self] error in
-            self?.callback { completion?(error) }
+        updater.update(channelQuery: channelQuery, completion: { error in
+            self.callback { completion?(error) }
         })
     }
     
@@ -686,8 +685,8 @@ public extension _ChatChannelController {
             arguments: nil,
             attachments: attachments,
             extraData: extraData
-        ) { [weak self] result in
-            self?.callback {
+        ) { result in
+            self.callback {
                 completion?(result)
             }
         }
@@ -717,8 +716,8 @@ public extension _ChatChannelController {
             return
         }
         
-        updater.addMembers(cid: cid, userIds: userIds) { [weak self] error in
-            self?.callback {
+        updater.addMembers(cid: cid, userIds: userIds) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -738,8 +737,8 @@ public extension _ChatChannelController {
             return
         }
         
-        updater.removeMembers(cid: cid, userIds: userIds) { [weak self] error in
-            self?.callback {
+        updater.removeMembers(cid: cid, userIds: userIds) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -756,8 +755,8 @@ public extension _ChatChannelController {
             channelModificationFailed(completion)
             return
         }
-        updater.markRead(cid: cid) { [weak self] error in
-            self?.callback {
+        updater.markRead(cid: cid) { error in
+            self.callback {
                 completion?(error)
             }
         }
