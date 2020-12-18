@@ -118,8 +118,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        worker.update(channelListQuery: query) { [weak self] error in
-            guard let self = self else { return }
+        worker.update(channelListQuery: query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -163,8 +162,8 @@ public extension _ChatChannelListController {
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
-        worker.update(channelListQuery: updatedQuery) { [weak self] error in
-            self?.callback { completion?(error) }
+        worker.update(channelListQuery: updatedQuery) { error in
+            self.callback { completion?(error) }
         }
     }
     
@@ -173,8 +172,8 @@ public extension _ChatChannelListController {
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func markAllRead(completion: ((Error?) -> Void)? = nil) {
-        worker.markAllRead { [weak self] error in
-            self?.callback {
+        worker.markAllRead { error in
+            self.callback {
                 completion?(error)
             }
         }

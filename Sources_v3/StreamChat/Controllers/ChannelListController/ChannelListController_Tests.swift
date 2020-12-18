@@ -33,6 +33,8 @@ class ChannelListController_Tests: StressTestCase {
         query = nil
         controllerCallbackQueueID = nil
         
+        env.channelListUpdater?.cleanUp()
+        
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
@@ -134,19 +136,30 @@ class ChannelListController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         // Assert the updater is called with the query
         XCTAssertEqual(env.channelListUpdater!.update_queries.first?.filter.filterHash, query.filter.filterHash)
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
+        // Simulate successful update
         env.channelListUpdater!.update_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelListUpdater!.update_completion = nil
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_synchronize_propagesErrorFromUpdater() {
+    func test_synchronize_propagatesErrorFromUpdater() {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
         // Simulate `synchronize` call and catch the completion
@@ -283,17 +296,28 @@ class ChannelListController_Tests: StressTestCase {
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         
-        // Simulate successfull udpate
-        env!.channelListUpdater?.update_completion?(nil)
-        
-        // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
-        
         // Assert correct `Pagination` is created
         XCTAssertEqual(
             env!.channelListUpdater?.update_queries.first?.pagination,
             .init(pageSize: limit, offset: controller.channels.count)
         )
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Simulate successful update
+        env!.channelListUpdater?.update_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelListUpdater!.update_completion = nil
+        
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
     func test_loadNextChannels_callsChannelUpdaterWithError() {
@@ -323,16 +347,27 @@ class ChannelListController_Tests: StressTestCase {
             completionCalled = true
         }
         
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
         XCTAssertFalse(completionCalled)
         
         // Simulate successfull udpate
         env.channelListUpdater!.markAllRead_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelListUpdater!.markAllRead_completion = nil
         
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
     
-    func test_markAllRead_propagesErrorFromUpdater() {
+    func test_markAllRead_propagatesErrorFromUpdater() {
         // Simulate `markRead` call and catch the completion
         var completionCalledError: Error?
         controller.markAllRead { [callbackQueueID] in
