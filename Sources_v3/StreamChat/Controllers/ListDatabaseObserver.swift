@@ -93,23 +93,13 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         ListChangeAggregator<DTO, Item>(itemCreator: self.itemCreator)
     
     /// Used for observing the changes in the DB.
-    private(set) lazy var frc: NSFetchedResultsController<DTO> = self.fetchedResultsControllerType
-        .init(
-            fetchRequest: self.request,
-            managedObjectContext: self.context,
-            sectionNameKeyPath: nil,
-            cacheName: nil
-        )
-    
-    /// The `NSFetchedResultsController` subclass the observe uses to create its FRC. You can inject your custom subclass
-    /// in the initializer if needed, i.e. when testing.
-    let fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type
+    private(set) var frc: NSFetchedResultsController<DTO>!
     
     let itemCreator: (DTO) -> Item?
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
     
-    /// When called, release the nofication observers
+    /// When called, release the notification observers
     var releaseNotificationObservers: (() -> Void)?
     
     /// Creates a new `ListObserver`.
@@ -134,7 +124,12 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         self.context = context
         request = fetchRequest
         self.itemCreator = itemCreator
-        self.fetchedResultsControllerType = fetchedResultsControllerType
+        frc = fetchedResultsControllerType.init(
+            fetchRequest: request,
+            managedObjectContext: self.context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
         
         _items.computeValue = { [unowned self] in (self.frc.fetchedObjects ?? []).lazy.compactMap(self.itemCreator) }
 
