@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Fixed thread's parent message not receiving updates [#656](https://github.com/GetStream/stream-chat-swift/issues/656)
 
 # [2.6.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.1)
 _December 17, 2020_
