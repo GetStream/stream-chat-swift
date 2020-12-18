@@ -61,7 +61,7 @@ extension EntityChange {
 extension EntityChange: Equatable where Item: Equatable {}
 
 extension EntityChange {
-    /// Create a `EnitityChange` value from the provided `ListChange`. It simply transforms `ListChange` to `EntityChange`
+    /// Create a `EntityChange` value from the provided `ListChange`. It simply transforms `ListChange` to `EntityChange`
     /// be removing the cases that don't make sense for a single entity change, and using a better naming.
     init(listChange: ListChange<Item>) {
         switch listChange {
@@ -111,7 +111,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
     
-    /// When called, release the nofication observers
+    /// When called, release the notification observers
     var releaseNotificationObservers: (() -> Void)?
     
     /// Creates a new `ListObserver`.
@@ -179,7 +179,11 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
             forName: DatabaseContainer.WillRemoveAllDataNotification,
             object: context,
             queue: .main
-        ) { [unowned self] _ in
+        ) { [weak self] _ in
+            // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
+            // cause a race condition when the notification observers are not removed at the right time.
+            guard let self = self else { return }
+            
             // Simulate ChangeObserver callbacks like all data are being removed
             self.changeAggregator.controllerWillChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
             
@@ -196,13 +200,17 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
         
         // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
         // the FRC doesn't know about it yet. Resetting the FRC removes the content of `FRC.fetchedObjects`. We also need to
-        // call `controllerDidChangeContent` on the change agregator to finish reporting about the removed object which started
+        // call `controllerDidChangeContent` on the change aggregator to finish reporting about the removed object which started
         // in the `WillRemoveAllDataNotification` handler above.
         let didRemoveAllDataNotificationObserver = notificationCenter.addObserver(
             forName: DatabaseContainer.DidRemoveAllDataNotification,
             object: context,
             queue: .main
-        ) { [unowned self] _ in
+        ) { [weak self] _ in
+            // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
+            // cause a race condition when the notification observers are not removed at the right time.
+            guard let self = self else { return }
+            
             // Reset FRC which causes the current `frc.fetchedObjects` to be reloaded
             try! self.startObserving()
             
