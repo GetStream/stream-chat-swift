@@ -173,7 +173,11 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             forName: DatabaseContainer.WillRemoveAllDataNotification,
             object: context,
             queue: .main
-        ) { [unowned self] _ in
+        ) { [weak self] _ in
+            // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
+            // cause a race condition when the notification observers are not removed at the right time.
+            guard let self = self else { return }
+            
             // Simulate ChangeObserver callbacks like all data are being removed
             self.changeAggregator.controllerWillChangeContent(self.frc as! NSFetchedResultsController<NSFetchRequestResult>)
             
@@ -190,13 +194,17 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
         
         // When `DidRemoveAllDataNotification` is received, we need to reset the FRC. At this point, the entities are removed but
         // the FRC doesn't know about it yet. Resetting the FRC removes the content of `FRC.fetchedObjects`. We also need to
-        // call `controllerDidChangeContent` on the change agregator to finish reporting about the removed object which started
+        // call `controllerDidChangeContent` on the change aggregator to finish reporting about the removed object which started
         // in the `WillRemoveAllDataNotification` handler above.
         let didRemoveAllDataNotificationObserver = notificationCenter.addObserver(
             forName: DatabaseContainer.DidRemoveAllDataNotification,
             object: context,
             queue: .main
-        ) { [unowned self] _ in
+        ) { [weak self] _ in
+            // Technically, this should rather be `unowned`, however, `deinit` is not always called on the main thread which can
+            // cause a race condition when the notification observers are not removed at the right time.
+            guard let self = self else { return }
+
             // Reset FRC which causes the current `frc.fetchedObjects` to be reloaded
             try! self.startObserving()
             
