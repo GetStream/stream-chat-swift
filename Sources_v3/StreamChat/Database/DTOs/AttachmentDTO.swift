@@ -65,7 +65,7 @@ class AttachmentDTO: NSManagedObject {
             return existing
         }
         
-        let new = AttachmentDTO(context: context)
+        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! AttachmentDTO
         new.attachmentID = id
         return new
     }
