@@ -49,6 +49,51 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var markRead_cid: ChannelId?
     @Atomic var markRead_completion: ((Error?) -> Void)?
     
+    // Cleans up all recorded values
+    func cleanUp() {
+        update_channelQuery = nil
+        update_channelCreatedCallback = nil
+        update_completion = nil
+        
+        updateChannel_payload = nil
+        updateChannel_completion = nil
+        
+        muteChannel_cid = nil
+        muteChannel_mute = nil
+        muteChannel_completion = nil
+        
+        deleteChannel_cid = nil
+        deleteChannel_completion = nil
+        
+        hideChannel_cid = nil
+        hideChannel_userId = nil
+        hideChannel_clearHistory = nil
+        hideChannel_completion = nil
+        
+        showChannel_cid = nil
+        showChannel_userId = nil
+        showChannel_completion = nil
+        
+        addMembers_cid = nil
+        addMembers_userIds = nil
+        addMembers_completion = nil
+        
+        removeMembers_cid = nil
+        removeMembers_userIds = nil
+        removeMembers_completion = nil
+        
+        createNewMessage_cid = nil
+        createNewMessage_text = nil
+        createNewMessage_command = nil
+        createNewMessage_arguments = nil
+        createNewMessage_attachments = nil
+        createNewMessage_extraData = nil
+        createNewMessage_completion = nil
+        
+        markRead_cid = nil
+        markRead_completion = nil
+    }
+    
     override func update(
         channelQuery: ChannelQuery<ExtraData>,
         channelCreatedCallback: ((ChannelId) -> Void)?,
