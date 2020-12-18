@@ -33,6 +33,9 @@ final class MemberController_Tests: StressTestCase {
         userId = nil
         cid = nil
         controllerCallbackQueueID = nil
+        
+        env.memberUpdater?.cleanUp()
+        env.memberListUpdater?.cleanUp()
 
         AssertAsync {
             Assert.canBeReleased(&controller)
@@ -90,19 +93,26 @@ final class MemberController_Tests: StressTestCase {
 
         // Assert controller is in `localDataFetched` state.
         XCTAssertEqual(controller.state, .localDataFetched)
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
 
-        // Simulate successfull network call.
+        // Simulate successful network call.
         env.memberListUpdater!.load_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.memberListUpdater!.load_completion = nil
 
-        AssertAsync {
-            // Assert controller is in `remoteDataFetched` state.
-            Assert.willBeEqual(self.controller.state, .remoteDataFetched)
-            // Assert completion is called
-            Assert.willBeTrue(completionIsCalled)
-        }
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
 
-    func test_synchronize_changesState_and_propogatesObserverErrorOnCallbackQueue() {
+    func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {
         // Update observer to throw the error.
         let observerError = TestError()
         env.memberObserverSynchronizeError = observerError
@@ -121,7 +131,7 @@ final class MemberController_Tests: StressTestCase {
         AssertAsync.willBeEqual(synchronizeError as? ClientError, ClientError(with: observerError))
     }
 
-    func test_synchronize_changesState_and_propogatesListUpdaterErrorOnCallbackQueue() {
+    func test_synchronize_changesState_and_propagatesListUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
         var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
@@ -309,7 +319,7 @@ final class MemberController_Tests: StressTestCase {
 
     // MARK: - Ban user
 
-    func test_ban_propogatesError() {
+    func test_ban_propagatesError() {
         // Simulate `ban` call and catch the completion.
         var completionError: Error?
         controller.ban { [callbackQueueID] in
@@ -325,7 +335,7 @@ final class MemberController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
-    func test_ban_propogatesNilError() {
+    func test_ban_propagatesNilError() {
         // Simulate `ban` call and catch the completion.
         var completionIsCalled = false
         controller.ban { [callbackQueueID] error in
@@ -335,12 +345,23 @@ final class MemberController_Tests: StressTestCase {
             XCTAssertNil(error)
             completionIsCalled = true
         }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
 
         // Simulate successful network response.
         env.memberUpdater!.banMember_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.memberUpdater!.banMember_completion = nil
 
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
 
     func test_ban_callsMemberUpdater_withCorrectValues() {
@@ -359,7 +380,7 @@ final class MemberController_Tests: StressTestCase {
 
     // MARK: - Unban user
 
-    func test_unban_propogatesError() {
+    func test_unban_propagatesError() {
         // Simulate `unban` call and catch the completion.
         var completionError: Error?
         controller.unban { [callbackQueueID] in
@@ -375,7 +396,7 @@ final class MemberController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
-    func test_unban_propogatesNilError() {
+    func test_unban_propagatesNilError() {
         // Simulate `unban` call and catch the completion.
         var completionIsCalled = false
         controller.unban { [callbackQueueID] error in
@@ -385,12 +406,23 @@ final class MemberController_Tests: StressTestCase {
             XCTAssertNil(error)
             completionIsCalled = true
         }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
 
         // Simulate successful network response.
         env.memberUpdater!.unbanMember_completion!(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.memberUpdater!.unbanMember_completion = nil
 
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
     }
 
     func test_unban_callsUserUpdater_withCorrectValues() {
