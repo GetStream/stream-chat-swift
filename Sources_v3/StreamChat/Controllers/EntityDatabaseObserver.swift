@@ -95,17 +95,7 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     
     /// Used for observing the changes in the DB.
-    private(set) lazy var frc: NSFetchedResultsController<DTO> = self.fetchedResultsControllerType
-        .init(
-            fetchRequest: self.request,
-            managedObjectContext: self.context,
-            sectionNameKeyPath: nil,
-            cacheName: nil
-        )
-    
-    /// The `NSFetchedResultsController` subclass the observe uses to create its FRC. You can inject your custom subclass
-    /// in the initializer if needed, i.e. when testing.
-    let fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type
+    private(set) var frc: NSFetchedResultsController<DTO>!
     
     let itemCreator: (DTO) -> Item?
     let request: NSFetchRequest<DTO>
@@ -136,7 +126,12 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
         self.context = context
         request = fetchRequest
         self.itemCreator = itemCreator
-        self.fetchedResultsControllerType = fetchedResultsControllerType
+        frc = fetchedResultsControllerType.init(
+            fetchRequest: request,
+            managedObjectContext: self.context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
         
         _item.computeValue = { [unowned self] in
             guard let fetchedObjects = self.frc.fetchedObjects else { return nil }
