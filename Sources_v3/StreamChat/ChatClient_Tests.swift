@@ -492,12 +492,15 @@ extension ChatClient_Tests {
 private struct Queue<Element> {
     @Atomic private var storage = [Element]()
     mutating func push(_ element: Element) {
-        storage.append(element)
+        _storage.mutate { $0.append(element) }
     }
     
     mutating func pop() -> Element? {
-        let first = storage.first
-        storage = Array(storage.dropFirst())
+        var first: Element?
+        _storage.mutate { storage in
+            first = storage.first
+            storage = Array(storage.dropFirst())
+        }
         return first
     }
 }

@@ -8,11 +8,11 @@ import Foundation
 /// Observers the storage for messages pending send and sends them.
 ///
 /// Sending of the message has the following phases:
-///     1. When a message with `.pending` state local state appears in the db, the sender enques it in the sending queue for the
+///     1. When a message with `.pending` state local state appears in the db, the sender eques it in the sending queue for the
 ///     channel the message belongs to.
 ///     2. The pending messages are send one by one order by their `locallyCreatedAt` value ascending.
 ///     3. When the message is being sent, its local state is changed to `.sending`
-///     4. If the operation is successfull, the local state of the message is changed to `nil`. If the operation fails, the local
+///     4. If the operation is successful, the local state of the message is changed to `nil`. If the operation fails, the local
 ///     state of is changed to `sendingFailed`.
 ///
 // TODO:
@@ -21,7 +21,7 @@ import Foundation
 ///
 class MessageSender<ExtraData: ExtraDataTypes>: Worker {
     /// Because we need to be sure messages for every channel are sent in the correct order, we create a sending queue for
-    /// every cid. These queues can send messages in parelel.
+    /// every cid. These queues can send messages in parallel.
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue<ExtraData>] = [:]
 
     private lazy var observer = ListDatabaseObserver<MessageDTO, MessageDTO>(
@@ -95,7 +95,7 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
     }
 }
 
-/// This objects takes care of sending messages to the server in the order they have been enqued.
+/// This objects takes care of sending messages to the server in the order they have been enqueued.
 private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
     unowned var apiClient: APIClient
     unowned var database: DatabaseContainer
@@ -107,21 +107,25 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
         self.dispatchQueue = dispatchQueue
     }
     
-    /// We use Set becase the message Id is the main identifier. Thanks to this, it's possible to schedule message for sending
+    /// We use Set because the message Id is the main identifier. Thanks to this, it's possible to schedule message for sending
     /// multiple times without having to worry about that.
     @Atomic private(set) var requests: Set<SendRequest> = []
     
     /// Schedules sending of the message. All already scheduled messages with `createdLocallyAt` older than these ones will
     /// be sent first.
     func scheduleSend(requests: [SendRequest]) {
-        let wasEmpty = self.requests.isEmpty
-        self.requests.formUnion(requests)
+        var wasEmpty: Bool!
+        _requests.mutate { mutableRequests in
+            wasEmpty = mutableRequests.isEmpty
+            mutableRequests.formUnion(requests)
+        }
+        
         if wasEmpty {
             sendNextMessage()
         }
     }
     
-    /// Gets the oldest message from the qeue and tries to send it.
+    /// Gets the oldest message from the queue and tries to send it.
     private func sendNextMessage() {
         dispatchQueue.async { [weak self] in
             // Sort the messages and send the oldest one
@@ -154,7 +158,7 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
                     
                 }, completion: { error in
                     if let error = error {
-                        log.error("Error changin localMessageState message with id \(request.messageId) to `sending`: \(error)")
+                        log.error("Error changing localMessageState message with id \(request.messageId) to `sending`: \(error)")
                         self?.markMessageAsFailedToSend(id: request.messageId) {
                             self?.removeRequestAndContinue(request)
                         }
@@ -183,7 +187,7 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
     }
     
     private func removeRequestAndContinue(_ request: SendRequest) {
-        requests.remove(request)
+        _requests.mutate { $0.remove(request) }
         sendNextMessage()
     }
     

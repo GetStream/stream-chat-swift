@@ -50,7 +50,7 @@ class APIClientMock: APIClient {
     ) where Response: Decodable {
         request_endpoint = AnyEndpoint(endpoint)
         request_completion = completion
-        request_allRecordedCalls.append((request_endpoint!, request_completion!))
+        _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
     }
 
     override func uploadFile(
@@ -63,7 +63,7 @@ class APIClientMock: APIClient {
         uploadFile_multipartFormData = multipartFormData
         uploadFile_progress = progress
         uploadFile_completion = completion
-        request_allRecordedCalls.append((AnyEndpoint(uploadFile_endpoint!), uploadFile_completion!))
+        _request_allRecordedCalls.mutate { $0.append((AnyEndpoint(uploadFile_endpoint!), uploadFile_completion!)) }
     }
 }
 
