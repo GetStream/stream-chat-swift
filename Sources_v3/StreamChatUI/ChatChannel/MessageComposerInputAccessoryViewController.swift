@@ -128,7 +128,9 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     }
     
     func setupInputView() {
-        inputView = composerView
+        inputView?.embed(composerView)
+        inputView?.translatesAutoresizingMaskIntoConstraints = false
+        inputView?.allowsSelfSizing = true
         
         composerView.messageInputView.textView.delegate = self
         
