@@ -19,11 +19,6 @@
   },
   "testTargets" : [
     {
-      "skippedTests" : [
-        "ChatClient_Tests",
-        "MessageSender_Tests",
-        "MessageUpdater_Tests"
-      ],
       "target" : {
         "containerPath" : "container:StreamChat_v3.xcodeproj",
         "identifier" : "799C9450247D59B1001F1104",
