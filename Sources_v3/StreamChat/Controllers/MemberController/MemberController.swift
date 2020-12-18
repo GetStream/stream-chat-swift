@@ -114,8 +114,7 @@ public class _ChatChannelMemberController<ExtraData: ExtraDataTypes>: DataContro
             return
         }
         
-        memberListUpdater.load(.channelMember(userId: userId, cid: cid)) { [weak self] error in
-            guard let self = self else { return }
+        memberListUpdater.load(.channelMember(userId: userId, cid: cid)) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -189,8 +188,8 @@ public extension _ChatChannelMemberController {
         reason: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        memberUpdater.banMember(userId, in: cid, for: timeoutInMinutes, reason: reason) { [weak self] error in
-            self?.callback {
+        memberUpdater.banMember(userId, in: cid, for: timeoutInMinutes, reason: reason) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -200,8 +199,8 @@ public extension _ChatChannelMemberController {
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     func unban(completion: ((Error?) -> Void)? = nil) {
-        memberUpdater.unbanMember(userId, in: cid) { [weak self] error in
-            self?.callback {
+        memberUpdater.unbanMember(userId, in: cid) { error in
+            self.callback {
                 completion?(error)
             }
         }
