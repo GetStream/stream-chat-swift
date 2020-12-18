@@ -94,8 +94,7 @@ public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataCo
             return
         }
         
-        memberListUpdater.load(query) { [weak self] error in
-            guard let self = self else { return }
+        memberListUpdater.load(query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -167,9 +166,9 @@ public extension _ChatChannelMemberListController {
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: members.count)
-        memberListUpdater.load(updatedQuery) { [weak self] error in
-            self?.query = updatedQuery
-            self?.callback {
+        memberListUpdater.load(updatedQuery) { error in
+            self.query = updatedQuery
+            self.callback {
                 completion?(error)
             }
         }
