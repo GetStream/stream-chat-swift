@@ -255,8 +255,10 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     }
     
     deinit {
-        connectionIdWaiters.forEach { $0(nil) }
-        connectionIdWaiters.removeAll()
+        _connectionIdWaiters.mutate { waiters in
+            waiters.forEach { $0(nil) }
+            waiters.removeAll()
+        }
     }
     
     // TODO: Not used & tested yet -> CIS-224
@@ -340,18 +342,23 @@ extension ClientError {
 /// its `RequestEncoder`.
 extension _ChatClient: ConnectionStateDelegate {
     func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: WebSocketConnectionState) {
-        if case let .connected(connectionId) = state {
-            self.connectionId = connectionId
-            connectionIdWaiters.forEach { $0(connectionId) }
-            connectionIdWaiters.removeAll()
-            
-        } else {
-            connectionId = nil
-
-            if case .disconnected = state {
-                // No reconnection attempt schedule, we should fail all existing connecitonId waiters.
-                connectionIdWaiters.forEach { $0(nil) }
-                connectionIdWaiters.removeAll()
+        _connectionId.mutate { mutableConnectionId in
+            _connectionIdWaiters.mutate { connectionIdWaiters in
+                
+                if case let .connected(connectionId) = state {
+                    mutableConnectionId = connectionId
+                    connectionIdWaiters.forEach { $0(connectionId) }
+                    connectionIdWaiters.removeAll()
+                    
+                } else {
+                    mutableConnectionId = nil
+                    
+                    if case .disconnected = state {
+                        // No reconnection attempt schedule, we should fail all existing connectionId waiters.
+                        connectionIdWaiters.forEach { $0(nil) }
+                        connectionIdWaiters.removeAll()
+                    }
+                }
             }
         }
     }
@@ -367,7 +374,9 @@ extension _ChatClient: ConnectionDetailsProviderDelegate {
         if let connectionId = connectionId {
             completion(connectionId)
         } else {
-            connectionIdWaiters.append(completion)
+            _connectionIdWaiters.mutate {
+                $0.append(completion)
+            }
         }
     }
 }

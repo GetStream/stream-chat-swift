@@ -45,14 +45,17 @@ class TypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
         
         // User is typing.
         let userId = typingEvent.userId
-        _typingEventTimeoutTimerControls { $0[userId]?.cancel() }
-        
-        let stopTypingEventTimerControl =
-            timer.schedule(timeInterval: .incomingTypingStartEventTimeout, queue: .global()) {
-                let typingStopEvent = TypingEvent(isTyping: false, cid: typingEvent.cid, userId: userId)
-                completion(typingStopEvent)
-            }
-        
-        _typingEventTimeoutTimerControls { $0[userId] = stopTypingEventTimerControl }
+        _typingEventTimeoutTimerControls.mutate { typingEventTimeoutTimerControls in
+
+            typingEventTimeoutTimerControls[userId]?.cancel()
+
+            let stopTypingEventTimerControl =
+                timer.schedule(timeInterval: .incomingTypingStartEventTimeout, queue: .global()) {
+                    let typingStopEvent = TypingEvent(isTyping: false, cid: typingEvent.cid, userId: userId)
+                    completion(typingStopEvent)
+                }
+            
+            typingEventTimeoutTimerControls[userId] = stopTypingEventTimerControl
+        }
     }
 }
