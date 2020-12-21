@@ -61,7 +61,8 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             }
             
             if messageDTO.existsOnlyLocally {
-                session.delete(message: messageDTO)
+                messageDTO.type = MessageType.deleted.rawValue
+                messageDTO.deletedAt = Date()
                 shouldDeleteOnBackend = false
             } else {
                 messageDTO.localMessageState = .deleting
