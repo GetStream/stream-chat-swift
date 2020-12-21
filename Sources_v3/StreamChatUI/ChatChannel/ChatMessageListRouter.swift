@@ -9,22 +9,16 @@ open class ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMess
     open func showMessageActionsPopUp(
         messageContentFrame: CGRect,
         messageData: _ChatMessageGroupPart<ExtraData>,
-        messageController: _ChatMessageController<ExtraData>,
-        messageActions: [ChatMessageActionItem]
+        messageActionsController: ChatMessageActionsVC<ExtraData>,
+        messageReactionsController: ChatMessageReactionViewController<ExtraData>?
     ) {
         guard let root = rootViewController else { return }
-
-        let actionsController = ChatMessageActionsViewController<ExtraData>()
-        actionsController.messageActions = messageActions
-
-        let reactionsController = ChatMessageReactionViewController<ExtraData>()
-        reactionsController.messageController = messageController
 
         let popup = ChatMessagePopupViewController<ExtraData>()
         popup.message = messageData
         popup.messageViewFrame = messageContentFrame
-        popup.actionsController = actionsController
-        popup.reactionsController = reactionsController
+        popup.actionsController = messageActionsController
+        popup.reactionsController = messageReactionsController
         popup.modalPresentationStyle = .overFullScreen
         popup.modalTransitionStyle = .crossDissolve
 
