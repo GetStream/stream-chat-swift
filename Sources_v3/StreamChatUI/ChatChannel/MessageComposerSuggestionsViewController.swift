@@ -5,6 +5,21 @@
 import StreamChat
 import UIKit
 
+public protocol SuggestionsViewControllerPresenter: class {
+    func showSuggestionsViewController(
+        with state: SuggestionsViewControllerState,
+        onSelectItem: ((Int) -> Void)
+    )
+    func dismissSuggestionsViewController()
+
+    var isSuggestionControllerPresented: Bool { get }
+}
+
+public enum SuggestionsViewControllerState {
+    case commands([Command])
+    case mentions([String])
+}
+
 open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
     UICollectionViewDelegate,
@@ -27,7 +42,7 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
     /// contentSize of the nested collectionView
     public var bottomAnchorView: UIView?
     
-    public var state: State? {
+    public var state: SuggestionsViewControllerState? {
         didSet {
             updateContentIfNeeded()
         }
