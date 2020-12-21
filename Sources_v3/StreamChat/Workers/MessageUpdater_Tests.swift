@@ -1039,4 +1039,126 @@ final class MessageUpdater_Tests: StressTestCase {
         // Assert successful result is propagated.
         XCTAssertNil(error)
     }
+
+    // MARK: - Resend message
+
+    func test_resendMessage_propagatesCurrentUserDoesNotExist_Error() throws {
+        // Simulate `resendMessage` call
+        let completionError = try await {
+            messageUpdater.resendMessage(with: .unique, completion: $0)
+        }
+
+        // Assert `CurrentUserDoesNotExist` is received
+        XCTAssertTrue(completionError is ClientError.CurrentUserDoesNotExist)
+    }
+
+    func test_resendMessage_propagatesMessageDoesNotExist_Error() throws {
+        // Create current user is the database
+        try database.createCurrentUser()
+
+        // Simulate `resendMessage` call
+        let completionError = try await {
+            messageUpdater.resendMessage(with: .unique, completion: $0)
+        }
+
+        // Assert `MessageDoesNotExist` is received
+        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+    }
+
+    func test_resendMessage_propagatesMessageCanNotBeUpdatedByCurrentUser_Error() throws {
+        let anotherUserId: UserId = .unique
+        let anotherUserMessageId: MessageId = .unique
+
+        // Create current user is the database
+        try database.createCurrentUser()
+
+        // Create message authored by another user in the database
+        try database.createMessage(id: anotherUserMessageId, authorId: anotherUserId)
+
+        // Try to resend another user's message
+        let completionError = try await {
+            messageUpdater.resendMessage(with: anotherUserMessageId, completion: $0)
+        }
+
+        // Assert `MessageCannotBeUpdatedByCurrentUser` is received
+        XCTAssertTrue(completionError is ClientError.MessageCannotBeUpdatedByCurrentUser)
+    }
+
+    func test_resendMessage_propagatesMessageEditingError() throws {
+        let currentUserId: UserId = .unique
+        
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+        
+        let invalidStates: [LocalMessageState] = [
+            .deleting,
+            .deletingFailed,
+            .pendingSend,
+            .sending,
+            .pendingSync,
+            .syncing,
+            .syncingFailed
+        ]
+        
+        for state in invalidStates {
+            let messageId: MessageId = .unique
+            
+            // Create a new message in the database in `sendingFailed` state
+            try database.createMessage(id: messageId, authorId: currentUserId, localState: state)
+            
+            // Try to resend the message
+            let completionError = try await {
+                messageUpdater.resendMessage(with: messageId, completion: $0)
+            }
+            
+            // Assert `MessageEditing` error is received
+            XCTAssertTrue(completionError is ClientError.MessageEditing)
+        }
+    }
+
+    func test_resendMessage_propagatesDatabaseError() throws {
+        let messageId: MessageId = .unique
+        let currentUserId: UserId = .unique
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+        // Create a new message in the database in `sendingFailed` state
+        try database.createMessage(id: messageId, authorId: currentUserId, localState: .sendingFailed)
+
+        // Update database container to throw the error on write
+        let databaseError = TestError()
+        database.write_errorResponse = databaseError
+
+        // Try to resend the message
+        let completionError = try await {
+            messageUpdater.resendMessage(with: messageId, completion: $0)
+        }
+
+        // Assert database error is propagated
+        AssertAsync.willBeEqual(completionError as? TestError, databaseError)
+    }
+
+    func test_resendMessage_happyPath() throws {
+        let currentUserId: UserId = .unique
+        let messageId: MessageId = .unique
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create a new message in the database
+        try database.createMessage(id: messageId, authorId: currentUserId, localState: .sendingFailed)
+
+        // Resend failed message
+        let completionError = try await {
+            messageUpdater.resendMessage(with: messageId, completion: $0)
+        }
+
+        // Load the message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        // Assert completion is called without any error
+        XCTAssertNil(completionError)
+        // Assert message state is changed to `.pendingSend`
+        XCTAssertEqual(message.localMessageState, .pendingSend)
+    }
 }

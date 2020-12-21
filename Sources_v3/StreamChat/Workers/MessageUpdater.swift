@@ -294,6 +294,25 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             attachmentDTO.localState = .pendingUpload
         }, completion: completion)
     }
+
+    /// Updates local state of the message with provided `messageId` to be enqueued by message sender background worker.
+    /// - Parameters:
+    ///   - messageId: The message identifier.
+    ///   - completion: Called when the message database entity is updated. Called with `Error` if update fails.
+    func resendMessage(with messageId: MessageId, completion: @escaping (Error?) -> Void) {
+        database.write({
+            let messageDTO = try $0.messageEditableByCurrentUser(messageId)
+
+            guard messageDTO.localMessageState == .sendingFailed else {
+                throw ClientError.MessageEditing(
+                    messageId: messageId,
+                    reason: "only message in `.sendingFailed` can be resent"
+                )
+            }
+
+            messageDTO.localMessageState = .pendingSend
+        }, completion: completion)
+    }
 }
 
 // MARK: - Private
