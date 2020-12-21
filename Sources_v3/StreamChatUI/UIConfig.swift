@@ -83,6 +83,9 @@ public extension UIConfig {
         public var galleryImageBackground: UIColor = .streamWhiteSmoke
         public var galleryUploadingOverlayBackground: UIColor = UIColor.black.withAlphaComponent(0.5)
         public var galleryUploadingProgressBackground: UIColor = UIColor.black.withAlphaComponent(0.6)
+        public var messageActionDefaultIconTint: UIColor = .streamGray
+        public var messageActionDefaultText: UIColor = .streamBlack
+        public var messageActionErrorTint: UIColor = .streamAccentRed
     }
 }
 
