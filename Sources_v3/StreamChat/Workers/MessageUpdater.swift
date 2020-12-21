@@ -61,7 +61,8 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             }
             
             if messageDTO.existsOnlyLocally {
-                session.delete(message: messageDTO)
+                messageDTO.type = MessageType.deleted.rawValue
+                messageDTO.deletedAt = Date()
                 shouldDeleteOnBackend = false
             } else {
                 messageDTO.localMessageState = .deleting
@@ -96,25 +97,16 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
     func editMessage(messageId: MessageId, text: String, completion: ((Error?) -> Void)? = nil) {
         database.write({ session in
-            guard let currentUserDTO = session.currentUser() else {
-                throw ClientError.CurrentUserDoesNotExist()
-            }
-            
-            guard let messageDTO = session.message(id: messageId) else {
-                throw ClientError.MessageDoesNotExist(messageId: messageId)
-            }
-            
-            guard messageDTO.user.id == currentUserDTO.user.id else {
-                throw ClientError.MessageCannotBeUpdatedByCurrentUser(messageId: messageId)
-            }
+            let messageDTO = try session.messageEditableByCurrentUser(messageId)
 
             switch messageDTO.localMessageState {
-            case nil:
+            case nil, .pendingSync, .syncingFailed, .deletingFailed:
                 messageDTO.text = text
                 messageDTO.localMessageState = .pendingSync
-            case .pendingSync, .pendingSend:
+            case .pendingSend, .sendingFailed:
                 messageDTO.text = text
-            default:
+                messageDTO.localMessageState = .pendingSend
+            case .sending, .syncing, .deleting:
                 throw ClientError.MessageEditing(
                     messageId: messageId,
                     reason: "message is in `\(messageDTO.localMessageState!)` state"
@@ -304,6 +296,25 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             attachmentDTO.localState = .pendingUpload
         }, completion: completion)
     }
+
+    /// Updates local state of the message with provided `messageId` to be enqueued by message sender background worker.
+    /// - Parameters:
+    ///   - messageId: The message identifier.
+    ///   - completion: Called when the message database entity is updated. Called with `Error` if update fails.
+    func resendMessage(with messageId: MessageId, completion: @escaping (Error?) -> Void) {
+        database.write({
+            let messageDTO = try $0.messageEditableByCurrentUser(messageId)
+
+            guard messageDTO.localMessageState == .sendingFailed else {
+                throw ClientError.MessageEditing(
+                    messageId: messageId,
+                    reason: "only message in `.sendingFailed` can be resent"
+                )
+            }
+
+            messageDTO.localMessageState = .pendingSend
+        }, completion: completion)
+    }
 }
 
 // MARK: - Private
@@ -351,5 +362,30 @@ extension ClientError {
 private extension MessageDTO {
     var existsOnlyLocally: Bool {
         localMessageState == .pendingSend || localMessageState == .sendingFailed
+    }
+}
+
+private extension DatabaseSession {
+    /// This helper return the message if it can be edited by the current user.
+    /// The message entity will be returned if it exists and authored by the current user.
+    /// If any of the requirements is not met the error will be thrown.
+    ///
+    /// - Parameter messageId: The message identifier.
+    /// - Throws: Either `CurrentUserDoesNotExist`/`MessageDoesNotExist`/`MessageCannotBeUpdatedByCurrentUser`
+    /// - Returns: The message entity.
+    func messageEditableByCurrentUser(_ messageId: MessageId) throws -> MessageDTO {
+        guard let currentUserDTO = currentUser() else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        guard let messageDTO = message(id: messageId) else {
+            throw ClientError.MessageDoesNotExist(messageId: messageId)
+        }
+
+        guard messageDTO.user.id == currentUserDTO.user.id else {
+            throw ClientError.MessageCannotBeUpdatedByCurrentUser(messageId: messageId)
+        }
+
+        return messageDTO
     }
 }

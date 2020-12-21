@@ -52,7 +52,7 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, 
     @available(iOS 13, *)
     lazy var basePublishers: BasePublishers = .init(controller: self)
 
-    /// Used for observing the curren-user changes in a database.
+    /// Used for observing the current user changes in a database.
     private lazy var currentUserObserver = createUserObserver()
         .onChange { [unowned self] change in
             self.delegateCallback {
@@ -350,8 +350,8 @@ public extension _CurrentChatUserController {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
-        let completion: ((Error?) -> Void) = { [weak self] error in
-            self?.callback {
+        let completion: ((Error?) -> Void) = { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -386,8 +386,8 @@ public extension _CurrentChatUserController {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
-        let completion: ((Error?) -> Void) = { [weak self] error in
-            self?.callback {
+        let completion: ((Error?) -> Void) = { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -417,15 +417,15 @@ public extension _CurrentChatUserController {
             completion?(ClientError.CurrentUserDoesNotExist())
             return
         }
-        let completion: ((Error?) -> Void) = { [weak self] error in
-            self?.callback {
+        let completion: ((Error?) -> Void) = { error in
+            self.callback {
                 completion?(error)
             }
         }
-        client.apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] (result) in
+        client.apiClient.request(endpoint: .devices(userId: currentUserId)) { (result) in
             do {
                 let devicesPayload = try result.get()
-                self?.client.databaseContainer.write({ (session) in
+                self.client.databaseContainer.write({ (session) in
                     try session.saveCurrentUserDevices(devicesPayload.devices, clearExisting: true)
                 }) { completion($0) }
             } catch {

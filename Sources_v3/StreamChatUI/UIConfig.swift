@@ -63,6 +63,7 @@ public extension UIConfig {
         public var outgoingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
         public var incomingMessageBubbleBackground: UIColor = .white
         public var incomingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
+        public var outgoingMessageErrorIndicatorTint = UIColor.streamAccentRed
 
         // MARK: - Message Composer
 
@@ -83,6 +84,9 @@ public extension UIConfig {
         public var galleryImageBackground: UIColor = .streamWhiteSmoke
         public var galleryUploadingOverlayBackground: UIColor = UIColor.black.withAlphaComponent(0.5)
         public var galleryUploadingProgressBackground: UIColor = UIColor.black.withAlphaComponent(0.6)
+        public var messageActionDefaultIconTint: UIColor = .streamGray
+        public var messageActionDefaultText: UIColor = .streamBlack
+        public var messageActionErrorTint: UIColor = .streamAccentRed
     }
 }
 
@@ -94,6 +98,7 @@ public extension UIConfig {
         public var channelListRouter: ChatChannelListRouter<ExtraData>.Type = ChatChannelListRouter<ExtraData>.self
         public var messageListRouter: ChatMessageListRouter<ExtraData>.Type = ChatMessageListRouter<ExtraData>.self
         public var channelDetailRouter: ChatChannelRouter<ExtraData>.Type = ChatChannelRouter<ExtraData>.self
+        public var messageActionsRouter: ChatMessageActionsRouter<ExtraData>.Type = ChatMessageActionsRouter<ExtraData>.self
     }
 }
 
@@ -148,17 +153,21 @@ public extension UIConfig {
         public var offsetToPreloadMoreMessages: CGFloat = 100
         public var messageContentView: ChatMessageContentView<ExtraData>.Type = ChatMessageContentView<ExtraData>.self
         public var messageContentSubviews = MessageContentViewSubviews()
-        public var messageAvailableReactions: [MessageReactionType] = [
+        public var messageActionsSubviews = MessageActionsSubviews()
+    }
+
+    struct MessageActionsSubviews {
+        public var reactionsView: ChatMessageReactionsView<ExtraData>.Type = ChatMessageReactionsView<ExtraData>.self
+        public var availableReactions: [MessageReactionType] = [
             .init(rawValue: "like"),
             .init(rawValue: "haha"),
             .init(rawValue: "facepalm"),
             .init(rawValue: "roar")
         ]
-        public var messageActionsView: MessageActionsView<ExtraData>.Type =
+        public var actionsView: MessageActionsView<ExtraData>.Type =
             MessageActionsView<ExtraData>.self
-        public var messageActionButton: MessageActionsView<ExtraData>.ActionButton.Type =
+        public var actionButton: MessageActionsView<ExtraData>.ActionButton.Type =
             MessageActionsView<ExtraData>.ActionButton.self
-        public var messageReactionsView: ChatMessageReactionsView<ExtraData>.Type = ChatMessageReactionsView<ExtraData>.self
     }
 
     struct MessageContentViewSubviews {
@@ -172,6 +181,7 @@ public extension UIConfig {
             ChatMessageOnlyVisibleForCurrentUserIndicator.self
         public var threadArrowView: ChatMessageThreadArrowView<ExtraData>.Type = ChatMessageThreadArrowView<ExtraData>.self
         public var threadInfoView: ChatMessageThreadInfoView<ExtraData>.Type = ChatMessageThreadInfoView<ExtraData>.self
+        public var errorIndicator: ChatMessageErrorIndicator<ExtraData>.Type = ChatMessageErrorIndicator<ExtraData>.self
     }
 
     struct MessageAttachmentViewSubviews {

@@ -211,7 +211,7 @@ extension ChatViewController {
             }
         }
         
-        if let presenter = presenter, presenter.channel.config.reactionsEnabled {
+        if Client.shared.isConnected, let presenter = presenter, presenter.channel.config.reactionsEnabled {
             showReactions(from: cell, in: message, locationInView: tapGesture.location(in: cell))
         }
     }

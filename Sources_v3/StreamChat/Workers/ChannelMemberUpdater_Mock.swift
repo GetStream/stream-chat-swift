@@ -16,6 +16,18 @@ final class ChannelMemberUpdaterMock: ChannelMemberUpdater {
     @Atomic var unbanMember_userId: UserId?
     @Atomic var unbanMember_cid: ChannelId?
     @Atomic var unbanMember_completion: ((Error?) -> Void)?
+    
+    func cleanUp() {
+        banMember_userId = nil
+        banMember_cid = nil
+        banMember_timeoutInMinutes = nil
+        banMember_reason = nil
+        banMember_completion = nil
+        
+        unbanMember_userId = nil
+        unbanMember_cid = nil
+        unbanMember_completion = nil
+    }
 
     override func banMember(
         _ userId: UserId,

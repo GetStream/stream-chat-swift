@@ -144,8 +144,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
         startMessageObserver()
         startRepliesObserver()
         
-        messageUpdater.getMessage(cid: cid, messageId: messageId) { [weak self] error in
-            guard let self = self else { return }
+        messageUpdater.getMessage(cid: cid, messageId: messageId) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -170,8 +169,8 @@ public extension _ChatMessageController {
     ///                 If request fails, the completion will be called with an error.
     ///
     func editMessage(text: String, completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.editMessage(messageId: messageId, text: text) { [weak self] error in
-            self?.callback {
+        messageUpdater.editMessage(messageId: messageId, text: text) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -184,8 +183,8 @@ public extension _ChatMessageController {
     ///                 If request fails, the completion will be called with an error.
     ///
     func deleteMessage(completion: ((Error?) -> Void)? = nil) {
-        messageUpdater.deleteMessage(messageId: messageId) { [weak self] error in
-            self?.callback {
+        messageUpdater.deleteMessage(messageId: messageId) { error in
+            self.callback {
                 completion?(error)
             }
         }
@@ -246,8 +245,8 @@ public extension _ChatMessageController {
             cid: cid,
             messageId: self.messageId,
             pagination: MessagesPagination(pageSize: limit, parameter: lastMessageId.map { PaginationParameter.lessThan($0) })
-        ) { [weak self] error in
-            self?.callback { completion?(error) }
+        ) { error in
+            self.callback { completion?(error) }
         }
     }
     
@@ -274,8 +273,8 @@ public extension _ChatMessageController {
             cid: cid,
             messageId: self.messageId,
             pagination: MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
-        ) { [weak self] error in
-            self?.callback { completion?(error) }
+        ) { error in
+            self.callback { completion?(error) }
         }
     }
     
@@ -347,6 +346,17 @@ public extension _ChatMessageController {
         completion: ((Error?) -> Void)? = nil
     ) {
         messageUpdater.restartFailedAttachmentUploading(with: id) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Changes local message from `.sendingFailed` to `.pendingSend` so it is enqueued by message sender worker.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the database operation is finished.
+    ///                         If operation fails, the completion will be called with an error.
+    func resendMessage(completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.resendMessage(with: messageId) { error in
             self.callback {
                 completion?(error)
             }

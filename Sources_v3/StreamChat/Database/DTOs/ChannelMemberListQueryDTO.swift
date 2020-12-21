@@ -29,7 +29,7 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
             return existing
         }
         
-        let new = ChannelMemberListQueryDTO(context: context)
+        let new = NSEntityDescription.insertNewObject(forEntityName: Self.entityName, into: context) as! ChannelMemberListQueryDTO
         new.queryHash = queryHash
         return new
     }

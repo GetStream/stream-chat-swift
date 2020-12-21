@@ -165,8 +165,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
         
         lastQuery = query
         
-        userQueryUpdater.update(userListQuery: query, policy: .replace) { [weak self] error in
-            guard let self = self else { return }
+        userQueryUpdater.update(userListQuery: query, policy: .replace) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -190,8 +189,8 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
         
         var updatedQuery = lastQuery
         updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)
-        userQueryUpdater.update(userListQuery: updatedQuery) { [weak self] error in
-            self?.callback { completion?(error) }
+        userQueryUpdater.update(userListQuery: updatedQuery) { error in
+            self.callback { completion?(error) }
         }
     }
 }

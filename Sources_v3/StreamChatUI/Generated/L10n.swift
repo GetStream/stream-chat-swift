@@ -49,6 +49,8 @@ internal enum L10n {
       internal static let edit = L10n.tr("Localizable", "message.actions.edit")
       /// Reply
       internal static let inlineReply = L10n.tr("Localizable", "message.actions.inline-reply")
+      /// Resend
+      internal static let resend = L10n.tr("Localizable", "message.actions.resend")
       /// Thread Reply
       internal static let threadReply = L10n.tr("Localizable", "message.actions.thread-reply")
       /// Block User
