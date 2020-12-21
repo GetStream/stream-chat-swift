@@ -16,6 +16,9 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
 
     public var channelController: _ChatChannelController<ExtraData>!
 
+    public private(set) lazy var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData> =
+        uiConfig.messageComposer.suggestionsViewController.init()
+
     // TODO: composer input must be able to distinguish between channel message send and thread message send
     public private(set) lazy var messageInputAccessoryViewController: MessageComposerInputAccessoryViewController<ExtraData> = {
         let inputAccessoryVC = MessageComposerInputAccessoryViewController<ExtraData>()
@@ -23,7 +26,7 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
         // `inputAccessoryViewController` is part of `_UIKeyboardWindowScene` so we need to manually pass
         // tintColor down that `inputAccessoryViewController` view hierarchy.
         inputAccessoryVC.view.tintColor = view.tintColor
-
+        inputAccessoryVC.suggestionsPresenter = self
         return inputAccessoryVC
     }()
 
@@ -155,5 +158,24 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>) {
         messageInputAccessoryViewController.state = .edit(message)
+    }
+}
+
+// MARK: - SuggestionsViewControllerPresenter
+
+extension ChatVC: SuggestionsViewControllerPresenter {
+    public var isSuggestionControllerPresented: Bool {
+        suggestionsViewController.isPresented
+    }
+
+    public func showSuggestionsViewController(with state: SuggestionsViewControllerState, onSelectItem: ((Int) -> Void)) {
+        suggestionsViewController.state = state
+        addChildViewController(suggestionsViewController, targetView: view)
+        suggestionsViewController.bottomAnchorView = messageInputAccessoryViewController.composerView
+    }
+
+    public func dismissSuggestionsViewController() {
+        suggestionsViewController.removeFromParent()
+        suggestionsViewController.view.removeFromSuperview()
     }
 }
