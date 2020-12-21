@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🐞 Fixed
+- Fixed being able to open reactions view without connection [#662](https://github.com/GetStream/stream-chat-swift/issues/662)
+
 ### 🔄 Changed
 
 # [2.6.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.1)
