@@ -24,13 +24,6 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
     UIConfigProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
-    // MARK: - Underlying types
-
-    public enum State {
-        case commands([Command])
-        case mentions([String])
-    }
-
     // MARK: - Property
 
     private var frameObserver: NSKeyValueObservation?
