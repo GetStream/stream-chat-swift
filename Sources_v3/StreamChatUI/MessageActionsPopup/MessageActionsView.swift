@@ -46,29 +46,3 @@ open class MessageActionsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider
         }
     }
 }
-
-// MARK: - Controller
-
-open class ChatMessageActionsViewController<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
-    public var messageActions: [ChatMessageActionItem] = [] {
-        didSet { updateContentIfNeeded() }
-    }
-
-    // MARK: - Subviews
-
-    private lazy var messageActionView = uiConfig
-        .messageList
-        .messageActionsView
-        .init()
-        .withoutAutoresizingMaskConstraints
-
-    // MARK: - Life Cycle
-
-    override open func setUpLayout() {
-        view.embed(messageActionView)
-    }
-
-    override open func updateContent() {
-        messageActionView.actionItems = messageActions
-    }
-}
