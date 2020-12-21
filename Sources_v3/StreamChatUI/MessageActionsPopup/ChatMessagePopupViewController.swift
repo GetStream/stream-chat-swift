@@ -17,8 +17,8 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
 
     public var message: _ChatMessageGroupPart<ExtraData>!
     public var messageViewFrame: CGRect!
-    public var actionsController: ChatMessageActionsViewController<ExtraData>!
-    public var reactionsController: ChatMessageReactionViewController<ExtraData>!
+    public var actionsController: ChatMessageActionsVC<ExtraData>!
+    public var reactionsController: ChatMessageReactionViewController<ExtraData>?
 
     // MARK: - Life Cycle
 
@@ -33,8 +33,10 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
     }
 
     override open func setUpLayout() {
-        reactionsController.view.translatesAutoresizingMaskIntoConstraints = false
-        addChildViewController(reactionsController, targetView: scrollContentView)
+        if let reactionsController = reactionsController {
+            reactionsController.view.translatesAutoresizingMaskIntoConstraints = false
+            addChildViewController(reactionsController, targetView: scrollContentView)
+        }
 
         actionsController.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(actionsController, targetView: scrollContentView)
@@ -51,9 +53,12 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
             messageContentView.bottomAnchor.constraint(equalTo: scrollContentView.topAnchor, constant: messageViewFrame.maxY),
             messageContentView.widthAnchor.constraint(equalToConstant: messageViewFrame.width),
             
-            reactionsController.view.bottomAnchor.constraint(equalTo: messageContentView.messageBubbleView.topAnchor, constant: -8),
-            reactionsController.view.leadingAnchor.constraint(greaterThanOrEqualTo: scrollContentView.leadingAnchor),
-            reactionsController.view.trailingAnchor.constraint(lessThanOrEqualTo: scrollContentView.trailingAnchor),
+            reactionsController?.view.bottomAnchor.constraint(
+                equalTo: messageContentView.messageBubbleView.topAnchor,
+                constant: -8
+            ),
+            reactionsController?.view.leadingAnchor.constraint(greaterThanOrEqualTo: scrollContentView.leadingAnchor),
+            reactionsController?.view.trailingAnchor.constraint(lessThanOrEqualTo: scrollContentView.trailingAnchor),
             
             actionsController.view.topAnchor.constraint(equalToSystemSpacingBelow: messageContentView.bottomAnchor, multiplier: 1),
             actionsController.view.widthAnchor.constraint(equalTo: scrollContentView.widthAnchor, multiplier: 0.7),
@@ -67,7 +72,7 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
                     constant: messageViewFrame.maxX - UIScreen.main.bounds.width
                 ),
                 actionsController.view.trailingAnchor.constraint(equalTo: messageContentView.trailingAnchor),
-                reactionsController.view.centerXAnchor.constraint(equalTo: messageContentView.leadingAnchor)
+                reactionsController?.view.centerXAnchor.constraint(equalTo: messageContentView.leadingAnchor)
             ])
         } else {
             constraints.append(contentsOf: [
@@ -76,12 +81,12 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
                     constant: messageViewFrame.minX
                 ),
                 actionsController.view.leadingAnchor.constraint(equalTo: messageContentView.messageBubbleView.leadingAnchor),
-                reactionsController.view.centerXAnchor.constraint(equalTo: messageContentView.trailingAnchor)
+                reactionsController?.view.centerXAnchor.constraint(equalTo: messageContentView.trailingAnchor)
             ])
         }
 
-        constraints.last?.priority = .defaultHigh
-        NSLayoutConstraint.activate(constraints)
+        constraints.last??.priority = .defaultHigh
+        NSLayoutConstraint.activate(constraints.compactMap { $0 })
     }
 
     override open func updateContent() {
