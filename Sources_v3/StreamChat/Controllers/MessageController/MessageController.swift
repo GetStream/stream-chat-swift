@@ -351,6 +351,17 @@ public extension _ChatMessageController {
             }
         }
     }
+    
+    /// Changes local message from `.sendingFailed` to `.pendingSend` so it is enqueued by message sender worker.
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the database operation is finished.
+    ///                         If operation fails, the completion will be called with an error.
+    func resendMessage(completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.resendMessage(with: messageId) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 // MARK: - Environment
