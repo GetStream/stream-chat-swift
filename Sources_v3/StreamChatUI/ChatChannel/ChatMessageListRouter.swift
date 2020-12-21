@@ -12,8 +12,6 @@ open class ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMess
         messageActionsController: ChatMessageActionsVC<ExtraData>,
         messageReactionsController: ChatMessageReactionViewController<ExtraData>?
     ) {
-        guard let root = rootViewController else { return }
-
         let popup = ChatMessagePopupViewController<ExtraData>()
         popup.message = messageData
         popup.messageViewFrame = messageContentFrame
@@ -22,14 +20,14 @@ open class ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMess
         popup.modalPresentationStyle = .overFullScreen
         popup.modalTransitionStyle = .crossDissolve
 
-        root.present(popup, animated: true)
+        rootViewController.present(popup, animated: true)
     }
     
     open func showPreview(for attachment: _ChatMessageAttachment<ExtraData>) {
         let preview = ChatAttachmentPreviewVC()
         preview.content = attachment.type == .file ? attachment.url : attachment.imageURL
-
+        
         let navigation = UINavigationController(rootViewController: preview)
-        rootViewController?.present(navigation, animated: true)
+        rootViewController.present(navigation, animated: true)
     }
 }
