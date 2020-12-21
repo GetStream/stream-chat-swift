@@ -65,6 +65,7 @@ public extension UIConfig {
         public var incomingMessageBubbleBorder: UIColor = .streamGrayGainsboro
         public var inactiveReactionTint: UIColor = .streamGray
         public var outgoingMessageErrorIndicatorTint: UIColor = .streamAccentRed
+        public var linkMessageBubbleBackground: UIColor = .streamBlueAlice
 
         // MARK: - Message Composer
 
@@ -211,6 +212,7 @@ public extension UIConfig {
         public var threadArrowView: ChatMessageThreadArrowView<ExtraData>.Type = ChatMessageThreadArrowView<ExtraData>.self
         public var threadInfoView: ChatMessageThreadInfoView<ExtraData>.Type = ChatMessageThreadInfoView<ExtraData>.self
         public var errorIndicator: ChatMessageErrorIndicator<ExtraData>.Type = ChatMessageErrorIndicator<ExtraData>.self
+        public var linkPreviewView: ChatMessageLinkPreviewView<ExtraData>.Type = ChatMessageLinkPreviewView<ExtraData>.self
     }
 
     struct MessageAttachmentViewSubviews {
@@ -323,6 +325,7 @@ private extension UIColor {
     static let streamWhiteSmoke = UIColor(rgb: 0xf2f2f2)
     static let streamWhiteSnow = UIColor(rgb: 0xfcfcfc)
     static let streamWhite = UIColor(rgb: 0xffffff)
+    static let streamBlueAlice = UIColor(rgb: 0xe9f2ff)
     static let streamAccentBlue = UIColor(rgb: 0x005fff)
     static let streamAccentRed = UIColor(rgb: 0xff3742)
     static let streamAccentGreen = UIColor(rgb: 0x20e070)
