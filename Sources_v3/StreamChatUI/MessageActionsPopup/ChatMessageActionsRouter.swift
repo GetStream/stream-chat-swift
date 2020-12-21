@@ -24,6 +24,6 @@ open class ChatMessageActionsRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatM
             handler: { _ in confirmed(true) }
         ))
 
-        rootViewController?.present(alert, animated: true)
+        rootViewController.present(alert, animated: true)
     }
 }
