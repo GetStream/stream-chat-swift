@@ -164,6 +164,10 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
             guard let self = self, let message = $0?.message else { return }
             self.delegate?.didTapOnRepliesForMessage?(self, message)
         }
+        cell.messageView.onErrorIndicatorTap = { [weak self, weak cell] _ in
+            guard let self = self, let cell = cell else { return }
+            self.didSelectMessageCell(cell)
+        }
         cell.message = message
 
         return cell

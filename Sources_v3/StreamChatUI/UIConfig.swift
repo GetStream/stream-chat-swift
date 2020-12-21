@@ -63,6 +63,7 @@ public extension UIConfig {
         public var outgoingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
         public var incomingMessageBubbleBackground: UIColor = .white
         public var incomingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
+        public var outgoingMessageErrorIndicatorTint = UIColor.streamAccentRed
 
         // MARK: - Message Composer
 
@@ -180,6 +181,7 @@ public extension UIConfig {
             ChatMessageOnlyVisibleForCurrentUserIndicator.self
         public var threadArrowView: ChatMessageThreadArrowView<ExtraData>.Type = ChatMessageThreadArrowView<ExtraData>.self
         public var threadInfoView: ChatMessageThreadInfoView<ExtraData>.Type = ChatMessageThreadInfoView<ExtraData>.self
+        public var errorIndicator: ChatMessageErrorIndicator<ExtraData>.Type = ChatMessageErrorIndicator<ExtraData>.self
     }
 
     struct MessageAttachmentViewSubviews {
