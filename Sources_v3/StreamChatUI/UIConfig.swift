@@ -97,6 +97,7 @@ public extension UIConfig {
         public var channelListRouter: ChatChannelListRouter<ExtraData>.Type = ChatChannelListRouter<ExtraData>.self
         public var messageListRouter: ChatMessageListRouter<ExtraData>.Type = ChatMessageListRouter<ExtraData>.self
         public var channelDetailRouter: ChatChannelRouter<ExtraData>.Type = ChatChannelRouter<ExtraData>.self
+        public var messageActionsRouter: ChatMessageActionsRouter<ExtraData>.Type = ChatMessageActionsRouter<ExtraData>.self
     }
 }
 
