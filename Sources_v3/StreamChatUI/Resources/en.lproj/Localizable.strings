@@ -13,6 +13,7 @@
 "message.actions.user-block" = "Block User";
 "message.actions.user-unmute" = "Unmute User";
 "message.actions.user-mute" = "Mute User";
+"message.actions.resend" = "Resend";
 
 "message.threads.reply" = "Thread Reply";
 
