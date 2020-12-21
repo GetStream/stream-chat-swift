@@ -123,11 +123,8 @@ final class MessageUpdater_Tests: StressTestCase {
     func test_editMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForEditing() throws {
         let invalidStates: [LocalMessageState] = [
             .deleting,
-            .deletingFailed,
             .sending,
-            .sendingFailed,
-            .syncing,
-            .syncingFailed
+            .syncing
         ]
         
         for state in invalidStates {

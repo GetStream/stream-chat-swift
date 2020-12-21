@@ -99,12 +99,13 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
 
             switch messageDTO.localMessageState {
-            case nil:
+            case nil, .pendingSync, .syncingFailed, .deletingFailed:
                 messageDTO.text = text
                 messageDTO.localMessageState = .pendingSync
-            case .pendingSync, .pendingSend:
+            case .pendingSend, .sendingFailed:
                 messageDTO.text = text
-            default:
+                messageDTO.localMessageState = .pendingSend
+            case .sending, .syncing, .deleting:
                 throw ClientError.MessageEditing(
                     messageId: messageId,
                     reason: "message is in `\(messageDTO.localMessageState!)` state"
