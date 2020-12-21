@@ -35,6 +35,13 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         return textView.withoutAutoresizingMaskConstraints
     }()
 
+    public private(set) lazy var linkPreviewView = uiConfig
+        .messageList
+        .messageContentSubviews
+        .linkPreviewView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     public private(set) lazy var repliedMessageView = showRepliedMessage ?
         uiConfig.messageList.messageContentSubviews.repliedMessageContentView.init().withoutAutoresizingMaskConstraints :
         nil
@@ -80,6 +87,7 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             addSubview(repliedMessageView)
         }
         addSubview(attachmentsView)
+        addSubview(linkPreviewView)
         addSubview(textView)
 
         layoutConstraints[.text] = [
@@ -88,6 +96,8 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             textView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
             textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
         ]
+
+        // link preview cannot exist without text, we can skip `[.linkPreview]` case
 
         layoutConstraints[.attachments] = [
             attachmentsView.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -118,6 +128,18 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
         ]
 
+        layoutConstraints[[.text, .linkPreview]] = [
+            textView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+            textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+            
+            linkPreviewView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+            linkPreviewView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+            linkPreviewView.topAnchor.constraint(equalToSystemSpacingBelow: textView.bottomAnchor, multiplier: 1),
+            linkPreviewView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
+            linkPreviewView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6)
+        ]
+
         layoutConstraints[[.text, .inlineReply]] = repliedMessageView.flatMap {
             return [
                 $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
@@ -145,6 +167,24 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             ]
         } ?? layoutConstraints[.attachments]
 
+        layoutConstraints[[.text, .inlineReply, .linkPreview]] = repliedMessageView.flatMap {
+            return [
+                $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+                $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+                $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+                
+                textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+                textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+                textView.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
+                
+                linkPreviewView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
+                linkPreviewView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+                linkPreviewView.topAnchor.constraint(equalToSystemSpacingBelow: textView.bottomAnchor, multiplier: 1),
+                linkPreviewView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
+                linkPreviewView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6)
+            ]
+        } ?? layoutConstraints[[.text, .linkPreview]]
+
         layoutConstraints[[.text, .attachments, .inlineReply]] = repliedMessageView.flatMap {
             return [
                 $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
@@ -162,6 +202,9 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
                 textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
             ]
         } ?? layoutConstraints[[.text, .attachments]]
+
+        // link preview is not visible when any attachment presented,
+        // so we can skip `[.text, .attachments, .inlineReply, .linkPreview]` case
     }
 
     override open func updateContent() {
@@ -184,9 +227,14 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor :
             uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
 
-        backgroundColor = message?.isSentByCurrentUser == true ?
-            uiConfig.colorPalette.outgoingMessageBubbleBackground :
-            uiConfig.colorPalette.incomingMessageBubbleBackground
+        if layoutOptions.contains(.linkPreview) {
+            backgroundColor = uiConfig.colorPalette.linkMessageBubbleBackground
+        } else {
+            backgroundColor = message?.isSentByCurrentUser == true ?
+                uiConfig.colorPalette.outgoingMessageBubbleBackground :
+                uiConfig.colorPalette.incomingMessageBubbleBackground
+        }
+
         layer.maskedCorners = corners
 
         attachmentsView.content = message.flatMap {
@@ -195,7 +243,10 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
                 didTapOnAttachment: message?.didTapOnAttachment
             )
         }
+        linkPreviewView.content = message?.attachments.first { $0.type.needLinkPreview }
+
         attachmentsView.isVisible = layoutOptions.contains(.attachments)
+        linkPreviewView.isVisible = layoutOptions.contains(.linkPreview)
 
         layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
         layoutConstraints[layoutOptions]?.forEach { $0.isActive = true }
@@ -234,8 +285,9 @@ private struct LayoutOptions: OptionSet, Hashable {
     static let text = Self(rawValue: 1 << 0)
     static let attachments = Self(rawValue: 1 << 1)
     static let inlineReply = Self(rawValue: 1 << 2)
+    static let linkPreview = Self(rawValue: 1 << 3)
 
-    static let all: Self = [.text, .attachments, .inlineReply]
+    static let all: Self = [.text, .attachments, .inlineReply, .linkPreview]
 }
 
 private extension _ChatMessageGroupPart {
@@ -244,18 +296,21 @@ private extension _ChatMessageGroupPart {
             return [.text]
         }
 
-        var options: LayoutOptions = .all
+        var options: LayoutOptions = []
 
-        if textContent.isEmpty {
-            options.remove(.text)
+        if !textContent.isEmpty {
+            options.insert(.text)
         }
 
-        if message.attachments.isEmpty {
-            options.remove(.attachments)
+        if parentMessageState != nil {
+            options.insert(.inlineReply)
         }
 
-        if parentMessageState == nil {
-            options.remove(.inlineReply)
+        if message.attachments.contains(where: { $0.type == .image || $0.type == .file }) {
+            options.insert(.attachments)
+        } else if message.attachments.contains(where: { $0.type.needLinkPreview }) {
+            // link preview is visible only when no other attachments available
+            options.insert(.linkPreview)
         }
 
         return options
@@ -267,5 +322,22 @@ private extension _ChatMessageGroupPart {
 private extension _ChatMessageGroupPart {
     var textContent: String {
         message.deletedAt == nil ? message.text : L10n.Message.deletedMessagePlaceholder
+    }
+}
+
+private extension AttachmentType {
+    var needLinkPreview: Bool {
+        switch self {
+        case .image: return false
+        case .imgur: return true
+        case .giphy: return false
+        case .video: return false
+        case .audio: return false
+        case .youtube: return true
+        case .product: return false
+        case .file: return false
+        case .link: return true
+        case .custom: return false
+        }
     }
 }
