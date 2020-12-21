@@ -988,6 +988,62 @@ final class MessageController_Tests: StressTestCase {
         // Assert error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, restartError)
     }
+
+    // MARK: - Resend message
+
+    func test_resendMessage_propagatesError() {
+        // Simulate `resend` call and catch the completion.
+        var completionError: Error?
+        controller.resendMessage { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+
+        // Simulate network response with the error.
+        let updaterError = TestError()
+        env.messageUpdater.resendMessage_completion!(updaterError)
+
+        // Assert error is propagated.
+        AssertAsync.willBeEqual(completionError as? TestError, updaterError)
+    }
+
+    func test_resend_propagatesNilError() {
+        // Simulate `resend` call and catch the completion.
+        var completionIsCalled = false
+        controller.resendMessage { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+
+        // Simulate successful updater call.
+        env.messageUpdater.resendMessage_completion!(nil)
+
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+    }
+
+    func test_resendMessage_callsUpdater_withCorrectValues() {
+        // Simulate `resendMessage` call.
+        controller.resendMessage()
+
+        // Assert updater is called with correct `messageId`.
+        XCTAssertEqual(env.messageUpdater.resendMessage_messageId, controller.messageId)
+    }
+
+    func test_resendMessage_keepsControllerAlive() {
+        // Simulate `resendMessage` call.
+        controller.resendMessage()
+
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+
+        // Assert controller is kept alive.
+        AssertAsync.staysTrue(weakController != nil)
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
