@@ -302,6 +302,7 @@
 		8819DFE2252628CA00FD1A50 /* UserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFE1252628CA00FD1A50 /* UserUpdater_Tests.swift */; };
 		8819DFE625262B1500FD1A50 /* UserController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFE525262B1500FD1A50 /* UserController_Tests.swift */; };
 		8819DFE925262EBA00FD1A50 /* UserUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8819DFE825262EBA00FD1A50 /* UserUpdater_Mock.swift */; };
+		8825333E258CE7AC00B77352 /* ChatMessageActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8825333D258CE7AC00B77352 /* ChatMessageActionsVC.swift */; };
 		8825334C258CE82500B77352 /* ChatMessageActionsRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8825334B258CE82500B77352 /* ChatMessageActionsRouter.swift */; };
 		882AE057257A176A004095B3 /* ChatChannelRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882AE056257A176A004095B3 /* ChatChannelRouter.swift */; };
 		882AE124257A7FFE004095B3 /* UIViewController+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882AE123257A7FFE004095B3 /* UIViewController+Extensions.swift */; };
@@ -1000,6 +1001,7 @@
 		8819DFE1252628CA00FD1A50 /* UserUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdater_Tests.swift; sourceTree = "<group>"; };
 		8819DFE525262B1500FD1A50 /* UserController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserController_Tests.swift; sourceTree = "<group>"; };
 		8819DFE825262EBA00FD1A50 /* UserUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdater_Mock.swift; sourceTree = "<group>"; };
+		8825333D258CE7AC00B77352 /* ChatMessageActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionsVC.swift; sourceTree = "<group>"; };
 		8825334B258CE82500B77352 /* ChatMessageActionsRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionsRouter.swift; sourceTree = "<group>"; };
 		882AE056257A176A004095B3 /* ChatChannelRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelRouter.swift; sourceTree = "<group>"; };
 		882AE0F0257A652A004095B3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -2352,6 +2354,7 @@
 				88F8366C2578D1C60039AEC8 /* MessageActionsView.swift */,
 				88F8364F2578D16D0039AEC8 /* MessageActionsView+ActionButton.swift */,
 				88F836602578D1A80039AEC8 /* ChatMessageActionItem.swift */,
+				8825333D258CE7AC00B77352 /* ChatMessageActionsVC.swift */,
 				8825334B258CE82500B77352 /* ChatMessageActionsRouter.swift */,
 			);
 			path = MessageActionsPopup;
@@ -3170,6 +3173,7 @@
 				DB70D002257119C500DDF436 /* ChatMessageReactionsView.swift in Sources */,
 				228190EB256733420048D7C6 /* UIFont+Extensions.swift in Sources */,
 				888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */,
+				8825333E258CE7AC00B77352 /* ChatMessageActionsVC.swift in Sources */,
 				224FF6872562F55F00725DD1 /* Date+Extensions.swift in Sources */,
 				22ADD682256C40410098EFEB /* ChatChannelMessageComposerView.swift in Sources */,
 				8850FE91256558B200C8D534 /* ChatRouter.swift in Sources */,

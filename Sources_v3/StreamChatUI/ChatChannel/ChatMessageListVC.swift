@@ -34,7 +34,8 @@ public protocol ChatMessageListVCDelegate: AnyObject {
 open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
-    UIConfigProvider {
+    UIConfigProvider,
+    ChatMessageActionsVCDelegate {
     public struct DataSource {
         public var numberOfMessages: (ChatMessageListVC) -> Int
         public var messageAtIndex: (ChatMessageListVC, Int) -> _ChatMessage<ExtraData>
@@ -130,16 +131,8 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         guard gesture.state == .began else { return }
         guard let ip = collectionView.indexPathForItem(at: location) else { return }
         guard let cell = collectionView.cellForItem(at: ip) as? СhatMessageCollectionViewCell<ExtraData> else { return }
-        guard let messageData = cell.message else { return }
-        guard messageData.deletedAt == nil else { return }
 
-        let messageController = dataSource.controllerForMessage(self, messageData.message)
-        router.showMessageActionsPopUp(
-            messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
-            messageData: messageData,
-            messageController: messageController,
-            messageActions: messageActions(messageController: messageController)
-        )
+        didSelectMessageCell(cell)
     }
 
     // MARK: - UICollectionViewDataSource
@@ -192,6 +185,35 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         }
     }
 
+    // MARK: - ChatMessageActionsVCDelegate
+
+    open func chatMessageActionsVC(
+        _ vc: ChatMessageActionsVC<ExtraData>,
+        didTapOnInlineReplyFor message: _ChatMessage<ExtraData>
+    ) {
+        delegate?.didTapOnInlineReply?(self, message)
+        dismiss(animated: true)
+    }
+
+    open func chatMessageActionsVC(
+        _ vc: ChatMessageActionsVC<ExtraData>,
+        didTapOnThreadReplyFor message: _ChatMessage<ExtraData>
+    ) {
+        dismiss(animated: true)
+    }
+
+    open func chatMessageActionsVC(
+        _ vc: ChatMessageActionsVC<ExtraData>,
+        didTapOnEdit message: _ChatMessage<ExtraData>
+    ) {
+        delegate?.didTapOnEdit?(self, message)
+        dismiss(animated: true)
+    }
+
+    open func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC<ExtraData>) {
+        dismiss(animated: true)
+    }
+
     // MARK: - Private
 
     private func messageGroupPart(at indexPath: IndexPath) -> _ChatMessageGroupPart<ExtraData> {
@@ -227,67 +249,27 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         )
     }
 
-    private func messageActions(messageController: _ChatMessageController<ExtraData>) -> [ChatMessageActionItem] {
-        guard
-            let message = messageController.message,
-            let currentUser = messageController.client.currentUserController().currentUser
-        else { return [] }
+    private func didSelectMessageCell(_ cell: СhatMessageCollectionViewCell<ExtraData>) {
+        guard let messageData = cell.message, messageData.isInteractionEnabled else { return }
 
-        var actions: [ChatMessageActionItem] = []
+        let actionsController = ChatMessageActionsVC<ExtraData>()
+        actionsController.messageController = dataSource.controllerForMessage(self, messageData.message)
+        actionsController.delegate = .init(delegate: self)
 
-        actions.append(.inlineReply { [weak self] in
-            self?.dismiss(animated: true)
-            guard let self = self else { return }
-            self.delegate?.didTapOnInlineReply?(self, message)
-        })
+        var reactionsController: ChatMessageReactionViewController<ExtraData>? {
+            guard messageData.message.localState == nil else { return nil }
 
-        actions.append(.threadReply { [weak self] in
-            debugPrint("thread reply")
-            self?.dismiss(animated: true)
-        })
-
-        actions.append(.copy { [weak self] in
-            UIPasteboard.general.string = message.text
-            self?.dismiss(animated: true)
-        })
-
-        if message.isSentByCurrentUser {
-            actions.append(.edit { [weak self] in
-                self?.dismiss(animated: true)
-                guard let self = self else { return }
-                self.delegate?.didTapOnEdit?(self, message)
-            })
-            actions.append(.delete { [weak self] in
-                self?.router.showMessageDeletionConfirmationAlert { confirmed in
-                    guard confirmed else { return }
-
-                    messageController.deleteMessage { [messageController] _ in
-                        self?.dismiss(animated: true)
-                        _ = messageController
-                    }
-                }
-            })
-        } else {
-            if currentUser.mutedUsers.contains(message.author) {
-                actions.append(.unmuteUser { [weak self] in
-                    let userController = messageController.client.userController(userId: message.author.id)
-                    userController.unmute { [userController] _ in
-                        self?.dismiss(animated: true)
-                        _ = userController
-                    }
-                })
-            } else {
-                actions.append(.muteUser { [weak self] in
-                    let userController = messageController.client.userController(userId: message.author.id)
-                    userController.mute { [userController] _ in
-                        self?.dismiss(animated: true)
-                        _ = userController
-                    }
-                })
-            }
+            let controller = ChatMessageReactionViewController<ExtraData>()
+            controller.messageController = dataSource.controllerForMessage(self, messageData.message)
+            return controller
         }
 
-        return actions
+        router.showMessageActionsPopUp(
+            messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
+            messageData: messageData,
+            messageActionsController: actionsController,
+            messageReactionsController: reactionsController
+        )
     }
 
     private func didTapOnAttachment(_ attachment: _ChatMessageAttachment<ExtraData>, in message: _ChatMessage<ExtraData>) {
@@ -296,7 +278,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
             let messageController = dataSource.controllerForMessage(self, message)
             messageController.restartFailedAttachmentUploading(with: attachment.id)
         default:
-            self.router.showPreview(for: attachment)
+            router.showPreview(for: attachment)
         }
     }
 }
