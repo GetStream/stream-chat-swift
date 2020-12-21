@@ -269,7 +269,7 @@ final class MessageUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
 
-    func test_deleteMessage_removesMessageThatExistOnlyLocally() throws {
+    func test_deleteMessage_softlyRemovesMessageThatExistOnlyLocally() throws {
         for state in [LocalMessageState.pendingSend, .sendingFailed] {
             let currentUserId: UserId = .unique
             let messageId: MessageId = .unique
@@ -290,15 +290,15 @@ final class MessageUpdater_Tests: StressTestCase {
                 completionCalled = true
             }
             
-            var message: MessageDTO? {
-                database.viewContext.message(id: messageId)
-            }
+            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
             
             AssertAsync {
                 // Assert completion is called
                 Assert.willBeTrue(completionCalled)
-                // Assert message is deleted locally
-                Assert.willBeTrue(message == nil)
+                // Assert `deletedAt` is set for the message
+                Assert.willBeTrue(message.deletedAt != nil)
+                // Assert `type` is set to `.deleted`
+                Assert.willBeEqual(message.type, MessageType.deleted.rawValue)
                 // Assert API is not called
                 Assert.staysTrue(self.apiClient.request_endpoint == nil)
             }
