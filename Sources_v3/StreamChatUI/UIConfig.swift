@@ -151,17 +151,21 @@ public extension UIConfig {
         public var offsetToPreloadMoreMessages: CGFloat = 100
         public var messageContentView: ChatMessageContentView<ExtraData>.Type = ChatMessageContentView<ExtraData>.self
         public var messageContentSubviews = MessageContentViewSubviews()
-        public var messageAvailableReactions: [MessageReactionType] = [
+        public var messageActionsSubviews = MessageActionsSubviews()
+    }
+
+    struct MessageActionsSubviews {
+        public var reactionsView: ChatMessageReactionsView<ExtraData>.Type = ChatMessageReactionsView<ExtraData>.self
+        public var availableReactions: [MessageReactionType] = [
             .init(rawValue: "like"),
             .init(rawValue: "haha"),
             .init(rawValue: "facepalm"),
             .init(rawValue: "roar")
         ]
-        public var messageActionsView: MessageActionsView<ExtraData>.Type =
+        public var actionsView: MessageActionsView<ExtraData>.Type =
             MessageActionsView<ExtraData>.self
-        public var messageActionButton: MessageActionsView<ExtraData>.ActionButton.Type =
+        public var actionButton: MessageActionsView<ExtraData>.ActionButton.Type =
             MessageActionsView<ExtraData>.ActionButton.self
-        public var messageReactionsView: ChatMessageReactionsView<ExtraData>.Type = ChatMessageReactionsView<ExtraData>.self
     }
 
     struct MessageContentViewSubviews {

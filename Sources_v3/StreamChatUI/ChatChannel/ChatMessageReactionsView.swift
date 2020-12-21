@@ -225,7 +225,9 @@ open class ChatMessageReactionViewController<ExtraData: ExtraDataTypes>: ViewCon
 
     private lazy var reactionsView = uiConfig
         .messageList
-        .messageReactionsView.init()
+        .messageActionsSubviews
+        .reactionsView
+        .init()
         .withoutAutoresizingMaskConstraints
 
     // MARK: - Life Cycle
@@ -248,7 +250,7 @@ open class ChatMessageReactionViewController<ExtraData: ExtraDataTypes>: ViewCon
     override open func updateContent() {
         reactionsView.reload(
             from: messageController.message,
-            with: uiConfig.messageList.messageAvailableReactions
+            with: uiConfig.messageList.messageActionsSubviews.availableReactions
         )
     }
 

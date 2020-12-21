@@ -40,7 +40,7 @@ open class MessageActionsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider
         }
 
         actionItems.forEach {
-            let actionView = uiConfig.messageList.messageActionButton.init()
+            let actionView = uiConfig.messageList.messageActionsSubviews.actionButton.init()
             actionView.actionItem = $0
             stackView.addArrangedSubview(actionView)
         }
