@@ -5,10 +5,8 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes>: UIInputViewController,
+open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
-    Customizable,
-    AppearanceSetting,
     UITextViewDelegate,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
@@ -63,27 +61,15 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     }()
     
     // MARK: Setup
-    
-    override open func viewDidLoad() {
-        super.viewDidLoad()
-        
-        setUp()
-        (self as! Self).applyDefaultAppearance()
-        setUpAppearance()
-        setUpLayout()
-        updateContent()
-    }
-    
-    open func setUp() {
+
+    override open func setUp() {
+        super.setUp()
         setupInputView()
         observeSizeChanges()
     }
-    
-    open func defaultAppearance() {}
-    
-    open func setUpAppearance() {}
-    
-    open func updateContent() {
+
+    override open func updateContent() {
+        super.updateContent()
         switch state {
         case .initial:
             textView.text = ""
@@ -125,7 +111,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     }
     
     func setupInputView() {
-        inputView = composerView
+        view.embed(composerView)
         
         composerView.messageInputView.textView.delegate = self
         
@@ -141,8 +127,6 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
         composerView.dismissButton.addTarget(self, action: #selector(resetState), for: .touchUpInside)
         composerView.attachmentsView.didTapRemoveItemButton = { [weak self] index in self?.imageAttachments.remove(at: index) }
     }
-    
-    open func setUpLayout() {}
     
     public func observeSizeChanges() {
         composerView.addObserver(self, forKeyPath: "safeAreaInsets", options: .new, context: nil)
@@ -295,20 +279,11 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
 
     // MARK: - UITextViewDelegate
     
-    public func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
-        composerView.messageInputView.textView.inputAccessoryView = view
-        return true
-    }
-
-    public func textViewShouldEndEditing(_ textView: UITextView) -> Bool {
-        composerView.messageInputView.textView.inputAccessoryView = nil
-        return true
-    }
-    
     public func textViewDidChange(_ textView: UITextView) {
         isEmpty = textView.text.replacingOccurrences(of: " ", with: "").isEmpty
         replaceTextWithSlashCommandViewIfNeeded()
         promptSuggestionIfNeeded(for: textView.text)
+        composerView.invalidateIntrinsicContentSize()
     }
 
     // MARK: - UIImagePickerControllerDelegate
