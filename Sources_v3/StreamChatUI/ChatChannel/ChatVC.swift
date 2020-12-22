@@ -50,6 +50,8 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
         super.setUp()
         
         messageComposerViewController.controller = channelController
+        messageComposerViewController.suggestionsPresenter = self
+        
         messageList.delegate = .wrap(self)
         messageList.dataSource = .wrap(self)
         
