@@ -5,22 +5,37 @@
 import StreamChat
 import UIKit
 
+public protocol SuggestionsViewControllerPresenter: class {
+    func showSuggestionsViewController(
+        with state: SuggestionsViewControllerState,
+        onSelectItem: ((Int) -> Void)
+    )
+    func dismissSuggestionsViewController()
+
+    var isSuggestionControllerPresented: Bool { get }
+}
+
+public enum SuggestionsViewControllerState {
+    case commands([Command])
+    case mentions([String])
+}
+
 open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
-    var heightConstraint: NSLayoutConstraint?
-    
-    // MARK: - Underlying types
-    
-    public enum State {
-        case commands([Command])
-        case mentions([String])
-    }
-
     // MARK: - Property
+
+    private var frameObserver: NSKeyValueObservation?
+
+    /// View to which the suggestions should be pinned.
+    /// This view should be assigned as soon as instance of this
+    /// class is instantiated, because we set observer to
+    /// the bottomAnchorView as soon as we compute the height of the
+    /// contentSize of the nested collectionView
+    public var bottomAnchorView: UIView?
     
-    public var state: State? {
+    public var state: SuggestionsViewControllerState? {
         didSet {
             updateContentIfNeeded()
         }
@@ -42,12 +57,9 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
         .init(layout: uiConfig.messageComposer.suggestionsCollectionViewLayout.init())
         .withoutAutoresizingMaskConstraints
 
-    // MARK: - Overrides
+    open private(set) lazy var containerView: UIView = UIView().withoutAutoresizingMaskConstraints
 
-    override open func viewDidLoad() {
-        super.viewDidLoad()
-        view.embed(collectionView)
-    }
+    // MARK: - Overrides
 
     override open func setUp() {
         super.setUp()
@@ -61,18 +73,6 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
             uiConfig.messageComposer.suggestionsMentionCollectionViewCell,
             forCellWithReuseIdentifier: uiConfig.messageComposer.suggestionsMentionCollectionViewCell.reuseId
         )
-        
-        collectionViewHeightObserver = collectionView.observe(
-            \.contentSize,
-            options: [.new],
-            changeHandler: { [weak self] _, change in
-                DispatchQueue.main.async {
-                    guard let self = self, let newSize = change.newValue else { return }
-                    self.heightConstraint?.constant = newSize.height
-                    self.view.setNeedsLayout()
-                }
-            }
-        )
     }
 
     override public func setUpAppearance() {
@@ -81,23 +81,55 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
     }
 
     override public func setUpLayout() {
-        view.translatesAutoresizingMaskIntoConstraints = false
+        view.embed(containerView)
+        containerView.embed(
+            collectionView,
+            insets: .init(
+                top: 0,
+                leading: containerView.directionalLayoutMargins.leading,
+                bottom: 0,
+                trailing: containerView.directionalLayoutMargins.trailing
+            )
+        )
 
-        heightConstraint = collectionView.heightAnchor.constraint(equalToConstant: 0)
-
-        let constraints = [heightConstraint].compactMap { $0 }
-
-        NSLayoutConstraint.activate(constraints)
+        collectionViewHeightObserver = collectionView.observe(
+            \.contentSize,
+            options: [.new],
+            changeHandler: { [weak self] _, change in
+                DispatchQueue.main.async {
+                    guard let newSize = change.newValue, newSize.height < 300 else {
+                        // TODO: Compute size better according to 4 cells.
+                        self?.view.frame.size.height = 300
+                        self?.updateViewFrame()
+                        return
+                    }
+                    self?.view.frame.size.height = newSize.height
+                    self?.updateViewFrame()
+                }
+            }
+        )
         updateContent()
-    }
-
-    override open func updateViewConstraints() {
-        super.updateViewConstraints()
-        heightConstraint?.constant = collectionView.contentSize.height
     }
 
     override open func updateContent() {
         collectionView.reloadData()
+    }
+
+    // MARK: - Private
+
+    private func updateViewFrame() {
+        frameObserver = bottomAnchorView?.observe(
+            \.bounds,
+            options: [.new, .initial],
+            changeHandler: { [weak self] bottomAnchoredView, change in
+                DispatchQueue.main.async {
+                    guard let self = self, let changedFrame = change.newValue else { return }
+
+                    let newFrame = bottomAnchoredView.convert(changedFrame, to: nil)
+                    self.view.frame.origin.y = newFrame.minY - self.view.frame.height
+                }
+            }
+        )
     }
 
     // MARK: - UICollectionView
