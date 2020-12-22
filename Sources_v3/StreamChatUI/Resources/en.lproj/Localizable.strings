@@ -27,5 +27,7 @@
 "composer.title.reply" = "Reply to Message";
 "composer.placeholder.message" = "Send a message";
 "composer.placeholder.giphy" = "Search GIFs";
+"composer.checkmark.direct-message-reply" = "Also send as direct message";
+"composer.checkmark.channel-reply" = "Also send in channel";
 
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
