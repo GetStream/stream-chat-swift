@@ -19,16 +19,10 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     public private(set) lazy var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData> =
         uiConfig.messageComposer.suggestionsViewController.init()
 
-    // TODO: composer input must be able to distinguish between channel message send and thread message send
-    public private(set) lazy var messageInputAccessoryViewController: MessageComposerInputAccessoryViewController<ExtraData> = {
-        let inputAccessoryVC = MessageComposerInputAccessoryViewController<ExtraData>()
-
-        // `inputAccessoryViewController` is part of `_UIKeyboardWindowScene` so we need to manually pass
-        // tintColor down that `inputAccessoryViewController` view hierarchy.
-        inputAccessoryVC.view.tintColor = view.tintColor
-        inputAccessoryVC.suggestionsPresenter = self
-        return inputAccessoryVC
-    }()
+    public private(set) lazy var messageComposerViewController = uiConfig
+        .messageComposer
+        .messageComposerViewController
+        .init()
 
     public private(set) lazy var messageList = uiConfig
         .messageList
@@ -36,7 +30,9 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
         .init()
 
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
-
+    
+    private var messageComposerBottomConstraint: NSLayoutConstraint?
+    
     // MARK: - Life Cycle
 
     override open func viewDidLoad() {
@@ -52,21 +48,59 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
 
     override open func setUp() {
         super.setUp()
-
-        messageInputAccessoryViewController.controller = channelController
+        
+        messageComposerViewController.controller = channelController
         messageList.delegate = .wrap(self)
         messageList.dataSource = .wrap(self)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillChangeFrame),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
+    }
+    
+    @objc func keyboardWillChangeFrame(notification: NSNotification) {
+        guard
+            let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+            let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
+            let curve = notification.userInfo![UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
+        else { return }
+        
+        messageComposerBottomConstraint?.constant = -frame.height
+        
+        UIView.animate(
+            withDuration: duration,
+            delay: 0.0,
+            options: UIView.AnimationOptions(rawValue: curve),
+            animations: { [weak self] in
+                self?.view.layoutIfNeeded()
+            }
+        )
     }
 
     override open func setUpLayout() {
         super.setUpLayout()
+        
         messageList.view.translatesAutoresizingMaskIntoConstraints = false
+        messageComposerViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        
         addChildViewController(messageList, targetView: view)
+        addChildViewController(messageComposerViewController, targetView: view)
+
         messageList.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
         messageList.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
         messageList.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        messageList.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-        messageList.collectionView.contentInset.bottom = 100
+        messageList.view.bottomAnchor.constraint(equalTo: messageComposerViewController.view.topAnchor).isActive = true
+
+        messageComposerViewController.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+            .isActive = true
+        messageComposerViewController.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+            .isActive = true
+        messageComposerBottomConstraint =
+            messageComposerViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        messageComposerBottomConstraint?.isActive = true
     }
 
     override public func defaultAppearance() {
@@ -91,14 +125,6 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
             title.text = data.title
             subtitle.text = data.subtitle
         }
-    }
-
-    // MARK: - ChatChannelMessageComposerView
-
-    override open var canBecomeFirstResponder: Bool { true }
-
-    override open var inputAccessoryViewController: UIInputViewController? {
-        messageInputAccessoryViewController
     }
 
     // MARK: - To override
@@ -153,11 +179,11 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>) {}
     
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>) {
-        messageInputAccessoryViewController.state = .reply(message)
+        messageComposerViewController.state = .reply(message)
     }
     
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>) {
-        messageInputAccessoryViewController.state = .edit(message)
+        messageComposerViewController.state = .edit(message)
     }
 }
 
@@ -171,7 +197,7 @@ extension ChatVC: SuggestionsViewControllerPresenter {
     public func showSuggestionsViewController(with state: SuggestionsViewControllerState, onSelectItem: ((Int) -> Void)) {
         suggestionsViewController.state = state
         addChildViewController(suggestionsViewController, targetView: view)
-        suggestionsViewController.bottomAnchorView = messageInputAccessoryViewController.composerView
+        suggestionsViewController.bottomAnchorView = messageComposerViewController.composerView
     }
 
     public func dismissSuggestionsViewController() {

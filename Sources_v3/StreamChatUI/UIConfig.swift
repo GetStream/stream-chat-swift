@@ -217,6 +217,8 @@ public extension UIConfig {
 
 public extension UIConfig {
     struct MessageComposer {
+        public var messageComposerViewController: MessageComposerViewController<ExtraData>.Type =
+            MessageComposerViewController<ExtraData>.self
         public var messageComposerView: ChatChannelMessageComposerView<ExtraData>.Type =
             ChatChannelMessageComposerView<ExtraData>.self
         public var messageInputView: ChatChannelMessageInputView<ExtraData>.Type = ChatChannelMessageInputView<ExtraData>.self
