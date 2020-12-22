@@ -5,7 +5,8 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMessageListVC<ExtraData>> {
+open class ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMessageListVC<ExtraData>>,
+                                                             ChatMessageActionsVCDelegate {
     open func showMessageActionsPopUp(
         messageContentFrame: CGRect,
         messageData: _ChatMessageGroupPart<ExtraData>,
@@ -16,6 +17,7 @@ open class ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMess
         popup.message = messageData
         popup.messageViewFrame = messageContentFrame
         popup.actionsController = messageActionsController
+        popup.actionsController.delegate = .init(delegate: self)
         popup.reactionsController = messageReactionsController
         popup.modalPresentationStyle = .overFullScreen
         popup.modalTransitionStyle = .crossDissolve
@@ -29,5 +31,34 @@ open class ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMess
         
         let navigation = UINavigationController(rootViewController: preview)
         rootViewController.present(navigation, animated: true)
+    }
+
+    // MARK: - ChatMessageActionsVCDelegate
+
+    open func chatMessageActionsVC(
+        _ vc: ChatMessageActionsVC<ExtraData>,
+        didTapOnInlineReplyFor message: _ChatMessage<ExtraData>
+    ) {
+        rootViewController.delegate?.didTapOnInlineReply?(rootViewController, message)
+        rootViewController.dismiss(animated: true)
+    }
+
+    open func chatMessageActionsVC(
+        _ vc: ChatMessageActionsVC<ExtraData>,
+        didTapOnThreadReplyFor message: _ChatMessage<ExtraData>
+    ) {
+        rootViewController.dismiss(animated: true)
+    }
+
+    open func chatMessageActionsVC(
+        _ vc: ChatMessageActionsVC<ExtraData>,
+        didTapOnEdit message: _ChatMessage<ExtraData>
+    ) {
+        rootViewController.delegate?.didTapOnEdit?(rootViewController, message)
+        rootViewController.dismiss(animated: true)
+    }
+
+    open func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC<ExtraData>) {
+        rootViewController.dismiss(animated: true)
     }
 }
