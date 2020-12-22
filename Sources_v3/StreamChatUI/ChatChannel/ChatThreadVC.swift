@@ -15,6 +15,8 @@ open class ChatThreadVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
 
         controller.setDelegate(self)
         controller.synchronize()
+
+        messageComposerViewController.threadParentMessage = controller.message
     }
 
     override func makeNavbarListener(

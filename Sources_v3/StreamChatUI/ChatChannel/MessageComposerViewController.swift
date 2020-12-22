@@ -31,6 +31,12 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         }
     }
     
+    public var threadParentMessage: _ChatMessage<ExtraData>? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+    
     var isEmpty: Bool = true {
         didSet {
             composerView.attachmentButton.isHidden = !isEmpty
@@ -103,6 +109,17 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             composerView.container.topStackView.isHidden = false
             textView.text = message.text
         }
+        
+        if let memberCount = controller?.channel?.memberCount,
+            threadParentMessage != nil {
+            composerView.setCheckmarkView(hidden: false)
+            
+            if memberCount > 2 {
+                composerView.checkmarkControl.label.text = L10n.Composer.Checkmark.channelReply
+            } else {
+                composerView.checkmarkControl.label.text = L10n.Composer.Checkmark.directMessageReply
+            }
+        }
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -151,38 +168,50 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     // MARK: Button actions
     
     @objc func sendMessage() {
-        guard
-            let controller = controller,
-            let cid = controller.cid,
-            let text = composerView.messageInputView.textView.text,
+        guard let text = composerView.messageInputView.textView.text,
             !text.replacingOccurrences(of: " ", with: "").isEmpty
         else { return }
         
         switch state {
         case .initial:
             // TODO: Attachments
-            controller.createNewMessage(text: text)
-        case let .reply(messageToReply):
-            let messageController = controller.client.messageController(
-                cid: cid,
-                messageId: messageToReply.id
-            )
+            createNewMessage(text: text)
+        case .reply:
             // TODO:
             // 1. Attachments
             // 2. Should be inline reply after backend implementation.
-            messageController.createNewReply(text: textView.text, showReplyInChannel: true)
+            print("Inline reply sent.")
         case let .edit(messageToEdit):
-            let messageController = controller.client.messageController(
+            guard let cid = controller?.cid else { return }
+            let messageController = controller?.client.messageController(
                 cid: cid,
                 messageId: messageToEdit.id
             )
             // TODO: Adjust LLC to edit attachments also
-            messageController.editMessage(text: textView.text)
+            messageController?.editMessage(text: text)
         case let .slashCommand(command):
-            controller.createNewMessage(text: "/\(command.name) " + text)
+            createNewMessage(text: "/\(command.name) " + text)
         }
         
         state = .initial
+    }
+    
+    func createNewMessage(text: String) {
+        guard let cid = controller?.cid else { return }
+        
+        if let threadParentMessage = threadParentMessage {
+            let messageController = controller?.client.messageController(
+                cid: cid,
+                messageId: threadParentMessage.id
+            )
+            
+            messageController?.createNewReply(
+                text: text,
+                showReplyInChannel: composerView.checkmarkControl.isSelected
+            )
+        } else {
+            controller?.createNewMessage(text: text)
+        }
     }
     
     @objc func showImagePicker() {
