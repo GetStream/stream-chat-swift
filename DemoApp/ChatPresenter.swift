@@ -9,7 +9,7 @@ import UIKit
 extension UIViewController {
     // TODO: Where to put this???
     func presentChat(userCredentials: UserCredentials) {
-        LogConfig.level = .debug
+        LogConfig.level = .error
         
         // Create client
         let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))

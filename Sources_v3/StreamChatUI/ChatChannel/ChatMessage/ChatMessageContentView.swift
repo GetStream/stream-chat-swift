@@ -205,9 +205,9 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         }
 
         if message?.deletedAt == nil, !(message?.reactionScores.isEmpty ?? true) {
-            toActivate.append(bubbleToReactionsConstraint!)
+//            toActivate.append(bubbleToReactionsConstraint!)
         } else {
-            toDeactivate.append(bubbleToReactionsConstraint!)
+//            toDeactivate.append(bubbleToReactionsConstraint!)
         }
         
         if message?.isLastInGroup == true {
