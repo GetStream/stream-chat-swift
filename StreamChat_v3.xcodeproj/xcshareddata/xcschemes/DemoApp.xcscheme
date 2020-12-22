@@ -50,6 +50,12 @@
             ReferencedContainer = "container:StreamChat_v3.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-UIViewLayoutFeedbackLoopDebuggingThreshold 100"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

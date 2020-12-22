@@ -9,8 +9,11 @@ extension ChatFileAttachmentListView {
     open class ItemView: ChatMessageAttachmentInfoView<ExtraData> {
         // MARK: - Subviews
 
-        public private(set) lazy var fileIconImageView = UIImageView()
-            .withoutAutoresizingMaskConstraints
+        public private(set) lazy var fileIconImageView: UIImageView = {
+            let imageView = UIImageView().withoutAutoresizingMaskConstraints
+            imageView.contentMode = .center
+            return imageView
+        }()
 
         // MARK: - Overrides
 
@@ -29,9 +32,8 @@ extension ChatFileAttachmentListView {
 
             NSLayoutConstraint.activate([
                 fileIconImageView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                fileIconImageView.centerYAnchor.constraint(equalTo: centerYAnchor),
-                fileIconImageView.topAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
-                fileIconImageView.bottomAnchor.constraint(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor),
+                fileIconImageView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+                fileIconImageView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
                 
                 actionIconImageView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
                 actionIconImageView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
