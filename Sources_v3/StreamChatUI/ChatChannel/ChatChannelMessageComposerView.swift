@@ -64,7 +64,13 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: View,
         .composerButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var titleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    public private(set) lazy var titleLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+    
+    public private(set) lazy var checkmarkControl: MessageComposerCheckmarkControl<ExtraData> = uiConfig
+        .messageComposer
+        .checkmarkControl.init()
+        .withoutAutoresizingMaskConstraints
     
     // MARK: - Overrides
     
@@ -165,6 +171,8 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: View,
         container.leftStackView.addArrangedSubview(attachmentButton)
         container.leftStackView.addArrangedSubview(commandsButton)
         
+        container.bottomStackView.addArrangedSubview(checkmarkControl)
+        
         [shrinkInputButton, attachmentButton, commandsButton, sendButton, dismissButton]
             .forEach { button in
                 button.pin(anchors: [.width], to: button.intrinsicContentSize.width)
@@ -173,5 +181,11 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: View,
 
         attachmentsView.isHidden = true
         shrinkInputButton.isHidden = true
+    }
+    
+    open func setCheckmarkView(hidden: Bool) {
+        if container.bottomStackView.isHidden != hidden {
+            container.bottomStackView.isHidden = hidden
+        }
     }
 }
