@@ -147,26 +147,5 @@ extension ChatMessageActionsVC {
         public var didTapOnThreadReply: (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
         public var didTapOnEdit: (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
         public var didFinish: (ChatMessageActionsVC) -> Void
-
-        public init(
-            didTapOnInlineReply: @escaping (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
-            didTapOnThreadReply: @escaping (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
-            didTapOnEdit: @escaping (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
-            didFinish: @escaping (ChatMessageActionsVC) -> Void = { _ in }
-        ) {
-            self.didTapOnInlineReply = didTapOnInlineReply
-            self.didTapOnThreadReply = didTapOnThreadReply
-            self.didTapOnEdit = didTapOnEdit
-            self.didFinish = didFinish
-        }
-
-        public init<Delegate: ChatMessageActionsVCDelegate>(delegate: Delegate) where Delegate.ExtraData == ExtraData {
-            self.init(
-                didTapOnInlineReply: { [weak delegate] in delegate?.chatMessageActionsVC($0, didTapOnInlineReplyFor: $1) },
-                didTapOnThreadReply: { [weak delegate] in delegate?.chatMessageActionsVC($0, didTapOnThreadReplyFor: $1) },
-                didTapOnEdit: { [weak delegate] in delegate?.chatMessageActionsVC($0, didTapOnEdit: $1) },
-                didFinish: { [weak delegate] in delegate?.chatMessageActionsVCDidFinish($0) }
-            )
-        }
     }
 }

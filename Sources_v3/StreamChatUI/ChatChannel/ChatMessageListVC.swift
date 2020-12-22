@@ -34,8 +34,7 @@ public protocol ChatMessageListVCDelegate: AnyObject {
 open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
-    UIConfigProvider,
-    ChatMessageActionsVCDelegate {
+    UIConfigProvider {
     public struct DataSource {
         public var numberOfMessages: (ChatMessageListVC) -> Int
         public var messageAtIndex: (ChatMessageListVC, Int) -> _ChatMessage<ExtraData>
@@ -189,35 +188,6 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         }
     }
 
-    // MARK: - ChatMessageActionsVCDelegate
-
-    open func chatMessageActionsVC(
-        _ vc: ChatMessageActionsVC<ExtraData>,
-        didTapOnInlineReplyFor message: _ChatMessage<ExtraData>
-    ) {
-        delegate?.didTapOnInlineReply?(self, message)
-        dismiss(animated: true)
-    }
-
-    open func chatMessageActionsVC(
-        _ vc: ChatMessageActionsVC<ExtraData>,
-        didTapOnThreadReplyFor message: _ChatMessage<ExtraData>
-    ) {
-        dismiss(animated: true)
-    }
-
-    open func chatMessageActionsVC(
-        _ vc: ChatMessageActionsVC<ExtraData>,
-        didTapOnEdit message: _ChatMessage<ExtraData>
-    ) {
-        delegate?.didTapOnEdit?(self, message)
-        dismiss(animated: true)
-    }
-
-    open func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC<ExtraData>) {
-        dismiss(animated: true)
-    }
-
     // MARK: - Private
 
     private func messageGroupPart(at indexPath: IndexPath) -> _ChatMessageGroupPart<ExtraData> {
@@ -258,7 +228,6 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
 
         let actionsController = ChatMessageActionsVC<ExtraData>()
         actionsController.messageController = dataSource.controllerForMessage(self, messageData.message)
-        actionsController.delegate = .init(delegate: self)
 
         var reactionsController: ChatMessageReactionViewController<ExtraData>? {
             guard messageData.message.localState == nil else { return nil }
