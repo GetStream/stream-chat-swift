@@ -48,13 +48,12 @@ extension UIViewController {
 
 class DemoChatChannelListRouter: ChatChannelListRouter<DefaultExtraData> {
     override func openCreateNewChannel() {
-        let client = rootViewController?.controller.client
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
         let chatViewController = storyboard.instantiateViewController(withIdentifier: "CreateChatViewController")
             as! CreateChatViewController
-        chatViewController.searchController = client?.userSearchController()
+        chatViewController.searchController = rootViewController.controller.client.userSearchController()
         
-        rootViewController?.navigationController?.pushViewController(chatViewController, animated: true)
+        navigationController?.pushViewController(chatViewController, animated: true)
     }
 }
