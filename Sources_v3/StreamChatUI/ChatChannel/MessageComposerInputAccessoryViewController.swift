@@ -25,6 +25,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     // MARK: - Properties
 
     var controller: _ChatChannelController<ExtraData>?
+    weak var suggestionsPresenter: SuggestionsViewControllerPresenter?
     
     public var state: State = .initial {
         didSet {
@@ -52,10 +53,6 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     public var textView: ChatChannelMessageInputTextView<ExtraData> {
         composerView.messageInputView.textView
     }
-    
-    public private(set) lazy var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData> = {
-        uiConfig.messageComposer.suggestionsViewController.init()
-    }()
     
     public private(set) lazy var imagePicker: UIImagePickerController = {
         let picker = UIImagePickerController()
@@ -215,7 +212,7 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     }
     
     @objc func showAvailableCommands() {
-        if suggestionsViewController.isPresented {
+        if suggestionsPresenter?.isSuggestionControllerPresented ?? false {
             dismissSuggestionsViewController()
         } else {
             promptSuggestionIfNeeded(for: "/")
@@ -228,24 +225,17 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
     
     // MARK: Suggestions
     
-    func showSuggestionsViewController() {
-        guard let parent = parent else { return }
-        parent.addChild(suggestionsViewController)
-        parent.view.addSubview(suggestionsViewController.view)
-        suggestionsViewController.didMove(toParent: parent)
-
-        guard let suggestionView = suggestionsViewController.view else { return }
-        suggestionView.bottomAnchor.constraint(equalTo: composerView.topAnchor).isActive = true
-        suggestionView.centerXAnchor.constraint(equalTo: composerView.centerXAnchor).isActive = true
-        suggestionView.leadingAnchor.constraint(equalTo: composerView.layoutMarginsGuide.leadingAnchor).isActive = true
-        suggestionView.trailingAnchor.constraint(equalTo: composerView.layoutMarginsGuide.trailingAnchor).isActive = true
+    func showSuggestionsViewController(
+        with state: SuggestionsViewControllerState,
+        onSelectItem: ((Int) -> Void)
+    ) {
+        suggestionsPresenter?.showSuggestionsViewController(with: state, onSelectItem: onSelectItem)
     }
 
     func dismissSuggestionsViewController() {
-        suggestionsViewController.removeFromParent()
-        suggestionsViewController.view.removeFromSuperview()
+        suggestionsPresenter?.dismissSuggestionsViewController()
     }
-    
+
     // MARK: Attachments
     
     var imageAttachments: [UIImage] = [] {
@@ -281,12 +271,13 @@ open class MessageComposerInputAccessoryViewController<ExtraData: ExtraDataTypes
         if !typedCommand.isEmpty {
             commandHints = commands.filter { $0.name.range(of: typedCommand, options: .caseInsensitive) != nil }
         }
-    
-        suggestionsViewController.state = .commands(commandHints)
-        suggestionsViewController.didSelectItemAt = { [weak self] index in
-            self?.state = .slashCommand(commandHints[index])
-        }
-        showSuggestionsViewController()
+
+        showSuggestionsViewController(
+            with: .commands(commandHints),
+            onSelectItem: { [weak self] index in
+                self?.state = .slashCommand(commandHints[index])
+            }
+        )
     }
     
     func replaceTextWithSlashCommandViewIfNeeded() {
