@@ -29,5 +29,9 @@
 "composer.placeholder.giphy" = "Search GIFs";
 "composer.checkmark.direct-message-reply" = "Also send as direct message";
 "composer.checkmark.channel-reply" = "Also send in channel";
+"composer.picker.title" = "Choose attachment type: ";
+"composer.picker.file" = "File";
+"composer.picker.image" = "Photo";
+"composer.picker.cancel" = "Cancel";
 
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
