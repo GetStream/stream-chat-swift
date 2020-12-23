@@ -60,9 +60,16 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     
     public private(set) lazy var imagePicker: UIImagePickerController = {
         let picker = UIImagePickerController()
-        picker.mediaTypes = ["public.image", "public.movie"]
+        picker.mediaTypes = ["public.image"]
         picker.sourceType = .photoLibrary
         picker.delegate = self
+        return picker
+    }()
+    
+    public private(set) lazy var documentPicker: UIDocumentPickerViewController = {
+        let picker = UIDocumentPickerViewController(documentTypes: ["public.item"], in: .import)
+        picker.delegate = self
+        picker.allowsMultipleSelection = true
         return picker
     }()
     
@@ -132,7 +139,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         
         composerView.messageInputView.textView.delegate = self
         
-        composerView.attachmentButton.addTarget(self, action: #selector(showImagePicker), for: .touchUpInside)
+        composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
@@ -142,7 +149,15 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             for: .touchUpInside
         )
         composerView.dismissButton.addTarget(self, action: #selector(resetState), for: .touchUpInside)
-        composerView.attachmentsView.didTapRemoveItemButton = { [weak self] index in self?.imageAttachments.remove(at: index) }
+        composerView.attachmentsView.didTapRemoveItemButton = { [weak self] index in
+            switch self?.selectedAttachments {
+            case .documents:
+                self?.documentAttachments.remove(at: index)
+            case .media:
+                self?.imageAttachments.remove(at: index)
+            default: return
+            }
+        }
     }
     
     public func observeSizeChanges() {
@@ -207,15 +222,42 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             
             messageController?.createNewReply(
                 text: text,
+                attachments: attachmentSeeds,
                 showReplyInChannel: composerView.checkmarkControl.isSelected
             )
         } else {
-            controller?.createNewMessage(text: text)
+            controller?.createNewMessage(text: text, attachments: attachmentSeeds)
         }
     }
     
-    @objc func showImagePicker() {
-        present(imagePicker, animated: true, completion: nil)
+    @objc func showAttachmentsPicker() {
+        var actionSheet: UIAlertController {
+            let actionSheet = UIAlertController(title: nil, message: L10n.Composer.Picker.title, preferredStyle: .actionSheet)
+            
+            actionSheet.addAction(UIAlertAction(title: L10n.Composer.Picker.file, style: .default, handler: { [weak self] _ in
+                guard let self = self else { return }
+                self.present(self.documentPicker, animated: true, completion: nil)
+            }))
+            
+            actionSheet.addAction(UIAlertAction(title: L10n.Composer.Picker.image, style: .default, handler: { [weak self] _ in
+                guard let self = self else { return }
+                self.present(self.imagePicker, animated: true, completion: nil)
+            }))
+            
+            actionSheet.addAction(UIAlertAction(title: L10n.Composer.Picker.cancel, style: .cancel))
+            
+            return actionSheet
+        }
+                
+        // Right now it's not possible to mix image and file attachments so we are limiting this option.
+        switch selectedAttachments {
+        case .none:
+            present(actionSheet, animated: true, completion: nil)
+        case .media:
+            present(imagePicker, animated: true, completion: nil)
+        case .documents:
+            present(documentPicker, animated: true, completion: nil)
+        }
     }
     
     @objc func shrinkInput() {
@@ -251,15 +293,67 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
 
     // MARK: Attachments
     
-    var imageAttachments: [UIImage] = [] {
+    public typealias AttachmentInfo = (preview: UIImage, localURL: URL)
+    
+    public enum SelectedAttachments {
+        case media, documents
+    }
+    
+    open var selectedAttachments: SelectedAttachments? {
+        if imageAttachments.isEmpty, documentAttachments.isEmpty {
+            return .none
+        } else {
+            return imageAttachments.isEmpty ? .documents : .media
+        }
+    }
+    
+    open var imageAttachments: [AttachmentInfo] = [] {
         didSet {
             didUpdateImageAttachments()
         }
     }
     
+    open var documentAttachments: [AttachmentInfo] = [] {
+        didSet {
+            didUpdateDocumentAttachments()
+        }
+    }
+    
+    open var attachmentSeeds: [_ChatMessageAttachment<ExtraData>.Seed] {
+        var attachments: [AttachmentInfo]
+        var type: AttachmentType
+        
+        switch selectedAttachments {
+        case .media:
+            attachments = imageAttachments
+            type = .image
+        case .documents:
+            attachments = documentAttachments
+            type = .file
+        case .none:
+            return []
+        }
+        
+        return attachments.map {
+            .init(
+                localURL: $0.localURL,
+                fileName: $0.localURL.lastPathComponent,
+                type: type,
+                extraData: .defaultValue
+            )
+        }
+    }
+    
     func didUpdateImageAttachments() {
-        composerView.attachmentsView.previews = imageAttachments
+        composerView.attachmentsView.previews = imageAttachments.map(\.preview)
         composerView.attachmentsView.isHidden = imageAttachments.isEmpty
+        composerView.invalidateIntrinsicContentSize()
+    }
+    
+    // NOTE: Identical to didUpdateImageAttachments for now but it will be changed really soon.
+    func didUpdateDocumentAttachments() {
+        composerView.attachmentsView.previews = documentAttachments.map(\.preview)
+        composerView.attachmentsView.isHidden = documentAttachments.isEmpty
         composerView.invalidateIntrinsicContentSize()
     }
     
@@ -321,9 +415,24 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
-        guard let selectedImage = info[.originalImage] as? UIImage else { return }
+        guard
+            let preview = info[.originalImage] as? UIImage,
+            let url = info[UIImagePickerController.InfoKey.imageURL] as? URL
+        else { return }
         
-        imageAttachments.append(selectedImage)
+        imageAttachments.append((preview, url))
         picker.dismiss(animated: true, completion: nil)
+    }
+    
+    // MARK: - UIDocumentPickerViewControllerDelegate
+    
+    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        let documentsInfo: [AttachmentInfo] = urls.map {
+            let preview = uiConfig.messageComposer.documentPreviews[$0.pathExtension] ??
+                uiConfig.messageComposer.fallbackDocumentPreview
+            return (preview, $0)
+        }
+        
+        documentAttachments.append(contentsOf: documentsInfo)
     }
 }
