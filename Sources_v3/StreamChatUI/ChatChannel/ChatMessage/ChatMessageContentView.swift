@@ -36,7 +36,12 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         .init()
         .withoutAutoresizingMaskConstraints
 
-    let messageReactionsView = ChatMessageReactionsView<ExtraData>().withoutAutoresizingMaskConstraints
+    public private(set) lazy var reactionsBubble = uiConfig
+        .messageList
+        .messageReactions
+        .reactionsBubbleView
+        .init()
+        .withoutAutoresizingMaskConstraints
 
     public private(set) lazy var threadArrowView = uiConfig
         .messageList
@@ -72,6 +77,8 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
 
     override open func setUp() {
         super.setUp()
+
+        reactionsBubble.isUserInteractionEnabled = false
         threadView.addTarget(self, action: #selector(didTapOnThread), for: .touchUpInside)
         errorIndicator.addTarget(self, action: #selector(didTapOnErrorIndicator), for: .touchUpInside)
     }
@@ -80,7 +87,7 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         addSubview(messageBubbleView)
         addSubview(messageMetadataView)
         addSubview(authorAvatarView)
-        addSubview(messageReactionsView)
+        addSubview(reactionsBubble)
         addSubview(threadArrowView)
         addSubview(threadView)
         addSubview(errorIndicator)
@@ -104,9 +111,9 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
             authorAvatarView.leadingAnchor.constraint(equalTo: leadingAnchor),
             authorAvatarView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
-            messageReactionsView.topAnchor.constraint(equalTo: topAnchor),
+            reactionsBubble.topAnchor.constraint(equalTo: topAnchor),
             
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor).with(priority: .defaultHigh),
+            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor).with(priority: .required - 1),
             messageBubbleView.topAnchor.constraint(equalTo: topAnchor).with(priority: .defaultHigh),
             messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor).with(priority: .defaultHigh),
             
@@ -123,8 +130,19 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
             errorIndicator.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
 
+        // this one is ugly: reactions view is part of message content, but is not part of it frame horizontally.
+        // In same time we want to prevent reactions view to slip out of screen / cell.
+        // We maybe should rethink layout of content view and make reactions part of frame horizontally as well.
+        // This will solve superview access hack
+        if let superview = self.superview {
+            reactionsBubble.trailingAnchor.constraint(lessThanOrEqualTo: superview.trailingAnchor).isActive = true
+            reactionsBubble.leadingAnchor.constraint(greaterThanOrEqualTo: superview.leadingAnchor).isActive = true
+        }
+
         incomingMessageConstraints = [
-            messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.trailingAnchor),
+            reactionsBubble.centerXAnchor.constraint(equalTo: messageBubbleView.trailingAnchor, constant: 8),
+            reactionsBubble.tailLeadingAnchor.constraint(equalTo: messageBubbleView.trailingAnchor, constant: -5),
+            
             messageMetadataView.leadingAnchor.constraint(equalTo: messageBubbleView.leadingAnchor).with(priority: .defaultHigh),
             messageBubbleView.leadingAnchor.constraint(
                 equalToSystemSpacingAfter: authorAvatarView.trailingAnchor,
@@ -135,7 +153,9 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         ]
 
         outgoingMessageConstraints = [
-            messageReactionsView.centerXAnchor.constraint(equalTo: messageBubbleView.leadingAnchor),
+            reactionsBubble.centerXAnchor.constraint(equalTo: messageBubbleView.leadingAnchor, constant: -8),
+            reactionsBubble.tailTrailingAnchor.constraint(equalTo: messageBubbleView.leadingAnchor, constant: 5),
+            
             messageMetadataView.trailingAnchor.constraint(equalTo: messageBubbleView.trailingAnchor).with(priority: .defaultHigh),
             messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor),
             threadArrowView.trailingAnchor.constraint(equalTo: messageBubbleView.trailingAnchor),
@@ -143,7 +163,7 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         ]
 
         bubbleToReactionsConstraint = messageBubbleView.topAnchor.constraint(
-            equalTo: messageReactionsView.bottomAnchor
+            equalTo: reactionsBubble.centerYAnchor
         )
         bubbleToMetadataConstraint = messageMetadataView.topAnchor.constraint(
             equalToSystemSpacingBelow: messageBubbleView.bottomAnchor,
@@ -155,24 +175,39 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
     }
 
     override open func updateContent() {
+        // When message cell is about to be reused, it sets `nil` for message value.
+        // That means we need to remove all dynamic constraints to prevent layout warnings.
+        guard let message = self.message else {
+            NSLayoutConstraint.deactivate(outgoingMessageConstraints)
+            NSLayoutConstraint.deactivate(incomingMessageConstraints)
+            NSLayoutConstraint.deactivate(outgoingMessageIsThreadConstraints)
+            NSLayoutConstraint.deactivate(incomingMessageIsThreadConstraints)
+            bubbleToReactionsConstraint?.isActive = false
+            bubbleToErrorIndicatorConstraint?.isActive = false
+            bubbleToMetadataConstraint?.isActive = false
+            return
+        }
+
         var toActivate: [NSLayoutConstraint] = []
         var toDeactivate: [NSLayoutConstraint] = []
 
-        let isOutgoing = message?.isSentByCurrentUser ?? false
-        let isPartOfThread = message?.isPartOfThread ?? false
+        let isOutgoing = message.isSentByCurrentUser
+        let isPartOfThread = message.isPartOfThread
 
         messageBubbleView.message = message
         messageMetadataView.message = message
         threadView.message = message
+        threadArrowView.direction = isOutgoing ? .toLeading : .toTrailing
 
-        if isOutgoing {
-            messageReactionsView.style = .smallOutgoing
-            threadArrowView.direction = .toLeading
-        } else {
-            messageReactionsView.style = .smallIncoming
-            threadArrowView.direction = .toTrailing
-        }
-        messageReactionsView.reload(from: message?.message)
+        let userReactionIDs = Set(message.currentUserReactions.map(\.type))
+
+        reactionsBubble.content = .init(
+            style: isOutgoing ? .smallOutgoing : .smallIncoming,
+            reactions: message.message.reactionScores.keys
+                .sorted { $0.rawValue < $1.rawValue }
+                .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) },
+            didTapOnReaction: { _ in }
+        )
 
         threadView.isHidden = !isPartOfThread
         threadArrowView.isHidden = !isPartOfThread
@@ -190,7 +225,7 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         }
 
         let placeholder = UIImage(named: "pattern1", in: .streamChatUI)
-        if let imageURL = message?.author.imageURL {
+        if let imageURL = message.author.imageURL {
             authorAvatarView.imageView.setImage(from: imageURL, placeholder: placeholder)
         } else {
             authorAvatarView.imageView.image = placeholder
@@ -204,19 +239,19 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
             toDeactivate.append(contentsOf: outgoingMessageConstraints)
         }
 
-        if message?.deletedAt == nil, !(message?.reactionScores.isEmpty ?? true) {
-//            toActivate.append(bubbleToReactionsConstraint!)
+        if message.deletedAt == nil, !message.reactionScores.isEmpty {
+            toActivate.append(bubbleToReactionsConstraint!)
         } else {
-//            toDeactivate.append(bubbleToReactionsConstraint!)
+            toDeactivate.append(bubbleToReactionsConstraint!)
         }
         
-        if message?.isLastInGroup == true {
+        if message.isLastInGroup {
             toActivate.append(bubbleToMetadataConstraint!)
         } else {
             toDeactivate.append(bubbleToMetadataConstraint!)
         }
 
-        if message?.lastActionFailed == true {
+        if message.lastActionFailed {
             toActivate.append(bubbleToErrorIndicatorConstraint!)
         } else {
             toDeactivate.append(bubbleToErrorIndicatorConstraint!)
@@ -225,10 +260,10 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         NSLayoutConstraint.deactivate(toDeactivate)
         NSLayoutConstraint.activate(toActivate)
 
-        authorAvatarView.isVisible = !isOutgoing && message?.isLastInGroup == true
+        authorAvatarView.isVisible = !isOutgoing && message.isLastInGroup
         messageMetadataView.isVisible = bubbleToMetadataConstraint?.isActive ?? false
-        messageReactionsView.isVisible = bubbleToReactionsConstraint?.isActive ?? false
-        errorIndicator.isVisible = message?.lastActionFailed ?? false
+        reactionsBubble.isVisible = bubbleToReactionsConstraint?.isActive ?? false
+        errorIndicator.isVisible = message.lastActionFailed
     }
 
     // MARK: - Actions
