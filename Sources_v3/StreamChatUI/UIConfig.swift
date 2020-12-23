@@ -222,13 +222,14 @@ public extension UIConfig {
     struct MessageComposer {
         public var messageComposerViewController: MessageComposerViewController<ExtraData>.Type =
             MessageComposerViewController<ExtraData>.self
-        public var messageComposerView: ChatChannelMessageComposerView<ExtraData>.Type =
-            ChatChannelMessageComposerView<ExtraData>.self
-        public var messageInputView: ChatChannelMessageInputView<ExtraData>.Type = ChatChannelMessageInputView<ExtraData>.self
+        public var messageComposerView: MessageComposerView<ExtraData>.Type =
+            MessageComposerView<ExtraData>.self
+        public var messageInputView: MessageComposerInputContainerView<ExtraData>
+            .Type = MessageComposerInputContainerView<ExtraData>.self
         public var attachmentsView: MessageComposerAttachmentsView<ExtraData>.Type = MessageComposerAttachmentsView<ExtraData>.self
         public var sendButton: MessageComposerSendButton<ExtraData>.Type = MessageComposerSendButton<ExtraData>.self
         public var composerButton: ChatSquareButton<ExtraData>.Type = ChatSquareButton<ExtraData>.self
-        public var textView: ChatChannelMessageInputTextView<ExtraData>.Type = ChatChannelMessageInputTextView<ExtraData>.self
+        public var textView: MessageComposerInputTextView<ExtraData>.Type = MessageComposerInputTextView<ExtraData>.self
         public var replyBubbleView: ChatReplyBubbleView<ExtraData>.Type = ChatReplyBubbleView.self
         public var replyBubbleAvatarView: AvatarView.Type = AvatarView.self
         public var checkmarkControl: MessageComposerCheckmarkControl<ExtraData>.Type =

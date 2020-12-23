@@ -48,13 +48,13 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     
     // MARK: - Subviews
         
-    public private(set) lazy var composerView: ChatChannelMessageComposerView<ExtraData> = uiConfig
+    public private(set) lazy var composerView: MessageComposerView<ExtraData> = uiConfig
         .messageComposer
         .messageComposerView.init()
         .withoutAutoresizingMaskConstraints
     
     /// Convenience getter for underlying `textView`.
-    public var textView: ChatChannelMessageInputTextView<ExtraData> {
+    public var textView: MessageComposerInputTextView<ExtraData> {
         composerView.messageInputView.textView
     }
     
