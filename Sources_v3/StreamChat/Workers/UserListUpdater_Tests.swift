@@ -187,11 +187,14 @@ class UserListUpdater_Tests: StressTestCase {
             // At this point, DB write should have completed
             
             // Assert the data is stored in the DB
-            let user: ChatUser? = self.database.viewContext.user(id: dummyUserId)?.asModel()
-        
-            XCTAssert(user != nil)
+            // We call this block in `main` queue since we need to access `viewContext`
+            DispatchQueue.main.sync {
+                let user: ChatUser? = self.database.viewContext.user(id: dummyUserId)?.asModel()
             
-            completionCalled = true
+                XCTAssert(user != nil)
+                
+                completionCalled = true
+            }
         })
         
         // Simulate API response with user data
