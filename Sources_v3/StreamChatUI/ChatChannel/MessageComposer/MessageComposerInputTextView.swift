@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelMessageInputTextView<ExtraData: ExtraDataTypes>: UITextView,
+open class MessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
     AppearanceSetting,
     Customizable,
     UIConfigProvider
