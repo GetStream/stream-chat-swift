@@ -18,7 +18,7 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
     public var message: _ChatMessageGroupPart<ExtraData>!
     public var messageViewFrame: CGRect!
     public var actionsController: ChatMessageActionsVC<ExtraData>!
-    public var reactionsController: ChatMessageReactionViewController<ExtraData>?
+    public var reactionsController: ChatMessageReactionVC<ExtraData>?
 
     // MARK: - Life Cycle
 

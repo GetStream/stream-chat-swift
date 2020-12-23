@@ -260,10 +260,10 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         actionsController.messageController = dataSource.controllerForMessage(self, messageData.message)
         actionsController.delegate = .init(delegate: self)
 
-        var reactionsController: ChatMessageReactionViewController<ExtraData>? {
+        var reactionsController: ChatMessageReactionVC<ExtraData>? {
             guard messageData.message.localState == nil else { return nil }
 
-            let controller = ChatMessageReactionViewController<ExtraData>()
+            let controller = ChatMessageReactionVC<ExtraData>()
             controller.messageController = dataSource.controllerForMessage(self, messageData.message)
             return controller
         }
