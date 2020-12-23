@@ -261,6 +261,27 @@ public extension UIConfig {
             "unmute": UIImage(named: "command_unmute", in: .streamChatUI)!
         ]
         public var fallbackCommandIcon: UIImage = UIImage(named: "command_fallback", in: .streamChatUI)!
+        public var documentPreviews: [String: UIImage] = [
+            "7z": UIImage(named: "7z", in: .streamChatUI)!,
+            "csv": UIImage(named: "csv", in: .streamChatUI)!,
+            "doc": UIImage(named: "doc", in: .streamChatUI)!,
+            "docx": UIImage(named: "docx", in: .streamChatUI)!,
+            "html": UIImage(named: "html", in: .streamChatUI)!,
+            "md": UIImage(named: "md", in: .streamChatUI)!,
+            "mp3": UIImage(named: "mp3", in: .streamChatUI)!,
+            "odt": UIImage(named: "odt", in: .streamChatUI)!,
+            "pdf": UIImage(named: "pdf", in: .streamChatUI)!,
+            "ppt": UIImage(named: "ppt", in: .streamChatUI)!,
+            "pptx": UIImage(named: "pptx", in: .streamChatUI)!,
+            "rar": UIImage(named: "rar", in: .streamChatUI)!,
+            "rtf": UIImage(named: "rtf", in: .streamChatUI)!,
+            "tar.gz": UIImage(named: "tar.gz", in: .streamChatUI)!,
+            "txt": UIImage(named: "txt", in: .streamChatUI)!,
+            "xls": UIImage(named: "xls", in: .streamChatUI)!,
+            "xlsx": UIImage(named: "xlsx", in: .streamChatUI)!,
+            "zip": UIImage(named: "zip", in: .streamChatUI)!
+        ]
+        public var fallbackDocumentPreview: UIImage = UIImage(named: "generic", in: .streamChatUI)!
     }
 }
 
