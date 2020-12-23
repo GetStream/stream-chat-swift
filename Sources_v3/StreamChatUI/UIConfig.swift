@@ -59,11 +59,12 @@ public extension UIConfig {
 
         // MARK: - Message Bubbles
 
-        public var outgoingMessageBubbleBackground: UIColor = UIColor(rgb: 0xe5e5e5)
-        public var outgoingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
-        public var incomingMessageBubbleBackground: UIColor = .white
-        public var incomingMessageBubbleBorder: UIColor = UIColor(rgb: 0xe5e5e5)
-        public var outgoingMessageErrorIndicatorTint = UIColor.streamAccentRed
+        public var outgoingMessageBubbleBackground: UIColor = .streamGrayGainsboro
+        public var outgoingMessageBubbleBorder: UIColor = .streamGrayGainsboro
+        public var incomingMessageBubbleBackground: UIColor = .streamWhite
+        public var incomingMessageBubbleBorder: UIColor = .streamGrayGainsboro
+        public var inactiveReactionTint: UIColor = .streamGray
+        public var outgoingMessageErrorIndicatorTint: UIColor = .streamAccentRed
 
         // MARK: - Message Composer
 
@@ -157,20 +158,56 @@ public extension UIConfig {
         public var messageContentView: ChatMessageContentView<ExtraData>.Type = ChatMessageContentView<ExtraData>.self
         public var messageContentSubviews = MessageContentViewSubviews()
         public var messageActionsSubviews = MessageActionsSubviews()
+        public var messageReactions = MessageReactions()
     }
 
     struct MessageActionsSubviews {
-        public var reactionsView: ChatMessageReactionsView<ExtraData>.Type = ChatMessageReactionsView<ExtraData>.self
-        public var availableReactions: [MessageReactionType] = [
-            .init(rawValue: "like"),
-            .init(rawValue: "haha"),
-            .init(rawValue: "facepalm"),
-            .init(rawValue: "roar")
-        ]
         public var actionsView: MessageActionsView<ExtraData>.Type =
             MessageActionsView<ExtraData>.self
         public var actionButton: MessageActionsView<ExtraData>.ActionButton.Type =
             MessageActionsView<ExtraData>.ActionButton.self
+    }
+
+    struct MessageReactions {
+        public var reactionsBubbleView: ChatMessageReactionsBubbleView<ExtraData>.Type =
+            ChatMessageDefaultReactionsBubbleView<ExtraData>.self
+        public var reactionsView: ChatMessageReactionsView<ExtraData>.Type = ChatMessageReactionsView<ExtraData>.self
+        public var reactionItemView: ChatMessageReactionsView<ExtraData>.ItemView.Type =
+            ChatMessageReactionsView<ExtraData>.ItemView.self
+
+        public var availableReactions: [MessageReactionType] = [
+            .init(rawValue: "like"),
+            .init(rawValue: "haha"),
+            .init(rawValue: "thumbsup"),
+            .init(rawValue: "thumbsdown"),
+            .init(rawValue: "wut")
+        ]
+
+        public var smallIconForMessageReaction: (MessageReactionType) -> UIImage? = { reaction in
+            switch reaction.rawValue {
+            case "like": return UIImage(named: "reaction_love_small", in: .streamChatUI)
+            case "haha": return UIImage(named: "reaction_lol_small", in: .streamChatUI)
+            case "thumbsup": return UIImage(named: "reaction_thumbsup_small", in: .streamChatUI)
+            case "thumbsdown": return UIImage(named: "reaction_thumbsdown_small", in: .streamChatUI)
+            case "wut": return UIImage(named: "reaction_wut_small", in: .streamChatUI)
+            default:
+                log.warning("Small icon for reaction \(reaction) is missing.")
+                return nil
+            }
+        }
+
+        public var bigIconForMessageReaction: (MessageReactionType) -> UIImage? = { reaction in
+            switch reaction.rawValue {
+            case "like": return UIImage(named: "reaction_love_big", in: .streamChatUI)
+            case "haha": return UIImage(named: "reaction_lol_big", in: .streamChatUI)
+            case "thumbsup": return UIImage(named: "reaction_thumbsup_big", in: .streamChatUI)
+            case "thumbsdown": return UIImage(named: "reaction_thumbsdown_big", in: .streamChatUI)
+            case "wut": return UIImage(named: "reaction_wut_big", in: .streamChatUI)
+            default:
+                log.warning("Big icon for reaction \(reaction) is missing.")
+                return nil
+            }
+        }
     }
 
     struct MessageContentViewSubviews {
