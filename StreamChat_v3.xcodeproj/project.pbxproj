@@ -381,6 +381,7 @@
 		88BEBCDC2536FDF200D9E8B7 /* MemberListController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BEBCDB2536FDF200D9E8B7 /* MemberListController+SwiftUI_Tests.swift */; };
 		88BEBCE1253704AE00D9E8B7 /* MemberListController_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BEBCE0253704AE00D9E8B7 /* MemberListController_Mock.swift */; };
 		88BEBCE725370BC900D9E8B7 /* SimpleChannelMembersViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BEBCE625370BC900D9E8B7 /* SimpleChannelMembersViewController.swift */; };
+		88CABC1525933DD80061BB67 /* ChatMessageReactionsView+ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC0725933DD40061BB67 /* ChatMessageReactionsView+ItemView.swift */; };
 		88D85D97252F168000AE1030 /* MemberController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D85D96252F168000AE1030 /* MemberController+SwiftUI.swift */; };
 		88D85D9A252F168B00AE1030 /* MemberController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D85D99252F168B00AE1030 /* MemberController+Combine.swift */; };
 		88D85D9D252F16A300AE1030 /* MemberController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D85D9C252F16A300AE1030 /* MemberController+SwiftUI_Tests.swift */; };
@@ -1084,6 +1085,7 @@
 		88BEBCDB2536FDF200D9E8B7 /* MemberListController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		88BEBCE0253704AE00D9E8B7 /* MemberListController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberListController_Mock.swift; sourceTree = "<group>"; };
 		88BEBCE625370BC900D9E8B7 /* SimpleChannelMembersViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleChannelMembersViewController.swift; sourceTree = "<group>"; };
+		88CABC0725933DD40061BB67 /* ChatMessageReactionsView+ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageReactionsView+ItemView.swift"; sourceTree = "<group>"; };
 		88D85D96252F168000AE1030 /* MemberController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberController+SwiftUI.swift"; sourceTree = "<group>"; };
 		88D85D99252F168B00AE1030 /* MemberController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberController+Combine.swift"; sourceTree = "<group>"; };
 		88D85D9C252F16A300AE1030 /* MemberController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
@@ -1486,6 +1488,7 @@
 		7908830C2548707B00896F03 /* ChatChannel */ = {
 			isa = PBXGroup;
 			children = (
+				88CABC0625933DC30061BB67 /* Reactions */,
 				886BDE68258A501E00E1CD00 /* Attachments */,
 				E74346B12593546000512C2D /* ChatMessage */,
 				E743468C2593521E00512C2D /* MessageComposer */,
@@ -2291,6 +2294,14 @@
 				88D85D9F252F16B400AE1030 /* MemberController+Combine_Tests.swift */,
 			);
 			path = MemberController;
+			sourceTree = "<group>";
+		};
+		88CABC0625933DC30061BB67 /* Reactions */ = {
+			isa = PBXGroup;
+			children = (
+				88CABC0725933DD40061BB67 /* ChatMessageReactionsView+ItemView.swift */,
+			);
+			path = Reactions;
 			sourceTree = "<group>";
 		};
 		88D85DA5252F3C0900AE1030 /* MemberListController */ = {
@@ -3251,6 +3262,7 @@
 				8850B946255C3B41003AED69 /* AvatarView.swift in Sources */,
 				DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */,
 				E79AC10B25831A1500C3CE5D /* MessageComposerCommandCollectionViewCell.swift in Sources */,
+				88CABC1525933DD80061BB67 /* ChatMessageReactionsView+ItemView.swift in Sources */,
 				224FF6812562F2E900725DD1 /* ChatUnreadCountView.swift in Sources */,
 				224FF67B2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift in Sources */,
 				DB70CFFB25702EB900DDF436 /* ChatMessagePopupViewController.swift in Sources */,
