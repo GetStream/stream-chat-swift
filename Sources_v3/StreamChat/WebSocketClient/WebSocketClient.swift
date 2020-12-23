@@ -75,7 +75,7 @@ class WebSocketClient {
     
     /// Used for starting and ending background tasks. Typically, this is provided by `UIApplication` which conforms
     /// to `BackgroundTaskScheduler` automatically.
-    private lazy var backgroundTaskScheduler: BackgroundTaskScheduler = environment.backgroundTaskScheduler
+    private lazy var backgroundTaskScheduler: BackgroundTaskScheduler? = environment.backgroundTaskScheduler
     
     /// The identifier of the currently running background task. `nil` of no background task is running.
     private var activeBackgroundTask: UIBackgroundTaskIdentifier?
@@ -188,7 +188,7 @@ class WebSocketClient {
     @objc private func handleAppDidEnterBackground() {
         guard options.contains(.staysConnectedInBackground), connectionState.isActive else { return }
         
-        let backgroundTask = backgroundTaskScheduler.beginBackgroundTask { [weak self] in
+        let backgroundTask = backgroundTaskScheduler?.beginBackgroundTask { [weak self] in
             self?.disconnect(source: .systemInitiated)
         }
         
@@ -206,7 +206,7 @@ class WebSocketClient {
     
     private func cancelBackgroundTaskIfNeeded() {
         if let backgroundTask = activeBackgroundTask {
-            backgroundTaskScheduler.endBackgroundTask(backgroundTask)
+            backgroundTaskScheduler?.endBackgroundTask(backgroundTask)
             activeBackgroundTask = nil
         }
     }
@@ -239,7 +239,16 @@ extension WebSocketClient {
             }
         }
         
-        var backgroundTaskScheduler: BackgroundTaskScheduler = UIApplication.shared
+        var backgroundTaskScheduler: BackgroundTaskScheduler? = {
+            if Bundle.main.isAppExtension {
+                /// No background task scheduler exists for app extensions.
+                return nil
+            } else {
+                /// We can't use `UIApplication.shared` directly because there's no way to convince the compiler
+                /// this code is accessible only for non-extension executables.
+                return UIApplication.value(forKeyPath: "sharedApplication") as? UIApplication
+            }
+        }()
     }
 }
 
