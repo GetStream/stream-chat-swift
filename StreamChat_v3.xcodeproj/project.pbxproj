@@ -386,6 +386,7 @@
 		88CABC4425933EE70061BB67 /* ChatMessageReactionsBubbleView+Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC3425933ECC0061BB67 /* ChatMessageReactionsBubbleView+Default.swift */; };
 		88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC1C25933DF50061BB67 /* ChatMessageReactionsView.swift */; };
 		88CABC4625933EE70061BB67 /* ChatMessageReactionsBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC2C25933EB80061BB67 /* ChatMessageReactionsBubbleView.swift */; };
+		88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC6525934CF60061BB67 /* ChatMessageReactions+Types.swift */; };
 		88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88CABC8D25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift */; };
 		88D85D97252F168000AE1030 /* MemberController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D85D96252F168000AE1030 /* MemberController+SwiftUI.swift */; };
 		88D85D9A252F168B00AE1030 /* MemberController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D85D99252F168B00AE1030 /* MemberController+Combine.swift */; };
@@ -1094,6 +1095,7 @@
 		88CABC2425933E490061BB67 /* ChatMessageReactionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionVC.swift; sourceTree = "<group>"; };
 		88CABC2C25933EB80061BB67 /* ChatMessageReactionsBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionsBubbleView.swift; sourceTree = "<group>"; };
 		88CABC3425933ECC0061BB67 /* ChatMessageReactionsBubbleView+Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageReactionsBubbleView+Default.swift"; sourceTree = "<group>"; };
+		88CABC6525934CF60061BB67 /* ChatMessageReactions+Types.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageReactions+Types.swift"; sourceTree = "<group>"; };
 		88CABC8D25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionsBubbleTail.swift; sourceTree = "<group>"; };
 		88D85D96252F168000AE1030 /* MemberController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberController+SwiftUI.swift"; sourceTree = "<group>"; };
 		88D85D99252F168B00AE1030 /* MemberController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberController+Combine.swift"; sourceTree = "<group>"; };
@@ -2307,6 +2309,7 @@
 		88CABC0625933DC30061BB67 /* Reactions */ = {
 			isa = PBXGroup;
 			children = (
+				88CABC6525934CF60061BB67 /* ChatMessageReactions+Types.swift */,
 				88CABC1C25933DF50061BB67 /* ChatMessageReactionsView.swift */,
 				88CABC0725933DD40061BB67 /* ChatMessageReactionsView+ItemView.swift */,
 				88CABC2425933E490061BB67 /* ChatMessageReactionVC.swift */,
@@ -3271,6 +3274,7 @@
 				792DD9FB256E67C6001DB91B /* UIConfigProvider.swift in Sources */,
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
 				88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */,
+				88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */,
 				790882D625486B4A00896F03 /* ChatChannelListCollectionViewLayout.swift in Sources */,
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
 				88BA7F6B258B717E006CE0C5 /* ChatMessageAttachmentInfoView.swift in Sources */,
