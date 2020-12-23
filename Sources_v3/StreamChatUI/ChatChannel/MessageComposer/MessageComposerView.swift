@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: View,
+open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
     UIConfigProvider {
     // MARK: - Properties
     
@@ -27,7 +27,7 @@ open class ChatChannelMessageComposerView<ExtraData: ExtraDataTypes>: View,
         .attachmentsView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var messageInputView: ChatChannelMessageInputView<ExtraData> = uiConfig
+    public private(set) lazy var messageInputView: MessageComposerInputContainerView<ExtraData> = uiConfig
         .messageComposer
         .messageInputView.init()
         .withoutAutoresizingMaskConstraints
