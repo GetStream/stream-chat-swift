@@ -134,4 +134,38 @@ final class MessageEndpoints_Tests: XCTestCase {
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+
+    func test_sendMessageAction_buildsCorrectly() {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let action = AttachmentAction(
+            name: .unique,
+            value: .unique,
+            style: .primary,
+            type: .button,
+            text: .unique
+        )
+
+        let expectedEndpoint = Endpoint<WrappedMessagePayload<DefaultExtraData>>(
+            path: "messages/\(messageId)/action",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: AttachmentActionRequestBody(
+                cid: cid,
+                messageId: messageId,
+                action: action
+            )
+        )
+
+        // Build endpoint.
+        let endpoint: Endpoint<WrappedMessagePayload<DefaultExtraData>> = .dispatchEphemeralMessageAction(
+            cid: cid,
+            messageId: messageId,
+            action: action
+        )
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
