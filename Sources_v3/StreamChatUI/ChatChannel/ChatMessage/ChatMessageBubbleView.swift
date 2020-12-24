@@ -10,6 +10,8 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         didSet { updateContentIfNeeded() }
     }
 
+    public var onLinkTap: (_ChatMessageAttachment<ExtraData>?) -> Void = { _ in }
+
     public let showRepliedMessage: Bool
     
     // MARK: - Subviews
@@ -70,6 +72,11 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         super.layoutSubviews()
 
         borderLayer.frame = bounds
+    }
+
+    override open func setUp() {
+        super.setUp()
+        linkPreviewView.addTarget(self, action: #selector(didTapOnLinkPreview), for: .touchUpInside)
     }
 
     override public func defaultAppearance() {
@@ -250,6 +257,10 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
 
         layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
         layoutConstraints[layoutOptions]?.forEach { $0.isActive = true }
+    }
+
+    @objc func didTapOnLinkPreview() {
+        onLinkTap(linkPreviewView.content)
     }
     
     // MARK: - Private

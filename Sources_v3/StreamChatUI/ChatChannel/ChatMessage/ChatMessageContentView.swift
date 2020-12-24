@@ -12,6 +12,9 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
 
     public var onThreadTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
     public var onErrorIndicatorTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
+    public var onLinkTap: (_ChatMessageAttachment<ExtraData>?) -> Void = { _ in } {
+        didSet { updateContentIfNeeded() }
+    }
 
     // MARK: - Subviews
 
@@ -81,6 +84,7 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         reactionsBubble.isUserInteractionEnabled = false
         threadView.addTarget(self, action: #selector(didTapOnThread), for: .touchUpInside)
         errorIndicator.addTarget(self, action: #selector(didTapOnErrorIndicator), for: .touchUpInside)
+        messageBubbleView.onLinkTap = onLinkTap
     }
 
     override open func setUpLayout() {
@@ -194,6 +198,7 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         let isOutgoing = message.isSentByCurrentUser
         let isPartOfThread = message.isPartOfThread
 
+        messageBubbleView.onLinkTap = onLinkTap
         messageBubbleView.message = message
         messageMetadataView.message = message
         threadView.message = message
