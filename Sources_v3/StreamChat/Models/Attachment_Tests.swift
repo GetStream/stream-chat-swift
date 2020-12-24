@@ -46,6 +46,36 @@ class Attachment_Tests: XCTestCase {
         // Assert object encoded and decoded correctly
         XCTAssertEqual(action, decoded)
     }
+
+    func test_cancelAction_isDetected() throws {
+        let cancelActions = [
+            AttachmentAction(
+                name: .unique,
+                value: "cancel",
+                style: .default,
+                type: .button,
+                text: .unique
+            ),
+            AttachmentAction(
+                name: .unique,
+                value: "CANCEL",
+                style: .default,
+                type: .button,
+                text: .unique
+            ),
+            AttachmentAction(
+                name: .unique,
+                value: "Cancel",
+                style: .default,
+                type: .button,
+                text: .unique
+            )
+        ]
+
+        for action in cancelActions {
+            XCTAssertTrue(action.isCancel)
+        }
+    }
     
     func test_file_encodedAndDecodedCorrectly() throws {
         let file: AttachmentFile = .init(

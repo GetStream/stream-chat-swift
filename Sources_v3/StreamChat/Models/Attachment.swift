@@ -168,6 +168,9 @@ public struct AttachmentAction: Codable, Hashable {
         self.type = type
         self.text = text
     }
+
+    /// Check if the action is cancel button.
+    public var isCancel: Bool { value.lowercased() == "cancel" }
     
     /// An attachment action type, e.g. button.
     public enum ActionType: String, Codable {
