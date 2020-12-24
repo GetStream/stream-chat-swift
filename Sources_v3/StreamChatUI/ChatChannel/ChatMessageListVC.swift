@@ -168,6 +168,11 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
             guard let self = self, let cell = cell else { return }
             self.didSelectMessageCell(cell)
         }
+        cell.messageView.onLinkTap = { [weak self] link in
+            if let link = link {
+                self?.didTapOnLink(link)
+            }
+        }
         cell.message = message
 
         return cell
@@ -284,6 +289,10 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         default:
             router.showPreview(for: attachment)
         }
+    }
+
+    private func didTapOnLink(_ link: _ChatMessageAttachment<ExtraData>) {
+        router.openLink(link)
     }
 }
 
