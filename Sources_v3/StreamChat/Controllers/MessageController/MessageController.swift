@@ -362,6 +362,19 @@ public extension _ChatMessageController {
             }
         }
     }
+    
+    /// Executes the provided action on the message this controller manages.
+    /// - Parameters:
+    ///   - action: The action to take.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the operation is finished.
+    ///                 If operation fails, the completion is called with the error.
+    func dispatchEphemeralMessageAction(_ action: AttachmentAction, completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 // MARK: - Environment

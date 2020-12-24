@@ -1044,6 +1044,66 @@ final class MessageController_Tests: StressTestCase {
         // Assert controller is kept alive.
         AssertAsync.staysTrue(weakController != nil)
     }
+
+    // MARK: - Dispatch ephemeral message action
+
+    func test_dispatchEphemeralMessageAction_propagatesError() {
+        // Simulate `dispatchEphemeralMessageAction` call and catch the completion.
+        var completionError: Error?
+        controller.dispatchEphemeralMessageAction(.unique) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+
+        // Simulate network response with the error.
+        let updaterError = TestError()
+        env.messageUpdater.dispatchEphemeralMessageAction_completion!(updaterError)
+
+        // Assert error is propagated.
+        AssertAsync.willBeEqual(completionError as? TestError, updaterError)
+    }
+
+    func test_dispatchEphemeralMessageAction_propagatesNilError() {
+        // Simulate `dispatchEphemeralMessageAction` call and catch the completion.
+        var completionIsCalled = false
+        controller.dispatchEphemeralMessageAction(.unique) { [callbackQueueID] error in
+            // Assert callback queue is correct.
+            AssertTestQueue(withId: callbackQueueID)
+            // Assert there is no error.
+            XCTAssertNil(error)
+            completionIsCalled = true
+        }
+
+        // Simulate successful updater call.
+        env.messageUpdater.dispatchEphemeralMessageAction_completion!(nil)
+
+        // Assert completion is called.
+        AssertAsync.willBeTrue(completionIsCalled)
+    }
+
+    func test_dispatchEphemeralMessageAction_callsUpdater_withCorrectValues() {
+        let action: AttachmentAction = .unique
+
+        // Simulate `dispatchEphemeralMessageAction` call.
+        controller.dispatchEphemeralMessageAction(action)
+
+        // Assert updater is called with correct values.
+        XCTAssertEqual(env.messageUpdater.dispatchEphemeralMessageAction_cid, controller.cid)
+        XCTAssertEqual(env.messageUpdater.dispatchEphemeralMessageAction_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.dispatchEphemeralMessageAction_action, action)
+    }
+
+    func test_dispatchEphemeralMessageAction_keepsControllerAlive() {
+        // Simulate `dispatchEphemeralMessageAction` call.
+        controller.dispatchEphemeralMessageAction(.unique)
+
+        // Create a weak ref and release a controller.
+        weak var weakController = controller
+        controller = nil
+
+        // Assert controller is kept alive.
+        AssertAsync.staysTrue(weakController != nil)
+    }
 }
 
 private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
