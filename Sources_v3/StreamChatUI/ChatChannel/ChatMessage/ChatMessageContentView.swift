@@ -113,7 +113,7 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
             
             reactionsBubble.topAnchor.constraint(equalTo: topAnchor),
             
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor).with(priority: .required - 1),
+            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor).almostRequired,
             messageBubbleView.topAnchor.constraint(equalTo: topAnchor).with(priority: .defaultHigh),
             messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor).with(priority: .defaultHigh),
             
