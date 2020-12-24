@@ -31,6 +31,19 @@ extension String {
     static var unique: String { UUID().uuidString }
 }
 
+extension AttachmentAction {
+    /// Returns a new unique action
+    static var unique: Self {
+        .init(
+            name: .unique,
+            value: .unique,
+            style: .primary,
+            type: .button,
+            text: .unique
+        )
+    }
+}
+
 extension AttachmentId {
     /// Returns a new unique id
     static var unique: Self {
