@@ -99,36 +99,41 @@ struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
         )
         
         // Parse URL.
-        url = AttachmentPayload.fixedURL(
+        let url: URL? = AttachmentPayload.fixedURL(
             try container.decodeIfPresent(String.self, forKey: .assetURL)
                 ?? container.decodeIfPresent(String.self, forKey: .url)
                 ?? container.decodeIfPresent(String.self, forKey: .titleLink)
                 ?? container.decodeIfPresent(String.self, forKey: .ogURL)
         )
-        
-        let type: AttachmentType
-        
-        if let typeString = try? container.decode(String.self, forKey: .type) {
-            let existsType = AttachmentType(rawValue: typeString)
-            
-            if existsType == .video {
-                if author == "GIPHY" {
-                    type = .giphy
-                    text = nil
-                } else if let url = url, url.absoluteString.contains("youtube") {
-                    type = .youtube
-                } else {
-                    type = existsType
+
+        let type: AttachmentType = {
+            let itWasLinkOriginally = container.contains(.ogURL)
+            let backendType = AttachmentType(rawValue: try? container.decode(String.self, forKey: .type))
+            if itWasLinkOriginally {
+                if let url = url, url.absoluteString.contains("youtube") {
+                    return .youtube
                 }
-            } else {
-                type = existsType
+                if backendType == .imgur {
+                    return backendType
+                }
+                return .link
             }
-        } else if (try? container.decodeIfPresent(String.self, forKey: .ogURL)) != nil {
-            type = .link
-        } else {
-            type = .custom(nil)
+            if backendType == .video {
+                if author == "GIPHY" {
+                    return .giphy
+                }
+                if let url = url, url.absoluteString.contains("youtube") {
+                    return .youtube
+                }
+            }
+            return backendType
+        }()
+
+        if type == .giphy {
+            text = nil
         }
-        
+
+        self.url = url
         self.type = type
         self.text = text
         file = (type == .file || type == .video) ? try AttachmentFile(from: decoder) : nil
