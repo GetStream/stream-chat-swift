@@ -135,12 +135,14 @@ extension DatabaseContainer {
         cid: ChannelId = .unique,
         text: String = .unique,
         attachments: [AttachmentPayload<DefaultExtraData.Attachment>] = [],
-        localState: LocalMessageState? = nil
+        localState: LocalMessageState? = nil,
+        type: MessageType? = nil
     ) throws {
         try writeSynchronously { session in
             try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
             
             let message: MessagePayload<DefaultExtraData> = .dummy(
+                type: type,
                 messageId: id,
                 attachments: attachments,
                 authorUserId: authorId,
