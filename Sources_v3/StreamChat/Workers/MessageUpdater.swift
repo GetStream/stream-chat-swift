@@ -315,6 +315,57 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             messageDTO.localMessageState = .pendingSend
         }, completion: completion)
     }
+
+    /// Executes the provided action on the message.
+    /// - Parameters:
+    ///   - cid: The channel identifier the message belongs to.
+    ///   - messageId: The message identifier to take the action on.
+    ///   - action: The action to take.
+    ///   - completion: The completion called when the API call is finished. Called with `Error` if request fails.
+    func dispatchEphemeralMessageAction(
+        cid: ChannelId,
+        messageId: MessageId,
+        action: AttachmentAction,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        database.write({ session in
+            let messageDTO = try session.messageEditableByCurrentUser(messageId)
+
+            guard messageDTO.type == MessageType.ephemeral.rawValue else {
+                throw ClientError.MessageEditing(
+                    messageId: messageId,
+                    reason: "actions can be sent only for messages with `.ephemeral` type"
+                )
+            }
+
+            guard action.isCancel == false else {
+                messageDTO.type = MessageType.deleted.rawValue
+                messageDTO.deletedAt = Date()
+                return
+            }
+
+            let endpoint: Endpoint<WrappedMessagePayload<ExtraData>> = .dispatchEphemeralMessageAction(
+                cid: cid,
+                messageId: messageId,
+                action: action
+            )
+
+            self.apiClient.request(endpoint: endpoint) {
+                switch $0 {
+                case .success(let payload):
+                    self.database.write({ session in
+                        try session.saveMessage(payload: payload.message, for: cid)
+                    }, completion: { error in
+                        completion?(error)
+                    })
+                case .failure(let error):
+                    completion?(error)
+                }
+            }
+        }, completion: { error in
+            completion?(error)
+        })
+    }
 }
 
 // MARK: - Private

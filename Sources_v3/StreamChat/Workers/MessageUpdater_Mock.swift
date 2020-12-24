@@ -53,6 +53,11 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
 
     @Atomic var resendMessage_messageId: MessageId?
     @Atomic var resendMessage_completion: ((Error?) -> Void)?
+
+    @Atomic var dispatchEphemeralMessageAction_cid: ChannelId?
+    @Atomic var dispatchEphemeralMessageAction_messageId: MessageId?
+    @Atomic var dispatchEphemeralMessageAction_action: AttachmentAction?
+    @Atomic var dispatchEphemeralMessageAction_completion: ((Error?) -> Void)?
     
     // Cleans up all recorded values
     func cleanUp() {
@@ -102,6 +107,11 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
 
         resendMessage_messageId = nil
         resendMessage_completion = nil
+
+        dispatchEphemeralMessageAction_cid = nil
+        dispatchEphemeralMessageAction_messageId = nil
+        dispatchEphemeralMessageAction_action = nil
+        dispatchEphemeralMessageAction_completion = nil
     }
     
     override func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
@@ -197,5 +207,17 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     ) {
         restartFailedAttachmentUploading_id = id
         restartFailedAttachmentUploading_completion = completion
+    }
+    
+    override func dispatchEphemeralMessageAction(
+        cid: ChannelId,
+        messageId: MessageId,
+        action: AttachmentAction,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        dispatchEphemeralMessageAction_cid = cid
+        dispatchEphemeralMessageAction_messageId = messageId
+        dispatchEphemeralMessageAction_action = action
+        dispatchEphemeralMessageAction_completion = completion
     }
 }

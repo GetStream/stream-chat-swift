@@ -1158,4 +1158,338 @@ final class MessageUpdater_Tests: StressTestCase {
         // Assert message state is changed to `.pendingSend`
         XCTAssertEqual(message.localMessageState, .pendingSend)
     }
+
+    // MARK: - Dispatch ephemeral message action
+    
+    func test_dispatchEphemeralMessageAction_cancel_happyPath() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let currentUserId: UserId = .unique
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+        // Create channel is the database
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create a new `ephemeral` message in the database
+        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
+
+        let cancelAction = AttachmentAction(
+            name: .unique,
+            value: "cancel",
+            style: .default,
+            type: .button,
+            text: .unique
+        )
+
+        // Simulate `dispatchEphemeralMessageAction`
+        let completionError = try await {
+            messageUpdater.dispatchEphemeralMessageAction(
+                cid: cid,
+                messageId: messageId,
+                action: cancelAction,
+                completion: $0
+            )
+        }
+
+        // Assert error is `nil`
+        XCTAssertNil(completionError)
+        // Assert `apiClient` is not invoked, message is updated locally.
+        XCTAssertNil(apiClient.request_endpoint)
+
+        // Load message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        // Assert message is marked as `deleted`.
+        XCTAssertEqual(message.type, MessageType.deleted.rawValue)
+        XCTAssertNotNil(message.deletedAt)
+    }
+
+    func test_dispatchEphemeralMessageAction_happyPath() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let currentUserId: UserId = .unique
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+        // Create channel is the database
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create a new `ephemeral` message in the database
+        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
+
+        let action = AttachmentAction(
+            name: .unique,
+            value: .unique,
+            style: .primary,
+            type: .button,
+            text: .unique
+        )
+
+        // Simulate `dispatchEphemeralMessageAction`
+        var completionCalledError: Error?
+        var completionCalled = false
+        messageUpdater.dispatchEphemeralMessageAction(
+            cid: cid,
+            messageId: messageId,
+            action: action
+        ) { error in
+            completionCalledError = error
+            completionCalled = true
+        }
+
+        // Assert endpoint is called.
+        let endpoint: Endpoint<WrappedMessagePayload<ExtraData>> = .dispatchEphemeralMessageAction(
+            cid: cid,
+            messageId: messageId,
+            action: action
+        )
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
+
+        // Simulate message response.
+        let messagePayload: WrappedMessagePayload<ExtraData> = .init(
+            message: .dummy(
+                messageId: messageId,
+                authorUserId: currentUserId
+            )
+        )
+        apiClient.test_simulateResponse(.success(messagePayload))
+
+        // Load message
+        let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+        AssertAsync {
+            // Assert completion is called without any error.
+            Assert.willBeTrue(completionCalled)
+            Assert.staysTrue(completionCalledError == nil)
+            // Assert message is updated.
+            Assert.willBeEqual(message.type, messagePayload.message.type.rawValue)
+            Assert.willBeEqual(message.text, messagePayload.message.text)
+        }
+    }
+
+    func test_dispatchEphemeralMessageAction_propagatesRequestError() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let currentUserId: UserId = .unique
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+        // Create channel is the database
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create a new `ephemeral` message in the database
+        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
+
+        let action = AttachmentAction(
+            name: .unique,
+            value: .unique,
+            style: .primary,
+            type: .button,
+            text: .unique
+        )
+
+        // Simulate `dispatchEphemeralMessageAction`
+        var completionCalledError: Error?
+        var completionCalled = false
+        messageUpdater.dispatchEphemeralMessageAction(
+            cid: cid,
+            messageId: messageId,
+            action: action
+        ) { error in
+            completionCalledError = error
+            completionCalled = true
+        }
+
+        // Assert endpoint is called.
+        let endpoint: Endpoint<WrappedMessagePayload<ExtraData>> = .dispatchEphemeralMessageAction(
+            cid: cid,
+            messageId: messageId,
+            action: action
+        )
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
+
+        // Simulate error response.
+        let networkError = TestError()
+        let result: Result<WrappedMessagePayload<ExtraData>, Error> = .failure(networkError)
+        apiClient.test_simulateResponse(result)
+
+        AssertAsync {
+            // Assert completion is called.
+            Assert.willBeTrue(completionCalled)
+            // Assert networking error is propagated.
+            Assert.willBeEqual(completionCalledError as? TestError, networkError)
+        }
+    }
+
+    func test_dispatchEphemeralMessageAction_propagatesCurrentUserDoesNotExist_Error() throws {
+        // Simulate `dispatchEphemeralMessageAction` call
+        let completionError = try await {
+            messageUpdater.dispatchEphemeralMessageAction(
+                cid: .unique,
+                messageId: .unique,
+                action: .unique,
+                completion: $0
+            )
+        }
+
+        // Assert `CurrentUserDoesNotExist` is received
+        XCTAssertTrue(completionError is ClientError.CurrentUserDoesNotExist)
+    }
+
+    func test_dispatchEphemeralMessageAction_propagatesMessageDoesNotExist_Error() throws {
+        // Create current user is the database
+        try database.createCurrentUser()
+
+        // Simulate `dispatchEphemeralMessageAction` call
+        let completionError = try await {
+            messageUpdater.dispatchEphemeralMessageAction(
+                cid: .unique,
+                messageId: .unique,
+                action: .unique,
+                completion: $0
+            )
+        }
+
+        // Assert `MessageDoesNotExist` is received
+        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+    }
+
+    func test_dispatchEphemeralMessageAction_propagatesMessageCanNotBeUpdatedByCurrentUser_Error() throws {
+        let cid: ChannelId = .unique
+        let anotherUserId: UserId = .unique
+        let anotherUserMessageId: MessageId = .unique
+
+        // Create current user is the database
+        try database.createCurrentUser()
+
+        // Create channel is the database
+        try database.createChannel(cid: cid, withMessages: false)
+
+        // Create message authored by another user in the database
+        try database.createMessage(id: anotherUserMessageId, authorId: anotherUserId, cid: cid)
+
+        // Simulate `dispatchEphemeralMessageAction` call
+        let completionError = try await {
+            messageUpdater.dispatchEphemeralMessageAction(
+                cid: cid,
+                messageId: anotherUserMessageId,
+                action: .unique,
+                completion: $0
+            )
+        }
+
+        // Assert `MessageCannotBeUpdatedByCurrentUser` is received
+        XCTAssertTrue(completionError is ClientError.MessageCannotBeUpdatedByCurrentUser)
+    }
+
+    func test_dispatchEphemeralMessageAction_propagatesMessageEditingError_forNonEphemeralMessage() throws {
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+
+        // Create channel is the database
+        try database.createChannel(cid: cid, withMessages: false)
+
+        let invalidTypes: [MessageType] = [
+            .regular,
+            .error,
+            .reply,
+            .system,
+            .deleted
+        ]
+
+        for type in invalidTypes {
+            let messageId: MessageId = .unique
+
+            // Create a new message in the database with specific type
+            try database.createMessage(id: messageId, authorId: currentUserId, type: type)
+
+            // Simulate `dispatchEphemeralMessageAction` call
+            let completionError = try await {
+                messageUpdater.dispatchEphemeralMessageAction(
+                    cid: cid,
+                    messageId: messageId,
+                    action: .unique,
+                    completion: $0
+                )
+            }
+
+            // Assert `MessageEditing` error is received
+            XCTAssertTrue(completionError is ClientError.MessageEditing)
+        }
+    }
+
+    func test_dispatchEphemeralMessageAction_propagatesDatabaseError_beforeAPICall() throws {
+        // Update database container to throw the error on write
+        let databaseError = TestError()
+        database.write_errorResponse = databaseError
+
+        // Simulate `dispatchEphemeralMessageAction` call
+        let completionError = try await {
+            messageUpdater.dispatchEphemeralMessageAction(
+                cid: .unique,
+                messageId: .unique,
+                action: .unique,
+                completion: $0
+            )
+        }
+
+        // Assert database error is propagated
+        XCTAssertEqual(completionError as? TestError, databaseError)
+    }
+
+    func test_dispatchEphemeralMessageAction_propagatesDatabaseError_afterAPICall() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let currentUserId: UserId = .unique
+
+        // Create current user is the database
+        try database.createCurrentUser(id: currentUserId)
+        // Create channel is the database
+        try database.createChannel(cid: cid, withMessages: false)
+        // Create a new `ephemeral` message in the database
+        try database.createMessage(id: messageId, authorId: currentUserId, type: .ephemeral)
+
+        let action = AttachmentAction(
+            name: .unique,
+            value: .unique,
+            style: .primary,
+            type: .button,
+            text: .unique
+        )
+
+        // Simulate `dispatchEphemeralMessageAction`
+        var completionCalledError: Error?
+        messageUpdater.dispatchEphemeralMessageAction(
+            cid: cid,
+            messageId: messageId,
+            action: action
+        ) { error in
+            completionCalledError = error
+        }
+
+        // Assert endpoint is called.
+        let endpoint: Endpoint<WrappedMessagePayload<ExtraData>> = .dispatchEphemeralMessageAction(
+            cid: cid,
+            messageId: messageId,
+            action: action
+        )
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
+
+        // Update database container to throw the error on write
+        let databaseError = TestError()
+        database.write_errorResponse = databaseError
+
+        // Simulate message response.
+        let messagePayload: WrappedMessagePayload<ExtraData> = .init(
+            message: .dummy(
+                messageId: messageId,
+                authorUserId: currentUserId
+            )
+        )
+        apiClient.test_simulateResponse(.success(messagePayload))
+
+        // Assert database error is propagated.
+        AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
+    }
 }
