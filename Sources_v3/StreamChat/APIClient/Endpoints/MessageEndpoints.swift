@@ -77,6 +77,24 @@ extension Endpoint {
             body: nil
         )
     }
+
+    static func dispatchEphemeralMessageAction<ExtraData: ExtraDataTypes>(
+        cid: ChannelId,
+        messageId: MessageId,
+        action: AttachmentAction
+    ) -> Endpoint<WrappedMessagePayload<ExtraData>> {
+        .init(
+            path: messageId.actionPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: AttachmentActionRequestBody(
+                cid: cid,
+                messageId: messageId,
+                action: action
+            )
+        )
+    }
 }
 
 private extension MessageId {
@@ -90,5 +108,9 @@ private extension MessageId {
     
     var reactionsPath: String {
         path.appending("/reaction")
+    }
+
+    var actionPath: String {
+        path.appending("/action")
     }
 }
