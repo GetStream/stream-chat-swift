@@ -30,4 +30,12 @@ open class ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMess
         let navigation = UINavigationController(rootViewController: preview)
         rootViewController.present(navigation, animated: true)
     }
+
+    open func openLink(_ link: _ChatMessageAttachment<ExtraData>) {
+        let preview = ChatAttachmentPreviewVC()
+        preview.content = link.url
+
+        let navigation = UINavigationController(rootViewController: preview)
+        rootViewController.present(navigation, animated: true)
+    }
 }
