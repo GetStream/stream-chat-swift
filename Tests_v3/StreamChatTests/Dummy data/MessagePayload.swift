@@ -8,6 +8,7 @@ import Foundation
 extension MessagePayload {
     /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.
     static func dummy<T: ExtraDataTypes>(
+        type: MessageType? = nil,
         messageId: MessageId,
         parentId: MessageId? = nil,
         showReplyInChannel: Bool = false,
@@ -25,7 +26,7 @@ extension MessagePayload {
     ) -> MessagePayload<T> where T.User == DefaultExtraData.User {
         .init(
             id: messageId,
-            type: parentId == nil ? .regular : .reply,
+            type: type ?? (parentId == nil ? .regular : .reply),
             user: UserPayload.dummy(userId: authorUserId) as UserPayload<T.User>,
             createdAt: .unique,
             updatedAt: .unique,
