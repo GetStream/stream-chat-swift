@@ -15,9 +15,7 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     // MARK: - Properties
 
     public var channelController: _ChatChannelController<ExtraData>!
-
-    public private(set) lazy var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData> =
-        uiConfig.messageComposer.suggestionsViewController.init()
+    public var userSuggestionSearchController: _ChatUserSearchController<ExtraData>!
 
     public private(set) lazy var messageComposerViewController = uiConfig
         .messageComposer
@@ -48,13 +46,15 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
 
     override open func setUp() {
         super.setUp()
-        
+
         messageComposerViewController.controller = channelController
-        messageComposerViewController.suggestionsPresenter = self
-        
+        messageComposerViewController.userSuggestionSearchController = userSuggestionSearchController
+
         messageList.delegate = .wrap(self)
         messageList.dataSource = .wrap(self)
-        
+
+        userSuggestionSearchController.search(term: nil) // Initially, load all users
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(keyboardWillChangeFrame),
@@ -186,24 +186,5 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>) {
         messageComposerViewController.state = .edit(message)
-    }
-}
-
-// MARK: - SuggestionsViewControllerPresenter
-
-extension ChatVC: SuggestionsViewControllerPresenter {
-    public var isSuggestionControllerPresented: Bool {
-        suggestionsViewController.isPresented
-    }
-
-    public func showSuggestionsViewController(with state: SuggestionsViewControllerState, onSelectItem: ((Int) -> Void)) {
-        suggestionsViewController.state = state
-        addChildViewController(suggestionsViewController, targetView: view)
-        suggestionsViewController.bottomAnchorView = messageComposerViewController.composerView
-    }
-
-    public func dismissSuggestionsViewController() {
-        suggestionsViewController.removeFromParent()
-        suggestionsViewController.view.removeFromSuperview()
     }
 }

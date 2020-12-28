@@ -12,7 +12,11 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate {
     // MARK: - Underlying types
-    
+
+    public var userSuggestionSearchController: _ChatUserSearchController<ExtraData>!
+    public private(set) lazy var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData> =
+        uiConfig.messageComposer.suggestionsViewController.init()
+
     public enum State {
         case initial
         case slashCommand(Command)
@@ -23,7 +27,6 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     // MARK: - Properties
 
     var controller: _ChatChannelController<ExtraData>?
-    weak var suggestionsPresenter: SuggestionsViewControllerPresenter?
     
     public var state: State = .initial {
         didSet {
@@ -267,7 +270,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     }
     
     @objc func showAvailableCommands() {
-        if suggestionsPresenter?.isSuggestionControllerPresented ?? false {
+        if suggestionsViewController.isPresented {
             dismissSuggestionsViewController()
         } else {
             promptSuggestionIfNeeded(for: "/")
@@ -279,16 +282,34 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     }
     
     // MARK: Suggestions
-    
-    func showSuggestionsViewController(
-        with state: SuggestionsViewControllerState,
-        onSelectItem: ((Int) -> Void)
-    ) {
-        suggestionsPresenter?.showSuggestionsViewController(with: state, onSelectItem: onSelectItem)
+
+    public func showSuggestionsViewController(for kind: SuggestionKind, onSelectItem: @escaping ((Int) -> Void)) {
+        guard let parent = parent else { return }
+
+        let dataSource: UICollectionViewDataSource
+        switch kind {
+        case let .command(hints):
+            dataSource = SuggestionsCommandDataSource(
+                with: hints,
+                collectionView: suggestionsViewController.collectionView
+            )
+        case .mention:
+            dataSource = SuggestionsMentionDataSource(
+                collectionView: suggestionsViewController.collectionView,
+                searchController: userSuggestionSearchController
+            )
+        }
+        suggestionsViewController.didSelectItemAt = onSelectItem
+        suggestionsViewController.dataSource = dataSource
+        suggestionsViewController.updateContentIfNeeded()
+
+        parent.addChildViewController(suggestionsViewController, targetView: parent.view)
+        suggestionsViewController.bottomAnchorView = composerView
     }
 
-    func dismissSuggestionsViewController() {
-        suggestionsPresenter?.dismissSuggestionsViewController()
+    public func dismissSuggestionsViewController() {
+        suggestionsViewController.removeFromParent()
+        suggestionsViewController.view.removeFromSuperview()
     }
 
     // MARK: Attachments
@@ -358,42 +379,63 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     }
     
     // MARK: UITextView
-    
+
     @objc func promptSuggestionIfNeeded(for text: String) {
-        // Check if first symbol is `/` and if there are available commands in `ChatConfig`.
-        guard text.trimmingCharacters(in: .whitespacesAndNewlines).first == "/",
-            let commands = controller?.channel?.config.commands
-        else {
+        if text.trimmingCharacters(in: .whitespacesAndNewlines).contains("@") {
+            if let index = (text.range(of: "@")?.upperBound) {
+                let textAfterAtSymbol = String(text.suffix(from: index))
+                promptMentions(for: textAfterAtSymbol)
+            }
+
+        } else if let commands = controller?.channel?.config.commands,
+            text.trimmingCharacters(in: .whitespacesAndNewlines).first == "/" {
+            prompt(commands: commands, for: text)
+        } else {
             dismissSuggestionsViewController()
-            return
         }
-        
+    }
+
+    func prompt(commands: [Command], for text: String) {
         // Get the command value without the `/`
         let typedCommand = String(text.trimmingCharacters(in: .whitespacesAndNewlines).dropFirst())
-        
+
         // Set all commands as hints initially
         var commandHints: [Command] = commands
-        
+
         // Filter commands when user is typing something after `/`
         if !typedCommand.isEmpty {
             commandHints = commands.filter { $0.name.range(of: typedCommand, options: .caseInsensitive) != nil }
         }
 
         showSuggestionsViewController(
-            with: .commands(commandHints),
-            onSelectItem: { [weak self] index in
-                self?.state = .slashCommand(commandHints[index])
+            for: .command(hints: commandHints),
+            onSelectItem: { [weak self] commandIndex in
+                self?.state = .slashCommand(commandHints[commandIndex])
             }
         )
     }
-    
+
+    func promptMentions(for text: String) {
+        userSuggestionSearchController.search(term: text)
+
+        showSuggestionsViewController(
+            for: .mention,
+            onSelectItem: { [weak self] _ in
+                print(text)
+                print(self?.textView.text)
+                self?.textView.text = self?.textView.text.appending("@ \(text)")
+                self?.state = .initial
+            }
+        )
+    }
+
     func replaceTextWithSlashCommandViewIfNeeded() {
         // Extract potential command name from input text
         let potentialCommandNameFromInput = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).dropFirst()
-        
+
         // Condition to check if input text matches any of the available commands
         let commandMatches: ((Command) -> Bool) = { command in command.name == potentialCommandNameFromInput }
-        
+
         // Update state if command detected
         if let command = controller?.channel?.config.commands?.first(where: commandMatches) {
             state = .slashCommand(command)
@@ -401,7 +443,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     }
 
     // MARK: - UITextViewDelegate
-    
+
     public func textViewDidChange(_ textView: UITextView) {
         isEmpty = textView.text.replacingOccurrences(of: " ", with: "").isEmpty
         replaceTextWithSlashCommandViewIfNeeded()

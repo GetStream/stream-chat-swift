@@ -8,7 +8,7 @@ import UIKit
 open class MessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: Properties
 
-    open var content: (title: String, subtitle: String, userImage: UIImage?, isUserOnline: Bool)? {
+    open var content: (title: String, subtitle: String, imageURL: URL?, isUserOnline: Bool)? {
         didSet {
             updateContentIfNeeded()
         }
@@ -51,7 +51,12 @@ open class MessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View, UICo
         usernameTagLabel.text = content?.subtitle
         usernameLabel.text = content?.title
 
-        avatarView.imageView.image = content?.userImage
+        if let url = content?.imageURL {
+            avatarView.imageView.setImage(from: url)
+        } else {
+            avatarView.imageView.image = UIImage(named: "pattern1", in: .streamChatUI)
+        }
+
         suggestionTypeImageView.image = UIImage(named: "command_mention", in: .streamChatUI)
     }
 
@@ -61,7 +66,8 @@ open class MessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View, UICo
         avatarView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
         avatarView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor).isActive = true
         avatarView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
-        avatarView.widthAnchor.constraint(equalTo: avatarView.heightAnchor).isActive = true
+        avatarView.widthAnchor.constraint(equalToConstant: 40).isActive = true
+        avatarView.heightAnchor.constraint(equalTo: avatarView.widthAnchor).isActive = true
     }
 
     private func setupStack() {
@@ -91,7 +97,15 @@ open class MessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: 
 
     public private(set) lazy var mentionView: MessageComposerMentionCellView<ExtraData> = {
         let view = uiConfig.messageComposer.suggestionsMentionCellView.init().withoutAutoresizingMaskConstraints
-        contentView.embed(view)
+        contentView.embed(
+            view,
+            insets: .init(
+                top: 0,
+                leading: contentView.directionalLayoutMargins.leading,
+                bottom: 0,
+                trailing: contentView.directionalLayoutMargins.trailing
+            )
+        )
         return view
     }()
 }

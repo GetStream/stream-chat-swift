@@ -36,7 +36,7 @@ open class MessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTypes>: 
         backgroundColor = uiConfig.colorPalette.generalBackground
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
-        bounces = false
+        bounces = true
         clipsToBounds = true
         layer.masksToBounds = true
         layer.cornerRadius = 10
