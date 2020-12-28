@@ -5,26 +5,17 @@
 import StreamChat
 import UIKit
 
-public protocol SuggestionsViewControllerPresenter: class {
-    func showSuggestionsViewController(
-        with state: SuggestionsViewControllerState,
-        onSelectItem: ((Int) -> Void)
-    )
-    func dismissSuggestionsViewController()
-
-    var isSuggestionControllerPresented: Bool { get }
-}
-
-public enum SuggestionsViewControllerState {
-    case commands([Command])
-    case mentions([String])
+public enum SuggestionKind {
+    case command(hints: [Command])
+    case mention
 }
 
 open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
-    UICollectionViewDelegate,
-    UICollectionViewDataSource {
+    UICollectionViewDelegate {
     // MARK: - Property
+
+    public var dataSource: UICollectionViewDataSource?
 
     private var frameObserver: NSKeyValueObservation?
 
@@ -34,15 +25,9 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
     /// the bottomAnchorView as soon as we compute the height of the
     /// contentSize of the nested collectionView
     public var bottomAnchorView: UIView?
-    
-    public var state: SuggestionsViewControllerState? {
-        didSet {
-            updateContentIfNeeded()
-        }
-    }
-    
+
     public var didSelectItemAt: ((Int) -> Void)?
-    
+
     public var isPresented: Bool {
         view.superview != nil
     }
@@ -63,16 +48,8 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
 
     override open func setUp() {
         super.setUp()
-        collectionView.dataSource = self
+
         collectionView.delegate = self
-        collectionView.register(
-            uiConfig.messageComposer.suggestionsCommandCollectionViewCell,
-            forCellWithReuseIdentifier: uiConfig.messageComposer.suggestionsCommandCollectionViewCell.reuseId
-        )
-        collectionView.register(
-            uiConfig.messageComposer.suggestionsMentionCollectionViewCell,
-            forCellWithReuseIdentifier: uiConfig.messageComposer.suggestionsMentionCollectionViewCell.reuseId
-        )
     }
 
     override public func setUpAppearance() {
@@ -97,9 +74,9 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
             options: [.new],
             changeHandler: { [weak self] _, change in
                 DispatchQueue.main.async {
-                    guard let newSize = change.newValue, newSize.height < 300 else {
+                    guard let newSize = change.newValue, newSize.height < 230 else {
                         // TODO: Compute size better according to 4 cells.
-                        self?.view.frame.size.height = 300
+                        self?.view.frame.size.height = 230
                         self?.updateViewFrame()
                         return
                     }
@@ -112,6 +89,7 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
     }
 
     override open func updateContent() {
+        collectionView.dataSource = dataSource
         collectionView.reloadData()
     }
 
@@ -134,47 +112,104 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
 
     // MARK: - UICollectionView
 
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let state = state else { return 0 }
-        
-        switch state {
-        case let .commands(commands):
-            return commands.count
-        case let .mentions(users):
-            return users.count
-        }
-    }
-
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let state = state else { return UICollectionViewCell() }
-        
-        switch state {
-        case let .commands(commands):
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: MessageComposerCommandCollectionViewCell<ExtraData>.reuseId,
-                for: indexPath
-            ) as! MessageComposerCommandCollectionViewCell<ExtraData>
-            
-            cell.uiConfig = uiConfig
-            
-            cell.commandView.command = commands[indexPath.row]
-            
-            return cell
-        // TODO: mentions
-        case .mentions:
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: MessageComposerMentionCollectionViewCell<ExtraData>.reuseId,
-                for: indexPath
-            ) as! MessageComposerMentionCollectionViewCell<ExtraData>
-            
-            cell.uiConfig = uiConfig
-            cell.mentionView.content = ("Damian", "@damian", UIImage(named: "pattern1", in: .streamChatUI), false)
-            
-            return cell
-        }
-    }
-    
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         didSelectItemAt?(indexPath.row)
+    }
+}
+
+class SuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
+    var collectionView: MessageComposerSuggestionsCollectionView<ExtraData>
+    var commands: [Command]
+
+    var uiConfig: UIConfig<ExtraData> {
+        collectionView.uiConfig()
+    }
+
+    init(with commands: [Command], collectionView: MessageComposerSuggestionsCollectionView<ExtraData>) {
+        self.commands = commands
+        self.collectionView = collectionView
+
+        super.init()
+
+        registerCollectionViewCell()
+    }
+
+    private func registerCollectionViewCell() {
+        collectionView.register(
+            uiConfig.messageComposer.suggestionsCommandCollectionViewCell,
+            forCellWithReuseIdentifier: uiConfig.messageComposer.suggestionsCommandCollectionViewCell.reuseId
+        )
+    }
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        commands.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MessageComposerCommandCollectionViewCell<ExtraData>.reuseId,
+            for: indexPath
+        ) as! MessageComposerCommandCollectionViewCell<ExtraData>
+
+        cell.uiConfig = uiConfig
+        cell.commandView.command = commands[indexPath.row]
+
+        return cell
+    }
+}
+
+class SuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
+    UICollectionViewDataSource,
+    _ChatUserSearchControllerDelegate {
+    var collectionView: MessageComposerSuggestionsCollectionView<ExtraData>
+    var searchController: _ChatUserSearchController<ExtraData>
+
+    var uiConfig: UIConfig<ExtraData> {
+        collectionView.uiConfig()
+    }
+
+    init(
+        collectionView: MessageComposerSuggestionsCollectionView<ExtraData>,
+        searchController: _ChatUserSearchController<ExtraData>
+    ) {
+        self.collectionView = collectionView
+        self.searchController = searchController
+        super.init()
+        registerCollectionViewCell()
+        searchController.setDelegate(self)
+    }
+
+    private func registerCollectionViewCell() {
+        collectionView.register(
+            uiConfig.messageComposer.suggestionsMentionCollectionViewCell,
+            forCellWithReuseIdentifier: uiConfig.messageComposer.suggestionsMentionCollectionViewCell.reuseId
+        )
+    }
+
+    // MARK: - CollectionViewDataSource
+
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        searchController.users.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: MessageComposerMentionCollectionViewCell<ExtraData>.reuseId,
+            for: indexPath
+        ) as! MessageComposerMentionCollectionViewCell<ExtraData>
+
+        let user = searchController.users[indexPath.row]
+        cell.mentionView.content = (user.name ?? "", user.id, user.imageURL, true)
+        cell.uiConfig = uiConfig
+        return cell
+    }
+
+    // MARK: - ChatUserSearchControllerDelegate
+
+    func controller(
+        _ controller: _ChatUserSearchController<ExtraData>,
+        didChangeUsers changes: [ListChange<ChatUser>]
+    ) {
+        collectionView.reloadData()
     }
 }

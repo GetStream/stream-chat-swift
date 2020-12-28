@@ -13,6 +13,7 @@ open class ChatChannelListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChan
     open func openChat(for channel: _ChatChannel<ExtraData>) {
         let vc = ChatChannelVC<ExtraData>()
         vc.channelController = rootViewController.controller.client.channelController(for: channel.cid)
+        vc.userSuggestionSearchController = rootViewController.controller.client.userSearchController()
         
         guard let navController = navigationController else {
             log.error("Can't push chat detail, no navigation controller available")
