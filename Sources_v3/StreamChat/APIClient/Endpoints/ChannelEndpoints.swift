@@ -78,7 +78,7 @@ extension Endpoint {
     }
     
     static func sendMessage<ExtraData: ExtraDataTypes>(cid: ChannelId, messagePayload: MessageRequestBody<ExtraData>)
-        -> Endpoint<WrappedMessagePayload<ExtraData>> {
+        -> Endpoint<MessagePayload<ExtraData>.Boxed> {
         .init(
             path: "channels/\(cid.type)/\(cid.id)/message",
             method: .post,

@@ -28,9 +28,12 @@ enum MessagePayloadsCodingKeys: String, CodingKey {
     //        case i18n
 }
 
-/// An object describing the wrapped incoming message JSON payload.
-struct WrappedMessagePayload<ExtraData: ExtraDataTypes>: Decodable {
-    let message: MessagePayload<ExtraData>
+extension MessagePayload {
+    /// A object describing the incoming JSON format for message payload. Unfortunately, our backend is not consistent
+    /// in this and the payload has the form: `{ "message": <message payload> }` rather than `{ <message payload> }`
+    struct Boxed: Decodable {
+        let message: MessagePayload
+    }
 }
 
 /// An object describing the incoming message JSON payload.
@@ -50,9 +53,6 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let threadParticipants: [UserPayload<ExtraData.User>]
     let replyCount: Int
     let extraData: ExtraData.Message
-    
-    // TODO: Reactions
-    // TODO: Translations
     
     let latestReactions: [MessageReactionPayload<ExtraData>]
     let ownReactions: [MessageReactionPayload<ExtraData>]

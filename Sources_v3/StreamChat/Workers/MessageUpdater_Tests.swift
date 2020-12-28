@@ -1237,7 +1237,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<WrappedMessagePayload<ExtraData>> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
@@ -1245,7 +1245,7 @@ final class MessageUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
         // Simulate message response.
-        let messagePayload: WrappedMessagePayload<ExtraData> = .init(
+        let messagePayload: MessagePayload<ExtraData>.Boxed = .init(
             message: .dummy(
                 messageId: messageId,
                 authorUserId: currentUserId
@@ -1299,7 +1299,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<WrappedMessagePayload<ExtraData>> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
@@ -1308,7 +1308,7 @@ final class MessageUpdater_Tests: StressTestCase {
 
         // Simulate error response.
         let networkError = TestError()
-        let result: Result<WrappedMessagePayload<ExtraData>, Error> = .failure(networkError)
+        let result: Result<MessagePayload<ExtraData>.Boxed, Error> = .failure(networkError)
         apiClient.test_simulateResponse(result)
 
         AssertAsync {
@@ -1469,7 +1469,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<WrappedMessagePayload<ExtraData>> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
@@ -1481,7 +1481,7 @@ final class MessageUpdater_Tests: StressTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate message response.
-        let messagePayload: WrappedMessagePayload<ExtraData> = .init(
+        let messagePayload: MessagePayload<ExtraData>.Boxed = .init(
             message: .dummy(
                 messageId: messageId,
                 authorUserId: currentUserId

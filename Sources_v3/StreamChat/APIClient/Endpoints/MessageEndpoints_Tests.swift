@@ -146,7 +146,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             text: .unique
         )
 
-        let expectedEndpoint = Endpoint<WrappedMessagePayload<DefaultExtraData>>(
+        let expectedEndpoint = Endpoint<MessagePayload<DefaultExtraData>.Boxed>(
             path: "messages/\(messageId)/action",
             method: .post,
             queryItems: nil,
@@ -159,7 +159,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint.
-        let endpoint: Endpoint<WrappedMessagePayload<DefaultExtraData>> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessagePayload<DefaultExtraData>.Boxed> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
