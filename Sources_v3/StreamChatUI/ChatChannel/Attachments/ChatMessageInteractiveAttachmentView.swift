@@ -74,15 +74,8 @@ open class ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: View
             actionsStackView.topAnchor.constraint(equalTo: separator.bottomAnchor),
             actionsStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
             actionsStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            actionsStackView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            actionsStackView.heightAnchor.constraint(equalToConstant: 48)
+            actionsStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
-    }
-
-    override open func tintColorDidChange() {
-        super.tintColorDidChange()
-
-        updateContentIfNeeded()
     }
 
     override open func updateContent() {
@@ -99,30 +92,19 @@ open class ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: View
             .forEach(actionsStackView.addArrangedSubview)
     }
 
-    // MARK: - Actions
-
-    @objc open func didTapOnActionButton(_ sender: UIButton) {
-        guard
-            let content = content,
-            let actionIndex = actionsStackView.arrangedSubviews.firstIndex(of: sender)
-        else { return }
-
-        let action = content.attachment.actions[actionIndex]
-        content.didTapOnAttachmentAction(action)
-    }
-
     // MARK: - Private
 
-    private func createActionButton(for action: AttachmentAction) -> UIButton {
-        let titleColor = action.style == .primary ?
-            tintColor :
-            uiConfig.colorPalette.subtitleText
+    private func createActionButton(for action: AttachmentAction) -> ActionButton {
+        let button = uiConfig
+            .messageList
+            .messageContentSubviews
+            .attachmentSubviews
+            .interactiveAttachmentActionButton
+            .init()
 
-        let button = UIButton(type: .custom)
-        button.setTitle(action.text, for: .normal)
-        button.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body).bold
-        button.setTitleColor(titleColor, for: .normal)
-        button.addTarget(self, action: #selector(didTapOnActionButton(_:)), for: .touchUpInside)
+        button.content = .init(action: action) { [weak self] in
+            self?.content?.didTapOnAttachmentAction(action)
+        }
 
         return button
     }
