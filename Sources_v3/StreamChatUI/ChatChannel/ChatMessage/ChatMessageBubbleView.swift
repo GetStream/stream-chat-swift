@@ -250,7 +250,7 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
                 didTapOnAttachment: message?.didTapOnAttachment
             )
         }
-        linkPreviewView.content = message?.attachments.first { $0.type.needLinkPreview }
+        linkPreviewView.content = message?.attachments.first { $0.type == .link }
 
         attachmentsView.isVisible = layoutOptions.contains(.attachments)
         linkPreviewView.isVisible = layoutOptions.contains(.linkPreview)
@@ -319,7 +319,7 @@ private extension _ChatMessageGroupPart {
 
         if message.attachments.contains(where: { $0.type == .image || $0.type == .file }) {
             options.insert(.attachments)
-        } else if message.attachments.contains(where: { $0.type.needLinkPreview }) {
+        } else if message.attachments.contains(where: { $0.type == .link }) {
             // link preview is visible only when no other attachments available
             options.insert(.linkPreview)
         }
@@ -333,22 +333,5 @@ private extension _ChatMessageGroupPart {
 private extension _ChatMessageGroupPart {
     var textContent: String {
         message.deletedAt == nil ? message.text : L10n.Message.deletedMessagePlaceholder
-    }
-}
-
-private extension AttachmentType {
-    var needLinkPreview: Bool {
-        switch self {
-        case .image: return false
-        case .imgur: return true
-        case .giphy: return false
-        case .video: return false
-        case .audio: return false
-        case .youtube: return true
-        case .product: return false
-        case .file: return false
-        case .link: return true
-        case .custom: return false
-        }
     }
 }
