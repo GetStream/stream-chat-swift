@@ -25,6 +25,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey {
     case ownReactions = "own_reactions"
     case reactionScores = "reaction_scores"
     case isSilent = "silent"
+    case channel
     //        case i18n
 }
 
@@ -59,6 +60,10 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let reactionScores: [MessageReactionType: Int]
     let attachments: [AttachmentPayload<ExtraData.Attachment>]
     let isSilent: Bool
+
+    /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
+    /// make an extra call do get channel details.
+    let channel: ChannelDetailPayload<ExtraData>?
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
@@ -85,6 +90,9 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
         attachments = try container.decode([AttachmentPayload<ExtraData.Attachment>].self, forKey: .attachments)
         extraData = try ExtraData.Message(from: decoder)
+        
+        // Some endpoints return also channel payload data for convenience
+        channel = try container.decodeIfPresent(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
     }
     
     init(
@@ -107,7 +115,8 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         ownReactions: [MessageReactionPayload<ExtraData>] = [],
         reactionScores: [MessageReactionType: Int],
         isSilent: Bool,
-        attachments: [AttachmentPayload<ExtraData.Attachment>]
+        attachments: [AttachmentPayload<ExtraData.Attachment>],
+        channel: ChannelDetailPayload<ExtraData>? = nil
     ) {
         self.id = id
         self.type = type
@@ -129,6 +138,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.reactionScores = reactionScores
         self.isSilent = isSilent
         self.attachments = attachments
+        self.channel = channel
     }
 }
 
