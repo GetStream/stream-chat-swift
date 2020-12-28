@@ -19,7 +19,7 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
+        let channelPayload: ChannelDetailPayload<DefaultExtraData> = .dummy(cid: channelId)
         
         let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
             messageId: messageId,
@@ -29,16 +29,19 @@ class MessageDTO_Tests: XCTestCase {
             ],
             ownReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
-            ]
+            ],
+            channel: channelPayload
         )
         
         // Asynchronously save the payload to the db
         database.write { session in
-            // Create the channel first
-            try! session.saveChannel(payload: channelPayload, query: nil)
-            
-            // Save the message
+            // Save the message, it should also save the channel
             try! session.saveMessage(payload: messagePayload, for: channelId)
+        }
+
+        // Load the channel from the db and check the fields are correct
+        var loadedChannel: _ChatChannel<DefaultExtraData>? {
+            database.viewContext.channel(cid: channelId)?.asModel()
         }
         
         // Load the message from the db and check the fields are correct
@@ -53,6 +56,50 @@ class MessageDTO_Tests: XCTestCase {
             return Set(try! database.viewContext.fetch(request))
         }
         
+        // Assert the channel data was saved correctly
+        AssertAsync {
+            // Channel details
+            Assert.willBeEqual(channelId, loadedChannel?.cid)
+            
+            Assert.willBeEqual(channelPayload.name, loadedChannel?.name)
+            Assert.willBeEqual(channelPayload.imageURL, loadedChannel?.imageURL)
+            Assert.willBeEqual(channelPayload.memberCount, loadedChannel?.memberCount)
+            Assert.willBeEqual(channelPayload.extraData, loadedChannel?.extraData)
+            Assert.willBeEqual(channelPayload.typeRawValue, loadedChannel?.type.rawValue)
+            Assert.willBeEqual(channelPayload.lastMessageAt, loadedChannel?.lastMessageAt)
+            Assert.willBeEqual(channelPayload.createdAt, loadedChannel?.createdAt)
+            Assert.willBeEqual(channelPayload.updatedAt, loadedChannel?.updatedAt)
+            Assert.willBeEqual(channelPayload.deletedAt, loadedChannel?.deletedAt)
+            
+            // Config
+            Assert.willBeEqual(channelPayload.config.reactionsEnabled, loadedChannel?.config.reactionsEnabled)
+            Assert.willBeEqual(channelPayload.config.typingEventsEnabled, loadedChannel?.config.typingEventsEnabled)
+            Assert.willBeEqual(channelPayload.config.readEventsEnabled, loadedChannel?.config.readEventsEnabled)
+            Assert.willBeEqual(channelPayload.config.connectEventsEnabled, loadedChannel?.config.connectEventsEnabled)
+            Assert.willBeEqual(channelPayload.config.uploadsEnabled, loadedChannel?.config.uploadsEnabled)
+            Assert.willBeEqual(channelPayload.config.repliesEnabled, loadedChannel?.config.repliesEnabled)
+            Assert.willBeEqual(channelPayload.config.searchEnabled, loadedChannel?.config.searchEnabled)
+            Assert.willBeEqual(channelPayload.config.mutesEnabled, loadedChannel?.config.mutesEnabled)
+            Assert.willBeEqual(channelPayload.config.urlEnrichmentEnabled, loadedChannel?.config.urlEnrichmentEnabled)
+            Assert.willBeEqual(channelPayload.config.messageRetention, loadedChannel?.config.messageRetention)
+            Assert.willBeEqual(channelPayload.config.maxMessageLength, loadedChannel?.config.maxMessageLength)
+            Assert.willBeEqual(channelPayload.config.commands, loadedChannel?.config.commands)
+            Assert.willBeEqual(channelPayload.config.createdAt, loadedChannel?.config.createdAt)
+            Assert.willBeEqual(channelPayload.config.updatedAt, loadedChannel?.config.updatedAt)
+            
+            // Creator
+            Assert.willBeEqual(channelPayload.createdBy!.id, loadedChannel?.createdBy?.id)
+            Assert.willBeEqual(channelPayload.createdBy!.createdAt, loadedChannel?.createdBy?.userCreatedAt)
+            Assert.willBeEqual(channelPayload.createdBy!.updatedAt, loadedChannel?.createdBy?.userUpdatedAt)
+            Assert.willBeEqual(channelPayload.createdBy!.lastActiveAt, loadedChannel?.createdBy?.lastActiveAt)
+            Assert.willBeEqual(channelPayload.createdBy!.isOnline, loadedChannel?.createdBy?.isOnline)
+            Assert.willBeEqual(channelPayload.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
+            Assert.willBeEqual(channelPayload.createdBy!.role, loadedChannel?.createdBy?.userRole)
+            Assert.willBeEqual(channelPayload.createdBy!.extraData, loadedChannel?.createdBy?.extraData)
+            Assert.willBeEqual(channelPayload.createdBy!.teams, loadedChannel?.createdBy?.teams)
+        }
+        
+        // Assert the message was saved correctly
         AssertAsync {
             Assert.willBeEqual(messagePayload.id, loadedMessage?.id)
             Assert.willBeEqual(messagePayload.type.rawValue, loadedMessage?.type)
@@ -145,8 +192,8 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.updatedAt, loadedMessage?.updatedAt)
             Assert.willBeEqual(messagePayload.deletedAt, loadedMessage?.deletedAt)
             Assert.willBeEqual(messagePayload.text, loadedMessage?.text)
-            //            Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
-            //            Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
+            Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
+            Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
             Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
             Assert.willBeEqual(
@@ -168,6 +215,20 @@ class MessageDTO_Tests: XCTestCase {
                 Set(messagePayload.attachmentIDs(cid: channelId)),
                 loadedMessage.flatMap { Set($0.attachments.map(\.attachmentID)) }
             )
+        }
+    }
+    
+    func test_messagePayloadNotStored_withoutChannelInfo() throws {
+        let payload: MessagePayload<DefaultExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        assert(payload.channel == nil, "Channel must be `nil`")
+        
+        XCTAssertThrowsError(
+            try database.writeSynchronously {
+                // Both `payload.channel` and `cid` are nil
+                try $0.saveMessage(payload: payload, for: nil)
+            }
+        ) { error in
+            XCTAssert(error is ClientError.MessagePayloadSavingFailure)
         }
     }
     
@@ -345,7 +406,7 @@ class MessageDTO_Tests: XCTestCase {
         // Assert the local state is set
         AssertAsync.willBeEqual(loadedMessage?.localState, .pendingSend)
         
-        // Re-save the payload and check the local state is not overriden
+        // Re-save the payload and check the local state is not overridden
         database.write { session in
             try! session.saveMessage(payload: messagePayload, for: channelId)
         }
