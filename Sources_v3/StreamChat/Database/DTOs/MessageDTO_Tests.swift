@@ -61,8 +61,8 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.updatedAt, loadedMessage?.updatedAt)
             Assert.willBeEqual(messagePayload.deletedAt, loadedMessage?.deletedAt)
             Assert.willBeEqual(messagePayload.text, loadedMessage?.text)
-//            Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
-//            Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
+            Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
+            Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
             Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
             Assert.willBeEqual(
