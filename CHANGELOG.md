@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐞 Fixed
 - Fixed thread's parent message not receiving updates [#656](https://github.com/GetStream/stream-chat-swift/issues/656)
 - Fixed being able to open reactions view without connection [#662](https://github.com/GetStream/stream-chat-swift/issues/662)
+- Fixed rare crash on row deletion in ChatViewController [#701](https://github.com/GetStream/stream-chat-swift/pull/701)
 
 # [2.6.1](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.1)
 _December 17, 2020_
