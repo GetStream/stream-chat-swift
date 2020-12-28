@@ -14,21 +14,15 @@ open class ChatFileAttachmentListView<ExtraData: ExtraDataTypes>: View, UIConfig
 
     public private(set) lazy var stackView: UIStackView = {
         let stack = UIStackView()
-        stack.isLayoutMarginsRelativeArrangement = true
-        stack.preservesSuperviewLayoutMargins = true
         stack.axis = .vertical
+        stack.spacing = 4
         return stack.withoutAutoresizingMaskConstraints
     }()
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
-        stackView.spacing = 4
-        directionalLayoutMargins = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
-    }
-
     override open func setUpLayout() {
-        embed(stackView)
+        embed(stackView, insets: .init(top: 4, leading: 4, bottom: 4, trailing: 4))
     }
 
     override open func updateContent() {
