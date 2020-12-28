@@ -264,6 +264,8 @@ public extension UIConfig {
         public var attachmentsView: MessageComposerAttachmentsView<ExtraData>.Type = MessageComposerAttachmentsView<ExtraData>.self
         public var documentAttachmentView: MessageComposerDocumentAttachmentView<ExtraData>.Type =
             MessageComposerDocumentAttachmentView<ExtraData>.self
+        public var documentAttachmentsFlowLayout: MessageComposerDocumentAttachmentsCollectionViewLayout.Type =
+            MessageComposerDocumentAttachmentsCollectionViewLayout.self
         public var sendButton: MessageComposerSendButton<ExtraData>.Type = MessageComposerSendButton<ExtraData>.self
         public var composerButton: ChatSquareButton<ExtraData>.Type = ChatSquareButton<ExtraData>.self
         public var textView: MessageComposerInputTextView<ExtraData>.Type = MessageComposerInputTextView<ExtraData>.self
