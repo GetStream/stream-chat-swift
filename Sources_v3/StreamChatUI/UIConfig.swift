@@ -175,39 +175,28 @@ public extension UIConfig {
         public var reactionItemView: ChatMessageReactionsView<ExtraData>.ItemView.Type =
             ChatMessageReactionsView<ExtraData>.ItemView.self
 
-        public var availableReactions: [MessageReactionType] = [
-            .init(rawValue: "like"),
-            .init(rawValue: "haha"),
-            .init(rawValue: "thumbsup"),
-            .init(rawValue: "thumbsdown"),
-            .init(rawValue: "wut")
+        public var availableReactions: [MessageReactionType: ReactionAppearanceType] = [
+            .init(rawValue: "like"): ReactionAppearance(
+                smallIcon: UIImage(named: "reaction_love_small", in: .streamChatUI)!,
+                largeIcon: UIImage(named: "reaction_love_big", in: .streamChatUI)!
+            ),
+            .init(rawValue: "haha"): ReactionAppearance(
+                smallIcon: UIImage(named: "reaction_lol_small", in: .streamChatUI)!,
+                largeIcon: UIImage(named: "reaction_lol_big", in: .streamChatUI)!
+            ),
+            .init(rawValue: "thumbsup"): ReactionAppearance(
+                smallIcon: UIImage(named: "reaction_thumbsup_small", in: .streamChatUI)!,
+                largeIcon: UIImage(named: "reaction_thumbsup_big", in: .streamChatUI)!
+            ),
+            .init(rawValue: "thumbsdown"): ReactionAppearance(
+                smallIcon: UIImage(named: "reaction_thumbsdown_small", in: .streamChatUI)!,
+                largeIcon: UIImage(named: "reaction_thumbsdown_big", in: .streamChatUI)!
+            ),
+            .init(rawValue: "wut"): ReactionAppearance(
+                smallIcon: UIImage(named: "reaction_wut_small", in: .streamChatUI)!,
+                largeIcon: UIImage(named: "reaction_wut_big", in: .streamChatUI)!
+            )
         ]
-
-        public var smallIconForMessageReaction: (MessageReactionType) -> UIImage? = { reaction in
-            switch reaction.rawValue {
-            case "like": return UIImage(named: "reaction_love_small", in: .streamChatUI)
-            case "haha": return UIImage(named: "reaction_lol_small", in: .streamChatUI)
-            case "thumbsup": return UIImage(named: "reaction_thumbsup_small", in: .streamChatUI)
-            case "thumbsdown": return UIImage(named: "reaction_thumbsdown_small", in: .streamChatUI)
-            case "wut": return UIImage(named: "reaction_wut_small", in: .streamChatUI)
-            default:
-                log.warning("Small icon for reaction \(reaction) is missing.")
-                return nil
-            }
-        }
-
-        public var bigIconForMessageReaction: (MessageReactionType) -> UIImage? = { reaction in
-            switch reaction.rawValue {
-            case "like": return UIImage(named: "reaction_love_big", in: .streamChatUI)
-            case "haha": return UIImage(named: "reaction_lol_big", in: .streamChatUI)
-            case "thumbsup": return UIImage(named: "reaction_thumbsup_big", in: .streamChatUI)
-            case "thumbsdown": return UIImage(named: "reaction_thumbsdown_big", in: .streamChatUI)
-            case "wut": return UIImage(named: "reaction_wut_big", in: .streamChatUI)
-            default:
-                log.warning("Big icon for reaction \(reaction) is missing.")
-                return nil
-            }
-        }
     }
 
     struct MessageContentViewSubviews {
