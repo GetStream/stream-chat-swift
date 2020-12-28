@@ -234,7 +234,9 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor :
             uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
 
-        if layoutOptions.contains(.linkPreview) {
+        if message?.type == .ephemeral {
+            backgroundColor = uiConfig.colorPalette.ephemeralMessageBubbleBackground
+        } else if layoutOptions.contains(.linkPreview) {
             backgroundColor = uiConfig.colorPalette.linkMessageBubbleBackground
         } else {
             backgroundColor = message?.isSentByCurrentUser == true ?
@@ -333,6 +335,14 @@ private extension _ChatMessageGroupPart {
 
 private extension _ChatMessageGroupPart {
     var textContent: String {
-        message.deletedAt == nil ? message.text : L10n.Message.deletedMessagePlaceholder
+        guard message.type != .ephemeral else {
+            return ""
+        }
+
+        guard message.deletedAt == nil else {
+            return L10n.Message.deletedMessagePlaceholder
+        }
+
+        return message.text
     }
 }
