@@ -22,9 +22,14 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
         .replyBubbleView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var attachmentsView: MessageComposerAttachmentsView<ExtraData> = uiConfig
+    public private(set) lazy var imageAttachmentsView: MessageComposerImageAttachmentsView<ExtraData> = uiConfig
         .messageComposer
-        .attachmentsView.init()
+        .imageAttachmentsView.init()
+        .withoutAutoresizingMaskConstraints
+    
+    public private(set) lazy var documentAttachmentsView: MessageComposerDocumentAttachmentsView<ExtraData> = uiConfig
+        .messageComposer
+        .documentAttachmentsView.init()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var messageInputView: MessageComposerInputContainerView<ExtraData> = uiConfig
@@ -97,7 +102,6 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
     
     override open func defaultAppearance() {
         super.defaultAppearance()
-        attachmentsViewHeight = 80
         stateIconHeight = 40
         
         backgroundColor = uiConfig.colorPalette.messageComposerBackground
@@ -154,8 +158,8 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
         
         replyView.isHidden = true
         container.centerStackView.addArrangedSubview(replyView)
-        container.centerStackView.addArrangedSubview(attachmentsView)
-        attachmentsView.heightAnchor.constraint(equalToConstant: attachmentsViewHeight).isActive = true
+        container.centerStackView.addArrangedSubview(imageAttachmentsView)
+        container.centerStackView.addArrangedSubview(documentAttachmentsView)
         
         container.centerStackView.addArrangedSubview(messageInputView)
         messageInputView.setContentHuggingPriority(.defaultLow, for: .horizontal)
@@ -179,7 +183,8 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
                 button.pin(anchors: [.height], to: button.intrinsicContentSize.height)
             }
 
-        attachmentsView.isHidden = true
+        imageAttachmentsView.isHidden = true
+        documentAttachmentsView.isHidden = true
         shrinkInputButton.isHidden = true
     }
     
