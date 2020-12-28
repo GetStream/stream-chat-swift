@@ -37,6 +37,7 @@ open class ChatMessageReactionVC<ExtraData: ExtraDataTypes>: ViewController, UIC
             return .init(
                 style: message.isSentByCurrentUser ? .bigOutgoing : .bigIncoming,
                 reactions: availableReactions
+                    .keys
                     .sorted { $0.rawValue < $1.rawValue }
                     .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) },
                 didTapOnReaction: { [weak self] in
