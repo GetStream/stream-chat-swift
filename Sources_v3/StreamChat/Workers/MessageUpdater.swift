@@ -339,7 +339,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             }
 
             guard action.isCancel == false else {
-                messageDTO.type = MessageType.deleted.rawValue
+                // For ephemeral messages we don't change `state` to `.deleted`
                 messageDTO.deletedAt = Date()
                 return
             }
