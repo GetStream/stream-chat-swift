@@ -30,6 +30,14 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
         .init()
         .withoutAutoresizingMaskConstraints
 
+    public private(set) lazy var interactiveAttachmentView = uiConfig
+        .messageList
+        .messageContentSubviews
+        .attachmentSubviews
+        .interactiveAttachmentView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     private var layoutConstraints: [LayoutOptions: [NSLayoutConstraint]] = [:]
 
     // MARK: - Overrides
@@ -37,6 +45,7 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
     override open func setUpLayout() {
         addSubview(imageGallery)
         addSubview(fileList)
+        addSubview(interactiveAttachmentView)
 
         layoutConstraints[.images] = [
             imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -51,6 +60,16 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
             fileList.topAnchor.constraint(equalTo: topAnchor),
             fileList.bottomAnchor.constraint(equalTo: bottomAnchor)
         ]
+
+        layoutConstraints[.interactiveAttachment] = [
+            interactiveAttachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            interactiveAttachmentView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            interactiveAttachmentView.topAnchor.constraint(equalTo: topAnchor),
+            interactiveAttachmentView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ]
+        layoutConstraints[[.images, .interactiveAttachment]] = layoutConstraints[.interactiveAttachment]
+        layoutConstraints[[.files, .interactiveAttachment]] = layoutConstraints[.interactiveAttachment]
+        layoutConstraints[.all] = layoutConstraints[.interactiveAttachment]
 
         layoutConstraints[[.images, .files]] = [
             imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
@@ -67,21 +86,28 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
     override open func updateContent() {
         let layoutOptions = calculateLayoutOptions()
 
-        imageGallery.content = content.flatMap {
+        imageGallery.content = content.map {
             .init(
-                attachments: $0.attachments.filter { $0.type == .image },
-                didTapOnAttachment: $0.didTapOnAttachment
+                attachments: $0.attachments.filter { $0.isImageOrGIF },
+                didTapOnAttachment: $0.didTapOnAttachment,
+                didTapOnAttachmentAction: nil
             )
         }
         imageGallery.isVisible = layoutOptions.contains(.images)
 
-        fileList.content = content.flatMap {
+        fileList.content = content.map {
             .init(
                 attachments: $0.attachments.filter { $0.type == .file },
-                didTapOnAttachment: $0.didTapOnAttachment
+                didTapOnAttachment: $0.didTapOnAttachment,
+                didTapOnAttachmentAction: nil
             )
         }
         fileList.isVisible = layoutOptions.contains(.files)
+
+        interactiveAttachmentView.content = content?.items.first {
+            !$0.attachment.actions.isEmpty
+        }
+        interactiveAttachmentView.isVisible = layoutOptions.contains(.interactiveAttachment)
 
         layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
         layoutConstraints[layoutOptions]?.forEach { $0.isActive = true }
@@ -93,10 +119,17 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
         var options: LayoutOptions = []
 
         for attachment in content?.attachments ?? [] {
-            options.insert(attachment.type == .image ? .images : .files)
+            if !attachment.actions.isEmpty {
+                options.insert(.interactiveAttachment)
+            } else if attachment.isImageOrGIF {
+                options.insert(.images)
+            } else {
+                options.insert(.files)
+            }
         }
 
-        return options
+        // If there is an interactive attachment it should be the only content we display.
+        return options.contains(.interactiveAttachment) ? .interactiveAttachment : options
     }
 }
 
@@ -107,6 +140,7 @@ private struct LayoutOptions: OptionSet, Hashable {
 
     static let images = Self(rawValue: 1 << 0)
     static let files = Self(rawValue: 1 << 1)
+    static let interactiveAttachment = Self(rawValue: 1 << 2)
 
-    static let all: Self = [.images, .files]
+    static let all: Self = [.images, .files, .interactiveAttachment]
 }
