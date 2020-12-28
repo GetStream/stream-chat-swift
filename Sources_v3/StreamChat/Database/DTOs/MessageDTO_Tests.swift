@@ -89,9 +89,9 @@ class MessageDTO_Tests: XCTestCase {
     
     func test_messagePayload_withExtraData_isStoredAndLoadedFromDB() {
         struct DeathStarMetadata: MessageExtraData {
-            static var defaultValue: DeathStarMetadata = .init(isSectedDeathStarPlanIncluded: false)
+            static var defaultValue: DeathStarMetadata = .init(isSecretDeathStarPlanIncluded: false)
             
-            let isSectedDeathStarPlanIncluded: Bool
+            let isSecretDeathStarPlanIncluded: Bool
         }
         
         enum SecretExtraData: ExtraDataTypes {
@@ -107,7 +107,7 @@ class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessagePayload<SecretExtraData> = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            extraData: DeathStarMetadata(isSectedDeathStarPlanIncluded: true),
+            extraData: DeathStarMetadata(isSecretDeathStarPlanIncluded: true),
             latestReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
             ],
