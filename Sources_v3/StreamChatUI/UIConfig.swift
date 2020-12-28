@@ -246,6 +246,8 @@ public extension UIConfig {
         // Interactive attachments
         public var interactiveAttachmentView: ChatMessageInteractiveAttachmentView<ExtraData>.Type =
             ChatMessageInteractiveAttachmentView<ExtraData>.self
+        public var interactiveAttachmentActionButton: ChatMessageInteractiveAttachmentView<ExtraData>.ActionButton.Type =
+            ChatMessageInteractiveAttachmentView<ExtraData>.ActionButton.self
     }
 }
 
