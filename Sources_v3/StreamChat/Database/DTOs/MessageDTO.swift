@@ -95,8 +95,14 @@ class MessageDTO: NSManagedObject {
         ])
 
         let deletedMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            // Non-deleted messages.
             .init(format: "deletedAt == nil"),
-            .init(format: "deletedAt != nil AND user.currentUser != nil", MessageType.reply.rawValue)
+            // Deleted messages sent by current user excluding ephemeral ones.
+            NSCompoundPredicate(andPredicateWithSubpredicates: [
+                .init(format: "deletedAt != nil"),
+                .init(format: "user.currentUser != nil"),
+                .init(format: "type != %@", MessageType.ephemeral.rawValue)
+            ])
         ])
 
         return .init(andPredicateWithSubpredicates: [
