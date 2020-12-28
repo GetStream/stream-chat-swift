@@ -108,23 +108,12 @@ struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
 
         let type: AttachmentType = {
             let itWasLinkOriginally = container.contains(.ogURL)
-            let backendType = AttachmentType(rawValue: try? container.decode(String.self, forKey: .type))
             if itWasLinkOriginally {
-                if let url = url, url.absoluteString.contains("youtube") {
-                    return .youtube
-                }
-                if backendType == .imgur {
-                    return backendType
-                }
                 return .link
             }
-            if backendType == .video {
-                if author == "GIPHY" {
-                    return .giphy
-                }
-                if let url = url, url.absoluteString.contains("youtube") {
-                    return .youtube
-                }
+            let backendType = AttachmentType(rawValue: try? container.decode(String.self, forKey: .type))
+            if backendType == .video, author == "GIPHY" {
+                return .giphy
             }
             return backendType
         }()

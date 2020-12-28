@@ -14,7 +14,7 @@ final class AttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.title, "The Weeknd - King Of The Fall (Official Video)")
         XCTAssertEqual(payload.author, "YouTube")
         XCTAssertEqual(payload.text, "For more information, follow The Weeknd on Twitter: http://twitter.com/theweeknd")
-        XCTAssertEqual(payload.type, .youtube)
+        XCTAssertEqual(payload.type, .link)
         XCTAssertEqual(payload.url, URL(string: "https://www.youtube.com/embed/ZXBcwyMUrcU"))
         XCTAssertEqual(payload.imageURL, URL(string: "https://i.ytimg.com/vi/ZXBcwyMUrcU/maxresdefault.jpg"))
         XCTAssertEqual(payload.imagePreviewURL, URL(string: "https://i.ytimg.com/vi/ZXBcwyMUrcU/maxresdefault_preview.jpg"))
@@ -29,7 +29,7 @@ final class AttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.title, "The Weeknd - King Of The Fall (Official Video)")
         XCTAssertEqual(payload.author, "YouTube")
         XCTAssertEqual(payload.text, "For more information, follow The Weeknd on Twitter: http://twitter.com/theweeknd")
-        XCTAssertEqual(payload.type, .youtube)
+        XCTAssertEqual(payload.type, .link)
         XCTAssertEqual(payload.url, URL(string: "https://www.youtube.com/embed/ZXBcwyMUrcU"))
         XCTAssertEqual(payload.imageURL, URL(string: "https://i.ytimg.com/vi/ZXBcwyMUrcU/maxresdefault.jpg"))
         XCTAssertEqual(payload.imagePreviewURL, URL(string: "https://i.ytimg.com/vi/ZXBcwyMUrcU/maxresdefault_preview.jpg"))
@@ -38,12 +38,13 @@ final class AttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.extraData.countdown, 120)
     }
 
-    func test_json_parsingLinks_scrapedImage() throws {
-        let json = XCTestCase.mockData(fromFile: "AttachmentPayload+LinkImage", extension: "json")
+    func test_json_parsingType_giphyDeletesText() throws {
+        let json = XCTestCase.mockData(fromFile: "AttachmentPayload+Giphy", extension: "json")
         let payload = try JSONDecoder.default.decode(AttachmentPayload<NoExtraDataTypes.Attachment>.self, from: json)
 
         // Assert `AttachmentPayload` correctly found link
-        XCTAssertEqual(payload.type, .link)
+        XCTAssertEqual(payload.type, .giphy)
+        XCTAssertNil(payload.text)
     }
 }
 

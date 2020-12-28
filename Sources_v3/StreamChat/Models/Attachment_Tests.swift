@@ -7,7 +7,7 @@ import XCTest
 
 class Attachment_Tests: XCTestCase {
     func test_type_encodedAndDecodedCorrectly() throws {
-        let types: [AttachmentType] = [.youtube, .imgur, .giphy, .custom("sticker")]
+        let types: [AttachmentType] = [.image, .video, .audio, .file, .giphy, .link, .custom("sticker")]
         
         // Different test for < iOS 13 because of decoding bug.
         if #available(iOS 13, *) {
