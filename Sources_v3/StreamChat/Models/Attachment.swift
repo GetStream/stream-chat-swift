@@ -189,15 +189,12 @@ public struct AttachmentAction: Codable, Hashable {
 public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
     /// Backend specified types.
     case image
-    case imgur
-    case giphy
     case video
     case audio
-    
-    /// Custom types.
-    case youtube
-    case product
     case file
+
+    /// Application custom types.
+    case giphy
     case link
     case custom(String?)
     
@@ -207,18 +204,12 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBySt
             return raw
         case .image:
             return "image"
-        case .imgur:
-            return "imgur"
         case .giphy:
             return "giphy"
         case .video:
             return "video"
         case .audio:
             return "audio"
-        case .youtube:
-            return "youtube"
-        case .product:
-            return "product"
         case .file:
             return "file"
         case .link:
@@ -230,18 +221,12 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBySt
         switch rawValue {
         case "image":
             self = .image
-        case "imgur":
-            self = .imgur
         case "giphy":
             self = .giphy
         case "video":
             self = .video
         case "audio":
             self = .audio
-        case "youtube":
-            self = .youtube
-        case "product":
-            self = .product
         case "file":
             self = .file
         case "link":
