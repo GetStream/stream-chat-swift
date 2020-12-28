@@ -82,7 +82,7 @@ extension Endpoint {
         cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction
-    ) -> Endpoint<WrappedMessagePayload<ExtraData>> {
+    ) -> Endpoint<MessagePayload<ExtraData>.Boxed> {
         .init(
             path: messageId.actionPath,
             method: .post,

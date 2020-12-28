@@ -12,7 +12,7 @@
 		2229C6D9256562AC00C56B63 /* ChatMessageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */; };
 		2229C6DF256562DB00C56B63 /* AttachmentPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2229C6DE256562DB00C56B63 /* AttachmentPayload.swift */; };
 		22411680258A91280034184D /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241167F258A91280034184D /* String+Extensions.swift */; };
-		224116B2258BACF90034184D /* WrappedMessage.json in Resources */ = {isa = PBXBuildFile; fileRef = 224116B1258BACF90034184D /* WrappedMessage.json */; };
+		224116B2258BACF90034184D /* Message.json in Resources */ = {isa = PBXBuildFile; fileRef = 224116B1258BACF90034184D /* Message.json */; };
 		224165A825910A2C00ED7F78 /* MessageComposerCheckmarkControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224165A725910A2C00ED7F78 /* MessageComposerCheckmarkControl.swift */; };
 		2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2245B2B525602465006A612D /* ChatChannelAvatarView.swift */; };
 		224FF67B2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF67A2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift */; };
@@ -266,7 +266,6 @@
 		79DDF81A249CE38B002F4412 /* RequestRecorderURLProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */; };
 		79DDF81B249CE38B002F4412 /* AssertNetworkRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */; };
 		79E2B84024CAC8D60024752F /* ListDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */; };
-		79F3ABEA24EAB9CD00AB9505 /* Message.json in Resources */ = {isa = PBXBuildFile; fileRef = 79F3ABE924EAB9CD00AB9505 /* Message.json */; };
 		79F3ABEC24EAE0B900AB9505 /* UserRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79F3ABEB24EAE0B900AB9505 /* UserRequestBody.swift */; };
 		79FC85E724ACCBC500A665ED /* Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79FC85E624ACCBC500A665ED /* Token.swift */; };
 		8008C18124ED64D300F5BCCE /* UIViewController+MoveToStoryboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008C17F24ED64C000F5BCCE /* UIViewController+MoveToStoryboard.swift */; };
@@ -724,7 +723,7 @@
 		2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachment.swift; sourceTree = "<group>"; };
 		2229C6DE256562DB00C56B63 /* AttachmentPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPayload.swift; sourceTree = "<group>"; };
 		2241167F258A91280034184D /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
-		224116B1258BACF90034184D /* WrappedMessage.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = WrappedMessage.json; sourceTree = "<group>"; };
+		224116B1258BACF90034184D /* Message.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Message.json; sourceTree = "<group>"; };
 		224165A725910A2C00ED7F78 /* MessageComposerCheckmarkControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerCheckmarkControl.swift; sourceTree = "<group>"; };
 		2245B2B525602465006A612D /* ChatChannelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelAvatarView.swift; sourceTree = "<group>"; };
 		224FF67A2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReadStatusCheckmarkView.swift; sourceTree = "<group>"; };
@@ -981,7 +980,6 @@
 		79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestRecorderURLProtocol.swift; sourceTree = "<group>"; };
 		79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertNetworkRequest.swift; sourceTree = "<group>"; };
 		79E2B83F24CAC8D60024752F /* ListDatabaseObserver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserver.swift; sourceTree = "<group>"; };
-		79F3ABE924EAB9CD00AB9505 /* Message.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Message.json; sourceTree = "<group>"; };
 		79F3ABEB24EAE0B900AB9505 /* UserRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRequestBody.swift; sourceTree = "<group>"; };
 		79FC85E624ACCBC500A665ED /* Token.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Token.swift; sourceTree = "<group>"; };
 		8008C17F24ED64C000F5BCCE /* UIViewController+MoveToStoryboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+MoveToStoryboard.swift"; sourceTree = "<group>"; };
@@ -1912,8 +1910,7 @@
 				798779F62498E47700015F8B /* Member.json */,
 				790A4C50252E0957001F4A23 /* Devices.json */,
 				798779F72498E47700015F8B /* Channel.json */,
-				79F3ABE924EAB9CD00AB9505 /* Message.json */,
-				224116B1258BACF90034184D /* WrappedMessage.json */,
+				224116B1258BACF90034184D /* Message.json */,
 				DA653BB9253F47EB00B448A0 /* Messages.json */,
 				798779F82498E47700015F8B /* OtherUser.json */,
 				798779F92498E47700015F8B /* CurrentUser.json */,
@@ -3104,11 +3101,10 @@
 				DBDAB4362596223900F69418 /* AttachmentPayload+Giphy.json in Resources */,
 				88EA9B112547271B007EE76B /* MessageReactionPayload+DefaultExtraData.json in Resources */,
 				8A0D64A424E57A260017A3C0 /* GuestUser+CustomExtraData.json in Resources */,
-				224116B2258BACF90034184D /* WrappedMessage.json in Resources */,
+				224116B2258BACF90034184D /* Message.json in Resources */,
 				8AC9CBDE24C74DD0006E236C /* NotificationMutesUpdated.json in Resources */,
 				798779FF2498E47700015F8B /* ChannelsQuery.json in Resources */,
 				8A0C3BC024C0ACAB00CAFD19 /* UserUnbanned.json in Resources */,
-				79F3ABEA24EAB9CD00AB9505 /* Message.json in Resources */,
 				8A0C3BDC24C1F18700CAFD19 /* MessageNew.json in Resources */,
 				8A62706224BE35E40040BFD6 /* UserStartTyping.json in Resources */,
 				88EA9B102547271B007EE76B /* MessageReactionPayload+CustomExtraData.json in Resources */,

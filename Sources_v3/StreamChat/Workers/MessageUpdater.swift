@@ -34,7 +34,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// If the message with a provided `messageId` has `pendingSend` or `sendingFailed` state
     /// it will be removed locally as it hasn't been sent yet.
     ///
-    /// If the messsage a provided `messageId` has some other local state it should be removed on the backend.
+    /// If the message with the provided `messageId` has some other local state it should be removed on the backend.
     /// Before the `delete` network call happens the local state is set to `deleting` and based on
     /// the response it becomes either `nil` if request succeeds or `deletingFailed` if request fails.
     ///
@@ -51,7 +51,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             
             guard let messageDTO = session.message(id: messageId) else {
                 // Even though the message does not exist locally
-                // we don't throw any error becauase we still want
+                // we don't throw any error because we still want
                 // to try to delete the message on the backend.
                 return
             }
@@ -344,7 +344,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                 return
             }
 
-            let endpoint: Endpoint<WrappedMessagePayload<ExtraData>> = .dispatchEphemeralMessageAction(
+            let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .dispatchEphemeralMessageAction(
                 cid: cid,
                 messageId: messageId,
                 action: action

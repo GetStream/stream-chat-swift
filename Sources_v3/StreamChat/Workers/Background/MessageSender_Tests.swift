@@ -112,7 +112,7 @@ class MessageSender_Tests: StressTestCase {
         }
 
         // Simulate successful response for message1.
-        let dummyPayload: WrappedMessagePayload<ExtraData> = .init(
+        let dummyPayload: MessagePayload<ExtraData>.Boxed = .init(
             message: .dummy(messageId: message1Id, authorUserId: .anonymous)
         )
         
@@ -158,7 +158,7 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate successfull API response
-        let callback = apiClient.request_completion as! (Result<WrappedMessagePayload<ExtraData>, Error>) -> Void
+        let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
         callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
         
         // Check the state is eventually changed to `nil`
@@ -184,7 +184,7 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate error API response
-        let callback = apiClient.request_completion as! (Result<WrappedMessagePayload<ExtraData>, Error>) -> Void
+        let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
         callback(.failure(TestError()))
         
         // Check the state is eventually changed to `sendingFailed`
@@ -237,8 +237,8 @@ class MessageSender_Tests: StressTestCase {
         )
         
         // Simulate the first call response
-        var callback: ((Result<WrappedMessagePayload<ExtraData>, Error>) -> Void) {
-            apiClient.request_completion as! (Result<WrappedMessagePayload<ExtraData>, Error>) -> Void
+        var callback: ((Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void) {
+            apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
         }
         callback(.success(.init(message: .dummy(messageId: message1Id, authorUserId: .anonymous))))
         
@@ -341,7 +341,7 @@ class MessageSender_Tests: StressTestCase {
 
         // Simulate successfull responses for both API calls
         apiClient.request_allRecordedCalls.forEach {
-            let callback = $0.completion as! (Result<WrappedMessagePayload<ExtraData>, Error>) -> Void
+            let callback = $0.completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
             callback(.success(.init(message: .dummy(messageId: .unique, authorUserId: .anonymous))))
         }
                 
@@ -385,7 +385,7 @@ class MessageSender_Tests: StressTestCase {
         AssertAsync.willBeTrue(apiClient.request_endpoint != nil)
         
         // Simulate successful API response with assigned attachment
-        let callback = apiClient.request_completion as! (Result<WrappedMessagePayload<ExtraData>, Error>) -> Void
+        let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
         let attachment: AttachmentPayload<ExtraData.Attachment> = .init(type: .giphy, title: .unique, imagePreviewURL: nil)
         let messagePayload: MessagePayload<ExtraData> = .dummy(
             messageId: messageId,
