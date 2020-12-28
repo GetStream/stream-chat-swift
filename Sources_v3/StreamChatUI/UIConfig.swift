@@ -66,6 +66,7 @@ public extension UIConfig {
         public var inactiveReactionTint: UIColor = .streamGray
         public var outgoingMessageErrorIndicatorTint: UIColor = .streamAccentRed
         public var linkMessageBubbleBackground: UIColor = .streamBlueAlice
+        public var ephemeralMessageBubbleBackground: UIColor = .streamWhite
 
         // MARK: - Message Composer
 
@@ -92,6 +93,7 @@ public extension UIConfig {
         public var messageActionDefaultIconTint: UIColor = .streamGray
         public var messageActionDefaultText: UIColor = .streamBlack
         public var messageActionErrorTint: UIColor = .streamAccentRed
+        public var messageInteractiveAttachmentActionsBorder: UIColor = .streamGrayGainsboro
     }
 }
 
@@ -241,6 +243,9 @@ public extension UIConfig {
         public var imageGalleryInteritemSpacing: CGFloat = 2
         public var imageGalleryItemUploadingOverlay: ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
             ChatMessageImageGallery<ExtraData>.UploadingOverlay.self
+        // Interactive attachments
+        public var interactiveAttachmentView: ChatMessageInteractiveAttachmentView<ExtraData>.Type =
+            ChatMessageInteractiveAttachmentView<ExtraData>.self
     }
 }
 
