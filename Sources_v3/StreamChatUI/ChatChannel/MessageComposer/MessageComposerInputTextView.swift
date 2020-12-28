@@ -44,10 +44,13 @@ open class MessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
     open func defaultAppearance() {
         font = .preferredFont(forTextStyle: .callout)
         textContainer.lineFragmentPadding = 10
+        textColor = uiConfig.colorPalette.text
         
         placeholderLabel.font = font
         placeholderLabel.textColor = uiConfig.colorPalette.messageComposerPlaceholder
         placeholderLabel.textAlignment = .center
+        
+        backgroundColor = .clear
     }
     
     open func setUp() {
