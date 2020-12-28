@@ -22,7 +22,8 @@ extension MessagePayload {
         extraData: T.Message = .defaultValue,
         latestReactions: [MessageReactionPayload<T>] = [],
         ownReactions: [MessageReactionPayload<T>] = [],
-        deletedAt: Date? = nil
+        deletedAt: Date? = nil,
+        channel: ChannelDetailPayload<T>? = nil
     ) -> MessagePayload<T> where T.User == DefaultExtraData.User {
         .init(
             id: messageId,
@@ -43,7 +44,8 @@ extension MessagePayload {
             ownReactions: ownReactions,
             reactionScores: ["like": 1],
             isSilent: true,
-            attachments: attachments
+            attachments: attachments,
+            channel: channel
         )
     }
 }

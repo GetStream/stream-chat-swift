@@ -17,7 +17,6 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         apiClient.request(endpoint: endpoint) {
             switch $0 {
             case let .success(message):
-                // TODO: CIS-235 (make a channel-query call from `getMessage` if channel doesn't exist locally)
                 self.database.write({ session in
                     try session.saveMessage(payload: message, for: cid)
                 }, completion: { error in
