@@ -86,6 +86,10 @@ extension ChannelPresenter {
                 return .none
             }
             
+            if let parentMessage = self.parentMessage, message.id == parentMessage.id {
+                self.parentMessage = message
+            }
+            
             if let index = items.lastIndex(whereMessageId: message.id) {
                 appendOrUpdateMessageItem(message, at: index)
                 let viewChanges = ViewChanges.itemsUpdated([index], [message], items)

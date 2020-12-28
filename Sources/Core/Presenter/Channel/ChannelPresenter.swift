@@ -52,7 +52,7 @@ public final class ChannelPresenter: Presenter {
     /// A channel (see `Channel`).
     public var channel: Channel { channelAtomic.get() }
     /// A parent message for replies.
-    public let parentMessage: Message?
+    public var parentMessage: Message?
     /// Checks if the presenter is in a thread.
     public var isThread: Bool { parentMessage != nil }
     /// Query options.
