@@ -1199,8 +1199,8 @@ final class MessageUpdater_Tests: StressTestCase {
         // Load message
         let message = try XCTUnwrap(database.viewContext.message(id: messageId))
 
-        // Assert message is marked as `deleted`.
-        XCTAssertEqual(message.type, MessageType.deleted.rawValue)
+        // Assert message has `deletedAt` field but stays in `ephemeral` state.
+        XCTAssertEqual(message.type, MessageType.ephemeral.rawValue)
         XCTAssertNotNil(message.deletedAt)
     }
 
