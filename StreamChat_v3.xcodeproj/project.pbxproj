@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		22086B38259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B37259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift */; };
 		22086B40259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B3F259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift */; };
+		22086B48259509AC0007F8C0 /* MessageComposerDocumentAttachmentsCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B47259509AC0007F8C0 /* MessageComposerDocumentAttachmentsCollectionViewLayout.swift */; };
 		2210525F256FE16600A5F0DB /* MessageComposerInputSlashCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2210525E256FE16600A5F0DB /* MessageComposerInputSlashCommandView.swift */; };
 		221742D5256DC97F005B257C /* MessageComposerAttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 221742D4256DC97F005B257C /* MessageComposerAttachmentsView.swift */; };
 		2229C6D9256562AC00C56B63 /* ChatMessageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */; };
@@ -726,6 +727,7 @@
 /* Begin PBXFileReference section */
 		22086B37259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerDocumentAttachmentCollectionViewCell.swift; sourceTree = "<group>"; };
 		22086B3F259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerDocumentAttachmentView.swift; sourceTree = "<group>"; };
+		22086B47259509AC0007F8C0 /* MessageComposerDocumentAttachmentsCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerDocumentAttachmentsCollectionViewLayout.swift; sourceTree = "<group>"; };
 		2210525E256FE16600A5F0DB /* MessageComposerInputSlashCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerInputSlashCommandView.swift; sourceTree = "<group>"; };
 		221742D4256DC97F005B257C /* MessageComposerAttachmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerAttachmentsView.swift; sourceTree = "<group>"; };
 		2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachment.swift; sourceTree = "<group>"; };
@@ -2684,6 +2686,7 @@
 				228DC80D25704B410080A49F /* MessageComposerAttachmentCellView.swift */,
 				22086B37259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift */,
 				22086B3F259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift */,
+				22086B47259509AC0007F8C0 /* MessageComposerDocumentAttachmentsCollectionViewLayout.swift */,
 				2210525E256FE16600A5F0DB /* MessageComposerInputSlashCommandView.swift */,
 				22FF4364256E943F00133910 /* MessageComposerSuggestionsViewController.swift */,
 				E73A8B2A2578EB2B00FBDC56 /* MessageComposerViewController.swift */,
@@ -3272,6 +3275,7 @@
 				22753599257C442300D1FDB6 /* MessageComposerSendButton.swift in Sources */,
 				88F836502578D16D0039AEC8 /* MessageActionsView+ActionButton.swift in Sources */,
 				88BA7F5D258B6953006CE0C5 /* LoadingIndicator.swift in Sources */,
+				22086B48259509AC0007F8C0 /* MessageComposerDocumentAttachmentsCollectionViewLayout.swift in Sources */,
 				88A11B0A2590AFBB0000AC24 /* ChatMessage+Extensions.swift in Sources */,
 				88A8CF20256E7C06004EA4C7 /* ChatMessageBubbleView.swift in Sources */,
 				DBC8A5762581476E00B20A82 /* ChatMessageListVC.swift in Sources */,
