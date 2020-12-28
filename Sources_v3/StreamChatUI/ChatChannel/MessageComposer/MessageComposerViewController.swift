@@ -92,7 +92,8 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             textView.placeholderLabel.text = L10n.Composer.Placeholder.message
             composerView.replyView.message = nil
             composerView.sendButton.mode = .new
-            composerView.attachmentsView.isHidden = true
+            composerView.documentAttachmentsView.isHidden = true
+            composerView.imageAttachmentsView.isHidden = true
             composerView.replyView.isHidden = true
             composerView.container.topStackView.isHidden = true
             composerView.messageInputView.setSlashCommandViews(hidden: true)
@@ -152,14 +153,15 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             for: .touchUpInside
         )
         composerView.dismissButton.addTarget(self, action: #selector(resetState), for: .touchUpInside)
-        composerView.attachmentsView.didTapRemoveItemButton = { [weak self] index in
-            switch self?.selectedAttachments {
-            case .documents:
-                self?.documentAttachments.remove(at: index)
-            case .media:
-                self?.imageAttachments.remove(at: index)
-            default: return
-            }
+        
+        composerView.imageAttachmentsView.didTapRemoveItemButton = { [weak self] index in
+            self?.imageAttachments.remove(at: index)
+            self?.composerView.imageAttachmentsView.invalidateIntrinsicContentSize()
+        }
+        
+        composerView.documentAttachmentsView.didTapRemoveItemButton = { [weak self] index in
+            self?.documentAttachments.remove(at: index)
+            self?.composerView.documentAttachmentsView.invalidateIntrinsicContentSize()
         }
     }
     
@@ -314,7 +316,8 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
 
     // MARK: Attachments
     
-    public typealias AttachmentInfo = (preview: UIImage, localURL: URL)
+    public typealias MediaAttachmentInfo = (preview: UIImage, localURL: URL)
+    public typealias DocumentAttachmentInfo = (preview: UIImage, localURL: URL, size: Int64)
     
     public enum SelectedAttachments {
         case media, documents
@@ -328,53 +331,56 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         }
     }
     
-    open var imageAttachments: [AttachmentInfo] = [] {
+    open var imageAttachments: [MediaAttachmentInfo] = [] {
         didSet {
             didUpdateImageAttachments()
         }
     }
     
-    open var documentAttachments: [AttachmentInfo] = [] {
+    open var documentAttachments: [DocumentAttachmentInfo] = [] {
         didSet {
             didUpdateDocumentAttachments()
         }
     }
     
     open var attachmentSeeds: [_ChatMessageAttachment<ExtraData>.Seed] {
-        var attachments: [AttachmentInfo]
-        var type: AttachmentType
-        
         switch selectedAttachments {
         case .media:
-            attachments = imageAttachments
-            type = .image
+            return imageAttachments.map {
+                .init(
+                    localURL: $0.localURL,
+                    fileName: $0.localURL.lastPathComponent,
+                    type: .image,
+                    extraData: .defaultValue
+                )
+            }
         case .documents:
-            attachments = documentAttachments
-            type = .file
+            return documentAttachments.map {
+                .init(
+                    localURL: $0.localURL,
+                    fileName: $0.localURL.lastPathComponent,
+                    type: .file,
+                    extraData: .defaultValue
+                )
+            }
         case .none:
             return []
-        }
-        
-        return attachments.map {
-            .init(
-                localURL: $0.localURL,
-                fileName: $0.localURL.lastPathComponent,
-                type: type,
-                extraData: .defaultValue
-            )
         }
     }
     
     func didUpdateImageAttachments() {
-        composerView.attachmentsView.previews = imageAttachments.map(\.preview)
-        composerView.attachmentsView.isHidden = imageAttachments.isEmpty
+        composerView.imageAttachmentsView.images = imageAttachments.map(\.preview)
+        composerView.imageAttachmentsView.isHidden = imageAttachments.isEmpty
+        composerView.imageAttachmentsView.invalidateIntrinsicContentSize()
         composerView.invalidateIntrinsicContentSize()
     }
     
-    // NOTE: Identical to didUpdateImageAttachments for now but it will be changed really soon.
     func didUpdateDocumentAttachments() {
-        composerView.attachmentsView.previews = documentAttachments.map(\.preview)
-        composerView.attachmentsView.isHidden = documentAttachments.isEmpty
+        composerView.documentAttachmentsView.documents = documentAttachments.map {
+            ($0.preview, $0.localURL.lastPathComponent, $0.size)
+        }
+        composerView.documentAttachmentsView.isHidden = documentAttachments.isEmpty
+        composerView.documentAttachmentsView.invalidateIntrinsicContentSize()
         composerView.invalidateIntrinsicContentSize()
     }
     
@@ -469,10 +475,11 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     // MARK: - UIDocumentPickerViewControllerDelegate
     
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let documentsInfo: [AttachmentInfo] = urls.map {
+        let documentsInfo: [DocumentAttachmentInfo] = urls.map {
             let preview = uiConfig.messageComposer.documentPreviews[$0.pathExtension] ??
                 uiConfig.messageComposer.fallbackDocumentPreview
-            return (preview, $0)
+            let size = (try? FileManager.default.attributesOfItem(atPath: $0.path)[.size] as? Int64) ?? 0
+            return (preview, $0, size)
         }
         
         documentAttachments.append(contentsOf: documentsInfo)
