@@ -132,8 +132,13 @@ class UserListUpdater_Tests: StressTestCase {
     }
     
     func test_removePolicy_takesAffect() throws {
+        // Create query
+        let filterHash = String.unique
+        var query = UserListQuery<DefaultExtraData.User>(filter: .equal(.id, to: "Luke"))
+        query.filter?.explicitHash = filterHash
         // Simulate `update` call
-        let query = UserListQuery<DefaultExtraData.User>(filter: .equal(.id, to: "Luke"))
+        // This call doesn't need `policy` argument specified since
+        // it's the first call for this query, hence there's no data to `replace` or `merge` to
         listUpdater.update(userListQuery: query)
         
         // Simulate API response with user data
@@ -149,7 +154,7 @@ class UserListUpdater_Tests: StressTestCase {
         // Assert user is inserted into DB
         AssertAsync.willBeTrue(user != nil)
         
-        // Simulate consequent `update` call with new users and `.merge` policy
+        // Simulate consequent `update` call with new users and `.replace` policy
         listUpdater.update(userListQuery: query, policy: .replace)
         
         // Simulate API response with user data
@@ -166,15 +171,14 @@ class UserListUpdater_Tests: StressTestCase {
         AssertAsync.willBeTrue(newUser != nil)
         
         // Assert first user is not linked to the query anymore
-        try database.writeSynchronously { session in
-            do {
-                let dto = try session.saveQuery(query: query)
-                XCTAssertEqual(dto!.users.count, 1)
-                XCTAssertEqual(dto!.users.map(\.id), [newUser!].map(\.id))
-            } catch {
-                XCTFail("Error trying to get query: \(error)")
-            }
+        var queryDTO: UserListQueryDTO? {
+            database.viewContext.userListQuery(filterHash: filterHash)
         }
+        
+        // Assert only 1 user is linked to query
+        XCTAssertEqual(queryDTO!.users.count, 1)
+        // Assert new user is linked to query
+        XCTAssertEqual(queryDTO!.users.map(\.id), [newUser!].map(\.id))
     }
     
     func test_updateCompletion_calledAfterDBWriteCompletes() {
