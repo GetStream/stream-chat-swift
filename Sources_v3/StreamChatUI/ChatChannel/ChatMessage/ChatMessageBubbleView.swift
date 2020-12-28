@@ -247,7 +247,8 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         attachmentsView.content = message.flatMap {
             .init(
                 attachments: $0.attachments,
-                didTapOnAttachment: message?.didTapOnAttachment
+                didTapOnAttachment: message?.didTapOnAttachment,
+                didTapOnAttachmentAction: message?.didTapOnAttachmentAction
             )
         }
         linkPreviewView.content = message?.attachments.first { $0.type == .link }
