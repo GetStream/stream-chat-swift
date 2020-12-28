@@ -254,6 +254,12 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
             isLastInGroup: isLastInGroup,
             didTapOnAttachment: { [weak self] attachment in
                 self?.didTapOnAttachment(attachment, in: message)
+            },
+            didTapOnAttachmentAction: { [weak self] _, action in
+                guard let self = self else { return }
+
+                let messageController = self.dataSource.controllerForMessage(self, message)
+                messageController.dispatchEphemeralMessageAction(action)
             }
         )
     }

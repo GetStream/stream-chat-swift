@@ -130,7 +130,13 @@ open class ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UICon
         authorLabel.textColor = tintColor
         outlineView.backgroundColor = tintColor
 
-        imagePreview.content = content.map { AttachmentListViewData<ExtraData>.ItemData(attachment: $0, didTapOnAttachment: {}) }
+        imagePreview.content = content.map {
+            .init(
+                attachment: $0,
+                didTapOnAttachment: {},
+                didTapOnAttachmentAction: { _ in }
+            )
+        }
 
         imagePreview.isHidden = isImageHidden
 
