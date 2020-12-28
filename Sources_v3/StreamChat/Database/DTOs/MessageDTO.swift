@@ -239,7 +239,19 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return message
     }
     
-    func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload<ExtraData>, for cid: ChannelId) throws -> MessageDTO {
+    func saveMessage<ExtraData: ExtraDataTypes>(payload: MessagePayload<ExtraData>, for cid: ChannelId?) throws -> MessageDTO {
+        guard payload.channel != nil || cid != nil else {
+            throw ClientError.MessagePayloadSavingFailure("""
+            Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
+            - `payload.channel` value: \(String(describing: payload.channel))
+            - `cid` value: \(String(describing: cid))
+            """)
+        }
+
+        if let cid = cid, let payloadCid = payload.channel?.cid {
+            log.assert(cid == payloadCid, "`cid` provided is different from the `payload.channel.cid`.")
+        }
+        
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
         
         dto.text = payload.text
@@ -254,7 +266,21 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.replyCount = Int32(payload.replyCount)
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.isSilent = payload.isSilent
-        dto.channel = ChannelDTO.loadOrCreate(cid: cid, context: self)
+        
+        var channelDTO: ChannelDTO?
+        if let channelPayload = payload.channel {
+            channelDTO = try self.saveChannel(payload: channelPayload, query: nil)
+        }
+        
+        if channelDTO == nil, let cid = cid {
+            channelDTO = ChannelDTO.loadOrCreate(cid: cid, context: self)
+        }
+
+        if let channelDTO = channelDTO {
+            dto.channel = channelDTO
+        } else {
+            log.assertationFailure("Should never happen because either `cid` or `payload.channel` should be present.")
+        }
         
         let user = try saveUser(payload: payload.user)
         dto.user = user
@@ -272,6 +298,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.threadParticipants = try Set(
             payload.threadParticipants.map { try saveUser(payload: $0) }
         )
+        
+        let cid = cid ?? payload.channel!.cid
         
         dto.attachments = try Set(
             payload.attachments.enumerated().map { index, attachment in
@@ -398,7 +426,9 @@ extension ClientError {
             "There is no `CurrentUserDTO` instance in the DB. Make sure to call `Client.setUser`."
         }
     }
-    
+
+    class MessagePayloadSavingFailure: ClientError {}
+
     class ChannelDoesNotExist: ClientError {
         init(cid: ChannelId) {
             super.init("There is no `ChannelDTO` instance in the DB matching cid: \(cid).")

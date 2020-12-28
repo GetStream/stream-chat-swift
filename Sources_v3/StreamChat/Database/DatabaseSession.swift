@@ -65,12 +65,14 @@ protocol MessageDatabaseSession {
         extraData: ExtraData.Message
     ) throws -> MessageDTO
     
-    /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successfull.
+    /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
     /// Throws an error if the save fails.
+    ///
+    /// You must either provide `cid` or `payload.channel` value must not be `nil`.
     @discardableResult
     func saveMessage<ExtraData: ExtraDataTypes>(
         payload: MessagePayload<ExtraData>,
-        for cid: ChannelId
+        for cid: ChannelId?
     ) throws -> MessageDTO
     
     /// Fetches `MessageDTO` with the given `id` from the DB. Returns `nil` if no `MessageDTO` matching the `id` exists.
