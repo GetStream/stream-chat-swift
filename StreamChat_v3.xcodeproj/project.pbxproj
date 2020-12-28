@@ -36,6 +36,7 @@
 		22ADD67C256BF1550098EFEB /* MessageComposerInputContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ADD67B256BF1550098EFEB /* MessageComposerInputContainerView.swift */; };
 		22ADD682256C40410098EFEB /* MessageComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ADD681256C40410098EFEB /* MessageComposerView.swift */; };
 		22C23506259A257B00DC805A /* MessageComposerDocumentAttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C23505259A257B00DC805A /* MessageComposerDocumentAttachmentsView.swift */; };
+		22C2350E259A25A300DC805A /* MessageComposerImageAttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C2350D259A25A300DC805A /* MessageComposerImageAttachmentsView.swift */; };
 		22FF4365256E943F00133910 /* MessageComposerSuggestionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FF4364256E943F00133910 /* MessageComposerSuggestionsViewController.swift */; };
 		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
 		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -756,6 +757,7 @@
 		22ADD67B256BF1550098EFEB /* MessageComposerInputContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerInputContainerView.swift; sourceTree = "<group>"; };
 		22ADD681256C40410098EFEB /* MessageComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerView.swift; sourceTree = "<group>"; };
 		22C23505259A257B00DC805A /* MessageComposerDocumentAttachmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerDocumentAttachmentsView.swift; sourceTree = "<group>"; };
+		22C2350D259A25A300DC805A /* MessageComposerImageAttachmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerImageAttachmentsView.swift; sourceTree = "<group>"; };
 		22FF4364256E943F00133910 /* MessageComposerSuggestionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerSuggestionsViewController.swift; sourceTree = "<group>"; };
 		7900452525374CA20096ECA1 /* User+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+SwiftUI.swift"; sourceTree = "<group>"; };
 		790881FD25432B7200896F03 /* StreamChatUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2689,6 +2691,7 @@
 				221742D4256DC97F005B257C /* MessageComposerAttachmentsView.swift */,
 				228DC80D25704B410080A49F /* MessageComposerAttachmentCellView.swift */,
 				22C23505259A257B00DC805A /* MessageComposerDocumentAttachmentsView.swift */,
+				22C2350D259A25A300DC805A /* MessageComposerImageAttachmentsView.swift */,
 				228DC80D25704B410080A49F /* MessageComposerImageAttachmentCollectionViewCell.swift */,
 				22086B37259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift */,
 				22086B3F259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift */,
@@ -3267,6 +3270,7 @@
 				224FF6872562F55F00725DD1 /* Date+Extensions.swift in Sources */,
 				22ADD682256C40410098EFEB /* MessageComposerView.swift in Sources */,
 				8850FE91256558B200C8D534 /* ChatRouter.swift in Sources */,
+				22C2350E259A25A300DC805A /* MessageComposerImageAttachmentsView.swift in Sources */,
 				E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */,
 				DB70CFF425701FE500DDF436 /* ChatChannelNavigationBarListener.swift in Sources */,
 				88CABC4325933EE70061BB67 /* ChatMessageReactionVC.swift in Sources */,
