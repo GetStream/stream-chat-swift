@@ -10,6 +10,7 @@ public struct _ChatMessageGroupPart<ExtraData: ExtraDataTypes> {
     public let parentMessageState: ParentMessageState?
     public let isLastInGroup: Bool
     public let didTapOnAttachment: ((_ChatMessageAttachment<ExtraData>) -> Void)?
+    public let didTapOnAttachmentAction: ((_ChatMessageAttachment<ExtraData>, AttachmentAction) -> Void)?
 
     public var parentMessage: _ChatMessage<ExtraData>? {
         switch parentMessageState {

@@ -57,7 +57,13 @@ open class ChatRepliedMessageContentView<ExtraData: ExtraDataTypes>: View {
 
     override open func updateContent() {
         messageBubbleView.message = message.flatMap {
-            .init(message: $0, parentMessageState: nil, isLastInGroup: true, didTapOnAttachment: nil)
+            .init(
+                message: $0,
+                parentMessageState: nil,
+                isLastInGroup: true,
+                didTapOnAttachment: nil,
+                didTapOnAttachmentAction: nil
+            )
         }
         messageBubbleView.isHidden = message == nil
 
