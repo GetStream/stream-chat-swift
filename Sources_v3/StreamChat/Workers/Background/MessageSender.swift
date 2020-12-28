@@ -166,7 +166,7 @@ private class MessageSendingQueue<ExtraData: ExtraDataTypes> {
                         return
                     }
                     
-                    let endpoint: Endpoint<WrappedMessagePayload<ExtraData>> = .sendMessage(cid: cid, messagePayload: requestBody)
+                    let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .sendMessage(cid: cid, messagePayload: requestBody)
                     self?.apiClient.request(endpoint: endpoint) {
                         switch $0 {
                         case let .success(payload):
