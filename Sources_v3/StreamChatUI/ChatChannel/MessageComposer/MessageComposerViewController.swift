@@ -46,6 +46,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             composerView.commandsButton.isHidden = !isEmpty
             composerView.shrinkInputButton.isHidden = isEmpty
             composerView.sendButton.isEnabled = !isEmpty
+            updateSendButton()
         }
     }
     
@@ -90,6 +91,8 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         case .initial:
             textView.text = ""
             textView.placeholderLabel.text = L10n.Composer.Placeholder.message
+            imageAttachments = []
+            documentAttachments = []
             composerView.replyView.message = nil
             composerView.sendButton.mode = .new
             composerView.documentAttachmentsView.isHidden = true
@@ -185,17 +188,12 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         }
     }
     
-    // MARK: Button actions
+    // MARK: Actions
     
     @objc func sendMessage() {
-        guard let text = composerView.messageInputView.textView.text,
-            !text.replacingOccurrences(of: " ", with: "").isEmpty
-        else { return }
-        
         switch state {
         case .initial:
-            // TODO: Attachments
-            createNewMessage(text: text)
+            createNewMessage(text: textView.text)
         case .reply:
             // TODO:
             // 1. Attachments
@@ -208,9 +206,9 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
                 messageId: messageToEdit.id
             )
             // TODO: Adjust LLC to edit attachments also
-            messageController?.editMessage(text: text)
+            messageController?.editMessage(text: textView.text)
         case let .slashCommand(command):
-            createNewMessage(text: "/\(command.name) " + text)
+            createNewMessage(text: "/\(command.name) " + textView.text)
         }
         
         state = .initial
@@ -283,6 +281,10 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         state = .initial
     }
     
+    func updateSendButton() {
+        composerView.sendButton.isEnabled = !isEmpty || !imageAttachments.isEmpty || !documentAttachments.isEmpty
+    }
+
     // MARK: Suggestions
 
     public func showSuggestionsViewController(for kind: SuggestionKind, onSelectItem: @escaping ((Int) -> Void)) {
@@ -373,6 +375,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         composerView.imageAttachmentsView.isHidden = imageAttachments.isEmpty
         composerView.imageAttachmentsView.invalidateIntrinsicContentSize()
         composerView.invalidateIntrinsicContentSize()
+        updateSendButton()
     }
     
     func didUpdateDocumentAttachments() {
@@ -382,6 +385,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         composerView.documentAttachmentsView.isHidden = documentAttachments.isEmpty
         composerView.documentAttachmentsView.invalidateIntrinsicContentSize()
         composerView.invalidateIntrinsicContentSize()
+        updateSendButton()
     }
     
     // MARK: UITextView
