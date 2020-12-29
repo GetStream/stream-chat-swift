@@ -138,9 +138,7 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
     override open func setUpLayout() {
         super.setUpLayout()
         embed(container)
-        
-        preservesSuperviewLayoutMargins = true
-        
+                
         container.preservesSuperviewLayoutMargins = true
         container.isLayoutMarginsRelativeArrangement = true
         
