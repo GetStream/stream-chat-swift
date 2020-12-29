@@ -548,8 +548,15 @@ extension ChatViewController {
         case let .itemRemoved(row, items):
             self.items = items
             
-            UIView.performWithoutAnimation {
-                tableView.deleteRows(at: [.row(row)], with: .none)
+            let rowsToDelete = [IndexPath.row(row)]
+            
+            if previousRowCount - rowsToDelete.count == items.count {
+                UIView.performWithoutAnimation {
+                    tableView.deleteRows(at: rowsToDelete, with: .none)
+                }
+            } else {
+                ClientLogger.log("⚠️", level: .error, "Inconsistent table view update. Recovering by reloading the table view.")
+                tableView.reloadData()
             }
             
         case .footerUpdated:
