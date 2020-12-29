@@ -37,15 +37,6 @@ final class AttachmentPayload_Tests: XCTestCase {
         // Assert `AttachmentPayload`s `ExtraData` is deserialized correctly
         XCTAssertEqual(payload.extraData.countdown, 120)
     }
-
-    func test_json_parsingType_giphyDeletesText() throws {
-        let json = XCTestCase.mockData(fromFile: "AttachmentPayload+Giphy", extension: "json")
-        let payload = try JSONDecoder.default.decode(AttachmentPayload<NoExtraDataTypes.Attachment>.self, from: json)
-
-        // Assert `AttachmentPayload` correctly found link
-        XCTAssertEqual(payload.type, .giphy)
-        XCTAssertNil(payload.text)
-    }
 }
 
 private struct TestExtraData: AttachmentExtraData {
