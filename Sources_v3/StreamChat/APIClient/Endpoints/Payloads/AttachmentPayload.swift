@@ -78,7 +78,7 @@ struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let author = try container.decodeIfPresent(String.self, forKey: .author)
         self.author = author
-        var text = try container.decodeIfPresent(String.self, forKey: .text)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        text = try container.decodeIfPresent(String.self, forKey: .text)?.trimmingCharacters(in: .whitespacesAndNewlines)
         
         title = (
             try container.decodeIfPresent(String.self, forKey: .title)
@@ -99,32 +99,23 @@ struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
         )
         
         // Parse URL.
-        let url: URL? = AttachmentPayload.fixedURL(
+        url = AttachmentPayload.fixedURL(
             try container.decodeIfPresent(String.self, forKey: .assetURL)
                 ?? container.decodeIfPresent(String.self, forKey: .url)
                 ?? container.decodeIfPresent(String.self, forKey: .titleLink)
                 ?? container.decodeIfPresent(String.self, forKey: .ogURL)
         )
 
-        let type: AttachmentType = {
-            let itWasLinkOriginally = container.contains(.ogURL)
-            if itWasLinkOriginally {
-                return .link
-            }
-            let backendType = AttachmentType(rawValue: try? container.decode(String.self, forKey: .type))
-            if backendType == .video, author == "GIPHY" {
-                return .giphy
-            }
-            return backendType
-        }()
-
-        if type == .giphy {
-            text = nil
+        let type: AttachmentType
+        let itWasLinkOriginally = container.contains(.ogURL)
+        if itWasLinkOriginally {
+            type = .link
+        } else {
+            type = AttachmentType(rawValue: try? container.decode(String.self, forKey: .type))
         }
-
-        self.url = url
+        // compiler is confused by expression unless we use helper variable for type
         self.type = type
-        self.text = text
+
         file = (type == .file || type == .video) ? try AttachmentFile(from: decoder) : nil
         actions = try container.decodeIfPresent([AttachmentAction].self, forKey: .actions) ?? []
         extraData = try .init(from: decoder)
