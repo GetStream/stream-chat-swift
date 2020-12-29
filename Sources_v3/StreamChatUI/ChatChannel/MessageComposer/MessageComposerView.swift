@@ -130,6 +130,7 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
         dismissButton.setImage(dismissIcon, for: .normal)
         
         titleLabel.textAlignment = .center
+        titleLabel.textColor = uiConfig.colorPalette.text
         titleLabel.font = .preferredFont(forTextStyle: .headline)
         titleLabel.adjustsFontForContentSizeCategory = true
     }
