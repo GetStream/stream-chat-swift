@@ -55,6 +55,7 @@ open class ChatReplyBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvide
         textView.backgroundColor = .clear
         textView.font = .preferredFont(forTextStyle: .footnote)
         textView.textContainerInset = .zero
+        textView.textColor = uiConfig.colorPalette.text
 
         authorAvatarView.contentMode = .scaleAspectFit
         
