@@ -5,18 +5,60 @@
 import Foundation
 import Nuke
 import StreamChat
+import StreamChatUI
 import UIKit
 
 class CreateChatViewController: UIViewController {
+    enum State {
+        case searching, loading, noUsers, selected, error
+    }
+    
+    // Composer subclass intended to be only used in this VC
+    class DemoComposerVC: MessageComposerViewController<DefaultExtraData> {
+        override func createNewMessage(text: String) {
+            guard let navController = parent?.parent as? UINavigationController,
+                let controller = controller else { return }
+            // Create the Channel on backend
+            controller.synchronize { error in
+                // TODO: handle error
+                if let error = error { print("###", error) }
+                
+                // Send the message
+                super.createNewMessage(text: text)
+                
+                // Present the new chat and controller
+                let vc = ChatChannelVC<ExtraData>()
+                vc.channelController = controller
+                vc.userSuggestionSearchController = controller.client.userSearchController()
+                
+                navController.setViewControllers([navController.viewControllers.first!, vc], animated: true)
+            }
+        }
+    }
+    
     @IBOutlet var tableView: UITableView!
     @IBOutlet var noMatchView: UIView!
     @IBOutlet var searchField: UISearchTextField!
+    @IBOutlet var addPersonButton: UIButton!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet var infoLabel: UILabel!
+    @IBOutlet var mainStackView: UIStackView!
     @IBOutlet var createGroupStack: UIStackView! {
         didSet {
             createGroupStack.isLayoutMarginsRelativeArrangement = true
         }
     }
+
+    @IBOutlet var infoLabelStackView: UIStackView! {
+        didSet {
+            infoLabelStackView.isLayoutMarginsRelativeArrangement = true
+        }
+    }
+    
+    @IBOutlet var alertImage: UIImageView!
+    @IBOutlet var alertText: UILabel!
+    
+    var composerView: DemoComposerVC!
     
     var searchController: ChatUserSearchController!
     
@@ -49,8 +91,6 @@ class CreateChatViewController: UIViewController {
         // An old trick to force the table view to hide empty lines
         tableView.tableFooterView = UIView()
         
-        noMatchView.isHidden = true
-        
         searchField.allowsDeletingTokens = true
         
         searchController.delegate = self
@@ -58,23 +98,92 @@ class CreateChatViewController: UIViewController {
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(openCreateGroupChat))
         createGroupStack.addGestureRecognizer(tapGestureRecognizer)
         
-        activityIndicator.startAnimating()
-        searchController.search(term: nil) // Empty initial search to get all users
+        // ComposerView
+        
+        composerView = DemoComposerVC()
+        composerView.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(composerView) // , targetView: view)
+        view.addSubview(composerView.view)
+        composerView.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+            .isActive = true
+        composerView.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+            .isActive = true
+        view.bottomAnchor.constraint(equalTo: composerView.view.bottomAnchor).isActive = true
+        
+        // Empty initial search to get all users
+        searchController.search(term: nil) { error in
+            if error != nil {
+                self.update(for: .error)
+            }
+        }
+        infoLabel.text = "On the platform"
+        update(for: .loading)
+    }
+    
+    func update(for state: State) {
+        switch state {
+        case .error:
+            // TODO: error handling
+            break
+        case .searching:
+            searchField.becomeFirstResponder()
+            noMatchView.isHidden = true
+            activityIndicator.stopAnimating()
+            createGroupStack.isHidden = searchField.hasText || !selectedUserIds.isEmpty
+            tableView.alpha = 1
+            addPersonButton.setImage(UIImage(systemName: "person"), for: .normal)
+            infoLabelStackView.isHidden = false
+        case .noUsers:
+            noMatchView.isHidden = false
+            activityIndicator.stopAnimating()
+            createGroupStack.isHidden = true
+            tableView.alpha = 0
+            addPersonButton.setImage(UIImage(systemName: "person"), for: .normal)
+            infoLabelStackView.isHidden = false
+            alertImage.image = UIImage(systemName: "magnifyingglass")
+            alertText.text = "No user matches these keywords..."
+        case .loading:
+            noMatchView.isHidden = true
+            activityIndicator.startAnimating()
+            createGroupStack.isHidden = true
+            tableView.alpha = 0
+            addPersonButton.setImage(UIImage(systemName: "person"), for: .normal)
+            infoLabelStackView.isHidden = false
+        case .selected:
+            noMatchView.isHidden = false
+            activityIndicator.stopAnimating()
+            createGroupStack.isHidden = true
+            tableView.alpha = 0
+            addPersonButton.setImage(UIImage(systemName: "person.badge.plus"), for: .normal)
+            infoLabelStackView.isHidden = true
+            alertImage.image = nil
+            alertText.text = "No chats here yet..."
+        }
     }
     
     @IBAction func searchFieldDidChange(_ sender: UISearchTextField) {
-        noMatchView.isHidden = true
-        activityIndicator.startAnimating()
-        createGroupStack.isHidden = sender.hasText
+        update(for: .loading)
+        
+        if let text = sender.text, !text.isEmpty {
+            infoLabel.text = "Matches for \"\(text)\""
+        } else {
+            infoLabel.text = "On the platform"
+        }
         
         operation?.cancel()
         operation = DispatchWorkItem { [weak self] in
-            self?.searchController.search(term: sender.text) { _ in
-                // TODO: handle error
+            self?.searchController.search(term: sender.text) { error in
+                if error != nil {
+                    self?.update(for: .error)
+                }
             }
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(throttleTime), execute: operation!)
+    }
+    
+    @IBAction func addPersonTapped(_ sender: Any) {
+        update(for: .searching)
     }
     
     @objc func openCreateGroupChat() {
@@ -111,8 +220,7 @@ extension CreateChatViewController: ChatUserSearchControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         if case .remoteDataFetched = state {
             print("\(users.count) users found")
-            activityIndicator.stopAnimating()
-            noMatchView.isHidden = !users.isEmpty
+            update(for: users.isEmpty ? .noUsers : .searching)
         }
     }
 }
@@ -161,16 +269,27 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
             )
             token.representedObject = cell.user
             searchField.replaceTextualPortion(of: searchField.textualRange, with: token, at: searchField.tokens.count)
+            
+            update(for: .selected)
         } else {
             // Deselect user
             cell.accessoryImageView.image = nil
             if let tokenIndex = searchField.tokens.firstIndex(where: { ($0.representedObject as? ChatUser)?.id == cell.user?.id }) {
                 searchField.removeToken(at: tokenIndex)
             }
+            
+            update(for: .searching)
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
-        createGroupStack.isHidden = searchField.hasText
+        let client = searchController.client
+        composerView.controller = try? client
+            .channelController(
+                createDirectMessageChannelWith: selectedUserIds.union([client.currentUserId]),
+                name: nil,
+                imageURL: nil,
+                extraData: .defaultValue
+            )
     }
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
