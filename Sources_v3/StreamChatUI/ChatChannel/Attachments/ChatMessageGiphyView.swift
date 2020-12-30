@@ -22,6 +22,14 @@ open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvid
 
     public private(set) lazy var imageView = UIImageView().withoutAutoresizingMaskConstraints
 
+    public private(set) lazy var badge = uiConfig
+        .messageList
+        .messageContentSubviews
+        .attachmentSubviews
+        .giphyBadgeView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     public private(set) lazy var loadingIndicator = uiConfig
         .messageList
         .messageContentSubviews
@@ -42,6 +50,9 @@ open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvid
         widthAnchor.constraint(equalTo: heightAnchor).isActive = true
 
         embed(imageView)
+
+        addSubview(badge)
+        badge.pin(anchors: [.leading, .bottom], to: layoutMarginsGuide)
 
         addSubview(loadingIndicator)
         loadingIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
@@ -72,6 +83,54 @@ open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvid
                 self?.loadingIndicator.isVisible = false
                 self?.imageTask = nil
             }
+        }
+    }
+}
+
+extension ChatMessageGiphyView {
+    open class GiphyBadge: View, UIConfigProvider {
+        public private(set) lazy var title: UILabel = {
+            let label = UILabel().withoutAutoresizingMaskConstraints
+            label.text = "GIPHY"
+            label.textColor = uiConfig.colorPalette.giphyBadgeText
+            label.font = UIFont.preferredFont(forTextStyle: .caption1).bold
+            return label
+        }()
+
+        public private(set) lazy var lightning = UIImageView(
+            image: uiConfig
+                .messageList
+                .messageContentSubviews
+                .attachmentSubviews
+                .giphyBadgeIcon
+        )
+        public private(set) lazy var contentStack: UIStackView = {
+            let stack = UIStackView(arrangedSubviews: [lightning, title]).withoutAutoresizingMaskConstraints
+            stack.axis = .horizontal
+            stack.alignment = .center
+            return stack
+        }()
+
+        override open func setUpLayout() {
+            super.setUpLayout()
+
+            directionalLayoutMargins = NSDirectionalEdgeInsets(top: 4, leading: 6, bottom: 4, trailing: 6)
+
+            addSubview(contentStack)
+            contentStack.pin(to: layoutMarginsGuide)
+        }
+
+        override open func defaultAppearance() {
+            super.defaultAppearance()
+
+            backgroundColor = UIColor.black.withAlphaComponent(0.6)
+            lightning.tintColor = uiConfig.colorPalette.giphyBadgeText
+        }
+
+        override open func layoutSubviews() {
+            super.layoutSubviews()
+
+            layer.cornerRadius = bounds.height / 2
         }
     }
 }
