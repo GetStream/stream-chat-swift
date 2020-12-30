@@ -87,7 +87,7 @@ open class MessageComposerInputContainerView<ExtraData: ExtraDataTypes>: UIView 
     }
 
     public func setSlashCommandViews(hidden: Bool) {
-        container.rightStackView.isHidden = hidden
-        container.leftStackView.isHidden = hidden
+        container.rightStackView.setAnimatedly(hidden: hidden)
+        container.leftStackView.setAnimatedly(hidden: hidden)
     }
 }
