@@ -67,6 +67,7 @@ public extension UIConfig {
         public var outgoingMessageErrorIndicatorTint: UIColor = .streamAccentRed
         public var linkMessageBubbleBackground: UIColor = .streamBlueAlice
         public var ephemeralMessageBubbleBackground: UIColor = .streamWhite
+        public var giphyBadgeText: UIColor = .streamWhite
 
         // MARK: - Message Composer
 
@@ -251,6 +252,8 @@ public extension UIConfig {
         // Giphy
         public var giphyAttachmentView: ChatMessageGiphyView<ExtraData>.Type =
             ChatMessageGiphyView<ExtraData>.self
+        public var giphyBadgeView: ChatMessageGiphyView<ExtraData>.GiphyBadge.Type = ChatMessageGiphyView<ExtraData>.GiphyBadge.self
+        public var giphyBadgeIcon: UIImage? = UIImage(named: "icon_giphy", in: .streamChatUI)
     }
 }
 
