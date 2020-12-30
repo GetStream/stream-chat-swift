@@ -320,7 +320,7 @@ private extension _ChatMessageGroupPart {
             options.insert(.inlineReply)
         }
 
-        if message.attachments.contains(where: { $0.isImageOrGIF || $0.type == .file }) {
+        if message.attachments.contains(where: { $0.type == .image || $0.type == .giphy || $0.type == .file }) {
             options.insert(.attachments)
         } else if message.attachments.contains(where: { $0.type == .link }) {
             // link preview is visible only when no other attachments available

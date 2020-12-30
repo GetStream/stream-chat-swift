@@ -16,7 +16,7 @@ open class ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: View
         .messageList
         .messageContentSubviews
         .attachmentSubviews
-        .imageGalleryItem
+        .giphyAttachmentView
         .init()
         .withoutAutoresizingMaskConstraints
 
@@ -79,7 +79,7 @@ open class ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: View
     }
 
     override open func updateContent() {
-        preview.content = content
+        preview.content = content?.attachment
 
         titleLabel.text = "\"" + (content?.attachment.title ?? "") + "\""
 
