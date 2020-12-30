@@ -10,7 +10,8 @@ import UIKit
 open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var content: _ChatMessageAttachment<ExtraData>? {
         didSet {
-            guard oldValue?.imageURL != content?.imageURL else { return }
+            let isDifferentImage = oldValue?.imageURL != content?.imageURL
+            guard hasFailed || isDifferentImage else { return }
             updateContentIfNeeded()
         }
     }
@@ -28,6 +29,8 @@ open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvid
         .loadingIndicator
         .init()
         .withoutAutoresizingMaskConstraints
+
+    public private(set) var hasFailed = false
 
     deinit {
         imageTask?.cancel()
@@ -53,13 +56,17 @@ open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvid
     override open func updateContent() {
         super.updateContent()
 
+        hasFailed = false
         loadingIndicator.isVisible = true
         imageTask = nil
         imageView.clear()
 
         if let url = content?.imageURL {
             imageTask = ImagePipeline.shared.loadData(with: url) { [weak self] result in
-                guard case let .success((rawGif, _)) = result else { return }
+                guard case let .success((rawGif, _)) = result else {
+                    self?.hasFailed = true
+                    return
+                }
                 guard let image = try? UIImage(gifData: rawGif) else { return }
                 self?.imageView.setGifImage(image)
                 self?.loadingIndicator.isVisible = false
