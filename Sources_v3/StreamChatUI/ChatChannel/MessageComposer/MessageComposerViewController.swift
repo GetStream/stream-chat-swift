@@ -42,10 +42,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     
     var isEmpty: Bool = true {
         didSet {
-            composerView.attachmentButton.isHidden = !isEmpty
-            composerView.commandsButton.isHidden = !isEmpty
-            composerView.shrinkInputButton.isHidden = isEmpty
-            composerView.sendButton.isEnabled = !isEmpty
+            setInput(shrinked: isEmpty)
             updateSendButton()
         }
     }
@@ -97,8 +94,8 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             composerView.sendButton.mode = .new
             composerView.documentAttachmentsView.isHidden = true
             composerView.imageAttachmentsView.isHidden = true
-            composerView.replyView.isHidden = true
-            composerView.container.topStackView.isHidden = true
+            composerView.replyView.setAnimatedly(hidden: true)
+            composerView.container.topStackView.setAnimatedly(hidden: true)
             composerView.messageInputView.setSlashCommandViews(hidden: true)
         case let .slashCommand(command):
             textView.text = ""
@@ -111,8 +108,8 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             let image = UIImage(named: "replyArrow", in: .streamChatUI)?
                 .tinted(with: uiConfig.colorPalette.messageComposerStateIcon)
             composerView.stateIcon.image = image
-            composerView.container.topStackView.isHidden = false
-            composerView.replyView.isHidden = false
+            composerView.container.topStackView.setAnimatedly(hidden: false)
+            composerView.replyView.setAnimatedly(hidden: false)
             composerView.replyView.message = messageToReply
         case let .edit(message):
             composerView.sendButton.mode = .edit
@@ -120,7 +117,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             let image = UIImage(named: "editPencil", in: .streamChatUI)?
                 .tinted(with: uiConfig.colorPalette.messageComposerStateIcon)
             composerView.stateIcon.image = image
-            composerView.container.topStackView.isHidden = false
+            composerView.container.topStackView.setAnimatedly(hidden: false)
             textView.text = message.text
         }
         
@@ -264,9 +261,13 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     }
     
     @objc func shrinkInput() {
-        composerView.attachmentButton.isHidden = false
-        composerView.commandsButton.isHidden = false
-        composerView.shrinkInputButton.isHidden = true
+        setInput(shrinked: true)
+    }
+    
+    func setInput(shrinked: Bool) {
+        composerView.attachmentButton.setAnimatedly(hidden: !shrinked)
+        composerView.commandsButton.setAnimatedly(hidden: !shrinked)
+        composerView.shrinkInputButton.setAnimatedly(hidden: shrinked)
     }
     
     @objc func showAvailableCommands() {
@@ -284,7 +285,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     func updateSendButton() {
         composerView.sendButton.isEnabled = !isEmpty || !imageAttachments.isEmpty || !documentAttachments.isEmpty
     }
-
+    
     // MARK: Suggestions
 
     public func showSuggestionsViewController(for kind: SuggestionKind, onSelectItem: @escaping ((Int) -> Void)) {
@@ -372,7 +373,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     
     func didUpdateImageAttachments() {
         composerView.imageAttachmentsView.images = imageAttachments.map(\.preview)
-        composerView.imageAttachmentsView.isHidden = imageAttachments.isEmpty
+        composerView.imageAttachmentsView.setAnimatedly(hidden: imageAttachments.isEmpty)
         composerView.imageAttachmentsView.invalidateIntrinsicContentSize()
         composerView.invalidateIntrinsicContentSize()
         updateSendButton()
@@ -382,7 +383,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         composerView.documentAttachmentsView.documents = documentAttachments.map {
             ($0.preview, $0.localURL.lastPathComponent, $0.size)
         }
-        composerView.documentAttachmentsView.isHidden = documentAttachments.isEmpty
+        composerView.documentAttachmentsView.setAnimatedly(hidden: documentAttachments.isEmpty)
         composerView.documentAttachmentsView.invalidateIntrinsicContentSize()
         composerView.invalidateIntrinsicContentSize()
         updateSendButton()
@@ -431,8 +432,6 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         showSuggestionsViewController(
             for: .mention,
             onSelectItem: { [weak self] _ in
-                print(text)
-                print(self?.textView.text)
                 self?.textView.text = self?.textView.text.appending("@ \(text)")
                 self?.state = .initial
             }
