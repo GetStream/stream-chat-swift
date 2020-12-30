@@ -23,12 +23,34 @@ internal enum L10n {
         }
     }
 
+    internal enum Channel {
+        internal enum Name {
+            /// and
+            internal static let and = L10n.tr("Localizable", "channel.name.and")
+            /// NoChannel
+            internal static let missing = L10n.tr("Localizable", "channel.name.missing")
+            /// more
+            internal static let more = L10n.tr("Localizable", "channel.name.more")
+        }
+    }
+
     internal enum Composer {
         internal enum Checkmark {
             /// Also send in channel
             internal static let channelReply = L10n.tr("Localizable", "composer.checkmark.channel-reply")
             /// Also send as direct message
             internal static let directMessageReply = L10n.tr("Localizable", "composer.checkmark.direct-message-reply")
+        }
+
+        internal enum Picker {
+            /// Cancel
+            internal static let cancel = L10n.tr("Localizable", "composer.picker.cancel")
+            /// File
+            internal static let file = L10n.tr("Localizable", "composer.picker.file")
+            /// Photo
+            internal static let image = L10n.tr("Localizable", "composer.picker.image")
+            /// Choose attachment type:
+            internal static let title = L10n.tr("Localizable", "composer.picker.title")
         }
 
         internal enum Placeholder {
