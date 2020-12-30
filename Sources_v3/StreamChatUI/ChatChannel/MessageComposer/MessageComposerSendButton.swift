@@ -24,10 +24,14 @@ open class MessageComposerSendButton<ExtraData: ExtraDataTypes>: ChatSquareButto
     
     override open var isEnabled: Bool {
         didSet {
+            var transformToApply: CGAffineTransform
             if isEnabled, mode == .new {
-                transform = CGAffineTransform(rotationAngle: -CGFloat.pi / 2.0)
+                transformToApply = CGAffineTransform(rotationAngle: -CGFloat.pi / 2.0)
             } else {
-                transform = .identity
+                transformToApply = .identity
+            }
+            Animate {
+                self.transform = transformToApply
             }
         }
     }
@@ -43,18 +47,24 @@ open class MessageComposerSendButton<ExtraData: ExtraDataTypes>: ChatSquareButto
         switch mode {
         case .new:
             let normalStateImage = UIImage(named: "sendMessageArrow", in: .streamChatUI)
-            setImage(normalStateImage, for: .normal)
+            setImageWithAnimation(normalStateImage, for: .normal)
             
             let buttonColor: UIColor = uiConfig.colorPalette.messageComposerButton
             let disabledStateImage = UIImage(named: "sendMessageArrow", in: .streamChatUI)?.tinted(with: buttonColor)
-            setImage(disabledStateImage, for: .disabled)
+            setImageWithAnimation(disabledStateImage, for: .disabled)
         case .edit:
             let normalStateImage = UIImage(named: "editMessageCheckmark", in: .streamChatUI)
-            setImage(normalStateImage, for: .normal)
+            setImageWithAnimation(normalStateImage, for: .normal)
             
             let buttonColor: UIColor = uiConfig.colorPalette.messageComposerButton
             let disabledStateImage = UIImage(named: "editMessageCheckmark", in: .streamChatUI)?.tinted(with: buttonColor)
-            setImage(disabledStateImage, for: .disabled)
+            setImageWithAnimation(disabledStateImage, for: .disabled)
         }
+    }
+    
+    private func setImageWithAnimation(_ image: UIImage?, for state: UIControl.State) {
+        UIView.transition(with: self, duration: 0.3, options: .transitionCrossDissolve, animations: {
+            self.setImage(image, for: state)
+        }, completion: nil)
     }
 }
