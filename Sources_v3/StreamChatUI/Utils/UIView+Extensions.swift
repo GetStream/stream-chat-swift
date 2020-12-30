@@ -51,6 +51,15 @@ extension UIView {
         get { !isHidden }
         set { isHidden = !newValue }
     }
+    
+    func setAnimatedly(hidden: Bool) {
+        Animate({
+            self.alpha = hidden ? 0.0 : 1.0
+            self.isHidden = hidden
+        }) { _ in
+            self.isHidden = hidden
+        }
+    }
 }
 
 enum LayoutAnchorName {
