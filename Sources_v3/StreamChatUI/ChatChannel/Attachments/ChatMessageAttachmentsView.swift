@@ -38,6 +38,14 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
         .init()
         .withoutAutoresizingMaskConstraints
 
+    public private(set) lazy var giphyView = uiConfig
+        .messageList
+        .messageContentSubviews
+        .attachmentSubviews
+        .giphyAttachmentView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     private var layoutConstraints: [LayoutOptions: [NSLayoutConstraint]] = [:]
 
     // MARK: - Overrides
@@ -45,6 +53,7 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
     override open func setUpLayout() {
         addSubview(imageGallery)
         addSubview(fileList)
+        addSubview(giphyView)
         addSubview(interactiveAttachmentView)
 
         layoutConstraints[.images] = [
@@ -61,6 +70,13 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
             fileList.bottomAnchor.constraint(equalTo: bottomAnchor)
         ]
 
+        layoutConstraints[.giphy] = [
+            giphyView.leadingAnchor.constraint(equalTo: leadingAnchor),
+            giphyView.trailingAnchor.constraint(equalTo: trailingAnchor),
+            giphyView.topAnchor.constraint(equalTo: topAnchor),
+            giphyView.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ]
+
         layoutConstraints[.interactiveAttachment] = [
             interactiveAttachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
             interactiveAttachmentView.trailingAnchor.constraint(equalTo: trailingAnchor),
@@ -69,6 +85,7 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
         ]
         layoutConstraints[[.images, .interactiveAttachment]] = layoutConstraints[.interactiveAttachment]
         layoutConstraints[[.files, .interactiveAttachment]] = layoutConstraints[.interactiveAttachment]
+        layoutConstraints[[.giphy, .interactiveAttachment]] = layoutConstraints[.interactiveAttachment]
         layoutConstraints[.all] = layoutConstraints[.interactiveAttachment]
 
         layoutConstraints[[.images, .files]] = [
@@ -88,7 +105,7 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
 
         imageGallery.content = content.map {
             .init(
-                attachments: $0.attachments.filter { $0.isImageOrGIF },
+                attachments: $0.attachments.filter { $0.type == .image },
                 didTapOnAttachment: $0.didTapOnAttachment,
                 didTapOnAttachmentAction: nil
             )
@@ -103,6 +120,9 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
             )
         }
         fileList.isVisible = layoutOptions.contains(.files)
+
+        giphyView.content = content?.attachments.first { $0.type == .giphy }
+        giphyView.isVisible = layoutOptions.contains(.giphy)
 
         interactiveAttachmentView.content = content?.items.first {
             !$0.attachment.actions.isEmpty
@@ -121,8 +141,10 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
         for attachment in content?.attachments ?? [] {
             if !attachment.actions.isEmpty {
                 options.insert(.interactiveAttachment)
-            } else if attachment.isImageOrGIF {
+            } else if attachment.type == .image {
                 options.insert(.images)
+            } else if attachment.type == .giphy {
+                options.insert(.giphy)
             } else {
                 options.insert(.files)
             }
@@ -141,6 +163,7 @@ private struct LayoutOptions: OptionSet, Hashable {
     static let images = Self(rawValue: 1 << 0)
     static let files = Self(rawValue: 1 << 1)
     static let interactiveAttachment = Self(rawValue: 1 << 2)
+    static let giphy = Self(rawValue: 1 << 3)
 
-    static let all: Self = [.images, .files, .interactiveAttachment]
+    static let all: Self = [.images, .files, .interactiveAttachment, .giphy]
 }
