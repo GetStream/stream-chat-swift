@@ -23,7 +23,8 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
         _ handler: @escaping (ChatChannelNavigationBarListener<ExtraData>.NavbarData) -> Void
     ) -> ChatChannelNavigationBarListener<ExtraData>? {
         guard let channel = channelController.channel else { return nil }
-        let navbarListener = ChatChannelNavigationBarListener.make(for: channel.cid, in: channelController.client)
+        let namer = uiConfig.messageList.channelNamer.init()
+        let navbarListener = ChatChannelNavigationBarListener.make(for: channel.cid, in: channelController.client, using: namer)
         navbarListener.onDataChange = handler
         return navbarListener
     }

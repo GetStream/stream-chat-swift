@@ -11,17 +11,24 @@ class ChatChannelNavigationBarListener<ExtraData: ExtraDataTypes> {
     typealias NavbarData = (title: String?, subtitle: String?)
 
     let channelController: _ChatChannelController<ExtraData>
+    let namer: ChannelNamer
     var onDataChange: (NavbarData) -> Void = { _ in }
 
-    static func make(for channel: ChannelId, in client: _ChatClient<ExtraData>) -> ChatChannelNavigationBarListener {
+    static func make(
+        for channel: ChannelId,
+        in client: _ChatClient<ExtraData>,
+        using namer: ChannelNamer
+    ) -> ChatChannelNavigationBarListener {
         /// if we in channel room, channel will be here, but it always safe to fallback to group chat
         let isDirect = client.channelController(for: channel).channel?.isDirectMessageChannel ?? false
         return isDirect
-            ? DirectChatChannelNavigationBarListener(client: client, channel: channel)
-            : GroupChatChannelNavigationBarListener(client: client, channel: channel)
+            ? DirectChatChannelNavigationBarListener(client: client, channel: channel, namer: namer)
+            : GroupChatChannelNavigationBarListener(client: client, channel: channel, namer: namer)
     }
 
-    fileprivate init(client: _ChatClient<ExtraData>, channel: ChannelId) {
+    fileprivate init(client: _ChatClient<ExtraData>, channel: ChannelId, namer: ChannelNamer) {
+        self.namer = namer
+        
         channelController = client.channelController(for: channel)
         channelController.setDelegate(self)
 
@@ -50,7 +57,7 @@ extension ChatChannelNavigationBarListener: _ChatChannelControllerDelegate {
 private class GroupChatChannelNavigationBarListener<ExtraData: ExtraDataTypes>: ChatChannelNavigationBarListener<ExtraData> {
     override func makeNavbarData() -> NavbarData {
         guard let channel = channelController.channel else { return (nil, nil) }
-        let title = channel.name
+        let title = namer.name(for: channel, as: channelController.client.currentUserId)
         let subtitle = "\(channel.memberCount) members, \(channel.watcherCount) online"
         return (title, subtitle)
     }
@@ -69,11 +76,11 @@ private class DirectChatChannelNavigationBarListener<ExtraData: ExtraDataTypes>:
 
     private var timer: Timer!
 
-    override init(client: _ChatClient<ExtraData>, channel: ChannelId) {
+    override init(client: _ChatClient<ExtraData>, channel: ChannelId, namer: ChannelNamer) {
         memberController = client.channelController(for: channel).channel?.cachedMembers
             .first { $0.id != client.currentUserId }
             .map { client.memberController(userId: $0.id, in: channel) }
-        super.init(client: client, channel: channel)
+        super.init(client: client, channel: channel, namer: namer)
 
         timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
             self?.fireNewNavbarData()
@@ -85,7 +92,7 @@ private class DirectChatChannelNavigationBarListener<ExtraData: ExtraDataTypes>:
 
     override func makeNavbarData() -> NavbarData {
         guard let channel = channelController.channel else { return (nil, nil) }
-        let title = channel.name
+        let title = namer.name(for: channel, as: channelController.client.currentUserId)
         guard let member = memberController?.member else { return (title, nil) }
         let subtitle: String
         if member.isOnline {

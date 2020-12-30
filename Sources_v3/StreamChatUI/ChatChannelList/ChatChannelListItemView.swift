@@ -139,8 +139,12 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: View, UIConfigPro
     
     override open func updateContent() {
         // Title
-        
-        titleLabel.text = channelAndUserId.channel?.name
+        if let channel = channelAndUserId.channel {
+            let namer = uiConfig.channelList.channelNamer.init()
+            titleLabel.text = namer.name(for: channel, as: channelAndUserId.currentUserId)
+        } else {
+            titleLabel.text = L10n.Channel.Name.missing
+        }
         
         // Subtitle
         
