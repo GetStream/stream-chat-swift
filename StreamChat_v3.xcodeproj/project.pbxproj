@@ -574,6 +574,9 @@
 		DB3CCF3F258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3CCF3E258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift */; };
 		DB70CFF425701FE500DDF436 /* ChatChannelNavigationBarListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */; };
 		DB70CFFB25702EB900DDF436 /* ChatMessagePopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB70CFFA25702EB900DDF436 /* ChatMessagePopupViewController.swift */; };
+		DB8230F2259B8DBF00E7D7FE /* ChatMessageGiphyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8230F1259B8DBF00E7D7FE /* ChatMessageGiphyView.swift */; };
+		DB823107259C271C00E7D7FE /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = DB823106259C271C00E7D7FE /* SwiftyGif */; };
+		DB82310F259C272E00E7D7FE /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = DB82310E259C272E00E7D7FE /* SwiftyGif */; };
 		DB9A3D562582689A00555D36 /* ChatMessageListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */; };
 		DB9A3D662582783F00555D36 /* ChatVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9A3D652582783F00555D36 /* ChatVC.swift */; };
 		DBC8A4BB257E5BFB00B20A82 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = DBC8A4BD257E5BFB00B20A82 /* Localizable.stringsdict */; };
@@ -1309,6 +1312,7 @@
 		DB3CCF3E258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageLinkPreviewView.swift; sourceTree = "<group>"; };
 		DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelNavigationBarListener.swift; sourceTree = "<group>"; };
 		DB70CFFA25702EB900DDF436 /* ChatMessagePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagePopupViewController.swift; sourceTree = "<group>"; };
+		DB8230F1259B8DBF00E7D7FE /* ChatMessageGiphyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageGiphyView.swift; sourceTree = "<group>"; };
 		DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListRouter.swift; sourceTree = "<group>"; };
 		DB9A3D652582783F00555D36 /* ChatVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVC.swift; sourceTree = "<group>"; };
 		DBC8A4BC257E5BFB00B20A82 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
@@ -1372,6 +1376,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				799ADAAF2563FFA1006D43F9 /* Nuke in Frameworks */,
+				DB823107259C271C00E7D7FE /* SwiftyGif in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1397,6 +1402,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				79940B98258398D200791EAE /* Nuke in Frameworks */,
+				DB82310F259C272E00E7D7FE /* SwiftyGif in Frameworks */,
 				79940B88258398A500791EAE /* StreamChat.framework in Frameworks */,
 				79940B8C258398A500791EAE /* StreamChatUI.framework in Frameworks */,
 			);
@@ -2261,18 +2267,19 @@
 		886BDE68258A501E00E1CD00 /* Attachments */ = {
 			isa = PBXGroup;
 			children = (
-				88AD1D6C2588D7D300ECED5B /* ChatMessageAttachmentsView.swift */,
-				883998202576397900294DB9 /* ChatMessageImageGallery.swift */,
-				8800A28B258A1924006D64C4 /* ChatFileAttachmentListView.swift */,
-				88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */,
 				8800A277258A17DD006D64C4 /* AttachmentListViewData.swift */,
 				8800A26E258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift */,
+				8800A28B258A1924006D64C4 /* ChatFileAttachmentListView.swift */,
+				88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */,
 				88BA7F6A258B717E006CE0C5 /* ChatMessageAttachmentInfoView.swift */,
+				88AD1D6C2588D7D300ECED5B /* ChatMessageAttachmentsView.swift */,
+				883998202576397900294DB9 /* ChatMessageImageGallery.swift */,
 				88BA7F7E258B97A8006CE0C5 /* ChatMessageImageGallery+ImagePreview.swift */,
 				88BA7F86258B97C9006CE0C5 /* ChatMessageImageGallery+UploadingOverlay.swift */,
-				DB3CCF3E258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift */,
 				888ABA062594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift */,
 				8806570C259A51C200E31D23 /* ChatMessageInteractiveAttachmentView+ActionButton.swift */,
+				DB3CCF3E258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift */,
+				DB8230F1259B8DBF00E7D7FE /* ChatMessageGiphyView.swift */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -2808,6 +2815,7 @@
 			name = StreamChatUI;
 			packageProductDependencies = (
 				799ADAAE2563FFA1006D43F9 /* Nuke */,
+				DB823106259C271C00E7D7FE /* SwiftyGif */,
 			);
 			productName = StreamChatUI;
 			productReference = 790881FD25432B7200896F03 /* StreamChatUI.framework */;
@@ -2872,6 +2880,7 @@
 			name = DemoApp;
 			packageProductDependencies = (
 				79940B97258398D200791EAE /* Nuke */,
+				DB82310E259C272E00E7D7FE /* SwiftyGif */,
 			);
 			productName = DemoApp;
 			productReference = 792DDA57256FB69E001DB91B /* ChatSample.app */;
@@ -3004,6 +3013,7 @@
 			packageReferences = (
 				79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */,
 				799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */,
+				DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
@@ -3306,6 +3316,7 @@
 				228DC80E25704B410080A49F /* MessageComposerImageAttachmentCollectionViewCell.swift in Sources */,
 				790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */,
 				DBC8A564258113F700B20A82 /* ChatThreadVC.swift in Sources */,
+				DB8230F2259B8DBF00E7D7FE /* ChatMessageGiphyView.swift in Sources */,
 				22086B38259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift in Sources */,
 				79D86E832562BAB900DCD1D2 /* AppearanceSetting.swift in Sources */,
 				22086B40259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift in Sources */,
@@ -4858,6 +4869,14 @@
 				minimumVersion = 4.0.4;
 			};
 		};
+		DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kirualex/SwiftyGif.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.3.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -4875,6 +4894,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */;
 			productName = Starscream;
+		};
+		DB823106259C271C00E7D7FE /* SwiftyGif */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */;
+			productName = SwiftyGif;
+		};
+		DB82310E259C272E00E7D7FE /* SwiftyGif */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */;
+			productName = SwiftyGif;
 		};
 /* End XCSwiftPackageProductDependency section */
 
