@@ -33,6 +33,7 @@ open class ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: Cha
     override open func setUpLayout() {
         addSubview(tailBehind)
         contentViewBackground.addSubview(contentView)
+        contentViewBackground.insetsLayoutMarginsFromSafeArea = false
         contentView.pin(to: contentViewBackground.layoutMarginsGuide)
         embed(contentViewBackground)
         addSubview(tailInFront)
