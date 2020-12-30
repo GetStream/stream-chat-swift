@@ -26,7 +26,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     
     // MARK: - Properties
 
-    var controller: _ChatChannelController<ExtraData>?
+    public var controller: _ChatChannelController<ExtraData>?
     
     public var state: State = .initial {
         didSet {
@@ -216,7 +216,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         state = .initial
     }
     
-    func createNewMessage(text: String) {
+    open func createNewMessage(text: String) {
         guard let cid = controller?.cid else { return }
         
         if let threadParentMessage = threadParentMessage {
