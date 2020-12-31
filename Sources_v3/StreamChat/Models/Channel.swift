@@ -173,8 +173,10 @@ extension _ChatChannel {
     /// Checks if read events evadable for the current user.
 //    public var readEventsEnabled: Bool { /* config.readEventsEnabled && members.contains(Member.current) */ fatalError() }
     
-    /// Returns `true` when the channel is a direct-message channel between 2 users.
-    public var isDirectMessageChannel: Bool { cid.id.hasPrefix("!members") && cachedMembers.count == 2 }
+    /// Returns `true` when the channel is a direct-message channel.
+    /// A "direct message" channel is created when client sends only the user id's for the channel and not an explicit `cid`,
+    /// so backend creates a `cid` based on member's `id`s
+    public var isDirectMessageChannel: Bool { cid.id.hasPrefix("!members") }
     
     /// returns `true` if the channel has one or more unread messages for the current user.
     public var isUnread: Bool { unreadCount.messages > 0 }
