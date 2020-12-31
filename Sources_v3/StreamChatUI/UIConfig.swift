@@ -51,6 +51,11 @@ public extension UIConfig {
         public var generalBackground: UIColor = UIColor(rgb: 0xfcfcfc)
         public var shadow: UIColor = .streamGray
 
+        // MARK: - Channel List
+
+        public var channelListActionsBackgroundColor: UIColor = .streamWhiteSmoke
+        public var channelListActionDeleteChannel: UIColor = .streamAccentRed
+
         // MARK: - Text interactions
 
         public var highlightedColorForColor: (UIColor) -> UIColor = { $0.withAlphaComponent(0.5) }
