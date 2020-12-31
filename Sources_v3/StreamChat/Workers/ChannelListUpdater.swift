@@ -18,19 +18,17 @@ class ChannelListUpdater<ExtraData: ExtraDataTypes>: Worker {
                 switch result {
                 case let .success(channelListPayload):
                     self.database.write { session in
-                        do {
-                            try channelListPayload.channels.forEach {
-                                try session.saveChannel(payload: $0, query: channelListQuery)
-                            }
-                            
-                            completion?(nil)
-                            
-                        } catch {
+                        try channelListPayload.channels.forEach {
+                            try session.saveChannel(payload: $0, query: channelListQuery)
+                        }
+                    } completion: { error in
+                        if let error = error {
                             log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
                             completion?(error)
+                        } else {
+                            completion?(nil)
                         }
                     }
-                    
                 case let .failure(error):
                     completion?(error)
                 }
