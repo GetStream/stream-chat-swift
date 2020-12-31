@@ -27,6 +27,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     // MARK: - Properties
 
     public var controller: _ChatChannelController<ExtraData>?
+    var shouldShowMentions = false
     
     public var state: State = .initial {
         didSet {
@@ -389,15 +390,16 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         updateSendButton()
     }
     
-    // MARK: UITextView
+    // MARK: Suggestions
 
-    @objc func promptSuggestionIfNeeded(for text: String) {
-        if text.trimmingCharacters(in: .whitespacesAndNewlines).contains("@") {
-            if let index = (text.range(of: "@")?.upperBound) {
+    open func promptSuggestionIfNeeded(for text: String) {
+        if shouldShowMentions {
+            if let index = (text.range(of: "@", options: .backwards)?.upperBound) {
                 let textAfterAtSymbol = String(text.suffix(from: index))
                 promptMentions(for: textAfterAtSymbol)
+            } else {
+                promptMentions(for: nil)
             }
-
         } else if let commands = controller?.channel?.config.commands,
             text.trimmingCharacters(in: .whitespacesAndNewlines).first == "/" {
             prompt(commands: commands, for: text)
@@ -406,7 +408,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         }
     }
 
-    func prompt(commands: [Command], for text: String) {
+    private func prompt(commands: [Command], for text: String) {
         // Get the command value without the `/`
         let typedCommand = String(text.trimmingCharacters(in: .whitespacesAndNewlines).dropFirst())
 
@@ -426,14 +428,33 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         )
     }
 
-    func promptMentions(for text: String) {
+    private func promptMentions(for text: String?) {
         userSuggestionSearchController.search(term: text)
-
         showSuggestionsViewController(
             for: .mention,
-            onSelectItem: { [weak self] _ in
-                self?.textView.text = self?.textView.text.appending("@ \(text)")
-                self?.state = .initial
+            onSelectItem: { [weak self, textView = self.textView] userIndex in
+                guard let self = self else { return }
+
+                let user = self.userSuggestionSearchController.users[userIndex]
+                let cursorPosition = textView.selectedRange
+
+                let atRange = (textView.textStorage.string as NSString)
+                    .rangeOfCharacter(
+                        from: CharacterSet(charactersIn: "@"),
+                        options: .backwards,
+                        range: NSRange(location: 0, length: cursorPosition.location)
+                    )
+
+                let oldPositionTillTheEnd = (textView.text as NSString).length - cursorPosition.location
+
+                textView.textStorage.replaceCharacters(
+                    in: NSRange(location: atRange.location, length: cursorPosition.location - atRange.location),
+                    with: "@\(user.id) "
+                )
+
+                let newPosition = (textView.text as NSString).length - oldPositionTillTheEnd
+                textView.selectedRange = NSRange(location: newPosition, length: 0)
+                self.dismissSuggestionsViewController()
             }
         )
     }
@@ -456,8 +477,24 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     public func textViewDidChange(_ textView: UITextView) {
         isEmpty = textView.text.replacingOccurrences(of: " ", with: "").isEmpty
         replaceTextWithSlashCommandViewIfNeeded()
-        promptSuggestionIfNeeded(for: textView.text)
+
+        updateMentionFlag(with: textView.text as NSString, till: textView.selectedRange.location)
+
+        promptSuggestionIfNeeded(for: textView.text!)
         composerView.invalidateIntrinsicContentSize()
+    }
+
+    func updateMentionFlag(with text: NSString, till caret: Int) {
+        let firstBreakPoint = text.rangeOfCharacter(
+            from: CharacterSet(charactersIn: " @"),
+            options: .backwards,
+            range: NSRange(location: 0, length: caret)
+        )
+        if firstBreakPoint.location != NSNotFound {
+            shouldShowMentions = text.substring(with: firstBreakPoint) == "@"
+        } else {
+            shouldShowMentions = false
+        }
     }
 
     // MARK: - UIImagePickerControllerDelegate
