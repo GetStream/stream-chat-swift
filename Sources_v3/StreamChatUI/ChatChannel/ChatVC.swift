@@ -71,8 +71,16 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
             let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
             let curve = notification.userInfo![UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
         else { return }
-        
-        messageComposerBottomConstraint?.constant = -frame.height
+
+        let localFrame = view.convert(frame, from: nil)
+        messageComposerBottomConstraint?.constant = -(view.bounds.height - localFrame.minY)
+
+        let collectionDelta = view.bounds.height - view.safeAreaInsets.bottom - localFrame.minY
+        let needUpdateContentOffset = !messageList.collectionView.isDecelerating && !messageList.collectionView.isDragging
+        let newContentOffset = CGPoint(
+            x: 0,
+            y: messageList.collectionView.contentOffset.y + collectionDelta
+        )
         
         UIView.animate(
             withDuration: duration,
@@ -80,6 +88,9 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
             options: UIView.AnimationOptions(rawValue: curve),
             animations: { [weak self] in
                 self?.view.layoutIfNeeded()
+                if needUpdateContentOffset {
+                    self?.messageList.collectionView.contentOffset = newContentOffset
+                }
             }
         )
     }
@@ -192,5 +203,7 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
 
     // MARK: - MessageComposerViewControllerDelegate
 
-    public func messageComposerViewControllerDidSendMessage(_ vc: MessageComposerViewController<ExtraData>) {}
+    public func messageComposerViewControllerDidSendMessage(_ vc: MessageComposerViewController<ExtraData>) {
+        messageList.setNeedsScrollToMostRecentMessage()
+    }
 }
