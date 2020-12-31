@@ -263,21 +263,19 @@ extension DatabaseContainer {
     /// Iterates over all items and if the DTO conforms to `EphemeralValueContainers` calls `resetEphemeralValues()` on
     /// every object.
     func resetEphemeralValues() {
-        write({ session in
-            let session = session as! NSManagedObjectContext
-            
-            try self.managedObjectModel.entities.forEach { entityDescription in
-                guard let entityName = entityDescription.name else { return }
-                let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
-                let entities = try session.fetch(fetchRequest) as? [EphemeralValuesContainer]
-                entities?.forEach { $0.resetEphemeralValues() }
-            }
-        }, completion: { error in
-            if let error = error {
-                log.error("Error resetting ephemeral values: \(error)")
-            } else {
+        writableContext.performAndWait {
+            do {
+                try self.managedObjectModel.entities.forEach { entityDescription in
+                    guard let entityName = entityDescription.name else { return }
+                    let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: entityName)
+                    let entities = try writableContext.fetch(fetchRequest) as? [EphemeralValuesContainer]
+                    entities?.forEach { $0.resetEphemeralValues() }
+                }
+                try writableContext.save()
                 log.debug("Ephemeral values reset.")
+            } catch {
+                log.error("Error resetting ephemeral values: \(error)")
             }
-        })
+        }
     }
 }
