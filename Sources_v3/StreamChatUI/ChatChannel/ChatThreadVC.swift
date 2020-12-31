@@ -19,6 +19,12 @@ open class ChatThreadVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
         messageComposerViewController.threadParentMessage = controller.message
     }
 
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        messageList.scrollToMostRecentMessageIfNeeded()
+    }
+
     override func makeNavbarListener(
         _ handler: @escaping (ChatChannelNavigationBarListener<ExtraData>.NavbarData) -> Void
     ) -> ChatChannelNavigationBarListener<ExtraData>? {

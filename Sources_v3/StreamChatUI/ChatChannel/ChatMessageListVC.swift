@@ -74,15 +74,12 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         return collection
     }()
 
-    // MARK: - Life Cycle
+    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
+    public private(set) var needsToScrollToMostRecentMessage = true
+    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
+    public private(set) var needsToScrollToMostRecentMessageAnimated = false
 
-    override open func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        if collectionView.contentOffset.y < collectionView.bounds.height {
-            let bottom = collectionView.contentSize.height
-            collectionView.scrollRectToVisible(CGRect(x: 0, y: bottom - 1, width: 1, height: 1), animated: false)
-        }
-    }
+    // MARK: - Life Cycle
 
     override open func setUp() {
         super.setUp()
@@ -108,8 +105,29 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
 
     // MARK: - Public API
 
+    /// Will scroll to most recent message on next `updateMessages` call
+    public func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
+        needsToScrollToMostRecentMessage = true
+        needsToScrollToMostRecentMessageAnimated = animated
+    }
+
+    /// Force scroll to most recent message check without waiting for `updateMessages`
+    public func scrollToMostRecentMessageIfNeeded() {
+        if needsToScrollToMostRecentMessage {
+            scrollToMostRecentMessage(animated: needsToScrollToMostRecentMessageAnimated)
+        }
+    }
+
+    public func scrollToMostRecentMessage(animated: Bool = true) {
+        needsToScrollToMostRecentMessage = false
+        needsToScrollToMostRecentMessageAnimated = false
+
+        // our collection is flipped, so (0; 0) item is most recent one
+        collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .bottom, animated: animated)
+    }
+
     public func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
-        collectionView.performBatchUpdates({
+        collectionView.performBatchUpdates {
             for change in changes {
                 switch change {
                 case let .insert(_, index):
@@ -122,7 +140,10 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
                     collectionView.reloadItems(at: [index])
                 }
             }
-        }, completion: completion)
+        } completion: { flag in
+            completion?(flag)
+            self.scrollToMostRecentMessageIfNeeded()
+        }
     }
 
     // MARK: - Actions
