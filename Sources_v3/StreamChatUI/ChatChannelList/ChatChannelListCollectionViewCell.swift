@@ -6,17 +6,25 @@ import Foundation
 import StreamChat
 import UIKit
 
-open class ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionViewCell {
+open class ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
     // MARK: - Properties
-    
-    var uiConfig: UIConfig<ExtraData> = .default
-    
-    public private(set) lazy var channelView: ChatChannelListItemView<ExtraData> = {
-        let view = uiConfig.channelList.channelListItemView.init(uiConfig: uiConfig)
-        contentView.embed(view)
-        return view
-    }()
-    
+
+    public private(set) lazy var channelView: ChatChannelListItemView<ExtraData> = uiConfig.channelList.channelListItemView.init()
+
+    // MARK: - UICollectionViewCell
+
+    override public func prepareForReuse() {
+        super.prepareForReuse()
+        channelView.trailingConstraint?.constant = 0
+    }
+
+    // MARK: Customizable
+
+    override open func setUpLayout() {
+        super.setUpLayout()
+        contentView.embed(channelView)
+    }
+
     // MARK: - Layout
     
     override open func preferredLayoutAttributesFitting(
