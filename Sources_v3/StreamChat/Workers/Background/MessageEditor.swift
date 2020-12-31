@@ -49,6 +49,8 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
     }
     
     private func handleChanges(changes: [ListChange<MessageDTO>]) {
+        guard !changes.isEmpty else { return }
+        
         _pendingMessageIDs.mutate { pendingMessageIDs in
             let wasEmpty = pendingMessageIDs.isEmpty
             changes.pendingEditMessageIDs.forEach { pendingMessageIDs.insert($0) }
