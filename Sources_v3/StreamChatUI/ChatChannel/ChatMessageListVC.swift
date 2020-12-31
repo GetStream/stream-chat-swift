@@ -79,6 +79,11 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
     public private(set) var needsToScrollToMostRecentMessageAnimated = false
 
+    /// Consider to call `setLayoutCached(_ value:)` instead
+    public private(set) var needsLayoutSwitch = false
+    /// Consider to call `setLayoutCached(_ value:)` instead
+    public private(set) var newLayoutCachedValue = false
+
     // MARK: - Life Cycle
 
     override open func setUp() {
@@ -127,6 +132,20 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     }
 
     public func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
+        if let max = collectionView.indexPathsForVisibleItems.map(\.item).max() {
+            let hasChangesOnTop = changes.contains { change in
+                if case let .insert(_, index) = change, index.item > max {
+                    return true
+                }
+                return false
+            }
+            if hasChangesOnTop {
+                setLayoutCached(false)
+            }
+        } else {
+            setLayoutCached(false)
+        }
+
         collectionView.performBatchUpdates {
             for change in changes {
                 switch change {
@@ -156,6 +175,28 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         guard let cell = collectionView.cellForItem(at: ip) as? СhatMessageCollectionViewCell<ExtraData> else { return }
 
         didSelectMessageCell(cell)
+    }
+
+    // MARK: - Layout optimizations
+
+    public func setLayoutCached(_ value: Bool) {
+        needsLayoutSwitch = true
+        newLayoutCachedValue = value
+        // invalidating layout while collection view is not in idle state, leads to crash
+        if collectionView.isDecelerating || collectionView.isDragging {
+            return
+        }
+        // I have no idea why it crashing without dispatch
+        DispatchQueue.main.async {
+            self.switchLayoutIfNeeded()
+        }
+    }
+
+    public func switchLayoutIfNeeded() {
+        if needsLayoutSwitch {
+            collectionViewLayout.layoutCached = newLayoutCachedValue
+        }
+        needsLayoutSwitch = false
     }
 
     // MARK: - UICollectionViewDataSource
@@ -214,7 +255,12 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     ) {
         if indexPath.row + 1 >= collectionView.numberOfItems(inSection: 0) {
             dataSource.loadMoreMessages(self)
+            setLayoutCached(true)
         }
+    }
+
+    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        switchLayoutIfNeeded()
     }
 
     // MARK: - ChatMessageActionsVCDelegate
