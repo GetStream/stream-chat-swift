@@ -25,7 +25,8 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
                 channelCreatedCallback?(payload.channel.cid)
                 self.database.write { (session) in
                     try session.saveChannel(payload: payload)
-                    completion?(nil)
+                } completion: { error in
+                    completion?(error)
                 }
             } catch {
                 completion?(error)
