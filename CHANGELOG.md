@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.6.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.2)
+_December 31, 2020_
+
 ### 🐞 Fixed
 - Fixed thread's parent message not receiving updates [#656](https://github.com/GetStream/stream-chat-swift/issues/656)
 - Fixed being able to open reactions view without connection [#662](https://github.com/GetStream/stream-chat-swift/issues/662)
