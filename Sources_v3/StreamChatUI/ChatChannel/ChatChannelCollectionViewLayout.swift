@@ -30,6 +30,21 @@ open class ChatChannelCollectionViewLayout: UICollectionViewFlowLayout {
         minimumLineSpacing = 4
     }
 
+    var bottomContentOffsetBeforeInvalidation: CGFloat?
+    /// Use this flag to signal that all cells layout have been calculated and it's safe to remove "infinite scroll" hack.
+    /// e.g. set to `true` when showing top most cell, set to `false` when new cell appears
+    var layoutCached: Bool = false {
+        willSet {
+            guard newValue != layoutCached else { return }
+            let offsetY = collectionView?.contentOffset.y ?? 0
+            bottomContentOffsetBeforeInvalidation = collectionViewContentSize.height - offsetY
+        }
+        didSet {
+            guard oldValue != layoutCached else { return }
+            invalidateLayout()
+        }
+    }
+
     open var zeroOffset: CGPoint {
         CGPoint(
             x: 0,
@@ -45,6 +60,9 @@ open class ChatChannelCollectionViewLayout: UICollectionViewFlowLayout {
 
     override open var collectionViewContentSize: CGSize {
         let size = super.collectionViewContentSize
+        if layoutCached {
+            return size
+        }
         return CGSize(width: size.width, height: 100_000)
     }
     
@@ -55,6 +73,14 @@ open class ChatChannelCollectionViewLayout: UICollectionViewFlowLayout {
             width: collectionView?.bounds.width ?? 0,
             height: 60
         )
+
+        if let offset = bottomContentOffsetBeforeInvalidation {
+            collectionView?.contentOffset = CGPoint(
+                x: 0,
+                y: collectionViewContentSize.height - offset
+            )
+            bottomContentOffsetBeforeInvalidation = nil
+        }
     }
 
     override open func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
@@ -74,6 +100,9 @@ open class ChatChannelCollectionViewLayout: UICollectionViewFlowLayout {
     }
 
     override open func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+        if layoutCached {
+            return super.targetContentOffset(forProposedContentOffset: proposedContentOffset)
+        }
         // Content offset may be zero only when view just loaded for first time and needs to be scrolled to bottom
         if proposedContentOffset == .zero {
             let insets = collectionView?.contentInset ?? .zero
@@ -92,6 +121,9 @@ open class ChatChannelCollectionViewLayout: UICollectionViewFlowLayout {
         forProposedContentOffset proposedContentOffset: CGPoint,
         withScrollingVelocity velocity: CGPoint
     ) -> CGPoint {
+        if layoutCached {
+            return super.targetContentOffset(forProposedContentOffset: proposedContentOffset, withScrollingVelocity: velocity)
+        }
         if proposedContentOffset.y < zeroOffset.y {
             return zeroOffset
         }
