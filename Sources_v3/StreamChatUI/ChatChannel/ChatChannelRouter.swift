@@ -10,6 +10,7 @@ open class ChatChannelRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelV
         let controller = ChatThreadVC<ExtraData>()
         controller.channelController = channel
         controller.controller = channel.client.messageController(cid: channel.cid!, messageId: message.id)
+        controller.userSuggestionSearchController = channel.client.userSearchController()
         navigationController?.show(controller, sender: self)
     }
 }
