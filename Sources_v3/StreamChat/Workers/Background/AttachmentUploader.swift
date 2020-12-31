@@ -52,6 +52,8 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
     }
 
     private func handleChanges(changes: [ListChange<AttachmentDTO>]) {
+        guard !changes.isEmpty else { return }
+        
         var wasEmpty: Bool!
         _pendingAttachmentIDs.mutate { pendingAttachmentIDs in
             wasEmpty = pendingAttachmentIDs.isEmpty
