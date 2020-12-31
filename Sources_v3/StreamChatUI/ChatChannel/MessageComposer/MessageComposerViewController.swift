@@ -436,19 +436,24 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
                 guard let self = self else { return }
 
                 let user = self.userSuggestionSearchController.users[userIndex]
-                let cursorPositon = textView.selectedRange
+                let cursorPosition = textView.selectedRange
 
                 let atRange = (textView.textStorage.string as NSString)
                     .rangeOfCharacter(
                         from: CharacterSet(charactersIn: "@"),
                         options: .backwards,
-                        range: NSRange(location: 0, length: cursorPositon.location)
+                        range: NSRange(location: 0, length: cursorPosition.location)
                     )
 
+                let oldPositionTillTheEnd = (textView.text as NSString).length - cursorPosition.location
+
                 textView.textStorage.replaceCharacters(
-                    in: NSRange(location: atRange.location, length: cursorPositon.location - atRange.location),
-                    with: "@\(user.id)"
+                    in: NSRange(location: atRange.location, length: cursorPosition.location - atRange.location),
+                    with: "@\(user.id) "
                 )
+
+                let newPosition = (textView.text as NSString).length - oldPositionTillTheEnd
+                textView.selectedRange = NSRange(location: newPosition, length: 0)
                 self.dismissSuggestionsViewController()
             }
         )
