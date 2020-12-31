@@ -11,7 +11,8 @@ import UIKit
 open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
     ChatMessageListVCDataSource,
-    ChatMessageListVCDelegate {
+    ChatMessageListVCDelegate,
+    MessageComposerViewControllerDelegate {
     // MARK: - Properties
 
     public var channelController: _ChatChannelController<ExtraData>!
@@ -47,6 +48,7 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     override open func setUp() {
         super.setUp()
 
+        messageComposerViewController.delegate = .wrap(self)
         messageComposerViewController.controller = channelController
         messageComposerViewController.userSuggestionSearchController = userSuggestionSearchController
 
@@ -187,4 +189,8 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>) {
         messageComposerViewController.state = .edit(message)
     }
+
+    // MARK: - MessageComposerViewControllerDelegate
+
+    public func messageComposerViewControllerDidSendMessage(_ vc: MessageComposerViewController<ExtraData>) {}
 }

@@ -5,12 +5,23 @@
 import StreamChat
 import UIKit
 
+public protocol MessageComposerViewControllerDelegate: AnyObject {
+    associatedtype ExtraData: ExtraDataTypes
+    func messageComposerViewControllerDidSendMessage(_ vc: MessageComposerViewController<ExtraData>)
+}
+
 open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
     UITextViewDelegate,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
     UINavigationControllerDelegate {
+    // MARK: - Delegate
+
+    public struct Delegate {
+        public var didSendMessage: ((MessageComposerViewController) -> Void)?
+    }
+
     // MARK: - Underlying types
 
     public var userSuggestionSearchController: _ChatUserSearchController<ExtraData>!
@@ -27,6 +38,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     // MARK: - Properties
 
     public var controller: _ChatChannelController<ExtraData>?
+    public var delegate: Delegate? // swiftlint:disable:this weak_delegate
     var shouldShowMentions = false
     
     public var state: State = .initial {
@@ -210,6 +222,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         }
         
         state = .initial
+        delegate?.didSendMessage?(self)
     }
     
     open func createNewMessage(text: String) {
@@ -523,5 +536,15 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         }
         
         documentAttachments.append(contentsOf: documentsInfo)
+    }
+}
+
+public extension MessageComposerViewController.Delegate {
+    static func wrap<T: MessageComposerViewControllerDelegate>(
+        _ delegate: T
+    ) -> MessageComposerViewController.Delegate where T.ExtraData == ExtraData {
+        MessageComposerViewController.Delegate(
+            didSendMessage: { [weak delegate] in delegate?.messageComposerViewControllerDidSendMessage($0) }
+        )
     }
 }
