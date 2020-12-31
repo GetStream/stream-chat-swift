@@ -5,14 +5,8 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    override public func defaultAppearance() {
-        backgroundColor = uiConfig.colorPalette.generalBackground
-    }
-
+open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: ChatSwipeableListItemView<ExtraData> {
     // MARK: - Properties
-    
-    public var uiConfig: UIConfig<ExtraData>
 
     public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet {
@@ -43,31 +37,14 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: View, UIConfigPro
     }()
     
     public private(set) lazy var timestampLabel = UILabel().withoutAutoresizingMaskConstraints
-    
-    // MARK: - Init
-    
-    public required init(
-        channel: _ChatChannel<ExtraData>? = nil,
-        userId: UserId? = nil,
-        uiConfig: UIConfig<ExtraData> = .default
-    ) {
-        channelAndUserId = (channel, userId)
-        self.uiConfig = uiConfig
-        
-        super.init(frame: .zero)
-        
-        self.uiConfig = uiConfig
-    }
-    
-    public required init?(coder: NSCoder) {
-        uiConfig = .default
-        channelAndUserId = (nil, nil)
-        
-        super.init(coder: coder)
-    }
-    
+
     // MARK: - Public
-    
+
+    override public func defaultAppearance() {
+        super.defaultAppearance()
+        backgroundColor = uiConfig.colorPalette.generalBackground
+    }
+
     override open func setUpAppearance() {
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.font = .preferredFont(forTextStyle: .headline)
@@ -82,7 +59,10 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: View, UIConfigPro
     }
     
     override open func setUpLayout() {
-        embed(container)
+        super.setUpLayout()
+
+        cellContentView.embed(container)
+
         container.preservesSuperviewLayoutMargins = true
         container.isLayoutMarginsRelativeArrangement = true
                 
@@ -133,8 +113,6 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: View, UIConfigPro
         
         container.centerStackView.isHidden = false
         container.centerStackView.addArrangedSubview(containerCenterView)
-    
-        avatarView.widthAnchor.constraint(equalToConstant: avatarView.intrinsicContentSize.width).isActive = true
     }
     
     override open func updateContent() {
