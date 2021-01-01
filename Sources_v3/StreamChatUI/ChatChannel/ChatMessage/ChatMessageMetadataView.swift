@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -26,12 +26,7 @@ open class ChatMessageMetadataView<ExtraData: ExtraDataTypes>: View, UIConfigPro
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var timestampLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .callout).bold
-        label.adjustsFontForContentSizeCategory = true
-        return label
-    }()
+    public private(set) lazy var timestampLabel: UILabel = UILabel()
     
     // MARK: - Overrides
 
@@ -39,6 +34,9 @@ open class ChatMessageMetadataView<ExtraData: ExtraDataTypes>: View, UIConfigPro
         let color = uiConfig.colorPalette.messageTimestampText
         currentUserVisabilityIndicator.textLabel.textColor = color
         currentUserVisabilityIndicator.imageView.tintColor = color
+        
+        timestampLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+        timestampLabel.adjustsFontForContentSizeCategory = true
         timestampLabel.textColor = color
     }
 

@@ -46,6 +46,7 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
         
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapOnOverlay)))
         scrollView.contentInsetAdjustmentBehavior = .always
+        scrollView.isScrollEnabled = false
     }
 
     override public func defaultAppearance() {
