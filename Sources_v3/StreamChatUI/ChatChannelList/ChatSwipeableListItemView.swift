@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -68,6 +68,33 @@ open class ChatSwipeableListItemView<ExtraData: ExtraDataTypes>: View, UIConfigP
 
     // MARK: Gesture recognizer
 
+    override public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        guard let recognizer = gestureRecognizer as? UIPanGestureRecognizer else {
+            return super.gestureRecognizerShouldBegin(gestureRecognizer)
+        }
+
+        // Fetch the swipe movement in the cell view. If horizontal swipe is detected,
+        // we allow the gestureRecognizer to continue the swipe, if it's horizontal,
+        // we deny it so we can continue on showing the cell option menu.
+        //
+        // *This practically means on panning the cell we don't accidentally scroll the list
+        let translation = recognizer.translation(in: self)
+
+        return abs(translation.x) > abs(translation.y)
+    }
+
+    public func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        // Default implementation of this function returns false, that means that gestureRecognizer
+        // is not required to resign and we can have 2 simultaneous recognizers running at the same time.
+        // by implementing this and set return to true, we deny any other touches to interfere.
+        //
+        // *This practically means on scrolling the list we don't accidentally reveal the cell actions.
+        true
+    }
+    
     public func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
