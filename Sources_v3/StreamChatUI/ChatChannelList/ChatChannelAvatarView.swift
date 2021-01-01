@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -8,7 +8,7 @@ import UIKit
 open class ChatChannelAvatarView<ExtraData: ExtraDataTypes>: AvatarView {
     // MARK: - Properties
 
-    public lazy var onlineIndicatorView = OnlineIndicatorView().withoutAutoresizingMaskConstraints
+    public lazy var onlineIndicatorView = OnlineIndicatorView<ExtraData>().withoutAutoresizingMaskConstraints
 
     public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContent() }
@@ -27,6 +27,7 @@ open class ChatChannelAvatarView<ExtraData: ExtraDataTypes>: AvatarView {
         embed(imageView)
         addSubview(onlineIndicatorView)
         onlineIndicatorView.pin(anchors: [.top, .right], to: self)
+        onlineIndicatorView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.25).isActive = true
     }
     
     // MARK: - Public
@@ -41,19 +42,11 @@ open class ChatChannelAvatarView<ExtraData: ExtraDataTypes>: AvatarView {
             let currentUserId = channelAndUserId.currentUserId,
             let otherMember = channel.cachedMembers.first(where: { $0.id == currentUserId }),
             otherMember.isOnline {
-            let fallbackBackgroundColor: UIColor
-            if #available(iOS 13.0, *) {
-                fallbackBackgroundColor = UIColor.systemBackground
-            } else {
-                fallbackBackgroundColor = .white
-            }
-
-            onlineIndicatorView.borderColor = backgroundColor ?? fallbackBackgroundColor
             onlineIndicatorView.isHidden = false
         } else {
             onlineIndicatorView.isHidden = true
         }
-        
+
         if let imageURL = channel.imageURL {
             imageView.setImage(from: imageURL)
         } else {

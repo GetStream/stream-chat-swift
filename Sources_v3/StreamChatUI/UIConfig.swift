@@ -54,7 +54,9 @@ public extension UIConfig {
         // MARK: - Channel List
 
         public var channelListActionsBackgroundColor: UIColor = .streamWhiteSmoke
+        public var channelListIndicatorBorderColor: UIColor = .streamWhiteSnow
         public var channelListActionDeleteChannel: UIColor = .streamAccentRed
+        public var channelListAvatarOnlineIndicator: UIColor = .streamAccentGreen
 
         // MARK: - Text interactions
 
