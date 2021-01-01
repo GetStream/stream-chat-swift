@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -48,7 +48,7 @@ public extension UIConfig {
 
         public var subtitleText: UIColor = .streamGray
         public var text: UIColor = .streamBlack
-        public var generalBackground: UIColor = UIColor(rgb: 0xfcfcfc)
+        public var generalBackground: UIColor = .streamWhiteSnow
         public var shadow: UIColor = .streamGray
 
         // MARK: - Channel List
@@ -89,13 +89,13 @@ public extension UIConfig {
 
         // MARK: - Message interaction
 
-        public var popupDimmedBackground: UIColor = UIColor.black.withAlphaComponent(0.2)
-        public var galleryMoreImagesOverlayBackground: UIColor = UIColor.black.withAlphaComponent(0.4)
-        public var messageTimestampText: UIColor = .lightGray
-        public var unreadChatTint: UIColor = .systemGray
+        public var popupDimmedBackground: UIColor = .streamOverlay
+        public var galleryMoreImagesOverlayBackground: UIColor = .streamOverlay
+        public var messageTimestampText: UIColor = .streamGray
+        public var unreadChatTint: UIColor = .streamGray
         public var galleryImageBackground: UIColor = .streamWhiteSmoke
-        public var galleryUploadingOverlayBackground: UIColor = UIColor.black.withAlphaComponent(0.5)
-        public var galleryUploadingProgressBackground: UIColor = UIColor.black.withAlphaComponent(0.6)
+        public var galleryUploadingOverlayBackground: UIColor = .streamOverlay
+        public var galleryUploadingProgressBackground: UIColor = .streamOverlayDark
         public var messageActionDefaultIconTint: UIColor = .streamGray
         public var messageActionDefaultText: UIColor = .streamBlack
         public var messageActionErrorTint: UIColor = .streamAccentRed
@@ -344,16 +344,33 @@ public extension UIConfig {
 
 private extension UIColor {
     /// This is color palette used by design team.
-    /// It's not fully used in figma yet, but we should stick with this colors if possible.
-    static let streamBlack = UIColor(rgb: 0x000000)
-    static let streamGray = UIColor(rgb: 0x7a7a7a)
-    static let streamGrayGainsboro = UIColor(rgb: 0xdbdbdb)
-    static let streamGrayWhisper = UIColor(rgb: 0xecebeb)
-    static let streamWhiteSmoke = UIColor(rgb: 0xf2f2f2)
-    static let streamWhiteSnow = UIColor(rgb: 0xfcfcfc)
-    static let streamWhite = UIColor(rgb: 0xffffff)
-    static let streamBlueAlice = UIColor(rgb: 0xe9f2ff)
-    static let streamAccentBlue = UIColor(rgb: 0x005fff)
-    static let streamAccentRed = UIColor(rgb: 0xff3742)
-    static let streamAccentGreen = UIColor(rgb: 0x20e070)
+    /// If you see any color not from this list in figma, point it out to anyone in design team.
+    static let streamBlack = mode(0x000000, 0xffffff)
+    static let streamGray = mode(0x7a7a7a, 0x7a7a7a)
+    static let streamGrayGainsboro = mode(0xdbdbdb, 0x2d2f2f)
+    static let streamGrayWhisper = mode(0xecebeb, 0x1c1e22)
+    static let streamWhiteSmoke = mode(0xf2f2f2, 0x13151b)
+    static let streamWhiteSnow = mode(0xfcfcfc, 0x070a0d)
+    static let streamWhite = mode(0xffffff, 0x101418)
+    static let streamBlueAlice = mode(0xe9f2ff, 0x00193d)
+    static let streamAccentBlue = mode(0x005fff, 0x005fff)
+    static let streamAccentRed = mode(0xff3742, 0xff3742)
+    static let streamAccentGreen = mode(0x20e070, 0x20e070)
+
+    static let streamBGGradientFrom = mode(0xf7f7f7, 0x101214)
+    static let streamBGGradientTo = mode(0xfcfcfc, 0x070a0d)
+    static let streamOverlay = mode(0x000000, lightAlpha: 0.2, 0x000000, darkAlpha: 0.4)
+    static let streamOverlayDark = mode(0x000000, lightAlpha: 0.6, 0xffffff, darkAlpha: 0.8)
+
+    static func mode(_ light: Int, lightAlpha: CGFloat = 1.0, _ dark: Int, darkAlpha: CGFloat = 1.0) -> UIColor {
+        if #available(iOS 13.0, *) {
+            return UIColor { traitCollection in
+                traitCollection.userInterfaceStyle == .dark
+                    ? UIColor(rgb: dark).withAlphaComponent(darkAlpha)
+                    : UIColor(rgb: light).withAlphaComponent(lightAlpha)
+            }
+        } else {
+            return UIColor(rgb: light).withAlphaComponent(lightAlpha)
+        }
+    }
 }
