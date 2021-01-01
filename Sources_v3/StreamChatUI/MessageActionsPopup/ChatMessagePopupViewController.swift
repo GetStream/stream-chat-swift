@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -12,8 +12,17 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
         .withoutAutoresizingMaskConstraints
     public private(set) lazy var contentView = UIView()
         .withoutAutoresizingMaskConstraints
-    public private(set) lazy var blurView = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-        .withoutAutoresizingMaskConstraints
+    public private(set) lazy var blurView: UIView = {
+        let blur: UIBlurEffect
+        if #available(iOS 13.0, *) {
+            blur = UIBlurEffect(style: .systemUltraThinMaterial)
+        } else {
+            blur = UIBlurEffect(style: .regular)
+        }
+        return UIVisualEffectView(effect: blur)
+            .withoutAutoresizingMaskConstraints
+    }()
+
     public private(set) lazy var messageContentView = uiConfig.messageList.messageContentView.init()
         .withoutAutoresizingMaskConstraints
 
@@ -40,7 +49,7 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
     }
 
     override public func defaultAppearance() {
-        view.backgroundColor = uiConfig.colorPalette.popupDimmedBackground
+        view.backgroundColor = .clear
     }
 
     override open func setUpLayout() {
@@ -60,20 +69,20 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
 
         var constraints = [
             scrollContentView.widthAnchor.constraint(equalTo: view.widthAnchor),
-
+            
             contentView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor),
-
+            
             reactionsView?.heightAnchor.constraint(equalToConstant: 40),
             reactionsView?.topAnchor.constraint(equalTo: contentView.topAnchor),
             reactionsView?.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor),
             reactionsView?.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor),
             reactionsView?.bottomAnchor.constraint(equalTo: messageContentView.topAnchor, constant: -spacing),
-
+            
             messageContentView.topAnchor.constraint(equalTo: contentView.topAnchor).almostRequired,
             messageContentView.widthAnchor.constraint(equalToConstant: messageViewFrame.width),
             messageContentView.heightAnchor.constraint(equalToConstant: messageViewFrame.height),
-
+            
             actionsView.topAnchor.constraint(equalTo: messageContentView.bottomAnchor, constant: spacing),
             actionsView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.7),
             actionsView.bottomAnchor.constraint(lessThanOrEqualTo: scrollContentView.bottomAnchor)
