@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -41,7 +41,9 @@ open class ChatChannelCollectionViewLayout: UICollectionViewFlowLayout {
         }
         didSet {
             guard oldValue != layoutCached else { return }
-            invalidateLayout()
+            let context = UICollectionViewFlowLayoutInvalidationContext()
+            context.invalidateFlowLayoutAttributes = true
+            invalidateLayout(with: context)
         }
     }
 
