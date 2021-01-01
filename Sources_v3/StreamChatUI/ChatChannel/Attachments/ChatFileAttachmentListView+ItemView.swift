@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -18,7 +18,7 @@ extension ChatFileAttachmentListView {
         // MARK: - Overrides
 
         override public func defaultAppearance() {
-            backgroundColor = .white
+            backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
             layer.cornerRadius = 12
             layer.masksToBounds = true
             layer.borderWidth = 1

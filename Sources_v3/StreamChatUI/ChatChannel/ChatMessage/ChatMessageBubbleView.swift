@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -222,7 +222,7 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         
         let font = UIFont.preferredFont(forTextStyle: .body)
         textView.attributedText = .init(string: message?.textContent ?? "", attributes: [
-            .foregroundColor: message?.deletedAt == nil ? UIColor.black : uiConfig.colorPalette.messageTimestampText,
+            .foregroundColor: message?.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.messageTimestampText,
             .font: message?.deletedAt == nil ? font : font.italic
         ])
         textView.isVisible = layoutOptions.contains(.text)
