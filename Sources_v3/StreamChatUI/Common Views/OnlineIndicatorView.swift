@@ -1,30 +1,33 @@
 //
-//  OnlineIndicatorView.swift
-//  StreamChatUI
-//
-//  Created by Dominik Bucher on 25/11/2020.
-//  Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
-open class OnlineIndicatorView: UIView {
+open class OnlineIndicatorView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+    // MARK: - Customizable
 
-    public var borderColor: UIColor = .white {
-        didSet { layer.borderColor = borderColor.cgColor }
+    override public func setUpLayout() {
+        super.setUpLayout()
+        heightAnchor.constraint(equalTo: widthAnchor).isActive = true
     }
-    public var fillColor: UIColor = .systemGreen {
-        didSet { layer.backgroundColor = fillColor.cgColor }
-    }
-    public var defaultDiameter: CGFloat = 14
-    override open var intrinsicContentSize: CGSize {
-        .init(width: defaultDiameter, height: defaultDiameter)
-    }
+
+    // MARK: - Lifecycle
+
     override open func layoutSubviews() {
         super.layoutSubviews()
+        layer.frame = layer.frame.inset(by: .init(top: -1, left: -1, bottom: -1, right: -1))
         layer.cornerRadius = bounds.width / 2
-        layer.borderWidth = 2
-        layer.backgroundColor = fillColor.cgColor
-        layer.borderColor = borderColor.cgColor
+        layer.borderWidth = (bounds.width / 5)
+        layer.masksToBounds = true
+        layer.backgroundColor = uiConfig.colorPalette.channelListAvatarOnlineIndicator.cgColor
+        layer.borderColor = uiConfig.colorPalette.channelListIndicatorBorderColor.cgColor
+
+        // Create a circle shape layer with true bounds.
+        let mask = CAShapeLayer()
+        mask.path = UIBezierPath(ovalIn: bounds.inset(by: .init(top: -1, left: -1, bottom: -1, right: -1))).cgPath
+
+        layer.mask = mask
     }
 }
