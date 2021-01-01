@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -73,14 +73,18 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
         else { return }
 
         let localFrame = view.convert(frame, from: nil)
+        // message composer follows keyboard
         messageComposerBottomConstraint?.constant = -(view.bounds.height - localFrame.minY)
 
+        // calculate new contentOffset for message list, so bottom message still visible when keyboard appears
         let collectionDelta = view.bounds.height - view.safeAreaInsets.bottom - localFrame.minY
-        let needUpdateContentOffset = !messageList.collectionView.isDecelerating && !messageList.collectionView.isDragging
         let newContentOffset = CGPoint(
             x: 0,
             y: messageList.collectionView.contentOffset.y + collectionDelta
         )
+
+        // changing contentOffset will cancel any scrolling in collectionView, bad UX
+        let needUpdateContentOffset = !messageList.collectionView.isDecelerating && !messageList.collectionView.isDragging
         
         UIView.animate(
             withDuration: duration,
