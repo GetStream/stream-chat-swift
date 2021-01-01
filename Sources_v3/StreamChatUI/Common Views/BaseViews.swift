@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -61,6 +61,16 @@ open class View: UIView, AppearanceSetting, Customizable {
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard #available(iOS 12, *) else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
+    }
 }
 
 /// Base class for overridable views StreamChatUI provides.
@@ -82,6 +92,16 @@ open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customiz
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard #available(iOS 12, *) else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
+    }
 }
 
 /// Base class for overridable views StreamChatUI provides.
@@ -103,6 +123,16 @@ open class Control: UIControl, AppearanceSetting, Customizable {
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard #available(iOS 12, *) else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
+    }
 }
 
 /// Base class for overridable views StreamChatUI provides.
@@ -124,6 +154,16 @@ open class Button: UIButton, AppearanceSetting, Customizable {
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard #available(iOS 12, *) else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
+    }
 }
 
 /// Base class for overridable views StreamChatUI provides.
@@ -145,6 +185,16 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard #available(iOS 12, *) else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
+    }
 }
 
 open class ViewController: UIViewController, AppearanceSetting, Customizable {
@@ -163,4 +213,14 @@ open class ViewController: UIViewController, AppearanceSetting, Customizable {
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard #available(iOS 12, *) else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
+    }
 }
