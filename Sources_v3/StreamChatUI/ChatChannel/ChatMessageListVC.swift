@@ -67,6 +67,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         collection.register(incomingCell, forCellWithReuseIdentifier: incomingCell.reuseId)
         collection.register(outgoingCell, forCellWithReuseIdentifier: outgoingCell.reuseId)
         collection.showsHorizontalScrollIndicator = false
+        collection.alwaysBounceVertical = true
         collection.keyboardDismissMode = .onDrag
         collection.dataSource = self
         collection.delegate = self
