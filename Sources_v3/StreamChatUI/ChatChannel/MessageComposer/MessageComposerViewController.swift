@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -110,6 +110,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             composerView.replyView.setAnimatedly(hidden: true)
             composerView.container.topStackView.setAnimatedly(hidden: true)
             composerView.messageInputView.setSlashCommandViews(hidden: true)
+            composerView.invalidateIntrinsicContentSize()
         case let .slashCommand(command):
             textView.text = ""
             textView.placeholderLabel.text = command.name.firstUppercased
@@ -124,6 +125,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             composerView.container.topStackView.setAnimatedly(hidden: false)
             composerView.replyView.setAnimatedly(hidden: false)
             composerView.replyView.message = messageToReply
+            composerView.invalidateIntrinsicContentSize()
         case let .edit(message):
             composerView.sendButton.mode = .edit
             composerView.titleLabel.text = L10n.Composer.Title.edit
@@ -132,6 +134,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             composerView.stateIcon.image = image
             composerView.container.topStackView.setAnimatedly(hidden: false)
             textView.text = message.text
+            composerView.invalidateIntrinsicContentSize()
         }
         
         if let memberCount = controller?.channel?.memberCount,
