@@ -21,7 +21,7 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 
 **StreamChatUI** is a framework containing highly customizable UI components to build your chat UI with Stream chat using UIKit or SwiftUI. 
 
-If you wnat to build a fully custom UI and looking only for low-level chat SDK without UI components, check out [**StreamChat**](#).
+If you want to build a fully custom UI and looking only for low-level chat SDK without UI components, check out [**StreamChat**](#).
 
 --- 
 
@@ -66,53 +66,123 @@ If you wnat to build a fully custom UI and looking only for low-level chat SDK w
 
 ### Channel List
 
-<img align="right" src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/channel_list_1.PNG?raw=true" width="30%" />
+<table>
+  <tr>
+    <th width="50%">Features</th>
+    <th width="30%">Preview</th>
+  </tr>
+  <tr>
+    <td> A list of channels matching provided query </td>
+    <th rowspan="7"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Channel%20List%20Bezel.png?raw=true" width="80%" /></th>
+  </tr>
+   <tr> <td> Channel name and image based on the channel members or custom data</td> </tr>
+  <tr> <td> Unread messages indicator </td> </tr>
+  <tr> <td> Preview of the last message </td> </tr>
+  <tr> <td> Online indicator for avatars </td> </tr>
+  <tr> <td> Create new channel and start right away </td> </tr>
+  <tr><td> </td> </tr>
+  </tr>
+</table>
 
-- A list of channels matching provided query
-- Channel name and image based on the channel members or custom data
-- Unread messages indicator
-- Preview of the last message
-- Online indicator for avatars    
+---
 
-<br /><br /><br /><br /><br /><br /> <!--- How to do this better? -->
+### Channel Creation
+
+<table>
+  <tr>
+    <th width="50%">Features</th>
+    <th width="30%">Preview</th>
+  </tr>
+  <tr>
+    <td> Easily search users by tag or name </td>
+    <th rowspan="9"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Channel%20Creation%20Bezel.png?raw=true" width="80%" /></th>
+  </tr>
+  <tr> <td> Create group or direct message </td> </tr>
+  <tr> <td> Send message and start the conversation </td> </tr>
+  <tr><td> </td> </tr>
+  </tr>
+</table>
 
 ---
 
 ### Message List
 
-<img align="right" src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/message_list_1.PNG?raw=true" width="30%" />
-
-- A list of message in a channel
-- Photo preview
-- Message reactions
-- Message grouping basend on the send time
-- Link preview
-- Inline replies
-- Message threads
-- GIPHY support
-
-<!--- How to do this better? -->
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /> 
-
+<table>
+  <tr>
+    <th width="50%">Features</th>
+    <th width="30%">Preview</th>
+  </tr>
+  <tr>
+    <td> A list of message in a channel </td>
+    <th rowspan="9"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Message%20List%20Bezel.png?raw=true" width="80%" /></th>
+  </tr>
+  <tr> <td> Photo preview </td> </tr>
+  <tr> <td> Message reactions </td> </tr>
+  <tr> <td> Message grouping based on the send time </td> </tr>
+  <tr> <td> Link preview </td> </tr>
+  <tr> <td> Inline replies </td> </tr>
+  <tr> <td> Message threads </td> </tr>
+  <tr> <td> GIPHY support </td> </tr>
+  <tr><td> </td> </tr>
+  </tr>
+</table>
 
 ---
   
 ### Message Composer
 
-<img align="right" src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/composer_photo_1.PNG?raw=true" width="30%" />
-
-- Support for multiline text
-- Image and file attachments
-
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /> <!--- How to do this better? -->
+<table>
+  <tr>
+    <th width="50%">Features</th>
+    <th width="30%">Preview</th>
+  </tr>
+  <tr>
+    <td> Support for multiline text, expands and shrinks as needed </td>
+    <th rowspan="6"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Message%20Composer%20Bezels.png?raw=true" width="80%" /></th>
+  </tr>
+  <tr> <td> Image and file attachments</td> </tr>
+  <tr> <td> Replies to messages </td> </tr>
+  <tr> <td> Tagging of users </td> </tr>
+  <tr> <td> Chat commands like mute, ban, giphy </td> </tr>
+  <tr><td> </td> </tr>
+  </tr>
+</table>
 
 ---
 
-### Chat Commands
+### Chat Commands 
 
-<img align="right" src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/commands_1.PNG?raw=true" width="30%" />
+<table>
+  <tr>
+    <th width="50%">Features</th>
+    <th width="30%">Preview</th>
+  </tr>
+  <tr>
+    <td> Easily search commands by writing / symbol or tap bolt icon </td>
+    <th rowspan="5"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Commands%20Bezel.png?raw=true" width="80%" /></th>
+  </tr>
+  <tr> <td> GIPHY support out of box</td> </tr>
+  <tr> <td> Supports mute, unmute, ban, unban commands </td> </tr>
+  <tr> <td> WIP support of custom commands </td> </tr>
+  <tr><td> </td> </tr>
+  </tr>
+</table>
 
-- Slash commands preview
-- User mentions preview
+---
 
-<br /><br /><br /><br /><br /><br /><br /><br /> <!--- How to do this better? -->
+### User Tagging Suggestion 
+
+<table>
+  <tr>
+    <th width="50%">Features</th>
+    <th width="30%">Preview</th>
+  </tr>
+  <tr>
+    <td> User mentions preview </td>
+    <th rowspan="4"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Mentions%20Bezel.png?raw=true" width="80%" /></th>
+  </tr>
+  <tr> <td> Easily search for concrete user </td> </tr>
+  <tr> <td> Mention as many users as you want </td> </tr>
+  <tr><td> </td> </tr>
+  </tr>
+</table>
