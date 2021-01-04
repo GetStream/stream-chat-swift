@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -10,7 +10,9 @@ extension UITextView {
     /// https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/TextLayout/Tasks/StringHeight.html
     ///
     func calculatedTextHeight() -> CGFloat {
-        let textStorage = NSTextStorage(string: text)
+        // Height is not calculated correctly with empty text
+        let string: String = text.isEmpty ? " " : text
+        let textStorage = NSTextStorage(string: string)
         let width = frame.width - textContainerInset.right - textContainerInset.left
         let customTextContainer = NSTextContainer(size: .init(width: width, height: CGFloat.greatestFiniteMagnitude))
         let layoutManager = NSLayoutManager()
