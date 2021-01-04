@@ -1,22 +1,23 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-open class MessageComposerInputContainerView<ExtraData: ExtraDataTypes>: UIView {
+open class MessageComposerInputContainerView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: - Properties
     
-    public let uiConfig: UIConfig<ExtraData>
+    open var rightAccessoryButtonHeight: CGFloat = 30
     
     // MARK: - Subviews
     
-    public private(set) lazy var container = ContainerStackView().withoutAutoresizingMaskConstraints
+    public private(set) lazy var container = UIStackView().withoutAutoresizingMaskConstraints
         
-    public private(set) lazy var textView: MessageComposerInputTextView<ExtraData> = {
-        uiConfig.messageComposer.textView.init().withoutAutoresizingMaskConstraints
-    }()
+    public private(set) lazy var textView: MessageComposerInputTextView<ExtraData> = uiConfig
+        .messageComposer
+        .textView.init()
+        .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var slashCommandView: MessageInputSlashCommandView<ExtraData> = uiConfig
         .messageComposer
@@ -25,69 +26,39 @@ open class MessageComposerInputContainerView<ExtraData: ExtraDataTypes>: UIView 
     
     public private(set) lazy var rightAccessoryButton: UIButton = {
         let button = UIButton().withoutAutoresizingMaskConstraints
-        if #available(iOS 13.0, *) {
-            button.setImage(UIImage(systemName: "xmark.circle"), for: .normal)
-        }
         button.widthAnchor.constraint(equalTo: button.heightAnchor, multiplier: 1).isActive = true
         return button
     }()
-    
-    // MARK: - Init
-    
-    public required init(
-        uiConfig: UIConfig<ExtraData> = .default
-    ) {
-        self.uiConfig = uiConfig
         
-        super.init(frame: .zero)
-        
-        commonInit()
-    }
-    
-    public required init?(coder: NSCoder) {
-        uiConfig = .default
-        
-        super.init(coder: coder)
-        
-        commonInit()
-    }
-    
-    public func commonInit() {
-        embed(container)
-
-        setupLayout()
-    }
-    
-    // MARK: - Overrides
-    
-    override open var intrinsicContentSize: CGSize {
-        CGSize(width: UIView.noIntrinsicMetric, height: textView.calculatedTextHeight())
-    }
-    
     // MARK: - Public
     
-    open func setupLayout() {
+    override public func defaultAppearance() {
+        let rightAccessoryImage = UIImage(named: "dismissInCircle", in: .streamChatUI)?
+            .tinted(with: uiConfig.colorPalette.messageComposerButton)
+        rightAccessoryButton.setImage(rightAccessoryImage, for: .normal)
+    }
+    
+    override open func setUpLayout() {
+        embed(container)
+
         container.preservesSuperviewLayoutMargins = true
         container.isLayoutMarginsRelativeArrangement = true
-        container.spacing = UIStackView.spacingUseSystem
-        
-        container.leftStackView.alignment = .center
-        container.leftStackView.addArrangedSubview(slashCommandView)
-        slashCommandView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        
-        textView.isScrollEnabled = false
+        container.alignment = .center
+
+        container.addArrangedSubview(slashCommandView)
+        slashCommandView.setContentHuggingPriority(.required, for: .horizontal)
+
+        container.addArrangedSubview(textView)
         textView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        
-        container.centerStackView.isHidden = false
-        container.centerStackView.addArrangedSubview(textView)
-        
-        container.rightStackView.alignment = .center
-        container.rightStackView.addArrangedSubview(rightAccessoryButton)
-        rightAccessoryButton.widthAnchor.constraint(equalToConstant: 20).isActive = true
+
+        container.addArrangedSubview(rightAccessoryButton)
+
+        rightAccessoryButton.heightAnchor.constraint(equalToConstant: rightAccessoryButtonHeight).isActive = true
     }
 
     public func setSlashCommandViews(hidden: Bool) {
-        container.rightStackView.setAnimatedly(hidden: hidden)
-        container.leftStackView.setAnimatedly(hidden: hidden)
+        slashCommandView.setAnimatedly(hidden: hidden)
+        rightAccessoryButton.setAnimatedly(hidden: hidden)
+        slashCommandView.invalidateIntrinsicContentSize()
     }
 }
