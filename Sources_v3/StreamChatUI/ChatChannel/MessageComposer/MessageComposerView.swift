@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -144,7 +144,7 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
         
         container.spacing = UIStackView.spacingUseSystem
         
-        container.topStackView.alignment = .center
+        container.topStackView.alignment = .fill
         container.topStackView.addArrangedSubview(stateIcon)
         container.topStackView.addArrangedSubview(titleLabel)
         container.topStackView.addArrangedSubview(dismissButton)
