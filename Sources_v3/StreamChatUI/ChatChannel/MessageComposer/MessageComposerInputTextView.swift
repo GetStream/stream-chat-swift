@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -10,6 +10,10 @@ open class MessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
     Customizable,
     UIConfigProvider
 {
+    // MARK: - Properties
+            
+    lazy var textViewHeightConstraint = heightAnchor.constraint(equalToConstant: .zero)
+    
     // MARK: - Subviews
     
     public lazy var placeholderLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
@@ -72,6 +76,10 @@ open class MessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
             trailing: .zero
         ))
         placeholderLabel.pin(anchors: [.centerY], to: self)
+        
+        isScrollEnabled = false
+        
+        textViewHeightConstraint.isActive = true
     }
     
     open func updateContent() {}
@@ -79,5 +87,7 @@ open class MessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
     @objc func textDidChange() {
         delegate?.textViewDidChange?(self)
         placeholderLabel.isHidden = !text.isEmpty
+        textViewHeightConstraint.constant = calculatedTextHeight() + textContainerInset.bottom + textContainerInset.top
+        layoutIfNeeded()
     }
 }
