@@ -270,8 +270,10 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         _ vc: ChatMessageActionsVC<ExtraData>,
         didTapOnInlineReplyFor message: _ChatMessage<ExtraData>
     ) {
-        delegate?.didTapOnInlineReply?(self, message)
-        dismiss(animated: true)
+        dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.didTapOnInlineReply?(self, message)
+        }
     }
 
     open func chatMessageActionsVC(
@@ -285,8 +287,10 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         _ vc: ChatMessageActionsVC<ExtraData>,
         didTapOnEdit message: _ChatMessage<ExtraData>
     ) {
-        delegate?.didTapOnEdit?(self, message)
-        dismiss(animated: true)
+        dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.didTapOnEdit?(self, message)
+        }
     }
 
     open func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC<ExtraData>) {
