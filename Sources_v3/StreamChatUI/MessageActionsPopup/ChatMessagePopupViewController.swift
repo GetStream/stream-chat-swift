@@ -74,7 +74,7 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
             contentView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor),
             
-            reactionsView?.heightAnchor.constraint(equalToConstant: 40),
+            reactionsView?.heightAnchor.constraint(equalToConstant: reactionsViewHeight),
             reactionsView?.topAnchor.constraint(equalTo: contentView.topAnchor),
             reactionsView?.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor),
             reactionsView?.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor),
@@ -139,16 +139,36 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
         messageContentView.reactionsBubble.isHidden = true
     }
 
-    override open func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
 
+        // Initially, the `applyInitialContentOffset` invocation was in `viewDidLayoutSubviews`
+        // since the content offset can be applied when all the views are laid out
+        // and `scrollView` content size is calculated.
+        //
+        // The problem is that `viewDidLayoutSubviews` is also called when reaction is
+        // added/removed OR the gif is loaded while the initial `contentOffset` should be applied just once.
+        //
+        // Dispatching the invocation from `viewWillAppear`:
+        //  1. makes sure we do it once;
+        //  2. postpones it to the next run-loop iteration which guarantees it happens after `viewDidLayoutSubviews`
+        DispatchQueue.main.async {
+            self.applyInitialContentOffset()
+        }
+    }
+    
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        scrollToMakeMessageVisible()
+    }
+
+    open func applyInitialContentOffset() {
         let contentOffset = CGPoint(x: 0, y: max(0, -messageViewFrame.minY + spacing + reactionsViewHeight))
         scrollView.setContentOffset(contentOffset, animated: false)
     }
 
-    override open func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
+    open func scrollToMakeMessageVisible() {
         let contentRect = scrollContentView.convert(contentView.frame, to: scrollView)
         scrollView.scrollRectToVisible(contentRect, animated: true)
     }
