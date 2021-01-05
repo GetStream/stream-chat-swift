@@ -123,6 +123,8 @@ public extension UIConfig {
     struct ChannelListUI {
         public var channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self
         public var channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self
+        public var channelListSwipeableItemView: ChatSwipeableListItemView<ExtraData>.Type =
+            ChatSwipeableListItemView<ExtraData>.self
         public var channelListItemView: ChatChannelListItemView<ExtraData>.Type = ChatChannelListItemView<ExtraData>.self
         public var channelViewCell: ChatChannelListCollectionViewCell<ExtraData>.Type =
             ChatChannelListCollectionViewCell<ExtraData>.self
