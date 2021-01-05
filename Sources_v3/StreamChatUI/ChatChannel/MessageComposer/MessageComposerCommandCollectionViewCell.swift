@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -21,7 +21,7 @@ open class MessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UICo
 
     // MARK: - Appearance
 
-    override open func defaultAppearance() {
+    override public func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.generalBackground
 
         commandNameLabel.font = UIFont.preferredFont(forTextStyle: .footnote).bold

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -47,7 +47,7 @@ open class ChatReplyBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvide
         textView.isUserInteractionEnabled = false
     }
     
-    override open func defaultAppearance() {
+    override public func defaultAppearance() {
         textView.textContainer.maximumNumberOfLines = 6
         textView.textContainer.lineBreakMode = .byTruncatingTail
         textView.textContainer.lineFragmentPadding = .zero

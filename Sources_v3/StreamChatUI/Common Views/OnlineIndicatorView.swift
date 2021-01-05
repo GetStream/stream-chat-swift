@@ -8,7 +8,7 @@ import UIKit
 open class OnlineIndicatorView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: - Customizable
 
-    override public func setUpLayout() {
+    override open func setUpLayout() {
         super.setUpLayout()
         heightAnchor.constraint(equalTo: widthAnchor).isActive = true
     }

@@ -52,12 +52,12 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
         collectionView.delegate = self
     }
 
-    override public func setUpAppearance() {
+    override open func setUpAppearance() {
         view.backgroundColor = .clear
         view.layer.addShadow(color: uiConfig.colorPalette.shadow)
     }
 
-    override public func setUpLayout() {
+    override open func setUpLayout() {
         view.embed(containerView)
         containerView.embed(
             collectionView,

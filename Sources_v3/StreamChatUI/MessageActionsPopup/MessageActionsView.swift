@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -23,7 +23,7 @@ open class MessageActionsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider
 
     // MARK: Overrides
 
-    override open func defaultAppearance() {
+    override public func defaultAppearance() {
         layer.cornerRadius = 16
         layer.masksToBounds = true
         backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBorder

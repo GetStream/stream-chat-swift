@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -16,7 +16,7 @@ open class ChatSquareButton<ExtraData: ExtraDataTypes>: Button, UIConfigProvider
         defaultIntrinsicContentSize ?? super.intrinsicContentSize
     }
     
-    override open func defaultAppearance() {
+    override public func defaultAppearance() {
         defaultIntrinsicContentSize = .init(width: 40, height: 40)
         imageView?.contentMode = .scaleAspectFit
     }
