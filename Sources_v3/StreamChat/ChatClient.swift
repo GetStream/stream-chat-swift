@@ -215,7 +215,6 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///
     /// - Parameter config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
     ///
-    @available(iOSApplicationExtension, unavailable)
     public convenience init(config: ChatClientConfig) {
         // All production workers
         let workerBuilders: [WorkerBuilder] = [
