@@ -3,7 +3,7 @@
 > ⚠️ This README refers to an upcoming version of the SDK which is not publicly available yet.
 
 <p align="center">
-  <img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Low%20Level%20SDK.png"/>
+  <img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/iOS%20Chat%20Messaging.png"/>
 </p>
 
 <p align="center">
