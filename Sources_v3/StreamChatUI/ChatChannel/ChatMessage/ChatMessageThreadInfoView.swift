@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -25,7 +25,7 @@ open class ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: View, UIConfig
         }
     }
 
-    override open func defaultAppearance() {
+    override public func defaultAppearance() {
         shape.contentsScale = layer.contentsScale
         shape.strokeColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
         shape.fillColor = nil

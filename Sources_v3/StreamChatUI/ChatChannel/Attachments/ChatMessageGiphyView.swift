@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Nuke
@@ -59,7 +59,7 @@ open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvid
         loadingIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
     }
 
-    override open func defaultAppearance() {
+    override public func defaultAppearance() {
         super.defaultAppearance()
         backgroundColor = .clear
     }
@@ -120,7 +120,7 @@ extension ChatMessageGiphyView {
             contentStack.pin(to: layoutMarginsGuide)
         }
 
-        override open func defaultAppearance() {
+        override public func defaultAppearance() {
             super.defaultAppearance()
 
             backgroundColor = UIColor.black.withAlphaComponent(0.6)
