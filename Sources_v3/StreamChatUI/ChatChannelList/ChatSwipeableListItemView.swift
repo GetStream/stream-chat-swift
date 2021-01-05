@@ -21,7 +21,7 @@ open class ChatSwipeableListItemView<ExtraData: ExtraDataTypes>: View, UIConfigP
 
     // MARK: - View
 
-    override public func setUpLayout() {
+    override open func setUpLayout() {
         super.setUpLayout()
         addSubview(cellContentView)
         cellContentView.pin(anchors: [.top, .bottom, .width], to: self)
@@ -43,7 +43,7 @@ open class ChatSwipeableListItemView<ExtraData: ExtraDataTypes>: View, UIConfigP
         trailingConstraint?.isActive = true
     }
 
-    override public func setUp() {
+    override open func setUp() {
         super.setUp()
 
         deleteButton.addTarget(self, action: #selector(didTapDelete), for: .touchUpInside)

@@ -100,7 +100,7 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
     
     // MARK: - Public
     
-    override open func defaultAppearance() {
+    override public func defaultAppearance() {
         super.defaultAppearance()
         stateIconHeight = 40
         

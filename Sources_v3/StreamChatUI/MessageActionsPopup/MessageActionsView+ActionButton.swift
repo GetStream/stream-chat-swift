@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -12,7 +12,7 @@ extension MessageActionsView {
 
         // MARK: Overrides
 
-        override open func defaultAppearance() {
+        override public func defaultAppearance() {
             backgroundColor = uiConfig.colorPalette.generalBackground
             titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline).bold
             contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
