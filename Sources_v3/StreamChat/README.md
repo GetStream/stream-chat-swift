@@ -1,6 +1,10 @@
-# [StreamChat](https://getstream.io/chat/) iOS SDK 
+---
 
-> ⚠️ This README refers to an upcoming version of the SDK which is not publicly available yet.
+⚠️ This README refers to a beta version of the SDK not suitable for using in production.
+
+---
+
+# [StreamChat](https://getstream.io/chat/) (low-level) iOS SDK 
 
 <p align="center">
   <img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Low%20Level%20SDK.png"/>
@@ -21,14 +25,14 @@ The **StreamChat SDK**  is the official iOS SDK for [Stream Chat](https://getstr
 
 **StreamChat** is a low level client for Stream chat service and is meant to be used when you want to build a fully custom UI. 
 
-For the majority of common use cases, using our highly composable and customizable [**StreamChatUI**](#) is preferable.
+For the majority of common use cases, using our highly composable and customizable [**StreamChatUI**](https://github.com/GetStream/stream-chat-swift/tree/main_v3) is preferable.
 
 --- 
 
 ## Main Features
 
 - **Swift native API:** Uses Swift's powerful language features to make the SDK usage easy and type-safe.
-- **Fully open source implementation:** You have access to the comple source code of the SDK here on GitHub.
+- **Fully open source implementation:** You have access to the complete source code of the SDK here on GitHub.
 - **Offline support:** Browse channels and send messages while offline.
 - **Uses `UIKit` patterns and paradigms:** The API follows the design of native system SKDs. It makes integration with your existing code easy and familiar.
 - **First-class support for `SwiftUI` and `Combine`:** Built-it wrappers make using the SDK with the latest Apple frameworks a seamless experience.
@@ -38,14 +42,14 @@ For the majority of common use cases, using our highly composable and customizab
 ## **Quick Links** (WIP)
 
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat.
-* [Installation](https://github.com/GetStream/stream-chat-swift/blob/master_v3/Documentation/Installation.MD): Learn more about how to install the SDK using CocoaPods, SPM, or Carthage.
-* [Cheat Sheet:](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet) Learn how to use the SDK by examples.
+* [Installation](https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Installation.MD): Learn more about how to install the SDK using CocoaPods, SPM, or Carthage.
+* [Cheat Sheet:](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheett) Learn how to use the SDK by real-world examples.
 * [Sample app](https://github.com/GetStream/stream-chat-swift/tree/master/Example): This repo includes a fully functional sample app with example usage of the SDK with UIKit, SwiftUI, and Combine.
 
 &nbsp;
 
-* [Chat UI Kit](https://getstream.io/chat/ui-kit/): A set of UI elements you can customize to build your chat UI quickly.
-* [Swift Chat API Docs](https://getstream.io/chat/docs/swift/)
+* [StreamChatUI SDK](https://github.com/GetStream/stream-chat-swift/tree/main_v3): An SDK containing rich and customizable chat UI elements to easily and quickly build your chat UI with.
+* [Swift Chat API Docs](https://github.com/GetStream/stream-chat-swift/wiki)
 * [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/)
 
 ## API Quick Overview
