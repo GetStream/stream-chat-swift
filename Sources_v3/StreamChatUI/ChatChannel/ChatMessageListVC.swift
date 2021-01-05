@@ -99,7 +99,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
 
         view.addSubview(collectionView)
         collectionView.pin(to: view.safeAreaLayoutGuide)
-        collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 8, right: 0)
+        collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
     }
 
     override public func defaultAppearance() {
