@@ -470,6 +470,15 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
 
                 let newPosition = (textView.text as NSString).length - oldPositionTillTheEnd
                 textView.selectedRange = NSRange(location: newPosition, length: 0)
+                
+                // Trigger layout recalculation on `MessageComposerInputTextView`.
+                // When we change text with `textStorage.replaceCharacters` method `textViewDidChange` is not fired
+                // so height of the textView is not recalculated.
+                // It's possible to observe `NSTextStorage.didProccessEditingNotification` but it's
+                // not safe to perform operations on textView after this call cause text is not yet updated.
+                let text = textView.text
+                textView.text = text
+                
                 self.dismissSuggestionsViewController()
             }
         )
