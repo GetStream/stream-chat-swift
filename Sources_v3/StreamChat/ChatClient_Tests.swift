@@ -52,12 +52,14 @@ class ChatClient_Tests: StressTestCase {
         
         var usedDatabaseKind: DatabaseContainer.Kind?
         var shouldFlushDBOnStart: Bool?
+        var shouldResetEphemeralValues: Bool?
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
-        env.databaseContainerBuilder = { kind, shouldFlushOnStart in
+        env.databaseContainerBuilder = { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart in
             usedDatabaseKind = kind
             shouldFlushDBOnStart = shouldFlushOnStart
+            shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
             return DatabaseContainerMock()
         }
         
@@ -68,6 +70,7 @@ class ChatClient_Tests: StressTestCase {
             .onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString))
         )
         XCTAssertEqual(shouldFlushDBOnStart, config.shouldFlushLocalStorageOnStart)
+        XCTAssertEqual(shouldResetEphemeralValues, config.isClientInActiveMode)
     }
     
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
@@ -79,7 +82,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
-        env.databaseContainerBuilder = { kind, _ in
+        env.databaseContainerBuilder = { kind, _, _ in
             usedDatabaseKind = kind
             return DatabaseContainerMock()
         }
@@ -108,7 +111,7 @@ class ChatClient_Tests: StressTestCase {
 
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
-        env.databaseContainerBuilder = { kind, _ in
+        env.databaseContainerBuilder = { kind, _, _ in
             usedDatabaseKinds.append(kind)
             // Return error for the first time
             if let error = errorsToReturn.pop() {
@@ -473,7 +476,11 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                 return self.webSocketClient!
             },
             databaseContainerBuilder: {
-                self.databaseContainer = try! DatabaseContainerMock(kind: $0, shouldFlushOnStart: $1)
+                self.databaseContainer = try! DatabaseContainerMock(
+                    kind: $0,
+                    shouldFlushOnStart: $1,
+                    shouldResetEphemeralValuesOnStart: $2
+                )
                 return self.databaseContainer!
             },
             requestEncoderBuilder: {

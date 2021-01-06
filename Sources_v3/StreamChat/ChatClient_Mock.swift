@@ -42,7 +42,9 @@ extension _ChatClient.Environment where ExtraData == DefaultExtraData {
                     internetConnection: $5
                 )
             },
-            databaseContainerBuilder: { try! DatabaseContainerMock(kind: $0, shouldFlushOnStart: $1) },
+            databaseContainerBuilder: {
+                try! DatabaseContainerMock(kind: $0, shouldFlushOnStart: $1, shouldResetEphemeralValuesOnStart: $2)
+            },
             requestEncoderBuilder: DefaultRequestEncoder.init,
             requestDecoderBuilder: DefaultRequestDecoder.init,
             eventDecoderBuilder: EventDecoder.init,

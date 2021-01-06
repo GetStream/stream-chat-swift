@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -22,11 +22,18 @@ class DatabaseContainerMock: DatabaseContainer {
     override init(
         kind: DatabaseContainer.Kind,
         shouldFlushOnStart: Bool = false,
+        shouldResetEphemeralValuesOnStart: Bool = true,
         modelName: String = "StreamChatModel",
         bundle: Bundle? = nil
     ) throws {
         init_kind = kind
-        try super.init(kind: kind, shouldFlushOnStart: shouldFlushOnStart, modelName: modelName, bundle: bundle)
+        try super.init(
+            kind: kind,
+            shouldFlushOnStart: shouldFlushOnStart,
+            shouldResetEphemeralValuesOnStart: shouldResetEphemeralValuesOnStart,
+            modelName: modelName,
+            bundle: bundle
+        )
     }
     
     override func removeAllData(force: Bool = true) throws {

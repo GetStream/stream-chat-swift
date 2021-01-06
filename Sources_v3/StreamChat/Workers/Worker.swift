@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -9,6 +9,10 @@ typealias WorkerBuilder = (
     _ database: DatabaseContainer,
     _ apiClient: APIClient
 ) -> Worker
+
+typealias EventWorkerBuilder = (
+    _ database: DatabaseContainer,
+    _ eventNotificationCenter: EventNotificationCenter,
     _ apiClient: APIClient
 ) -> Worker
 
@@ -21,5 +25,18 @@ class Worker: NSObject { // TODO: remove NSObject
         self.database = database
         self.apiClient = apiClient
         super.init()
+    }
+}
+
+class EventWorker: Worker {
+    unowned let eventNotificationCenter: EventNotificationCenter
+    
+    init(
+        database: DatabaseContainer,
+        eventNotificationCenter: EventNotificationCenter,
+        apiClient: APIClient
+    ) {
+        self.eventNotificationCenter = eventNotificationCenter
+        super.init(database: database, apiClient: apiClient)
     }
 }
