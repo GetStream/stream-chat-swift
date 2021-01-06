@@ -22,13 +22,13 @@ open class MessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
     
     override public var text: String! {
         didSet {
-            textDidChange()
+            textDidChangeProgrammatically()
         }
     }
     
     override public var attributedText: NSAttributedString! {
         didSet {
-            textDidChange()
+            textDidChangeProgrammatically()
         }
     }
     
@@ -84,8 +84,12 @@ open class MessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
     
     open func updateContent() {}
     
-    @objc func textDidChange() {
+    func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
+        textDidChange()
+    }
+        
+    @objc func textDidChange() {
         placeholderLabel.isHidden = !text.isEmpty
         textViewHeightConstraint.constant = calculatedTextHeight() + textContainerInset.bottom + textContainerInset.top
         layoutIfNeeded()
