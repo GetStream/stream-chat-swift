@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -60,7 +60,6 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     lazy var userQueryUpdater = self.environment
         .userQueryUpdaterBuilder(
             client.databaseContainer,
-            client.webSocketClient,
             client.apiClient
         )
     
@@ -199,7 +198,6 @@ extension _ChatUserSearchController {
     struct Environment {
         var userQueryUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
         ) -> UserListUpdater<ExtraData.User> = UserListUpdater.init
         

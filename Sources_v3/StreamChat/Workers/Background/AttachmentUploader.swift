@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -26,14 +26,14 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
 
     var minSignificantUploadingProgressChange: Double = 0.05
 
-    override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
+    override init(database: DatabaseContainer, apiClient: APIClient) {
         observer = .init(
             context: database.backgroundReadOnlyContext,
             fetchRequest: AttachmentDTO.pendingUploadFetchRequest(),
             itemCreator: { $0 }
         )
 
-        super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        super.init(database: database, apiClient: apiClient)
 
         startObserving()
     }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -23,14 +23,14 @@ class MessageEditor<ExtraData: ExtraDataTypes>: Worker {
     
     private let observer: ListDatabaseObserver<MessageDTO, MessageDTO>
 
-    override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
+    override init(database: DatabaseContainer, apiClient: APIClient) {
         observer = .init(
             context: database.backgroundReadOnlyContext,
             fetchRequest: MessageDTO.messagesPendingSyncFetchRequest(),
             itemCreator: { $0 }
         )
         
-        super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        super.init(database: database, apiClient: apiClient)
         
         startObserving()
     }
