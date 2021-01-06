@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -208,7 +208,7 @@ class SuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
 
     func controller(
         _ controller: _ChatUserSearchController<ExtraData>,
-        didChangeUsers changes: [ListChange<ChatUser>]
+        didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
     ) {
         collectionView.reloadData()
     }
