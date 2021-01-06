@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -23,7 +23,7 @@ final class UserUpdater_Tests: StressTestCase {
         apiClient = APIClientMock()
         database = DatabaseContainerMock()
         
-        userUpdater = .init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        userUpdater = .init(database: database, apiClient: apiClient)
     }
     
     override func tearDown() {

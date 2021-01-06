@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -368,7 +368,9 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
 
     private func setupEventObservers(for cid: ChannelId) {
         eventObservers.removeAll()
-        let center = client.webSocketClient.eventNotificationCenter
+        // We can't setup event observers in connectionless mode
+        guard let webSocketClient = client.webSocketClient else { return }
+        let center = webSocketClient.eventNotificationCenter
         eventObservers = [
             MemberEventObserver(notificationCenter: center, cid: cid) { [unowned self] event in
                 self.delegateCallback {

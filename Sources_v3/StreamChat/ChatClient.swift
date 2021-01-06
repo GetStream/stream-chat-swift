@@ -120,7 +120,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     }()
     
     /// The `WebSocketClient` instance `Client` uses to communicate with Stream WS servers.
-    lazy var webSocketClient: WebSocketClient = {
+    lazy var webSocketClient: WebSocketClient? = {
         // Create a connection request
         let webSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
             userId: self.currentUserId,
@@ -142,7 +142,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             internetConnection
         )
         
-        webSocketClient.connectionStateDelegate = self
+        webSocketClient?.connectionStateDelegate = self
         
         return webSocketClient
     }()
@@ -269,6 +269,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         self.workerBuilders = workerBuilders
         
         createBackgroundWorkers()
+        createWebSocketClient()
     }
     
     deinit {
@@ -297,6 +298,13 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             builder(self.databaseContainer, self.webSocketClient, self.apiClient)
         }
     }
+    
+    /// Before CIS-555, `webSocketClient` was initialized in `createBackgroundWorkers` in `init` since it was passed
+    /// to the background workers. Now, background workers do not access `webSocketClient` and it's not being
+    /// initialized in `init`, so we initialize it here explicitly.
+    private func createWebSocketClient() {
+        _ = webSocketClient
+    }
 }
 
 extension _ChatClient {
@@ -315,7 +323,7 @@ extension _ChatClient {
             _ eventDecoder: AnyEventDecoder,
             _ notificationCenter: EventNotificationCenter,
             _ internetConnection: InternetConnection
-        ) -> WebSocketClient = {
+        ) -> WebSocketClient? = {
             WebSocketClient(
                 connectEndpoint: $0,
                 sessionConfiguration: $1,

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -24,7 +24,7 @@ class EventSender_Tests: StressTestCase {
         time = VirtualTime()
         VirtualTimeTimer.time = time
         
-        eventSender = EventSender(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        eventSender = EventSender(database: database, apiClient: apiClient)
         eventSender.timer = VirtualTimeTimer.self
     }
     
