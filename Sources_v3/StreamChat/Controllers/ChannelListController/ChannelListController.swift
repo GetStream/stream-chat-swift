@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -56,7 +56,6 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     private lazy var worker: ChannelListUpdater<ExtraData> = self.environment
         .channelQueryUpdaterBuilder(
             client.databaseContainer,
-            client.webSocketClient,
             client.apiClient
         )
 
@@ -184,7 +183,6 @@ extension _ChatChannelListController {
     struct Environment {
         var channelQueryUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
         ) -> ChannelListUpdater<ExtraData> = ChannelListUpdater.init
 

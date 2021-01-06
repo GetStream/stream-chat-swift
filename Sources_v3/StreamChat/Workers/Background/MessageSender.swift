@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -37,8 +37,8 @@ class MessageSender<ExtraData: ExtraDataTypes>: Worker {
         attributes: [.concurrent]
     )
     
-    override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
-        super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+    override init(database: DatabaseContainer, apiClient: APIClient) {
+        super.init(database: database, apiClient: apiClient)
 
         // We need to initialize the observer synchronously
         _ = observer

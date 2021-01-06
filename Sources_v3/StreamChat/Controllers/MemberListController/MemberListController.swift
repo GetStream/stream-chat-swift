@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -117,7 +117,6 @@ public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataCo
     private func createMemberListUpdater() -> ChannelMemberListUpdater<ExtraData> {
         environment.memberListUpdaterBuilder(
             client.databaseContainer,
-            client.webSocketClient,
             client.apiClient
         )
     }
@@ -179,7 +178,6 @@ extension _ChatChannelMemberListController {
     struct Environment {
         var memberListUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
         ) -> ChannelMemberListUpdater<ExtraData> = ChannelMemberListUpdater.init
 

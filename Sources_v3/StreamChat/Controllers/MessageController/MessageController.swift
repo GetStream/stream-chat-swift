@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -120,7 +120,6 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var messageUpdater: MessageUpdater<ExtraData> = environment.messageUpdaterBuilder(
         client.databaseContainer,
-        client.webSocketClient,
         client.apiClient
     )
 
@@ -390,7 +389,6 @@ extension _ChatMessageController {
         
         var messageUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
         ) -> MessageUpdater<ExtraData> = MessageUpdater.init
     }

@@ -295,7 +295,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     func createBackgroundWorkers() {
         backgroundWorkers = workerBuilders.map { builder in
-            builder(self.databaseContainer, self.webSocketClient, self.apiClient)
+            builder(self.databaseContainer, self.apiClient)
         }
     }
     

@@ -187,13 +187,11 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(
         client.databaseContainer,
-        client.webSocketClient,
         client.apiClient
     )
     
     private lazy var eventSender: EventSender<ExtraData> = self.environment.eventSenderBuilder(
         client.databaseContainer,
-        client.webSocketClient,
         client.apiClient
     )
     
@@ -769,13 +767,11 @@ extension _ChatChannelController {
     struct Environment {
         var channelUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
         ) -> ChannelUpdater<ExtraData> = ChannelUpdater.init
         
         var eventSenderBuilder: (
             _ database: DatabaseContainer,
-            _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
         ) -> EventSender<ExtraData> = EventSender.init
     }

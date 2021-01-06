@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -129,7 +129,6 @@ public class _ChatUserController<ExtraData: ExtraDataTypes>: DataController, Del
     private func createUserUpdater() -> UserUpdater<ExtraData> {
         environment.userUpdaterBuilder(
             client.databaseContainer,
-            client.webSocketClient,
             client.apiClient
         )
     }
@@ -208,7 +207,6 @@ extension _ChatUserController {
     struct Environment {
         var userUpdaterBuilder: (
             _ database: DatabaseContainer,
-            _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
         ) -> UserUpdater<ExtraData> = UserUpdater.init
         
