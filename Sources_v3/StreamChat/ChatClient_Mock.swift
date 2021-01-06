@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -10,6 +10,7 @@ extension ChatClient {
         ChatClient(
             config: .init(apiKey: .init(.unique)),
             workerBuilders: [],
+            eventWorkerBuilders: [],
             environment: .mock
         )
     }

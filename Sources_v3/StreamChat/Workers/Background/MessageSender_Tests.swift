@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -23,7 +23,7 @@ class MessageSender_Tests: StressTestCase {
         apiClient = APIClientMock()
         database = try! DatabaseContainerMock(kind: .inMemory)
         
-        sender = MessageSender(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        sender = MessageSender(database: database, apiClient: apiClient)
         
         cid = .unique
         

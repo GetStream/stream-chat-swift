@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -445,16 +445,14 @@ private class TestEnvironment {
         memberUpdaterBuilder: { [unowned self] in
             self.memberUpdater = .init(
                 database: $0,
-                webSocketClient: $1,
-                apiClient: $2
+                apiClient: $1
             )
             return self.memberUpdater!
         },
         memberListUpdaterBuilder: { [unowned self] in
             self.memberListUpdater = .init(
                 database: $0,
-                webSocketClient: $1,
-                apiClient: $2
+                apiClient: $1
             )
             return self.memberListUpdater!
         },

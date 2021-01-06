@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -22,7 +22,7 @@ final class MessageUpdater_Tests: StressTestCase {
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         database = try! DatabaseContainerMock(kind: .inMemory)
-        messageUpdater = MessageUpdater(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        messageUpdater = MessageUpdater(database: database, apiClient: apiClient)
     }
     
     override func tearDown() {

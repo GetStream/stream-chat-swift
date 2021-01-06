@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -391,8 +391,7 @@ private class TestEnvironment {
         .init(channelQueryUpdaterBuilder: { [unowned self] in
             self.channelListUpdater = ChannelListUpdaterMock(
                 database: $0,
-                webSocketClient: $1,
-                apiClient: $2
+                apiClient: $1
             )
             return self.channelListUpdater!
         })

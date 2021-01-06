@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -33,7 +33,10 @@ class ChatClient_Tests: StressTestCase {
     var workerBuilders: [WorkerBuilder] = [
         MessageSender<DefaultExtraData>.init,
         NewChannelQueryUpdater<DefaultExtraData>.init,
-        NewUserQueryUpdater<DefaultExtraData.User>.init,
+        NewUserQueryUpdater<DefaultExtraData.User>.init
+    ]
+    
+    var eventWorkerBuilders: [EventWorkerBuilder] = [
         ChannelWatchStateUpdater<DefaultExtraData>.init
     ]
     
@@ -59,7 +62,7 @@ class ChatClient_Tests: StressTestCase {
         }
         
         // Create a `Client` and assert that a DB file is created on the provided URL + APIKey path
-        _ = ChatClient(config: config, workerBuilders: [Worker.init], environment: env)
+        _ = ChatClient(config: config, workerBuilders: [Worker.init], eventWorkerBuilders: [], environment: env)
         XCTAssertEqual(
             usedDatabaseKind,
             .onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString))
@@ -82,7 +85,7 @@ class ChatClient_Tests: StressTestCase {
         }
         
         // Create a `Client` and assert the correct DB kind is used
-        _ = ChatClient(config: config, workerBuilders: [Worker.init], environment: env)
+        _ = ChatClient(config: config, workerBuilders: [Worker.init], eventWorkerBuilders: [], environment: env)
         
         XCTAssertEqual(usedDatabaseKind, .inMemory)
     }
@@ -117,7 +120,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Create a chat client and assert `Client` tries to initialize the local DB, and when it fails, it falls back
         // to the in-memory option.
-        _ = ChatClient(config: config, workerBuilders: [Worker.init], environment: env)
+        _ = ChatClient(config: config, workerBuilders: [Worker.init], eventWorkerBuilders: [], environment: env)
         
         XCTAssertEqual(
             usedDatabaseKinds,
@@ -133,6 +136,7 @@ class ChatClient_Tests: StressTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
+            eventWorkerBuilders: eventWorkerBuilders,
             environment: testEnv.environment
         )
         
@@ -155,6 +159,7 @@ class ChatClient_Tests: StressTestCase {
         _ = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -183,6 +188,7 @@ class ChatClient_Tests: StressTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
 
@@ -201,6 +207,7 @@ class ChatClient_Tests: StressTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -243,6 +250,7 @@ class ChatClient_Tests: StressTestCase {
         let client = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -283,6 +291,7 @@ class ChatClient_Tests: StressTestCase {
         let client = ChatClient(
             config: config,
             workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -302,6 +311,7 @@ class ChatClient_Tests: StressTestCase {
         _ = ChatClient(
             config: inMemoryStorageConfig,
             workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
             environment: testEnv.environment
         )
         
@@ -331,32 +341,23 @@ class ChatClient_Tests: StressTestCase {
         // Set up mocks for APIClient, WSClient and Database
         let config = ChatClientConfig(apiKey: .init(.unique))
         
-        // Prepare a test worker
-        class TestWorker: Worker {
-            var init_database: DatabaseContainer?
-            var init_webSocketClient: WebSocketClient?
-            var init_apiClient: APIClient?
-            
-            override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
-                init_database = database
-                init_webSocketClient = webSocketClient
-                init_apiClient = apiClient
-                
-                super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
-            }
-        }
-        
-        // Create a Client instance and check the TestWorker is initialized properly
+        // Create a Client instance and check the workers are initialized properly
         let client = _ChatClient(
             config: config,
             workerBuilders: [TestWorker.init],
+            eventWorkerBuilders: [TestEventWorker.init],
             environment: testEnv.environment
         )
         
         let testWorker = client.backgroundWorkers.first as? TestWorker
         XCTAssert(testWorker?.init_database is DatabaseContainerMock)
-        XCTAssert(testWorker?.init_webSocketClient is WebSocketClientMock)
         XCTAssert(testWorker?.init_apiClient is APIClientMock)
+        
+        // Event workers are initialized after normal workers
+        let testEventWorker = client.backgroundWorkers.last as? TestEventWorker
+        XCTAssert(testEventWorker?.init_database is DatabaseContainerMock)
+        XCTAssert(testEventWorker?.init_eventNotificationCenter is EventNotificationCenterMock)
+        XCTAssert(testEventWorker?.init_apiClient is APIClientMock)
     }
     
     // MARK: - Setting a new current user tests
@@ -370,18 +371,11 @@ class ChatClient_Tests: StressTestCase {
     }
     
     func test_settingUser_resetsBackgroundWorkers() {
-        // TestWorker to be used for checking if workers are re-created
-        class TestWorker: Worker {
-            let id = UUID()
-        }
-        
-        // Custom workerBuilders for ChatClient, including only TestWorker
-        let workerBuilders: [WorkerBuilder] = [TestWorker.init]
-        
-        // Create ChatClient
+        // Create ChatClient with TestWorker and TestEventWorker only
         let client = _ChatClient(
             config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
+            workerBuilders: [TestWorker.init],
+            eventWorkerBuilders: [TestEventWorker.init],
             environment: testEnv.environment
         )
         
@@ -396,12 +390,14 @@ class ChatClient_Tests: StressTestCase {
 
         // Save worker's UUID
         let oldWorkerUUID = (client.backgroundWorkers.first as! TestWorker).id
+        let oldEventWorkerUUID = (client.backgroundWorkers.last as! TestEventWorker).id
         
         // Set the same user again
         currentUserController.setUser(userId: oldUserId, name: nil, imageURL: nil, token: oldUserToken)
 
         // .. to make sure worker's are not re-created for the same user
         XCTAssertEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)
+        XCTAssertEqual((client.backgroundWorkers.last as! TestEventWorker).id, oldEventWorkerUUID)
         
         // Generate userIds for second user
         let newUserId: UserId = .unique
@@ -412,6 +408,37 @@ class ChatClient_Tests: StressTestCase {
 
         // Check if the worker is re-created
         XCTAssertNotEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)
+        XCTAssertNotEqual((client.backgroundWorkers.last as! TestEventWorker).id, oldEventWorkerUUID)
+    }
+}
+
+class TestWorker: Worker {
+    let id = UUID()
+    
+    var init_database: DatabaseContainer?
+    var init_apiClient: APIClient?
+    
+    override init(database: DatabaseContainer, apiClient: APIClient) {
+        init_database = database
+        init_apiClient = apiClient
+        
+        super.init(database: database, apiClient: apiClient)
+    }
+}
+
+class TestEventWorker: EventWorker {
+    let id = UUID()
+    
+    var init_database: DatabaseContainer?
+    var init_eventNotificationCenter: EventNotificationCenter?
+    var init_apiClient: APIClient?
+    
+    override init(database: DatabaseContainer, eventNotificationCenter: EventNotificationCenter, apiClient: APIClient) {
+        init_database = database
+        init_eventNotificationCenter = eventNotificationCenter
+        init_apiClient = apiClient
+        
+        super.init(database: database, eventNotificationCenter: eventNotificationCenter, apiClient: apiClient)
     }
 }
 
@@ -425,6 +452,8 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
     @Atomic var requestDecoder: TestRequestDecoder?
     
     @Atomic var eventDecoder: EventDecoder<ExtraData>?
+    
+    @Atomic var notificationCenter: EventNotificationCenter?
     
     lazy var environment: _ChatClient<ExtraData>.Environment = { [unowned self] in
         .init(
@@ -461,6 +490,10 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
             eventDecoderBuilder: {
                 self.eventDecoder = EventDecoder<ExtraData>()
                 return self.eventDecoder!
+            },
+            notificationCenterBuilder: {
+                self.notificationCenter = EventNotificationCenterMock(middlewares: $0)
+                return self.notificationCenter!
             }
         )
     }()
@@ -512,6 +545,8 @@ private extension ChatClientConfig {
 }
 
 // MARK: - Mock
+
+class EventNotificationCenterMock: EventNotificationCenter {}
 
 class WebSocketClientMock: WebSocketClient {
     let init_connectEndpoint: Endpoint<EmptyResponse>

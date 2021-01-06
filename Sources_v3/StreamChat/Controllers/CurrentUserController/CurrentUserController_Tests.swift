@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -133,8 +133,8 @@ final class CurrentUserController_Tests: StressTestCase {
         XCTAssertTrue(delegate.didUpdateConnectionStatus_statuses.isEmpty)
         
         // Simulate connection status updates.
-        client.webSocketClient.simulateConnectionStatus(.connecting)
-        client.webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        client.webSocketClient?.simulateConnectionStatus(.connecting)
+        client.webSocketClient?.simulateConnectionStatus(.connected(connectionId: .unique))
         
         // Assert updates are received
         AssertAsync.willBeEqual(delegate.didUpdateConnectionStatus_statuses, [.connecting, .connected])
@@ -244,7 +244,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_setAnonymousUser() {
         let oldUserId = client.currentUserId
-        let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
+        let oldWSConnectEndpoint = client.webSocketClient!.connectEndpoint
 
         // Set up a new anonymous user
         var setUserCompletionCalled = false
@@ -258,11 +258,11 @@ final class CurrentUserController_Tests: StressTestCase {
             Assert.willBeTrue(self.client.mockDatabaseContainer.flush_called == true)
 
             // WebSocketClient connect endpoint is updated
-            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(self.client.webSocketClient.connectEndpoint))
+            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(self.client.webSocketClient!.connectEndpoint))
 
             // New user id is used in `TypingStartCleanupMiddleware`
             Assert.willBeTrue(
-                self.client.webSocketClient.typingMiddleware?.excludedUserIds().contains(self.client.currentUserId) == true
+                self.client.webSocketClient!.typingMiddleware?.excludedUserIds().contains(self.client.currentUserId) == true
             )
 
             // WebSocketClient connect is called
@@ -273,7 +273,7 @@ final class CurrentUserController_Tests: StressTestCase {
         XCTAssertFalse(setUserCompletionCalled)
 
         // Simulate successful connection
-        client.webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        client.webSocketClient!.simulateConnectionStatus(.connected(connectionId: .unique))
 
         // Check the completion is called
         AssertAsync.willBeTrue(setUserCompletionCalled)
@@ -318,7 +318,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
 
     func test_setUser() {
-        let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
+        let oldWSConnectEndpoint = client.webSocketClient!.connectEndpoint
 
         let newUserId: UserId = .unique
         let newUserToken: Token = .unique
@@ -341,11 +341,11 @@ final class CurrentUserController_Tests: StressTestCase {
             Assert.willBeTrue(self.client.mockDatabaseContainer.flush_called == true)
 
             // WebSocketClient connect endpoint is updated
-            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(self.client.webSocketClient.connectEndpoint))
+            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(self.client.webSocketClient!.connectEndpoint))
 
             // New user id is used in `TypingStartCleanupMiddleware`
             Assert.willBeTrue(
-                self.client.webSocketClient.typingMiddleware?.excludedUserIds().contains(newUserId) == true
+                self.client.webSocketClient!.typingMiddleware?.excludedUserIds().contains(newUserId) == true
             )
 
             // WebSocketClient connect is called
@@ -357,10 +357,10 @@ final class CurrentUserController_Tests: StressTestCase {
 
         // Simulate a health check event with the current user data
         // This should trigger the middlewares and save the current user data to DB
-        client.webSocketClient.webSocketDidReceiveMessage(healthCheckEventJSON(userId: newUserId))
+        client.webSocketClient!.webSocketDidReceiveMessage(healthCheckEventJSON(userId: newUserId))
 
         // Simulate successful connection
-        client.webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        client.webSocketClient!.simulateConnectionStatus(.connected(connectionId: .unique))
 
         var currentUser: CurrentUserDTO? {
             client.databaseContainer.viewContext.currentUser()
@@ -435,7 +435,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
 
     func test_setGuestUser() {
-        let oldWSConnectEndpoint = client.webSocketClient.connectEndpoint
+        let oldWSConnectEndpoint = client.webSocketClient!.connectEndpoint
 
         let newUserToken: Token = .unique
         let newUserExtraData = DefaultExtraData.User.defaultValue
@@ -466,7 +466,7 @@ final class CurrentUserController_Tests: StressTestCase {
 
             // New user id is used in `TypingStartCleanupMiddleware`
             Assert.willBeTrue(
-                self.client.webSocketClient.typingMiddleware?.excludedUserIds().contains(newUser.userId) == true
+                self.client.webSocketClient!.typingMiddleware?.excludedUserIds().contains(newUser.userId) == true
             )
 
             // Make sure `guest` endpoint is called
@@ -496,7 +496,7 @@ final class CurrentUserController_Tests: StressTestCase {
             Assert.willBeEqual(self.client.provideToken(), newUserToken)
 
             // WebSocketClient connect endpoint is updated
-            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(self.client.webSocketClient.connectEndpoint))
+            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(self.client.webSocketClient!.connectEndpoint))
 
             // WebSocketClient connect is called
             Assert.willBeEqual(self.client.mockWebSocketClient.connect_calledCounter, 1)
@@ -504,10 +504,10 @@ final class CurrentUserController_Tests: StressTestCase {
 
         // Simulate a health check event with the current user data
         // This should trigger the middlewares and save the current user data to DB
-        client.webSocketClient.webSocketDidReceiveMessage(healthCheckEventJSON(userId: newUser.userId))
+        client.webSocketClient!.webSocketDidReceiveMessage(healthCheckEventJSON(userId: newUser.userId))
 
         // Simulate successful connection
-        client.webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        client.webSocketClient!.simulateConnectionStatus(.connected(connectionId: .unique))
         
         var currentUser: CurrentUserDTO? {
             client.databaseContainer.viewContext.currentUser()
@@ -528,7 +528,7 @@ final class CurrentUserController_Tests: StressTestCase {
         controller.setAnonymousUser(completion: { _ in setUserCompletionCalled = true })
 
         // Simulate successful connection
-        client.webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        client.webSocketClient!.simulateConnectionStatus(.connected(connectionId: .unique))
 
         // Wait for the connection to succeed
         AssertAsync.willBeTrue(setUserCompletionCalled)
@@ -542,7 +542,7 @@ final class CurrentUserController_Tests: StressTestCase {
         XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 1)
 
         // Simulate WS disconnecting
-        client.webSocketClient.simulateConnectionStatus(.disconnected(error: nil))
+        client.webSocketClient!.simulateConnectionStatus(.disconnected(error: nil))
 
         // Call connect again and assert WS connect is called
         var connectCompletionCalled = false
@@ -557,7 +557,7 @@ final class CurrentUserController_Tests: StressTestCase {
         controller = nil
 
         // Simulate successful connection
-        client.webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+        client.webSocketClient!.simulateConnectionStatus(.connected(connectionId: .unique))
         client.mockAPIClient.cleanUp()
         
         AssertAsync.willBeTrue(connectCompletionCalled)

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -23,7 +23,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
         
         channelWatchStateUpdater = ChannelWatchStateUpdater(
             database: database,
-            webSocketClient: webSocketClient,
+            eventNotificationCenter: webSocketClient.eventNotificationCenter,
             apiClient: apiClient
         )
     }

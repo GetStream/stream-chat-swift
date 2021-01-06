@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -1155,7 +1155,7 @@ private class TestEnvironment {
                 return self.messageObserver!
             },
             messageUpdaterBuilder: { [unowned self] in
-                self.messageUpdater = MessageUpdaterMock(database: $0, webSocketClient: $1, apiClient: $2)
+                self.messageUpdater = MessageUpdaterMock(database: $0, apiClient: $1)
                 return self.messageUpdater
             }
         )
