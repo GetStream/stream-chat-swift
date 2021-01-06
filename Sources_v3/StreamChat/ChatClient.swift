@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -77,7 +77,9 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// callbacks when the connection status changes.
     ///
     public var connectionStatus: ConnectionStatus {
-        ConnectionStatus(webSocketConnectionState: webSocketClient.connectionState)
+        ConnectionStatus(
+            webSocketConnectionState: webSocketClient?.connectionState ?? .disconnected(error: .ClientIsNotInActiveMode())
+        )
     }
     
     /// The config object of the `ChatClient` instance.
@@ -217,16 +219,30 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///
     @available(iOSApplicationExtension, unavailable)
     public convenience init(config: ChatClientConfig) {
-        // All production workers
-        let workerBuilders: [WorkerBuilder] = [
-            MessageSender<ExtraData>.init,
-            NewChannelQueryUpdater<ExtraData>.init,
-            NewUserQueryUpdater<ExtraData.User>.init,
-            ChannelWatchStateUpdater<ExtraData>.init,
-            MessageEditor<ExtraData>.init,
-            MissingEventsPublisher<ExtraData>.init,
-            AttachmentUploader<ExtraData>.init
-        ]
+        let workerBuilders: [WorkerBuilder]
+        let eventWorkerBuilders: [EventWorkerBuilder]
+        var environment = Environment()
+        
+        if config.isClientInActiveMode {
+            // All production workers
+            workerBuilders = [
+                MessageSender<ExtraData>.init,
+                NewChannelQueryUpdater<ExtraData>.init,
+                NewUserQueryUpdater<ExtraData.User>.init,
+                MessageEditor<ExtraData>.init,
+                AttachmentUploader<ExtraData>.init
+            ]
+            
+            // All production event workers
+            eventWorkerBuilders = [
+                ChannelWatchStateUpdater<ExtraData>.init,
+                MissingEventsPublisher<ExtraData>.init
+            ]
+        } else {
+            workerBuilders = []
+            eventWorkerBuilders = []
+            environment.webSocketClientBuilder = { _, _, _, _, _, _ in nil }
+        }
         
         self.init(
             config: config,
@@ -337,6 +353,15 @@ extension ClientError {
     }
     
     public class MissingToken: ClientError {}
+    
+    public class ClientIsNotInActiveMode: ClientError {
+        override public var localizedDescription: String {
+            """
+                ChatClient is in connectionless mode, it cannot connect to websocket.
+                Please check `ChatClientConfig.isClientInActiveMode` for additional info.
+            """
+        }
+    }
 }
 
 /// `APIClient` listens for `WebSocketClient` connection updates so it can forward the current connection id to
@@ -374,6 +399,10 @@ extension _ChatClient: ConnectionDetailsProviderDelegate {
     func provideConnectionId(completion: @escaping (String?) -> Void) {
         if let connectionId = connectionId {
             completion(connectionId)
+        } else if !config.isClientInActiveMode {
+            // We're in passive mode
+            // We will never have connectionId
+            completion(nil)
         } else {
             _connectionIdWaiters.mutate {
                 $0.append(completion)
