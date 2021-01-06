@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -496,7 +496,7 @@ class ChannelController_Tests: StressTestCase {
         // Send notification with event happened in the observed channel
         let event = TestMemberEvent(cid: controller.channelQuery.cid!, userId: .unique)
         let notification = Notification(newEventReceived: event, sender: self)
-        client.webSocketClient.eventNotificationCenter.post(notification)
+        client.webSocketClient!.eventNotificationCenter.post(notification)
         
         // Assert the event is received
         AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
@@ -512,7 +512,7 @@ class ChannelController_Tests: StressTestCase {
         // Send notification with event happened in the observed channel
         let event = TestMemberEvent(cid: controller.cid!, userId: .unique)
         let notification = Notification(newEventReceived: event, sender: self)
-        client.webSocketClient.eventNotificationCenter.post(notification)
+        client.webSocketClient!.eventNotificationCenter.post(notification)
         
         // Assert the event is received
         AssertAsync.willBeEqual(delegate.didReceiveMemberEvent_event as? TestMemberEvent, event)
@@ -1737,11 +1737,11 @@ private class TestEnvironment {
     
     lazy var environment: ChatChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
-            self.channelUpdater = ChannelUpdaterMock(database: $0, webSocketClient: $1, apiClient: $2)
+            self.channelUpdater = ChannelUpdaterMock(database: $0, apiClient: $1)
             return self.channelUpdater!
         },
         eventSenderBuilder: { [unowned self] in
-            self.eventSender = EventSenderMock(database: $0, webSocketClient: $1, apiClient: $2)
+            self.eventSender = EventSenderMock(database: $0, apiClient: $1)
             return self.eventSender!
         }
     )

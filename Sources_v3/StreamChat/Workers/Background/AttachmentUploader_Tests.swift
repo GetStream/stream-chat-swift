@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -21,7 +21,7 @@ final class AttachmentUploader_Tests: StressTestCase {
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         database = DatabaseContainerMock()
-        uploader = AttachmentUploader(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        uploader = AttachmentUploader(database: database, apiClient: apiClient)
     }
 
     override func tearDown() {

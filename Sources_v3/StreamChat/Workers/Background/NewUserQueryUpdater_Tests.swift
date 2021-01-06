@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -26,7 +26,6 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         
         newUserQueryUpdater = NewUserQueryUpdater(
             database: database,
-            webSocketClient: webSocketClient,
             apiClient: apiClient,
             env: env.environment
         )
@@ -76,7 +75,6 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         // Create `newUserQueryUpdater`
         newUserQueryUpdater = NewUserQueryUpdater(
             database: database,
-            webSocketClient: webSocketClient,
             apiClient: apiClient,
             env: env.environment
         )
@@ -141,8 +139,7 @@ private class TestEnvironment {
     lazy var environment = NewUserQueryUpdater<DefaultExtraData.User>.Environment(createUserListUpdater: { [unowned self] in
         self.userQueryUpdater = UserListUpdaterMock(
             database: $0,
-            webSocketClient: $1,
-            apiClient: $2
+            apiClient: $1
         )
         return self.userQueryUpdater!
     })

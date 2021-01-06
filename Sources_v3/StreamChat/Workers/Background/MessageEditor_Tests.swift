@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -21,7 +21,7 @@ final class MessageEditor_Tests: StressTestCase {
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         database = try! DatabaseContainerMock(kind: .inMemory)
-        editor = MessageEditor(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        editor = MessageEditor(database: database, apiClient: apiClient)
     }
     
     override func tearDown() {

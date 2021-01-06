@@ -71,17 +71,21 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, 
     /// `Combine` publishers.
     ///
     public var connectionStatus: ConnectionStatus {
-        .init(webSocketConnectionState: client.webSocketClient.connectionState)
+        client.connectionStatus
     }
     
     /// The connection event observer for the connection status updates.
-    private lazy var connectionEventObserver = ConnectionEventObserver(
-        notificationCenter: client.webSocketClient.eventNotificationCenter
-    ) { [unowned self] status in
-        self.delegateCallback {
-            $0.currentUserController(self, didUpdateConnectionStatus: status.connectionStatus)
+    private lazy var connectionEventObserver: ConnectionEventObserver? = {
+        guard let webSocketClient = client.webSocketClient else { return nil }
+        let observer = ConnectionEventObserver(
+            notificationCenter: webSocketClient.eventNotificationCenter
+        ) { [unowned self] status in
+            self.delegateCallback {
+                $0.currentUserController(self, didUpdateConnectionStatus: status.connectionStatus)
+            }
         }
-    }
+        return observer
+    }()
 
     /// A type-erased delegate.
     // swiftlint:disable:next weak_delegate
@@ -111,10 +115,12 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, 
         self.client = client
         self.environment = environment
         startObserving()
-        _ = connectionEventObserver
     }
     
     private func startObserving() {
+        // Start connection event observing
+        _ = connectionEventObserver
+        
         do {
             try currentUserObserver.startObserving()
         } catch {
@@ -146,7 +152,7 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, 
         client.currentUserId = userId
         
         // Set a new WebSocketClient connect endpoint
-        client.webSocketClient.connectEndpoint = .webSocketConnect(
+        webSocketClient.connectEndpoint = .webSocketConnect(
             userId: userId,
             name: name,
             imageURL: imageURL,
@@ -197,12 +203,12 @@ public extension _CurrentChatUserController {
         }
         
         // Set up a waiter for the new connection id to know when the connection process is finished
-        client.provideConnectionId { [weak self] connectionId in
+        client.provideConnectionId { [weak webSocketClient] connectionId in
             if connectionId != nil {
                 completion?(nil)
             } else {
                 // Try to get a concrete error
-                if case let .disconnected(error) = self?.client.webSocketClient.connectionState {
+                if case let .disconnected(error) = webSocketClient?.connectionState {
                     completion?(ClientError.ConnectionNotSuccessfull(with: error))
                 } else {
                     completion?(ClientError.ConnectionNotSuccessfull())
@@ -210,7 +216,7 @@ public extension _CurrentChatUserController {
             }
         }
         
-        client.webSocketClient.connect()
+        webSocketClient.connect()
     }
     
     /// Disconnects the chat client the controller represents from the chat servers. No further updates from the servers
@@ -223,7 +229,7 @@ public extension _CurrentChatUserController {
         }
         
         // Disconnect the web socket
-        client.webSocketClient.disconnect(source: .userInitiated)
+        webSocketClient.disconnect(source: .userInitiated)
         
         // Reset `connectionId`. This would happen asynchronously by the callback from WebSocketClient anyway, but it's
         // safer to do it here synchronously to immediately stop all API calls.

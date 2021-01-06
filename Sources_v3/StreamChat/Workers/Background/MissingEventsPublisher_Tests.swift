@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -24,7 +24,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         
         publisher = MissingEventsPublisher(
             database: database,
-            webSocketClient: webSocketClient,
+            eventNotificationCenter: webSocketClient.eventNotificationCenter,
             apiClient: apiClient
         )
     }
