@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -77,7 +77,13 @@ class DatabaseContainer: NSPersistentContainer {
     ///   - completion: Called when the container finishes its initialization. If the initialization fails, called
     ///   with an error.
     ///
-    init(kind: Kind, shouldFlushOnStart: Bool = false, modelName: String = "StreamChatModel", bundle: Bundle? = nil) throws {
+    init(
+        kind: Kind,
+        shouldFlushOnStart: Bool = false,
+        shouldResetEphemeralValuesOnStart: Bool = true,
+        modelName: String = "StreamChatModel",
+        bundle: Bundle? = nil
+    ) throws {
         // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
         let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
         let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
@@ -115,7 +121,9 @@ class DatabaseContainer: NSPersistentContainer {
         
         setupLoggerForDatabaseChanges()
         
-        resetEphemeralValues()
+        if shouldResetEphemeralValuesOnStart {
+            resetEphemeralValues()
+        }
     }
     
     deinit {

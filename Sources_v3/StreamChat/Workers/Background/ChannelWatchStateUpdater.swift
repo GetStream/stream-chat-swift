@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -7,7 +7,7 @@ import CoreData
 /// After WebSocket changes it's state to `connected` we need to start watching existing channels so we can receive updated on them.
 /// This background worker listens to `ConnectionStatusUpdated` event and on `connected` we are fetching all channels from DB and
 /// sending ChannelListQuery to the backend to start `watching` channels.
-final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: Worker {
+final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: EventWorker {
     private var webSocketConnectedObserver: WebSocketConnectedObserver?
     
     private var channels: [ChannelDTO] {
@@ -21,14 +21,22 @@ final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: Worker {
         return []
     }
     
-    override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
-        super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+    override init(
+        database: DatabaseContainer,
+        eventNotificationCenter: EventNotificationCenter,
+        apiClient: APIClient
+    ) {
+        super.init(
+            database: database,
+            eventNotificationCenter: eventNotificationCenter,
+            apiClient: apiClient
+        )
         startObserving()
     }
     
     private func startObserving() {
         webSocketConnectedObserver = WebSocketConnectedObserver(
-            notificationCenter: webSocketClient.eventNotificationCenter,
+            notificationCenter: eventNotificationCenter,
             filter: { $0.connectionStatus == .connected },
             callback: { [unowned self] in self.watchChannels() }
         )

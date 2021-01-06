@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -17,7 +17,7 @@ import Foundation
 /// We remember `lastReceivedEventDate` when state becomes `connecting` to catch the last event date
 /// before the `HealthCheck` override the `lastReceivedEventDate` with the recent date.
 ///
-class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
+class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
     // MARK: - Properties
     
     private var connectionObserver: EventObserver?
@@ -25,8 +25,16 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
     
     // MARK: - Init
 
-    override init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
-        super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+    override init(
+        database: DatabaseContainer,
+        eventNotificationCenter: EventNotificationCenter,
+        apiClient: APIClient
+    ) {
+        super.init(
+            database: database,
+            eventNotificationCenter: eventNotificationCenter,
+            apiClient: apiClient
+        )
         startObserving()
     }
     
@@ -34,7 +42,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
     
     private func startObserving() {
         connectionObserver = EventObserver(
-            notificationCenter: webSocketClient.eventNotificationCenter,
+            notificationCenter: eventNotificationCenter,
             transform: { $0 as? ConnectionStatusUpdated },
             callback: { [unowned self] in
                 switch $0.webSocketConnectionState {
@@ -75,7 +83,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: Worker {
             self?.apiClient.request(endpoint: endpoint) {
                 switch $0 {
                 case let .success(payload):
-                    self?.webSocketClient.eventNotificationCenter.process(payload.eventPayloads)
+                    self?.eventNotificationCenter.process(payload.eventPayloads)
                 case let .failure(error):
                     log.error("Internal error: Failed to fetch and reply missing events: \(error)")
                 }

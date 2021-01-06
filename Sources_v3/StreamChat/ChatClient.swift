@@ -96,6 +96,9 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     /// Builder blocks used for creating `backgroundWorker`s when needed.
     private let workerBuilders: [WorkerBuilder]
+    
+    /// Builder blocks used for creating `backgroundWorker`s dealing with events when needed.
+    private let eventWorkerBuilders: [EventWorkerBuilder]
 
     /// The notification center used to send and receive notifications about incoming events.
     private(set) lazy var eventNotificationCenter = environment.notificationCenterBuilder([
@@ -164,7 +167,9 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
                 
                 let dbFileURL = config.localStorageFolderURL!.appendingPathComponent(config.apiKey.apiKeyString)
                 return try environment.databaseContainerBuilder(
-                    .onDisk(databaseFileURL: dbFileURL), config.shouldFlushLocalStorageOnStart
+                    .onDisk(databaseFileURL: dbFileURL),
+                    config.shouldFlushLocalStorageOnStart,
+                    config.isClientInActiveMode // Only reset Ephemeral values in active mode
                 )
             }
             
@@ -176,7 +181,12 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         }
         
         do {
-            return try environment.databaseContainerBuilder(.inMemory, config.shouldFlushLocalStorageOnStart)
+            return try environment.databaseContainerBuilder(
+                .inMemory,
+                config.shouldFlushLocalStorageOnStart,
+                config
+                    .isClientInActiveMode
+            ) // Only reset Ephemeral values in active mode
         } catch {
             fatalError("Failed to initialize the in-memory storage with error: \(error). This is a non-recoverable error.")
         }
@@ -217,7 +227,6 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///
     /// - Parameter config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
     ///
-    @available(iOSApplicationExtension, unavailable)
     public convenience init(config: ChatClientConfig) {
         let workerBuilders: [WorkerBuilder]
         let eventWorkerBuilders: [EventWorkerBuilder]
@@ -247,7 +256,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         self.init(
             config: config,
             workerBuilders: workerBuilders,
-            environment: .init()
+            eventWorkerBuilders: eventWorkerBuilders,
+            environment: environment
         )
     }
     
@@ -262,11 +272,13 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     init(
         config: ChatClientConfig,
         workerBuilders: [WorkerBuilder],
+        eventWorkerBuilders: [EventWorkerBuilder],
         environment: Environment
     ) {
         self.config = config
         self.environment = environment
         self.workerBuilders = workerBuilders
+        self.eventWorkerBuilders = eventWorkerBuilders
         
         createBackgroundWorkers()
         createWebSocketClient()
@@ -296,6 +308,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     func createBackgroundWorkers() {
         backgroundWorkers = workerBuilders.map { builder in
             builder(self.databaseContainer, self.apiClient)
+        } + eventWorkerBuilders.map { builder in
+            builder(self.databaseContainer, self.eventNotificationCenter, self.apiClient)
         }
     }
     
@@ -334,8 +348,12 @@ extension _ChatClient {
             )
         }
         
-        var databaseContainerBuilder: (_ kind: DatabaseContainer.Kind, _ shouldFlushOnStart: Bool) throws -> DatabaseContainer = {
-            try DatabaseContainer(kind: $0, shouldFlushOnStart: $1)
+        var databaseContainerBuilder: (
+            _ kind: DatabaseContainer.Kind,
+            _ shouldFlushOnStart: Bool,
+            _ shouldResetEphemeralValuesOnStart: Bool
+        ) throws -> DatabaseContainer = {
+            try DatabaseContainer(kind: $0, shouldFlushOnStart: $1, shouldResetEphemeralValuesOnStart: $2)
         }
         
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
