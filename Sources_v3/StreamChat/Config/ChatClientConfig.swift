@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -50,12 +50,20 @@ public struct ChatClientConfig {
     /// refreshed.
     public var tokenProvider: TokenProvider?
     
+    /// Flag for setting a ChatClient instance in connection-less mode.
+    /// A connection-less client is not able to connect to websocket and will not
+    /// receive websocket events. It can still observe and mutate database.
+    /// This flag is automatically set to `false` for app extensions
+    /// **Warning**: There should be at max 1 active client at the same time, else it can lead to undefined behavior.
+    public var isClientInActiveMode: Bool
+    
     /// Creates a new instance of `ChatClientConfig`.
     ///
     /// - Parameter apiKey: The API key of the chat app the `ChatClient` connects to.
     ///
     public init(apiKey: APIKey) {
         self.apiKey = apiKey
+        isClientInActiveMode = !Bundle.main.isAppExtension
     }
 }
 
