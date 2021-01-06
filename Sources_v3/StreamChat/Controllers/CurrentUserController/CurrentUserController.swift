@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -133,6 +133,12 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, 
         extraData: ExtraData.User? = nil,
         completion: @escaping (Error?) -> Void
     ) {
+        // Setting a new user is not possible in connectionless mode
+        guard let webSocketClient = client.webSocketClient else {
+            completion(ClientError.ClientIsNotInActiveMode())
+            return
+        }
+        
         // Reset the current token
         client.currentToken = nil
         
@@ -178,6 +184,12 @@ public extension _CurrentChatUserController {
     /// called with an error.
     ///
     func connect(completion: ((Error?) -> Void)? = nil) {
+        // Connecting is not possible in connectionless mode (duh)
+        guard let webSocketClient = client.webSocketClient else {
+            completion?(ClientError.ClientIsNotInActiveMode())
+            return
+        }
+        
         guard client.connectionId == nil else {
             log.warning("The client is already connected. Skipping the `connect` call.")
             completion?(nil)
@@ -204,6 +216,12 @@ public extension _CurrentChatUserController {
     /// Disconnects the chat client the controller represents from the chat servers. No further updates from the servers
     /// are received.
     func disconnect() {
+        // Disconnecting is not possible in connectionless mode (duh)
+        guard let webSocketClient = client.webSocketClient else {
+            log.error(ClientError.ClientIsNotInActiveMode().localizedDescription)
+            return
+        }
+        
         // Disconnect the web socket
         client.webSocketClient.disconnect(source: .userInitiated)
         
