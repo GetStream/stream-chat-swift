@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -18,7 +18,6 @@ final class NewUserQueryUpdater<ExtraData: UserExtraData>: Worker {
     private lazy var userListUpdater: UserListUpdater<ExtraData> = self.environment
         .createUserListUpdater(
             database,
-            webSocketClient,
             apiClient
         )
     
@@ -38,15 +37,15 @@ final class NewUserQueryUpdater<ExtraData: UserExtraData>: Worker {
         return []
     }
     
-    init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient, env: Environment) {
+    init(database: DatabaseContainer, apiClient: APIClient, env: Environment) {
         environment = env
-        super.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient)
+        super.init(database: database, apiClient: apiClient)
         
         startObserving()
     }
     
-    override convenience init(database: DatabaseContainer, webSocketClient: WebSocketClient, apiClient: APIClient) {
-        self.init(database: database, webSocketClient: webSocketClient, apiClient: apiClient, env: .init())
+    override convenience init(database: DatabaseContainer, apiClient: APIClient) {
+        self.init(database: database, apiClient: apiClient, env: .init())
     }
     
     private func startObserving() {
@@ -113,7 +112,6 @@ extension NewUserQueryUpdater {
     struct Environment {
         var createUserListUpdater: (
             _ database: DatabaseContainer,
-            _ webSocketClient: WebSocketClient,
             _ apiClient: APIClient
         ) -> UserListUpdater<ExtraData> = UserListUpdater.init
     }
