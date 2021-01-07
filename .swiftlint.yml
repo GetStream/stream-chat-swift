@@ -1,6 +1,6 @@
 excluded:
   - "Utils/Internet Connection/Reachability_Vendor.swift"
-  
+
 disabled_rules:
   - large_tuple
   - multiple_closures_with_trailing_closure
@@ -63,3 +63,12 @@ cyclomatic_complexity:
   ignores_case_statements: true
   warning: 25
   error: 30
+
+custom_rules:
+  constraints_forbidden:
+    included: ".*StreamChatUI" # I gave up on it. Feel free to find better regex
+    regex: "Anchor(.constraint)\\("
+    capture_group: 1
+    match_kinds:
+      - identifier
+    message: "Plain constraints methods are forbidded. Use `pin(...)` alternative"
