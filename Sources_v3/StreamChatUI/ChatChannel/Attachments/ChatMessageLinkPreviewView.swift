@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -53,7 +53,7 @@ open class ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UICon
 
     public private(set) lazy var outlineView: UIView = {
         let view = UIView().withoutAutoresizingMaskConstraints
-        view.widthAnchor.constraint(equalToConstant: 2).isActive = true
+        view.widthAnchor.pin(equalToConstant: 2).isActive = true
         return view
     }()
 
@@ -101,24 +101,24 @@ open class ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UICon
         addSubview(outlineStack)
 
         imagePreview.pin(anchors: [.leading, .top, .trailing], to: self)
-        imagePreview.widthAnchor.constraint(equalTo: imagePreview.heightAnchor).isActive = true
+        imagePreview.widthAnchor.pin(equalTo: imagePreview.heightAnchor).isActive = true
 
         outlineStack.pin(anchors: [.leading, .bottom, .trailing], to: layoutMarginsGuide)
-        outlineStack.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor).with(priority: .required - 1).isActive = true
+        outlineStack.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).with(priority: .required - 1).isActive = true
 
-        authorBackground.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
-        authorBackground.bottomAnchor.constraint(equalTo: authorLabel.bottomAnchor).isActive = true
-        authorBackground.layoutMarginsGuide.topAnchor.constraint(equalTo: authorLabel.topAnchor).isActive = true
-        authorBackground.layoutMarginsGuide.trailingAnchor.constraint(equalTo: authorLabel.trailingAnchor).isActive = true
+        authorBackground.leadingAnchor.pin(equalTo: leadingAnchor).isActive = true
+        authorBackground.bottomAnchor.pin(equalTo: authorLabel.bottomAnchor).isActive = true
+        authorBackground.layoutMarginsGuide.topAnchor.pin(equalTo: authorLabel.topAnchor).isActive = true
+        authorBackground.layoutMarginsGuide.trailingAnchor.pin(equalTo: authorLabel.trailingAnchor).isActive = true
 
         authorLabel.setContentCompressionResistancePriority(.required, for: .vertical)
         headlineLabel.setContentCompressionResistancePriority(.required, for: .vertical)
 
-        noAuthorWithImageConstraint = headlineLabel.topAnchor.constraint(
+        noAuthorWithImageConstraint = headlineLabel.topAnchor.pin(
             equalToSystemSpacingBelow: imagePreview.bottomAnchor,
             multiplier: 1
         )
-        authorOnImageConstraint = authorLabel.firstBaselineAnchor.constraint(equalTo: imagePreview.bottomAnchor)
+        authorOnImageConstraint = authorLabel.firstBaselineAnchor.pin(equalTo: imagePreview.bottomAnchor)
     }
 
     override open func updateContent() {

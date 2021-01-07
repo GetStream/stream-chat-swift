@@ -12,7 +12,7 @@ open class MessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
 {
     // MARK: - Properties
             
-    lazy var textViewHeightConstraint = heightAnchor.constraint(equalToConstant: .zero)
+    lazy var textViewHeightConstraint = heightAnchor.pin(equalToConstant: .zero)
     
     // MARK: - Subviews
     

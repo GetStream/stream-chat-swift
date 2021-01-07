@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -44,9 +44,9 @@ open class MessageComposerImageAttachmentCollectionViewCell<ExtraData: ExtraData
         contentView.addSubview(discardButton)
         
         NSLayoutConstraint.activate([
-            discardButton.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
-            discardButton.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
-            discardButton.leadingAnchor.constraint(
+            discardButton.topAnchor.pin(equalTo: contentView.layoutMarginsGuide.topAnchor),
+            discardButton.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+            discardButton.leadingAnchor.pin(
                 greaterThanOrEqualToSystemSpacingAfter: contentView.layoutMarginsGuide.leadingAnchor,
                 multiplier: 2
             )

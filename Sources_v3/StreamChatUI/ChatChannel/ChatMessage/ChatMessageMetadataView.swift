@@ -87,7 +87,7 @@ open class ChatMessageOnlyVisibleForCurrentUserIndicator: View {
         stack.addArrangedSubview(textLabel)
         embed(stack)
 
-        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor).isActive = true
+        imageView.widthAnchor.pin(equalTo: imageView.heightAnchor).isActive = true
     }
 }
 

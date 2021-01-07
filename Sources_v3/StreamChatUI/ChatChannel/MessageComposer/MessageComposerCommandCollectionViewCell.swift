@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -51,11 +51,11 @@ open class MessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UICo
     // MARK: Private
 
     private func setupLeftImageViewConstraints() {
-        commandImageView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
-        commandImageView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor).isActive = true
-        commandImageView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
-        commandImageView.widthAnchor.constraint(equalTo: commandImageView.heightAnchor).isActive = true
-        commandImageView.heightAnchor.constraint(equalToConstant: 24).isActive = true
+        commandImageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
+        commandImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).isActive = true
+        commandImageView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
+        commandImageView.widthAnchor.pin(equalTo: commandImageView.heightAnchor).isActive = true
+        commandImageView.heightAnchor.pin(equalToConstant: 24).isActive = true
     }
 
     private func setupStack() {
@@ -66,11 +66,11 @@ open class MessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UICo
 
         textStackView.addArrangedSubview(commandNameLabel)
         textStackView.addArrangedSubview(commandNameSubtitleLabel)
-        textStackView.leadingAnchor.constraint(
+        textStackView.leadingAnchor.pin(
             equalToSystemSpacingAfter: commandImageView.trailingAnchor,
             multiplier: 1
         ).isActive = true
-        textStackView.centerYAnchor.constraint(equalTo: commandImageView.centerYAnchor).isActive = true
+        textStackView.centerYAnchor.pin(equalTo: commandImageView.centerYAnchor).isActive = true
     }
 }
 

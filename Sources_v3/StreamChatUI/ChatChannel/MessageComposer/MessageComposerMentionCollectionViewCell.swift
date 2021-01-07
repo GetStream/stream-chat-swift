@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -63,11 +63,11 @@ open class MessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View, UICo
     // MARK: Private
 
     private func setupLeftImageViewConstraints() {
-        avatarView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
-        avatarView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor).isActive = true
-        avatarView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
-        avatarView.widthAnchor.constraint(equalToConstant: 40).isActive = true
-        avatarView.heightAnchor.constraint(equalTo: avatarView.widthAnchor).isActive = true
+        avatarView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
+        avatarView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).isActive = true
+        avatarView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
+        avatarView.widthAnchor.pin(equalToConstant: 40).isActive = true
+        avatarView.heightAnchor.pin(equalTo: avatarView.widthAnchor).isActive = true
     }
 
     private func setupStack() {
@@ -77,16 +77,16 @@ open class MessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View, UICo
 
         textStackView.addArrangedSubview(usernameLabel)
         textStackView.addArrangedSubview(usernameTagLabel)
-        textStackView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        textStackView.leadingAnchor.constraint(
+        textStackView.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
+        textStackView.leadingAnchor.pin(
             equalToSystemSpacingAfter: avatarView.trailingAnchor,
             multiplier: 1
         ).isActive = true
     }
 
     private func setupSuggestionTypeImageViewConstraints() {
-        suggestionTypeImageView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
-        suggestionTypeImageView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        suggestionTypeImageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
+        suggestionTypeImageView.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
     }
 }
 

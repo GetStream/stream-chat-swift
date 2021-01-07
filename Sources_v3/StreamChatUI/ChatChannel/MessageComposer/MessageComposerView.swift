@@ -60,7 +60,7 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
     public private(set) lazy var stateIcon: UIImageView = {
         let imageView = UIImageView().withoutAutoresizingMaskConstraints
         imageView.contentMode = .center
-        imageView.widthAnchor.constraint(equalTo: imageView.heightAnchor, multiplier: 1).isActive = true
+        imageView.widthAnchor.pin(equalTo: imageView.heightAnchor, multiplier: 1).isActive = true
         return imageView
     }()
     
@@ -149,7 +149,7 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
         container.topStackView.addArrangedSubview(titleLabel)
         container.topStackView.addArrangedSubview(dismissButton)
         
-        stateIcon.heightAnchor.constraint(equalToConstant: stateIconHeight).isActive = true
+        stateIcon.heightAnchor.pin(equalToConstant: stateIconHeight).isActive = true
         
         container.centerStackView.isHidden = false
         container.centerStackView.axis = .vertical

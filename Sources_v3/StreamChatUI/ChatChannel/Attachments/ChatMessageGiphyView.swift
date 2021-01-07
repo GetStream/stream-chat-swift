@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Nuke
@@ -47,7 +47,7 @@ open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvid
     override open func setUpLayout() {
         super.setUpLayout()
 
-        widthAnchor.constraint(equalTo: heightAnchor).isActive = true
+        widthAnchor.pin(equalTo: heightAnchor).isActive = true
 
         embed(imageView)
 
@@ -55,8 +55,8 @@ open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvid
         badge.pin(anchors: [.leading, .bottom], to: layoutMarginsGuide)
 
         addSubview(loadingIndicator)
-        loadingIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        loadingIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+        loadingIndicator.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
+        loadingIndicator.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
     }
 
     override open func defaultAppearance() {

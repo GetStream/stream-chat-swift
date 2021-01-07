@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -30,9 +30,9 @@ open class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollecti
         contentView.addSubview(messageView)
 
         NSLayoutConstraint.activate([
-            messageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            messageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
-            messageView.widthAnchor.constraint(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.75)
+            messageView.topAnchor.pin(equalTo: contentView.topAnchor),
+            messageView.bottomAnchor.pin(equalTo: contentView.bottomAnchor),
+            messageView.widthAnchor.pin(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.75)
         ])
     }
 
@@ -71,13 +71,13 @@ open class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollecti
 class СhatIncomingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
     override func setUpLayout() {
         super.setUpLayout()
-        messageView.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
+        messageView.leadingAnchor.pin(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
     }
 }
 
 class СhatOutgoingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
     override func setUpLayout() {
         super.setUpLayout()
-        messageView.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
+        messageView.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
     }
 }

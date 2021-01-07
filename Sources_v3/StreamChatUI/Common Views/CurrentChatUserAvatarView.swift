@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -67,7 +67,7 @@ open class CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UIConf
     }
     
     override open func setUpLayout() {
-        widthAnchor.constraint(equalTo: heightAnchor).isActive = true
+        widthAnchor.pin(equalTo: heightAnchor).isActive = true
         avatarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         avatarView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         embed(avatarView)
