@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -100,38 +100,38 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         errorIndicator.setContentCompressionResistancePriority(.required, for: .vertical)
 
         incomingMessageIsThreadConstraints = [
-            threadView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            messageMetadataView.leadingAnchor.constraint(equalToSystemSpacingAfter: threadView.trailingAnchor, multiplier: 1)
+            threadView.bottomAnchor.pin(equalTo: bottomAnchor),
+            messageMetadataView.leadingAnchor.pin(equalToSystemSpacingAfter: threadView.trailingAnchor, multiplier: 1)
         ]
 
         outgoingMessageIsThreadConstraints = [
-            threadView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            threadView.leadingAnchor.constraint(equalToSystemSpacingAfter: messageMetadataView.trailingAnchor, multiplier: 1)
+            threadView.bottomAnchor.pin(equalTo: bottomAnchor),
+            threadView.leadingAnchor.pin(equalToSystemSpacingAfter: messageMetadataView.trailingAnchor, multiplier: 1)
         ]
 
         NSLayoutConstraint.activate([
-            authorAvatarView.widthAnchor.constraint(equalToConstant: 32),
-            authorAvatarView.heightAnchor.constraint(equalToConstant: 32),
-            authorAvatarView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            authorAvatarView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            authorAvatarView.widthAnchor.pin(equalToConstant: 32),
+            authorAvatarView.heightAnchor.pin(equalToConstant: 32),
+            authorAvatarView.leadingAnchor.pin(equalTo: leadingAnchor),
+            authorAvatarView.bottomAnchor.pin(equalTo: bottomAnchor),
             
-            reactionsBubble.topAnchor.constraint(equalTo: topAnchor),
+            reactionsBubble.topAnchor.pin(equalTo: topAnchor),
             
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor).almostRequired,
-            messageBubbleView.topAnchor.constraint(equalTo: topAnchor).with(priority: .defaultHigh),
-            messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor).with(priority: .defaultHigh),
+            messageBubbleView.trailingAnchor.pin(equalTo: trailingAnchor).almostRequired,
+            messageBubbleView.topAnchor.pin(equalTo: topAnchor).with(priority: .defaultHigh),
+            messageBubbleView.bottomAnchor.pin(equalTo: bottomAnchor).with(priority: .defaultHigh),
             
-            messageMetadataView.heightAnchor.constraint(equalToConstant: 16),
-            messageMetadataView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            messageMetadataView.heightAnchor.pin(equalToConstant: 16),
+            messageMetadataView.bottomAnchor.pin(equalTo: bottomAnchor),
             
-            threadArrowView.widthAnchor.constraint(equalToConstant: 16),
-            threadArrowView.topAnchor.constraint(equalTo: messageBubbleView.centerYAnchor),
-            threadArrowView.bottomAnchor.constraint(equalTo: threadView.centerYAnchor),
+            threadArrowView.widthAnchor.pin(equalToConstant: 16),
+            threadArrowView.topAnchor.pin(equalTo: messageBubbleView.centerYAnchor),
+            threadArrowView.bottomAnchor.pin(equalTo: threadView.centerYAnchor),
             
-            threadView.topAnchor.constraint(equalToSystemSpacingBelow: messageBubbleView.bottomAnchor, multiplier: 1),
+            threadView.topAnchor.pin(equalToSystemSpacingBelow: messageBubbleView.bottomAnchor, multiplier: 1),
             
-            errorIndicator.bottomAnchor.constraint(equalTo: messageBubbleView.bottomAnchor),
-            errorIndicator.trailingAnchor.constraint(equalTo: trailingAnchor)
+            errorIndicator.bottomAnchor.pin(equalTo: messageBubbleView.bottomAnchor),
+            errorIndicator.trailingAnchor.pin(equalTo: trailingAnchor)
         ])
 
         // this one is ugly: reactions view is part of message content, but is not part of it frame horizontally.
@@ -139,41 +139,41 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         // We maybe should rethink layout of content view and make reactions part of frame horizontally as well.
         // This will solve superview access hack
         if let superview = self.superview {
-            reactionsBubble.trailingAnchor.constraint(lessThanOrEqualTo: superview.trailingAnchor).isActive = true
-            reactionsBubble.leadingAnchor.constraint(greaterThanOrEqualTo: superview.leadingAnchor).isActive = true
+            reactionsBubble.trailingAnchor.pin(lessThanOrEqualTo: superview.trailingAnchor).isActive = true
+            reactionsBubble.leadingAnchor.pin(greaterThanOrEqualTo: superview.leadingAnchor).isActive = true
         }
 
         incomingMessageConstraints = [
-            reactionsBubble.centerXAnchor.constraint(equalTo: messageBubbleView.trailingAnchor, constant: 8),
-            reactionsBubble.tailLeadingAnchor.constraint(equalTo: messageBubbleView.trailingAnchor, constant: -5),
+            reactionsBubble.centerXAnchor.pin(equalTo: messageBubbleView.trailingAnchor, constant: 8),
+            reactionsBubble.tailLeadingAnchor.pin(equalTo: messageBubbleView.trailingAnchor, constant: -5),
             
-            messageMetadataView.leadingAnchor.constraint(equalTo: messageBubbleView.leadingAnchor).with(priority: .defaultHigh),
-            messageBubbleView.leadingAnchor.constraint(
+            messageMetadataView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor).with(priority: .defaultHigh),
+            messageBubbleView.leadingAnchor.pin(
                 equalToSystemSpacingAfter: authorAvatarView.trailingAnchor,
                 multiplier: 1
             ),
-            threadArrowView.leadingAnchor.constraint(equalTo: messageBubbleView.leadingAnchor),
-            threadView.leadingAnchor.constraint(equalTo: threadArrowView.trailingAnchor)
+            threadArrowView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
+            threadView.leadingAnchor.pin(equalTo: threadArrowView.trailingAnchor)
         ]
 
         outgoingMessageConstraints = [
-            reactionsBubble.centerXAnchor.constraint(equalTo: messageBubbleView.leadingAnchor, constant: -8),
-            reactionsBubble.tailTrailingAnchor.constraint(equalTo: messageBubbleView.leadingAnchor, constant: 5),
+            reactionsBubble.centerXAnchor.pin(equalTo: messageBubbleView.leadingAnchor, constant: -8),
+            reactionsBubble.tailTrailingAnchor.pin(equalTo: messageBubbleView.leadingAnchor, constant: 5),
             
-            messageMetadataView.trailingAnchor.constraint(equalTo: messageBubbleView.trailingAnchor).with(priority: .defaultHigh),
-            messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            threadArrowView.trailingAnchor.constraint(equalTo: messageBubbleView.trailingAnchor),
-            threadView.trailingAnchor.constraint(equalTo: threadArrowView.leadingAnchor)
+            messageMetadataView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor).with(priority: .defaultHigh),
+            messageBubbleView.leadingAnchor.pin(equalTo: leadingAnchor),
+            threadArrowView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
+            threadView.trailingAnchor.pin(equalTo: threadArrowView.leadingAnchor)
         ]
 
-        bubbleToReactionsConstraint = messageBubbleView.topAnchor.constraint(
+        bubbleToReactionsConstraint = messageBubbleView.topAnchor.pin(
             equalTo: reactionsBubble.centerYAnchor
         )
-        bubbleToMetadataConstraint = messageMetadataView.topAnchor.constraint(
+        bubbleToMetadataConstraint = messageMetadataView.topAnchor.pin(
             equalToSystemSpacingBelow: messageBubbleView.bottomAnchor,
             multiplier: 1
         )
-        bubbleToErrorIndicatorConstraint = messageBubbleView.trailingAnchor.constraint(
+        bubbleToErrorIndicatorConstraint = messageBubbleView.trailingAnchor.pin(
             equalTo: errorIndicator.centerXAnchor
         )
     }

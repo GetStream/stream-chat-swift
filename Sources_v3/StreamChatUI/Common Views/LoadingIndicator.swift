@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -23,7 +23,7 @@ open class LoadingIndicator<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
 
     override open func setUpLayout() {
         embed(imageView)
-        widthAnchor.constraint(equalTo: heightAnchor).isActive = true
+        widthAnchor.pin(equalTo: heightAnchor).isActive = true
     }
 
     override open func updateContent() {

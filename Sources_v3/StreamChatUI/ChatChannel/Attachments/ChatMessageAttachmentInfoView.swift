@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -74,13 +74,13 @@ open class ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: View, UICon
         fileSizeLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
 
         NSLayoutConstraint.activate([
-            fileNameAndSizeStack.topAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
-            fileNameAndSizeStack.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            fileNameAndSizeStack.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
+            fileNameAndSizeStack.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
+            fileNameAndSizeStack.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            fileNameAndSizeStack.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),
             
-            actionIconImageView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-            actionIconImageView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            actionIconImageView.leadingAnchor.constraint(
+            actionIconImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            actionIconImageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            actionIconImageView.leadingAnchor.pin(
                 greaterThanOrEqualToSystemSpacingAfter: fileNameAndSizeStack.trailingAnchor,
                 multiplier: 2
             )

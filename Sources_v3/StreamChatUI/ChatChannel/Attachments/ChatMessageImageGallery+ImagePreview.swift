@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Nuke
@@ -59,8 +59,8 @@ extension ChatMessageImageGallery {
             embed(uploadingOverlay)
 
             addSubview(loadingIndicator)
-            loadingIndicator.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-            loadingIndicator.centerXAnchor.constraint(equalTo: centerXAnchor).isActive = true
+            loadingIndicator.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
+            loadingIndicator.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
         }
 
         override open func updateContent() {

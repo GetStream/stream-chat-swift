@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -39,8 +39,8 @@ open class MessageComposerSendButton<ExtraData: ExtraDataTypes>: ChatSquareButto
     override open func setUpLayout() {
         guard let size = defaultIntrinsicContentSize else { return }
         
-        heightAnchor.constraint(equalToConstant: size.height).isActive = true
-        widthAnchor.constraint(equalToConstant: size.width).isActive = true
+        heightAnchor.pin(equalToConstant: size.height).isActive = true
+        widthAnchor.pin(equalToConstant: size.width).isActive = true
     }
     
     override open func updateContent() {

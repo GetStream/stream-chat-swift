@@ -1,12 +1,11 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
 open class ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: ChatMessageReactionsBubbleView<ExtraData> {
-
     // MARK: - Subviews
 
     private let contentViewBackground = UIView().withoutAutoresizingMaskConstraints
@@ -39,10 +38,10 @@ open class ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: Cha
         addSubview(tailInFront)
 
         NSLayoutConstraint.activate([
-            tailBehind.centerXAnchor.constraint(equalTo: contentViewBackground.centerXAnchor).with(priority: .defaultLow),
-            tailBehind.centerYAnchor.constraint(equalTo: contentViewBackground.bottomAnchor),
-            tailInFront.centerXAnchor.constraint(equalTo: tailBehind.centerXAnchor),
-            tailInFront.centerYAnchor.constraint(equalTo: tailBehind.centerYAnchor)
+            tailBehind.centerXAnchor.pin(equalTo: contentViewBackground.centerXAnchor).with(priority: .defaultLow),
+            tailBehind.centerYAnchor.pin(equalTo: contentViewBackground.bottomAnchor),
+            tailInFront.centerXAnchor.pin(equalTo: tailBehind.centerXAnchor),
+            tailInFront.centerYAnchor.pin(equalTo: tailBehind.centerYAnchor)
         ])
     }
 

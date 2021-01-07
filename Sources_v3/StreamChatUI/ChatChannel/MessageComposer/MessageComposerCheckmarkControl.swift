@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -60,8 +60,8 @@ open class MessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: Control, 
         container.leftStackView.alignment = .center
         container.leftStackView.addArrangedSubview(checkmark)
 
-        checkmark.heightAnchor.constraint(equalToConstant: checkmarkHeight).isActive = true
-        checkmark.widthAnchor.constraint(equalToConstant: checkmarkHeight).isActive = true
+        checkmark.heightAnchor.pin(equalToConstant: checkmarkHeight).isActive = true
+        checkmark.widthAnchor.pin(equalToConstant: checkmarkHeight).isActive = true
         
         container.centerStackView.isHidden = false
         container.centerStackView.alignment = .center

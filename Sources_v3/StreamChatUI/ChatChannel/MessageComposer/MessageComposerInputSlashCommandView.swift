@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -66,7 +66,7 @@ open class MessageInputSlashCommandView<ExtraData: ExtraDataTypes>: View, UIConf
         container.rightStackView.addArrangedSubview(commandLabel)
         
         iconView.contentMode = .scaleAspectFit
-        iconView.heightAnchor.constraint(equalToConstant: commandLabel.font.pointSize).isActive = true
+        iconView.heightAnchor.pin(equalToConstant: commandLabel.font.pointSize).isActive = true
     }
     
     override open func updateContent() {

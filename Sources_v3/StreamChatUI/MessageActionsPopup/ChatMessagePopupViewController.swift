@@ -69,65 +69,65 @@ open class ChatMessagePopupViewController<ExtraData: ExtraDataTypes>: ViewContro
         view.embed(scrollView)
 
         var constraints = [
-            scrollContentView.widthAnchor.constraint(equalTo: view.widthAnchor),
+            scrollContentView.widthAnchor.pin(equalTo: view.widthAnchor),
             
-            contentView.leadingAnchor.constraint(equalTo: scrollContentView.leadingAnchor),
-            contentView.trailingAnchor.constraint(equalTo: scrollContentView.trailingAnchor),
+            contentView.leadingAnchor.pin(equalTo: scrollContentView.leadingAnchor),
+            contentView.trailingAnchor.pin(equalTo: scrollContentView.trailingAnchor),
             
-            reactionsView?.heightAnchor.constraint(equalToConstant: reactionsViewHeight),
-            reactionsView?.topAnchor.constraint(equalTo: contentView.topAnchor),
-            reactionsView?.leadingAnchor.constraint(greaterThanOrEqualTo: contentView.leadingAnchor),
-            reactionsView?.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor),
-            reactionsView?.bottomAnchor.constraint(equalTo: messageContentView.topAnchor, constant: -spacing),
+            reactionsView?.heightAnchor.pin(equalToConstant: reactionsViewHeight),
+            reactionsView?.topAnchor.pin(equalTo: contentView.topAnchor),
+            reactionsView?.leadingAnchor.pin(greaterThanOrEqualTo: contentView.leadingAnchor),
+            reactionsView?.trailingAnchor.pin(lessThanOrEqualTo: contentView.trailingAnchor),
+            reactionsView?.bottomAnchor.pin(equalTo: messageContentView.topAnchor, constant: -spacing),
             
-            messageContentView.topAnchor.constraint(equalTo: contentView.topAnchor).almostRequired,
-            messageContentView.widthAnchor.constraint(equalToConstant: messageViewFrame.width),
-            messageContentView.heightAnchor.constraint(equalToConstant: messageViewFrame.height),
+            messageContentView.topAnchor.pin(equalTo: contentView.topAnchor).almostRequired,
+            messageContentView.widthAnchor.pin(equalToConstant: messageViewFrame.width),
+            messageContentView.heightAnchor.pin(equalToConstant: messageViewFrame.height),
             
-            actionsView.topAnchor.constraint(equalTo: messageContentView.bottomAnchor, constant: spacing),
-            actionsView.widthAnchor.constraint(equalTo: contentView.widthAnchor, multiplier: 0.7),
-            actionsView.bottomAnchor.constraint(lessThanOrEqualTo: scrollContentView.bottomAnchor)
+            actionsView.topAnchor.pin(equalTo: messageContentView.bottomAnchor, constant: spacing),
+            actionsView.widthAnchor.pin(equalTo: contentView.widthAnchor, multiplier: 0.7),
+            actionsView.bottomAnchor.pin(lessThanOrEqualTo: scrollContentView.bottomAnchor)
         ]
 
         if message.isSentByCurrentUser {
             constraints.append(contentsOf: [
-                messageContentView.trailingAnchor.constraint(
+                messageContentView.trailingAnchor.pin(
                     equalTo: contentView.leadingAnchor,
                     constant: messageViewFrame.maxX
                 ),
-                actionsView.trailingAnchor.constraint(equalTo: messageContentView.trailingAnchor),
-                reactionsView?.centerXAnchor.constraint(equalTo: messageContentView.leadingAnchor)
+                actionsView.trailingAnchor.pin(equalTo: messageContentView.trailingAnchor),
+                reactionsView?.centerXAnchor.pin(equalTo: messageContentView.leadingAnchor)
                     .with(priority: .defaultHigh),
-                reactionsController?.reactionsBubble.tailTrailingAnchor.constraint(equalTo: messageContentView.leadingAnchor)
+                reactionsController?.reactionsBubble.tailTrailingAnchor.pin(equalTo: messageContentView.leadingAnchor)
             ])
         } else {
             constraints.append(contentsOf: [
-                messageContentView.leadingAnchor.constraint(
+                messageContentView.leadingAnchor.pin(
                     equalTo: contentView.leadingAnchor,
                     constant: messageViewFrame.minX
                 ),
-                actionsView.leadingAnchor.constraint(equalTo: messageContentView.messageBubbleView.leadingAnchor),
-                reactionsView?.centerXAnchor.constraint(equalTo: messageContentView.trailingAnchor)
+                actionsView.leadingAnchor.pin(equalTo: messageContentView.messageBubbleView.leadingAnchor),
+                reactionsView?.centerXAnchor.pin(equalTo: messageContentView.trailingAnchor)
                     .with(priority: .defaultHigh),
-                reactionsController?.reactionsBubble.tailLeadingAnchor.constraint(equalTo: messageContentView.trailingAnchor)
+                reactionsController?.reactionsBubble.tailLeadingAnchor.pin(equalTo: messageContentView.trailingAnchor)
             ])
         }
 
         if messageViewFrame.minY <= 0 {
             constraints.append(contentsOf: [
-                contentView.topAnchor.constraint(equalTo: scrollContentView.topAnchor),
-                contentView.bottomAnchor.constraint(
+                contentView.topAnchor.pin(equalTo: scrollContentView.topAnchor),
+                contentView.bottomAnchor.pin(
                     equalTo: scrollContentView.bottomAnchor,
                     constant: -(view.bounds.height - messageViewFrame.maxY - actionsViewHeight - spacing)
                 )
             ])
         } else {
             constraints.append(contentsOf: [
-                contentView.topAnchor.constraint(
+                contentView.topAnchor.pin(
                     equalTo: scrollContentView.topAnchor,
                     constant: messageViewFrame.minY - reactionsViewHeight - spacing
                 ),
-                contentView.bottomAnchor.constraint(equalTo: scrollContentView.bottomAnchor)
+                contentView.bottomAnchor.pin(equalTo: scrollContentView.bottomAnchor)
             ])
         }
 
