@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -33,15 +33,15 @@ extension ChatMessageImageGallery {
             addSubview(actionIconImageView)
 
             NSLayoutConstraint.activate([
-                actionIconImageView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-                actionIconImageView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+                actionIconImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+                actionIconImageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
                 
-                fileSizeContainer.topAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
-                fileSizeContainer.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                fileSizeContainer.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                fileSizeContainer.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
+                fileSizeContainer.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
+                fileSizeContainer.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+                fileSizeContainer.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+                fileSizeContainer.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),
                 
-                loadingIndicator.widthAnchor.constraint(equalToConstant: 16)
+                loadingIndicator.widthAnchor.pin(equalToConstant: 16)
             ])
         }
 

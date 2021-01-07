@@ -26,7 +26,7 @@ open class MessageComposerInputContainerView<ExtraData: ExtraDataTypes>: View, U
     
     public private(set) lazy var rightAccessoryButton: UIButton = {
         let button = UIButton().withoutAutoresizingMaskConstraints
-        button.widthAnchor.constraint(equalTo: button.heightAnchor, multiplier: 1).isActive = true
+        button.widthAnchor.pin(equalTo: button.heightAnchor, multiplier: 1).isActive = true
         return button
     }()
         
@@ -53,7 +53,7 @@ open class MessageComposerInputContainerView<ExtraData: ExtraDataTypes>: View, U
 
         container.addArrangedSubview(rightAccessoryButton)
 
-        rightAccessoryButton.heightAnchor.constraint(equalToConstant: rightAccessoryButtonHeight).isActive = true
+        rightAccessoryButton.heightAnchor.pin(equalToConstant: rightAccessoryButtonHeight).isActive = true
     }
 
     public func setSlashCommandViews(hidden: Bool) {

@@ -97,8 +97,8 @@ open class ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: Control, UIConf
     override open func setUpLayout() {
         super.setUpLayout()
         embed(stack)
-        avatarView.widthAnchor.constraint(equalToConstant: 16).isActive = true
-        avatarView.heightAnchor.constraint(equalToConstant: 16).with(priority: .defaultHigh).isActive = true
+        avatarView.widthAnchor.pin(equalToConstant: 16).isActive = true
+        avatarView.heightAnchor.pin(equalToConstant: 16).with(priority: .defaultHigh).isActive = true
         replyCountLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         replyCountLabel.setContentCompressionResistancePriority(.required, for: .vertical)
     }

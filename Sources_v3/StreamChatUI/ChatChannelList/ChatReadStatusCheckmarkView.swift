@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -35,7 +35,7 @@ open class ChatReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: View, UIConfi
     
     override open func setUpLayout() {
         embed(imageView)
-        widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        widthAnchor.pin(equalTo: heightAnchor, multiplier: 1).isActive = true
     }
     
     override open func updateContent() {

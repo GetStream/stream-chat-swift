@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -57,31 +57,31 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
         addSubview(interactiveAttachmentView)
 
         layoutConstraints[.images] = [
-            imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageGallery.trailingAnchor.constraint(equalTo: trailingAnchor),
-            imageGallery.topAnchor.constraint(equalTo: topAnchor),
-            imageGallery.bottomAnchor.constraint(equalTo: bottomAnchor)
+            imageGallery.leadingAnchor.pin(equalTo: leadingAnchor),
+            imageGallery.trailingAnchor.pin(equalTo: trailingAnchor),
+            imageGallery.topAnchor.pin(equalTo: topAnchor),
+            imageGallery.bottomAnchor.pin(equalTo: bottomAnchor)
         ]
 
         layoutConstraints[.files] = [
-            fileList.leadingAnchor.constraint(equalTo: leadingAnchor),
-            fileList.trailingAnchor.constraint(equalTo: trailingAnchor),
-            fileList.topAnchor.constraint(equalTo: topAnchor),
-            fileList.bottomAnchor.constraint(equalTo: bottomAnchor)
+            fileList.leadingAnchor.pin(equalTo: leadingAnchor),
+            fileList.trailingAnchor.pin(equalTo: trailingAnchor),
+            fileList.topAnchor.pin(equalTo: topAnchor),
+            fileList.bottomAnchor.pin(equalTo: bottomAnchor)
         ]
 
         layoutConstraints[.giphy] = [
-            giphyView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            giphyView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            giphyView.topAnchor.constraint(equalTo: topAnchor),
-            giphyView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            giphyView.leadingAnchor.pin(equalTo: leadingAnchor),
+            giphyView.trailingAnchor.pin(equalTo: trailingAnchor),
+            giphyView.topAnchor.pin(equalTo: topAnchor),
+            giphyView.bottomAnchor.pin(equalTo: bottomAnchor)
         ]
 
         layoutConstraints[.interactiveAttachment] = [
-            interactiveAttachmentView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            interactiveAttachmentView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            interactiveAttachmentView.topAnchor.constraint(equalTo: topAnchor),
-            interactiveAttachmentView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            interactiveAttachmentView.leadingAnchor.pin(equalTo: leadingAnchor),
+            interactiveAttachmentView.trailingAnchor.pin(equalTo: trailingAnchor),
+            interactiveAttachmentView.topAnchor.pin(equalTo: topAnchor),
+            interactiveAttachmentView.bottomAnchor.pin(equalTo: bottomAnchor)
         ]
         layoutConstraints[[.images, .interactiveAttachment]] = layoutConstraints[.interactiveAttachment]
         layoutConstraints[[.files, .interactiveAttachment]] = layoutConstraints[.interactiveAttachment]
@@ -89,14 +89,14 @@ open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfig
         layoutConstraints[.all] = layoutConstraints[.interactiveAttachment]
 
         layoutConstraints[[.images, .files]] = [
-            imageGallery.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageGallery.trailingAnchor.constraint(equalTo: trailingAnchor),
-            imageGallery.topAnchor.constraint(equalTo: topAnchor),
+            imageGallery.leadingAnchor.pin(equalTo: leadingAnchor),
+            imageGallery.trailingAnchor.pin(equalTo: trailingAnchor),
+            imageGallery.topAnchor.pin(equalTo: topAnchor),
             
-            fileList.leadingAnchor.constraint(equalTo: leadingAnchor),
-            fileList.trailingAnchor.constraint(equalTo: trailingAnchor),
-            fileList.topAnchor.constraint(equalTo: imageGallery.bottomAnchor),
-            fileList.bottomAnchor.constraint(equalTo: bottomAnchor)
+            fileList.leadingAnchor.pin(equalTo: leadingAnchor),
+            fileList.trailingAnchor.pin(equalTo: trailingAnchor),
+            fileList.topAnchor.pin(equalTo: imageGallery.bottomAnchor),
+            fileList.bottomAnchor.pin(equalTo: bottomAnchor)
         ]
     }
 

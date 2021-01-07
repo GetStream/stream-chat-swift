@@ -108,17 +108,17 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
         addChildViewController(messageList, targetView: view)
         addChildViewController(messageComposerViewController, targetView: view)
 
-        messageList.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
-        messageList.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
-        messageList.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        messageList.view.bottomAnchor.constraint(equalTo: messageComposerViewController.view.topAnchor).isActive = true
+        messageList.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        messageList.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        messageList.view.topAnchor.pin(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        messageList.view.bottomAnchor.pin(equalTo: messageComposerViewController.view.topAnchor).isActive = true
 
-        messageComposerViewController.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
+        messageComposerViewController.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
             .isActive = true
-        messageComposerViewController.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+        messageComposerViewController.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
             .isActive = true
         messageComposerBottomConstraint =
-            messageComposerViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            messageComposerViewController.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
     }
 

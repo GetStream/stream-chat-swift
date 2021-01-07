@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -46,24 +46,24 @@ open class MessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>: Cha
         addSubview(fileNameAndSizeStack)
 
         NSLayoutConstraint.activate([
-            fileIconImageView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            fileIconImageView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-            fileIconImageView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
+            fileIconImageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            fileIconImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            fileIconImageView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),
             
-            actionIconImageView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-            actionIconImageView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            actionIconImageView.leadingAnchor.constraint(
+            actionIconImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            actionIconImageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            actionIconImageView.leadingAnchor.pin(
                 equalToSystemSpacingAfter: fileNameAndSizeStack.trailingAnchor,
                 multiplier: 1
             ),
             
-            fileNameAndSizeStack.leadingAnchor.constraint(
+            fileNameAndSizeStack.leadingAnchor.pin(
                 equalToSystemSpacingAfter: fileIconImageView.trailingAnchor,
                 multiplier: 2
             ),
-            fileNameAndSizeStack.centerYAnchor.constraint(equalTo: centerYAnchor),
-            fileNameAndSizeStack.topAnchor.constraint(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
-            fileNameAndSizeStack.bottomAnchor.constraint(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor)
+            fileNameAndSizeStack.centerYAnchor.pin(equalTo: centerYAnchor),
+            fileNameAndSizeStack.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
+            fileNameAndSizeStack.bottomAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor)
         ])
     }
     

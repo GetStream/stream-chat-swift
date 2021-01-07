@@ -10,7 +10,7 @@ open class OnlineIndicatorView<ExtraData: ExtraDataTypes>: View, UIConfigProvide
 
     override open func setUpLayout() {
         super.setUpLayout()
-        heightAnchor.constraint(equalTo: widthAnchor).isActive = true
+        heightAnchor.pin(equalTo: widthAnchor).isActive = true
     }
 
     // MARK: - Lifecycle

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -59,10 +59,10 @@ open class ChatAttachmentPreviewVC: ViewController {
     override open func setUpLayout() {
         view.addSubview(webView)
         NSLayoutConstraint.activate([
-            webView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            webView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            webView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            webView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            webView.topAnchor.pin(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            webView.leadingAnchor.pin(equalTo: view.leadingAnchor),
+            webView.trailingAnchor.pin(equalTo: view.trailingAnchor),
+            webView.bottomAnchor.pin(equalTo: view.bottomAnchor)
         ])
     }
 
@@ -71,7 +71,7 @@ open class ChatAttachmentPreviewVC: ViewController {
         goForwardButton.isEnabled = false
         title = content?.absoluteString
 
-        if let url = self.content {
+        if let url = content {
             webView.load(URLRequest(url: url))
         } else {
             activityIndicatorView.stopAnimating()

@@ -39,67 +39,67 @@ open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPro
 
         layouts = [
             [
-                previews[0].leadingAnchor.constraint(equalTo: leadingAnchor),
-                previews[0].topAnchor.constraint(equalTo: topAnchor),
-                previews[0].bottomAnchor.constraint(equalTo: bottomAnchor),
-                previews[0].trailingAnchor.constraint(equalTo: trailingAnchor)
+                previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
+                previews[0].topAnchor.pin(equalTo: topAnchor),
+                previews[0].bottomAnchor.pin(equalTo: bottomAnchor),
+                previews[0].trailingAnchor.pin(equalTo: trailingAnchor)
             ],
             [
-                previews[0].leadingAnchor.constraint(equalTo: leadingAnchor),
-                previews[0].topAnchor.constraint(equalTo: topAnchor),
-                previews[0].bottomAnchor.constraint(equalTo: bottomAnchor),
-                previews[0].widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
+                previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
+                previews[0].topAnchor.pin(equalTo: topAnchor),
+                previews[0].bottomAnchor.pin(equalTo: bottomAnchor),
+                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
                 
-                previews[1].trailingAnchor.constraint(equalTo: trailingAnchor),
-                previews[1].topAnchor.constraint(equalTo: topAnchor),
-                previews[1].bottomAnchor.constraint(equalTo: bottomAnchor),
-                previews[1].widthAnchor.constraint(equalTo: previews[0].widthAnchor)
+                previews[1].trailingAnchor.pin(equalTo: trailingAnchor),
+                previews[1].topAnchor.pin(equalTo: topAnchor),
+                previews[1].bottomAnchor.pin(equalTo: bottomAnchor),
+                previews[1].widthAnchor.pin(equalTo: previews[0].widthAnchor)
             ],
             [
-                previews[0].leadingAnchor.constraint(equalTo: leadingAnchor),
-                previews[0].topAnchor.constraint(equalTo: topAnchor),
-                previews[0].bottomAnchor.constraint(equalTo: bottomAnchor),
-                previews[0].widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
+                previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
+                previews[0].topAnchor.pin(equalTo: topAnchor),
+                previews[0].bottomAnchor.pin(equalTo: bottomAnchor),
+                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
                 
-                previews[1].topAnchor.constraint(equalTo: topAnchor),
-                previews[1].trailingAnchor.constraint(equalTo: trailingAnchor),
-                previews[1].heightAnchor.constraint(equalTo: heightAnchor, multiplier: 0.5, constant: anchorSpacing),
-                previews[1].widthAnchor.constraint(equalTo: previews[0].widthAnchor),
+                previews[1].topAnchor.pin(equalTo: topAnchor),
+                previews[1].trailingAnchor.pin(equalTo: trailingAnchor),
+                previews[1].heightAnchor.pin(equalTo: heightAnchor, multiplier: 0.5, constant: anchorSpacing),
+                previews[1].widthAnchor.pin(equalTo: previews[0].widthAnchor),
                 
-                previews[2].trailingAnchor.constraint(equalTo: previews[1].trailingAnchor),
-                previews[2].heightAnchor.constraint(equalTo: previews[1].heightAnchor),
-                previews[2].widthAnchor.constraint(equalTo: previews[1].widthAnchor),
-                previews[2].bottomAnchor.constraint(equalTo: bottomAnchor)
+                previews[2].trailingAnchor.pin(equalTo: previews[1].trailingAnchor),
+                previews[2].heightAnchor.pin(equalTo: previews[1].heightAnchor),
+                previews[2].widthAnchor.pin(equalTo: previews[1].widthAnchor),
+                previews[2].bottomAnchor.pin(equalTo: bottomAnchor)
             ],
             [
-                previews[0].leadingAnchor.constraint(equalTo: leadingAnchor),
-                previews[0].topAnchor.constraint(equalTo: topAnchor),
-                previews[0].widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
-                previews[0].heightAnchor.constraint(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
+                previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
+                previews[0].topAnchor.pin(equalTo: topAnchor),
+                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
+                previews[0].heightAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
                 
-                previews[1].topAnchor.constraint(equalTo: topAnchor),
-                previews[1].trailingAnchor.constraint(equalTo: trailingAnchor),
-                previews[1].heightAnchor.constraint(equalTo: previews[0].heightAnchor),
-                previews[1].widthAnchor.constraint(equalTo: previews[0].widthAnchor),
+                previews[1].topAnchor.pin(equalTo: topAnchor),
+                previews[1].trailingAnchor.pin(equalTo: trailingAnchor),
+                previews[1].heightAnchor.pin(equalTo: previews[0].heightAnchor),
+                previews[1].widthAnchor.pin(equalTo: previews[0].widthAnchor),
                 
-                previews[2].leadingAnchor.constraint(equalTo: leadingAnchor),
-                previews[2].heightAnchor.constraint(equalTo: previews[0].heightAnchor),
-                previews[2].widthAnchor.constraint(equalTo: previews[0].widthAnchor),
-                previews[2].bottomAnchor.constraint(equalTo: bottomAnchor),
+                previews[2].leadingAnchor.pin(equalTo: leadingAnchor),
+                previews[2].heightAnchor.pin(equalTo: previews[0].heightAnchor),
+                previews[2].widthAnchor.pin(equalTo: previews[0].widthAnchor),
+                previews[2].bottomAnchor.pin(equalTo: bottomAnchor),
                 
-                previews[3].trailingAnchor.constraint(equalTo: trailingAnchor),
-                previews[3].heightAnchor.constraint(equalTo: previews[0].heightAnchor),
-                previews[3].widthAnchor.constraint(equalTo: previews[0].widthAnchor),
-                previews[3].bottomAnchor.constraint(equalTo: bottomAnchor)
+                previews[3].trailingAnchor.pin(equalTo: trailingAnchor),
+                previews[3].heightAnchor.pin(equalTo: previews[0].heightAnchor),
+                previews[3].widthAnchor.pin(equalTo: previews[0].widthAnchor),
+                previews[3].bottomAnchor.pin(equalTo: bottomAnchor)
             ]
         ]
 
         NSLayoutConstraint.activate([
-            moreImagesOverlay.leadingAnchor.constraint(equalTo: previews[3].leadingAnchor),
-            moreImagesOverlay.trailingAnchor.constraint(equalTo: previews[3].trailingAnchor),
-            moreImagesOverlay.topAnchor.constraint(equalTo: previews[3].topAnchor),
-            moreImagesOverlay.bottomAnchor.constraint(equalTo: previews[3].bottomAnchor),
-            widthAnchor.constraint(equalTo: heightAnchor)
+            moreImagesOverlay.leadingAnchor.pin(equalTo: previews[3].leadingAnchor),
+            moreImagesOverlay.trailingAnchor.pin(equalTo: previews[3].trailingAnchor),
+            moreImagesOverlay.topAnchor.pin(equalTo: previews[3].topAnchor),
+            moreImagesOverlay.bottomAnchor.pin(equalTo: previews[3].bottomAnchor),
+            widthAnchor.pin(equalTo: heightAnchor)
         ])
     }
 

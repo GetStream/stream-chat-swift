@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -86,8 +86,8 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: ChatSwipeableList
         stackView.spacing = UIStackView.spacingUseSystem
         
         containerCenterView.addSubview(stackView)
-        stackView.topAnchor.constraint(greaterThanOrEqualTo: containerCenterView.topAnchor, constant: 0).isActive = true
-        stackView.bottomAnchor.constraint(lessThanOrEqualTo: containerCenterView.bottomAnchor, constant: 0).isActive = true
+        stackView.topAnchor.pin(greaterThanOrEqualTo: containerCenterView.topAnchor, constant: 0).isActive = true
+        stackView.bottomAnchor.pin(lessThanOrEqualTo: containerCenterView.bottomAnchor, constant: 0).isActive = true
         stackView.pin(anchors: [.leading, .trailing, .centerY], to: containerCenterView)
         
         // Top part of centerStackView.

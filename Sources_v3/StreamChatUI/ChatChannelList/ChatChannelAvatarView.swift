@@ -23,11 +23,11 @@ open class ChatChannelAvatarView<ExtraData: ExtraDataTypes>: AvatarView {
     override open func setUpLayout() {
         super.setUpLayout()
         
-        widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+        widthAnchor.pin(equalTo: heightAnchor, multiplier: 1).isActive = true
         embed(imageView)
         addSubview(onlineIndicatorView)
         onlineIndicatorView.pin(anchors: [.top, .right], to: self)
-        onlineIndicatorView.widthAnchor.constraint(equalTo: widthAnchor, multiplier: 0.25).isActive = true
+        onlineIndicatorView.widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.25).isActive = true
     }
     
     // MARK: - Public

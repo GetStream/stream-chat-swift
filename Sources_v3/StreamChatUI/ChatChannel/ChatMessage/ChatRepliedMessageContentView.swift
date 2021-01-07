@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -31,27 +31,27 @@ open class ChatRepliedMessageContentView<ExtraData: ExtraDataTypes>: View {
         embed(loadingView)
 
         avatarOnTheLeftConstraints = [
-            authorAvatarView.widthAnchor.constraint(equalToConstant: 24),
-            authorAvatarView.heightAnchor.constraint(equalToConstant: 24),
-            authorAvatarView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            authorAvatarView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            authorAvatarView.widthAnchor.pin(equalToConstant: 24),
+            authorAvatarView.heightAnchor.pin(equalToConstant: 24),
+            authorAvatarView.leadingAnchor.pin(equalTo: leadingAnchor),
+            authorAvatarView.bottomAnchor.pin(equalTo: bottomAnchor),
             
-            messageBubbleView.topAnchor.constraint(equalTo: topAnchor),
-            messageBubbleView.leadingAnchor.constraint(equalToSystemSpacingAfter: authorAvatarView.trailingAnchor, multiplier: 1),
-            messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            messageBubbleView.topAnchor.pin(equalTo: topAnchor),
+            messageBubbleView.leadingAnchor.pin(equalToSystemSpacingAfter: authorAvatarView.trailingAnchor, multiplier: 1),
+            messageBubbleView.trailingAnchor.pin(equalTo: trailingAnchor),
+            messageBubbleView.bottomAnchor.pin(equalTo: bottomAnchor)
         ]
 
         avatarOnTheRightConstraints = [
-            messageBubbleView.topAnchor.constraint(equalTo: topAnchor),
-            messageBubbleView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            messageBubbleView.topAnchor.pin(equalTo: topAnchor),
+            messageBubbleView.leadingAnchor.pin(equalTo: leadingAnchor),
+            messageBubbleView.bottomAnchor.pin(equalTo: bottomAnchor),
             
-            authorAvatarView.widthAnchor.constraint(equalToConstant: 24),
-            authorAvatarView.heightAnchor.constraint(equalToConstant: 24),
-            authorAvatarView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            authorAvatarView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            authorAvatarView.leadingAnchor.constraint(equalToSystemSpacingAfter: messageBubbleView.trailingAnchor, multiplier: 1)
+            authorAvatarView.widthAnchor.pin(equalToConstant: 24),
+            authorAvatarView.heightAnchor.pin(equalToConstant: 24),
+            authorAvatarView.trailingAnchor.pin(equalTo: trailingAnchor),
+            authorAvatarView.bottomAnchor.pin(equalTo: bottomAnchor),
+            authorAvatarView.leadingAnchor.pin(equalToSystemSpacingAfter: messageBubbleView.trailingAnchor, multiplier: 1)
         ]
     }
 

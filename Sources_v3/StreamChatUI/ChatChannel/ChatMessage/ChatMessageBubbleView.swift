@@ -98,115 +98,115 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         addSubview(textView)
 
         layoutConstraints[.text] = [
-            textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-            textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+            textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            textView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            textView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
         ]
 
         // link preview cannot exist without text, we can skip `[.linkPreview]` case
 
         layoutConstraints[.attachments] = [
-            attachmentsView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            attachmentsView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            attachmentsView.topAnchor.constraint(equalTo: topAnchor),
-            attachmentsView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            attachmentsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6)
+            attachmentsView.leadingAnchor.pin(equalTo: leadingAnchor),
+            attachmentsView.trailingAnchor.pin(equalTo: trailingAnchor),
+            attachmentsView.topAnchor.pin(equalTo: topAnchor),
+            attachmentsView.bottomAnchor.pin(equalTo: bottomAnchor),
+            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
         ]
 
         layoutConstraints[.inlineReply] = repliedMessageView.flatMap {
             return [
-                $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-                $0.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+                $0.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+                $0.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+                $0.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+                $0.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
             ]
         }
 
         layoutConstraints[[.text, .attachments]] = [
-            attachmentsView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            attachmentsView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            attachmentsView.topAnchor.constraint(equalTo: topAnchor),
-            attachmentsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
+            attachmentsView.leadingAnchor.pin(equalTo: leadingAnchor),
+            attachmentsView.trailingAnchor.pin(equalTo: trailingAnchor),
+            attachmentsView.topAnchor.pin(equalTo: topAnchor),
+            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
             
-            textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.constraint(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
-            textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+            textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            textView.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
+            textView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
         ]
 
         layoutConstraints[[.text, .linkPreview]] = [
-            textView.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-            textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
+            textView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
             
-            linkPreviewView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            linkPreviewView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            linkPreviewView.topAnchor.constraint(equalToSystemSpacingBelow: textView.bottomAnchor, multiplier: 1),
-            linkPreviewView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
-            linkPreviewView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6)
+            linkPreviewView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            linkPreviewView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            linkPreviewView.topAnchor.pin(equalToSystemSpacingBelow: textView.bottomAnchor, multiplier: 1),
+            linkPreviewView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),
+            linkPreviewView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
         ]
 
         layoutConstraints[[.text, .inlineReply]] = repliedMessageView.flatMap {
             return [
-                $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+                $0.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+                $0.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+                $0.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
                 
-                textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                textView.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
-                textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+                textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+                textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+                textView.topAnchor.pin(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
+                textView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
             ]
         } ?? layoutConstraints[.text]
 
         layoutConstraints[[.attachments, .inlineReply]] = repliedMessageView.flatMap {
             return [
-                $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+                $0.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+                $0.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+                $0.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
                 
-                attachmentsView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                attachmentsView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                attachmentsView.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
-                attachmentsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
-                attachmentsView.bottomAnchor.constraint(equalTo: bottomAnchor)
+                attachmentsView.leadingAnchor.pin(equalTo: leadingAnchor),
+                attachmentsView.trailingAnchor.pin(equalTo: trailingAnchor),
+                attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
+                attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
+                attachmentsView.bottomAnchor.pin(equalTo: bottomAnchor)
             ]
         } ?? layoutConstraints[.attachments]
 
         layoutConstraints[[.text, .inlineReply, .linkPreview]] = repliedMessageView.flatMap {
             return [
-                $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+                $0.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+                $0.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+                $0.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
                 
-                textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                textView.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
+                textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+                textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+                textView.topAnchor.pin(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
                 
-                linkPreviewView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                linkPreviewView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                linkPreviewView.topAnchor.constraint(equalToSystemSpacingBelow: textView.bottomAnchor, multiplier: 1),
-                linkPreviewView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor),
-                linkPreviewView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6)
+                linkPreviewView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+                linkPreviewView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+                linkPreviewView.topAnchor.pin(equalToSystemSpacingBelow: textView.bottomAnchor, multiplier: 1),
+                linkPreviewView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),
+                linkPreviewView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
             ]
         } ?? layoutConstraints[[.text, .linkPreview]]
 
         layoutConstraints[[.text, .attachments, .inlineReply]] = repliedMessageView.flatMap {
             return [
-                $0.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                $0.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                $0.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
+                $0.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+                $0.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+                $0.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
                 
-                attachmentsView.leadingAnchor.constraint(equalTo: leadingAnchor),
-                attachmentsView.trailingAnchor.constraint(equalTo: trailingAnchor),
-                attachmentsView.topAnchor.constraint(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
-                attachmentsView.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width * 0.6),
+                attachmentsView.leadingAnchor.pin(equalTo: leadingAnchor),
+                attachmentsView.trailingAnchor.pin(equalTo: trailingAnchor),
+                attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
+                attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
                 
-                textView.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-                textView.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-                textView.topAnchor.constraint(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
-                textView.bottomAnchor.constraint(equalTo: layoutMarginsGuide.bottomAnchor)
+                textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+                textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+                textView.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
+                textView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
             ]
         } ?? layoutConstraints[[.text, .attachments]]
 

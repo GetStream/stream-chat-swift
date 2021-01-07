@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -57,24 +57,24 @@ open class ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: View
         addSubview(actionsStackView)
 
         NSLayoutConstraint.activate([
-            preview.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor),
-            preview.trailingAnchor.constraint(equalTo: layoutMarginsGuide.trailingAnchor),
-            preview.topAnchor.constraint(equalTo: layoutMarginsGuide.topAnchor),
-            preview.heightAnchor.constraint(equalTo: preview.widthAnchor),
+            preview.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            preview.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            preview.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            preview.heightAnchor.pin(equalTo: preview.widthAnchor),
             
-            titleLabel.topAnchor.constraint(equalToSystemSpacingBelow: preview.bottomAnchor, multiplier: 1),
-            titleLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: trailingAnchor),
+            titleLabel.topAnchor.pin(equalToSystemSpacingBelow: preview.bottomAnchor, multiplier: 1),
+            titleLabel.leadingAnchor.pin(equalTo: leadingAnchor),
+            titleLabel.trailingAnchor.pin(equalTo: trailingAnchor),
             
-            separator.topAnchor.constraint(equalToSystemSpacingBelow: titleLabel.bottomAnchor, multiplier: 1),
-            separator.leadingAnchor.constraint(equalTo: leadingAnchor),
-            separator.trailingAnchor.constraint(equalTo: trailingAnchor),
-            separator.heightAnchor.constraint(equalToConstant: 1),
+            separator.topAnchor.pin(equalToSystemSpacingBelow: titleLabel.bottomAnchor, multiplier: 1),
+            separator.leadingAnchor.pin(equalTo: leadingAnchor),
+            separator.trailingAnchor.pin(equalTo: trailingAnchor),
+            separator.heightAnchor.pin(equalToConstant: 1),
             
-            actionsStackView.topAnchor.constraint(equalTo: separator.bottomAnchor),
-            actionsStackView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            actionsStackView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            actionsStackView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            actionsStackView.topAnchor.pin(equalTo: separator.bottomAnchor),
+            actionsStackView.leadingAnchor.pin(equalTo: leadingAnchor),
+            actionsStackView.trailingAnchor.pin(equalTo: trailingAnchor),
+            actionsStackView.bottomAnchor.pin(equalTo: bottomAnchor)
         ])
     }
 

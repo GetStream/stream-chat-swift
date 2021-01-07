@@ -28,18 +28,18 @@ open class ChatSwipeableListItemView<ExtraData: ExtraDataTypes>: View, UIConfigP
         addSubview(actionButtonStack)
         actionButtonStack.addArrangedSubview(deleteButton)
 
-        actionButtonStack.trailingAnchor.constraint(greaterThanOrEqualTo: trailingAnchor).isActive = true
+        actionButtonStack.trailingAnchor.pin(greaterThanOrEqualTo: trailingAnchor).isActive = true
 
         actionButtonStack.pin(anchors: [.top, .bottom], to: self)
 
         actionButtonStack.axis = .horizontal
         actionButtonStack.alignment = .fill
 
-        deleteButton.widthAnchor.constraint(equalTo: deleteButton.heightAnchor).almostRequired.isActive = true
-        deleteButton.heightAnchor.constraint(equalTo: heightAnchor).isActive = true
+        deleteButton.widthAnchor.pin(equalTo: deleteButton.heightAnchor).almostRequired.isActive = true
+        deleteButton.heightAnchor.pin(equalTo: heightAnchor).isActive = true
 
-        cellContentView.trailingAnchor.constraint(equalTo: actionButtonStack.leadingAnchor).isActive = true
-        trailingConstraint = trailingAnchor.constraint(equalTo: cellContentView.trailingAnchor)
+        cellContentView.trailingAnchor.pin(equalTo: actionButtonStack.leadingAnchor).isActive = true
+        trailingConstraint = trailingAnchor.pin(equalTo: cellContentView.trailingAnchor)
         trailingConstraint?.isActive = true
     }
 
