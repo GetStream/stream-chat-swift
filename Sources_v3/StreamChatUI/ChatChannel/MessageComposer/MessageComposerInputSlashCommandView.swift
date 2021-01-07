@@ -66,7 +66,6 @@ open class MessageInputSlashCommandView<ExtraData: ExtraDataTypes>: View, UIConf
         container.rightStackView.addArrangedSubview(commandLabel)
         
         iconView.contentMode = .scaleAspectFit
-        iconView.heightAnchor.pin(equalToConstant: commandLabel.font.pointSize).isActive = true
     }
     
     override open func updateContent() {
