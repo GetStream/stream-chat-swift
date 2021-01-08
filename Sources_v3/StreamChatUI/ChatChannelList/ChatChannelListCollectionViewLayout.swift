@@ -1,13 +1,11 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 import UIKit
 
 open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
-    private var stopObserving: (() -> Void)?
-    
     // MARK: - Init & Deinit
     
     override public init() {
@@ -18,10 +16,6 @@ open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
         commonInit()
-    }
-    
-    deinit {
-        stopObserving?()
     }
     
     // MARK: - Overrides
@@ -53,10 +47,6 @@ open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
             name: UIContentSizeCategory.didChangeNotification,
             object: nil
         )
-        
-        stopObserving = { [unowned self] in
-            center.removeObserver(self)
-        }
     }
     
     @objc private func didChangeContentSizeCategory(_ notification: Notification) {
