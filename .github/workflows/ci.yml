@@ -15,9 +15,6 @@ on:
     types:
       - created
 
-env:
-  carthage-cache-dir: 'carthage-cache-14122020' # When you change carthage cache directory, please append the date
-
 jobs:
   run-danger:
     name: Run Danger
@@ -70,6 +67,15 @@ jobs:
       run: bundle exec fastlane test_v3
     - name: Post Codecov report
       run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
 
   build-and-test-v3-release:
     name: Run v3 Tests (Release)
@@ -94,6 +100,15 @@ jobs:
       run: ./bootstrap.sh
     - name: Run v3 Tests (Release)
       run: bundle exec fastlane test_v3_release
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
 
   build-and-test-v3-ios12:
     name: Run v3 Tests (iOS12.4)
@@ -125,6 +140,15 @@ jobs:
         xcrun simctl list devices 12.4
     - name: Run v3 Tests (Debug - iOS 12.4)
       run: bundle exec fastlane test_v3 device:"iPhone 7 (12.4)"
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
 
   build-sample-v3:
     name: Build v3 Sample
@@ -149,6 +173,15 @@ jobs:
       run: ./bootstrap.sh
     - name: Build v3 Sample
       run: bundle exec fastlane build_sample_v3
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
 
   build-sample-v3-ios12:
     name: Build v3 Sample (iOS12.4)
@@ -180,3 +213,12 @@ jobs:
         xcrun simctl list devices 12.4
     - name: Build v3 Sample
       run: bundle exec fastlane build_sample_v3 device:"iPhone 7 (12.4)"
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
