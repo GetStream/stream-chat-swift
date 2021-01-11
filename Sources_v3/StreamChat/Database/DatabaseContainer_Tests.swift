@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -117,6 +117,9 @@ class DatabaseContainer_Tests: StressTestCase {
             modelName: "TestDataModel",
             bundle: Bundle(for: DatabaseContainer_Tests.self)
         )
+        
+        // Assert `resetEphemeralValues` is called on DatabaseContainer
+        XCTAssert((newDatabase as! DatabaseContainerMock).resetEphemeralValues_called)
 
         let testObject2 = try newDatabase.viewContext
             .fetch(NSFetchRequest<TestManagedObject>(entityName: "TestManagedObject"))
@@ -126,6 +129,20 @@ class DatabaseContainer_Tests: StressTestCase {
         
         // Wait for the new DB instance to be released
         AssertAsync.canBeReleased(&newDatabase)
+    }
+    
+    func test_databaseContainer_doesntCallsResetEphemeralValues_whenFlagIsSetToFalse() throws {
+        // Create a new on-disc database with the test data model
+        let dbURL = URL.newTemporaryFileURL()
+        let database = try DatabaseContainerMock(
+            kind: .onDisk(databaseFileURL: dbURL),
+            shouldResetEphemeralValuesOnStart: false,
+            modelName: "TestDataModel",
+            bundle: Bundle(for: DatabaseContainer_Tests.self)
+        )
+        
+        // Assert `resetEphemeralValues` is not called on DatabaseContainer
+        XCTAssertFalse(database.resetEphemeralValues_called)
     }
     
     func test_databaseContainer_removesAllData_whenShouldFlushOnStartIsTrue() throws {

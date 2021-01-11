@@ -10,13 +10,20 @@ class ChatClient_Tests: StressTestCase {
     var userId: UserId!
     private var testEnv: TestEnvironment<DefaultExtraData>!
     
-    // A helper providing ChatClientConfic with in-memory DB option
+    // A helper providing ChatClientConfig with in-memory DB option
     var inMemoryStorageConfig: ChatClientConfig {
         var config = ChatClientConfig()
         config.isLocalStorageEnabled = false
         config.baseURL = BaseURL(urlString: .unique)!
         return config
     }
+    
+    // Helper for providing config with in-memory DB option and passive (inactive) mode
+    lazy var inactiveInMemoryStorageConfig: ChatClientConfig = {
+        var config = inMemoryStorageConfig
+        config.isClientInActiveMode = false
+        return config
+    }()
     
     override func setUp() {
         super.setUp()
@@ -412,6 +419,49 @@ class ChatClient_Tests: StressTestCase {
         // Check if the worker is re-created
         XCTAssertNotEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)
         XCTAssertNotEqual((client.backgroundWorkers.last as! TestEventWorker).id, oldEventWorkerUUID)
+    }
+    
+    // MARK: - Passive (not active) Client tests
+    
+    func test_passiveClient_doesNotHaveWorkers() {
+        // Create Client with inactive flag set
+        let client = ChatClient(config: inactiveInMemoryStorageConfig)
+        
+        // Assert that no background worker is initialized
+        XCTAssert(client.backgroundWorkers.isEmpty)
+    }
+    
+    func test_passiveClient_doesNotHaveWSClient() {
+        // Create Client with inactive flag set
+        let client = ChatClient(
+            config: inactiveInMemoryStorageConfig
+        )
+        
+        // Assert the wsClient is not initialized
+        XCTAssertNil(client.webSocketClient)
+        
+        // Assert connection status is reported correctly
+        XCTAssertEqual(
+            client.connectionStatus,
+            ConnectionStatus.disconnected(error: .ClientIsNotInActiveMode())
+        )
+    }
+    
+    func test_passiveClient_provideConnectionId_returnsImmediately() {
+        // Create Client with inactive flag set
+        let client = ChatClient(config: inactiveInMemoryStorageConfig)
+        
+        // Set a connection Id waiter
+        var providedConnectionId: ConnectionId? = .unique
+        var connectionIdCallbackCalled = false
+        client.provideConnectionId {
+            providedConnectionId = $0
+            connectionIdCallbackCalled = true
+        }
+        
+        AssertAsync.willBeTrue(connectionIdCallbackCalled)
+        // Assert that `nil` id is provided by waiter
+        XCTAssertNil(providedConnectionId)
     }
 }
 
