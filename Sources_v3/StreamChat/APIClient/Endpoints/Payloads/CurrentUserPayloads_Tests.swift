@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -58,6 +58,29 @@ class CurrentUserPayload_Tests: XCTestCase {
     }
 }
 
-class CurrentUserRequestBody_Tests: XCTestCase {
-    // TODO: CIS-235
+class CurrentUserUpdateRequestBody_Tests: XCTestCase {
+    func test_isSerialized() throws {
+        let payload: CurrentUserUpdateRequestBody<DefaultExtraData.User> = .init(
+            id: "123",
+            set: .init(
+                name: "Nuno",
+                imageURL: URL(string: "FakeUrl")!
+            ),
+            unset: [.extraDataKey("fake_custom_property")]
+        )
+        
+        let expected: [String: Any] = [
+            "id": payload.id,
+            "set": [
+                "name": payload.set.name!,
+                "image": payload.set.imageURL!.absoluteString
+            ],
+            "unset": ["fake_custom_property"]
+        ]
+        
+        let encodedJSON = try JSONEncoder.default.encode(payload)
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
+        
+        AssertJSONEqual(encodedJSON, expectedJSON)
+    }
 }

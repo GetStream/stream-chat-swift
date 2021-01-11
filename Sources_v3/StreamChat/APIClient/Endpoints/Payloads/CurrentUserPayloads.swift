@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -61,8 +61,61 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
 }
 
 /// An object describing the outgoing user JSON payload.
-class CurrentUserRequestBody<ExtraData: UserExtraData>: Encodable {
-    // TODO: Add more fields while working on CIS-235
+struct CurrentUserUpdateRequestBody<ExtraData: UserExtraData>: Encodable {
+    let id: String
+    let set: UserData<ExtraData>
+    let unset: [UserDataKey]
+    
+    init(
+        id: String,
+        set: UserData<ExtraData> = .init(),
+        unset: [UserDataKey] = []
+    ) {
+        self.id = id
+        self.set = set
+        self.unset = unset
+    }
+    
+    enum UserDataKey: RawRepresentable, Encodable, Equatable {
+        case name
+        case image
+        case extraDataKey(String)
+        
+        init(rawValue: String) {
+            switch rawValue {
+            case "name": self = .name
+            case "image": self = .image
+            default: self = .extraDataKey(rawValue)
+            }
+        }
+        
+        var rawValue: String {
+            switch self {
+            case .name: return "name"
+            case .image: return "image"
+            case let .extraDataKey(key): return key
+            }
+        }
+    }
+    
+    struct UserData<ExtraData: UserExtraData>: Encodable {
+        let name: String?
+        let imageURL: URL?
+        let extraData: ExtraData?
+        
+        init(name: String? = nil, imageURL: URL? = nil, extraData: ExtraData? = nil) {
+            self.name = name
+            self.imageURL = imageURL
+            self.extraData = extraData
+        }
+        
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: UserPayloadsCodingKeys.self)
+            try container.encodeIfPresent(name, forKey: .name)
+            try container.encodeIfPresent(imageURL, forKey: .imageURL)
+            try extraData?.encode(to: encoder)
+        }
+    }
 }
 
 /// An object describing the incoming muted-user JSON payload.

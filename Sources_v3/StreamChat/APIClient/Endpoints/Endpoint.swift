@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -15,6 +15,7 @@ struct Endpoint<ResponseType: Decodable> {
 enum EndpointMethod: String {
     case get = "GET"
     case post = "POST"
+    case patch = "PATCH"
     case delete = "DELETE"
 }
 

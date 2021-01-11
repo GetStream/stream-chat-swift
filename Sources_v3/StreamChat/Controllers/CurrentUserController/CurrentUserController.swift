@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -338,6 +338,42 @@ public extension _CurrentChatUserController {
                 }
             }
         }
+    }
+    
+    /// Updates the current user.
+    /// - Parameters:
+    ///   - name: Optionally provide a new name to be updated.
+    ///   - imageURL: Optionally provide a new image to be updated.
+    ///   - userExtraData: Optionally provide new user extra data to be updated.
+    ///   - completion: Called when user is successfuly updated, or with error.
+    func updateUser(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        userExtraData: ExtraData.User? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard let currentUserId = currentUser?.id else {
+            completion?(ClientError.CurrentUserDoesNotExist())
+            return
+        }
+        
+        let userData = CurrentUserUpdateRequestBody<ExtraData.User>.UserData(
+            name: name,
+            imageURL: imageURL,
+            extraData: userExtraData
+        )
+        
+        let payload = CurrentUserUpdateRequestBody(
+            id: currentUserId,
+            set: userData,
+            unset: []
+        )
+        
+        client
+            .apiClient
+            .request(endpoint: .updateCurrentUser(id: currentUserId, payload: payload)) {
+                completion?($0.error)
+            }
     }
     
     /// Registers a device to the current user.

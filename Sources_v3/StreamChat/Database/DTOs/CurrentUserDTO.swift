@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -117,7 +117,7 @@ extension CurrentUserDTO {
     func asModel<ExtraData: UserExtraData>() -> _CurrentChatUser<ExtraData> { .create(fromDTO: self) }
     
     /// Snapshots the current state of `CurrentUserDTO` and returns its representation for used in API calls.
-    func asRequestBody<ExtraData: UserExtraData>() -> CurrentUserRequestBody<ExtraData> {
+    func asRequestBody<ExtraData: UserExtraData>() -> CurrentUserUpdateRequestBody<ExtraData> {
         // swiftlint:disable:previous unavailable_function
         fatalError("Not implemented yet")
         // TODO: CIS-235
