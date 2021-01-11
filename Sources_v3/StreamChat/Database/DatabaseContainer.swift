@@ -265,9 +265,7 @@ class DatabaseContainer: NSPersistentContainer {
             throw error
         }
     }
-}
-
-extension DatabaseContainer {
+    
     /// Iterates over all items and if the DTO conforms to `EphemeralValueContainers` calls `resetEphemeralValues()` on
     /// every object.
     func resetEphemeralValues() {
