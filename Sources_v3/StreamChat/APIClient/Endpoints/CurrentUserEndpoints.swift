@@ -8,7 +8,7 @@ extension Endpoint {
     static func updateCurrentUser<ExtraData: UserExtraData>(
         id: String,
         payload: CurrentUserUpdateRequestBody<ExtraData>
-    ) -> Endpoint<EmptyResponse> {
+    ) -> Endpoint<CurrentUserUpdateResponse<ExtraData>> {
         .init(
             path: "users",
             method: .patch,

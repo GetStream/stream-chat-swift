@@ -118,6 +118,27 @@ struct CurrentUserUpdateRequestBody<ExtraData: UserExtraData>: Encodable {
     }
 }
 
+struct CurrentUserUpdateResponse<ExtraData: UserExtraData>: Decodable {
+    let user: UserPayload<ExtraData>
+    let duration: String
+    
+    enum CodingKeys: String, CodingKey {
+        case users
+        case duration
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let users = try container.decode([String: UserPayload<ExtraData>].self, forKey: .users)
+        if let user = users.first?.value {
+            self.user = user
+        } else {
+            throw DecodingError.dataCorrupted(.init(codingPath: [CodingKeys.users], debugDescription: "Missing updated user."))
+        }
+        duration = try container.decode(String.self, forKey: .duration)
+    }
+}
+
 /// An object describing the incoming muted-user JSON payload.
 struct MutedUserPayload<ExtraData: UserExtraData>: Decodable {
     private enum CodingKeys: String, CodingKey {
