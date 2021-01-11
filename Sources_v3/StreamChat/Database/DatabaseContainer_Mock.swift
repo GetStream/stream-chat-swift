@@ -14,6 +14,7 @@ class DatabaseContainerMock: DatabaseContainer {
     @Atomic var flush_called = false
     @Atomic var recreatePersistentStore_called = false
     @Atomic var recreatePersistentStore_errorResponse: Error?
+    @Atomic var resetEphemeralValues_called = false
     
     convenience init() {
         try! self.init(kind: .inMemory)
@@ -58,6 +59,11 @@ class DatabaseContainerMock: DatabaseContainer {
         } else {
             super.write(actions, completion: completion)
         }
+    }
+    
+    override func resetEphemeralValues() {
+        resetEphemeralValues_called = true
+        super.resetEphemeralValues()
     }
 }
 
