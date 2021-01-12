@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -37,6 +37,12 @@ class SettingsViewController: UITableViewController {
             clearLocalDatabase()
         default:
             break
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if let userUpdateVC = segue.destination as? UserUpdateViewController {
+            userUpdateVC.currentUserController = currentUserController
         }
     }
 }

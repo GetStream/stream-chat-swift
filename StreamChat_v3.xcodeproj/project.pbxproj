@@ -505,6 +505,8 @@
 		AD161F0A25A8A322009A0D9C /* CurrentUserEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD161F0925A8A322009A0D9C /* CurrentUserEndpoints.swift */; };
 		AD515D2B25ACB3F200548199 /* CurrentUserEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD515D2A25ACB3F200548199 /* CurrentUserEndpoints_Tests.swift */; };
 		ADCDDCC525AE1293004E15FB /* CurrentUserUpdateResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = ADCDDCC425AE1293004E15FB /* CurrentUserUpdateResponse.json */; };
+		ADCDDD0025AE2784004E15FB /* UserUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */; };
+		ADCDDD0825AE2F4A004E15FB /* InputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */; };
 		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
 		DA49712625476A3600AC68C2 /* AttachmentRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4971202547699E00AC68C2 /* AttachmentRequestBody.swift */; };
@@ -1248,6 +1250,8 @@
 		AD161F0925A8A322009A0D9C /* CurrentUserEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserEndpoints.swift; sourceTree = "<group>"; };
 		AD515D2A25ACB3F200548199 /* CurrentUserEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserEndpoints_Tests.swift; sourceTree = "<group>"; };
 		ADCDDCC425AE1293004E15FB /* CurrentUserUpdateResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = CurrentUserUpdateResponse.json; sourceTree = "<group>"; };
+		ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdateViewController.swift; sourceTree = "<group>"; };
+		ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputViewController.swift; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA4971202547699E00AC68C2 /* AttachmentRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentRequestBody.swift; sourceTree = "<group>"; };
@@ -1808,13 +1812,6 @@
 			path = StreamChatTestTools;
 			sourceTree = "<group>";
 		};
-		793060F225778897005CF846 /* StreamChatTestToolsTests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = StreamChatTestToolsTests;
-			sourceTree = "<group>";
-		};
 		7930610D25778BC4005CF846 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -2146,7 +2143,6 @@
 			isa = PBXGroup;
 			children = (
 				7908824625432CC600896F03 /* StreamChatTests */,
-				793060F225778897005CF846 /* StreamChatTestToolsTests */,
 				7908823925432C9000896F03 /* StreamChatUITests */,
 				792A71F22578EFBB0082498D /* Shared */,
 				7908824925432CC600896F03 /* Info.plist */,
@@ -2232,6 +2228,8 @@
 			children = (
 				804B127624ED59FE002B00EA /* Settings.storyboard */,
 				804B127424ED596C002B00EA /* SettingsViewController.swift */,
+				ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */,
+				ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */,
 				8008C18524EDBCF500F5BCCE /* LogsViewController.swift */,
 				8040BC5F24FDD58700DE369F /* SplitViewController.swift */,
 				DAD8A89D2507E1A900D05282 /* CombineSimpleChat */,
@@ -3409,6 +3407,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADCDDD0825AE2F4A004E15FB /* InputViewController.swift in Sources */,
 				804B127124E712F1002B00EA /* SimpleChannelsViewController.swift in Sources */,
 				DAD8A8A42507E1C400D05282 /* CombineSimpleChannelsViewController.swift in Sources */,
 				80437AA3252E519E000920A3 /* Configuration.swift in Sources */,
@@ -3435,6 +3434,7 @@
 				80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */,
 				88BEBCE725370BC900D9E8B7 /* SimpleChannelMembersViewController.swift in Sources */,
 				8008C19224F44DF900F5BCCE /* UIView+InstantiateFromNib.swift in Sources */,
+				ADCDDD0025AE2784004E15FB /* UserUpdateViewController.swift in Sources */,
 				DA4EE5D3252CB64900CB26D4 /* UserListView.swift in Sources */,
 				80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */,
 				8040BC5E24FDAB1E00DE369F /* UIColor+ForUsername.swift in Sources */,
