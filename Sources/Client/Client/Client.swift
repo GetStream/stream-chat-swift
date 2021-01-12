@@ -257,7 +257,7 @@ public final class Client: Uploader {
             webSocket.connect()
             
             // The improve latency, call the preheat endpoint to set up TCP connection which can be reused.
-            self.request(endpoint: .users(.init(filter: .none))) { (_: Result<EmptyData, ClientError>) in
+            self.request(endpoint: .heatUpTCPConnection) { (_: Result<EmptyData, ClientError>) in
                 self.logger?.log("♨️ TCP connection heated up.")
             }
             
