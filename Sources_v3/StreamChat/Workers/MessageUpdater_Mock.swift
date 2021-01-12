@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -25,6 +25,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var createNewReply_parentMessageId: MessageId?
     @Atomic var createNewReply_attachments: [_ChatMessageAttachment<ExtraData>.Seed]?
     @Atomic var createNewReply_showReplyInChannel: Bool?
+    @Atomic var createNewReply_quotedMessageId: MessageId?
     @Atomic var createNewReply_extraData: ExtraData.Message?
     @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
     
@@ -144,6 +145,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         parentMessageId: MessageId?,
         attachments: [_ChatMessageAttachment<ExtraData>.Seed],
         showReplyInChannel: Bool,
+        quotedMessageId: MessageId?,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -154,6 +156,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         createNewReply_parentMessageId = parentMessageId
         createNewReply_attachments = attachments
         createNewReply_showReplyInChannel = showReplyInChannel
+        createNewReply_quotedMessageId = quotedMessageId
         createNewReply_extraData = extraData
         createNewReply_completion = completion
     }

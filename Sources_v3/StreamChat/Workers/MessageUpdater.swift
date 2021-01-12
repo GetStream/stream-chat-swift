@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -125,6 +125,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - attachments: An array of the attachments for the message.
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
     ///   in the response thread.
+    ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -136,6 +137,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         parentMessageId: MessageId,
         attachments: [_ChatMessageAttachment<ExtraData>.Seed],
         showReplyInChannel: Bool,
+        quotedMessageId: MessageId?,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -149,6 +151,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                 parentMessageId: parentMessageId,
                 attachments: attachments,
                 showReplyInChannel: showReplyInChannel,
+                quotedMessageId: quotedMessageId,
                 extraData: extraData
             )
             
@@ -351,13 +354,13 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
 
             self.apiClient.request(endpoint: endpoint) {
                 switch $0 {
-                case .success(let payload):
+                case let .success(payload):
                     self.database.write({ session in
                         try session.saveMessage(payload: payload.message, for: cid)
                     }, completion: { error in
                         completion?(error)
                     })
-                case .failure(let error):
+                case let .failure(error):
                     completion?(error)
                 }
             }
