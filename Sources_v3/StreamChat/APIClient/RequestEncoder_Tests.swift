@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -147,6 +147,46 @@ class RequestEncoder_Tests: XCTestCase {
         let endpoint = Endpoint<Data>(
             path: .unique,
             method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+        
+        // Encode the request and wait for the result
+        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        
+        // Check the body is present (and empty)
+        let body = try XCTUnwrap(request.httpBody)
+        let serializedBody = try JSONDecoder.stream.decode(EmptyBody.self, from: body)
+        
+        XCTAssertEqual(serializedBody, EmptyBody())
+    }
+    
+    func test_encodingRequestBody_PATCH() throws {
+        // Prepare a PATCH endpoint with JSON body
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: TestUser(name: "Luke", age: 22)
+        )
+        
+        // Encode the request and wait for the result
+        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        
+        // Check the body is present
+        let body = try XCTUnwrap(request.httpBody)
+        let serializedBody = try JSONDecoder.stream.decode(TestUser.self, from: body)
+        
+        XCTAssertEqual(serializedBody, endpoint.body as! TestUser)
+    }
+    
+    func test_encodingRequestWithoutBody_PATCH() throws {
+        // Prepare a PATCH endpoint without JSON body
+        let endpoint = Endpoint<Data>(
+            path: .unique,
+            method: .patch,
             queryItems: nil,
             requiresConnectionId: false,
             body: nil

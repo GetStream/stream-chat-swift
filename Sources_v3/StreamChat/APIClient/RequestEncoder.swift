@@ -148,39 +148,12 @@ struct DefaultRequestEncoder: RequestEncoder {
     private func encodeRequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
         switch endpoint.method {
         case .get, .delete:
-            try encodeGETorDELETERequestBody(request: &request, endpoint: endpoint)
-        case .post:
-            try encodePOSTRequestBody(request: &request, endpoint: endpoint)
-        case .patch:
-            try encodePATCHRequestBody(request: &request, endpoint: endpoint)
+            guard let body = endpoint.body else { return }
+            try encodeJSONToQueryItems(request: &request, data: body)
+        case .post, .patch:
+            let body = try JSONEncoder.stream.encode(AnyEncodable(endpoint.body ?? EmptyBody()))
+            request.httpBody = body
         }
-    }
-    
-    private func encodeGETorDELETERequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
-        log.assert(
-            [EndpointMethod.get, EndpointMethod.delete].contains(endpoint.method),
-            "Endpoint method is \(endpoint.method) but must be either GET or DELETE."
-        )
-        log.assert(request.url != nil, "Request URL must not be `nil`.")
-        
-        guard let body = endpoint.body else { return }
-        try encodeJSONToQueryItems(request: &request, data: body)
-    }
-    
-    private func encodePOSTRequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
-        log.assert(endpoint.method == .post, "Request method is \(endpoint.method) but must be POST.")
-        // If the endpoint doesn't contain a body, we should encode an empty body
-        // since backends expects it
-        let body = try JSONEncoder.stream.encode(AnyEncodable(endpoint.body ?? EmptyBody()))
-        request.httpBody = body
-    }
-    
-    private func encodePATCHRequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
-        log.assert(endpoint.method == .patch, "Request method is \(endpoint.method) but must be PATCH.")
-        // If the endpoint doesn't contain a body, we should encode an empty body
-        // since backends expects it
-        let body = try JSONEncoder.stream.encode(AnyEncodable(endpoint.body ?? EmptyBody()))
-        request.httpBody = body
     }
     
     private func encodeJSONToQueryItems(request: inout URLRequest, data: Encodable) throws {
