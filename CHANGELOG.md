@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- Message replies (thread) is unreachable when message itself is deleted [#734](https://github.com/GetStream/stream-chat-swift/issues/734)
 
 # [2.6.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.2)
 _December 31, 2020_
