@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -152,6 +152,7 @@ extension _ChatMessage {
             showReplyInChannel: true,
             replyCount: 2,
             extraData: .init(),
+            quotedMessageId: nil,
             isSilent: false,
             reactionScores: ["": 1],
             author: .init(id: .unique),
