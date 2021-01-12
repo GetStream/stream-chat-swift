@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -94,6 +94,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
     ///   - attachments: Attachments for the message.
+    ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -103,6 +104,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         command: String?,
         arguments: String?,
         attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
+        quotedMessageId: MessageId?,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -116,6 +118,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
                 parentMessageId: nil,
                 attachments: attachments,
                 showReplyInChannel: false,
+                quotedMessageId: quotedMessageId,
                 extraData: extraData
             )
             
