@@ -451,6 +451,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 parentMessageId: parentMessageId,
                 attachments: attachmentSeeds,
                 showReplyInChannel: showReplyInChannel,
+                quotedMessageId: nil,
                 extraData: extraData
             ) { result in
                 if let newMessageId = try? result.get() {
@@ -503,6 +504,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 parentMessageId: .unique,
                 attachments: [],
                 showReplyInChannel: false,
+                quotedMessageId: nil,
                 extraData: .defaultValue
             ) { completion($0) }
         }
