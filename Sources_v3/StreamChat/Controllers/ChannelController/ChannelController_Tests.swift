@@ -1123,6 +1123,7 @@ class ChannelController_Tests: StressTestCase {
         let message = try session.createNewMessage(
             in: channelId,
             text: "Message",
+            quotedMessageId: nil,
             attachments: [
                 ChatMessageAttachment.Seed.dummy(),
                 ChatMessageAttachment.Seed.dummy(),
@@ -1417,6 +1418,7 @@ class ChannelController_Tests: StressTestCase {
             .dummy(),
             .dummy()
         ]
+        let quotedMessageId: MessageId = .unique
         
         // Simulate `createNewMessage` calls and catch the completion
         var completionCalled = false
@@ -1425,6 +1427,7 @@ class ChannelController_Tests: StressTestCase {
 //            command: command,
 //            arguments: arguments,
             attachments: attachments,
+            quotedMessageId: quotedMessageId,
             extraData: extraData
         ) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
@@ -1447,6 +1450,7 @@ class ChannelController_Tests: StressTestCase {
         //        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, attachments)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_quotedMessageId, quotedMessageId)
         
         // Simulate successful update
         env.channelUpdater?.createNewMessage_completion?(.success(newMessageId))
