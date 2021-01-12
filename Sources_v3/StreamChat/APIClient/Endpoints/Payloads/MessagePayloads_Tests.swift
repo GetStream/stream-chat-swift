@@ -32,6 +32,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.reactionScores, ["love": 1])
         XCTAssertEqual(payload.isSilent, true)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
+        XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
     }
     
     func test_messagePayload_isSerialized_withCustomExtraData() throws {
@@ -58,6 +59,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.reactionScores, ["love": 1])
         XCTAssertEqual(payload.isSilent, true)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
+        XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
     }
 }
 
