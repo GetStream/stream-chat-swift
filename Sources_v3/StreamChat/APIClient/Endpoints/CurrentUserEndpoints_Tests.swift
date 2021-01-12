@@ -7,14 +7,13 @@ import XCTest
 
 final class CurrentUserEndpoints_Tests: XCTestCase {
     func test_updateCurrentUser_buildsCorrectly() {
-        let userId = "123"
         let payload: CurrentUserUpdateRequestBody<DefaultExtraData.User> = .init(
-            id: userId,
-            set: .init(name: "Nuno", imageURL: URL(string: "Fake")!, extraData: .init()),
+            id: "123",
+            set: .init(name: "Luke Skywalker", imageURL: URL(string: "url")!, extraData: .init()),
             unset: [.image, .extraDataKey("custom_prop")]
         )
         
-        let expectedEndpoint = Endpoint<EmptyResponse>(
+        let expectedEndpoint = Endpoint<CurrentUserUpdateResponse<DefaultExtraData.User>>(
             path: "users",
             method: .patch,
             queryItems: nil,
@@ -22,10 +21,8 @@ final class CurrentUserEndpoints_Tests: XCTestCase {
             body: ["users": [payload]]
         )
         
-        // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .updateCurrentUser(id: userId, payload: payload)
+        let endpoint: Endpoint<CurrentUserUpdateResponse> = .updateCurrentUser(payload: payload)
         
-        // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
 }

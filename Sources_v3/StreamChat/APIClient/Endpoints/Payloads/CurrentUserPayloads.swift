@@ -62,12 +62,12 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
 
 /// An object describing the outgoing user JSON payload.
 struct CurrentUserUpdateRequestBody<ExtraData: UserExtraData>: Encodable {
-    let id: String
+    let id: UserId
     let set: UserData<ExtraData>
     let unset: [UserDataKey]
     
     init(
-        id: String,
+        id: UserId,
         set: UserData<ExtraData> = .init(),
         unset: [UserDataKey] = []
     ) {
@@ -120,22 +120,24 @@ struct CurrentUserUpdateRequestBody<ExtraData: UserExtraData>: Encodable {
 
 struct CurrentUserUpdateResponse<ExtraData: UserExtraData>: Decodable {
     let user: UserPayload<ExtraData>
-    let duration: String
     
     enum CodingKeys: String, CodingKey {
         case users
-        case duration
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let users = try container.decode([String: UserPayload<ExtraData>].self, forKey: .users)
-        if let user = users.first?.value {
-            self.user = user
-        } else {
-            throw DecodingError.dataCorrupted(.init(codingPath: [CodingKeys.users], debugDescription: "Missing updated user."))
+        guard let user = users.first?.value else {
+            throw DecodingError.dataCorrupted(
+                .init(codingPath: [CodingKeys.users], debugDescription: "Missing updated user.")
+            )
         }
-        duration = try container.decode(String.self, forKey: .duration)
+        self.user = user
+    }
+    
+    init(user: UserPayload<ExtraData>) {
+        self.user = user
     }
 }
 

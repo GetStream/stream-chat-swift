@@ -115,13 +115,6 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 extension CurrentUserDTO {
     /// Snapshots the current state of `CurrentUserDTO` and returns an immutable model object from it.
     func asModel<ExtraData: UserExtraData>() -> _CurrentChatUser<ExtraData> { .create(fromDTO: self) }
-    
-    /// Snapshots the current state of `CurrentUserDTO` and returns its representation for used in API calls.
-    func asRequestBody<ExtraData: UserExtraData>() -> CurrentUserUpdateRequestBody<ExtraData> {
-        // swiftlint:disable:previous unavailable_function
-        fatalError("Not implemented yet")
-        // TODO: CIS-235
-    }
 }
 
 extension _CurrentChatUser {

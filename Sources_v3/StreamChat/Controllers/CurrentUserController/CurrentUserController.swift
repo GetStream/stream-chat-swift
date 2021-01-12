@@ -371,11 +371,12 @@ public extension _CurrentChatUserController {
         
         client
             .apiClient
-            .request(endpoint: .updateCurrentUser(id: currentUserId, payload: payload)) { [weak client] in
+            .request(endpoint: .updateCurrentUser(payload: payload)) { [weak client] in
                 switch $0 {
                 case let .success(response):
                     client?.databaseContainer.write({ (session) in
-                        try session.saveUser(payload: response.user)
+                        let userDTO = try session.saveUser(payload: response.user)
+                        session.currentUser()?.user = userDTO
                     }) { completion?($0) }
                 case let .failure(error):
                     completion?(error)

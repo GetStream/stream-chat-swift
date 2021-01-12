@@ -6,7 +6,6 @@ import Foundation
 
 extension Endpoint {
     static func updateCurrentUser<ExtraData: UserExtraData>(
-        id: String,
         payload: CurrentUserUpdateRequestBody<ExtraData>
     ) -> Endpoint<CurrentUserUpdateResponse<ExtraData>> {
         .init(
