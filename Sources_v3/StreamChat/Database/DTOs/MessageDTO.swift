@@ -423,6 +423,8 @@ private extension _ChatMessage {
         attachments = dto.attachments
             .map { $0.asModel() }
             .sorted { $0.id.index < $1.id.index }
+        
+        quotedMessageId = dto.quotedMessage.map(\.id)
     }
 }
 
