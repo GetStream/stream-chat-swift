@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -12,6 +12,8 @@ extension MessagePayload {
         messageId: MessageId,
         parentId: MessageId? = nil,
         showReplyInChannel: Bool = false,
+        quotedMessageId: MessageId? = nil,
+        quotedMessage: MessagePayload<T>? = nil,
         attachments: [AttachmentPayload<T.Attachment>] = [
             .dummy(),
             .dummy(),
@@ -37,6 +39,8 @@ extension MessagePayload {
             args: .unique,
             parentId: parentId,
             showReplyInChannel: showReplyInChannel,
+            quotedMessageId: quotedMessageId,
+            quotedMessage: quotedMessage,
             mentionedUsers: [UserPayload.dummy(userId: .unique)],
             replyCount: .random(in: 0...1000),
             extraData: extraData,
