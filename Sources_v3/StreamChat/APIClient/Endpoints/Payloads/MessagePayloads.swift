@@ -40,7 +40,7 @@ extension MessagePayload {
 }
 
 /// An object describing the incoming message JSON payload.
-struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
+class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let id: String
     let type: MessageType
     let user: UserPayload<ExtraData.User>
@@ -52,6 +52,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let args: String?
     let parentId: String?
     let showReplyInChannel: Bool
+    let quotedMessage: MessagePayload<ExtraData>?
     let mentionedUsers: [UserPayload<ExtraData.User>]
     let threadParticipants: [UserPayload<ExtraData.User>]
     let replyCount: Int
@@ -67,7 +68,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     /// make an extra call do get channel details.
     let channel: ChannelDetailPayload<ExtraData>?
     
-    init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         type = try container.decode(MessageType.self, forKey: .type)
@@ -81,6 +82,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         args = try container.decodeIfPresent(String.self, forKey: .args)
         parentId = try container.decodeIfPresent(String.self, forKey: .parentId)
         showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
+        quotedMessage = try container.decodeIfPresent(MessagePayload<ExtraData>.self, forKey: .quotedMessage)
         mentionedUsers = try container.decode([UserPayload<ExtraData.User>].self, forKey: .mentionedUsers)
         // backend returns `thread_participants` only if message is a thread, we are fine with to have it on all messages
         threadParticipants = try container.decodeIfPresent([UserPayload<ExtraData.User>].self, forKey: .threadParticipants) ?? []
@@ -109,6 +111,8 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         args: String? = nil,
         parentId: String? = nil,
         showReplyInChannel: Bool,
+        quotedMessageId: String? = nil,
+        quotedMessage: MessagePayload<ExtraData>? = nil,
         mentionedUsers: [UserPayload<ExtraData.User>],
         threadParticipants: [UserPayload<ExtraData.User>] = [],
         replyCount: Int,
@@ -131,6 +135,7 @@ struct MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.args = args
         self.parentId = parentId
         self.showReplyInChannel = showReplyInChannel
+        self.quotedMessage = quotedMessage
         self.mentionedUsers = mentionedUsers
         self.threadParticipants = threadParticipants
         self.replyCount = replyCount
