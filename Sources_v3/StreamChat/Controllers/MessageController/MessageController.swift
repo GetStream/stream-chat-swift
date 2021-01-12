@@ -196,6 +196,7 @@ public extension _ChatMessageController {
     ///   - attachments: An array of the attachments for the message.
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
     ///   in the response thread.
+    ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -205,6 +206,7 @@ public extension _ChatMessageController {
 //        arguments: String? = nil,
         attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
         showReplyInChannel: Bool = false,
+        quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -216,6 +218,7 @@ public extension _ChatMessageController {
             parentMessageId: messageId,
             attachments: attachments,
             showReplyInChannel: showReplyInChannel,
+            quotedMessageId: quotedMessageId,
             extraData: extraData
         ) { result in
             self.callback {
