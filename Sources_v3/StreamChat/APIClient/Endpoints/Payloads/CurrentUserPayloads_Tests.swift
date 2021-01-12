@@ -31,15 +31,6 @@ class CurrentUserPayload_Tests: XCTestCase {
     }
     
     func test_currentUserJSON_isSerialized_withCustomExtraData() throws {
-        struct TestExtraData: UserExtraData {
-            static var defaultValue: TestExtraData = .init(secretNote: nil)
-            
-            let secretNote: String?
-            private enum CodingKeys: String, CodingKey {
-                case secretNote = "secret_note"
-            }
-        }
-        
         let payload = try JSONDecoder.default.decode(CurrentUserPayload<TestExtraData>.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
@@ -82,5 +73,35 @@ class CurrentUserUpdateRequestBody_Tests: XCTestCase {
         let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
         
         AssertJSONEqual(encodedJSON, expectedJSON)
+    }
+}
+
+class CurrentUserUpdateResponse_Tests: XCTestCase {
+    func test_currentUserUpdateResponseJSON_isSerialized() throws {
+        let currentUserUpdateResponseJSON = XCTestCase.mockData(fromFile: "CurrentUserUpdateResponse")
+        let payload = try JSONDecoder.default.decode(
+            CurrentUserUpdateResponse<TestExtraData>.self, from: currentUserUpdateResponseJSON
+        )
+        let user = payload.user
+        XCTAssertEqual(user.id, "luke_skywalker")
+        XCTAssertEqual(user.role, .user)
+        XCTAssertEqual(user.createdAt, "2020-12-07T11:36:47.059906Z".toDate())
+        XCTAssertEqual(user.updatedAt, "2021-01-11T10:36:24.488391Z".toDate())
+        XCTAssertEqual(user.lastActiveAt, "2021-01-08T19:16:54.380686Z".toDate())
+        XCTAssertEqual(user.isBanned, false)
+        XCTAssertEqual(user.isOnline, false)
+        XCTAssertEqual(user.name, "Luke")
+        let expectedImage = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
+        XCTAssertEqual(user.imageURL?.absoluteString, expectedImage)
+        XCTAssertEqual(user.extraData.secretNote, "Anaking is Vader!")
+    }
+}
+
+private struct TestExtraData: UserExtraData {
+    static var defaultValue: TestExtraData = .init(secretNote: nil)
+    
+    let secretNote: String?
+    private enum CodingKeys: String, CodingKey {
+        case secretNote = "secret_note"
     }
 }
