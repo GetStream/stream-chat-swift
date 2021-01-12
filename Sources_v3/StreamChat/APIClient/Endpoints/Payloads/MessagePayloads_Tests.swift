@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -71,6 +71,7 @@ class MessageRequestBody_Tests: XCTestCase {
             args: .unique,
             parentId: .unique,
             showReplyInChannel: true,
+            quotedMessageId: "quoted-message-id",
             extraData: .init(secretNote: "Anakin is Vader ;-)")
         )
         
@@ -81,6 +82,7 @@ class MessageRequestBody_Tests: XCTestCase {
             "parent_id": payload.parentId!,
             "show_in_channel": true,
             "args": payload.args!,
+            "quoted_message_id": "quoted-message-id",
             "secret_note": "Anakin is Vader ;-)",
             "command": payload.command!
         ]
