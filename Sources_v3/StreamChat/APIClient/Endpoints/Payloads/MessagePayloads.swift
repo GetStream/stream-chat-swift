@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -18,6 +18,8 @@ enum MessagePayloadsCodingKeys: String, CodingKey {
     case attachments
     case parentId = "parent_id"
     case showReplyInChannel = "show_in_channel"
+    case quotedMessageId = "quoted_message_id"
+    case quotedMessage = "quoted_message"
     case mentionedUsers = "mentioned_users"
     case threadParticipants = "thread_participants"
     case replyCount = "reply_count"
@@ -151,6 +153,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let args: String?
     let parentId: String?
     let showReplyInChannel: Bool
+    let quotedMessageId: String?
     let attachments: [AttachmentRequestBody<ExtraData.Attachment>]
     let extraData: ExtraData.Message
     
@@ -162,6 +165,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         args: String? = nil,
         parentId: String? = nil,
         showReplyInChannel: Bool = false,
+        quotedMessageId: String? = nil,
         attachments: [AttachmentRequestBody<ExtraData.Attachment>] = [],
         extraData: ExtraData.Message
     ) {
@@ -172,6 +176,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         self.args = args
         self.parentId = parentId
         self.showReplyInChannel = showReplyInChannel
+        self.quotedMessageId = quotedMessageId
         self.attachments = attachments
         self.extraData = extraData
     }
@@ -184,6 +189,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         try container.encodeIfPresent(args, forKey: .args)
         try container.encodeIfPresent(parentId, forKey: .parentId)
         try container.encodeIfPresent(showReplyInChannel, forKey: .showReplyInChannel)
+        try container.encodeIfPresent(quotedMessageId, forKey: .quotedMessageId)
         
         if !attachments.isEmpty {
             try container.encode(attachments, forKey: .attachments)
