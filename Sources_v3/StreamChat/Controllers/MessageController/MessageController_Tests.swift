@@ -618,6 +618,7 @@ final class MessageController_Tests: StressTestCase {
 //        let command: String = .unique
 //        let arguments: String = .unique
         let showReplyInChannel = true
+        let quotedMessageId: MessageId = .unique
         let extraData: DefaultExtraData.Message = .defaultValue
         let attachments: [ChatMessageAttachment.Seed] = [
             .dummy(),
@@ -633,6 +634,7 @@ final class MessageController_Tests: StressTestCase {
 //            arguments: arguments,
             attachments: attachments,
             showReplyInChannel: showReplyInChannel,
+            quotedMessageId: quotedMessageId,
             extraData: extraData
         ) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
@@ -657,6 +659,7 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(env.messageUpdater.createNewReply_showReplyInChannel, showReplyInChannel)
         XCTAssertEqual(env.messageUpdater.createNewReply_extraData, extraData)
         XCTAssertEqual(env.messageUpdater.createNewReply_attachments, attachments)
+        XCTAssertEqual(env.messageUpdater.createNewReply_quotedMessageId, quotedMessageId)
         
         // Simulate successful update
         env.messageUpdater.createNewReply_completion?(.success(newMessageId))
