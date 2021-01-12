@@ -142,6 +142,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 command: command,
                 arguments: arguments,
                 attachments: attachments,
+                quotedMessageId: nil,
                 extraData: extraData
             ) { result in
                 if let newMessageId = try? result.get() {
@@ -196,6 +197,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 text: .unique,
                 command: .unique,
                 arguments: .unique,
+                quotedMessageId: nil,
                 extraData: .defaultValue
             ) { completion($0) }
         }
