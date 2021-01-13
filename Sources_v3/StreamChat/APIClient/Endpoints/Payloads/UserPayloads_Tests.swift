@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -82,6 +82,64 @@ class UserRequestBody_Tests: XCTestCase {
         ]
         
         AssertJSONEqual(serialized, expected)
+    }
+}
+
+class UserUpdateRequestBody_Tests: XCTestCase {
+    func test_isSerialized() throws {
+        let payload: UserUpdateRequestBody<TestExtraData> = .init(
+            name: .unique,
+            imageURL: .unique(),
+            extraData: TestExtraData(secretNote: .unique)
+        )
+        
+        let expected: [String: Any] = [
+            "name": payload.name!,
+            "image": payload.imageURL!.absoluteString,
+            "secret_note": payload.extraData!.secretNote!
+        ]
+        
+        let encodedJSON = try JSONEncoder.default.encode(payload)
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
+        
+        AssertJSONEqual(encodedJSON, expectedJSON)
+    }
+}
+
+class UserUpdateResponse_Tests: XCTestCase {
+    func test_currentUserUpdateResponseJSON_isSerialized() throws {
+        let currentUserUpdateResponseJSON = XCTestCase.mockData(fromFile: "UserUpdateResponse")
+        let payload = try JSONDecoder.default.decode(
+            UserUpdateResponse<TestExtraData>.self, from: currentUserUpdateResponseJSON
+        )
+        let user = payload.user
+        XCTAssertEqual(user.id, "luke_skywalker")
+        XCTAssertEqual(user.role, .user)
+        XCTAssertEqual(user.createdAt, "2020-12-07T11:36:47.059906Z".toDate())
+        XCTAssertEqual(user.updatedAt, "2021-01-11T10:36:24.488391Z".toDate())
+        XCTAssertEqual(user.lastActiveAt, "2021-01-08T19:16:54.380686Z".toDate())
+        XCTAssertEqual(user.isBanned, false)
+        XCTAssertEqual(user.isOnline, false)
+        XCTAssertEqual(user.name, "Luke")
+        let expectedImage = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
+        XCTAssertEqual(user.imageURL?.absoluteString, expectedImage)
+        XCTAssertEqual(user.extraData.secretNote, "Anaking is Vader!")
+    }
+    
+    func test_currentUserUpdateResponseJSON_whenMissingUser_failsSerialization() {
+        let currentUserUpdateResponseJSON = XCTestCase.mockData(fromFile: "UserUpdateResponse+MissingUser")
+        XCTAssertThrowsError(try JSONDecoder.default.decode(
+            UserUpdateResponse<TestExtraData>.self, from: currentUserUpdateResponseJSON
+        ))
+    }
+}
+
+private struct TestExtraData: UserExtraData {
+    static var defaultValue: TestExtraData = .init(secretNote: nil)
+    
+    let secretNote: String?
+    private enum CodingKeys: String, CodingKey {
+        case secretNote = "secret_note"
     }
 }
 
