@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### 🐞 Fixed
+- ComposerView layout overlap when both image and file uploaded [#738](https://github.com/GetStream/stream-chat-swift/issues/738)
 - Message replies (thread) is unreachable when message itself is deleted [#734](https://github.com/GetStream/stream-chat-swift/issues/734)
 - Photo library permission was asked unnecessarily. 
   StreamChat v2.x uses `UIImagePickerController` which handles the photo library access internally, so the SDK doesn't ever need full photo library access. 
