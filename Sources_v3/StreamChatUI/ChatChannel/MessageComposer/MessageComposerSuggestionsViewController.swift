@@ -15,9 +15,20 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
     UICollectionViewDelegate {
     // MARK: - Property
 
-    public var dataSource: UICollectionViewDataSource?
+    public var dataSource: UICollectionViewDataSource? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
 
     private var frameObserver: NSKeyValueObservation?
+
+    /// Height for suggestion cell, this value should never be 0
+    /// otherwise it causes loop for height of this controller and as a result this controller height will be 0 as well.
+    /// Note: This value can be 1, it's just for purpose of 1 cell being visible.
+    private let defaultRowHeight: CGFloat = 44
+
+    open var numberOfVisibleRows: CGFloat = 4
 
     /// View to which the suggestions should be pinned.
     /// This view should be assigned as soon as instance of this
@@ -72,16 +83,23 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
         collectionViewHeightObserver = collectionView.observe(
             \.contentSize,
             options: [.new],
-            changeHandler: { [weak self] _, change in
+            changeHandler: { [weak self] collectionView, change in
                 DispatchQueue.main.async {
-                    guard let newSize = change.newValue, newSize.height < 230 else {
-                        // TODO: Compute size better according to 4 cells.
-                        self?.view.frame.size.height = 230
-                        self?.updateViewFrame()
+                    guard let self = self else { return }
+
+                    // NOTE: The defaultRowHeight height value will be used only once to set visibleCells
+                    // once again, not looping it to 0 value so this controller can resize again.
+                    let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
+
+                    guard let newSize = change.newValue,
+                        newSize.height < cellHeight * self.numberOfVisibleRows
+                    else {
+                        self.view.frame.size.height = cellHeight * self.numberOfVisibleRows
+                        self.updateViewFrame()
                         return
                     }
-                    self?.view.frame.size.height = newSize.height
-                    self?.updateViewFrame()
+                    self.view.frame.size.height = newSize.height
+                    self.updateViewFrame()
                 }
             }
         )
