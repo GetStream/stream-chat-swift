@@ -244,11 +244,18 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_setAnonymousUser() {
         let oldUserId = client.currentUserId
-        let oldWSConnectEndpoint = client.webSocketClient!.connectEndpoint
 
         // Set up a new anonymous user
         var setUserCompletionCalled = false
         controller.setAnonymousUser(completion: { _ in setUserCompletionCalled = true })
+
+        let expectedWebSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
+            userId: currentUserId,
+            name: nil,
+            imageURL: nil,
+            role: .anonymous,
+            extraData: nil as DefaultExtraData.User?
+        )
 
         AssertAsync {
             // New user id is set
@@ -258,7 +265,7 @@ final class CurrentUserController_Tests: StressTestCase {
             Assert.willBeTrue(self.client.mockDatabaseContainer.flush_called == true)
 
             // WebSocketClient connect endpoint is updated
-            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(self.client.webSocketClient!.connectEndpoint))
+            Assert.willBeEqual(AnyEndpoint(expectedWebSocketEndpoint), AnyEndpoint(self.client.webSocketClient!.connectEndpoint!))
 
             // New user id is used in `TypingStartCleanupMiddleware`
             Assert.willBeTrue(
@@ -318,19 +325,28 @@ final class CurrentUserController_Tests: StressTestCase {
     }
 
     func test_setUser() {
-        let oldWSConnectEndpoint = client.webSocketClient!.connectEndpoint
-
         let newUserId: UserId = .unique
         let newUserToken: Token = .unique
+        let name: String = .unique
+        let imageURL: URL = .unique()
+        let userExtraData: DefaultExtraData.User = .defaultValue
 
         // Set up a new user
         var setUserCompletionCalled = false
         controller.setUser(
             userId: newUserId,
-            name: nil,
-            imageURL: nil,
+            name: name,
+            imageURL: imageURL,
+            userExtraData: userExtraData,
             token: newUserToken,
             completion: { _ in setUserCompletionCalled = true }
+        )
+
+        let expectedWebSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
+            userId: newUserId,
+            name: name,
+            imageURL: imageURL,
+            extraData: userExtraData
         )
 
         AssertAsync {
@@ -341,7 +357,7 @@ final class CurrentUserController_Tests: StressTestCase {
             Assert.willBeTrue(self.client.mockDatabaseContainer.flush_called == true)
 
             // WebSocketClient connect endpoint is updated
-            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(self.client.webSocketClient!.connectEndpoint))
+            Assert.willBeEqual(AnyEndpoint(expectedWebSocketEndpoint), AnyEndpoint(self.client.webSocketClient!.connectEndpoint!))
 
             // New user id is used in `TypingStartCleanupMiddleware`
             Assert.willBeTrue(
@@ -435,8 +451,6 @@ final class CurrentUserController_Tests: StressTestCase {
     }
 
     func test_setGuestUser() {
-        let oldWSConnectEndpoint = client.webSocketClient!.connectEndpoint
-
         let newUserToken: Token = .unique
         let newUserExtraData = DefaultExtraData.User.defaultValue
         let newUser = GuestUserTokenRequestPayload(userId: .unique, name: .unique, imageURL: .unique(), extraData: newUserExtraData)
@@ -491,12 +505,20 @@ final class CurrentUserController_Tests: StressTestCase {
         )
         client.mockAPIClient.test_simulateResponse(.success(payload))
 
+        let expectedWebSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
+            userId: newUser.userId,
+            name: newUser.name,
+            imageURL: newUser.imageURL,
+            role: .guest,
+            extraData: newUser.extraData
+        )
+
         AssertAsync {
             // The token from `guest` endpoint payload is set
             Assert.willBeEqual(self.client.provideToken(), newUserToken)
 
             // WebSocketClient connect endpoint is updated
-            Assert.willBeTrue(AnyEndpoint(oldWSConnectEndpoint) != AnyEndpoint(self.client.webSocketClient!.connectEndpoint))
+            Assert.willBeEqual(AnyEndpoint(expectedWebSocketEndpoint), AnyEndpoint(self.client.webSocketClient!.connectEndpoint!))
 
             // WebSocketClient connect is called
             Assert.willBeEqual(self.client.mockWebSocketClient.connect_calledCounter, 1)

@@ -124,20 +124,11 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     /// The `WebSocketClient` instance `Client` uses to communicate with Stream WS servers.
     lazy var webSocketClient: WebSocketClient? = {
-        // Create a connection request
-        let webSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
-            userId: self.currentUserId,
-            name: nil,
-            imageURL: nil,
-            extraData: nil as ExtraData.User?
-        )
-        
         var encoder = environment.requestEncoderBuilder(config.baseURL.webSocketBaseURL, config.apiKey)
         encoder.connectionDetailsProviderDelegate = self
                 
         // Create a WebSocketClient.
-        let webSocketClient = environment.webSocketClientBuilder(
-            webSocketEndpoint,
+        let webSocketClient = environment.webSocketClientBuilder?(
             urlSessionConfiguration,
             encoder,
             EventDecoder<ExtraData>(),
@@ -250,7 +241,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         } else {
             workerBuilders = []
             eventWorkerBuilders = []
-            environment.webSocketClientBuilder = { _, _, _, _, _, _ in nil }
+            environment.webSocketClientBuilder = nil
         }
         
         self.init(
@@ -330,21 +321,19 @@ extension _ChatClient {
             _ requestDecoder: RequestDecoder
         ) -> APIClient = { APIClient(sessionConfiguration: $0, requestEncoder: $1, requestDecoder: $2) }
         
-        var webSocketClientBuilder: (
-            _ connectEndpoint: Endpoint<EmptyResponse>,
+        var webSocketClientBuilder: ((
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
             _ eventDecoder: AnyEventDecoder,
             _ notificationCenter: EventNotificationCenter,
             _ internetConnection: InternetConnection
-        ) -> WebSocketClient? = {
+        ) -> WebSocketClient)? = {
             WebSocketClient(
-                connectEndpoint: $0,
-                sessionConfiguration: $1,
-                requestEncoder: $2,
-                eventDecoder: $3,
-                eventNotificationCenter: $4,
-                internetConnection: $5
+                sessionConfiguration: $0,
+                requestEncoder: $1,
+                eventDecoder: $2,
+                eventNotificationCenter: $3,
+                internetConnection: $4
             )
         }
         
