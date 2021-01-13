@@ -68,11 +68,10 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// Hides the channel from queryChannels for the user until a message is added.
     /// - Parameters:
     ///   - cid: The channel identifier.
-    ///   - userId: Current user Id.
     ///   - clearHistory: Flag to remove channel history.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func hideChannel(cid: ChannelId, userId: UserId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .hideChannel(cid: cid, userId: userId, clearHistory: clearHistory)) {
+    func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) {
             completion?($0.error)
         }
     }
@@ -80,10 +79,9 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// Removes hidden status for the specific channel.
     /// - Parameters:
     ///   - channel: The channel you want to show.
-    ///   - userId: Current user Id.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func showChannel(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .showChannel(cid: cid, userId: userId)) {
+    func showChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .showChannel(cid: cid)) {
             completion?($0.error)
         }
     }

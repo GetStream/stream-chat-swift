@@ -1003,7 +1003,6 @@ class ChannelController_Tests: StressTestCase {
         
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
-        XCTAssertEqual(env.channelUpdater?.hideChannel_userId, client.currentUserId)
         XCTAssertEqual(env.channelUpdater?.hideChannel_cid, channelId)
         XCTAssertEqual(env.channelUpdater?.hideChannel_clearHistory, false)
         
@@ -1084,8 +1083,7 @@ class ChannelController_Tests: StressTestCase {
         // Completion shouldn't be called yet
         XCTAssertFalse(completionCalled)
         XCTAssertEqual(env.channelUpdater?.showChannel_cid, channelId)
-        XCTAssertNotNil(env.channelUpdater?.showChannel_userId)
-        
+
         // Simulate successful update
         env.channelUpdater?.showChannel_completion?(nil)
         // Release reference of completion so we can deallocate stuff

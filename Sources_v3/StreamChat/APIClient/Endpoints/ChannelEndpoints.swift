@@ -57,23 +57,23 @@ extension Endpoint {
         )
     }
     
-    static func hideChannel(cid: ChannelId, userId: UserId, clearHistory: Bool) -> Endpoint<EmptyResponse> {
+    static func hideChannel(cid: ChannelId, clearHistory: Bool) -> Endpoint<EmptyResponse> {
         .init(
             path: "channels/\(cid.type)/\(cid.id)/hide",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: HideChannelRequest(userId: userId, clearHistory: clearHistory)
+            body: ["clear_history": clearHistory]
         )
     }
     
-    static func showChannel(cid: ChannelId, userId: UserId) -> Endpoint<EmptyResponse> {
+    static func showChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
             path: "channels/\(cid.type)/\(cid.id)/show",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["userId": userId]
+            body: nil
         )
     }
     
