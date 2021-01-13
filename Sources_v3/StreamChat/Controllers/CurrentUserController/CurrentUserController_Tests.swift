@@ -565,6 +565,189 @@ final class CurrentUserController_Tests: StressTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
     
+    // MARK: - Updating current user
+    
+    func test_updateUser_shouldMakeAPICall() throws {
+        // Simulate user already set
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Expected updated user data
+        let expectedName = String.unique
+        let expectedImageUrl = URL.unique()
+        
+        // Call update user
+        controller.updateUserData(
+            name: expectedName,
+            imageURL: expectedImageUrl,
+            userExtraData: nil,
+            completion: { error in
+                XCTAssertNil(error)
+            }
+        )
+        
+        // Simulate API response
+        let currentUserUpdateResponse = UserUpdateResponse(
+            user: UserPayload.dummy(
+                userId: userPayload.id,
+                name: expectedName,
+                imageUrl: expectedImageUrl
+            )
+        )
+        client.mockAPIClient.test_simulateResponse(.success(currentUserUpdateResponse))
+        
+        // Assert that request is made to the correct endpoint
+        let expectedEndpoint: Endpoint<UserUpdateResponse<DefaultExtraData.User>> = .updateUser(
+            id: userPayload.id,
+            payload: .init(name: expectedName, imageURL: expectedImageUrl, extraData: nil)
+        )
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+    
+    func test_updateUser_shouldUpdateDB() throws {
+        // Simulate user already set
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Expected updated user data
+        let expectedName = String.unique
+        let expectedImageUrl = URL.unique()
+        
+        // Call update user
+        var completionCalled = false
+        controller.updateUserData(
+            name: expectedName,
+            imageURL: expectedImageUrl,
+            userExtraData: nil,
+            completion: { _ in
+                completionCalled = true
+            }
+        )
+        
+        // Simulate API response
+        let currentUserUpdateResponse = UserUpdateResponse(
+            user: UserPayload.dummy(
+                userId: userPayload.id,
+                name: expectedName,
+                imageUrl: expectedImageUrl
+            )
+        )
+        client.mockAPIClient.test_simulateResponse(.success(currentUserUpdateResponse))
+        
+        var currentUser: CurrentChatUser? {
+            client.databaseContainer.viewContext.currentUser()?.asModel()
+        }
+        
+        // Check the completion is called and the current user model was updated
+        AssertAsync {
+            Assert.willBeTrue(completionCalled)
+            Assert.willBeEqual(currentUser?.name, expectedName)
+            Assert.willBeEqual(currentUser?.imageURL, expectedImageUrl)
+        }
+    }
+    
+    func test_updateUser_whenAPICallError_shouldCompleteWithError() throws {
+        // Simulate user already set
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Call update user
+        var completionError: Error?
+        controller.updateUserData(
+            name: .unique,
+            imageURL: nil,
+            userExtraData: nil,
+            completion: { error in
+                completionError = error
+            }
+        )
+        
+        // Simulate API error
+        let error = TestError()
+        client
+            .mockAPIClient
+            .test_simulateResponse(
+                Result<UserUpdateResponse<DefaultExtraData.User>, Error>.failure(error)
+            )
+        client
+            .mockAPIClient
+            .cleanUp()
+        
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionError as? TestError, error)
+    }
+    
+    func test_updateUser_whenCurrentUserDoesNotExist_shouldError() throws {
+        let error = try await {
+            controller.updateUserData(
+                name: .unique,
+                imageURL: nil,
+                userExtraData: nil,
+                completion: $0
+            )
+        }
+        
+        XCTAssert(error is ClientError.CurrentUserDoesNotExist)
+    }
+    
+    func test_updateUser_whenNoDataProvided_shouldNotMakeRequest() throws {
+        // Simulate user already set
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        let error = try await {
+            controller.updateUserData(
+                name: nil,
+                imageURL: nil,
+                userExtraData: nil,
+                completion: $0
+            )
+        }
+        
+        XCTAssertNil(error)
+        XCTAssertNil(client.mockAPIClient.request_endpoint)
+    }
+    
+    func test_updateUser_whenDBFails_shouldCompleteWithDatabaseError() throws {
+        // Simulate user already set
+        let userPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+        
+        // Simulate the DB failing with `TestError`
+        let testError = TestError()
+        client.mockDatabaseContainer.write_errorResponse = testError
+        
+        // Call update user
+        var completionError: Error?
+        controller.updateUserData(
+            name: .unique,
+            imageURL: nil,
+            userExtraData: nil,
+            completion: { error in
+                completionError = error
+            }
+        )
+        
+        // Simulate API response
+        let currentUserUpdateResponse = UserUpdateResponse(
+            user: userPayload
+        )
+        client.mockAPIClient.test_simulateResponse(.success(currentUserUpdateResponse))
+        
+        // Check returned error
+        AssertAsync.willBeEqual(completionError as? TestError, testError)
+    }
+    
     // MARK: - Device endpoints
     
     // MARK: addDevice
