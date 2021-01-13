@@ -570,9 +570,6 @@ extension ChatClient_Tests {
         XCTAssertEqual(
             headers["X-Stream-Client"],
             "stream-chat-swift-client-\(SystemEnvironment.version)"
-                + "|\(SystemEnvironment.deviceModelName)"
-                + "|\(SystemEnvironment.systemName)"
-                + "|\(SystemEnvironment.name)"
         )
     }
 }

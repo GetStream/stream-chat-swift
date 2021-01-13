@@ -27,11 +27,7 @@ extension Client {
     }
     
     func authHeaders(token: Token) -> [String: String] {
-        var headers = [
-            "X-Stream-Client": "stream-chat-swift-client-\(Environment.version)"
-                + "|\(Environment.deviceModelName)" // Device
-                + "|\(Environment.systemName)" // OS version
-                + "|\(Environment.name)"] // Environment name: development X productio
+        var headers = ["X-Stream-Client": "stream-chat-swift-client-\(Environment.version)"]
         
         if token.isBlank || user.isAnonymous {
             headers["Stream-Auth-Type"] = "anonymous"
