@@ -196,18 +196,11 @@ public extension ComposerView {
             }
         }
         
-        // Images Collection View.
-        addSubview(imagesCollectionView)
+        let attachmentsStackView = UIStackView(arrangedSubviews: [imagesCollectionView, filesStackView])
+        attachmentsStackView.axis = .vertical
+        addSubview(attachmentsStackView)
         
-        imagesCollectionView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview()
-            make.top.equalToSuperview()
-        }
-        
-        // Files Stack View.
-        addSubview(filesStackView)
-        
-        filesStackView.snp.makeConstraints { make in
+        attachmentsStackView.snp.makeConstraints { make in
             make.left.right.equalToSuperview()
             make.top.equalToSuperview()
         }
