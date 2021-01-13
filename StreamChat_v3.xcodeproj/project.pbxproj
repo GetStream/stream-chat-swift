@@ -1936,12 +1936,13 @@
 				798779F62498E47700015F8B /* Member.json */,
 				790A4C50252E0957001F4A23 /* Devices.json */,
 				798779F72498E47700015F8B /* Channel.json */,
+				798779F92498E47700015F8B /* CurrentUser.json */,
 				224116B1258BACF90034184D /* Message.json */,
 				DA653BB9253F47EB00B448A0 /* Messages.json */,
 				798779F82498E47700015F8B /* OtherUser.json */,
-				798779F92498E47700015F8B /* CurrentUser.json */,
 				798779FA2498E47700015F8B /* ChannelsQuery.json */,
 				DA8407252525E90D005A0F62 /* UsersQuery.json */,
+				ADCDDCC325AE127C004E15FB /* UserUpdate */,
 				88EA9B0B254726F6007EE76B /* MessageReaction */,
 				DA4971652549C46400AC68C2 /* Attachment */,
 				88F896F52541AC0900DE517D /* FlagMessage */,
@@ -2585,6 +2586,15 @@
 			path = "Internet Connection";
 			sourceTree = "<group>";
 		};
+		ADCDDCC325AE127C004E15FB /* UserUpdate */ = {
+			isa = PBXGroup;
+			children = (
+				ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */,
+				AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */,
+			);
+			path = UserUpdate;
+			sourceTree = "<group>";
+		};
 		DA4971652549C46400AC68C2 /* Attachment */ = {
 			isa = PBXGroup;
 			children = (
@@ -3119,6 +3129,7 @@
 				8A0C3BC624C0AEDB00CAFD19 /* UserStopWatching.json in Resources */,
 				8836FFD3254082FF009FDF73 /* FlagUserPayload+CustomExtraData.json in Resources */,
 				8A0D64A224E57A260017A3C0 /* GuestUser+DefaultExtraData.json in Resources */,
+				ADCDDCC525AE1293004E15FB /* UserUpdateResponse.json in Resources */,
 				798779FB2498E47700015F8B /* Member.json in Resources */,
 				8A0CC9F824C608C500705CF9 /* ReactionDeleted.json in Resources */,
 				8AC9CBE124C74DD0006E236C /* NotificationInviteAccepted.json in Resources */,
@@ -3158,6 +3169,7 @@
 				8A0C3BD224C1CD1C00CAFD19 /* ChannelHiddenCleared.json in Resources */,
 				8AC9CBDD24C74DD0006E236C /* NotificationMessageNew.json in Resources */,
 				DA49715C2549C45E00AC68C2 /* AttachmentPayload+NoExtraData.json in Resources */,
+				AD7D633325AF577E0051219B /* UserUpdateResponse+MissingUser.json in Resources */,
 				8AC9CBE224C74DD0006E236C /* NotificationInviteRejected.json in Resources */,
 				8A0CC9EC24C602B600705CF9 /* MemberAdded.json in Resources */,
 				DA8407262525E90D005A0F62 /* UsersQuery.json in Resources */,
