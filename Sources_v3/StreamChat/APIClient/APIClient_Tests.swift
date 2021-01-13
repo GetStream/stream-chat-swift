@@ -428,20 +428,6 @@ struct AnyEndpoint: Equatable {
     }
 }
 
-private class TestWebSocketClient: WebSocketClient {
-    init() {
-        super.init(
-            connectEndpoint: .init(path: "", method: .get, queryItems: nil, requiresConnectionId: false, body: nil),
-            sessionConfiguration: .default,
-            requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
-            eventDecoder: EventDecoder<DefaultExtraData>(),
-            eventNotificationCenter: EventNotificationCenter(),
-            internetConnection: InternetConnection(),
-            reconnectionStrategy: DefaultReconnectionStrategy()
-        )
-    }
-}
-
 extension URLSessionConfiguration {
     // Because on < iOS13 the configuration class gets copied and we can't simply compare it's the same instance, we need to
     // provide custom implementation for comparing. The default `Equatable` implementation of `URLSessionConfiguration`
