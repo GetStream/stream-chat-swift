@@ -68,19 +68,32 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     @objc func keyboardWillChangeFrame(notification: NSNotification) {
         guard
             let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+            let oldFrame = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
             let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
             let curve = notification.userInfo![UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
         else { return }
 
         let localFrame = view.convert(frame, from: nil)
+        let localOldFrame = view.convert(oldFrame, from: nil)
+
         // message composer follows keyboard
         messageComposerBottomConstraint?.constant = -(view.bounds.height - localFrame.minY)
 
         // calculate new contentOffset for message list, so bottom message still visible when keyboard appears
-        let collectionDelta = view.bounds.height - view.safeAreaInsets.bottom - localFrame.minY
+        var keyboardTop = localFrame.minY
+        if keyboardTop == view.bounds.height {
+            keyboardTop -= view.safeAreaInsets.bottom
+        }
+
+        var oldKeyboardTop = localOldFrame.minY
+        if oldKeyboardTop == view.bounds.height {
+            oldKeyboardTop -= view.safeAreaInsets.bottom
+        }
+
+        let keyboardDelta = oldKeyboardTop - keyboardTop
         let newContentOffset = CGPoint(
             x: 0,
-            y: messageList.collectionView.contentOffset.y + collectionDelta
+            y: messageList.collectionView.contentOffset.y + keyboardDelta
         )
 
         // changing contentOffset will cancel any scrolling in collectionView, bad UX
