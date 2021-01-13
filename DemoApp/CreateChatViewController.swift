@@ -59,6 +59,7 @@ class CreateChatViewController: UIViewController {
     @IBOutlet var alertText: UILabel!
     
     var composerView: DemoComposerVC!
+    var messageComposerBottomConstraint: NSLayoutConstraint?
     
     var searchController: ChatUserSearchController!
     
@@ -108,7 +109,8 @@ class CreateChatViewController: UIViewController {
             .isActive = true
         composerView.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
             .isActive = true
-        view.bottomAnchor.constraint(equalTo: composerView.view.bottomAnchor).isActive = true
+        messageComposerBottomConstraint = composerView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        messageComposerBottomConstraint?.isActive = true
         
         // Empty initial search to get all users
         searchController.search(term: nil) { error in
@@ -118,6 +120,13 @@ class CreateChatViewController: UIViewController {
         }
         infoLabel.text = "On the platform"
         update(for: .loading)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(keyboardWillChangeFrame),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
     }
     
     func update(for state: State) {
@@ -159,6 +168,27 @@ class CreateChatViewController: UIViewController {
             alertImage.image = nil
             alertText.text = "No chats here yet..."
         }
+    }
+    
+    @objc func keyboardWillChangeFrame(notification: NSNotification) {
+        guard
+            let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+            let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
+            let curve = notification.userInfo![UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
+        else { return }
+        
+        let localFrame = view.convert(frame, from: nil)
+        // message composer follows keyboard
+        messageComposerBottomConstraint?.constant = -(view.bounds.height - localFrame.minY)
+        
+        UIView.animate(
+            withDuration: duration,
+            delay: 0.0,
+            options: UIView.AnimationOptions(rawValue: curve),
+            animations: { [weak self] in
+                self?.view.layoutIfNeeded()
+            }
+        )
     }
     
     @IBAction func searchFieldDidChange(_ sender: UISearchTextField) {
