@@ -305,9 +305,29 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     
     // MARK: Suggestions
 
-    public func showSuggestionsViewController(for kind: SuggestionKind, onSelectItem: @escaping ((Int) -> Void)) {
-        guard let parent = parent else { return }
+    public func showOrUpdateSuggestionsViewController(for kind: SuggestionKind, onSelectItem: @escaping ((Int) -> Void)) {
+        guard !suggestionsViewController.isPresented else {
+            updateSuggestionsDataIfNeededSource(for: kind, onSelectItem: onSelectItem)
+            return
+        }
 
+        guard let parent = parent else {
+            log.assert(self.parent == nil, "Couldn't find parent on MessageComposerViewController")
+            return
+        }
+
+        updateSuggestionsDataIfNeededSource(for: kind, onSelectItem: onSelectItem)
+        
+        parent.addChildViewController(suggestionsViewController, targetView: parent.view)
+        suggestionsViewController.bottomAnchorView = composerView
+    }
+
+    public func dismissSuggestionsViewController() {
+        suggestionsViewController.removeFromParent()
+        suggestionsViewController.view.removeFromSuperview()
+    }
+
+    public func updateSuggestionsDataIfNeededSource(for kind: SuggestionKind, onSelectItem: @escaping ((Int) -> Void)) {
         let dataSource: UICollectionViewDataSource
         switch kind {
         case let .command(hints):
@@ -323,15 +343,6 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         }
         suggestionsViewController.didSelectItemAt = onSelectItem
         suggestionsViewController.dataSource = dataSource
-        suggestionsViewController.updateContentIfNeeded()
-
-        parent.addChildViewController(suggestionsViewController, targetView: parent.view)
-        suggestionsViewController.bottomAnchorView = composerView
-    }
-
-    public func dismissSuggestionsViewController() {
-        suggestionsViewController.removeFromParent()
-        suggestionsViewController.view.removeFromSuperview()
     }
 
     // MARK: Attachments
@@ -436,7 +447,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             commandHints = commands.filter { $0.name.range(of: typedCommand, options: .caseInsensitive) != nil }
         }
 
-        showSuggestionsViewController(
+        showOrUpdateSuggestionsViewController(
             for: .command(hints: commandHints),
             onSelectItem: { [weak self] commandIndex in
                 self?.state = .slashCommand(commandHints[commandIndex])
@@ -446,7 +457,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
 
     private func promptMentions(for text: String?) {
         userSuggestionSearchController.search(term: text)
-        showSuggestionsViewController(
+        showOrUpdateSuggestionsViewController(
             for: .mention,
             onSelectItem: { [weak self, textView = self.textView] userIndex in
                 guard let self = self else { return }

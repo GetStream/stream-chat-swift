@@ -8,6 +8,8 @@ import UIKit
 open class MessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: Properties
 
+    open var commandImageHeight: CGFloat = 24
+
     open var command: Command? {
         didSet {
             updateContentIfNeeded()
@@ -22,7 +24,7 @@ open class MessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UICo
     // MARK: - Appearance
 
     override public func defaultAppearance() {
-        backgroundColor = uiConfig.colorPalette.generalBackground
+        backgroundColor = .clear
 
         commandNameLabel.font = UIFont.preferredFont(forTextStyle: .footnote).bold
 
