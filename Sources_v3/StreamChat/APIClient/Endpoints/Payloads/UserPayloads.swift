@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -22,6 +22,8 @@ enum UserPayloadsCodingKeys: String, CodingKey {
     case isAnonymous = "anon"
     case devices
 }
+
+// MARK: - GET users
 
 /// An object describing the incoming user JSON payload.
 class UserPayload<ExtraData: UserExtraData>: Decodable {
@@ -105,5 +107,51 @@ class UserRequestBody<ExtraData: UserExtraData>: Encodable {
         try container.encodeIfPresent(name, forKey: .name)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try extraData.encode(to: encoder)
+    }
+}
+
+// MARK: - PATCH users
+
+/// An object describing the incoming user JSON payload.
+struct UserUpdateResponse<ExtraData: UserExtraData>: Decodable {
+    let user: UserPayload<ExtraData>
+    
+    enum CodingKeys: String, CodingKey {
+        case users
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let users = try container.decode([String: UserPayload<ExtraData>].self, forKey: .users)
+        guard let user = users.first?.value else {
+            throw DecodingError.dataCorrupted(
+                .init(codingPath: [CodingKeys.users], debugDescription: "Missing updated user.")
+            )
+        }
+        self.user = user
+    }
+    
+    init(user: UserPayload<ExtraData>) {
+        self.user = user
+    }
+}
+
+/// An object describing the outgoing user JSON payload.
+struct UserUpdateRequestBody<ExtraData: UserExtraData>: Encodable {
+    let name: String?
+    let imageURL: URL?
+    let extraData: ExtraData?
+    
+    init(name: String? = nil, imageURL: URL? = nil, extraData: ExtraData? = nil) {
+        self.name = name
+        self.imageURL = imageURL
+        self.extraData = extraData
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: UserPayloadsCodingKeys.self)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
+        try extraData?.encode(to: encoder)
     }
 }
