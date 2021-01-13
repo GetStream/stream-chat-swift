@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🐞 Fixed
 - Message replies (thread) is unreachable when message itself is deleted [#734](https://github.com/GetStream/stream-chat-swift/issues/734)
+- Photo library permission was asked unnecessarily. 
+  StreamChat v2.x uses `UIImagePickerController` which handles the photo library access internally, so the SDK doesn't ever need full photo library access. 
+  This was introduced with [#199](https://github.com/GetStream/stream-chat-swift/issues/199) incorrectly. 
+  Further reading can be found [here](https://stackoverflow.com/questions/46404628/ios11-photo-library-access-is-possible-even-if-settings-are-set-to-never) [#735](https://github.com/GetStream/stream-chat-swift/issues/735)
 
 # [2.6.2](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.2)
 _December 31, 2020_
