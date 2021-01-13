@@ -104,7 +104,7 @@ open class ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UICon
         imagePreview.widthAnchor.pin(equalTo: imagePreview.heightAnchor).isActive = true
 
         outlineStack.pin(anchors: [.leading, .bottom, .trailing], to: layoutMarginsGuide)
-        outlineStack.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).with(priority: .required - 1).isActive = true
+        outlineStack.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).almostRequired.isActive = true
 
         authorBackground.leadingAnchor.pin(equalTo: leadingAnchor).isActive = true
         authorBackground.bottomAnchor.pin(equalTo: authorLabel.bottomAnchor).isActive = true
