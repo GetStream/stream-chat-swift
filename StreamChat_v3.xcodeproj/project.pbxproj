@@ -503,6 +503,10 @@
 		8AE335A924FCF999002B6677 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A624FCF999002B6677 /* InternetConnection.swift */; };
 		8AE335AA24FCF99E002B6677 /* InternetConnection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A424FCF999002B6677 /* InternetConnection_Tests.swift */; };
 		8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */; };
+		AD7D633325AF577E0051219B /* UserUpdateResponse+MissingUser.json in Resources */ = {isa = PBXBuildFile; fileRef = AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */; };
+		ADCDDCC525AE1293004E15FB /* UserUpdateResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */; };
+		ADCDDD0025AE2784004E15FB /* UserUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */; };
+		ADCDDD0825AE2F4A004E15FB /* InputViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */; };
 		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
 		DA49712625476A3600AC68C2 /* AttachmentRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4971202547699E00AC68C2 /* AttachmentRequestBody.swift */; };
@@ -1244,6 +1248,10 @@
 		8AE335A524FCF999002B6677 /* Reachability_Vendor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability_Vendor.swift; sourceTree = "<group>"; };
 		8AE335A624FCF999002B6677 /* InternetConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternetConnection.swift; sourceTree = "<group>"; };
 		8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPongEmojiFormatter.swift; sourceTree = "<group>"; };
+		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
+		ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserUpdateResponse.json; sourceTree = "<group>"; };
+		ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUpdateViewController.swift; sourceTree = "<group>"; };
+		ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputViewController.swift; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA4971202547699E00AC68C2 /* AttachmentRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentRequestBody.swift; sourceTree = "<group>"; };
@@ -2228,6 +2236,8 @@
 			children = (
 				804B127624ED59FE002B00EA /* Settings.storyboard */,
 				804B127424ED596C002B00EA /* SettingsViewController.swift */,
+				ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */,
+				ADCDDD0725AE2F4A004E15FB /* InputViewController.swift */,
 				8008C18524EDBCF500F5BCCE /* LogsViewController.swift */,
 				8040BC5F24FDD58700DE369F /* SplitViewController.swift */,
 				DAD8A89D2507E1A900D05282 /* CombineSimpleChat */,
@@ -3407,6 +3417,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ADCDDD0825AE2F4A004E15FB /* InputViewController.swift in Sources */,
 				804B127124E712F1002B00EA /* SimpleChannelsViewController.swift in Sources */,
 				DAD8A8A42507E1C400D05282 /* CombineSimpleChannelsViewController.swift in Sources */,
 				80437AA3252E519E000920A3 /* Configuration.swift in Sources */,
@@ -3433,6 +3444,7 @@
 				80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */,
 				88BEBCE725370BC900D9E8B7 /* SimpleChannelMembersViewController.swift in Sources */,
 				8008C19224F44DF900F5BCCE /* UIView+InstantiateFromNib.swift in Sources */,
+				ADCDDD0025AE2784004E15FB /* UserUpdateViewController.swift in Sources */,
 				DA4EE5D3252CB64900CB26D4 /* UserListView.swift in Sources */,
 				80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */,
 				8040BC5E24FDAB1E00DE369F /* UIColor+ForUsername.swift in Sources */,
