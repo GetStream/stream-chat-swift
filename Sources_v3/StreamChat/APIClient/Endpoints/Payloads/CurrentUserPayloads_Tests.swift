@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -56,8 +56,4 @@ class CurrentUserPayload_Tests: XCTestCase {
         
         XCTAssertEqual(payload.extraData.secretNote, "Anaking is Vader!")
     }
-}
-
-class CurrentUserRequestBody_Tests: XCTestCase {
-    // TODO: CIS-235
 }
