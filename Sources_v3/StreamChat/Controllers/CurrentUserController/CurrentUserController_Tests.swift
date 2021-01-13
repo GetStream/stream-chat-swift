@@ -242,12 +242,12 @@ final class CurrentUserController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, databaseError)
     }
     
-    func test_setAnonymousUser() {
-        let oldUserId = client.currentUserId
-
+    func test_setAnonymousUser() throws {
         // Set up a new anonymous user
         var setUserCompletionCalled = false
         controller.setAnonymousUser(completion: { _ in setUserCompletionCalled = true })
+
+        let currentUserId = try XCTUnwrap(client.currentUserId)
 
         let expectedWebSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
             userId: currentUserId,
@@ -259,7 +259,7 @@ final class CurrentUserController_Tests: StressTestCase {
 
         AssertAsync {
             // New user id is set
-            Assert.willBeTrue(self.client.currentUserId != oldUserId)
+            Assert.willBeTrue(currentUserId.isAnonymousUser)
 
             // Database should be flushed
             Assert.willBeTrue(self.client.mockDatabaseContainer.flush_called == true)
@@ -269,7 +269,7 @@ final class CurrentUserController_Tests: StressTestCase {
 
             // New user id is used in `TypingStartCleanupMiddleware`
             Assert.willBeTrue(
-                self.client.webSocketClient!.typingMiddleware?.excludedUserIds().contains(self.client.currentUserId) == true
+                self.client.webSocketClient!.typingMiddleware?.excludedUserIds().contains(currentUserId) == true
             )
 
             // WebSocketClient connect is called

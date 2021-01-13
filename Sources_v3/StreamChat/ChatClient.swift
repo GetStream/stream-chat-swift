@@ -69,8 +69,8 @@ public typealias ChatClient = _ChatClient<DefaultExtraData>
 ///
 public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// The `UserId` of the currently logged in user.
-    @Atomic public var currentUserId: UserId = .anonymous
-    
+    @Atomic public internal(set) var currentUserId: UserId?
+
     /// The current connection status of the client.
     ///
     /// To observe changes in the connection status, create an instance of `CurrentChatUserController`, and use it to receive
@@ -285,6 +285,11 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     // TODO: Not used & tested yet -> CIS-224
     func refreshToken(completion: @escaping (Error?) -> Void) {
         log.assert(config.tokenProvider != nil, "You can't call `refreshToken` when `Config.tokenProvider` is nil.")
+
+        guard let currentUserId = currentUserId else {
+            completion(ClientError.CurrentUserDoesNotExist())
+            return
+        }
         
         config.tokenProvider?(config.apiKey, currentUserId, { [weak self] (token) in
             guard let token = token else {
