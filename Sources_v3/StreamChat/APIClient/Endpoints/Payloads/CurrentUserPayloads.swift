@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -58,11 +58,6 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
         
         try super.init(from: decoder)
     }
-}
-
-/// An object describing the outgoing user JSON payload.
-class CurrentUserRequestBody<ExtraData: UserExtraData>: Encodable {
-    // TODO: Add more fields while working on CIS-235
 }
 
 /// An object describing the incoming muted-user JSON payload.
