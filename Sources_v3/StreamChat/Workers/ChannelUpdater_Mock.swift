@@ -22,12 +22,10 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var deleteChannel_completion: ((Error?) -> Void)?
 
     @Atomic var hideChannel_cid: ChannelId?
-    @Atomic var hideChannel_userId: UserId?
     @Atomic var hideChannel_clearHistory: Bool?
     @Atomic var hideChannel_completion: ((Error?) -> Void)?
 
     @Atomic var showChannel_cid: ChannelId?
-    @Atomic var showChannel_userId: UserId?
     @Atomic var showChannel_completion: ((Error?) -> Void)?
     
     @Atomic var addMembers_cid: ChannelId?
@@ -67,12 +65,10 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         deleteChannel_completion = nil
         
         hideChannel_cid = nil
-        hideChannel_userId = nil
         hideChannel_clearHistory = nil
         hideChannel_completion = nil
         
         showChannel_cid = nil
-        showChannel_userId = nil
         showChannel_completion = nil
         
         addMembers_cid = nil
@@ -121,16 +117,14 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         deleteChannel_completion = completion
     }
 
-    override func hideChannel(cid: ChannelId, userId: UserId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
+    override func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
         hideChannel_cid = cid
-        hideChannel_userId = userId
         hideChannel_clearHistory = clearHistory
         hideChannel_completion = completion
     }
 
-    override func showChannel(cid: ChannelId, userId: UserId, completion: ((Error?) -> Void)? = nil) {
+    override func showChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         showChannel_cid = cid
-        showChannel_userId = userId
         showChannel_completion = completion
     }
     

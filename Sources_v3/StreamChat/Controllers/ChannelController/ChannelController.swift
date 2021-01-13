@@ -509,7 +509,7 @@ public extension _ChatChannelController {
             return
         }
         
-        updater.hideChannel(cid: cid, userId: client.currentUserId, clearHistory: clearHistory) { error in
+        updater.hideChannel(cid: cid, clearHistory: clearHistory) { error in
             self.callback {
                 completion?(error)
             }
@@ -528,7 +528,7 @@ public extension _ChatChannelController {
             return
         }
         
-        updater.showChannel(cid: cid, userId: client.currentUserId) { error in
+        updater.showChannel(cid: cid) { error in
             self.callback {
                 completion?(error)
             }
