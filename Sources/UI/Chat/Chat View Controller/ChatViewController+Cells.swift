@@ -25,12 +25,14 @@ extension ChatViewController {
         let messageStyle = message.isOwn ? style.outgoingMessage : style.incomingMessage
         let cell = tableView.dequeueMessageCell(for: indexPath, style: messageStyle)
         
-        if message.isDeleted {
-            cell.update(info: "This message was deleted.", date: message.deleted)
-        } else if message.isEphemeral {
+        if message.isEphemeral {
             cell.update(text: message.args ?? "")
         } else {
-            cell.update(text: message.textOrArgs)
+            if message.isDeleted {
+                cell.update(info: "This message was deleted.", date: message.deleted)
+            } else {
+                cell.update(text: message.textOrArgs)
+            }
             
             if message.isOwn {
                 cell.readUsersView?.update(readUsers: readUsers)
