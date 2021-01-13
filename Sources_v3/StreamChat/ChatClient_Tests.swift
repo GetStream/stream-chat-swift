@@ -516,12 +516,11 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
             },
             webSocketClientBuilder: {
                 self.webSocketClient = WebSocketClientMock(
-                    connectEndpoint: $0,
-                    sessionConfiguration: $1,
-                    requestEncoder: $2,
-                    eventDecoder: $3,
-                    eventNotificationCenter: $4,
-                    internetConnection: $5
+                    sessionConfiguration: $0,
+                    requestEncoder: $1,
+                    eventDecoder: $2,
+                    eventNotificationCenter: $3,
+                    internetConnection: $4
                 )
                 return self.webSocketClient!
             },

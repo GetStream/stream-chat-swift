@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -47,17 +47,13 @@ class WebSocketClient {
     ///
     /// Changing this value doesn't automatically update the existing connection. You need to manually call `disconnect`
     /// and `connect` to make a new connection to the updated endpoint.
-    var connectEndpoint: Endpoint<EmptyResponse> {
-        didSet {
-            engineNeedsToBeRecreated = true
-        }
-    }
+    var connectEndpoint: Endpoint<EmptyResponse>?
     
     /// The decoder used to decode incoming events
     private let eventDecoder: AnyEventDecoder
     
     /// The web socket engine used to make the actual WS connection
-    private(set) lazy var engine: WebSocketEngine = createEngine()
+    private(set) var engine: WebSocketEngine?
     
     /// If in the `waitingForReconnect` state, this variable contains the reconnection timer.
     private var reconnectionTimer: TimerControl?
@@ -92,22 +88,24 @@ class WebSocketClient {
         return pingController
     }()
     
-    private func createEngine() -> WebSocketEngine {
+    private func createEngineIfNeeded(for connectEndpoint: Endpoint<EmptyResponse>) -> WebSocketEngine {
+        let request: URLRequest
         do {
-            let request = try requestEncoder.encodeRequest(for: connectEndpoint)
-            let engine = environment.createEngine(request, sessionConfiguration, engineQueue)
-            engine.delegate = self
-            return engine
-            
+            request = try requestEncoder.encodeRequest(for: connectEndpoint)
         } catch {
             fatalError("Failed to create WebSocketEngine with error: \(error)")
         }
+
+        if let existedEngine = engine, existedEngine.request == request {
+            return existedEngine
+        }
+
+        let engine = environment.createEngine(request, sessionConfiguration, engineQueue)
+        engine.delegate = self
+        return engine
     }
     
-    @Atomic private var engineNeedsToBeRecreated = false
-    
     init(
-        connectEndpoint: Endpoint<EmptyResponse>,
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
@@ -117,7 +115,6 @@ class WebSocketClient {
         environment: Environment = .init()
     ) {
         self.environment = environment
-        self.connectEndpoint = connectEndpoint
         self.requestEncoder = requestEncoder
         self.sessionConfiguration = sessionConfiguration
         self.reconnectionStrategy = reconnectionStrategy
@@ -134,6 +131,11 @@ class WebSocketClient {
     ///
     /// Calling this method has no effect is the web socket is already connected, or is in the connecting phase.
     func connect() {
+        guard let endpoint = connectEndpoint else {
+            log.assertationFailure("Attempt to connect `web-socket` while endpoint is missing")
+            return
+        }
+
         switch connectionState {
         // Calling connect in the following states has no effect
         case .connecting, .waitingForConnectionId, .connected(connectionId: _):
@@ -141,12 +143,7 @@ class WebSocketClient {
         default: break
         }
         
-        // Engine needs to be recreated if the connection endpoint has changed. For example, when a new user is
-        // logged in, or when an auth token is refreshed.
-        if engineNeedsToBeRecreated {
-            engineNeedsToBeRecreated = false
-            engine = createEngine()
-        }
+        engine = createEngineIfNeeded(for: endpoint)
         
         // Cancel the reconnection timer if exists
         reconnectionTimer?.cancel()
@@ -154,7 +151,7 @@ class WebSocketClient {
         connectionState = .connecting
         
         engineQueue.async { [engine] in
-            engine.connect()
+            engine!.connect()
         }
     }
     
@@ -165,7 +162,7 @@ class WebSocketClient {
     func disconnect(source: WebSocketConnectionState.DisconnectionSource = .userInitiated) {
         connectionState = .disconnecting(source: source)
         engineQueue.async { [engine] in
-            engine.disconnect()
+            engine?.disconnect()
         }
     }
     
@@ -324,7 +321,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
 extension WebSocketClient: WebSocketPingControllerDelegate {
     func sendPing() {
         engineQueue.async { [engine] in
-            engine.sendPing()
+            engine?.sendPing()
         }
     }
     

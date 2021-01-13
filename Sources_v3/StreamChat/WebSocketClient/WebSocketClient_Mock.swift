@@ -7,7 +7,6 @@ import Foundation
 
 /// Mock implementation of `WebSocketClient`.
 class WebSocketClientMock: WebSocketClient {
-    let init_connectEndpoint: Endpoint<EmptyResponse>
     let init_sessionConfiguration: URLSessionConfiguration
     let init_requestEncoder: RequestEncoder
     let init_eventDecoder: AnyEventDecoder
@@ -20,7 +19,6 @@ class WebSocketClientMock: WebSocketClient {
     @Atomic var disconnect_calledCounter = 0
 
     override init(
-        connectEndpoint: Endpoint<EmptyResponse>,
         sessionConfiguration: URLSessionConfiguration,
         requestEncoder: RequestEncoder,
         eventDecoder: AnyEventDecoder,
@@ -29,7 +27,6 @@ class WebSocketClientMock: WebSocketClient {
         reconnectionStrategy: WebSocketClientReconnectionStrategy = DefaultReconnectionStrategy(),
         environment: WebSocketClient.Environment = .init()
     ) {
-        init_connectEndpoint = connectEndpoint
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
         init_eventDecoder = eventDecoder
@@ -39,7 +36,6 @@ class WebSocketClientMock: WebSocketClient {
         init_environment = environment
 
         super.init(
-            connectEndpoint: connectEndpoint,
             sessionConfiguration: sessionConfiguration,
             requestEncoder: requestEncoder,
             eventDecoder: eventDecoder,
@@ -62,7 +58,6 @@ class WebSocketClientMock: WebSocketClient {
 extension WebSocketClientMock {
     convenience init() {
         self.init(
-            connectEndpoint: .init(path: "", method: .get, queryItems: nil, requiresConnectionId: false, body: nil),
             sessionConfiguration: .default,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             eventDecoder: EventDecoder<DefaultExtraData>(),
