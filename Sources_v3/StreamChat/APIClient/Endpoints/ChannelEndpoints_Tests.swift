@@ -116,18 +116,17 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         for clearHistory in testCases {
             let cid = ChannelId.unique
-            let userId = UserId.unique
-            
+
             let expectedEndpoint = Endpoint<EmptyResponse>(
                 path: "channels/\(cid.type)/\(cid.id)/hide",
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: false,
-                body: HideChannelRequest(userId: userId, clearHistory: clearHistory)
+                body: ["clear_history": clearHistory]
             )
             
             // Build endpoint
-            let endpoint: Endpoint<EmptyResponse> = .hideChannel(cid: cid, userId: userId, clearHistory: clearHistory)
+            let endpoint: Endpoint<EmptyResponse> = .hideChannel(cid: cid, clearHistory: clearHistory)
             
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -161,18 +160,17 @@ final class ChannelEndpoints_Tests: XCTestCase {
     
     func test_showChannel_buildsCorrectly() {
         let cid = ChannelId.unique
-        let userId = UserId.unique
-        
+
         let expectedEndpoint = Endpoint<EmptyResponse>(
             path: "channels/\(cid.type)/\(cid.id)/show",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["userId": userId]
+            body: nil
         )
         
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .showChannel(cid: cid, userId: userId)
+        let endpoint: Endpoint<EmptyResponse> = .showChannel(cid: cid)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

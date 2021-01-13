@@ -342,21 +342,20 @@ class ChannelUpdater_Tests: StressTestCase {
 
     func test_hideChannel_makesCorrectAPICall() {
         let channelID = ChannelId.unique
-        let userID = UserId.unique
         let clearHistory = true
 
-        // Simulate `hideChannel(cid:, userId:, clearHistory:, completion:)` call
-        channelUpdater.hideChannel(cid: channelID, userId: userID, clearHistory: clearHistory)
+        // Simulate `hideChannel(cid:, clearHistory:, completion:)` call
+        channelUpdater.hideChannel(cid: channelID, clearHistory: clearHistory)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .hideChannel(cid: channelID, userId: userID, clearHistory: clearHistory)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .hideChannel(cid: channelID, clearHistory: clearHistory)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
     func test_hideChannel_successfulResponse_isPropagatedToCompletion() {
-        // Simulate `hideChannel(cid:, userId:, clearHistory:, completion:)` call
+        // Simulate `hideChannel(cid:, clearHistory:, completion:)` call
         var completionCalled = false
-        channelUpdater.hideChannel(cid: .unique, userId: .unique, clearHistory: true) { error in
+        channelUpdater.hideChannel(cid: .unique, clearHistory: true) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -372,9 +371,9 @@ class ChannelUpdater_Tests: StressTestCase {
     }
 
     func test_hideChannel_errorResponse_isPropagatedToCompletion() {
-        // Simulate `hideChannel(cid:, userId:, clearHistory:, completion:)` call
+        // Simulate `hideChannel(cid:, clearHistory:, completion:)` call
         var completionCalledError: Error?
-        channelUpdater.hideChannel(cid: .unique, userId: .unique, clearHistory: true) { completionCalledError = $0 }
+        channelUpdater.hideChannel(cid: .unique, clearHistory: true) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
@@ -388,20 +387,19 @@ class ChannelUpdater_Tests: StressTestCase {
 
     func test_showChannel_makesCorrectAPICall() {
         let channelID = ChannelId.unique
-        let userID = UserId.unique
 
-        // Simulate `showChannel(cid:, userId:)` call
-        channelUpdater.showChannel(cid: channelID, userId: userID)
+        // Simulate `showChannel(cid:)` call
+        channelUpdater.showChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .showChannel(cid: channelID, userId: userID)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .showChannel(cid: channelID)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
     func test_showChannel_successfulResponse_isPropagatedToCompletion() {
-        // Simulate `showChannel(cid:, userId:)` call
+        // Simulate `showChannel(cid:)` call
         var completionCalled = false
-        channelUpdater.showChannel(cid: .unique, userId: .unique) { error in
+        channelUpdater.showChannel(cid: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -417,9 +415,9 @@ class ChannelUpdater_Tests: StressTestCase {
     }
 
     func test_showChannel_errorResponse_isPropagatedToCompletion() {
-        // Simulate `showChannel(cid:, userId:)` call
+        // Simulate `showChannel(cid:)` call
         var completionCalledError: Error?
-        channelUpdater.showChannel(cid: .unique, userId: .unique) { completionCalledError = $0 }
+        channelUpdater.showChannel(cid: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
