@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -33,7 +33,7 @@ open class MessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTypes>: 
     // MARK: - Appearance
 
     public func defaultAppearance() {
-        backgroundColor = uiConfig.colorPalette.generalBackground
+        backgroundColor = uiConfig.colorPalette.popupBackground
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
         bounces = true

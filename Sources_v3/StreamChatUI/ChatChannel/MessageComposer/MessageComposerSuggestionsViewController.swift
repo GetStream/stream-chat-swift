@@ -15,9 +15,20 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
     UICollectionViewDelegate {
     // MARK: - Property
 
-    public var dataSource: UICollectionViewDataSource?
+    public var dataSource: UICollectionViewDataSource? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
 
     private var frameObserver: NSKeyValueObservation?
+
+    /// Height for suggestion cell, this value should never be 0
+    /// otherwise it causes loop for height of this controller and as a result this controller height will be 0 as well.
+    /// Note: This value can be 1, it's just for purpose of 1 cell being visible.
+    private let defaultRowHeight: CGFloat = 44
+
+    open var numberOfVisibleRows: CGFloat = 4
 
     /// View to which the suggestions should be pinned.
     /// This view should be assigned as soon as instance of this
@@ -72,16 +83,23 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
         collectionViewHeightObserver = collectionView.observe(
             \.contentSize,
             options: [.new],
-            changeHandler: { [weak self] _, change in
+            changeHandler: { [weak self] collectionView, change in
                 DispatchQueue.main.async {
-                    guard let newSize = change.newValue, newSize.height < 230 else {
-                        // TODO: Compute size better according to 4 cells.
-                        self?.view.frame.size.height = 230
-                        self?.updateViewFrame()
+                    guard let self = self else { return }
+
+                    // NOTE: The defaultRowHeight height value will be used only once to set visibleCells
+                    // once again, not looping it to 0 value so this controller can resize again.
+                    let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
+
+                    guard let newSize = change.newValue,
+                        newSize.height < cellHeight * self.numberOfVisibleRows
+                    else {
+                        self.view.frame.size.height = cellHeight * self.numberOfVisibleRows
+                        self.updateViewFrame()
                         return
                     }
-                    self?.view.frame.size.height = newSize.height
-                    self?.updateViewFrame()
+                    self.view.frame.size.height = newSize.height
+                    self.updateViewFrame()
                 }
             }
         )
@@ -117,21 +135,29 @@ open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: 
     }
 }
 
-class SuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
-    var collectionView: MessageComposerSuggestionsCollectionView<ExtraData>
-    var commands: [Command]
+open class SuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
+    open var collectionView: MessageComposerSuggestionsCollectionView<ExtraData>
+    open var commands: [Command]
 
-    var uiConfig: UIConfig<ExtraData> {
+    open var uiConfig: UIConfig<ExtraData> {
         collectionView.uiConfig()
     }
 
-    init(with commands: [Command], collectionView: MessageComposerSuggestionsCollectionView<ExtraData>) {
+    public init(with commands: [Command], collectionView: MessageComposerSuggestionsCollectionView<ExtraData>) {
         self.commands = commands
         self.collectionView = collectionView
 
         super.init()
 
         registerCollectionViewCell()
+
+        collectionView.register(
+            MessageComposerSuggestionsCommandsReusableView<ExtraData>.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "CommandsHeader"
+        )
+        (collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?
+            .headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 40)
     }
 
     private func registerCollectionViewCell() {
@@ -141,11 +167,32 @@ class SuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UIColle
         )
     }
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        let headerView = collectionView.dequeueReusableSupplementaryView(
+            ofKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: "CommandsHeader",
+            for: indexPath
+        ) as! MessageComposerSuggestionsCommandsReusableView<ExtraData>
+
+        headerView.suggestionsHeader.headerLabel.text = L10n.Composer.Suggestions.Commands.header
+        headerView.suggestionsHeader.commandImageView.image = UIImage(
+            named: "bolt",
+            in: .streamChatUI
+        )?
+            .tinted(with: headerView.tintColor)
+
+        return headerView
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         commands.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: MessageComposerCommandCollectionViewCell<ExtraData>.reuseId,
             for: indexPath
@@ -158,7 +205,7 @@ class SuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UIColle
     }
 }
 
-class SuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
+open class SuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
     UICollectionViewDataSource,
     _ChatUserSearchControllerDelegate {
     var collectionView: MessageComposerSuggestionsCollectionView<ExtraData>
@@ -176,6 +223,8 @@ class SuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
         self.searchController = searchController
         super.init()
         registerCollectionViewCell()
+        (collectionView.collectionViewLayout as? UICollectionViewFlowLayout)?
+            .headerReferenceSize = CGSize(width: self.collectionView.frame.size.width, height: 0)
         searchController.setDelegate(self)
     }
 
@@ -188,11 +237,19 @@ class SuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
 
     // MARK: - CollectionViewDataSource
 
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        UICollectionReusableView()
+    }
+
+    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         searchController.users.count
     }
 
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: MessageComposerMentionCollectionViewCell<ExtraData>.reuseId,
             for: indexPath
@@ -206,7 +263,7 @@ class SuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
 
     // MARK: - ChatUserSearchControllerDelegate
 
-    func controller(
+    public func controller(
         _ controller: _ChatUserSearchController<ExtraData>,
         didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
     ) {

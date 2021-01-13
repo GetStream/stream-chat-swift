@@ -38,4 +38,5 @@
 "composer.picker.image" = "Photo";
 "composer.picker.cancel" = "Cancel";
 
+"composer.suggestions.commands.header" = "Instant Commands";
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
