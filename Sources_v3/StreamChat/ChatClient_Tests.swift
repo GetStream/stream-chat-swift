@@ -372,11 +372,10 @@ class ChatClient_Tests: StressTestCase {
     
     // MARK: - Setting a new current user tests
     
-    func test_defaultUserIsAnonymous() {
+    func test_currentUserId_isNilInitially() {
         let client = ChatClient(config: inMemoryStorageConfig)
         
-        // The current userId should be set, but the user is not loaded before the connection is established
-        XCTAssertTrue(client.currentUserId.isAnonymousUser)
+        XCTAssertNil(client.currentUserId)
         XCTAssertNil(testEnv.databaseContainer?.viewContext.currentUser())
     }
     
