@@ -310,21 +310,9 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
             return delay > uiConfig.messageList.minTimeInvteralBetweenMessagesInGroup
         }
 
-        var parentMessageState: _ChatMessageGroupPart<ExtraData>.ParentMessageState?
-
-        // TODO: Waiting for reply support in LLC CIS-505
-//        if message.repliesTo != nil {
-        if false {
-            if let parentMessage = dataSource.replyMessageForMessageAtIndex(self, message, indexPath.row) {
-                parentMessageState = .loaded(parentMessage)
-            } else {
-                parentMessageState = .loading
-            }
-        }
-
         return .init(
             message: message,
-            parentMessageState: parentMessageState,
+            quotedMessage: dataSource.replyMessageForMessageAtIndex(self, message, indexPath.row),
             isLastInGroup: isLastInGroup,
             didTapOnAttachment: { [weak self] attachment in
                 self?.didTapOnAttachment(attachment, in: message)

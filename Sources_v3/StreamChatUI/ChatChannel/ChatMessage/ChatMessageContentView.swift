@@ -21,8 +21,7 @@ open class ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProv
     public private(set) lazy var messageBubbleView = uiConfig
         .messageList
         .messageContentSubviews
-        .bubbleView
-        .init(showRepliedMessage: true)
+        .bubbleView.init()
         .withoutAutoresizingMaskConstraints
 
     public private(set) lazy var messageMetadataView = uiConfig
