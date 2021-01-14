@@ -31,7 +31,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     public enum State {
         case initial
         case slashCommand(Command)
-        case reply(_ChatMessage<ExtraData>)
+        case quote(_ChatMessage<ExtraData>)
         case edit(_ChatMessage<ExtraData>)
     }
     
@@ -117,7 +117,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             composerView.messageInputView.setSlashCommandViews(hidden: false)
             composerView.messageInputView.slashCommandView.commandName = command.name.uppercased()
             dismissSuggestionsViewController()
-        case let .reply(messageToReply):
+        case let .quote(messageToQuote):
             composerView.titleLabel.text = L10n.Composer.Title.reply
             let image = UIImage(named: "replyArrow", in: .streamChatUI)?
                 .tinted(with: uiConfig.colorPalette.messageComposerStateIcon)
@@ -207,11 +207,8 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         switch state {
         case .initial:
             createNewMessage(text: textView.text)
-        case .reply:
-            // TODO:
-            // 1. Attachments
-            // 2. Should be inline reply after backend implementation.
-            print("Inline reply sent.")
+        case let .quote(messageToQuote):
+            createNewMessage(text: textView.text, quotedMessageId: messageToQuote.id)
         case let .edit(messageToEdit):
             guard let cid = controller?.cid else { return }
             let messageController = controller?.client.messageController(
@@ -228,7 +225,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         delegate?.didSendMessage?(self)
     }
     
-    open func createNewMessage(text: String) {
+    open func createNewMessage(text: String, quotedMessageId: MessageId? = nil) {
         guard let cid = controller?.cid else { return }
         
         if let threadParentMessage = threadParentMessage {
@@ -240,10 +237,11 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             messageController?.createNewReply(
                 text: text,
                 attachments: attachmentSeeds,
-                showReplyInChannel: composerView.checkmarkControl.isSelected
+                showReplyInChannel: composerView.checkmarkControl.isSelected,
+                quotedMessageId: quotedMessageId
             )
         } else {
-            controller?.createNewMessage(text: text, attachments: attachmentSeeds)
+            controller?.createNewMessage(text: text, attachments: attachmentSeeds, quotedMessageId: quotedMessageId)
         }
     }
     

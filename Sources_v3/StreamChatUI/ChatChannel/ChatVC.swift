@@ -213,7 +213,7 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>) {}
     
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>) {
-        messageComposerViewController.state = .reply(message)
+        messageComposerViewController.state = .quote(message)
     }
     
     public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>) {
