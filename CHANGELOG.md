@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- `Message.channel` to access the channel from a message. [#650](https://github.com/GetStream/stream-chat-swift/issues/650)
+
 ### 🐞 Fixed
 - Make an OPTIONS request to `connect` instead of `QueryUsers` request to heat up HTTP connection. [#733](https://github.com/GetStream/stream-chat-swift/issues/733)
 - ComposerView layout overlap when both image and file uploaded [#738](https://github.com/GetStream/stream-chat-swift/issues/738)
