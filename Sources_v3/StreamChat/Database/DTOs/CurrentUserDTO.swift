@@ -7,8 +7,8 @@ import Foundation
 
 @objc(CurrentUserDTO)
 class CurrentUserDTO: NSManagedObject {
-    @NSManaged var unreadChannelsCount: Int16
-    @NSManaged var unreadMessagesCount: Int16
+    @NSManaged var unreadChannelsCount: Int64
+    @NSManaged var unreadMessagesCount: Int64
     
     /// Into this field the creation date of last locally received event is saved.
     /// The date later serves as reference date for `/sync` endpoint
@@ -81,10 +81,9 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         guard let dto = currentUser() else {
             throw ClientError.CurrentUserDoesNotExist()
         }
-        
-        // TODO: Fix this properly in CIS-431
-        dto.unreadChannelsCount = Int16(clamping: count.channels)
-        dto.unreadMessagesCount = Int16(clamping: count.messages)
+                
+        dto.unreadChannelsCount = Int64(clamping: count.channels)
+        dto.unreadMessagesCount = Int64(clamping: count.messages)
     }
     
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws {
