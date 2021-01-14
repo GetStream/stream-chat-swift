@@ -97,7 +97,7 @@ class CreateChatViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.bounces = false
+        tableView.bounces = true
         
         // An old trick to force the table view to hide empty lines
         tableView.tableFooterView = UIView()
@@ -136,7 +136,9 @@ class CreateChatViewController: UIViewController {
             alertView.trailingAnchor.constraint(equalTo: alertLayoutGuide.trailingAnchor),
             alertView.centerYAnchor.constraint(equalTo: alertLayoutGuide.centerYAnchor),
             
-            activityIndicator.centerYAnchor.constraint(equalTo: alertLayoutGuide.centerYAnchor)
+            activityIndicator.centerYAnchor.constraint(equalTo: alertLayoutGuide.centerYAnchor),
+            
+            mainStackView.bottomAnchor.constraint(equalTo: composerView.view.topAnchor)
         ])
         
         // Empty initial search to get all users
@@ -357,6 +359,11 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
         let bottomEdge = scrollView.contentOffset.y + scrollView.bounds.height
         guard bottomEdge >= scrollView.contentSize.height else { return }
         searchController.loadNextUsers()
+    }
+    
+    public func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        // Hide keyboard on scroll
+        view.endEditing(true)
     }
 }
 

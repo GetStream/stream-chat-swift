@@ -246,7 +246,7 @@
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="56" id="SJe-Lu-k6e"/>
                                 </constraints>
                             </stackView>
-                            <stackView opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="VNP-td-vFN">
+                            <stackView opaque="NO" contentMode="scaleToFill" ambiguous="YES" preservesSuperviewLayoutMargins="YES" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="VNP-td-vFN">
                                 <rect key="frame" x="0.0" y="116" width="414" height="746"/>
                                 <subviews>
                                     <stackView opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="FBd-lR-7z2">
@@ -284,7 +284,7 @@
                                         </subviews>
                                         <color key="backgroundColor" systemColor="tertiarySystemGroupedBackgroundColor"/>
                                     </stackView>
-                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="FX5-jE-SCM">
+                                    <tableView clipsSubviews="YES" contentMode="scaleToFill" ambiguous="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="FX5-jE-SCM">
                                         <rect key="frame" x="0.0" y="91" width="414" height="655"/>
                                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                         <prototypes>
@@ -393,7 +393,6 @@
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="bfN-Fc-dZz" firstAttribute="leading" secondItem="8EK-qi-Gc6" secondAttribute="leading" constant="16" id="D2H-TY-tmk"/>
-                            <constraint firstItem="8EK-qi-Gc6" firstAttribute="bottom" secondItem="VNP-td-vFN" secondAttribute="bottom" id="F6i-ty-UBN"/>
                             <constraint firstItem="VNP-td-vFN" firstAttribute="top" secondItem="bfN-Fc-dZz" secondAttribute="bottom" id="GU1-gp-wmK"/>
                             <constraint firstItem="EqL-Ft-K1g" firstAttribute="centerX" secondItem="wKh-ZD-f8Y" secondAttribute="centerX" id="YMB-2p-2ji"/>
                             <constraint firstItem="VNP-td-vFN" firstAttribute="leading" secondItem="8EK-qi-Gc6" secondAttribute="leading" id="ZSu-EO-OFi"/>
