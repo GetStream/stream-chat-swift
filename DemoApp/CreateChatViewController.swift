@@ -100,6 +100,7 @@ class CreateChatViewController: UIViewController {
         tableView.tableFooterView = UIView()
         
         searchField.allowsDeletingTokens = true
+        searchField.addTarget(self, action: #selector(searchFieldDidTapReturn(_:)), for: .primaryActionTriggered)
         
         searchController.delegate = self
         
@@ -142,7 +143,6 @@ class CreateChatViewController: UIViewController {
             // TODO: error handling
             break
         case .searching:
-            searchField.becomeFirstResponder()
             noMatchView.isHidden = true
             activityIndicator.stopAnimating()
             createGroupStack.isHidden = searchField.hasText || !selectedUserIds.isEmpty
@@ -196,6 +196,10 @@ class CreateChatViewController: UIViewController {
                 self?.view.layoutIfNeeded()
             }
         )
+    }
+    
+    @objc func searchFieldDidTapReturn(_ sender: UISearchTextField) {
+        sender.resignFirstResponder()
     }
     
     @IBAction func searchFieldDidChange(_ sender: UISearchTextField) {
