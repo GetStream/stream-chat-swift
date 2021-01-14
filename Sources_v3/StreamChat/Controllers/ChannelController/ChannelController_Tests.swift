@@ -148,7 +148,11 @@ class ChannelController_Tests: StressTestCase {
 
     // MARK: - Creating `ChannelController` tests
 
-    func test_channelControllerForNewChannel_createdCorrectly() {
+    func test_channelControllerForNewChannel_createdCorrectly() throws {
+        // Simulate currently logged-in user
+        let currentUserId: UserId = .unique
+        client.currentUserId = currentUserId
+
         let cid: ChannelId = .unique
         let team: String = .unique
         let members: Set<UserId> = [.unique]
@@ -156,45 +160,107 @@ class ChannelController_Tests: StressTestCase {
         let extraData: DefaultExtraData.Channel = .defaultValue
 
         // Create a new `ChannelController`
-        let controller = client.channelController(
-            createChannelWithId: cid,
+        for isCurrentUserMember in [true, false] {
+            let controller = try client.channelController(
+                createChannelWithId: cid,
+                name: .unique,
+                imageURL: .unique(),
+                team: team,
+                members: members,
+                isCurrentUserMember: isCurrentUserMember,
+                invites: invites,
+                extraData: extraData
+            )
+
+            // Assert `ChannelQuery` created correctly
+            XCTAssertEqual(cid, controller.channelQuery.cid)
+            XCTAssertEqual(team, controller.channelQuery.channelPayload?.team)
+            XCTAssertEqual(
+                members.union(isCurrentUserMember ? [currentUserId] : []),
+                controller.channelQuery.channelPayload?.members
+            )
+            XCTAssertEqual(invites, controller.channelQuery.channelPayload?.invites)
+            XCTAssertEqual(extraData, controller.channelQuery.channelPayload?.extraData)
+        }
+    }
+
+    func test_channelControllerForNewChannel_throwsError_ifCurrentUserDoesNotExist() throws {
+        for isCurrentUserMember in [true, false] {
+            // Try to create `ChannelController` while current user is missing
+            XCTAssertThrowsError(
+                try client.channelController(
+                    createChannelWithId: .unique,
+                    name: .unique,
+                    imageURL: .unique(),
+                    team: .unique,
+                    members: [.unique, .unique],
+                    isCurrentUserMember: isCurrentUserMember,
+                    invites: [.unique, .unique],
+                    extraData: .defaultValue
+                )
+            ) { error in
+                // Assert `ClientError.CurrentUserDoesNotExist` is thrown
+                XCTAssertTrue(error is ClientError.CurrentUserDoesNotExist)
+            }
+        }
+    }
+
+    func test_channelControllerForNewChannel_includesCurrentUser_byDefault() throws {
+        // Simulate currently logged-in user
+        let currentUserId: UserId = .unique
+        client.currentUserId = currentUserId
+
+        // Create DM channel members.
+        let members: Set<UserId> = [.unique, .unique, .unique]
+
+        // Try to create `ChannelController` with non-empty members while current user is missing
+        let controller = try client.channelController(
+            createChannelWithId: .unique,
             name: .unique,
             imageURL: .unique(),
-            team: team,
+            team: .unique,
             members: members,
-            invites: invites,
-            extraData: extraData
+            extraData: .defaultValue
         )
 
-        // Assert `ChannelQuery` created correctly
-        XCTAssertEqual(cid, controller.channelQuery.cid)
-        XCTAssertEqual(team, controller.channelQuery.channelPayload?.team)
-        XCTAssertEqual(members, controller.channelQuery.channelPayload?.members)
-        XCTAssertEqual(invites, controller.channelQuery.channelPayload?.invites)
-        XCTAssertEqual(extraData, controller.channelQuery.channelPayload?.extraData)
+        XCTAssertEqual(controller.channelQuery.channelPayload?.members, members.union([currentUserId]))
     }
 
     func test_channelControllerForNew1on1Channel_createdCorrectly() throws {
-        let team: String = .unique
-        let members: Set<UserId> = [.unique]
-        let extraData: DefaultExtraData.Channel = .defaultValue
+        // Simulate currently logged-in user
+        let currentUserId: UserId = .unique
+        client.currentUserId = currentUserId
 
-        // Create a new `ChannelController`
-        let controller = try client.channelController(
-            createDirectMessageChannelWith: members,
-            name: .unique,
-            imageURL: .unique(),
-            team: team,
-            extraData: extraData
-        )
+        for isCurrentUserMember in [true, false] {
+            let team: String = .unique
+            let members: Set<UserId> = [.unique]
+            let extraData: DefaultExtraData.Channel = .defaultValue
 
-        // Assert `ChannelQuery` created correctly
-        XCTAssertEqual(team, controller.channelQuery.channelPayload?.team)
-        XCTAssertEqual(members, controller.channelQuery.channelPayload?.members)
-        XCTAssertEqual(extraData, controller.channelQuery.channelPayload?.extraData)
+            // Create a new `ChannelController`
+            let controller = try client.channelController(
+                createDirectMessageChannelWith: members,
+                isCurrentUserMember: isCurrentUserMember,
+                name: .unique,
+                imageURL: .unique(),
+                team: team,
+                extraData: extraData
+            )
+
+            // Assert `ChannelQuery` created correctly
+            XCTAssertEqual(team, controller.channelQuery.channelPayload?.team)
+            XCTAssertEqual(
+                members.union(isCurrentUserMember ? [currentUserId] : []),
+                controller.channelQuery.channelPayload?.members
+            )
+            XCTAssertEqual(extraData, controller.channelQuery.channelPayload?.extraData)
+        }
     }
 
     func test_channelControllerForNew1on1Channel_throwsError_OnEmptyMembers() {
+        // Simulate currently logged-in user
+        let currentUserId: UserId = .unique
+        client.currentUserId = currentUserId
+
         let members: Set<UserId> = []
 
         // Create a new `ChannelController`
@@ -210,8 +276,51 @@ class ChannelController_Tests: StressTestCase {
             XCTAssert(error is ClientError.ChannelEmptyMembers)
         }
     }
+
+    func test_channelControllerForNewDirectMessagesChannel_throwsError_ifCurrentUserDoesNotExist() {
+        for isCurrentUserMember in [true, false] {
+            // Try to create `ChannelController` with non-empty members while current user is missing
+            XCTAssertThrowsError(
+                try client.channelController(
+                    createDirectMessageChannelWith: [.unique],
+                    isCurrentUserMember: isCurrentUserMember,
+                    name: .unique,
+                    imageURL: .unique(),
+                    team: .unique,
+                    extraData: .init()
+                )
+            ) { error in
+                // Assert `ClientError.CurrentUserDoesNotExist` is thrown
+                XCTAssertTrue(error is ClientError.CurrentUserDoesNotExist)
+            }
+        }
+    }
+
+    func test_channelControllerForNewDirectMessagesChannel_includesCurrentUser_byDefault() throws {
+        // Simulate currently logged-in user
+        let currentUserId: UserId = .unique
+        client.currentUserId = currentUserId
+
+        // Create DM channel members.
+        let members: Set<UserId> = [.unique, .unique, .unique]
+
+        // Try to create `ChannelController` with non-empty members while current user is missing
+        let controller = try client.channelController(
+            createDirectMessageChannelWith: members,
+            name: .unique,
+            imageURL: .unique(),
+            team: .unique,
+            extraData: .init()
+        )
+
+        XCTAssertEqual(controller.channelQuery.channelPayload?.members, members.union([currentUserId]))
+    }
     
     func test_channelController_returnsNilCID_forNewDirectMessageChannel() throws {
+        // Simulate currently logged-in user
+        let currentUserId: UserId = .unique
+        client.currentUserId = currentUserId
+
         // Create ChatChannelController for new channel
         controller = try client.channelController(
             createDirectMessageChannelWith: [.unique],
