@@ -96,6 +96,9 @@ open class MessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View, UICo
         attachmentPreview.heightAnchor.pin(equalTo: attachmentPreview.widthAnchor, multiplier: 1).isActive = true
 
         container.centerStackView.addArrangedSubview(textView)
+        
+        textView.setContentHuggingPriority(.required, for: .vertical)
+        
         textViewHeightConstraint.isActive = true
         
         container.centerStackView.layer.maskedCorners = [

@@ -11,8 +11,6 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
     }
 
     public var onLinkTap: (_ChatMessageAttachment<ExtraData>?) -> Void = { _ in }
-
-    public let showRepliedMessage: Bool
     
     // MARK: - Subviews
 
@@ -44,27 +42,15 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var repliedMessageView = showRepliedMessage ?
-        uiConfig.messageList.messageContentSubviews.repliedMessageContentView.init().withoutAutoresizingMaskConstraints :
-        nil
+    public private(set) lazy var quotedMessageView = uiConfig
+        .messageList
+        .messageContentSubviews
+        .quotedMessageBubbleView.init()
+        .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var borderLayer = CAShapeLayer()
 
     private var layoutConstraints: [LayoutOptions: [NSLayoutConstraint]] = [:]
-
-    // MARK: - Init
-    
-    public required init(showRepliedMessage: Bool) {
-        self.showRepliedMessage = showRepliedMessage
-
-        super.init(frame: .zero)
-    }
-    
-    public required init?(coder: NSCoder) {
-        showRepliedMessage = false
-        
-        super.init(coder: coder)
-    }
 
     // MARK: - Overrides
 
@@ -90,9 +76,7 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
     override open func setUpLayout() {
         layer.addSublayer(borderLayer)
 
-        if let repliedMessageView = repliedMessageView {
-            addSubview(repliedMessageView)
-        }
+        addSubview(quotedMessageView)
         addSubview(attachmentsView)
         addSubview(linkPreviewView)
         addSubview(textView)
@@ -113,15 +97,13 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             attachmentsView.bottomAnchor.pin(equalTo: bottomAnchor),
             attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
         ]
-
-        layoutConstraints[.inlineReply] = repliedMessageView.flatMap {
-            return [
-                $0.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                $0.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                $0.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
-                $0.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
-            ]
-        }
+        
+        layoutConstraints[.quotedMessage] = [
+            quotedMessageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            quotedMessageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            quotedMessageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            quotedMessageView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
+        ]
 
         layoutConstraints[[.text, .attachments]] = [
             attachmentsView.leadingAnchor.pin(equalTo: leadingAnchor),
@@ -147,68 +129,60 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
             linkPreviewView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
         ]
 
-        layoutConstraints[[.text, .inlineReply]] = repliedMessageView.flatMap {
-            return [
-                $0.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                $0.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                $0.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
-                
-                textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                textView.topAnchor.pin(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
-                textView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
-            ]
-        } ?? layoutConstraints[.text]
+        layoutConstraints[[.text, .quotedMessage]] = [
+            quotedMessageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            quotedMessageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            quotedMessageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            
+            textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            textView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
+            textView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
+        ]
 
-        layoutConstraints[[.attachments, .inlineReply]] = repliedMessageView.flatMap {
-            return [
-                $0.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                $0.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                $0.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
-                
-                attachmentsView.leadingAnchor.pin(equalTo: leadingAnchor),
-                attachmentsView.trailingAnchor.pin(equalTo: trailingAnchor),
-                attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
-                attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
-                attachmentsView.bottomAnchor.pin(equalTo: bottomAnchor)
-            ]
-        } ?? layoutConstraints[.attachments]
+        layoutConstraints[[.attachments, .quotedMessage]] = [
+            quotedMessageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            quotedMessageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            quotedMessageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            
+            attachmentsView.leadingAnchor.pin(equalTo: leadingAnchor),
+            attachmentsView.trailingAnchor.pin(equalTo: trailingAnchor),
+            attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
+            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
+            attachmentsView.bottomAnchor.pin(equalTo: bottomAnchor)
+        ]
 
-        layoutConstraints[[.text, .inlineReply, .linkPreview]] = repliedMessageView.flatMap {
-            return [
-                $0.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                $0.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                $0.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
-                
-                textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                textView.topAnchor.pin(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
-                
-                linkPreviewView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                linkPreviewView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                linkPreviewView.topAnchor.pin(equalToSystemSpacingBelow: textView.bottomAnchor, multiplier: 1),
-                linkPreviewView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),
-                linkPreviewView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
-            ]
-        } ?? layoutConstraints[[.text, .linkPreview]]
+        layoutConstraints[[.text, .quotedMessage, .linkPreview]] = [
+            quotedMessageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            quotedMessageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            quotedMessageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            
+            textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            textView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
+            
+            linkPreviewView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            linkPreviewView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            linkPreviewView.topAnchor.pin(equalToSystemSpacingBelow: textView.bottomAnchor, multiplier: 1),
+            linkPreviewView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),
+            linkPreviewView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
+        ]
 
-        layoutConstraints[[.text, .attachments, .inlineReply]] = repliedMessageView.flatMap {
-            return [
-                $0.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                $0.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                $0.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
-                
-                attachmentsView.leadingAnchor.pin(equalTo: leadingAnchor),
-                attachmentsView.trailingAnchor.pin(equalTo: trailingAnchor),
-                attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: $0.bottomAnchor, multiplier: 1),
-                attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
-                
-                textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                textView.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
-                textView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
-            ]
-        } ?? layoutConstraints[[.text, .attachments]]
+        layoutConstraints[[.text, .attachments, .quotedMessage]] = [
+            quotedMessageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            quotedMessageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            quotedMessageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            
+            attachmentsView.leadingAnchor.pin(equalTo: leadingAnchor),
+            attachmentsView.trailingAnchor.pin(equalTo: trailingAnchor),
+            attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
+            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
+            
+            textView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
+            textView.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
+            textView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor)
+        ]
 
         // link preview is not visible when any attachment presented,
         // so we can skip `[.text, .attachments, .inlineReply, .linkPreview]` case
@@ -217,8 +191,9 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
     override open func updateContent() {
         let layoutOptions = message?.layoutOptions ?? []
 
-        repliedMessageView?.message = message?.parentMessage
-        repliedMessageView?.isVisible = layoutOptions.contains(.inlineReply)
+        quotedMessageView.isParentMessageSentByCurrentUser = message?.isSentByCurrentUser
+        quotedMessageView.message = message?.quotedMessage
+        quotedMessageView.isVisible = layoutOptions.contains(.quotedMessage)
         
         let font: UIFont = uiConfig.font.body
         textView.attributedText = .init(string: message?.textContent ?? "", attributes: [
@@ -298,10 +273,10 @@ private struct LayoutOptions: OptionSet, Hashable {
 
     static let text = Self(rawValue: 1 << 0)
     static let attachments = Self(rawValue: 1 << 1)
-    static let inlineReply = Self(rawValue: 1 << 2)
+    static let quotedMessage = Self(rawValue: 1 << 2)
     static let linkPreview = Self(rawValue: 1 << 3)
 
-    static let all: Self = [.text, .attachments, .inlineReply, .linkPreview]
+    static let all: Self = [.text, .attachments, .quotedMessage, .linkPreview]
 }
 
 private extension _ChatMessageGroupPart {
@@ -315,9 +290,9 @@ private extension _ChatMessageGroupPart {
         if !textContent.isEmpty {
             options.insert(.text)
         }
-
-        if parentMessageState != nil {
-            options.insert(.inlineReply)
+        
+        if quotedMessage != nil {
+            options.insert(.quotedMessage)
         }
 
         if message.attachments.contains(where: { $0.type == .image || $0.type == .giphy || $0.type == .file }) {
