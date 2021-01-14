@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -282,14 +282,17 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         tableView.deselectRow(at: indexPath, animated: true)
-        let client = searchController.client
-        composerView.controller = try? client
-            .channelController(
-                createDirectMessageChannelWith: selectedUserIds.union([client.currentUserId]),
-                name: nil,
-                imageURL: nil,
-                extraData: .defaultValue
-            )
+        do {
+            composerView.controller = try searchController.client
+                .channelController(
+                    createDirectMessageChannelWith: selectedUserIds,
+                    name: nil,
+                    imageURL: nil,
+                    extraData: .defaultValue
+                )
+        } catch {
+            print(error.localizedDescription)
+        }
     }
     
     public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
