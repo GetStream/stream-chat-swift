@@ -352,11 +352,11 @@
                                     </tableView>
                                 </subviews>
                             </stackView>
-                            <view contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AKd-kB-siE">
-                                <rect key="frame" x="0.0" y="367" width="414" height="162.5"/>
+                            <view contentMode="scaleToFill" ambiguous="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AKd-kB-siE">
+                                <rect key="frame" x="0.0" y="367" width="295.5" height="162.5"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="magnifyingglass" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="QJY-eK-8rq">
-                                        <rect key="frame" x="152" y="9" width="110" height="108"/>
+                                        <rect key="frame" x="93" y="53" width="110" height="108"/>
                                         <color key="tintColor" systemColor="secondaryLabelColor"/>
                                         <constraints>
                                             <constraint firstAttribute="width" constant="110" id="6LF-rz-iND"/>
@@ -364,7 +364,7 @@
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No user matches these keywords..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sqo-ta-rZH">
-                                        <rect key="frame" x="16" y="134" width="382" height="20.5"/>
+                                        <rect key="frame" x="16" y="178" width="263.5" height="20.5"/>
                                         <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
                                         <color key="textColor" systemColor="secondaryLabelColor"/>
                                         <nil key="highlightedColor"/>
@@ -381,7 +381,7 @@
                                     <constraint firstItem="Sqo-ta-rZH" firstAttribute="leading" secondItem="chG-YF-Oqh" secondAttribute="leading" constant="16" id="rOB-fS-Cpl"/>
                                 </constraints>
                             </view>
-                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="EqL-Ft-K1g">
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" ambiguous="YES" hidesWhenStopped="YES" style="large" translatesAutoresizingMaskIntoConstraints="NO" id="EqL-Ft-K1g">
                                 <rect key="frame" x="182" y="423" width="50" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="2yq-14-dGS"/>
@@ -392,18 +392,14 @@
                         <viewLayoutGuide key="safeArea" id="8EK-qi-Gc6"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="EqL-Ft-K1g" firstAttribute="centerY" secondItem="wKh-ZD-f8Y" secondAttribute="centerY" id="BEI-V9-9FN"/>
                             <constraint firstItem="bfN-Fc-dZz" firstAttribute="leading" secondItem="8EK-qi-Gc6" secondAttribute="leading" constant="16" id="D2H-TY-tmk"/>
                             <constraint firstItem="8EK-qi-Gc6" firstAttribute="bottom" secondItem="VNP-td-vFN" secondAttribute="bottom" id="F6i-ty-UBN"/>
                             <constraint firstItem="VNP-td-vFN" firstAttribute="top" secondItem="bfN-Fc-dZz" secondAttribute="bottom" id="GU1-gp-wmK"/>
                             <constraint firstItem="EqL-Ft-K1g" firstAttribute="centerX" secondItem="wKh-ZD-f8Y" secondAttribute="centerX" id="YMB-2p-2ji"/>
-                            <constraint firstItem="AKd-kB-siE" firstAttribute="centerY" secondItem="wKh-ZD-f8Y" secondAttribute="centerY" id="Yh6-WE-znB"/>
                             <constraint firstItem="VNP-td-vFN" firstAttribute="leading" secondItem="8EK-qi-Gc6" secondAttribute="leading" id="ZSu-EO-OFi"/>
                             <constraint firstItem="bfN-Fc-dZz" firstAttribute="top" secondItem="8EK-qi-Gc6" secondAttribute="top" constant="16" id="gZU-tg-60R"/>
-                            <constraint firstItem="8EK-qi-Gc6" firstAttribute="trailing" secondItem="AKd-kB-siE" secondAttribute="trailing" id="iBI-Pw-4Cu"/>
                             <constraint firstItem="8EK-qi-Gc6" firstAttribute="trailing" secondItem="bfN-Fc-dZz" secondAttribute="trailing" constant="16" id="niT-lq-JQq"/>
                             <constraint firstItem="8EK-qi-Gc6" firstAttribute="trailing" secondItem="VNP-td-vFN" secondAttribute="trailing" id="vx3-6m-FW7"/>
-                            <constraint firstItem="AKd-kB-siE" firstAttribute="leading" secondItem="8EK-qi-Gc6" secondAttribute="leading" id="wUV-2I-c8t"/>
                         </constraints>
                     </view>
                     <connections>
@@ -411,12 +407,14 @@
                         <outlet property="addPersonButton" destination="3vQ-eI-nnd" id="doq-ep-Eu2"/>
                         <outlet property="alertImage" destination="QJY-eK-8rq" id="y6y-yE-Tdh"/>
                         <outlet property="alertText" destination="Sqo-ta-rZH" id="9O7-Om-2qZ"/>
+                        <outlet property="alertView" destination="AKd-kB-siE" id="59m-YC-g8h"/>
                         <outlet property="createGroupStack" destination="FBd-lR-7z2" id="Y6B-ZZ-b69"/>
                         <outlet property="infoLabel" destination="nMB-Oa-xTm" id="KpN-Sv-huD"/>
                         <outlet property="infoLabelStackView" destination="NVk-qQ-B4Y" id="bz4-FS-5Eh"/>
                         <outlet property="mainStackView" destination="VNP-td-vFN" id="lsn-fT-AT0"/>
                         <outlet property="noMatchView" destination="AKd-kB-siE" id="Gl4-uc-6d0"/>
                         <outlet property="searchField" destination="r48-7H-SOv" id="5Dk-H6-8U8"/>
+                        <outlet property="searchFieldStack" destination="bfN-Fc-dZz" id="elH-0G-UKI"/>
                         <outlet property="tableView" destination="FX5-jE-SCM" id="AB4-2h-kVQ"/>
                     </connections>
                 </viewController>

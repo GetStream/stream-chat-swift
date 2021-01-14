@@ -38,6 +38,7 @@ class CreateChatViewController: UIViewController {
     
     @IBOutlet var tableView: UITableView!
     @IBOutlet var noMatchView: UIView!
+    @IBOutlet var searchFieldStack: UIStackView!
     @IBOutlet var searchField: UISearchTextField!
     @IBOutlet var addPersonButton: UIButton!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
@@ -55,8 +56,10 @@ class CreateChatViewController: UIViewController {
         }
     }
     
+    @IBOutlet var alertView: UIView!
     @IBOutlet var alertImage: UIImageView!
     @IBOutlet var alertText: UILabel!
+    let alertLayoutGuide = UILayoutGuide()
     
     var composerView: DemoComposerVC!
     var messageComposerBottomConstraint: NSLayoutConstraint?
@@ -120,6 +123,22 @@ class CreateChatViewController: UIViewController {
         messageComposerBottomConstraint = composerView.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
         
+        // AlertLayoutGuide
+        view.addLayoutGuide(alertLayoutGuide)
+        
+        NSLayoutConstraint.activate([
+            alertLayoutGuide.topAnchor.constraint(equalTo: searchFieldStack.bottomAnchor),
+            alertLayoutGuide.bottomAnchor.constraint(equalTo: composerView.view.topAnchor),
+            alertLayoutGuide.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            alertLayoutGuide.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            
+            alertView.leadingAnchor.constraint(equalTo: alertLayoutGuide.leadingAnchor),
+            alertView.trailingAnchor.constraint(equalTo: alertLayoutGuide.trailingAnchor),
+            alertView.centerYAnchor.constraint(equalTo: alertLayoutGuide.centerYAnchor),
+            
+            activityIndicator.centerYAnchor.constraint(equalTo: alertLayoutGuide.centerYAnchor)
+        ])
+        
         // Empty initial search to get all users
         searchController.search(term: nil) { error in
             if error != nil {
@@ -155,7 +174,7 @@ class CreateChatViewController: UIViewController {
             createGroupStack.isHidden = true
             tableView.alpha = 0
             addPersonButton.setImage(UIImage(systemName: "person"), for: .normal)
-            infoLabelStackView.isHidden = false
+            infoLabelStackView.isHidden = true
             alertImage.image = UIImage(systemName: "magnifyingglass")
             alertText.text = "No user matches these keywords..."
         case .loading:
