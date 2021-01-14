@@ -197,7 +197,7 @@ public final class Channel: Codable {
         let members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
         self.members = Set<Member>(members)
         invitedMembers = Set<Member>()
-        let config = try container.decode(Config.self, forKey: .config)
+        let config = (try? container.decode(Config.self, forKey: .config)) ?? Config()
         self.config = config
         created = try container.decodeIfPresent(Date.self, forKey: .created) ?? config.created
         deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)

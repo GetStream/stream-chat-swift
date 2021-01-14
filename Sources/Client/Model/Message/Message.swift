@@ -14,6 +14,7 @@ public struct Message: Codable {
         case id
         case type
         case user
+        case channel
         case created = "created_at"
         case updated = "updated_at"
         case deleted = "deleted_at"
@@ -44,6 +45,8 @@ public struct Message: Codable {
     public var type: MessageType
     /// A user (see `User`).
     public var user: User
+    /// A channel (see `Channel`).
+    public var channel: Channel?
     /// A created date.
     public var created: Date
     /// A updated date.
@@ -143,6 +146,7 @@ public struct Message: Codable {
                 text: String,
                 silent: Bool = false,
                 user: User = User.current,
+                channel: Channel? = nil,
                 command: String? = nil,
                 args: String? = nil,
                 attachments: [Attachment] = [],
@@ -162,6 +166,7 @@ public struct Message: Codable {
         self.text = text
         self.isSilent = silent
         self.user = user
+        self.channel = channel
         self.command = command
         self.args = args
         self.attachments = attachments
@@ -199,6 +204,7 @@ public struct Message: Codable {
         id = try container.decode(String.self, forKey: .id)
         type = try container.decode(MessageType.self, forKey: .type)
         user = try container.decode(User.self, forKey: .user)
+        channel = try container.decode(Channel.self, forKey: .channel)
         created = try container.decode(Date.self, forKey: .created)
         updated = try container.decode(Date.self, forKey: .updated)
         deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
