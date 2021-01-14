@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -68,7 +68,7 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
             $0.currentUserController(controller!, didChangeCurrentUserUnreadCount: newUnreadCount)
         }
         
-        XCTAssertEqual(recording.output, [.noUnread, .dummy])
+        XCTAssertEqual(recording.output, [.noUnread, newUnreadCount])
     }
     
     func test_connectionStatusPublisher() throws {
