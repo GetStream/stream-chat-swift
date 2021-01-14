@@ -31,31 +31,39 @@ public extension _ChatClient {
     ///
     /// - Parameters:
     ///   - cid: The `ChannelId` for the new channel.
+    ///   - name: The new channel name.
+    ///   - imageURL: The new channel avatar URL.
     ///   - team: Team for new channel.
-    ///   - members: IDs for the new channel members.
+    ///   - members: Ds for the new channel members.
+    ///   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
     ///   - invites: IDs for the new channel invitees.
     ///   - extraData: Extra data for the new channel.
-    ///
+    /// - Throws: `ClientError.CurrentUserDoesNotExist` if there is no currently logged-in user.
     /// - Returns: A new instance of `ChatChannelController`.
-    ///
     func channelController(
         createChannelWithId cid: ChannelId,
         name: String?,
         imageURL: URL?,
         team: String? = nil,
         members: Set<UserId> = [],
+        isCurrentUserMember: Bool = true,
         invites: Set<UserId> = [],
         extraData: ExtraData.Channel
-    ) -> _ChatChannelController<ExtraData> {
+    ) throws -> _ChatChannelController<ExtraData> {
+        guard let currentUserId = currentUserId else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
         let payload = ChannelEditDetailPayload<ExtraData>(
             cid: cid,
             name: name,
             imageURL: imageURL,
             team: team,
-            members: members,
+            members: members.union(isCurrentUserMember ? [currentUserId] : []),
             invites: invites,
             extraData: extraData
         )
+
         return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
     }
 
@@ -66,25 +74,32 @@ public extension _ChatClient {
     ///
     /// - Parameters:
     ///   - members: Members for the new channel. Must not be empty.
+    ///   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
+    ///   - name: The new channel name.
+    ///   - imageURL: The new channel avatar URL.
     ///   - team: Team for the new channel.
     ///   - extraData: Extra data for the new channel.
-    ///
+    /// - Throws:
+    ///     - `ClientError.ChannelEmptyMembers` if `members` is empty.
+    ///     - `ClientError.CurrentUserDoesNotExist` if there is no currently logged-in user.
     /// - Returns: A new instance of `ChatChannelController`.
-    ///
     func channelController(
         createDirectMessageChannelWith members: Set<UserId>,
+        isCurrentUserMember: Bool = true,
         name: String?,
         imageURL: URL?,
         team: String? = nil,
         extraData: ExtraData.Channel
     ) throws -> _ChatChannelController<ExtraData> {
+        guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
+
         let payload = ChannelEditDetailPayload<ExtraData>(
             type: .messaging,
             name: name,
             imageURL: imageURL,
             team: team,
-            members: members,
+            members: members.union(isCurrentUserMember ? [currentUserId] : []),
             invites: [],
             extraData: extraData
         )
