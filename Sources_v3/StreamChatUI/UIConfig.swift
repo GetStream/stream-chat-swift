@@ -7,6 +7,7 @@ import UIKit
 
 public struct UIConfig<ExtraData: ExtraDataTypes> {
     public var channelList = ChannelListUI()
+    public var channelDetail = ChannelDetailUI()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()
     public var currentUser = CurrentUserUI()
@@ -58,6 +59,13 @@ public extension UIConfig {
         public var channelListIndicatorBorderColor: UIColor = .streamWhiteSnow
         public var channelListActionDeleteChannel: UIColor = .streamAccentRed
         public var channelListAvatarOnlineIndicator: UIColor = .streamAccentGreen
+        
+        // MARK: - Channel Detail
+        
+        public var channelDetailSectionHeaderBgColor: UIColor = .streamGrayGainsboro
+        public var channelDetailIconColor: UIColor = .streamGray
+        public var channelDetailDisclosureIndicatorColor: UIColor = .streamGray
+        public var channelDetailDeletionColor: UIColor = .streamAccentRed
 
         // MARK: - Text interactions
 
@@ -138,6 +146,33 @@ public extension UIConfig {
         public var avatarView: ChatChannelAvatarView<ExtraData>.Type = ChatChannelAvatarView.self
         public var unreadCountView: ChatUnreadCountView.Type = ChatUnreadCountView.self
         public var readStatusView: ChatReadStatusCheckmarkView<ExtraData>.Type = ChatReadStatusCheckmarkView<ExtraData>.self
+    }
+}
+
+// MARK: - ChannelDetailUI
+
+public extension UIConfig {
+    struct ChannelDetailUI {
+        public var channelDetailCollectionView: ChatChannelDetailCollectionView.Type =
+            ChatChannelDetailCollectionView.self
+        public var channelDetailViewCell: ChatChannelDetailCollectionViewCell<ExtraData>.Type =
+            ChatChannelDetailCollectionViewCell<ExtraData>.self
+        public var channelDetailItemView: ChatChannelDetailItemView<ExtraData>.Type =
+            ChatChannelDetailItemView<ExtraData>.self
+        
+        public var icon = Icons()
+        
+        public struct Icons {
+            public var indicator = UIImage(named: "icn_indicator", in: .streamChatUI)
+            public var notification = UIImage(named: "icn_notification", in: .streamChatUI)
+            public var mute = UIImage(named: "icn_mute", in: .streamChatUI)
+            public var block = UIImage(named: "icn_block", in: .streamChatUI)
+            public var photosAndVideos = UIImage(named: "icn_photos_videos", in: .streamChatUI)
+            public var files = UIImage(named: "icn_files", in: .streamChatUI)
+            public var groups = UIImage(named: "icn_shared_groups", in: .streamChatUI)
+            public var leaveGroup = UIImage(named: "icn_leave_group", in: .streamChatUI)
+            public var delete = UIImage(named: "icn_delete_conversation", in: .streamChatUI)
+        }
     }
 }
 

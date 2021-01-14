@@ -15,7 +15,10 @@ open class ChatChannelRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelV
         navigationController?.show(controller, sender: self)
     }
     
-    open func showChannelDetail(_ channel: _ChatChannel<ExtraData>) {
-        fatalError("not implemented")
+    open func showChannelDetail(_ channel: _ChatChannelController<ExtraData>) {
+        debugPrint(channel)
+        let vc = ChatChannelDetailVC<ExtraData>()
+        vc.channelController = channel
+        navigationController?.show(vc, sender: self)
     }
 }

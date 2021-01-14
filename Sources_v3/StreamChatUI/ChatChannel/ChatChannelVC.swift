@@ -48,9 +48,7 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
     // MARK: - Actions
     
     @objc open func didTapOnChannelAvatar(_ sender: Any) {
-        guard let channel = channelController.channel else { return }
-        
-        router.showChannelDetail(channel)
+        router.showChannelDetail(channelController)
     }
 
     // MARK: - ChatMessageListVCDataSource
