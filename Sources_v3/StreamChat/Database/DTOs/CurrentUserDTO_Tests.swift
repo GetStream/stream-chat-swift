@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -49,8 +49,8 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.createdAt, loadedCurrentUser?.user.userCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedCurrentUser?.user.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedCurrentUser?.user.lastActivityAt)
-            Assert.willBeEqual(Int16(payload.unreadCount!.messages), loadedCurrentUser?.unreadMessagesCount)
-            Assert.willBeEqual(Int16(payload.unreadCount!.channels), loadedCurrentUser?.unreadChannelsCount)
+            Assert.willBeEqual(Int64(payload.unreadCount!.messages), loadedCurrentUser?.unreadMessagesCount)
+            Assert.willBeEqual(Int64(payload.unreadCount!.channels), loadedCurrentUser?.unreadChannelsCount)
             Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
                 try? JSONDecoder.default.decode(DefaultExtraData.User.self, from: $0.user.extraData)
             })

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -173,8 +173,8 @@ class DatabaseSession_Tests: StressTestCase {
         let currentUser = database.viewContext.currentUser()
         
         // Assert unread count is taken from event payload
-        XCTAssertEqual(Int16(eventPayload.unreadCount!.messages), currentUser?.unreadMessagesCount)
-        XCTAssertEqual(Int16(eventPayload.unreadCount!.channels), currentUser?.unreadChannelsCount)
+        XCTAssertEqual(Int64(eventPayload.unreadCount!.messages), currentUser?.unreadMessagesCount)
+        XCTAssertEqual(Int64(eventPayload.unreadCount!.channels), currentUser?.unreadChannelsCount)
     }
     
     func test_saveCurrentUserUnreadCount_failsIfThereIsNoCurrentUser() throws {
