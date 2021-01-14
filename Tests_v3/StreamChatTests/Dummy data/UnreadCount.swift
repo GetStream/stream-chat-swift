@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -7,6 +7,6 @@ import Foundation
 
 extension UnreadCount {
     static var dummy: Self {
-        .init(channels: 10, messages: 323)
+        .init(channels: Int.random(in: 0...Int.max), messages: Int.random(in: 0...Int.max))
     }
 }
