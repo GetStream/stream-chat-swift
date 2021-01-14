@@ -24,27 +24,7 @@ extension ViewController {
             return
         }
         
-        let status = PHPhotoLibrary.authorizationStatus()
-        
-        switch status {
-        case .notDetermined:
-            PHPhotoLibrary.requestAuthorization { [weak self] status in
-                DispatchQueue.main.async {
-                    if status == .authorized {
-                        self?.showAuthorizedImagePicker(sourceType: sourceType, completion)
-                    } else {
-                        completion(.failure(.invalidStatus(status)))
-                    }
-                }
-            }
-        case .restricted, .denied:
-            completion(.failure(.invalidStatus(status)))
-        case .authorized:
-            showAuthorizedImagePicker(sourceType: sourceType, completion)
-        @unknown default:
-            print(#file, #function, #line, "Unknown authorization status: \(status.rawValue)")
-            return
-        }
+        showAuthorizedImagePicker(sourceType: sourceType, completion)
     }
     
     private func showAuthorizedImagePicker(sourceType: UIImagePickerController.SourceType,

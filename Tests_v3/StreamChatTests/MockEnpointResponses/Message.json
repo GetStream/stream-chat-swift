@@ -170,6 +170,53 @@
         "mentioned_users" : [
             
         ],
+        "quoted_message" : {
+            "secret_note": "",
+            "updated_at" : "2021-01-02T07:23:41.411638Z",
+            "reply_count" : 0,
+            "html" : "<p>@thierry @1ae405d6-c279-3a8e-a27f-b91ec604de07 Hey!<\/p>\n",
+            "type" : "regular",
+            "own_reactions" : [
+                
+            ],
+            "pinned_at" : null,
+            "id" : "4C0CC2DA-8AB5-421F-808E-50DC7E40653D",
+            "user" : {
+                "banned" : false,
+                "online" : true,
+                "id" : "cilvia",
+                "role" : "user",
+                "created_at" : "2019-10-24T08:34:11.155375Z",
+                "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U01173D1D5J-0dead6eea6ea-512",
+                "value" : "cilvia",
+                "updated_at" : "2021-01-12T16:43:25.726221Z",
+                "last_active" : "2021-01-12T16:38:26.444716Z",
+                "name" : "Neil Hannah"
+            },
+            "shadowed" : false,
+            "pin_expires" : null,
+            "attachments" : [
+                
+            ],
+            "reaction_counts" : {
+                
+            },
+            "reaction_scores" : {
+                
+            },
+            "silent" : false,
+            "text" : "@thierry @1ae405d6-c279-3a8e-a27f-b91ec604de07 Hey!",
+            "pinned_by" : null,
+            "created_at" : "2021-01-02T07:23:41.411638Z",
+            "mentioned_users" : [
+                
+            ],
+            "pinned" : false,
+            "latest_reactions" : [
+                
+            ]
+        },
+        "quoted_message_id" : "4C0CC2DA-8AB5-421F-808E-50DC7E40653D",
         "thread_participants" : [
             {
                 "id" : "josh",

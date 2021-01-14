@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -62,6 +62,7 @@ protocol MessageDatabaseSession {
         parentMessageId: MessageId?,
         attachments: [_ChatMessageAttachment<ExtraData>.Seed],
         showReplyInChannel: Bool,
+        quotedMessageId: MessageId?,
         extraData: ExtraData.Message
     ) throws -> MessageDTO
     
@@ -102,6 +103,7 @@ extension MessageDatabaseSession {
     func createNewMessage<ExtraData: ExtraDataTypes>(
         in cid: ChannelId,
         text: String,
+        quotedMessageId: MessageId?,
         attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
         extraData: ExtraData.Message = .defaultValue
     ) throws -> MessageDTO {
@@ -113,6 +115,7 @@ extension MessageDatabaseSession {
             parentMessageId: nil,
             attachments: attachments,
             showReplyInChannel: false,
+            quotedMessageId: quotedMessageId,
             extraData: extraData
         )
     }

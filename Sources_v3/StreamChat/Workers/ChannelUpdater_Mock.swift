@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -43,6 +43,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var createNewMessage_command: String?
     @Atomic var createNewMessage_arguments: String?
     @Atomic var createNewMessage_attachments: [_ChatMessageAttachment<ExtraData>.Seed]?
+    @Atomic var createNewMessage_quotedMessageId: MessageId?
     @Atomic var createNewMessage_extraData: ExtraData.Message?
     @Atomic var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
     
@@ -139,6 +140,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         command: String?,
         arguments: String?,
         attachments: [_ChatMessageAttachment<ExtraData>.Seed],
+        quotedMessageId: MessageId?,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -147,6 +149,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         createNewMessage_command = command
         createNewMessage_arguments = arguments
         createNewMessage_attachments = attachments
+        createNewMessage_quotedMessageId = quotedMessageId
         createNewMessage_extraData = extraData
         createNewMessage_completion = completion
     }

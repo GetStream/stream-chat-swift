@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -32,6 +32,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var flaggedBy: CurrentUserDTO?
     @NSManaged var reactions: Set<MessageReactionDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
+    @NSManaged var quotedMessage: MessageDTO?
     
     // The timestamp the message was created locally. Applies only for the messages of the current user.
     @NSManaged var locallyCreatedAt: Date?
@@ -194,6 +195,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         parentMessageId: MessageId?,
         attachments: [_ChatMessageAttachment<ExtraData>.Seed],
         showReplyInChannel: Bool,
+        quotedMessageId: MessageId?,
         extraData: ExtraData.Message
     ) throws -> MessageDTO {
         guard let currentUserDTO = currentUser() else {
@@ -227,6 +229,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
         message.showReplyInChannel = showReplyInChannel
+        message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
         
         message.user = currentUserDTO.user
         message.channel = channelDTO
@@ -267,9 +270,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.isSilent = payload.isSilent
         
+        dto.quotedMessage = try payload.quotedMessage.flatMap { try saveMessage(payload: $0, for: cid) }
+
         var channelDTO: ChannelDTO?
         if let channelPayload = payload.channel {
-            channelDTO = try self.saveChannel(payload: channelPayload, query: nil)
+            channelDTO = try saveChannel(payload: channelPayload, query: nil)
         }
         
         if channelDTO == nil, let cid = cid {
@@ -348,6 +353,7 @@ extension MessageDTO {
             args: args,
             parentId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
+            quotedMessageId: quotedMessage?.id,
             attachments: attachments
                 .sorted { $0.attachmentID.index < $1.attachmentID.index }
                 .map { $0.asRequestPayload() },
@@ -417,6 +423,8 @@ private extension _ChatMessage {
         attachments = dto.attachments
             .map { $0.asModel() }
             .sorted { $0.id.index < $1.id.index }
+        
+        quotedMessageId = dto.quotedMessage.map(\.id)
     }
 }
 

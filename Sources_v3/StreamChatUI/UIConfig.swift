@@ -49,7 +49,8 @@ public extension UIConfig {
         public var subtitleText: UIColor = .streamGray
         public var text: UIColor = .streamBlack
         public var generalBackground: UIColor = .streamWhiteSnow
-        public var shadow: UIColor = .streamGray
+        public var popupBackground: UIColor = .streamWhite
+        public var shadow: UIColor = .streamModalShadow
 
         // MARK: - Channel List
 
@@ -308,6 +309,10 @@ public extension UIConfig {
             MessageComposerCommandCellView<ExtraData>.self
         public var suggestionsCollectionViewLayout: MessageComposerSuggestionsCollectionViewLayout.Type =
             MessageComposerSuggestionsCollectionViewLayout.self
+        public var suggestionsHeaderReusableView: MessageComposerSuggestionsCommandsReusableView<ExtraData>.Type =
+            MessageComposerSuggestionsCommandsReusableView.self
+        public var suggestionsHeaderView: MessageComposerSuggestionsCommandsHeaderView<ExtraData>.Type =
+            MessageComposerSuggestionsCommandsHeaderView.self
         public var mentionAvatarView: ChatChannelAvatarView<ExtraData>.Type = ChatChannelAvatarView<ExtraData>.self
         public var commandIcons: [String: UIImage] = [
             "ban": UIImage(named: "command_ban", in: .streamChatUI)!,
@@ -360,6 +365,7 @@ private extension UIColor {
     static let streamAccentBlue = mode(0x005fff, 0x005fff)
     static let streamAccentRed = mode(0xff3742, 0xff3742)
     static let streamAccentGreen = mode(0x20e070, 0x20e070)
+    static let streamModalShadow = mode(0, lightAlpha: 0.15, 0, darkAlpha: 1)
 
     static let streamBGGradientFrom = mode(0xf7f7f7, 0x101214)
     static let streamBGGradientTo = mode(0xfcfcfc, 0x070a0d)

@@ -657,6 +657,7 @@ public extension _ChatChannelController {
     ///   - text: Text of the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - attachments: An array of the attachments for the message.
+    ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
     func createNewMessage(
@@ -664,6 +665,7 @@ public extension _ChatChannelController {
 //        command: String? = nil,
 //        arguments: String? = nil,
         attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
+        quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -684,6 +686,7 @@ public extension _ChatChannelController {
             command: nil,
             arguments: nil,
             attachments: attachments,
+            quotedMessageId: quotedMessageId,
             extraData: extraData
         ) { result in
             self.callback {

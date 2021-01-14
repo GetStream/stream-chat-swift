@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -21,8 +21,16 @@ class MessageDTO_Tests: XCTestCase {
         
         let channelPayload: ChannelDetailPayload<DefaultExtraData> = .dummy(cid: channelId)
         
+        let quotedMessagePayload: MessagePayload<DefaultExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: userId,
+            channel: channelPayload
+        )
+        
         let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
             messageId: messageId,
+            quotedMessageId: quotedMessagePayload.id,
+            quotedMessage: quotedMessagePayload,
             authorUserId: userId,
             latestReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: .unique))
@@ -111,6 +119,7 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
             Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
+            Assert.willBeEqual(messagePayload.quotedMessage?.id, loadedMessage?.quotedMessage?.id)
             Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
             Assert.willBeEqual(
                 messagePayload.mentionedUsers.map(\.id),
@@ -353,6 +362,7 @@ class MessageDTO_Tests: XCTestCase {
                 parentMessageId: parentMessageId,
                 attachments: messageAttachmentSeeds,
                 showReplyInChannel: true,
+                quotedMessageId: nil,
                 extraData: messageExtraData
             ).id
         }
@@ -452,6 +462,7 @@ class MessageDTO_Tests: XCTestCase {
                     parentMessageId: nil,
                     attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
                     showReplyInChannel: false,
+                    quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
                 )
                 message1Id = message1DTO.id
@@ -466,6 +477,7 @@ class MessageDTO_Tests: XCTestCase {
                     parentMessageId: nil,
                     attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
                     showReplyInChannel: false,
+                    quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
                 )
                 message2Id = message2DTO.id
@@ -534,6 +546,7 @@ class MessageDTO_Tests: XCTestCase {
                     parentMessageId: newMessageParentMessageId,
                     attachments: newMessageAttachmentSeeds,
                     showReplyInChannel: true,
+                    quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
                 )
                 newMessageId = messageDTO.id
@@ -573,6 +586,7 @@ class MessageDTO_Tests: XCTestCase {
                     parentMessageId: .unique,
                     attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
                     showReplyInChannel: true,
+                    quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
                 )
             }, completion: completion)
@@ -604,6 +618,7 @@ class MessageDTO_Tests: XCTestCase {
                     parentMessageId: .unique,
                     attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
                     showReplyInChannel: true,
+                    quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
                 )
             }, completion: completion)
@@ -635,6 +650,7 @@ class MessageDTO_Tests: XCTestCase {
                 parentMessageId: messageId,
                 attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
                 showReplyInChannel: false,
+                quotedMessageId: nil,
                 extraData: NoExtraData.defaultValue
             )
             // Get reply messageId
