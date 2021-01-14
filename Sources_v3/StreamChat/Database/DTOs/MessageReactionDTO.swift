@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -104,7 +104,7 @@ extension NSManagedObjectContext {
         )
         
         dto.type = payload.type.rawValue
-        dto.score = Int64(payload.score)
+        dto.score = Int64(clamping: payload.score)
         dto.createdAt = payload.createdAt
         dto.updatedAt = payload.updatedAt
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
