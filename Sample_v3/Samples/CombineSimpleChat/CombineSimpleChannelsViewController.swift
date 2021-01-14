@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -232,14 +232,17 @@ class CombineSimpleChannelsViewController: UITableViewController {
         let defaultName = "Channel" + id.prefix(4)
         
         alertTextField(title: "Create channel", placeholder: defaultName) { name in
-            let controller = self.chatClient.channelController(
-                createChannelWithId: .init(type: .messaging, id: id),
-                name: name,
-                imageURL: nil,
-                members: [self.chatClient.currentUserId],
-                extraData: .defaultValue
-            )
-            controller.synchronize()
+            do {
+                let controller = try self.chatClient.channelController(
+                    createChannelWithId: .init(type: .messaging, id: id),
+                    name: name,
+                    imageURL: nil,
+                    extraData: .defaultValue
+                )
+                controller.synchronize()
+            } catch {
+                print(error.localizedDescription)
+            }
         }
     }
     
@@ -262,9 +265,8 @@ class CombineSimpleChannelsViewController: UITableViewController {
         func pushDirectMessageChat(for userId: UserId) {
             if let chatVC = UIStoryboard.combineSimpleChat
                 .instantiateViewController(withIdentifier: "CombineSimpleChatViewController") as? CombineSimpleChatViewController {
-                let newChatMemebers = [userId, chatClient.currentUserId]
                 let controller = try! chatClient.channelController(
-                    createDirectMessageChannelWith: Set(newChatMemebers),
+                    createDirectMessageChannelWith: [userId],
                     name: nil,
                     imageURL: nil,
                     extraData: .defaultValue

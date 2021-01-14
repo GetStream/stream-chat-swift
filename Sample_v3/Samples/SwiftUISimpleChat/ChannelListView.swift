@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 #if swift(>=5.3)
@@ -27,14 +27,17 @@ struct ChannelListView: View {
         let defaultName = "Channel" + id.prefix(4)
         
         return TextAlert(title: "Create channel", placeholder: defaultName) { name in
-            let controller = self.channelList.controller.client.channelController(
-                createChannelWithId: .init(type: .messaging, id: id),
-                name: name,
-                imageURL: nil,
-                members: [self.channelList.controller.client.currentUserId],
-                extraData: .defaultValue
-            )
-            controller.synchronize()
+            do {
+                let controller = try self.channelList.controller.client.channelController(
+                    createChannelWithId: .init(type: .messaging, id: id),
+                    name: name,
+                    imageURL: nil,
+                    extraData: .defaultValue
+                )
+                controller.synchronize()
+            } catch {
+                print(error.localizedDescription)
+            }
         }
     }
 
