@@ -204,7 +204,7 @@ public struct Message: Codable {
         id = try container.decode(String.self, forKey: .id)
         type = try container.decode(MessageType.self, forKey: .type)
         user = try container.decode(User.self, forKey: .user)
-        channel = try container.decode(Channel.self, forKey: .channel)
+        channel = try container.decodeIfPresent(Channel.self, forKey: .channel)
         created = try container.decode(Date.self, forKey: .created)
         updated = try container.decode(Date.self, forKey: .updated)
         deleted = try container.decodeIfPresent(Date.self, forKey: .deleted)
