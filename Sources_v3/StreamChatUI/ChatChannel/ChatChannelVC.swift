@@ -61,22 +61,7 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
         replyMessageFor message: _ChatMessage<ExtraData>,
         at index: Int
     ) -> _ChatMessage<ExtraData>? {
-        guard let parentMessageId = message.parentMessageId else { return nil }
-        let messageController = channelController.client.messageController(
-            cid: channelController.cid!,
-            messageId: parentMessageId
-        )
-        if let parentMessage = messageController.message {
-            return parentMessage
-        }
-        messageController.synchronize { [weak self, messageController] _ in
-            guard let self = self, let parentMessage = messageController.message else { return }
-            self.channelController(
-                self.channelController,
-                didUpdateMessages: [.update(parentMessage, index: IndexPath(item: index, section: 0))]
-            )
-        }
-        return nil
+        message.quotedMessageId.flatMap { channelController.dataStore.message(id: $0) }
     }
 
     override public func chatMessageListVC(
