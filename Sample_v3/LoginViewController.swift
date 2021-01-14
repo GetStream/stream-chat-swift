@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import SwiftUI
@@ -69,7 +69,7 @@ extension LoginViewController {
         
         let channelListController = chatClient.channelListController(
             query: ChannelListQuery(
-                filter: .containMembers(userIds: [chatClient.currentUserId]),
+                filter: .containMembers(userIds: [chatClient.currentUserId!]),
                 pageSize: 25
             )
         )
