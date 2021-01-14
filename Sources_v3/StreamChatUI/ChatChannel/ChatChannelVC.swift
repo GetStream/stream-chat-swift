@@ -35,11 +35,22 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
         guard let channel = channelController.channel else { return }
 
         let avatar = ChatChannelAvatarView<ExtraData>()
+        avatar.channelAndUserId = (channel, channelController.client.currentUserId)
+        let tapGesture = UITapGestureRecognizer()
+        tapGesture.addTarget(self, action: #selector(didTapOnChannelAvatar))
+        avatar.addGestureRecognizer(tapGesture)
         avatar.translatesAutoresizingMaskIntoConstraints = false
         avatar.heightAnchor.pin(equalToConstant: 32).isActive = true
-        avatar.channelAndUserId = (channel, channelController.client.currentUserId)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatar)
         navigationItem.largeTitleDisplayMode = .never
+    }
+    
+    // MARK: - Actions
+    
+    @objc open func didTapOnChannelAvatar(_ sender: Any) {
+        guard let channel = channelController.channel else { return }
+        
+        router.showChannelDetail(channel)
     }
 
     // MARK: - ChatMessageListVCDataSource

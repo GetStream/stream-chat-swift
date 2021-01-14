@@ -14,4 +14,8 @@ open class ChatChannelRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelV
         controller.userSuggestionSearchController = channel.client.userSearchController()
         navigationController?.show(controller, sender: self)
     }
+    
+    open func showChannelDetail(_ channel: _ChatChannel<ExtraData>) {
+        fatalError("not implemented")
+    }
 }
