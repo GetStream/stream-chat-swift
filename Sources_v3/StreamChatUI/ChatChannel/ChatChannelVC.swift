@@ -8,7 +8,7 @@ import UIKit
 open class ChatChannelVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
     // MARK: - Properties
 
-    public private(set) lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
+    public private(set) lazy var router = uiConfig.navigation.channelRouter.init(rootViewController: self)
     
     // MARK: - Life Cycle
     
