@@ -21,7 +21,7 @@ extension UITableView {
         scrollToRowIfPossible(at: Int.max, animated: animated)
     }
     
-    public func scrollToRowIfPossible(at row: Int, animated: Bool = true) {
+    public func scrollToRowIfPossible(at row: Int, scrollPosition: ScrollPosition = .top, animated: Bool = true) {
         let sectionsCount = numberOfSections
         
         guard sectionsCount > 0 else {
@@ -36,7 +36,7 @@ extension UITableView {
         
         let row: Int = min(row, rowsCount - 1)
         setContentOffset(contentOffset, animated: false)
-        scrollToRow(at: IndexPath(row: row, section: sectionsCount - 1), at: .top, animated: animated)
+        scrollToRow(at: IndexPath(row: row, section: sectionsCount - 1), at: scrollPosition, animated: animated)
     }
     
     func layoutFooterView() {

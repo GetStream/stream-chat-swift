@@ -468,7 +468,8 @@ extension ChatViewController {
             tableView.reloadData()
             
             if scrollToRow >= 0 && (isLoading || canScroll) {
-                tableView.scrollToRowIfPossible(at: scrollToRow, animated: false)
+                let isBottom = scrollToRow == items.count - 1
+                tableView.scrollToRowIfPossible(at: scrollToRow, scrollPosition: isBottom ? .bottom : .top, animated: false)
             }
             
             if !items.isEmpty, case .loading = items[0] {
