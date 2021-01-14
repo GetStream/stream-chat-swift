@@ -356,16 +356,16 @@
                                 <rect key="frame" x="0.0" y="367" width="295.5" height="162.5"/>
                                 <subviews>
                                     <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="magnifyingglass" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="QJY-eK-8rq">
-                                        <rect key="frame" x="93" y="53" width="110" height="108"/>
-                                        <color key="tintColor" systemColor="secondaryLabelColor"/>
+                                        <rect key="frame" x="58" y="53" width="140" height="138"/>
+                                        <color key="tintColor" systemColor="tertiaryLabelColor"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="110" id="6LF-rz-iND"/>
-                                            <constraint firstAttribute="height" constant="110" id="gZx-Cp-f6L"/>
+                                            <constraint firstAttribute="width" constant="140" id="6LF-rz-iND"/>
+                                            <constraint firstAttribute="height" constant="140" id="gZx-Cp-f6L"/>
                                         </constraints>
                                     </imageView>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No user matches these keywords..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Sqo-ta-rZH">
-                                        <rect key="frame" x="16" y="178" width="263.5" height="20.5"/>
-                                        <fontDescription key="fontDescription" type="system" weight="light" pointSize="17"/>
+                                        <rect key="frame" x="16" y="208" width="224" height="17"/>
+                                        <fontDescription key="fontDescription" type="system" weight="light" pointSize="14"/>
                                         <color key="textColor" systemColor="secondaryLabelColor"/>
                                         <nil key="highlightedColor"/>
                                     </label>
@@ -644,6 +644,9 @@
         </systemColor>
         <systemColor name="systemGrayColor">
             <color red="0.55686274509803924" green="0.55686274509803924" blue="0.57647058823529407" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="tertiaryLabelColor">
+            <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.29999999999999999" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="tertiarySystemGroupedBackgroundColor">
             <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
