@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -20,8 +20,8 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var updatedAt: Date
     @NSManaged var lastMessageAt: Date?
     
-    @NSManaged var watcherCount: Int16
-    @NSManaged var memberCount: Int16
+    @NSManaged var watcherCount: Int64
+    @NSManaged var memberCount: Int64
     
     @NSManaged var isFrozen: Bool
     
@@ -91,7 +91,7 @@ extension NSManagedObjectContext {
         dto.updatedAt = payload.updatedAt
         dto.defaultSortingAt = payload.lastMessageAt ?? payload.createdAt
         dto.lastMessageAt = payload.lastMessageAt
-        dto.memberCount = Int16(payload.memberCount)
+        dto.memberCount = Int64(clamping: payload.memberCount)
         
         dto.isFrozen = payload.isFrozen
         
@@ -131,7 +131,7 @@ extension NSManagedObjectContext {
             dto.members.insert(member)
         }
         
-        dto.watcherCount = Int16(payload.watcherCount ?? 0)
+        dto.watcherCount = Int64(clamping: payload.watcherCount ?? 0)
         
         return dto
     }
