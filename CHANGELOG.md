@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### 🐞 Fixed
+- Fixed chat table view not starting at the bottom when the last message is long. [#653](https://github.com/GetStream/stream-chat-swift/issues/653)
 - Make an OPTIONS request to `connect` instead of `QueryUsers` request to heat up HTTP connection. [#733](https://github.com/GetStream/stream-chat-swift/issues/733)
 - ComposerView layout overlap when both image and file uploaded [#738](https://github.com/GetStream/stream-chat-swift/issues/738)
 - Message replies (thread) is unreachable when message itself is deleted [#734](https://github.com/GetStream/stream-chat-swift/issues/734)
