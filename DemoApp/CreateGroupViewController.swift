@@ -157,23 +157,23 @@ extension CreateGroupViewController: UITableViewDelegate, UITableViewDataSource 
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as! SearchUserCell
+        defer {
+            tableView.deselectRow(at: indexPath, animated: true)
+        }
         
-        if cell.accessoryImageView.image == nil {
-            // Select user
-            cell.accessoryImageView.image = UIImage(systemName: "checkmark.circle.fill")
-            if let user = cell.user {
-                selectedUsers.append(user)
-            }
-        } else {
-            // Deselect user
-            cell.accessoryImageView.image = nil
-            if let user = cell.user {
-                selectedUsers.removeAll(where: { $0.id == user.id })
-            }
+        let cell = tableView.cellForRow(at: indexPath) as! SearchUserCell
+        guard cell.accessoryImageView.image == nil else {
+            // The cell isn't selected
+            // De-select user by tapping functionality was removed due to designer feedback
+            return
+        }
+        
+        // Select user
+        cell.accessoryImageView.image = UIImage(systemName: "checkmark.circle.fill")
+        if let user = cell.user {
+            selectedUsers.append(user)
         }
 
-        tableView.deselectRow(at: indexPath, animated: true)
         showSelectedUsers(!selectedUsers.isEmpty)
         selectedUsersCollectionView.reloadData()
     }

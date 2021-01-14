@@ -299,30 +299,28 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as! UserCredentialsCell
-        
-        if cell.accessoryImageView.image == nil {
-            // Select user
-            cell.accessoryImageView.image = UIImage(systemName: "checkmark.circle.fill")
-            let token = UISearchToken(
-                icon: cell.avatarView.image?.resized(to: .init(width: 20, height: 20)),
-                text: cell.user?.name ?? cell.user?.id ?? "NoName"
-            )
-            token.representedObject = cell.user
-            searchField.replaceTextualPortion(of: searchField.textualRange, with: token, at: searchField.tokens.count)
-            
-            update(for: .selected)
-        } else {
-            // Deselect user
-            cell.accessoryImageView.image = nil
-            if let tokenIndex = searchField.tokens.firstIndex(where: { ($0.representedObject as? ChatUser)?.id == cell.user?.id }) {
-                searchField.removeToken(at: tokenIndex)
-            }
-            
-            update(for: .searching)
+        defer {
+            tableView.deselectRow(at: indexPath, animated: true)
         }
         
-        tableView.deselectRow(at: indexPath, animated: true)
+        let cell = tableView.cellForRow(at: indexPath) as! UserCredentialsCell
+        guard cell.accessoryImageView.image == nil else {
+            // The cell isn't selected
+            // De-select user by tapping functionality was removed due to designer feedback
+            return
+        }
+        
+        // Select user
+        cell.accessoryImageView.image = UIImage(systemName: "checkmark.circle.fill")
+        let token = UISearchToken(
+            icon: cell.avatarView.image?.resized(to: .init(width: 20, height: 20)),
+            text: cell.user?.name ?? cell.user?.id ?? "NoName"
+        )
+        token.representedObject = cell.user
+        searchField.replaceTextualPortion(of: searchField.textualRange, with: token, at: searchField.tokens.count)
+        
+        update(for: .selected)
+        let client = searchController.client
         do {
             composerView.controller = try searchController.client
                 .channelController(
