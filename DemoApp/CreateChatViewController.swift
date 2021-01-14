@@ -232,7 +232,7 @@ class CreateChatViewController: UIViewController {
         
         let createGroupController = storyboard.instantiateViewController(withIdentifier: "CreateGroupViewController")
             as! CreateGroupViewController
-        createGroupController.searchController = searchController
+        createGroupController.searchController = searchController.client.userSearchController()
         
         navigationController?.pushViewController(createGroupController, animated: true)
     }
