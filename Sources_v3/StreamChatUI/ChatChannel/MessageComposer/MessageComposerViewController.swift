@@ -103,11 +103,11 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             textView.placeholderLabel.text = L10n.Composer.Placeholder.message
             imageAttachments = []
             documentAttachments = []
-            composerView.replyView.message = nil
+            composerView.quotedMessageView.message = nil
             composerView.sendButton.mode = .new
             composerView.documentAttachmentsView.isHidden = true
             composerView.imageAttachmentsView.isHidden = true
-            composerView.replyView.setAnimatedly(hidden: true)
+            composerView.quotedMessageView.setAnimatedly(hidden: true)
             composerView.container.topStackView.setAnimatedly(hidden: true)
             composerView.messageInputView.setSlashCommandViews(hidden: true)
             composerView.invalidateIntrinsicContentSize()
@@ -123,8 +123,8 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
                 .tinted(with: uiConfig.colorPalette.messageComposerStateIcon)
             composerView.stateIcon.image = image
             composerView.container.topStackView.setAnimatedly(hidden: false)
-            composerView.replyView.setAnimatedly(hidden: false)
-            composerView.replyView.message = messageToReply
+            composerView.quotedMessageView.setAnimatedly(hidden: false)
+            composerView.quotedMessageView.message = messageToQuote
             composerView.invalidateIntrinsicContentSize()
         case let .edit(message):
             composerView.sendButton.mode = .edit
