@@ -17,9 +17,9 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var replyView = uiConfig
+    public private(set) lazy var quotedMessageView = uiConfig
         .messageComposer
-        .replyBubbleView.init()
+        .quotedMessageView.init()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var imageAttachmentsView: MessageComposerImageAttachmentsView<ExtraData> = uiConfig
@@ -155,8 +155,8 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
         container.centerStackView.axis = .vertical
         container.centerStackView.alignment = .fill
         
-        replyView.isHidden = true
-        container.centerStackView.addArrangedSubview(replyView)
+        quotedMessageView.isHidden = true
+        container.centerStackView.addArrangedSubview(quotedMessageView)
         container.centerStackView.addArrangedSubview(imageAttachmentsView)
         container.centerStackView.addArrangedSubview(documentAttachmentsView)
         

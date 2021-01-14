@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatReplyBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class MessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: - Properties
     
     public var avatarViewWidth: CGFloat = 24
@@ -26,7 +26,7 @@ open class ChatReplyBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvide
     
     public private(set) lazy var authorAvatarView = uiConfig
         .messageComposer
-        .replyBubbleAvatarView.init()
+        .quotedMessageAvatarView.init()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var attachmentPreview = UIImageView()
