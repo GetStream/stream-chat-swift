@@ -13,7 +13,11 @@ class GroupUserCell: UICollectionViewCell {
 }
 
 class SearchUserCell: UITableViewCell {
-    @IBOutlet var mainStackView: UIStackView!
+    @IBOutlet var mainStackView: UIStackView! {
+        didSet {
+            mainStackView.isLayoutMarginsRelativeArrangement = true
+        }
+    }
     
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var descriptionLabel: UILabel!
@@ -26,9 +30,22 @@ class SearchUserCell: UITableViewCell {
 
 class CreateGroupViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
+    @IBOutlet var selectedUsersStackView: UIStackView! {
+        didSet {
+            selectedUsersStackView.isLayoutMarginsRelativeArrangement = true
+        }
+    }
+
     @IBOutlet var selectedUsersCollectionView: UICollectionView!
     @IBOutlet var loadingIndicator: UIActivityIndicatorView!
     @IBOutlet var noMatchView: UIView!
+    @IBOutlet var infoStackView: UIStackView! {
+        didSet {
+            infoStackView.isLayoutMarginsRelativeArrangement = true
+        }
+    }
+
+    @IBOutlet var infoLabel: UILabel!
     
     var searchController: ChatUserSearchController!
     
@@ -39,17 +56,13 @@ class CreateGroupViewController: UIViewController {
     var selectedUsers = [ChatUser]()
     
     @IBOutlet var searchField: UISearchBar!
-    @IBOutlet var mainStackView: UIStackView! {
-        didSet {
-            mainStackView.isLayoutMarginsRelativeArrangement = true
-        }
-    }
+    @IBOutlet var mainStackView: UIStackView!
     
     var operation: DispatchWorkItem?
     let throttleTime = 1000
     
     lazy var nextButton: UIBarButtonItem = UIBarButtonItem(
-        image: UIImage(systemName: "arrow.right"),
+        image: UIImage(named: "Icon_arrow_right"),
         style: .done,
         target: self,
         action: #selector(nextTapped)
@@ -93,11 +106,18 @@ class CreateGroupViewController: UIViewController {
         searchController.search(term: nil) // Empty initial search to get all users
         
         view.bringSubviewToFront(searchField)
+        infoLabel.text = "On the platform"
     }
     
     @objc func searchFieldDidChange(_ sender: UISearchTextField) {
         noMatchView.isHidden = true
         loadingIndicator.startAnimating()
+        
+        if let text = sender.text, !text.isEmpty {
+            infoLabel.text = "Matches for \"\(text)\""
+        } else {
+            infoLabel.text = "On the platform"
+        }
         
         operation?.cancel()
         operation = DispatchWorkItem { [weak self] in
@@ -117,7 +137,7 @@ class CreateGroupViewController: UIViewController {
     }
     
     func showSelectedUsers(_ show: Bool) {
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: 0.25) {
             self.selectedUsersCollectionView.isHidden = !show
             self.navigationItem.rightBarButtonItem = show ? self.nextButton : nil
         }
@@ -198,8 +218,15 @@ extension CreateGroupViewController: UICollectionViewDataSource, UICollectionVie
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let id = selectedUsers[indexPath.row].id
+        
         selectedUsers.remove(at: indexPath.row)
         collectionView.deleteItems(at: [indexPath])
+        showSelectedUsers(!selectedUsers.isEmpty)
+        
+        if let cell = tableView.visibleCells.first(where: { ($0 as? SearchUserCell)?.user?.id == id }) as? SearchUserCell {
+            cell.accessoryImageView.image = nil
+        }
     }
 }
 
