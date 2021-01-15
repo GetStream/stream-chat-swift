@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.6.3](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.3)
+_January 15, 2021_
+
 ### ✅ Added
 - `Message.channel` to access the channel from a message. PS: Due to a temporary backend issue, it's possible that `Message.channel.config` will not be accurate when using the `search` functionality. This should be fixed soon. [#650](https://github.com/GetStream/stream-chat-swift/issues/650)
 
