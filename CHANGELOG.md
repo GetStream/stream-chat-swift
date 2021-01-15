@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### ✅ Added
+- `Message.channel` to access the channel from a message. PS: Due to a temporary backend issue, it's possible that `Message.channel.config` will not be accurate when using the `search` functionality. This should be fixed soon. [#650](https://github.com/GetStream/stream-chat-swift/issues/650)
+
 ### 🐞 Fixed
 - Fixed chat table view not starting at the bottom when the last message is long. [#653](https://github.com/GetStream/stream-chat-swift/issues/653)
 - Make an OPTIONS request to `connect` instead of `QueryUsers` request to heat up HTTP connection. [#733](https://github.com/GetStream/stream-chat-swift/issues/733)
