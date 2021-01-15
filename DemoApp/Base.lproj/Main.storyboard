@@ -469,9 +469,17 @@
                                                             <nil key="textColor"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
+                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Iut-cT-KXn">
+                                                            <rect key="frame" x="-56" y="0.0" width="240" height="128"/>
+                                                            <color key="backgroundColor" systemColor="labelColor"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="width" constant="12" id="9Nt-pA-ZHT"/>
+                                                                <constraint firstAttribute="height" constant="12" id="TYF-0s-svo"/>
+                                                            </constraints>
+                                                        </view>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="xmark.circle.fill" catalog="system" translatesAutoresizingMaskIntoConstraints="NO" id="d1Y-X1-M2b" customClass="AvatarView" customModule="ChatSample" customModuleProvider="target">
                                                             <rect key="frame" x="8" y="9" width="104" height="40"/>
-                                                            <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <color key="tintColor" systemColor="systemBackgroundColor"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="24" id="8Lh-Mu-Dgy"/>
                                                                 <constraint firstAttribute="height" constant="24" id="fJ3-4V-eXo"/>
@@ -485,7 +493,9 @@
                                                         <constraint firstItem="LkB-9t-RLq" firstAttribute="top" secondItem="Hfs-oZ-VPu" secondAttribute="bottom" constant="6" id="EDu-vj-KKE"/>
                                                         <constraint firstItem="Hfs-oZ-VPu" firstAttribute="leading" secondItem="LI1-gx-p7l" secondAttribute="leading" id="Ha6-Lw-lkb"/>
                                                         <constraint firstAttribute="bottom" secondItem="LkB-9t-RLq" secondAttribute="bottom" id="MaD-m1-FmV"/>
+                                                        <constraint firstItem="Iut-cT-KXn" firstAttribute="centerX" secondItem="d1Y-X1-M2b" secondAttribute="centerX" id="Nrc-bg-m7B"/>
                                                         <constraint firstItem="LkB-9t-RLq" firstAttribute="leading" secondItem="LI1-gx-p7l" secondAttribute="leading" id="OQn-fr-E2l"/>
+                                                        <constraint firstItem="Iut-cT-KXn" firstAttribute="centerY" secondItem="d1Y-X1-M2b" secondAttribute="centerY" id="Ty6-y9-7NF"/>
                                                         <constraint firstAttribute="trailing" secondItem="d1Y-X1-M2b" secondAttribute="trailing" id="iDd-6l-w4E"/>
                                                         <constraint firstAttribute="trailing" secondItem="Hfs-oZ-VPu" secondAttribute="trailing" id="tN5-7t-SeH"/>
                                                     </constraints>
@@ -636,6 +646,9 @@
         <namedColor name="AccentColor">
             <color red="0.0" green="0.46000000000000002" blue="0.89000000000000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </namedColor>
+        <systemColor name="labelColor">
+            <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
         <systemColor name="secondaryLabelColor">
             <color red="0.23529411764705882" green="0.23529411764705882" blue="0.2627450980392157" alpha="0.59999999999999998" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
