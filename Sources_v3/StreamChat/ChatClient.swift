@@ -135,6 +135,10 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             eventNotificationCenter,
             internetConnection
         )
+
+        if let currentUserId = currentUserId {
+            webSocketClient?.connectEndpoint = .webSocketConnect(userId: currentUserId)
+        }
         
         webSocketClient?.connectionStateDelegate = self
         
