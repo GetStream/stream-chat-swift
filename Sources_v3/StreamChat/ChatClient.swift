@@ -88,7 +88,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///
     /// `ChatClient` initializes a set of background workers that keep observing the current state of the system and perform
     /// work if needed (i.e. when a new message pending sent appears in the database, a worker tries to send it.)
-    private(set) var backgroundWorkers: [Worker]!
+    private(set) var backgroundWorkers: [Worker] = []
     
     /// Builder blocks used for creating `backgroundWorker`s when needed.
     private let workerBuilders: [WorkerBuilder]
@@ -270,9 +270,6 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         self.environment = environment
         self.workerBuilders = workerBuilders
         self.eventWorkerBuilders = eventWorkerBuilders
-        
-        createBackgroundWorkers()
-        createWebSocketClient()
     }
     
     deinit {

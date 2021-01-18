@@ -140,7 +140,7 @@ class ChatClient_Tests: StressTestCase {
     
     // MARK: - WebSocketClient tests
     
-    func test_webSocketClientIsInitialized() throws {
+    func test_webSocketClientConfiguration() throws {
         // Use in-memory store
         // Create a new chat client
         let client = ChatClient(
@@ -149,6 +149,9 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: eventWorkerBuilders,
             environment: testEnv.environment
         )
+
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
         
         // Assert the init parameters are correct
         let webSocket = testEnv.webSocketClient
@@ -172,6 +175,9 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
         
         // Assert that mandatory middlewares exists
         let middlewares = try XCTUnwrap(testEnv.webSocketClient?.init_eventNotificationCenter.middlewares)
@@ -265,6 +271,9 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
         
         // Set a connection Id waiter and assert it's `nil`
         var providedConnectionId: ConnectionId?
@@ -308,6 +317,9 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
         
         // Set a connection Id waiter and set `providedConnectionId` to a non-nil value
         var providedConnectionId: ConnectionId? = .unique
@@ -361,7 +373,7 @@ class ChatClient_Tests: StressTestCase {
     
     // MARK: - APIClient tests
     
-    func test_apiClientIsInitialized() throws {
+    func test_apiClientConfiguration() throws {
         // Create a new chat client
         _ = ChatClient(
             config: inMemoryStorageConfig,
@@ -369,6 +381,9 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [],
             environment: testEnv.environment
         )
+
+        // Simulate access to `apiClient` so it is initialized
+        _ = client.apiClient
         
         assertMandatoryHeaderFields(testEnv.apiClient?.init_sessionConfiguration)
         XCTAssert(testEnv.apiClient?.init_requestDecoder is TestRequestDecoder)
@@ -392,7 +407,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader<DefaultExtraData> })
     }
     
-    func test_backgroundWorkersAreInitialized() {
+    func test_backgroundWorkersConfiguration() {
         // Set up mocks for APIClient, WSClient and Database
         let config = ChatClientConfig(apiKey: .init(.unique))
         
@@ -403,6 +418,9 @@ class ChatClient_Tests: StressTestCase {
             eventWorkerBuilders: [TestEventWorker.init],
             environment: testEnv.environment
         )
+
+        // Simulate `createBackgroundWorkers` so workers are created.
+        client.createBackgroundWorkers()
         
         let testWorker = client.backgroundWorkers.first as? TestWorker
         XCTAssert(testWorker?.init_database is DatabaseContainerMock)
@@ -470,7 +488,10 @@ class ChatClient_Tests: StressTestCase {
     func test_passiveClient_doesNotHaveWorkers() {
         // Create Client with inactive flag set
         let client = ChatClient(config: inactiveInMemoryStorageConfig)
-        
+
+        // Simulate `createBackgroundWorkers`.
+        client.createBackgroundWorkers()
+
         // Assert that no background worker is initialized
         XCTAssert(client.backgroundWorkers.isEmpty)
     }
