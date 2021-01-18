@@ -53,7 +53,7 @@ open class ChatReplyBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvide
         textView.textContainer.lineFragmentPadding = .zero
         
         textView.backgroundColor = .clear
-        textView.font = .preferredFont(forTextStyle: .footnote)
+        textView.font = uiConfig.font.footnote
         textView.textContainerInset = .zero
         textView.textColor = uiConfig.colorPalette.text
 

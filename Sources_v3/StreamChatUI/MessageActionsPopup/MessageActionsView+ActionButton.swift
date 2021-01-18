@@ -14,7 +14,7 @@ extension MessageActionsView {
 
         override public func defaultAppearance() {
             backgroundColor = uiConfig.colorPalette.generalBackground
-            titleLabel?.font = UIFont.preferredFont(forTextStyle: .headline).bold
+            titleLabel?.font = uiConfig.font.body
             contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
             titleEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
             contentHorizontalAlignment = .left

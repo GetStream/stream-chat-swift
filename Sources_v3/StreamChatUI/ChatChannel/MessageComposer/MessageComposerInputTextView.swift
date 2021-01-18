@@ -46,7 +46,7 @@ open class MessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
     // MARK: Public
     
     open func defaultAppearance() {
-        font = .preferredFont(forTextStyle: .callout)
+        font = uiConfig.font.body
         textContainer.lineFragmentPadding = 10
         textColor = uiConfig.colorPalette.text
         

@@ -22,7 +22,7 @@ open class MessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataType
     override public func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.popupBackground
 
-        headerLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+        headerLabel.font = uiConfig.font.body
         headerLabel.textColor = uiConfig.colorPalette.subtitleText
         commandImageView.contentMode = .scaleAspectFit
     }

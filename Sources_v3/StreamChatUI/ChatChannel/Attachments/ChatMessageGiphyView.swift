@@ -93,7 +93,7 @@ extension ChatMessageGiphyView {
             let label = UILabel().withoutAutoresizingMaskConstraints
             label.text = "GIPHY"
             label.textColor = uiConfig.colorPalette.giphyBadgeText
-            label.font = UIFont.preferredFont(forTextStyle: .caption1).bold
+            label.font = uiConfig.font.bodyBold
             return label
         }()
 
