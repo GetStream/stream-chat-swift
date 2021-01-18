@@ -502,7 +502,12 @@
 		8AE335A924FCF999002B6677 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A624FCF999002B6677 /* InternetConnection.swift */; };
 		8AE335AA24FCF99E002B6677 /* InternetConnection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A424FCF999002B6677 /* InternetConnection_Tests.swift */; };
 		8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */; };
-		ADA3611425B0A85400731453 /* ChatChannelDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3611325B0A85400731453 /* ChatChannelDetailVC.swift */; };
+		ADA3611425B0A85400731453 /* ChatChannelUserDetailVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3611325B0A85400731453 /* ChatChannelUserDetailVC.swift */; };
+		ADC14ECA25B59F100035E55F /* ChatChannelUserDetailCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC14EC925B59F100035E55F /* ChatChannelUserDetailCollectionView.swift */; };
+		ADC14ED225B59FCD0035E55F /* ChatChannelUserDetailCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC14ED125B59FCD0035E55F /* ChatChannelUserDetailCollectionViewLayout.swift */; };
+		ADC14EDA25B5A0040035E55F /* ChatChannelUserDetailCollectionSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC14ED925B5A0040035E55F /* ChatChannelUserDetailCollectionSectionView.swift */; };
+		ADC14EE225B5A0540035E55F /* ChatChannelUserDetailCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC14EE125B5A0540035E55F /* ChatChannelUserDetailCollectionViewCell.swift */; };
+		ADC14EF025B5A0B00035E55F /* ChatChannelUserDetailItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC14EEF25B5A0B00035E55F /* ChatChannelUserDetailItemView.swift */; };
 		DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */; };
 		DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */; };
 		DA49712625476A3600AC68C2 /* AttachmentRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4971202547699E00AC68C2 /* AttachmentRequestBody.swift */; };
@@ -1244,7 +1249,12 @@
 		8AE335A524FCF999002B6677 /* Reachability_Vendor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability_Vendor.swift; sourceTree = "<group>"; };
 		8AE335A624FCF999002B6677 /* InternetConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternetConnection.swift; sourceTree = "<group>"; };
 		8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPongEmojiFormatter.swift; sourceTree = "<group>"; };
-		ADA3611325B0A85400731453 /* ChatChannelDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelDetailVC.swift; sourceTree = "<group>"; };
+		ADA3611325B0A85400731453 /* ChatChannelUserDetailVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelUserDetailVC.swift; sourceTree = "<group>"; };
+		ADC14EC925B59F100035E55F /* ChatChannelUserDetailCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelUserDetailCollectionView.swift; sourceTree = "<group>"; };
+		ADC14ED125B59FCD0035E55F /* ChatChannelUserDetailCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelUserDetailCollectionViewLayout.swift; sourceTree = "<group>"; };
+		ADC14ED925B5A0040035E55F /* ChatChannelUserDetailCollectionSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelUserDetailCollectionSectionView.swift; sourceTree = "<group>"; };
+		ADC14EE125B5A0540035E55F /* ChatChannelUserDetailCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelUserDetailCollectionViewCell.swift; sourceTree = "<group>"; };
+		ADC14EEF25B5A0B00035E55F /* ChatChannelUserDetailItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelUserDetailItemView.swift; sourceTree = "<group>"; };
 		DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StringInterpolation+Extenstions.swift"; sourceTree = "<group>"; };
 		DA15A20224DF256F00BE2423 /* ChannelQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelQuery_Tests.swift; sourceTree = "<group>"; };
 		DA4971202547699E00AC68C2 /* AttachmentRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentRequestBody.swift; sourceTree = "<group>"; };
@@ -1480,6 +1490,7 @@
 				888123E5255D51BD00070D5A /* Common Views */,
 				7908830C2548707B00896F03 /* ChatChannel */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
+				ADC14EBC25B59C620035E55F /* ChatChannelDetail */,
 				88F8364E2578D1590039AEC8 /* MessageActionsPopup */,
 				88F0D6ED257E446800F4B050 /* Resources */,
 				88F0D6EA257E409E00F4B050 /* Generated */,
@@ -1541,7 +1552,6 @@
 				E743468C2593521E00512C2D /* MessageComposer */,
 				DB9A3D652582783F00555D36 /* ChatVC.swift */,
 				7908832D254876C100896F03 /* ChatChannelVC.swift */,
-				ADA3611325B0A85400731453 /* ChatChannelDetailVC.swift */,
 				DBC8A5752581476E00B20A82 /* ChatMessageListVC.swift */,
 				DBC8A563258113F700B20A82 /* ChatThreadVC.swift */,
 				882AE056257A176A004095B3 /* ChatChannelRouter.swift */,
@@ -2589,6 +2599,19 @@
 			path = "Internet Connection";
 			sourceTree = "<group>";
 		};
+		ADC14EBC25B59C620035E55F /* ChatChannelDetail */ = {
+			isa = PBXGroup;
+			children = (
+				ADA3611325B0A85400731453 /* ChatChannelUserDetailVC.swift */,
+				ADC14EC925B59F100035E55F /* ChatChannelUserDetailCollectionView.swift */,
+				ADC14ED125B59FCD0035E55F /* ChatChannelUserDetailCollectionViewLayout.swift */,
+				ADC14ED925B5A0040035E55F /* ChatChannelUserDetailCollectionSectionView.swift */,
+				ADC14EE125B5A0540035E55F /* ChatChannelUserDetailCollectionViewCell.swift */,
+				ADC14EEF25B5A0B00035E55F /* ChatChannelUserDetailItemView.swift */,
+			);
+			path = ChatChannelDetail;
+			sourceTree = "<group>";
+		};
 		DA4971652549C46400AC68C2 /* Attachment */ = {
 			isa = PBXGroup;
 			children = (
@@ -3277,6 +3300,7 @@
 				790882E425486B6A00896F03 /* ChatChannelListCollectionView.swift in Sources */,
 				228190EB256733420048D7C6 /* UIFont+Extensions.swift in Sources */,
 				888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */,
+				ADC14ECA25B59F100035E55F /* ChatChannelUserDetailCollectionView.swift in Sources */,
 				8825333E258CE7AC00B77352 /* ChatMessageActionsVC.swift in Sources */,
 				224FF6872562F55F00725DD1 /* Date+Extensions.swift in Sources */,
 				22ADD682256C40410098EFEB /* MessageComposerView.swift in Sources */,
@@ -3287,7 +3311,7 @@
 				DB70CFF425701FE500DDF436 /* ChatChannelNavigationBarListener.swift in Sources */,
 				88CABC4325933EE70061BB67 /* ChatMessageReactionVC.swift in Sources */,
 				DB9A3D562582689A00555D36 /* ChatMessageListRouter.swift in Sources */,
-				ADA3611425B0A85400731453 /* ChatChannelDetailVC.swift in Sources */,
+				ADA3611425B0A85400731453 /* ChatChannelUserDetailVC.swift in Sources */,
 				88A8CF0B256E7AC8004EA4C7 /* ChatMessageGroupPart.swift in Sources */,
 				22411680258A91280034184D /* String+Extensions.swift in Sources */,
 				228C7EE52583AF4800AAE9E3 /* UITextView+Extensions.swift in Sources */,
@@ -3303,6 +3327,7 @@
 				88A8CF20256E7C06004EA4C7 /* ChatMessageBubbleView.swift in Sources */,
 				DBC8A5762581476E00B20A82 /* ChatMessageListVC.swift in Sources */,
 				8800A28C258A1924006D64C4 /* ChatFileAttachmentListView.swift in Sources */,
+				ADC14EDA25B5A0040035E55F /* ChatChannelUserDetailCollectionSectionView.swift in Sources */,
 				88A8CF16256E7BDA004EA4C7 /* ChatMessageContentView.swift in Sources */,
 				E79AC10A25831A1500C3CE5D /* MessageComposerMentionCollectionViewCell.swift in Sources */,
 				226C438D25802AAD008B3648 /* MessageComposerInputTextView.swift in Sources */,
@@ -3341,6 +3366,7 @@
 				88CABC6625934CF60061BB67 /* ChatMessageReactions+Types.swift in Sources */,
 				790882D625486B4A00896F03 /* ChatChannelListCollectionViewLayout.swift in Sources */,
 				790882F725486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift in Sources */,
+				ADC14ED225B59FCD0035E55F /* ChatChannelUserDetailCollectionViewLayout.swift in Sources */,
 				88BA7F6B258B717E006CE0C5 /* ChatMessageAttachmentInfoView.swift in Sources */,
 				8850B946255C3B41003AED69 /* AvatarView.swift in Sources */,
 				DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */,
@@ -3361,6 +3387,7 @@
 				8850B92A255C286B003AED69 /* UIConfig.swift in Sources */,
 				790882ED25486B6D00896F03 /* ChatChannelListCollectionViewDataSource.swift in Sources */,
 				DB3CCF3F258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift in Sources */,
+				ADC14EE225B5A0540035E55F /* ChatChannelUserDetailCollectionViewCell.swift in Sources */,
 				E79AC10D25831A1500C3CE5D /* MessageComposerSuggestionsCollectionViewLayout.swift in Sources */,
 				E73A8B2B2578EB2B00FBDC56 /* MessageComposerViewController.swift in Sources */,
 				8800A26F258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift in Sources */,
@@ -3379,6 +3406,7 @@
 				224FF6972562F5AE00725DD1 /* Bundle+Extensions.swift in Sources */,
 				88A11B302590CC860000AC24 /* ChatMessageErrorIndicator.swift in Sources */,
 				22ADD67C256BF1550098EFEB /* MessageComposerInputContainerView.swift in Sources */,
+				ADC14EF025B5A0B00035E55F /* ChatChannelUserDetailItemView.swift in Sources */,
 				88BA7F7F258B97A8006CE0C5 /* ChatMessageImageGallery+ImagePreview.swift in Sources */,
 				224FF69D2562F5D100725DD1 /* UIImage+Extensions.swift in Sources */,
 				88F0D734257E4EA500F4B050 /* L10n.swift in Sources */,

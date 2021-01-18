@@ -17,7 +17,7 @@ open class ChatChannelRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelV
     
     open func showChannelDetail(_ channel: _ChatChannelController<ExtraData>) {
         debugPrint(channel)
-        let vc = ChatChannelDetailVC<ExtraData>()
+        let vc = ChatChannelUserDetailVC<ExtraData>()
         vc.channelController = channel
         navigationController?.show(vc, sender: self)
     }

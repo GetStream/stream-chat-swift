@@ -153,12 +153,12 @@ public extension UIConfig {
 
 public extension UIConfig {
     struct ChannelDetailUI {
-        public var channelDetailCollectionView: ChatChannelDetailCollectionView.Type =
-            ChatChannelDetailCollectionView.self
-        public var channelDetailViewCell: ChatChannelDetailCollectionViewCell<ExtraData>.Type =
-            ChatChannelDetailCollectionViewCell<ExtraData>.self
-        public var channelDetailItemView: ChatChannelDetailItemView<ExtraData>.Type =
-            ChatChannelDetailItemView<ExtraData>.self
+        public var channelDetailCollectionView: ChatChannelUserDetailCollectionView.Type =
+            ChatChannelUserDetailCollectionView.self
+        public var channelDetailViewCell: ChatChannelUserDetailCollectionViewCell<ExtraData>.Type =
+            ChatChannelUserDetailCollectionViewCell<ExtraData>.self
+        public var channelDetailItemView: ChatChannelUserDetailItemView<ExtraData>.Type =
+            ChatChannelUserDetailItemView<ExtraData>.self
         
         public var icon = Icons()
         
