@@ -142,15 +142,17 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
 
         let title = UILabel()
         title.textAlignment = .center
-        title.font = .preferredFont(forTextStyle: .headline)
+        title.font = uiConfig.font.headline
 
         let subtitle = UILabel()
         subtitle.textAlignment = .center
-        subtitle.font = .preferredFont(forTextStyle: .subheadline)
+        subtitle.font = uiConfig.font.footnote
         subtitle.textColor = uiConfig.colorPalette.subtitleText
 
         let titleView = UIStackView(arrangedSubviews: [title, subtitle])
         titleView.axis = .vertical
+        titleView.spacing = 2
+
         navigationItem.titleView = titleView
 
         navbarListener = makeNavbarListener { data in

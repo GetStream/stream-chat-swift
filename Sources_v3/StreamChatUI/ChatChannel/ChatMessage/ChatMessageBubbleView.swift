@@ -30,7 +30,7 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         textView.dataDetectorTypes = .link
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
-        textView.font = .preferredFont(forTextStyle: .body)
+        textView.font = uiConfig.font.body
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
@@ -220,7 +220,7 @@ open class ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         repliedMessageView?.message = message?.parentMessage
         repliedMessageView?.isVisible = layoutOptions.contains(.inlineReply)
         
-        let font = UIFont.preferredFont(forTextStyle: .body)
+        let font: UIFont = uiConfig.font.body
         textView.attributedText = .init(string: message?.textContent ?? "", attributes: [
             .foregroundColor: message?.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.messageTimestampText,
             .font: message?.deletedAt == nil ? font : font.italic

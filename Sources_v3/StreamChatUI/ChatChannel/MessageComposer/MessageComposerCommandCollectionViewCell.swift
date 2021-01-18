@@ -26,9 +26,9 @@ open class MessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UICo
     override public func defaultAppearance() {
         backgroundColor = .clear
 
-        commandNameLabel.font = UIFont.preferredFont(forTextStyle: .footnote).bold
+        commandNameLabel.font = uiConfig.font.bodyBold
 
-        commandNameSubtitleLabel.font = .preferredFont(forTextStyle: .caption1)
+        commandNameSubtitleLabel.font = uiConfig.font.body
         commandNameSubtitleLabel.textColor = uiConfig.colorPalette.subtitleText
 
         commandNameLabel.textColor = uiConfig.colorPalette.text

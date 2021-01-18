@@ -131,7 +131,7 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
         
         titleLabel.textAlignment = .center
         titleLabel.textColor = uiConfig.colorPalette.text
-        titleLabel.font = .preferredFont(forTextStyle: .headline)
+        titleLabel.font = uiConfig.font.bodyBold
         titleLabel.adjustsFontForContentSizeCategory = true
     }
     
