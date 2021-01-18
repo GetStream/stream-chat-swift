@@ -63,9 +63,9 @@ public extension UIConfig {
         // MARK: - Channel Detail
         
         public var channelDetailSectionHeaderBgColor: UIColor = .streamGrayGainsboro
-        public var channelDetailIconColor: UIColor = .streamGray
-        public var channelDetailDisclosureIndicatorColor: UIColor = .streamGray
-        public var channelDetailDeletionColor: UIColor = .streamAccentRed
+        public var channelDetailDefaultActionColor: UIColor = .streamGray
+        public var channelDetailDefaultTextColor: UIColor = .streamBlack
+        public var channelDetailDestructiveActionColor: UIColor = .streamAccentRed
 
         // MARK: - Text interactions
 
@@ -153,12 +153,32 @@ public extension UIConfig {
 
 public extension UIConfig {
     struct ChannelDetailUI {
-        public var channelDetailCollectionView: ChatChannelUserDetailCollectionView.Type =
-            ChatChannelUserDetailCollectionView.self
-        public var channelDetailViewCell: ChatChannelUserDetailCollectionViewCell<ExtraData>.Type =
-            ChatChannelUserDetailCollectionViewCell<ExtraData>.self
-        public var channelDetailItemView: ChatChannelUserDetailItemView<ExtraData>.Type =
-            ChatChannelUserDetailItemView<ExtraData>.self
+        public var channelDetailCollectionView: ChatChannelDetailCollectionView.Type =
+            ChatChannelDetailCollectionView.self
+        
+        // Toggle Action Cell
+        public var channelDetailToggleActionCell: ChatChannelDetailToggleActionCell<ExtraData>.Type =
+            ChatChannelDetailToggleActionCell<ExtraData>.self
+        public var channelDetailToggleActionView: ChatChannelDetailToggleActionView<ExtraData>.Type =
+            ChatChannelDetailToggleActionView<ExtraData>.self
+        
+        // Selection Action Cell
+        public var channelDetailSelectionActionCell: ChatChannelDetailSelectionActionCell<ExtraData>.Type =
+            ChatChannelDetailSelectionActionCell<ExtraData>.self
+        public var channelDetailSelectionActionView: ChatChannelDetailSelectionActionView<ExtraData>.Type =
+            ChatChannelDetailSelectionActionView<ExtraData>.self
+        
+        // Destructive Action Cell
+        public var channelDetailDestructiveActionCell: ChatChannelDetailDestructiveActionCell<ExtraData>.Type =
+            ChatChannelDetailDestructiveActionCell<ExtraData>.self
+        public var channelDetailDestructiveActionView: ChatChannelDetailDestructiveActionView<ExtraData>.Type =
+            ChatChannelDetailDestructiveActionView<ExtraData>.self
+        
+        // Display Action Cell
+        public var channelDetailDisplayActionCell: ChatChannelDetailDisplayActionCell<ExtraData>.Type =
+            ChatChannelDetailDisplayActionCell<ExtraData>.self
+        public var channelDetailDisplayActionView: ChatChannelDetailDisplayActionView<ExtraData>.Type =
+            ChatChannelDetailDisplayActionView<ExtraData>.self
         
         public var icon = Icons()
         
@@ -169,7 +189,7 @@ public extension UIConfig {
             public var block = UIImage(named: "icn_block", in: .streamChatUI)
             public var photosAndVideos = UIImage(named: "icn_photos_videos", in: .streamChatUI)
             public var files = UIImage(named: "icn_files", in: .streamChatUI)
-            public var groups = UIImage(named: "icn_shared_groups", in: .streamChatUI)
+            public var sharedGroups = UIImage(named: "icn_shared_groups", in: .streamChatUI)
             public var leaveGroup = UIImage(named: "icn_leave_group", in: .streamChatUI)
             public var delete = UIImage(named: "icn_delete_conversation", in: .streamChatUI)
         }

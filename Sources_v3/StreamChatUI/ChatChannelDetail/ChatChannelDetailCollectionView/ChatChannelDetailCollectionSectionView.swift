@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelUserDetailCollectionSectionView<ExtraData: ExtraDataTypes>: UICollectionReusableView, UIConfigProvider {
+open class ChatChannelDetailCollectionSectionView<ExtraData: ExtraDataTypes>: UICollectionReusableView, UIConfigProvider {
     class var reuseId: String { String(describing: self) }
     
     override public init(frame: CGRect) {

@@ -4,7 +4,7 @@
 
 import UIKit
 
-open class ChatChannelUserDetailCollectionView: UICollectionView {
+open class ChatChannelDetailCollectionView: UICollectionView {
     public required init(layout: UICollectionViewLayout) {
         super.init(frame: .zero, collectionViewLayout: layout)
     }

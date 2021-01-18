@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelUserDetailCollectionViewLayout: UICollectionViewFlowLayout {
+open class ChatChannelDetailCollectionViewLayout: UICollectionViewFlowLayout {
     // MARK: - Init
     
     override public init() {
