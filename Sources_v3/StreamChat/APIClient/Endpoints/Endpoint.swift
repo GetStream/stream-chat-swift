@@ -9,7 +9,24 @@ struct Endpoint<ResponseType: Decodable> {
     let method: EndpointMethod
     let queryItems: Encodable?
     let requiresConnectionId: Bool
+    let requiresToken: Bool
     let body: Encodable?
+
+    init(
+        path: String,
+        method: EndpointMethod,
+        queryItems: Encodable? = nil,
+        requiresConnectionId: Bool = false,
+        requiresToken: Bool = true,
+        body: Encodable? = nil
+    ) {
+        self.path = path
+        self.method = method
+        self.queryItems = queryItems
+        self.requiresConnectionId = requiresConnectionId
+        self.requiresToken = requiresToken
+        self.body = body
+    }
 }
 
 enum EndpointMethod: String {
