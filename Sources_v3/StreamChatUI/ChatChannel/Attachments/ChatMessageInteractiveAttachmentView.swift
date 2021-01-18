@@ -22,7 +22,7 @@ open class ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: View
 
     public private(set) lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .headline).italic
+        label.font = uiConfig.font.bodyItalic
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center
         return label.withoutAutoresizingMaskConstraints

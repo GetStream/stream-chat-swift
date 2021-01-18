@@ -29,9 +29,9 @@ open class MessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View, UICo
 
     override public func defaultAppearance() {
         backgroundColor = .clear
-        usernameLabel.font = UIFont.preferredFont(forTextStyle: .footnote).bold
+        usernameLabel.font = uiConfig.font.headlineBold
 
-        usernameTagLabel.font = .preferredFont(forTextStyle: .caption1)
+        usernameTagLabel.font = uiConfig.font.footnoteBold
         usernameTagLabel.textColor = uiConfig.colorPalette.subtitleText
 
         usernameLabel.textColor = uiConfig.colorPalette.text

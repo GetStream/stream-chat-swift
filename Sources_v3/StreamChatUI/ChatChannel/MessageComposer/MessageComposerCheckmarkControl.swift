@@ -38,7 +38,7 @@ open class MessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: Control, 
     }
     
     override public func defaultAppearance() {
-        label.font = .preferredFont(forTextStyle: .footnote)
+        label.font = uiConfig.font.footnote
         label.textColor = uiConfig.colorPalette.messageComposerCheckmarkLabel
         
         checkmark.layer.cornerRadius = 4

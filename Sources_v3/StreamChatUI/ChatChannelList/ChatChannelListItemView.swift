@@ -47,15 +47,15 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: ChatSwipeableList
 
     override open func setUpAppearance() {
         titleLabel.adjustsFontForContentSizeCategory = true
-        titleLabel.font = .preferredFont(forTextStyle: .headline)
+        titleLabel.font = uiConfig.font.bodyBold
         
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
         subtitleLabel.adjustsFontForContentSizeCategory = true
-        subtitleLabel.font = .preferredFont(forTextStyle: .subheadline)
+        subtitleLabel.font = uiConfig.font.footnote
         
         timestampLabel.textColor = uiConfig.colorPalette.subtitleText
         timestampLabel.adjustsFontForContentSizeCategory = true
-        timestampLabel.font = .preferredFont(forTextStyle: .subheadline)
+        timestampLabel.font = uiConfig.font.footnote
     }
     
     override open func setUpLayout() {

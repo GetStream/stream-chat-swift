@@ -25,14 +25,14 @@ open class ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UICon
 
     public private(set) lazy var authorLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = .preferredFont(forTextStyle: .title3)
+        label.font = uiConfig.font.bodyBold
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
 
     public private(set) lazy var headlineLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = UIFont.preferredFont(forTextStyle: .subheadline).bold
+        label.font = uiConfig.font.footnoteBold
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
@@ -42,7 +42,7 @@ open class ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UICon
         textView.isEditable = false
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
-        textView.font = .preferredFont(forTextStyle: .footnote)
+        textView.font = uiConfig.font.footnote
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0

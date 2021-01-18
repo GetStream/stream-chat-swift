@@ -14,14 +14,14 @@ open class ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: View, UICon
 
     public private(set) lazy var fileNameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .body).bold
+        label.font = uiConfig.font.bodyBold
         label.adjustsFontForContentSizeCategory = true
         return label.withoutAutoresizingMaskConstraints
     }()
 
     public private(set) lazy var fileSizeLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .footnote)
+        label.font = uiConfig.font.footnoteBold
         label.adjustsFontForContentSizeCategory = true
         return label.withoutAutoresizingMaskConstraints
     }()

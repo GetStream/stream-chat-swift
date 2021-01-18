@@ -35,7 +35,7 @@ open class ChatMessageMetadataView<ExtraData: ExtraDataTypes>: View, UIConfigPro
         currentUserVisabilityIndicator.textLabel.textColor = color
         currentUserVisabilityIndicator.imageView.tintColor = color
         
-        timestampLabel.font = UIFont.preferredFont(forTextStyle: .footnote)
+        timestampLabel.font = uiConfig.font.footnote
         timestampLabel.adjustsFontForContentSizeCategory = true
         timestampLabel.textColor = color
     }
@@ -70,7 +70,7 @@ open class ChatMessageOnlyVisibleForCurrentUserIndicator: View {
 
     public private(set) lazy var textLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.preferredFont(forTextStyle: .callout).bold
+        label.font = uiConfig.font.footnote
         label.adjustsFontForContentSizeCategory = true
         return label.withoutAutoresizingMaskConstraints
     }()

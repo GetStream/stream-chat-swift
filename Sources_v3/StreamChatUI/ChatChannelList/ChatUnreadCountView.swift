@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -64,11 +64,11 @@ open class ChatUnreadCountView: View {
         layer.masksToBounds = true
         backgroundColor = .systemRed
         unreadCountLabel.textColor = .white
-        unreadCountLabel.font = UIFont.preferredFont(forTextStyle: .caption1).bold
+        unreadCountLabel.font = uiConfig.font.captionBold
         unreadCountLabel.adjustsFontForContentSizeCategory = true
         unreadCountLabel.textAlignment = .center
     }
-    
+
     override open func setUpLayout() {
         embed(unreadCountLabel, insets: .init(top: inset, leading: inset, bottom: inset, trailing: inset))
         setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)

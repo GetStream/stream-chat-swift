@@ -44,7 +44,7 @@ open class MessageInputSlashCommandView<ExtraData: ExtraDataTypes>: View, UIConf
         backgroundColor = uiConfig.colorPalette.slashCommandViewBackground
         
         commandLabel.textColor = uiConfig.colorPalette.slashCommandViewText
-        commandLabel.font = UIFont.preferredFont(forTextStyle: .caption1).bold
+        commandLabel.font = uiConfig.font.footnoteBold
         commandLabel.adjustsFontForContentSizeCategory = true
         commandLabel.textAlignment = .center
         

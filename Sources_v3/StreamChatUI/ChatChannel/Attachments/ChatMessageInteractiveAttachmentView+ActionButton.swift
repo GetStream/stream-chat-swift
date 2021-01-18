@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -19,7 +19,7 @@ extension ChatMessageInteractiveAttachmentView {
         }
 
         override public func defaultAppearance() {
-            titleLabel?.font = UIFont.preferredFont(forTextStyle: .body).bold
+            titleLabel?.font = uiConfig.font.body
         }
 
         override open func setUp() {
