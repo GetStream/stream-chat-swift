@@ -83,7 +83,6 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: ChatSwipeableList
         let containerCenterView = UIView()
         let stackView = UIStackView()
         stackView.axis = .vertical
-        stackView.spacing = UIStackView.spacingUseSystem
         
         containerCenterView.addSubview(stackView)
         stackView.topAnchor.pin(greaterThanOrEqualTo: containerCenterView.topAnchor, constant: 0).isActive = true

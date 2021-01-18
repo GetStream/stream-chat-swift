@@ -151,6 +151,8 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
 
         let titleView = UIStackView(arrangedSubviews: [title, subtitle])
         titleView.axis = .vertical
+        titleView.spacing = 2
+
         navigationItem.titleView = titleView
 
         navbarListener = makeNavbarListener { data in
