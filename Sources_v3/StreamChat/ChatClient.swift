@@ -211,6 +211,9 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     /// An array of requests waiting for the connection id
     @Atomic var connectionIdWaiters: [(String?) -> Void] = []
+
+    /// An array of requests waiting for the token
+    @Atomic var tokenWaiters: [(Token?) -> Void] = []
     
     /// The token of the current user. If the current user is anonymous, the token is `nil`.
     @Atomic var currentToken: Token?
@@ -277,10 +280,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     }
     
     deinit {
-        _connectionIdWaiters.mutate { waiters in
-            waiters.forEach { $0(nil) }
-            waiters.removeAll()
-        }
+        completeConnectionIdWaiters(connectionId: nil)
+        completeTokenWaiters(token: nil)
     }
     
     // TODO: Not used & tested yet -> CIS-224
@@ -309,12 +310,19 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             builder(self.databaseContainer, self.eventNotificationCenter, self.apiClient)
         }
     }
-    
-    /// Before CIS-555, `webSocketClient` was initialized in `createBackgroundWorkers` in `init` since it was passed
-    /// to the background workers. Now, background workers do not access `webSocketClient` and it's not being
-    /// initialized in `init`, so we initialize it here explicitly.
-    private func createWebSocketClient() {
-        _ = webSocketClient
+
+    func completeConnectionIdWaiters(connectionId: String?) {
+        _connectionIdWaiters.mutate { waiters in
+            waiters.forEach { $0(connectionId) }
+            waiters.removeAll()
+        }
+    }
+
+    func completeTokenWaiters(token: Token?) {
+        _tokenWaiters.mutate { waiters in
+            waiters.forEach { $0(token) }
+            waiters.removeAll()
+        }
     }
 }
 
@@ -413,8 +421,14 @@ extension _ChatClient: ConnectionStateDelegate {
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
 extension _ChatClient: ConnectionDetailsProviderDelegate {
-    func provideToken() -> Token? {
-        currentToken
+    func provideToken(completion: @escaping (_ token: Token?) -> Void) {
+        if let token = currentToken {
+            completion(token)
+        } else {
+            _tokenWaiters.mutate {
+                $0.append(completion)
+            }
+        }
     }
     
     func provideConnectionId(completion: @escaping (String?) -> Void) {

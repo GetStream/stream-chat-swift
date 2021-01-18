@@ -81,46 +81,22 @@ struct DefaultRequestEncoder: RequestEncoder {
             }
             
             try encodeRequestBody(request: &request, endpoint: endpoint)
-            
-            // Add Stream auth headers
-            var headers = request.allHTTPHeaderFields ?? [:]
-            if let token = connectionDetailsProviderDelegate?.provideToken() {
-                headers["Stream-Auth-Type"] = "jwt"
-                headers["Authorization"] = token
-            } else {
-                headers["Stream-Auth-Type"] = "anonymous"
-            }
-            request.allHTTPHeaderFields = headers
-            
         } catch {
             completion(.failure(error))
             return
         }
-        
-        if endpoint.requiresConnectionId {
-            log.assert(
-                connectionDetailsProviderDelegate != nil,
-                "The endpoind requiers `connectionId` but `connectionDetailsProviderDelegate` is not set."
-            )
-            
-            connectionDetailsProviderDelegate?.provideConnectionId { (connectionId) in
-                guard let connectionId = connectionId else {
-                    completion(.failure(ClientError.MissingConnectionId("Failed to get `connectionId`, request can't be created.")))
-                    return
-                }
-                
-                do {
-                    request.url = try request.url?.appendingQueryItems(["connection_id": connectionId])
-                } catch {
-                    completion(.failure(error))
-                    return
-                }
-                
-                completion(.success(request))
+
+        addAuthorizationHeader(request: request, endpoint: endpoint) {
+            switch $0 {
+            case let .success(requestWithAuth):
+                self.addConnectionIdIfNeeded(
+                    request: requestWithAuth,
+                    endpoint: endpoint,
+                    completion: completion
+                )
+            case let .failure(error):
+                completion(.failure(error))
             }
-            
-        } else {
-            completion(.success(request))
         }
     }
     
@@ -130,6 +106,71 @@ struct DefaultRequestEncoder: RequestEncoder {
     }
     
     // MARK: - Private
+
+    private func addAuthorizationHeader<T: Decodable>(
+        request: URLRequest,
+        endpoint: Endpoint<T>,
+        completion: @escaping (Result<URLRequest, Error>) -> Void
+    ) {
+        guard endpoint.requiresToken else {
+            var updatedRequest = request
+            updatedRequest.setHTTPHeaders(.anonymousStreamAuth)
+            completion(.success(updatedRequest))
+            return
+        }
+
+        log.assert(
+            connectionDetailsProviderDelegate != nil,
+            "The endpoint requires `token` but `connectionDetailsProviderDelegate` is not set."
+        )
+
+        connectionDetailsProviderDelegate?.provideToken {
+            if let token = $0 {
+                var updatedRequest = request
+
+                if token.userId.isAnonymousUser {
+                    updatedRequest.setHTTPHeaders(.anonymousStreamAuth)
+                } else {
+                    updatedRequest.setHTTPHeaders(.jwtStreamAuth, .authorization(token.rawValue))
+                }
+
+                completion(.success(updatedRequest))
+            } else {
+                let error = ClientError.MissingToken("Failed to get `token`, request can't be created.")
+                completion(.failure(error))
+            }
+        }
+    }
+
+    private func addConnectionIdIfNeeded<T: Decodable>(
+        request: URLRequest,
+        endpoint: Endpoint<T>,
+        completion: @escaping (Result<URLRequest, Error>) -> Void
+    ) {
+        guard endpoint.requiresConnectionId else {
+            completion(.success(request))
+            return
+        }
+
+        log.assert(
+            connectionDetailsProviderDelegate != nil,
+            "The endpoint requires `connectionId` but `connectionDetailsProviderDelegate` is not set."
+        )
+
+        connectionDetailsProviderDelegate?.provideConnectionId {
+            do {
+                if let connectionId = $0 {
+                    var updatedRequest = request
+                    updatedRequest.url = try updatedRequest.url?.appendingQueryItems(["connection_id": connectionId])
+                    completion(.success(updatedRequest))
+                } else {
+                    throw ClientError.MissingConnectionId("Failed to get `connectionId`, request can't be created.")
+                }
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
     
     private func encodeRequestURL<T: Decodable>(for endpoint: Endpoint<T>) throws -> URL {
         var urlComponents = URLComponents()
@@ -207,7 +248,7 @@ private extension URL {
 
 protocol ConnectionDetailsProviderDelegate: AnyObject {
     func provideConnectionId(completion: @escaping (_ connectionId: ConnectionId?) -> Void)
-    func provideToken() -> Token?
+    func provideToken(completion: @escaping (Token?) -> Void)
 }
 
 extension ClientError {
