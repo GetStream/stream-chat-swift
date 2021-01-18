@@ -213,12 +213,20 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     /// The token of the current user. If the current user is anonymous, the token is `nil`.
     @Atomic var currentToken: Token?
+
+    public var tokenProvider: _TokenProvider<ExtraData>
     
     /// Creates a new instance of `ChatClient`.
-    ///
-    /// - Parameter config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
-    ///
-    public convenience init(config: ChatClientConfig) {
+    /// - Parameters:
+    ///   - config: The config object for the `Client`. See `ChatClientConfig` for all configuration options.
+    ///   - tokenProvider: The `_TokenProvider<ExtraData>` instance that incapsulates the logic of obtaining a JWT
+    ///   token used to communicate with REST-API.
+    ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
+    public convenience init(
+        config: ChatClientConfig,
+        tokenProvider: _TokenProvider<ExtraData>,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         let workerBuilders: [WorkerBuilder]
         let eventWorkerBuilders: [EventWorkerBuilder]
         var environment = Environment()
@@ -246,9 +254,11 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         
         self.init(
             config: config,
+            tokenProvider: tokenProvider,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: eventWorkerBuilders,
-            environment: environment
+            environment: environment,
+            completion: completion
         )
     }
     
@@ -262,11 +272,14 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     ///
     init(
         config: ChatClientConfig,
+        tokenProvider: _TokenProvider<ExtraData>,
         workerBuilders: [WorkerBuilder],
         eventWorkerBuilders: [EventWorkerBuilder],
-        environment: Environment
+        environment: Environment,
+        completion: ((Error?) -> Void)? = nil
     ) {
         self.config = config
+        self.tokenProvider = tokenProvider
         self.environment = environment
         self.workerBuilders = workerBuilders
         self.eventWorkerBuilders = eventWorkerBuilders
