@@ -1,5 +1,5 @@
 {
-  "access_token" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg",
+  "access_token" : "some random value",
   "user" : {
     "id" : "broken-waterfall-5",
     "role" : "guest",
