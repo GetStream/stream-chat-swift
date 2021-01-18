@@ -45,17 +45,21 @@ public struct ChatClientConfig {
     /// `ChatChannel` specific settings.
 //    public var channel = Channel()
     
-    /// You can optionally provide your custom `TokenProvider` here and it will be called every time a new current user is set.
-    /// If you're using self-expiring tokens, setting the provider is mandatory to ensure the tokens can get automatically
-    /// refreshed.
-    public var tokenProvider: TokenProvider?
-    
     /// Flag for setting a ChatClient instance in connection-less mode.
     /// A connection-less client is not able to connect to websocket and will not
     /// receive websocket events. It can still observe and mutate database.
     /// This flag is automatically set to `false` for app extensions
     /// **Warning**: There should be at max 1 active client at the same time, else it can lead to undefined behavior.
     public var isClientInActiveMode: Bool
+
+    /// If set to `true` the `ChatClient` will automatically establish a web-socket
+    /// connection to listen to the updates when `reloadUserIfNeeded` is called.
+    ///
+    /// If set to `false` the connection won't be established automatically
+    /// but has to be initiated manually by calling `connect`.
+    ///
+    /// Is `true` by default.
+    public var shouldConnectAutomatically = true
     
     /// Creates a new instance of `ChatClientConfig`.
     ///

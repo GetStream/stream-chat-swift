@@ -5,10 +5,11 @@
 import Foundation
 @testable import StreamChat
 
-extension ChatClient {
-    static var mock: ChatClient {
-        ChatClient(
+extension _ChatClient {
+    static var mock: _ChatClient {
+        .init(
             config: .init(apiKey: .init(.unique)),
+            tokenProvider: .anonymous,
             workerBuilders: [],
             eventWorkerBuilders: [],
             environment: .mock

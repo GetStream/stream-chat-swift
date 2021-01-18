@@ -71,7 +71,14 @@ class ChatClient_Tests: StressTestCase {
         }
         
         // Create a `Client` and assert that a DB file is created on the provided URL + APIKey path
-        _ = ChatClient(config: config, workerBuilders: [Worker.init], eventWorkerBuilders: [], environment: env)
+        _ = ChatClient(
+            config: config,
+            tokenProvider: .anonymous,
+            workerBuilders: [Worker.init],
+            eventWorkerBuilders: [],
+            environment: env
+        )
+
         XCTAssertEqual(
             usedDatabaseKind,
             .onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString))
@@ -95,7 +102,13 @@ class ChatClient_Tests: StressTestCase {
         }
         
         // Create a `Client` and assert the correct DB kind is used
-        _ = ChatClient(config: config, workerBuilders: [Worker.init], eventWorkerBuilders: [], environment: env)
+        _ = ChatClient(
+            config: config,
+            tokenProvider: .anonymous,
+            workerBuilders: [Worker.init],
+            eventWorkerBuilders: [],
+            environment: env
+        )
         
         XCTAssertEqual(usedDatabaseKind, .inMemory)
     }
@@ -130,7 +143,13 @@ class ChatClient_Tests: StressTestCase {
         
         // Create a chat client and assert `Client` tries to initialize the local DB, and when it fails, it falls back
         // to the in-memory option.
-        _ = ChatClient(config: config, workerBuilders: [Worker.init], eventWorkerBuilders: [], environment: env)
+        _ = ChatClient(
+            config: config,
+            tokenProvider: .anonymous,
+            workerBuilders: [Worker.init],
+            eventWorkerBuilders: [],
+            environment: env
+        )
         
         XCTAssertEqual(
             usedDatabaseKinds,
@@ -145,6 +164,7 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
+            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: eventWorkerBuilders,
             environment: testEnv.environment
@@ -169,8 +189,9 @@ class ChatClient_Tests: StressTestCase {
     func test_webSocketClient_hasAllMandatoryMiddlewares() throws {
         // Use in-memory store
         // Create a new chat client, which in turn creates a webSocketClient
-        _ = ChatClient(
+        let client = ChatClient(
             config: inMemoryStorageConfig,
+            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -267,6 +288,7 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
+            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -313,6 +335,7 @@ class ChatClient_Tests: StressTestCase {
         // Create a new chat client
         let client = ChatClient(
             config: inMemoryStorageConfig,
+            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -343,40 +366,13 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNil(providedConnectionId)
     }
     
-    func test_clientProvidesToken_fromTokenProvider() throws {
-        let newUserId: UserId = .unique
-        let newToken: Token = .unique
-        
-        var config = inMemoryStorageConfig
-        config.tokenProvider = { apiKey, userId, completion in
-            XCTAssertEqual(apiKey, config.apiKey)
-            XCTAssertEqual(userId, newUserId)
-            completion(newToken)
-        }
-        
-        // Create a new chat client
-        let client = ChatClient(
-            config: config,
-            workerBuilders: workerBuilders,
-            eventWorkerBuilders: [],
-            environment: testEnv.environment
-        )
-        
-        // Assert the token of anonymous user is `nil`
-        XCTAssertNil(client.provideToken())
-        
-        // Set a new user without an explicit token
-        client.currentUserController().setUser(userId: newUserId, name: nil, imageURL: nil)
-        
-        AssertAsync.willBeEqual(client.provideToken(), newToken)
-    }
-    
     // MARK: - APIClient tests
     
     func test_apiClientConfiguration() throws {
         // Create a new chat client
-        _ = ChatClient(
+        let client = ChatClient(
             config: inMemoryStorageConfig,
+            tokenProvider: .anonymous,
             workerBuilders: workerBuilders,
             eventWorkerBuilders: [],
             environment: testEnv.environment
@@ -393,9 +389,14 @@ class ChatClient_Tests: StressTestCase {
     // MARK: - Background workers tests
     
     func test_productionClientIsInitalizedWithAllMandatoryBackgroundWorkers() {
-        // Create a new Client with production configuration
-        let config = ChatClientConfig(apiKey: .init(.unique))
-        let client = _ChatClient<DefaultExtraData>(config: config)
+        var config = inMemoryStorageConfig
+        config.shouldConnectAutomatically = false
+
+        // Create a new chat client
+        let client = ChatClient(
+            config: config,
+            tokenProvider: .anonymous
+        )
         
         // Check all the mandatory background workers are initialized
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender<DefaultExtraData> })
@@ -414,6 +415,7 @@ class ChatClient_Tests: StressTestCase {
         // Create a Client instance and check the workers are initialized properly
         let client = _ChatClient(
             config: config,
+            tokenProvider: .anonymous,
             workerBuilders: [TestWorker.init],
             eventWorkerBuilders: [TestEventWorker.init],
             environment: testEnv.environment
@@ -487,11 +489,14 @@ class ChatClient_Tests: StressTestCase {
     
     func test_passiveClient_doesNotHaveWorkers() {
         // Create Client with inactive flag set
-        let client = ChatClient(config: inactiveInMemoryStorageConfig)
+        let client = ChatClient(
+            config: inactiveInMemoryStorageConfig,
+            tokenProvider: .anonymous
+        )
 
         // Simulate `createBackgroundWorkers`.
         client.createBackgroundWorkers()
-
+        
         // Assert that no background worker is initialized
         XCTAssert(client.backgroundWorkers.isEmpty)
     }
@@ -499,7 +504,8 @@ class ChatClient_Tests: StressTestCase {
     func test_passiveClient_doesNotHaveWSClient() {
         // Create Client with inactive flag set
         let client = ChatClient(
-            config: inactiveInMemoryStorageConfig
+            config: inactiveInMemoryStorageConfig,
+            tokenProvider: .anonymous
         )
         
         // Assert the wsClient is not initialized
@@ -514,7 +520,10 @@ class ChatClient_Tests: StressTestCase {
     
     func test_passiveClient_provideConnectionId_returnsImmediately() {
         // Create Client with inactive flag set
-        let client = ChatClient(config: inactiveInMemoryStorageConfig)
+        let client = ChatClient(
+            config: inactiveInMemoryStorageConfig,
+            tokenProvider: .anonymous
+        )
         
         // Set a connection Id waiter
         var providedConnectionId: ConnectionId? = .unique

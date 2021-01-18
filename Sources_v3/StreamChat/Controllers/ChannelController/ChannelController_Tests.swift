@@ -185,10 +185,17 @@ class ChannelController_Tests: StressTestCase {
     }
 
     func test_channelControllerForNewChannel_throwsError_ifCurrentUserDoesNotExist() throws {
+        let clientWithoutCurrentUser = ChatClient(
+            config: .init(apiKeyString: .unique),
+            tokenProvider: .closure {
+                $1(.failure(TestError()))
+            }
+        )
+
         for isCurrentUserMember in [true, false] {
             // Try to create `ChannelController` while current user is missing
             XCTAssertThrowsError(
-                try client.channelController(
+                try clientWithoutCurrentUser.channelController(
                     createChannelWithId: .unique,
                     name: .unique,
                     imageURL: .unique(),
@@ -278,6 +285,13 @@ class ChannelController_Tests: StressTestCase {
     }
 
     func test_channelControllerForNewDirectMessagesChannel_throwsError_ifCurrentUserDoesNotExist() {
+        let client = ChatClient(
+            config: .init(apiKeyString: .unique),
+            tokenProvider: .closure {
+                $1(.failure(TestError()))
+            }
+        )
+
         for isCurrentUserMember in [true, false] {
             // Try to create `ChannelController` with non-empty members while current user is missing
             XCTAssertThrowsError(
