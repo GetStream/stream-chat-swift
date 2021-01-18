@@ -341,6 +341,7 @@
 		88381E77258259C70047A6A3 /* FileUploadPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 88381E76258259C70047A6A3 /* FileUploadPayload.json */; };
 		88381E8725825A240047A6A3 /* AttachmentEndpoints_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88381E8625825A240047A6A3 /* AttachmentEndpoints_Tests.swift */; };
 		883998212576397900294DB9 /* ChatMessageImageGallery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883998202576397900294DB9 /* ChatMessageImageGallery.swift */; };
+		883EB93925B070AB001858FD /* GuestUser+InvalidToken.json in Resources */ = {isa = PBXBuildFile; fileRef = 883EB93825B070AB001858FD /* GuestUser+InvalidToken.json */; };
 		884C61222594A449008B70DC /* AttachmentActionRequestBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884C61212594A449008B70DC /* AttachmentActionRequestBody.swift */; };
 		884C612A2594A7DB008B70DC /* AttachmentActionRequestBody_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884C61292594A7DB008B70DC /* AttachmentActionRequestBody_Tests.swift */; };
 		8850B92A255C286B003AED69 /* UIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850B929255C286B003AED69 /* UIConfig.swift */; };
@@ -1071,6 +1072,7 @@
 		88381E76258259C70047A6A3 /* FileUploadPayload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = FileUploadPayload.json; sourceTree = "<group>"; };
 		88381E8625825A240047A6A3 /* AttachmentEndpoints_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentEndpoints_Tests.swift; sourceTree = "<group>"; };
 		883998202576397900294DB9 /* ChatMessageImageGallery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageImageGallery.swift; sourceTree = "<group>"; };
+		883EB93825B070AB001858FD /* GuestUser+InvalidToken.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "GuestUser+InvalidToken.json"; sourceTree = "<group>"; };
 		884C61212594A449008B70DC /* AttachmentActionRequestBody.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentActionRequestBody.swift; sourceTree = "<group>"; };
 		884C61292594A7DB008B70DC /* AttachmentActionRequestBody_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentActionRequestBody_Tests.swift; sourceTree = "<group>"; };
 		8850B929255C286B003AED69 /* UIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIConfig.swift; sourceTree = "<group>"; };
@@ -2517,6 +2519,7 @@
 				8A0D649F24E57A260017A3C0 /* GuestUser+DefaultExtraData.json */,
 				8A0D64A024E57A260017A3C0 /* GuestUser+NoExtraData.json */,
 				8A0D64A124E57A260017A3C0 /* GuestUser+CustomExtraData.json */,
+				883EB93825B070AB001858FD /* GuestUser+InvalidToken.json */,
 			);
 			path = GuestUser;
 			sourceTree = "<group>";
@@ -3145,6 +3148,7 @@
 				798779FB2498E47700015F8B /* Member.json in Resources */,
 				8A0CC9F824C608C500705CF9 /* ReactionDeleted.json in Resources */,
 				8AC9CBE124C74DD0006E236C /* NotificationInviteAccepted.json in Resources */,
+				883EB93925B070AB001858FD /* GuestUser+InvalidToken.json in Resources */,
 				8A0C3BCC24C1CA9900CAFD19 /* ChannelUpdated.json in Resources */,
 				798779FD2498E47700015F8B /* OtherUser.json in Resources */,
 				F64F9B6225077CF600834F55 /* MessageNew+MissingFields.json in Resources */,

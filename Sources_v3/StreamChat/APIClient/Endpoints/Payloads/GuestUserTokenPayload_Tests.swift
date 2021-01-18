@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,14 +9,19 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
     let guestUserDefaultExtraDataJSON = XCTestCase.mockData(fromFile: "GuestUser+DefaultExtraData")
     let guestUserNoExtraDataJSON = XCTestCase.mockData(fromFile: "GuestUser+NoExtraData")
     let guestUserCustomExtraDataJSON = XCTestCase.mockData(fromFile: "GuestUser+CustomExtraData")
-    
+    let guestUserInvalidTokenJSON = XCTestCase.mockData(fromFile: "GuestUser+InvalidToken")
+
     func test_guestUserDefaultExtraData_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(
             GuestUserTokenPayload<DefaultExtraData.User>.self,
             from: guestUserDefaultExtraDataJSON
         )
-        
-        XCTAssertEqual(payload.token, "123")
+
+        XCTAssertEqual(
+            payload.token,
+            // swiftlint:disable:next line_length
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg"
+        )
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
         XCTAssertFalse(payload.user.isBanned)
@@ -33,8 +38,12 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
     
     func test_guestUserNoExtraData_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(GuestUserTokenPayload<NoExtraData>.self, from: guestUserNoExtraDataJSON)
-        
-        XCTAssertEqual(payload.token, "123")
+
+        XCTAssertEqual(
+            payload.token,
+            // swiftlint:disable:next line_length
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg"
+        )
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
         XCTAssertFalse(payload.user.isBanned)
@@ -51,8 +60,12 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
         }
         
         let payload = try JSONDecoder.default.decode(GuestUserTokenPayload<TestExtraData>.self, from: guestUserCustomExtraDataJSON)
-        
-        XCTAssertEqual(payload.token, "123")
+
+        XCTAssertEqual(
+            payload.token,
+            // swiftlint:disable:next line_length
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg"
+        )
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")
         XCTAssertFalse(payload.user.isBanned)
@@ -61,5 +74,13 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.user.extraData.company, "getstream.io")
         XCTAssertEqual(payload.user.role, .guest)
         XCTAssertTrue(payload.user.isOnline)
+    }
+
+    func test_guestUserWithInvalidToken_isFailedToBeSerialized() throws {
+        XCTAssertThrowsError(
+            try JSONDecoder.default.decode(GuestUserTokenPayload<NoExtraData>.self, from: guestUserInvalidTokenJSON)
+        ) { error in
+            XCTAssertTrue(error is ClientError.InvalidToken)
+        }
     }
 }

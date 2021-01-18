@@ -1,9 +1,9 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
-import StreamChat
+@testable import StreamChat
 
 extension URL {
     /// Returns a unique random URL
@@ -29,6 +29,13 @@ extension URL {
 extension String {
     /// Returns a new unique string
     static var unique: String { UUID().uuidString }
+}
+
+extension Token {
+    /// Returns a new `Token` with the provided `user_id` but not in JWT format.
+    static func unique(userId: UserId = .unique) -> Self {
+        .init(rawValue: .unique, userId: userId)
+    }
 }
 
 extension AttachmentAction {
