@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,6 +8,9 @@ import Foundation
 
 /// Describes the possible states of the client connection to the servers.
 public enum ConnectionStatus: Equatable {
+    /// The client is initialized but not connected to the remote server yet.
+    case initialized
+    
     /// The client is disconnected. This is an initial state. Optionally contains an error, if the connection was disconnected
     /// due to an error.
     case disconnected(error: ClientError? = nil)

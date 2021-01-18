@@ -89,6 +89,6 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
         controller?.delegateCallback { $0.currentUserController(controller!, didUpdateConnectionStatus: newStatus) }
         
         // Assert initial value as well as the update are received
-        AssertAsync.willBeEqual(recording.output, [.disconnected(error: nil), newStatus])
+        AssertAsync.willBeEqual(recording.output, [.initialized, newStatus])
     }
 }
