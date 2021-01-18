@@ -28,6 +28,7 @@ final class CurrentUserController_Tests: StressTestCase {
     override func tearDown() {
         controllerCallbackQueueID = nil
         client.mockAPIClient.cleanUp()
+        env.chatClientUpdater?.cleanUp()
         
         AssertAsync {
             Assert.canBeReleased(&controller)
@@ -221,371 +222,6 @@ final class CurrentUserController_Tests: StressTestCase {
         // Assert delegate received correct unread count
         AssertAsync.willBeEqual(delegate.didChangeCurrentUserUnreadCount_count, unreadCount)
     }
-
-    // MARK: - Setting new user
-    
-    func test_setUser_updatesClientToken() {
-        let newToken: Token = .unique
-        controller.setUser(userId: .unique, name: nil, imageURL: nil, token: newToken)
-        AssertAsync.willBeEqual(client.provideToken(), newToken)
-    }
-    
-    func test_setAnonymousUser_forwardsDatabaseError() throws {
-        // Set the error to be thrown on database write
-        let databaseError = TestError()
-        client.mockDatabaseContainer.recreatePersistentStore_errorResponse = databaseError
-        
-        // Set up a new anonymous user and wait for the completion
-        let completionError = try await(controller.setAnonymousUser)
-        
-        // Assert error is forwarded
-        AssertAsync.willBeEqual(completionError as? TestError, databaseError)
-    }
-    
-    func test_setAnonymousUser() throws {
-        // Set up a new anonymous user
-        var setUserCompletionCalled = false
-        controller.setAnonymousUser(completion: { _ in setUserCompletionCalled = true })
-
-        let currentUserId = try XCTUnwrap(client.currentUserId)
-
-        let expectedWebSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
-            userId: currentUserId,
-            name: nil,
-            imageURL: nil,
-            role: .anonymous,
-            extraData: nil as DefaultExtraData.User?
-        )
-
-        AssertAsync {
-            // New user id is set
-            Assert.willBeTrue(currentUserId.isAnonymousUser)
-
-            // Database should be flushed
-            Assert.willBeTrue(self.client.mockDatabaseContainer.flush_called == true)
-
-            // WebSocketClient connect endpoint is updated
-            Assert.willBeEqual(AnyEndpoint(expectedWebSocketEndpoint), AnyEndpoint(self.client.webSocketClient!.connectEndpoint!))
-
-            // New user id is used in `TypingStartCleanupMiddleware`
-            Assert.willBeTrue(
-                self.client.webSocketClient!.typingMiddleware?.excludedUserIds().contains(currentUserId) == true
-            )
-
-            // WebSocketClient connect is called
-            Assert.willBeEqual(self.client.mockWebSocketClient.connect_calledCounter, 1)
-        }
-
-        // Make sure the completion is not called yet
-        XCTAssertFalse(setUserCompletionCalled)
-
-        // Simulate successful connection
-        client.webSocketClient!.simulateConnectionStatus(.connected(connectionId: .unique))
-
-        // Check the completion is called
-        AssertAsync.willBeTrue(setUserCompletionCalled)
-    }
-    
-    func test_setUser_forwardsDatabaseError() throws {
-        // Set the error to be thrown on database write
-        let databaseError = TestError()
-        client.mockDatabaseContainer.recreatePersistentStore_errorResponse = databaseError
-        
-        // Set up a new anonymous user and wait for the completion
-        let completionError = try await {
-            controller.setUser(userId: .unique, name: nil, imageURL: nil, token: .unique, completion: $0)
-        }
-        
-        // Assert error is forwarded
-        AssertAsync.willBeEqual(completionError as? TestError, databaseError)
-    }
-    
-    func test_setUser_forwardsTokenProviderError() throws {
-        var tokenCompletion: ((Token?) -> Void)!
-        
-        // Create client with token provider that saves a completion
-        var config = ChatClientConfig(apiKey: .init(.unique))
-        config.tokenProvider = { tokenCompletion = $2 }
-        let client = ChatClient(config: config)
-        
-        // Set a new user without a token and capture the error
-        var completionError: Error?
-        client.currentUserController().setUser(userId: .unique, name: nil, imageURL: nil, token: nil) {
-            completionError = $0
-        }
-        
-        // Assert token provider is invoked
-        AssertAsync.willBeTrue(tokenCompletion != nil)
-        
-        // Simulate failed attempt to fetch a token
-        tokenCompletion(nil)
-                
-        // Make sure the completion is not called yet
-        AssertAsync.willBeTrue(completionError is ClientError.MissingToken)
-    }
-
-    func test_setUser() {
-        let newUserId: UserId = .unique
-        let newUserToken: Token = .unique
-        let name: String = .unique
-        let imageURL: URL = .unique()
-        let userExtraData: DefaultExtraData.User = .defaultValue
-
-        // Set up a new user
-        var setUserCompletionCalled = false
-        controller.setUser(
-            userId: newUserId,
-            name: name,
-            imageURL: imageURL,
-            userExtraData: userExtraData,
-            token: newUserToken,
-            completion: { _ in setUserCompletionCalled = true }
-        )
-
-        let expectedWebSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
-            userId: newUserId,
-            name: name,
-            imageURL: imageURL,
-            extraData: userExtraData
-        )
-
-        AssertAsync {
-            // New user id is set
-            Assert.willBeEqual(self.client.currentUserId, newUserId)
-
-            // Database should be flushed
-            Assert.willBeTrue(self.client.mockDatabaseContainer.flush_called == true)
-
-            // WebSocketClient connect endpoint is updated
-            Assert.willBeEqual(AnyEndpoint(expectedWebSocketEndpoint), AnyEndpoint(self.client.webSocketClient!.connectEndpoint!))
-
-            // New user id is used in `TypingStartCleanupMiddleware`
-            Assert.willBeTrue(
-                self.client.webSocketClient!.typingMiddleware?.excludedUserIds().contains(newUserId) == true
-            )
-
-            // WebSocketClient connect is called
-            Assert.willBeEqual(self.client.mockWebSocketClient.connect_calledCounter, 1)
-        }
-
-        // Make sure the completion is not called yet
-        XCTAssertFalse(setUserCompletionCalled)
-
-        // Simulate a health check event with the current user data
-        // This should trigger the middlewares and save the current user data to DB
-        client.webSocketClient!.webSocketDidReceiveMessage(healthCheckEventJSON(userId: newUserId))
-
-        // Simulate successful connection
-        client.webSocketClient!.simulateConnectionStatus(.connected(connectionId: .unique))
-
-        var currentUser: CurrentUserDTO? {
-            client.databaseContainer.viewContext.currentUser()
-        }
-
-        // Check the completion is called and the current user model is available
-        AssertAsync {
-            // Completion is called
-            Assert.willBeTrue(setUserCompletionCalled)
-
-            // Current user is available
-            Assert.willBeEqual(currentUser?.user.id, newUserId)
-
-            // The token is updated
-            Assert.willBeEqual(self.client.provideToken(), newUserToken)
-        }
-    }
-
-    func test_setUser_shouldNotDeleteDB_whenUserIsTheSame() throws {
-        let newUserId: UserId = .unique
-        let newUserToken: Token = .unique
-
-        // Set a new user
-        controller.setUser(userId: newUserId, name: nil, imageURL: nil, token: newUserToken)
-
-        // Assert flush was called initially
-        XCTAssert(client.mockDatabaseContainer.flush_called == true)
-
-        // Reset the DB flush_called flag
-        client.mockDatabaseContainer.flush_called = false
-
-        // Disconnect
-        controller.disconnect()
-
-        // Set the same user again
-        controller.setUser(userId: newUserId, name: nil, imageURL: nil, token: newUserToken)
-
-        // Assert DB flush wasn't called
-        XCTAssert(client.mockDatabaseContainer.flush_called == false)
-    }
-    
-    func test_setGuestUser_forwardsDatabaseError() throws {
-        // Set the error to be thrown on database write
-        let databaseError = TestError()
-        client.mockDatabaseContainer.recreatePersistentStore_errorResponse = databaseError
-        
-        // Set up a new guest user and wait for the completion
-        let completionError = try await {
-            controller.setGuestUser(userId: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue, completion: $0)
-        }
-        
-        // Assert error is forwarded
-        AssertAsync.willBeEqual(completionError as? TestError, databaseError)
-    }
-    
-    func test_setGuestUser_forwardsNetworkError() throws {
-        // Set up a new anonymous user and wait for the completion
-        var completionError: Error?
-        controller.setGuestUser(userId: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue) {
-            completionError = $0
-        }
-        
-        AssertAsync.willBeTrue(client.mockAPIClient.request_endpoint != nil)
-        
-        // Set the error to be thrown on database write
-        let networkError = TestError()
-        let networkResponse: Result<GuestUserTokenPayload<DefaultExtraData.User>, Error> = .failure(networkError)
-        client.mockAPIClient.test_simulateResponse(networkResponse)
-        
-        // Assert error is forwarded
-        AssertAsync.willBeEqual(completionError as? TestError, networkError)
-    }
-
-    func test_setGuestUser() {
-        let newUserToken: Token = .unique
-        let newUserExtraData = DefaultExtraData.User.defaultValue
-        let newUser = GuestUserTokenRequestPayload(userId: .unique, name: .unique, imageURL: .unique(), extraData: newUserExtraData)
-
-        // Set up a new guest user
-        var setUserCompletionCalled = false
-        controller.setGuestUser(
-            userId: newUser.userId,
-            name: newUser.name,
-            imageURL: newUser.imageURL,
-            extraData: newUserExtraData,
-            completion: { _ in setUserCompletionCalled = true }
-        )
-
-        AssertAsync {
-            // `WebSocketClient.disconnect(source:)` should be called once
-            Assert.willBeEqual(self.client.mockWebSocketClient.disconnect_calledCounter, 1)
-
-            // Token should be flushed
-            Assert.willBeNil(self.client.provideToken())
-
-            // Database should be flushed
-            Assert.willBeTrue(self.client.mockDatabaseContainer.flush_called)
-
-            // New user id is set
-            Assert.willBeEqual(self.client.currentUserId, newUser.userId)
-
-            // New user id is used in `TypingStartCleanupMiddleware`
-            Assert.willBeTrue(
-                self.client.webSocketClient!.typingMiddleware?.excludedUserIds().contains(newUser.userId) == true
-            )
-
-            // Make sure `guest` endpoint is called
-            Assert.willBeEqual(
-                self.client.mockAPIClient.request_endpoint,
-                AnyEndpoint(.guestUserToken(
-                    userId: newUser.userId,
-                    name: newUser.name,
-                    imageURL: newUser.imageURL,
-                    extraData: newUserExtraData
-                ))
-            )
-        }
-
-        // Make sure the completion is not called yet
-        XCTAssertFalse(setUserCompletionCalled)
-
-        // Simulate a successful response from `guest` endpoint with a token
-        let payload = GuestUserTokenPayload(
-            user: .dummy(userId: newUser.userId, role: .guest, extraData: newUserExtraData),
-            token: newUserToken
-        )
-        client.mockAPIClient.test_simulateResponse(.success(payload))
-
-        let expectedWebSocketEndpoint: Endpoint<EmptyResponse> = .webSocketConnect(
-            userId: newUser.userId,
-            name: newUser.name,
-            imageURL: newUser.imageURL,
-            role: .guest,
-            extraData: newUser.extraData
-        )
-
-        AssertAsync {
-            // The token from `guest` endpoint payload is set
-            Assert.willBeEqual(self.client.provideToken(), newUserToken)
-
-            // WebSocketClient connect endpoint is updated
-            Assert.willBeEqual(AnyEndpoint(expectedWebSocketEndpoint), AnyEndpoint(self.client.webSocketClient!.connectEndpoint!))
-
-            // WebSocketClient connect is called
-            Assert.willBeEqual(self.client.mockWebSocketClient.connect_calledCounter, 1)
-        }
-
-        // Simulate a health check event with the current user data
-        // This should trigger the middlewares and save the current user data to DB
-        client.webSocketClient!.webSocketDidReceiveMessage(healthCheckEventJSON(userId: newUser.userId))
-
-        // Simulate successful connection
-        client.webSocketClient!.simulateConnectionStatus(.connected(connectionId: .unique))
-        
-        var currentUser: CurrentUserDTO? {
-            client.databaseContainer.viewContext.currentUser()
-        }
-
-        // Check the completion is called and the current user model is available
-        AssertAsync {
-            // Completion is called
-            Assert.willBeTrue(setUserCompletionCalled)
-            // Current user is available
-            Assert.willBeEqual(currentUser?.user.id, newUser.userId)
-        }
-    }
-
-    func test_disconnectAndConnect() {
-        // Set up a new anonymous user and wait for completion
-        var setUserCompletionCalled = false
-        controller.setAnonymousUser(completion: { _ in setUserCompletionCalled = true })
-
-        // Simulate successful connection
-        client.webSocketClient!.simulateConnectionStatus(.connected(connectionId: .unique))
-
-        // Wait for the connection to succeed
-        AssertAsync.willBeTrue(setUserCompletionCalled)
-
-        // Reset the call counters
-        client.mockWebSocketClient.connect_calledCounter = 0
-        client.mockWebSocketClient.disconnect_calledCounter = 0
-
-        // Disconnect and assert WS is disconnected
-        controller.disconnect()
-        XCTAssertEqual(client.mockWebSocketClient.disconnect_calledCounter, 1)
-
-        // Simulate WS disconnecting
-        client.webSocketClient!.simulateConnectionStatus(.disconnected(error: nil))
-
-        // Call connect again and assert WS connect is called
-        var connectCompletionCalled = false
-        controller.connect(completion: { _ in connectCompletionCalled = true })
-        XCTAssertEqual(client.mockWebSocketClient.connect_calledCounter, 1)
-        
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-        
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
-
-        // Simulate successful connection
-        client.webSocketClient!.simulateConnectionStatus(.connected(connectionId: .unique))
-        client.mockAPIClient.cleanUp()
-        
-        AssertAsync.willBeTrue(connectCompletionCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
-    }
     
     // MARK: - Updating current user
     
@@ -768,6 +404,73 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Check returned error
         AssertAsync.willBeEqual(completionError as? TestError, testError)
+    }
+
+    // MARK: - Reload user if needed
+
+    func test_reloadUserIfNeeded_callsClientUpdater_and_propagatesTheResult() {
+        for error in [nil, TestError()] {
+            // Simulate `reloadUserIfNeeded` and capture the result.
+            var reloadUserIfNeededCompletionCalled = false
+            var reloadUserIfNeededCompletionError: Error?
+            controller.reloadUserIfNeeded { [callbackQueueID] error in
+                AssertTestQueue(withId: callbackQueueID)
+                reloadUserIfNeededCompletionError = error
+                reloadUserIfNeededCompletionCalled = true
+            }
+
+            // Assert the `chatClientUpdater` is called.
+            XCTAssertTrue(env.chatClientUpdater.reloadUserIfNeeded_called)
+            // The completion hasn't been called yet.
+            XCTAssertFalse(reloadUserIfNeededCompletionCalled)
+
+            // Simulate `chatClientUpdater` result.
+            env.chatClientUpdater.reloadUserIfNeeded_completion!(error)
+
+            // Assert `reloadUserIfNeeded` completion is called.
+            AssertAsync.willBeTrue(reloadUserIfNeededCompletionCalled)
+
+            // Assert `error` is propagated.
+            XCTAssertEqual(reloadUserIfNeededCompletionError as? TestError, error)
+        }
+    }
+
+    // MARK: - Connect
+
+    func test_connect_callsClientUpdater_and_propagatesTheResult() {
+        for error in [nil, TestError()] {
+            // Simulate `connect` and capture the result.
+            var connectCompletionCalled = false
+            var connectCompletionError: Error?
+            controller.connect { [callbackQueueID] error in
+                AssertTestQueue(withId: callbackQueueID)
+                connectCompletionError = error
+                connectCompletionCalled = true
+            }
+
+            // Assert the `chatClientUpdater` is called.
+            XCTAssertTrue(env.chatClientUpdater.connect_called)
+            // The completion hasn't been called yet.
+            XCTAssertFalse(connectCompletionCalled)
+
+            // Simulate `chatClientUpdater` result.
+            env.chatClientUpdater.connect_completion!(error)
+            // Wait for completion to be called.
+            AssertAsync.willBeTrue(connectCompletionCalled)
+
+            // Assert `error` is propagated.
+            XCTAssertEqual(connectCompletionError as? TestError, error)
+        }
+    }
+
+    // MARK: - Disconnect
+
+    func test_disconnect_callsClientUpdater() {
+        // Simulate `disconnect`.
+        controller.disconnect()
+
+        // Assert the `chatClientUpdater` is called.
+        XCTAssertTrue(env.chatClientUpdater.disconnect_called)
     }
     
     // MARK: - Device endpoints
@@ -1174,11 +877,16 @@ private class TestEnvironment {
     var currentUserObserver: EntityDatabaseObserverMock<CurrentChatUser, CurrentUserDTO>!
     var currentUserObserverStartUpdatingError: Error?
 
+    var chatClientUpdater: ChatClientUpdaterMock<DefaultExtraData>!
+
     lazy var currentUserControllerEnvironment: CurrentChatUserController
         .Environment = .init(currentUserObserverBuilder: { [unowned self] in
             self.currentUserObserver = .init(context: $0, fetchRequest: $1, itemCreator: $2, fetchedResultsControllerType: $3)
             self.currentUserObserver.synchronizeError = self.currentUserObserverStartUpdatingError
             return self.currentUserObserver!
+        }, chatClientUpdaterBuilder: { [unowned self] in
+            self.chatClientUpdater = ChatClientUpdaterMock(client: $0)
+            return self.chatClientUpdater!
         })
 }
 

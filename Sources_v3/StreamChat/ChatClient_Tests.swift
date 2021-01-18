@@ -33,6 +33,7 @@ class ChatClient_Tests: StressTestCase {
     
     override func tearDown() {
         testEnv.apiClient?.cleanUp()
+        testEnv.clientUpdater?.cleanUp()
         AssertAsync.canBeReleased(&testEnv)
         super.tearDown()
     }
@@ -63,6 +64,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
+        env.clientUpdaterBuilder = ChatClientUpdaterMock.init
         env.databaseContainerBuilder = { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart in
             usedDatabaseKind = kind
             shouldFlushDBOnStart = shouldFlushOnStart
@@ -96,6 +98,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
+        env.clientUpdaterBuilder = ChatClientUpdaterMock.init
         env.databaseContainerBuilder = { kind, _, _ in
             usedDatabaseKind = kind
             return DatabaseContainerMock()
@@ -131,6 +134,7 @@ class ChatClient_Tests: StressTestCase {
 
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
+        env.clientUpdaterBuilder = ChatClientUpdaterMock.init
         env.databaseContainerBuilder = { kind, _, _ in
             usedDatabaseKinds.append(kind)
             // Return error for the first time
@@ -251,7 +255,9 @@ class ChatClient_Tests: StressTestCase {
             }
         )
 
-        // Assert `init` completion hasn't been called yet.
+        // Assert `init` completion is called synchronously since there is no
+        // async job to be done (we don't try to establish and wait for connection since
+        // `shouldConnectAutomatically` == false).
         XCTAssertTrue(initCompletionCalled)
         // Assert connection status is `.initialized`
         XCTAssertEqual(client.connectionStatus, .initialized)
@@ -435,56 +441,82 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(testEventWorker?.init_apiClient is APIClientMock)
     }
     
-    // MARK: - Setting a new current user tests
-    
-    func test_currentUserId_isNilInitially() {
-        let client = ChatClient(config: inMemoryStorageConfig)
-        
-        XCTAssertNil(client.currentUserId)
-        XCTAssertNil(testEnv.databaseContainer?.viewContext.currentUser())
-    }
-    
-    func test_settingUser_resetsBackgroundWorkers() {
-        // Create ChatClient with TestWorker and TestEventWorker only
-        let client = _ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: [TestWorker.init],
-            eventWorkerBuilders: [TestEventWorker.init],
-            environment: testEnv.environment
+    // MARK: - Init
+
+    func test_currentUserIsFetched_whenInitIsFinished_noMatterOnWhichThread() throws {
+        // Create current user id.
+        let currentUserId: UserId = .unique
+        // Create a config with on-disk storage.
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.shouldConnectAutomatically = false
+        // Create an active client to save the current user to the database.
+        let chatClient = ChatClient(
+            config: config,
+            tokenProvider: .static(.unique(userId: currentUserId))
         )
-        
-        let currentUserController = client.currentUserController()
+        // Create current user in the database.
+        try chatClient.databaseContainer.createCurrentUser(id: currentUserId)
 
-        // Generate userIds for first user
-        let oldUserId: UserId = .unique
-        let oldUserToken: Token = .unique
-        
-        // Set a user
-        currentUserController.setUser(userId: oldUserId, name: nil, imageURL: nil, token: oldUserToken)
+        // Take main then background queue.
+        for queue in [DispatchQueue.main, DispatchQueue.global()] {
+            let error: Error? = try await { completion in
+                // Dispatch creating a chat-client to specific queue.
+                queue.async {
+                    // Create a `ChatClient` instance with the same config
+                    // to access the storage with exited current user.
+                    let chatClient = ChatClient(
+                        config: config,
+                        tokenProvider: .static(.unique(userId: currentUserId))
+                    )
 
-        // Save worker's UUID
-        let oldWorkerUUID = (client.backgroundWorkers.first as! TestWorker).id
-        let oldEventWorkerUUID = (client.backgroundWorkers.last as! TestEventWorker).id
-        
-        // Set the same user again
-        currentUserController.setUser(userId: oldUserId, name: nil, imageURL: nil, token: oldUserToken)
+                    let expectedWebSocketEndpoint = AnyEndpoint(.webSocketConnect(userId: currentUserId))
 
-        // .. to make sure worker's are not re-created for the same user
-        XCTAssertEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)
-        XCTAssertEqual((client.backgroundWorkers.last as! TestEventWorker).id, oldEventWorkerUUID)
-        
-        // Generate userIds for second user
-        let newUserId: UserId = .unique
-        let newUserToken: Token = .unique
-        
-        // Set a user
-        currentUserController.setUser(userId: newUserId, name: nil, imageURL: nil, token: newUserToken)
+                    // 1. Check `currentUserId` is fetched synchronously
+                    // 2. `webSocket` has correct connect endpoint
+                    if chatClient.currentUserId == currentUserId,
+                        chatClient.webSocketClient?.connectEndpoint.map(AnyEndpoint.init) == expectedWebSocketEndpoint {
+                        completion(nil)
+                    } else {
+                        completion(TestError())
+                    }
+                }
+            }
 
-        // Check if the worker is re-created
-        XCTAssertNotEqual((client.backgroundWorkers.first as! TestWorker).id, oldWorkerUUID)
-        XCTAssertNotEqual((client.backgroundWorkers.last as! TestEventWorker).id, oldEventWorkerUUID)
+            XCTAssertNil(error)
+        }
     }
     
+    func test_reloadUserIfNeededIsCalled_whenClientIsInitialized_andErrorIsPropagated() {
+        for error in [nil, TestError()] {
+            var clientInitCompletionCalled = false
+            var clientInitCompletionError: Error?
+
+            // Create a client, provide the completion and catch the result.
+            _ = ChatClient(
+                config: inMemoryStorageConfig,
+                tokenProvider: .anonymous,
+                workerBuilders: [],
+                eventWorkerBuilders: [],
+                environment: testEnv.environment,
+                completion: { error in
+                    clientInitCompletionCalled = true
+                    clientInitCompletionError = error
+                }
+            )
+
+            // Assert `reloadUserIfNeeded` is called on `clientUpdater`.
+            XCTAssertTrue(testEnv.clientUpdater!.reloadUserIfNeeded_called)
+
+            // Simulate `reloadUserIfNeeded` completion result.
+            testEnv.clientUpdater?.reloadUserIfNeeded_completion!(error)
+            // Wait for `ChatClient.init` completion called.
+            AssertAsync.willBeTrue(clientInitCompletionCalled)
+
+            // Assert error from `reloadUserIfNeeded` is propagated.
+            XCTAssertEqual(clientInitCompletionError as? TestError, error)
+        }
+    }
+
     // MARK: - Passive (not active) Client tests
     
     func test_passiveClient_doesNotHaveWorkers() {
@@ -510,12 +542,6 @@ class ChatClient_Tests: StressTestCase {
         
         // Assert the wsClient is not initialized
         XCTAssertNil(client.webSocketClient)
-        
-        // Assert connection status is reported correctly
-        XCTAssertEqual(
-            client.connectionStatus,
-            ConnectionStatus.disconnected(error: .ClientIsNotInActiveMode())
-        )
     }
     
     func test_passiveClient_provideConnectionId_returnsImmediately() {
@@ -581,6 +607,8 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
     @Atomic var eventDecoder: EventDecoder<ExtraData>?
     
     @Atomic var notificationCenter: EventNotificationCenter?
+
+    @Atomic var clientUpdater: ChatClientUpdaterMock<ExtraData>?
     
     lazy var environment: _ChatClient<ExtraData>.Environment = { [unowned self] in
         .init(
@@ -624,6 +652,10 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
             notificationCenterBuilder: {
                 self.notificationCenter = EventNotificationCenterMock(middlewares: $0)
                 return self.notificationCenter!
+            },
+            clientUpdaterBuilder: {
+                self.clientUpdater = ChatClientUpdaterMock(client: $0)
+                return self.clientUpdater!
             }
         )
     }()
