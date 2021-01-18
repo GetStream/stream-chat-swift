@@ -11,7 +11,8 @@ class DatabaseContainerMock: DatabaseContainer {
     /// If set, the `write` completion block is called with this value.
     @Atomic var write_errorResponse: Error?
     @Atomic var init_kind: DatabaseContainer.Kind
-    @Atomic var flush_called = false
+    @Atomic var removeAllData_called = false
+    @Atomic var removeAllData_errorResponse: Error?
     @Atomic var recreatePersistentStore_called = false
     @Atomic var recreatePersistentStore_errorResponse: Error?
     @Atomic var resetEphemeralValues_called = false
@@ -38,7 +39,12 @@ class DatabaseContainerMock: DatabaseContainer {
     }
     
     override func removeAllData(force: Bool = true) throws {
-        flush_called = true
+        removeAllData_called = true
+
+        if let error = removeAllData_errorResponse {
+            throw error
+        }
+
         try super.removeAllData(force: force)
     }
     
