@@ -59,6 +59,8 @@ public extension UIConfig {
         public var channelListIndicatorBorderColor: UIColor = .streamWhiteSnow
         public var channelListActionDeleteChannel: UIColor = .streamAccentRed
         public var channelListAvatarOnlineIndicator: UIColor = .streamAccentGreen
+        public var channelListUnreadCountView: UIColor = .streamAccentRed
+        public var channelListUnreadCountLabel: UIColor = .streamWhite
 
         // MARK: - Text interactions
 
@@ -151,7 +153,7 @@ public extension UIConfig {
     
     struct ChannelListItemSubviews {
         public var avatarView: ChatChannelAvatarView<ExtraData>.Type = ChatChannelAvatarView.self
-        public var unreadCountView: ChatUnreadCountView.Type = ChatUnreadCountView.self
+        public var unreadCountView: ChatUnreadCountView<ExtraData>.Type = ChatUnreadCountView<ExtraData>.self
         public var readStatusView: ChatReadStatusCheckmarkView<ExtraData>.Type = ChatReadStatusCheckmarkView<ExtraData>.self
     }
 }
@@ -237,8 +239,8 @@ public extension UIConfig {
         public var repliedMessageContentView: ChatRepliedMessageContentView<ExtraData>.Type =
             ChatRepliedMessageContentView<ExtraData>.self
         public var attachmentSubviews = MessageAttachmentViewSubviews()
-        public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator.Type =
-            ChatMessageOnlyVisibleForCurrentUserIndicator.self
+        public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.Type =
+            ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.self
         public var threadArrowView: ChatMessageThreadArrowView<ExtraData>.Type = ChatMessageThreadArrowView<ExtraData>.self
         public var threadInfoView: ChatMessageThreadInfoView<ExtraData>.Type = ChatMessageThreadInfoView<ExtraData>.self
         public var errorIndicator: ChatMessageErrorIndicator<ExtraData>.Type = ChatMessageErrorIndicator<ExtraData>.self

@@ -52,7 +52,7 @@ open class ChatMessageMetadataView<ExtraData: ExtraDataTypes>: View, UIConfigPro
     }
 }
 
-open class ChatMessageOnlyVisibleForCurrentUserIndicator: View {
+open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: - Subviews
 
     public private(set) lazy var stack: UIStackView = {
