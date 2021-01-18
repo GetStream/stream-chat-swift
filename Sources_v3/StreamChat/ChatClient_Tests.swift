@@ -194,18 +194,63 @@ class ChatClient_Tests: StressTestCase {
     }
     
     func test_connectionStatus_isExposed() {
-        // Create a new chat client
+        var config = inMemoryStorageConfig
+        config.shouldConnectAutomatically = false
+
+        // Create an environment.
+        var clientUpdater: ChatClientUpdater<DefaultExtraData>?
+        var env = ChatClient.Environment()
+        env.clientUpdaterBuilder = {
+            if let updater = clientUpdater {
+                return updater
+            } else {
+                let updater = ChatClientUpdater<DefaultExtraData>(client: $0)
+                clientUpdater = updater
+                return updater
+            }
+        }
+
+        // Create a new chat client.
+        var initCompletionCalled = false
         let client = ChatClient(
-            config: inMemoryStorageConfig,
-            workerBuilders: workerBuilders,
+            config: config,
+            tokenProvider: .anonymous,
+            workerBuilders: [],
             eventWorkerBuilders: [],
-            environment: testEnv.environment
+            environment: env,
+            completion: { error in
+                XCTAssertNil(error)
+                initCompletionCalled = true
+            }
         )
 
-        // Simulate connection state change of WSClient
+        // Assert `init` completion hasn't been called yet.
+        XCTAssertTrue(initCompletionCalled)
+        // Assert connection status is `.initialized`
+        XCTAssertEqual(client.connectionStatus, .initialized)
+
+        // Simulate `connect` call and catch the completion.
+        var connectCompletionCalled = false
+        clientUpdater?.connect { error in
+            XCTAssertNil(error)
+            connectCompletionCalled = true
+        }
+
+        // Assert `connect` completion hasn't been called yet.
+        XCTAssertFalse(connectCompletionCalled)
+
+        // Simulate established web-socket connection.
+        client.webSocketClient?.simulateConnectionStatus(.connected(connectionId: .unique))
+        // Assert the WSConnectionState is exposed as ChatClientConnectionStatus
+        XCTAssertEqual(client.connectionStatus, .connected)
+
+        // Assert `connect` completion is called.
+        XCTAssertTrue(connectCompletionCalled)
+
+        // Simulate web-socket disconnection.
         let error = ClientError(with: TestError())
-        testEnv.webSocketClient?.simulateConnectionStatus(.disconnected(error: error))
-        
+        client.webSocketClient?.simulateConnectionStatus(.disconnected(error: error))
+
         // Assert the WSConnectionState is exposed as ChatClientConnectionStatus
         XCTAssertEqual(client.connectionStatus, .disconnected(error: error))
     }

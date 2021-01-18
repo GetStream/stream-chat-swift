@@ -76,12 +76,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// To observe changes in the connection status, create an instance of `CurrentChatUserController`, and use it to receive
     /// callbacks when the connection status changes.
     ///
-    public var connectionStatus: ConnectionStatus {
-        ConnectionStatus(
-            webSocketConnectionState: webSocketClient?.connectionState ?? .disconnected(error: .ClientIsNotInActiveMode())
-        )
-    }
-    
+    public internal(set) var connectionStatus: ConnectionStatus = .initialized
+
     /// The config object of the `ChatClient` instance.
     ///
     /// This value can't be mutated and can only be set when initializing a new `ChatClient` instance.
@@ -397,6 +393,8 @@ extension ClientError {
 /// its `RequestEncoder`.
 extension _ChatClient: ConnectionStateDelegate {
     func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: WebSocketConnectionState) {
+        connectionStatus = .init(webSocketConnectionState: state)
+
         _connectionId.mutate { mutableConnectionId in
             _connectionIdWaiters.mutate { connectionIdWaiters in
                 

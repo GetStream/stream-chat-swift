@@ -59,7 +59,7 @@ final class CurrentUserController_Tests: StressTestCase {
         XCTAssertEqual(controller.unreadCount, unreadCount)
         
         // Check the initial connection status.
-        XCTAssertEqual(controller.connectionStatus, .disconnected(error: nil))
+        XCTAssertEqual(controller.connectionStatus, .initialized)
     }
     
     func test_initialState_whenLocalDataFetchFailed() throws {
