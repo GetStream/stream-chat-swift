@@ -283,30 +283,31 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         self.environment = environment
         self.workerBuilders = workerBuilders
         self.eventWorkerBuilders = eventWorkerBuilders
+
+        currentUserId = fetchCurrentUserIdFromDatabase()
+
+        let updater = environment.clientUpdaterBuilder(self)
+        updater.reloadUserIfNeeded(completion: completion)
     }
     
     deinit {
         completeConnectionIdWaiters(connectionId: nil)
         completeTokenWaiters(token: nil)
     }
-    
-    // TODO: Not used & tested yet -> CIS-224
-    func refreshToken(completion: @escaping (Error?) -> Void) {
-        log.assert(config.tokenProvider != nil, "You can't call `refreshToken` when `Config.tokenProvider` is nil.")
 
-        guard let currentUserId = currentUserId else {
-            completion(ClientError.CurrentUserDoesNotExist())
-            return
-        }
-        
-        config.tokenProvider?(config.apiKey, currentUserId, { [weak self] (token) in
-            guard let token = token else {
-                completion(ClientError.MissingToken("Can't connect because `TokenProvider` didn't return a valid token."))
-                return
+    func fetchCurrentUserIdFromDatabase() -> UserId? {
+        var currentUserId: UserId?
+
+        let context = databaseContainer.viewContext
+        if Thread.isMainThread {
+            currentUserId = context.currentUser()?.user.id
+        } else {
+            context.performAndWait {
+                currentUserId = context.currentUser()?.user.id
             }
-            self?.currentToken = token
-            completion(nil)
-        })
+        }
+
+        return currentUserId
     }
     
     func createBackgroundWorkers() {
@@ -373,6 +374,8 @@ extension _ChatClient {
         var notificationCenterBuilder: ([EventMiddleware]) -> EventNotificationCenter = EventNotificationCenter.init
         
         var internetConnection: () -> InternetConnection = { InternetConnection() }
+
+        var clientUpdaterBuilder = ChatClientUpdater<ExtraData>.init
     }
 }
 

@@ -136,7 +136,8 @@ extension _ChatClient.Environment {
             requestEncoderBuilder: DefaultRequestEncoder.init,
             requestDecoderBuilder: DefaultRequestDecoder.init,
             eventDecoderBuilder: EventDecoder.init,
-            notificationCenterBuilder: EventNotificationCenter.init
+            notificationCenterBuilder: EventNotificationCenter.init,
+            clientUpdaterBuilder: ChatClientUpdaterMock<ExtraData>.init
         )
     }
 }
