@@ -187,9 +187,7 @@ class ChannelController_Tests: StressTestCase {
     func test_channelControllerForNewChannel_throwsError_ifCurrentUserDoesNotExist() throws {
         let clientWithoutCurrentUser = ChatClient(
             config: .init(apiKeyString: .unique),
-            tokenProvider: .closure {
-                $1(.failure(TestError()))
-            }
+            tokenProvider: .invalid()
         )
 
         for isCurrentUserMember in [true, false] {
@@ -287,9 +285,7 @@ class ChannelController_Tests: StressTestCase {
     func test_channelControllerForNewDirectMessagesChannel_throwsError_ifCurrentUserDoesNotExist() {
         let client = ChatClient(
             config: .init(apiKeyString: .unique),
-            tokenProvider: .closure {
-                $1(.failure(TestError()))
-            }
+            tokenProvider: .invalid()
         )
 
         for isCurrentUserMember in [true, false] {
@@ -1955,5 +1951,13 @@ private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelControllerDel
     ) {
         didChangeTypingMembers_typingMembers = typingMembers
         validateQueue()
+    }
+}
+
+extension _TokenProvider {
+    static func invalid(_ error: Error = TestError()) -> Self {
+        .closure {
+            $1(.failure(error))
+        }
     }
 }
