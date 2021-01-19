@@ -13,12 +13,20 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: Collectio
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
-    
+
     // MARK: - Subviews
 
     public private(set) lazy var messageView = uiConfig.messageList.messageContentView.init().withoutAutoresizingMaskConstraints
-    
+    private var hasCompletedStreamSetup = false
+
     // MARK: - Lifecycle
+
+    override open func didMoveToSuperview() {
+        super.didMoveToSuperview()
+
+        guard superview != nil, !hasCompletedStreamSetup else { return }
+        hasCompletedStreamSetup = true
+    }
 
     override open func setUpLayout() {
         contentView.addSubview(messageView)
@@ -41,23 +49,23 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: Collectio
 
         message = nil
     }
-    
+
     override open func preferredLayoutAttributesFitting(
         _ layoutAttributes: UICollectionViewLayoutAttributes
     ) -> UICollectionViewLayoutAttributes {
         let preferredAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
-        
+
         let targetSize = CGSize(
             width: layoutAttributes.frame.width,
             height: UIView.layoutFittingCompressedSize.height
         )
-        
+
         preferredAttributes.frame.size = contentView.systemLayoutSizeFitting(
             targetSize,
             withHorizontalFittingPriority: .required,
             verticalFittingPriority: .fittingSizeLevel
         )
-        
+
         return preferredAttributes
     }
 }
