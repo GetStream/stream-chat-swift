@@ -20,40 +20,25 @@ class LoginViewController: UITableViewController {
         config.isLocalStorageEnabled = Configuration.isLocalStorageEnabled
         config.shouldFlushLocalStorageOnStart = Configuration.shouldFlushLocalStorageOnStart
         config.baseURL = Configuration.baseURL
+
+        let tokenProvider: TokenProvider = Configuration.token.map { .static($0) } ?? .guest(
+            userId: Configuration.userId,
+            name: Configuration.userName
+        )
         
-        let chatClient = ChatClient(config: config)
-        
-        let currentUserController = chatClient.currentUserController()
-        
-        func setUserCompletion(_ error: Error?) {
-            guard let error = error else { return }
-            
-            DispatchQueue.main.async {
-                let viewController = UIApplication.shared.keyWindow?.rootViewController
-                viewController?.alert(title: "Error", message: "Error logging in: \(error)") {
-                    viewController?.moveToStoryboard(.main, options: [.transitionFlipFromRight])
+        let chatClient = ChatClient(
+            config: config,
+            tokenProvider: tokenProvider,
+            completion: {
+                guard let error = $0 else { return }
+                DispatchQueue.main.async {
+                    let viewController = UIApplication.shared.keyWindow?.rootViewController
+                    viewController?.alert(title: "Error", message: "Error logging in: \(error)") {
+                        viewController?.moveToStoryboard(.main, options: [.transitionFlipFromRight])
+                    }
                 }
             }
-        }
-        
-        if let token = Configuration.token {
-            currentUserController.setUser(
-                userId: Configuration.userId,
-                name: Configuration.userName,
-                imageURL: nil,
-                userExtraData: nil,
-                token: token,
-                completion: setUserCompletion
-            )
-        } else {
-            currentUserController.setGuestUser(
-                userId: Configuration.userId,
-                name: Configuration.userName,
-                imageURL: nil,
-                extraData: .defaultValue,
-                completion: setUserCompletion
-            )
-        }
+        )
         
         return chatClient
     }

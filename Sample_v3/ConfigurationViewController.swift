@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -33,22 +33,21 @@ class ConfigurationViewController: UITableViewController {
         case 1:
             tokenTypeSegmentedControl.selectedSegmentIndex = 1
             jwtTextField.isEnabled = false
-            if token != .development {
+            if tableView.numberOfRows(inSection: 0) > 4 {
                 tableView.deleteRows(at: [jwtCellIndexPath], with: .top)
             }
-            jwtTextField.text = nil
+            token = nil
         case 2:
             tokenTypeSegmentedControl.selectedSegmentIndex = 2
             jwtTextField.isEnabled = false
-            if let token = token,
-                !token.isEmpty {
+            if tableView.numberOfRows(inSection: 0) > 4 {
                 tableView.deleteRows(at: [jwtCellIndexPath], with: .top)
             }
-            jwtTextField.text = .development
+            token = .development(userId: userId)
         default:
             tokenTypeSegmentedControl.selectedSegmentIndex = 0
             jwtTextField.isEnabled = true
-            jwtTextField.text = Configuration.TestUser.defaults.first(where: { $0.id == userId })?.token ?? ""
+            token = Configuration.TestUser.defaults.first(where: { $0.id == userId })?.token
             tableView.insertRows(at: [jwtCellIndexPath], with: .top)
         }
         
@@ -155,8 +154,8 @@ extension ConfigurationViewController {
     }
 
     var token: Token? {
-        get { jwtTextField.text ?? "" }
-        set { jwtTextField.text = newValue }
+        get { try? Token(rawValue: jwtTextField.text ?? "") }
+        set { jwtTextField.text = newValue?.rawValue }
     }
     
     var isLocalStorageEnabled: Bool {

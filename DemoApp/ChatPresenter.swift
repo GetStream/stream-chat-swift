@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -10,24 +10,14 @@ extension UIViewController {
     // TODO: Where to put this???
     func presentChat(userCredentials: UserCredentials) {
         LogConfig.level = .error
+
+        // Create a token
+        let token = try! Token(rawValue: userCredentials.token)
         
         // Create client
         let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
-        let client = ChatClient(config: config)
-        
-        // Log in the current user
-        let currentUserController = client.currentUserController()
-        currentUserController.setUser(
-            userId: userCredentials.id,
-            name: userCredentials.name,
-            imageURL: userCredentials.avatarURL,
-            token: userCredentials.token
-        ) { error in
-            if let error = error {
-                print("User login failed: \(error)")
-            }
-        }
-        
+        let client = ChatClient(config: config, tokenProvider: .static(token))
+
         // Config
         var uiConfig = UIConfig<DefaultExtraData>()
         uiConfig.navigation.channelListRouter = DemoChatChannelListRouter.self
