@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -29,7 +29,7 @@ enum Configuration {
     struct TestUser {
         let name: String
         let id: String
-        let token: String
+        let token: Token
         
         static var defaults: [Self] {
             [
@@ -162,8 +162,17 @@ enum Configuration {
     }
 
     static var token: Token? {
-        get { UserDefaults.standard.string(forKey: "token") ?? DefaultValues.token }
-        set { UserDefaults.standard.setValue(newValue, forKey: PersistenceKeys.token) }
+        get {
+            guard
+                let rawValue = UserDefaults.standard.string(forKey: PersistenceKeys.token),
+                let token = try? Token(rawValue: rawValue)
+            else {
+                return DefaultValues.token
+            }
+
+            return token
+        }
+        set { UserDefaults.standard.setValue(newValue?.rawValue, forKey: PersistenceKeys.token) }
     }
     
     static var isLocalStorageEnabled: Bool {
