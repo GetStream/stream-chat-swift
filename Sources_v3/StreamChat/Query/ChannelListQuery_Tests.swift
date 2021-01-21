@@ -40,7 +40,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         
         // Create queries with sortings
         let queries = sortings.map {
-            ChannelListQuery<NoExtraData.Channel>(filter: .containMembers(userIds: [.unique]), sort: $0)
+            ChannelListQuery<NoExtraData>(filter: .containMembers(userIds: [.unique]), sort: $0)
         }
         
         // Assert safe sorting option is added
