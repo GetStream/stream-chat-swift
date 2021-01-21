@@ -35,7 +35,7 @@ extension Data {
     ///
     /// - Returns: Gzip-compressed `Data` instance.
     /// - Throws: `GzipError`
-    public func gzipped() throws -> Data {
+    func gzipped() throws -> Data {
         guard !isEmpty else {
             return Data()
         }
@@ -106,10 +106,10 @@ extension Data {
 }
 
 /// Errors on gzipping/gunzipping based on the zlib error codes.
-public struct GzipError: Swift.Error {
+struct GzipError: Swift.Error {
     // cf. http://www.zlib.net/manual.html
     
-    public enum Kind: Equatable {
+    enum Kind: Equatable {
         /// The stream structure was inconsistent.
         ///
         /// - underlying zlib error: `Z_STREAM_ERROR` (-2)
@@ -143,12 +143,12 @@ public struct GzipError: Swift.Error {
     }
     
     /// Error kind.
-    public let kind: Kind
+    let kind: Kind
     
     /// Returned message by zlib.
-    public let message: String
+    let message: String
     
-    internal init(code: Int32, msg: UnsafePointer<CChar>?) {
+    init(code: Int32, msg: UnsafePointer<CChar>?) {
         message = {
             guard let msg = msg, let message = String(validatingUTF8: msg) else {
                 return "Unknown gzip error"
@@ -174,7 +174,7 @@ public struct GzipError: Swift.Error {
         }()
     }
     
-    public var localizedDescription: String {
+    var localizedDescription: String {
         message
     }
 }
