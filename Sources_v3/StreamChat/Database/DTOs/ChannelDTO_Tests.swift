@@ -143,7 +143,7 @@ class ChannelDTO_Tests: XCTestCase {
     }
     
     func test_channelWithChannelListQuery_isSavedAndLoaded() {
-        let query = ChannelListQuery<NoExtraData>(
+        let query = ChannelListQuery(
             filter: .and([.less(.createdAt, than: .unique), .exists(.deletedAt, exists: false)])
         )
         
@@ -172,8 +172,8 @@ class ChannelDTO_Tests: XCTestCase {
     func test_channelListQuery_withSorting() {
         // Create two channels queries with different sortings.
         let filter: Filter<ChannelListFilterScope<NoExtraData>> = .in(.members, values: [.unique])
-        let queryWithDefaultSorting = ChannelListQuery(filter: filter)
-        let queryWithUpdatedAtSorting = ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
+        let queryWithDefaultSorting = _ChannelListQuery(filter: filter)
+        let queryWithUpdatedAtSorting = _ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
 
         // Create dummy channels payloads with ids: a, b, c, d.
         let payload1 = dummyPayload(with: try! .init(cid: "a:a"))

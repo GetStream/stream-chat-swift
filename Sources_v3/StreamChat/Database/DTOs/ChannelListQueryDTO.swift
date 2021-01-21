@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -28,7 +28,7 @@ extension NSManagedObjectContext {
         ChannelListQueryDTO.load(filterHash: filterHash, context: self)
     }
     
-    func saveQuery<ExtraData: ChannelExtraData>(query: ChannelListQuery<ExtraData>) -> ChannelListQueryDTO {
+    func saveQuery<ExtraData: ChannelExtraData>(query: _ChannelListQuery<ExtraData>) -> ChannelListQueryDTO {
         if let existingDTO = ChannelListQueryDTO.load(filterHash: query.filter.filterHash, context: self) {
             return existingDTO
         }

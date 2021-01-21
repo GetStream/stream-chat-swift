@@ -9,13 +9,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_channels_buildsCorrectly() {
         let filter: Filter<ChannelListFilterScope<NoExtraData>> = .containMembers(userIds: [.unique])
         
-        func channelListQuery(options: QueryOptions) -> ChannelListQuery<NoExtraData> {
-            var query: ChannelListQuery<NoExtraData> = .init(filter: filter)
+        func channelListQuery(options: QueryOptions) -> ChannelListQuery {
+            var query: ChannelListQuery = .init(filter: filter)
             query.options = options
             return query
         }
         
-        let testCases: [(ChannelListQuery<NoExtraData>, Bool)] = [
+        let testCases: [(ChannelListQuery, Bool)] = [
             (channelListQuery(options: .state), true),
             (channelListQuery(options: .presence), true),
             (channelListQuery(options: .watch), true),

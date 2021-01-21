@@ -12,7 +12,7 @@ extension _ChatClient {
     ///
     /// - Returns: A new instance of `ChannelController`.
     ///
-    public func channelListController(query: ChannelListQuery<ExtraData.Channel>) -> _ChatChannelListController<ExtraData> {
+    public func channelListController(query: _ChannelListQuery<ExtraData.Channel>) -> _ChatChannelListController<ExtraData> {
         .init(query: query, client: self)
     }
 }
@@ -40,7 +40,7 @@ public typealias ChatChannelListController = _ChatChannelListController<NoExtraD
 ///
 public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of channels.
-    public let query: ChannelListQuery<ExtraData.Channel>
+    public let query: _ChannelListQuery<ExtraData.Channel>
     
     /// The `ChatClient` instance this controller belongs to.
     public let client: _ChatClient<ExtraData>
@@ -110,7 +110,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     /// - Parameters:
     ///   - query: The query used for filtering the channels.
     ///   - client: The `Client` instance this controller belongs to.
-    init(query: ChannelListQuery<ExtraData.Channel>, client: _ChatClient<ExtraData>, environment: Environment = .init()) {
+    init(query: _ChannelListQuery<ExtraData.Channel>, client: _ChatClient<ExtraData>, environment: Environment = .init()) {
         self.client = client
         self.query = query
         self.environment = environment
