@@ -8,7 +8,7 @@ import Foundation
 extension ChannelDetailPayload where ExtraData == NoExtraData {
     /// Returns a dummy channel detail payload with the given cid
     static func dummy(cid: ChannelId) -> ChannelDetailPayload {
-        let member: MemberPayload<NoExtraData.User> =
+        let member: MemberPayload<NoExtraData> =
             .init(
                 user: .init(
                     id: .unique,

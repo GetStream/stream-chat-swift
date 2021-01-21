@@ -13,7 +13,7 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
 
     func test_guestUserDefaultExtraData_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(
-            GuestUserTokenPayload<NoExtraData.User>.self,
+            GuestUserTokenPayload<NoExtraData>.self,
             from: guestUserDefaultExtraDataJSON
         )
 

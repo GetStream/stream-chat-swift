@@ -1234,7 +1234,7 @@ class ChannelController_Tests: StressTestCase {
     
     // Helper function that creates channel with message
     func setupChannelWithMessage(_ session: DatabaseSession) throws -> MessageId {
-        let dummyUserPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let dummyUserPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         try session.saveCurrentUser(payload: dummyUserPayload)
         try session.saveChannel(payload: dummyPayload(with: channelId))
         let message = try session.createNewMessage(
