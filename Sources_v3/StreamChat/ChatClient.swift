@@ -37,16 +37,6 @@ public protocol ExtraDataTypes {
     associatedtype Attachment: AttachmentExtraData = NoExtraData
 }
 
-/// A concrete implementation of `ExtraDataTypes` with the default extra data type values.
-///
-/// `ChatUser` extra data type: `NoExtraData`
-///
-/// `ChatMessage` extra data type: `NoExtraData`
-///
-/// `ChatChannel` extra data type: `NoExtraData`
-///
-public struct DefaultExtraData: ExtraDataTypes {}
-
 /// The root object representing a Stream Chat.
 ///
 /// Typically, an app contains just one instance of `ChatClient`. However, it's possible to have multiple instances if your use
