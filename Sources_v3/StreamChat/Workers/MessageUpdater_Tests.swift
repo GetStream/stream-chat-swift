@@ -439,7 +439,7 @@ final class MessageUpdater_Tests: StressTestCase {
             .dummy(),
             .dummy()
         ]
-        let extraData: NoExtraData.Message = .defaultValue
+        let extraData: NoExtraData = .defaultValue
         
         // Create new reply message
         let newMessageId: MessageId = try await { completion in
