@@ -186,7 +186,7 @@ class UserDTO_Tests: XCTestCase {
 
     func test_userListQuery_withSorting() {
         // Create two user queries with different sortings.
-        let filter = Filter<UserListFilterScope<NoExtraData>>.query(.name, text: "a")
+        let filter = Filter<UserListFilterScope>.query(.name, text: "a")
         let queryWithLastActiveAtSorting = _UserListQuery(filter: filter, sort: [.init(key: .lastActivityAt, isAscending: false)])
         let queryWithIdSorting = _UserListQuery(filter: filter, sort: [.init(key: .id, isAscending: false)])
 

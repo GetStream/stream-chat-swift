@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -9,7 +9,7 @@ import Foundation
 public protocol AnyMemberListFilterScope: AnyUserListFilterScope {}
 
 /// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `ChannelMemberListQuery`.
-public class MemberListFilterScope<ExtraData: UserExtraData>: UserListFilterScope<ExtraData>, AnyMemberListFilterScope {}
+public class MemberListFilterScope<ExtraData: UserExtraData>: _UserListFilterScope<ExtraData>, AnyMemberListFilterScope {}
 
 /// Non extra-data-specific filer keys for member list.
 public extension FilterKey where Scope: AnyMemberListFilterScope {

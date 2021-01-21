@@ -46,8 +46,8 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     }
     
     func test_update_called_forEachQuery() throws {
-        let filter1: Filter<UserListFilterScope<NoExtraData>> = .equal(.id, to: .unique)
-        let filter2: Filter<UserListFilterScope<NoExtraData>> = .notEqual(.id, to: .unique)
+        let filter1: Filter<UserListFilterScope> = .equal(.id, to: .unique)
+        let filter2: Filter<UserListFilterScope> = .notEqual(.id, to: .unique)
         
         try database.createUserListQuery(filter: filter1)
         try database.createUserListQuery(filter: filter2)
@@ -65,7 +65,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         // Deinitialize newUserQueryUpdater
         newUserQueryUpdater = nil
         
-        let filter: Filter<UserListFilterScope<NoExtraData>> = .notEqual(.id, to: .unique)
+        let filter: Filter<UserListFilterScope> = .notEqual(.id, to: .unique)
         try database.createUserListQuery(filter: filter)
         try database.createUser(id: .unique)
         
@@ -85,7 +85,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     
     func test_filter_isModified() throws {
         let id: UserId = .unique
-        let filter: Filter<UserListFilterScope<NoExtraData>> = .notEqual(.id, to: .unique)
+        let filter: Filter<UserListFilterScope> = .notEqual(.id, to: .unique)
         
         try database.createUserListQuery(filter: filter)
         try database.createUser(id: id)
@@ -100,7 +100,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     }
     
     func test_newUserQueryUpdater_doesNotRetainItself() throws {
-        let filter: Filter<UserListFilterScope<NoExtraData>> = .notEqual(.id, to: .unique)
+        let filter: Filter<UserListFilterScope> = .notEqual(.id, to: .unique)
         try database.createUserListQuery(filter: filter)
         try database.createUser()
         
@@ -112,7 +112,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     }
     
     func test_updater_ignoresNonObservedQueries() throws {
-        let filter1: Filter<UserListFilterScope<NoExtraData>> = .equal(.id, to: .unique)
+        let filter1: Filter<UserListFilterScope> = .equal(.id, to: .unique)
         
         try database.createUserListQuery(filter: filter1)
         
