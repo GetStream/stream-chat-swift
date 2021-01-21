@@ -17,17 +17,25 @@ extension _ChatClient {
     }
 }
 
-/// `_ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
+/// `ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
 ///
-/// Learn more about `_ChatUserSearchController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user-list).
-///
-/// - Note: `ChatUserSearchController` is a typealias of `_ChatUserSearchController` with default extra data. If you're using
-/// custom extra data, create your own typealias of `_ChatUserSearchController`.
+/// - Note: `ChatUserSearchController` is a typealias of `_ChatUserSearchController` with the default extra data types.
+/// If you want to use your custom extra data types, you should create your own `ChatUserSearchController`
+/// typealias for `_ChatUserSearchController`.
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatUserSearchController = _ChatUserSearchController<NoExtraData>
 
+/// `_ChatUserSearchController` is a controller class which allows observing a list of chat users based on the provided query.
+///
+/// - Note: `_ChatUserSearchController` type is not meant to be used directly.
+/// If you don't use custom extra data types, use `ChatUserSearchController` typealias instead.
+/// When using custom extra data types, you should create your own `ChatUserSearchController` typealias
+/// for `_ChatUserSearchController`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
 public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: _ChatClient<ExtraData>
