@@ -378,18 +378,14 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
             return imageAttachments.map {
                 .init(
                     localURL: $0.localURL,
-                    fileName: $0.localURL.lastPathComponent,
-                    type: .image,
-                    extraData: .defaultValue
+                    type: .image
                 )
             }
         case .documents:
             return documentAttachments.map {
                 .init(
                     localURL: $0.localURL,
-                    fileName: $0.localURL.lastPathComponent,
-                    type: .file,
-                    extraData: .defaultValue
+                    type: .file
                 )
             }
         case .none:
