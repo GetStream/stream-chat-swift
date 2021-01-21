@@ -15,9 +15,9 @@ class CurrentUserModelDTO_Tests: XCTestCase {
     
     func test_currentUserPayload_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
-        let extraData = DefaultExtraData.User.defaultValue
+        let extraData = NoExtraData.User.defaultValue
         
-        let payload: CurrentUserPayload<DefaultExtraData.User> = .dummy(
+        let payload: CurrentUserPayload<NoExtraData.User> = .dummy(
             userId: userId,
             role: .admin,
             extraData: extraData,
@@ -52,7 +52,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(Int64(payload.unreadCount!.messages), loadedCurrentUser?.unreadMessagesCount)
             Assert.willBeEqual(Int64(payload.unreadCount!.channels), loadedCurrentUser?.unreadChannelsCount)
             Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
-                try? JSONDecoder.default.decode(DefaultExtraData.User.self, from: $0.user.extraData)
+                try? JSONDecoder.default.decode(NoExtraData.User.self, from: $0.user.extraData)
             })
             Assert.willBeEqual(mutedUserIDs, Set(loadedCurrentUser?.mutedUsers.map(\.id) ?? []))
             Assert.willBeEqual(payload.devices.count, loadedCurrentUser?.devices.count)
@@ -64,7 +64,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
         
-        let payload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: userId, role: .user)
+        let payload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: userId, role: .user)
         
         try database.writeSynchronously { session in
             // Save the user

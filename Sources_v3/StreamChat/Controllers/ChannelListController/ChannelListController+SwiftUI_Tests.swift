@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -61,8 +61,8 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
 class ChannelListControllerMock: ChatChannelListController {
     @Atomic var synchronize_called = false
     
-    var channels_simulated: [_ChatChannel<DefaultExtraData>]?
-    override var channels: [_ChatChannel<DefaultExtraData>] {
+    var channels_simulated: [_ChatChannel<NoExtraData>]?
+    override var channels: [_ChatChannel<NoExtraData>] {
         channels_simulated ?? super.channels
     }
 

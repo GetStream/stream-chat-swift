@@ -6,7 +6,7 @@
 import XCTest
 
 final class UserUpdater_Tests: StressTestCase {
-    typealias ExtraData = DefaultExtraData
+    typealias ExtraData = NoExtraData
     
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
@@ -279,7 +279,7 @@ final class UserUpdater_Tests: StressTestCase {
         }
         
         // Simulate `flagUser` API response with success.
-        let payload = FlagUserPayload<DefaultExtraData.User>(
+        let payload = FlagUserPayload<NoExtraData.User>(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedUser: .dummy(userId: flaggedUserId)
         )
@@ -343,7 +343,7 @@ final class UserUpdater_Tests: StressTestCase {
         }
         
         // Simulate API response with success.
-        let payload = FlagUserPayload<DefaultExtraData.User>(
+        let payload = FlagUserPayload<NoExtraData.User>(
             currentUser: .dummy(userId: .unique, role: .user),
             flaggedUser: .dummy(userId: .unique)
         )

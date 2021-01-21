@@ -1,12 +1,12 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
 import XCTest
 
 class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
-    var middleware: ChannelReadUpdaterMiddleware<DefaultExtraData>!
+    var middleware: ChannelReadUpdaterMiddleware<NoExtraData>!
     fileprivate var database: DatabaseContainerMock!
     
     override func setUp() {
@@ -28,7 +28,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: _ChatChannel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<NoExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -39,14 +39,14 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Create EventPayload for MessageReadEvent
-        let eventPayload = EventPayload<DefaultExtraData>(
+        let eventPayload = EventPayload<NoExtraData>(
             eventType: .messageRead,
             cid: channelId,
             user: dummyCurrentUser,
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let messageReadEvent = try MessageReadEvent<DefaultExtraData>(from: eventPayload)
+        let messageReadEvent = try MessageReadEvent<NoExtraData>(from: eventPayload)
         
         // Let the middleware handle the event
         // Middleware should mutate the loadedChannel's read
@@ -74,7 +74,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
 
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: _ChatChannel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<NoExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -85,7 +85,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Unfortunately, ChannelDetailPayload is needed for NotificationMarkReadEvent...
-        let channelDetailPayload = ChannelDetailPayload<DefaultExtraData>(
+        let channelDetailPayload = ChannelDetailPayload<NoExtraData>(
             cid: channelId,
             name: .unique,
             imageURL: .unique(),
@@ -103,14 +103,14 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             members: nil
         )
         // Create EventPayload for NotificationMarkReadEvent
-        let eventPayload = EventPayload<DefaultExtraData>(
+        let eventPayload = EventPayload<NoExtraData>(
             eventType: .notificationMarkRead,
             user: dummyCurrentUser,
             channel: channelDetailPayload,
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let notificationMarkReadEvent = try NotificationMarkReadEvent<DefaultExtraData>(from: eventPayload)
+        let notificationMarkReadEvent = try NotificationMarkReadEvent<NoExtraData>(from: eventPayload)
         
         // Let the middleware handle the event
         let handledEvent = try await { middleware.handle(event: notificationMarkReadEvent, completion: $0) }
@@ -137,7 +137,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: _ChatChannel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<NoExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -149,7 +149,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
         // Create EventPayload for NotificationMarkAllReadEvent
-        let eventPayload = EventPayload<DefaultExtraData>(
+        let eventPayload = EventPayload<NoExtraData>(
             eventType: .notificationMarkRead,
             user: dummyCurrentUser,
             createdAt: newReadDate

@@ -14,7 +14,7 @@ class CreateChatViewController: UIViewController {
     }
     
     // Composer subclass intended to be only used in this VC
-    class DemoComposerVC: MessageComposerViewController<DefaultExtraData> {
+    class DemoComposerVC: MessageComposerViewController<NoExtraData> {
         override func createNewMessage(text: String, quotedMessageId: MessageId? = nil) {
             guard let navController = parent?.parent as? UINavigationController,
                 let controller = controller else { return }

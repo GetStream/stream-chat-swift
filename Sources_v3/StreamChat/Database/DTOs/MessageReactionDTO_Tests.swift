@@ -25,7 +25,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     func test_messageReactionPayload_withDefaultExtraData_isStoredAndLoadedFromDB() throws {
         // Create message reaction payload with `DefaultExtraData`.
-        let payload: MessageReactionPayload<DefaultExtraData> = .dummy(
+        let payload: MessageReactionPayload<NoExtraData> = .dummy(
             messageId: .unique,
             user: dummyUser
         )
@@ -48,7 +48,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     func test_saveReaction_throwsMessageDoesNotExist_ifThereIsNoMessage() {
         // Create message reaction payload with `DefaultExtraData`.
-        let payload: MessageReactionPayload<DefaultExtraData> = .dummy(
+        let payload: MessageReactionPayload<NoExtraData> = .dummy(
             messageId: .unique,
             user: dummyUser
         )
@@ -67,7 +67,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     func test_asModel_buildsCorrectModel() throws {
         // Create message reaction payload with `DefaultExtraData`.
-        let payload: MessageReactionPayload<DefaultExtraData> = .dummy(
+        let payload: MessageReactionPayload<NoExtraData> = .dummy(
             messageId: .unique,
             user: dummyUser
         )
@@ -100,7 +100,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     func test_asModel_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         // Create message reaction payload with `DefaultExtraData`.
-        let payload: MessageReactionPayload<DefaultExtraData> = .dummy(
+        let payload: MessageReactionPayload<NoExtraData> = .dummy(
             messageId: .unique,
             user: dummyUser
         )
@@ -138,7 +138,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     func test_deleteReaction_worksCorrectly() throws {
         // Create message reaction payload with `DefaultExtraData`.
-        let payload: MessageReactionPayload<DefaultExtraData> = .dummy(
+        let payload: MessageReactionPayload<NoExtraData> = .dummy(
             messageId: .unique,
             user: dummyUser
         )

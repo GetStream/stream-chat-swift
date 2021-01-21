@@ -11,7 +11,7 @@ class UserListController_Tests: StressTestCase {
     
     var client: ChatClient!
     
-    var query: UserListQuery<DefaultExtraData.User>!
+    var query: UserListQuery<NoExtraData.User>!
     
     var controller: ChatUserListController!
     var controllerCallbackQueueID: UUID!
@@ -331,7 +331,7 @@ class UserListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userListUpdater: UserListUpdaterMock<DefaultExtraData.User>?
+    @Atomic var userListUpdater: UserListUpdaterMock<NoExtraData.User>?
     
     lazy var environment: ChatUserListController.Environment =
         .init(userQueryUpdaterBuilder: { [unowned self] in
@@ -354,7 +354,7 @@ private class TestDelegate: QueueAwareDelegate, ChatUserListControllerDelegate {
     }
     
     func controller(
-        _ controller: _ChatUserListController<DefaultExtraData>,
+        _ controller: _ChatUserListController<NoExtraData>,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         didChangeUsers_changes = changes
@@ -373,7 +373,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, _ChatUserListControllerDe
     }
     
     func controller(
-        _ controller: _ChatUserListController<DefaultExtraData>,
+        _ controller: _ChatUserListController<NoExtraData>,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         didChangeUsers_changes = changes

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -13,10 +13,10 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         let imageURL: URL = .unique()
         let team: String = .unique
         let invite: UserId = .unique
-        let extraData: DefaultExtraData.Channel = .defaultValue
+        let extraData: NoExtraData.Channel = .defaultValue
         
         // Create ChannelEditDetailPayload
-        let payload = ChannelEditDetailPayload<DefaultExtraData>(
+        let payload = ChannelEditDetailPayload<NoExtraData>(
             cid: cid,
             name: name,
             imageURL: imageURL,
@@ -43,7 +43,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
     
     func test_pathParameters() {
         // Create payload without id specified
-        let payload1: ChannelEditDetailPayload<DefaultExtraData> = .init(
+        let payload1: ChannelEditDetailPayload<NoExtraData> = .init(
             type: .messaging,
             name: .unique,
             imageURL: .unique(),
@@ -58,7 +58,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         
         // Create payload with id and type specified
         let cid: ChannelId = .unique
-        let payload2: ChannelEditDetailPayload<DefaultExtraData> = .init(
+        let payload2: ChannelEditDetailPayload<NoExtraData> = .init(
             cid: cid,
             name: .unique,
             imageURL: .unique(),

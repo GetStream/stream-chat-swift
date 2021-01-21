@@ -6,7 +6,7 @@
 import XCTest
 
 class NewUserQueryUpdater_Tests: StressTestCase {
-    typealias ExtraData = DefaultExtraData.User
+    typealias ExtraData = NoExtraData.User
     
     private var env: TestEnvironment!
     
@@ -46,8 +46,8 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     }
     
     func test_update_called_forEachQuery() throws {
-        let filter1: Filter<UserListFilterScope<DefaultExtraData.User>> = .equal(.id, to: .unique)
-        let filter2: Filter<UserListFilterScope<DefaultExtraData.User>> = .notEqual(.id, to: .unique)
+        let filter1: Filter<UserListFilterScope<NoExtraData.User>> = .equal(.id, to: .unique)
+        let filter2: Filter<UserListFilterScope<NoExtraData.User>> = .notEqual(.id, to: .unique)
         
         try database.createUserListQuery(filter: filter1)
         try database.createUserListQuery(filter: filter2)
@@ -65,7 +65,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         // Deinitialize newUserQueryUpdater
         newUserQueryUpdater = nil
         
-        let filter: Filter<UserListFilterScope<DefaultExtraData.User>> = .notEqual(.id, to: .unique)
+        let filter: Filter<UserListFilterScope<NoExtraData.User>> = .notEqual(.id, to: .unique)
         try database.createUserListQuery(filter: filter)
         try database.createUser(id: .unique)
         
@@ -85,7 +85,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     
     func test_filter_isModified() throws {
         let id: UserId = .unique
-        let filter: Filter<UserListFilterScope<DefaultExtraData.User>> = .notEqual(.id, to: .unique)
+        let filter: Filter<UserListFilterScope<NoExtraData.User>> = .notEqual(.id, to: .unique)
         
         try database.createUserListQuery(filter: filter)
         try database.createUser(id: id)
@@ -100,7 +100,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     }
     
     func test_newUserQueryUpdater_doesNotRetainItself() throws {
-        let filter: Filter<UserListFilterScope<DefaultExtraData.User>> = .notEqual(.id, to: .unique)
+        let filter: Filter<UserListFilterScope<NoExtraData.User>> = .notEqual(.id, to: .unique)
         try database.createUserListQuery(filter: filter)
         try database.createUser()
         
@@ -112,11 +112,11 @@ class NewUserQueryUpdater_Tests: StressTestCase {
     }
     
     func test_updater_ignoresNonObservedQueries() throws {
-        let filter1: Filter<UserListFilterScope<DefaultExtraData.User>> = .equal(.id, to: .unique)
+        let filter1: Filter<UserListFilterScope<NoExtraData.User>> = .equal(.id, to: .unique)
         
         try database.createUserListQuery(filter: filter1)
         
-        var nonObservedQuery = UserListQuery<DefaultExtraData.User>(filter: .equal(.name, to: .unique))
+        var nonObservedQuery = UserListQuery<NoExtraData.User>(filter: .equal(.name, to: .unique))
         nonObservedQuery.shouldBeUpdatedInBackground = false
         
         try database.writeSynchronously { session in
@@ -134,9 +134,9 @@ class NewUserQueryUpdater_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    var userQueryUpdater: UserListUpdaterMock<DefaultExtraData.User>?
+    var userQueryUpdater: UserListUpdaterMock<NoExtraData.User>?
     
-    lazy var environment = NewUserQueryUpdater<DefaultExtraData.User>.Environment(createUserListUpdater: { [unowned self] in
+    lazy var environment = NewUserQueryUpdater<NoExtraData.User>.Environment(createUserListUpdater: { [unowned self] in
         self.userQueryUpdater = UserListUpdaterMock(
             database: $0,
             apiClient: $1

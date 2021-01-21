@@ -10,7 +10,7 @@ class ChannelListUpdater_Tests: StressTestCase {
     var apiClient: APIClientMock!
     var database: DatabaseContainer!
     
-    var listUpdater: ChannelListUpdater<DefaultExtraData>!
+    var listUpdater: ChannelListUpdater<NoExtraData>!
     
     override func setUp() {
         super.setUp()
@@ -34,16 +34,16 @@ class ChannelListUpdater_Tests: StressTestCase {
     
     func test_update_makesCorrectAPICall() {
         // Simulate `update` call
-        let query = ChannelListQuery<DefaultExtraData.Channel>(filter: .in(.members, values: [.unique]))
+        let query = ChannelListQuery<NoExtraData.Channel>(filter: .in(.members, values: [.unique]))
         listUpdater.update(channelListQuery: query)
         
-        let referenceEndpoint: Endpoint<ChannelListPayload<DefaultExtraData>> = .channels(query: query)
+        let referenceEndpoint: Endpoint<ChannelListPayload<NoExtraData>> = .channels(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
     func test_update_successfulResponseData_areSavedToDB() {
         // Simulate `update` call
-        let query = ChannelListQuery<DefaultExtraData.Channel>(filter: .in(.members, values: [.unique]))
+        let query = ChannelListQuery<NoExtraData.Channel>(filter: .in(.members, values: [.unique]))
         var completionCalled = false
         listUpdater.update(channelListQuery: query, completion: { error in
             XCTAssertNil(error)
@@ -52,7 +52,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload<DefaultExtraData>(channels: [dummyPayload(with: cid)])
+        let payload = ChannelListPayload<NoExtraData>(channels: [dummyPayload(with: cid)])
         apiClient.test_simulateResponse(.success(payload))
         
         // Assert the data is stored in the DB
@@ -67,13 +67,13 @@ class ChannelListUpdater_Tests: StressTestCase {
     
     func test_update_errorResponse_isPropagatedToCompletion() {
         // Simulate `update` call
-        let query = ChannelListQuery<DefaultExtraData.Channel>(filter: .in(.members, values: [.unique]))
+        let query = ChannelListQuery<NoExtraData.Channel>(filter: .in(.members, values: [.unique]))
         var completionCalledError: Error?
         listUpdater.update(channelListQuery: query, completion: { completionCalledError = $0 })
         
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelListPayload<DefaultExtraData>, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<ChannelListPayload<NoExtraData>, Error>.failure(error))
         
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)

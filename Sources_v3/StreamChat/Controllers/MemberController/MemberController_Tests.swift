@@ -437,7 +437,7 @@ final class MemberController_Tests: StressTestCase {
 
 private class TestEnvironment {
     @Atomic var memberUpdater: ChannelMemberUpdaterMock?
-    @Atomic var memberListUpdater: ChannelMemberListUpdaterMock<DefaultExtraData>?
+    @Atomic var memberListUpdater: ChannelMemberListUpdaterMock<NoExtraData>?
     @Atomic var memberObserver: EntityDatabaseObserverMock<ChatChannelMember, MemberDTO>?
     @Atomic var memberObserverSynchronizeError: Error?
 

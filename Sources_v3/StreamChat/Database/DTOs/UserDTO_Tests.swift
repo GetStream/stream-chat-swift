@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -16,7 +16,7 @@ class UserDTO_Tests: XCTestCase {
     func test_userPayload_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<DefaultExtraData.User> = .dummy(userId: userId)
+        let payload: UserPayload<NoExtraData.User> = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -39,7 +39,7 @@ class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.updatedAt, loadedUserDTO?.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO?.lastActivityAt)
             Assert.willBeEqual(payload.extraData, loadedUserDTO.map {
-                try? JSONDecoder.default.decode(DefaultExtraData.User.self, from: $0.extraData)
+                try? JSONDecoder.default.decode(NoExtraData.User.self, from: $0.extraData)
             })
         }
     }
@@ -47,7 +47,7 @@ class UserDTO_Tests: XCTestCase {
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
         
-        let payload: UserPayload<DefaultExtraData.User> = .init(
+        let payload: UserPayload<NoExtraData.User> = .init(
             id: userId,
             name: .unique,
             imageURL: .unique(),
@@ -76,7 +76,7 @@ class UserDTO_Tests: XCTestCase {
     func test_DTO_asModel() {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<DefaultExtraData.User> = .dummy(userId: userId)
+        let payload: UserPayload<NoExtraData.User> = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -84,7 +84,7 @@ class UserDTO_Tests: XCTestCase {
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedUserModel: _ChatUser<DefaultExtraData.User>? {
+        var loadedUserModel: _ChatUser<NoExtraData.User>? {
             database.viewContext.user(id: userId)?.asModel()
         }
         
@@ -106,7 +106,7 @@ class UserDTO_Tests: XCTestCase {
     func test_DTO_asPayload() {
         let userId = UUID().uuidString
         
-        let payload: UserPayload<DefaultExtraData.User> = .dummy(userId: userId)
+        let payload: UserPayload<NoExtraData.User> = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -114,7 +114,7 @@ class UserDTO_Tests: XCTestCase {
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedUserPayload: UserRequestBody<DefaultExtraData.User>? {
+        var loadedUserPayload: UserRequestBody<NoExtraData.User>? {
             database.viewContext.user(id: userId)?.asRequestBody()
         }
         
@@ -142,7 +142,7 @@ class UserDTO_Tests: XCTestCase {
     }
     
     func test_userWithUserListQuery_isSavedAndLoaded() {
-        let query = UserListQuery<DefaultExtraData.User>(filter: .query(.name, text: "a"))
+        let query = UserListQuery<NoExtraData.User>(filter: .query(.name, text: "a"))
         
         // Create user
         let payload1 = dummyUser
@@ -166,7 +166,7 @@ class UserDTO_Tests: XCTestCase {
     }
 
     func test_userListQueryWithoutFilter_matchesAllUsers() throws {
-        let query = UserListQuery<DefaultExtraData.User>()
+        let query = UserListQuery<NoExtraData.User>()
         
         // Save 4 users to the DB
         try database.writeSynchronously { session in
@@ -186,7 +186,7 @@ class UserDTO_Tests: XCTestCase {
 
     func test_userListQuery_withSorting() {
         // Create two user queries with different sortings.
-        let filter = Filter<UserListFilterScope<DefaultExtraData.User>>.query(.name, text: "a")
+        let filter = Filter<UserListFilterScope<NoExtraData.User>>.query(.name, text: "a")
         let queryWithLastActiveAtSorting = UserListQuery(filter: filter, sort: [.init(key: .lastActivityAt, isAscending: false)])
         let queryWithIdSorting = UserListQuery(filter: filter, sort: [.init(key: .id, isAscending: false)])
 

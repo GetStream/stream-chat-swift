@@ -116,16 +116,16 @@ extension LoginViewController {
             #endif
         case streamDesignCell:
             
-            let channelList = ChatChannelListVC<DefaultExtraData>()
+            let channelList = ChatChannelListVC<NoExtraData>()
             
             channelList.controller = channelListController
             
             // An example of change default appearance
-            ChatChannelListItemView<DefaultExtraData>.defaultAppearance {
+            ChatChannelListItemView<NoExtraData>.defaultAppearance {
                 $0.backgroundColor = .yellow
             }
 
-            ChatChannelListVC<DefaultExtraData>.defaultAppearance {
+            ChatChannelListVC<NoExtraData>.defaultAppearance {
                 $0.title = "Custom title"
             }
             
@@ -144,9 +144,9 @@ extension LoginViewController {
     }
 }
 
-final class MyChatChannelListRouter: ChatChannelListRouter<DefaultExtraData> {
-    override func openChat(for channel: _ChatChannel<DefaultExtraData>) {
-        let chatScreen = ChatChannelVC<DefaultExtraData>()
+final class MyChatChannelListRouter: ChatChannelListRouter<NoExtraData> {
+    override func openChat(for channel: _ChatChannel<NoExtraData>) {
+        let chatScreen = ChatChannelVC<NoExtraData>()
         chatScreen.channelController = rootViewController.controller.client.channelController(for: channel.cid)
         navigationController?.pushViewController(chatScreen, animated: true)
     }

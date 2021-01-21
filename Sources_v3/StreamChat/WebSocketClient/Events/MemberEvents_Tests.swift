@@ -1,12 +1,12 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
 import XCTest
 
 class MemberEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder<DefaultExtraData>()
+    let eventDecoder = EventDecoder<NoExtraData>()
     
     func test_added() throws {
         let json = XCTestCase.mockData(fromFile: "MemberAdded")

@@ -7,7 +7,7 @@ import CoreData
 import XCTest
 
 final class MessageUpdater_Tests: StressTestCase {
-    typealias ExtraData = DefaultExtraData
+    typealias ExtraData = NoExtraData
     
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
@@ -439,7 +439,7 @@ final class MessageUpdater_Tests: StressTestCase {
             .dummy(),
             .dummy()
         ]
-        let extraData: DefaultExtraData.Message = .defaultValue
+        let extraData: NoExtraData.Message = .defaultValue
         
         // Create new reply message
         let newMessageId: MessageId = try await { completion in

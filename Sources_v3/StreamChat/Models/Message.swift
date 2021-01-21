@@ -14,7 +14,7 @@ public typealias MessageId = String
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatMessage = _ChatMessage<DefaultExtraData>
+public typealias ChatMessage = _ChatMessage<NoExtraData>
 
 /// A type representing a chat message. `_ChatMessage` is an immutable snapshot of a chat message entity at the given time.
 ///

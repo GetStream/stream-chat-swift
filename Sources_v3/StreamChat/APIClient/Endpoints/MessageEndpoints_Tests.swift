@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,7 +9,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_getMessage_buildsCorrectly() {
         let messageId: MessageId = .unique
         
-        let expectedEndpoint = Endpoint<MessagePayload<DefaultExtraData>>(
+        let expectedEndpoint = Endpoint<MessagePayload<NoExtraData>>(
             path: "messages/\(messageId)",
             method: .get,
             queryItems: nil,
@@ -18,7 +18,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload<DefaultExtraData>> = .getMessage(messageId: messageId)
+        let endpoint: Endpoint<MessagePayload<NoExtraData>> = .getMessage(messageId: messageId)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -43,7 +43,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     }
     
     func test_editMessage_buildsCorrectly() {
-        let payload = MessageRequestBody<DefaultExtraData>(
+        let payload = MessageRequestBody<NoExtraData>(
             id: .unique,
             user: .init(id: .unique, name: .unique, imageURL: .unique(), extraData: .init()),
             text: .unique,
@@ -69,7 +69,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let pagination: MessagesPagination = .init(pageSize: 10)
         
-        let expectedEndpoint = Endpoint<MessageRepliesPayload<DefaultExtraData>>(
+        let expectedEndpoint = Endpoint<MessageRepliesPayload<NoExtraData>>(
             path: "messages/\(messageId)/replies",
             method: .get,
             queryItems: nil,
@@ -78,7 +78,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<MessageRepliesPayload<DefaultExtraData>> = .loadReplies(messageId: messageId, pagination: pagination)
+        let endpoint: Endpoint<MessageRepliesPayload<NoExtraData>> = .loadReplies(messageId: messageId, pagination: pagination)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -146,7 +146,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             text: .unique
         )
 
-        let expectedEndpoint = Endpoint<MessagePayload<DefaultExtraData>.Boxed>(
+        let expectedEndpoint = Endpoint<MessagePayload<NoExtraData>.Boxed>(
             path: "messages/\(messageId)/action",
             method: .post,
             queryItems: nil,
@@ -159,7 +159,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint.
-        let endpoint: Endpoint<MessagePayload<DefaultExtraData>.Boxed> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessagePayload<NoExtraData>.Boxed> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action

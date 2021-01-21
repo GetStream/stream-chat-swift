@@ -26,7 +26,7 @@ extension _ChatClient {
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatUserSearchController = _ChatUserSearchController<DefaultExtraData>
+public typealias ChatUserSearchController = _ChatUserSearchController<NoExtraData>
 
 public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
@@ -212,7 +212,7 @@ extension _ChatUserSearchController {
     }
 }
 
-extension _ChatUserSearchController where ExtraData == DefaultExtraData {
+extension _ChatUserSearchController where ExtraData == NoExtraData {
     /// Set the delegate of `UserListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -318,7 +318,7 @@ extension AnyUserSearchControllerDelegate {
     }
 }
 
-extension AnyUserSearchControllerDelegate where ExtraData == DefaultExtraData {
+extension AnyUserSearchControllerDelegate where ExtraData == NoExtraData {
     convenience init(_ delegate: ChatUserSearchControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

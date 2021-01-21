@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -8,7 +8,7 @@ import XCTest
 final class FlagUserPayload_Tests: XCTestCase {
     func test_json_isDeserialized_withDefaultExtraData() throws {
         let json = XCTestCase.mockData(fromFile: "FlagUserPayload+DefaultExtraData", extension: "json")
-        let payload = try JSONDecoder.default.decode(FlagUserPayload<DefaultExtraData.User>.self, from: json)
+        let payload = try JSONDecoder.default.decode(FlagUserPayload<NoExtraData.User>.self, from: json)
         
         // Assert current user payload is deserialized correctly.
         let currentUser = payload.currentUser

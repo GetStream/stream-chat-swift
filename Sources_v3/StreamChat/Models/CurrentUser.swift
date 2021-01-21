@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -26,7 +26,7 @@ extension UserId {
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias CurrentChatUser = _CurrentChatUser<DefaultExtraData.User>
+public typealias CurrentChatUser = _CurrentChatUser<NoExtraData.User>
 
 /// A type representing the currently logged-in user. `_CurrentChatUser` is an immutable snapshot of a current user entity at
 /// the given time.

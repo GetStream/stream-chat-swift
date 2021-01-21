@@ -56,7 +56,7 @@ public struct DefaultExtraData: ExtraDataTypes {}
 /// data types, you should create your own `ChatClient` typealias for `_ChatClient`. Learn more about using custom extra data in our
 /// [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatClient = _ChatClient<DefaultExtraData>
+public typealias ChatClient = _ChatClient<NoExtraData>
 
 /// The root object representing a Stream Chat.
 ///

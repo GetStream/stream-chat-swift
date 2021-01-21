@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -24,7 +24,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the fields are correct
-        var loadedChannel: _ChatChannel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<NoExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -143,7 +143,7 @@ class ChannelDTO_Tests: XCTestCase {
     }
     
     func test_channelWithChannelListQuery_isSavedAndLoaded() {
-        let query = ChannelListQuery<DefaultExtraData.Channel>(
+        let query = ChannelListQuery<NoExtraData.Channel>(
             filter: .and([.less(.createdAt, than: .unique), .exists(.deletedAt, exists: false)])
         )
         
@@ -171,7 +171,7 @@ class ChannelDTO_Tests: XCTestCase {
     
     func test_channelListQuery_withSorting() {
         // Create two channels queries with different sortings.
-        let filter: Filter<ChannelListFilterScope<DefaultExtraData.Channel>> = .in(.members, values: [.unique])
+        let filter: Filter<ChannelListFilterScope<NoExtraData.Channel>> = .in(.members, values: [.unique])
         let queryWithDefaultSorting = ChannelListQuery(filter: filter)
         let queryWithUpdatedAtSorting = ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
 
@@ -271,7 +271,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Load the channel from the db and check the if fields are correct
-        var loadedChannel: _ChatChannel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<NoExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -315,7 +315,7 @@ class ChannelDTO_Tests: XCTestCase {
 extension XCTestCase {
     // MARK: - Dummy data with extra data
     
-    var dummyCurrentUser: CurrentUserPayload<DefaultExtraData.User> {
+    var dummyCurrentUser: CurrentUserPayload<NoExtraData.User> {
         CurrentUserPayload(
             id: "dummyCurrentUser",
             name: .unique,
@@ -331,11 +331,11 @@ extension XCTestCase {
         )
     }
     
-    var dummyUser: UserPayload<DefaultExtraData.User> {
+    var dummyUser: UserPayload<NoExtraData.User> {
         dummyUser(id: .unique)
     }
     
-    func dummyUser(id: String) -> UserPayload<DefaultExtraData.User> {
+    func dummyUser(id: String) -> UserPayload<NoExtraData.User> {
         UserPayload(
             id: id,
             name: .unique,
@@ -352,7 +352,7 @@ extension XCTestCase {
         )
     }
     
-    var dummyMessage: MessagePayload<DefaultExtraData> {
+    var dummyMessage: MessagePayload<NoExtraData> {
         MessagePayload(
             id: .unique,
             type: .regular,
@@ -374,12 +374,12 @@ extension XCTestCase {
         )
     }
     
-    var dummyChannelRead: ChannelReadPayload<DefaultExtraData> {
+    var dummyChannelRead: ChannelReadPayload<NoExtraData> {
         ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), unreadMessagesCount: 10)
     }
     
-    func dummyPayload(with channelId: ChannelId) -> ChannelPayload<DefaultExtraData> {
-        let member: MemberPayload<DefaultExtraData.User> =
+    func dummyPayload(with channelId: ChannelId) -> ChannelPayload<NoExtraData> {
+        let member: MemberPayload<NoExtraData.User> =
             .init(
                 user: .init(
                     id: .unique,
@@ -403,7 +403,7 @@ extension XCTestCase {
         let channelCreatedDate = Date.unique
         let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
         
-        let payload: ChannelPayload<DefaultExtraData> =
+        let payload: ChannelPayload<NoExtraData> =
             .init(
                 channel: .init(
                     cid: channelId,

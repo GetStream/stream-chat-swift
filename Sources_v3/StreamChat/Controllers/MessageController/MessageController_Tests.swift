@@ -148,7 +148,7 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(message.text, messageLocalText)
         
         // Simulate response from the backend with updated `text`, update the local message in the databse
-        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
+        let messagePayload: MessagePayload<NoExtraData> = .dummy(
             messageId: messageId,
             authorUserId: currentUserId,
             text: .unique
@@ -170,14 +170,14 @@ final class MessageController_Tests: StressTestCase {
         try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
         
         // Insert 2 replies for parent message
-        let reply1: MessagePayload<DefaultExtraData> = .dummy(
+        let reply1: MessagePayload<NoExtraData> = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
             authorUserId: .unique
         )
         
-        let reply2: MessagePayload<DefaultExtraData> = .dummy(
+        let reply2: MessagePayload<NoExtraData> = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
@@ -279,7 +279,7 @@ final class MessageController_Tests: StressTestCase {
         controller.synchronize()
 
         // Simulate response from a backend with a message that doesn't exist locally
-        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
+        let messagePayload: MessagePayload<NoExtraData> = .dummy(
             messageId: messageId,
             authorUserId: currentUserId
         )
@@ -315,7 +315,7 @@ final class MessageController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate response from a backend with a message that exists locally but has out-dated text
-        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
+        let messagePayload: MessagePayload<NoExtraData> = .dummy(
             messageId: messageId,
             authorUserId: currentUserId,
             text: "new text"
@@ -350,7 +350,7 @@ final class MessageController_Tests: StressTestCase {
         controller.synchronize()
         
         // Add reply to DB
-        let reply: MessagePayload<DefaultExtraData> = .dummy(
+        let reply: MessagePayload<NoExtraData> = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
@@ -619,7 +619,7 @@ final class MessageController_Tests: StressTestCase {
 //        let arguments: String = .unique
         let showReplyInChannel = true
         let quotedMessageId: MessageId = .unique
-        let extraData: DefaultExtraData.Message = .defaultValue
+        let extraData: NoExtraData.Message = .defaultValue
         let attachments: [ChatMessageAttachment.Seed] = [
             .dummy(),
             .dummy(),
@@ -843,7 +843,7 @@ final class MessageController_Tests: StressTestCase {
     func test_addReaction_callsUpdater_withCorrectValues() {
         let type: MessageReactionType = "like"
         let score = 5
-        let extraData: DefaultExtraData.MessageReaction = .defaultValue
+        let extraData: NoExtraData.MessageReaction = .defaultValue
         
         // Simulate `addReaction` call.
         controller.addReaction(type, score: score, extraData: extraData)
@@ -1146,8 +1146,8 @@ private class TestDelegateGeneric: QueueAwareDelegate, _MessageControllerDelegat
 }
 
 private class TestEnvironment {
-    var messageUpdater: MessageUpdaterMock<DefaultExtraData>!
-    var messageObserver: EntityDatabaseObserverMock<_ChatMessage<DefaultExtraData>, MessageDTO>!
+    var messageUpdater: MessageUpdaterMock<NoExtraData>!
+    var messageObserver: EntityDatabaseObserverMock<_ChatMessage<NoExtraData>, MessageDTO>!
     var messageObserver_synchronizeError: Error?
     
     lazy var controllerEnvironment: ChatMessageController

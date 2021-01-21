@@ -10,7 +10,7 @@ class CurrentUserPayload_Tests: XCTestCase {
     let currentUserJSON = XCTestCase.mockData(fromFile: "CurrentUser")
     
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(CurrentUserPayload<DefaultExtraData.User>.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(CurrentUserPayload<NoExtraData.User>.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())

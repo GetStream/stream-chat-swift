@@ -338,7 +338,7 @@ final class UserController_Tests: StressTestCase {
         controller.delegate = delegate
         
         // Create user in the database.
-        let initialExtraData: DefaultExtraData.User = .defaultValue
+        let initialExtraData: NoExtraData.User = .defaultValue
         try client.databaseContainer.createUser(id: userId, extraData: initialExtraData)
         
         // Assert `create` entity change is received by the delegate
@@ -564,7 +564,7 @@ final class UserController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userUpdater: UserUpdaterMock<DefaultExtraData>?
+    @Atomic var userUpdater: UserUpdaterMock<NoExtraData>?
     @Atomic var userObserver: EntityDatabaseObserverMock<ChatUser, UserDTO>?
     @Atomic var userObserverSynchronizeError: Error?
 

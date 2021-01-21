@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -46,20 +46,20 @@ final class ListChange_Tests: XCTestCase {
     }
     
     func test_fieldChange() {
-        let insertedItem: MemberPayload<DefaultExtraData.User> = .dummy()
+        let insertedItem: MemberPayload<NoExtraData.User> = .dummy()
         let insertedAt = IndexPath(row: 1, section: 1)
 
-        let updatedItem: MemberPayload<DefaultExtraData.User> = .dummy()
+        let updatedItem: MemberPayload<NoExtraData.User> = .dummy()
         let updatedAt = IndexPath(row: 2, section: 3)
 
-        let removedItem: MemberPayload<DefaultExtraData.User> = .dummy()
+        let removedItem: MemberPayload<NoExtraData.User> = .dummy()
         let removedAt = IndexPath(row: 3, section: 4)
 
-        let movedItem: MemberPayload<DefaultExtraData.User> = .dummy()
+        let movedItem: MemberPayload<NoExtraData.User> = .dummy()
         let movedFrom = IndexPath(row: 5, section: 6)
         let movedTo = IndexPath(row: 7, section: 8)
 
-        let path = \MemberPayload<DefaultExtraData.User>.user.id
+        let path = \MemberPayload<NoExtraData.User>.user.id
 
         XCTAssertEqual(
             ListChange.insert(insertedItem, index: insertedAt).fieldChange(path),

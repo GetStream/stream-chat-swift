@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -60,7 +60,7 @@ extension WebSocketClientMock {
         self.init(
             sessionConfiguration: .default,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
-            eventDecoder: EventDecoder<DefaultExtraData>(),
+            eventDecoder: EventDecoder<NoExtraData>(),
             eventNotificationCenter: .init(),
             internetConnection: InternetConnection()
         )

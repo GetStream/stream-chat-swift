@@ -4,7 +4,7 @@
 
 import Foundation
 
-public typealias TokenProvider = _TokenProvider<DefaultExtraData>
+public typealias TokenProvider = _TokenProvider<NoExtraData>
 
 /// The type designed to provider a `Token` to the `ChatClient` when it asks for it.
 public struct _TokenProvider<ExtraData: ExtraDataTypes> {

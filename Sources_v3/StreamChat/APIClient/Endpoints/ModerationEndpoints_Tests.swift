@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -96,7 +96,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         for (flag, path) in testCases {
             let userId: UserId = .unique
             
-            let expectedEndpoint = Endpoint<FlagUserPayload<DefaultExtraData.User>>(
+            let expectedEndpoint = Endpoint<FlagUserPayload<NoExtraData.User>>(
                 path: path,
                 method: .post,
                 queryItems: nil,
@@ -105,7 +105,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
             )
             
             // Build endpoint.
-            let endpoint: Endpoint<FlagUserPayload<DefaultExtraData.User>> = .flagUser(flag, with: userId)
+            let endpoint: Endpoint<FlagUserPayload<NoExtraData.User>> = .flagUser(flag, with: userId)
             
             // Assert endpoint is built correctly.
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -121,7 +121,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
         for (flag, path) in testCases {
             let messageId: MessageId = .unique
             
-            let expectedEndpoint = Endpoint<FlagMessagePayload<DefaultExtraData.User>>(
+            let expectedEndpoint = Endpoint<FlagMessagePayload<NoExtraData.User>>(
                 path: path,
                 method: .post,
                 queryItems: nil,
@@ -130,7 +130,7 @@ final class ModerationEndpoints_Tests: XCTestCase {
             )
             
             // Build endpoint.
-            let endpoint: Endpoint<FlagMessagePayload<DefaultExtraData.User>> = .flagMessage(flag, with: messageId)
+            let endpoint: Endpoint<FlagMessagePayload<NoExtraData.User>> = .flagMessage(flag, with: messageId)
             
             // Assert endpoint is built correctly.
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

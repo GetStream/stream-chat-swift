@@ -7,12 +7,12 @@ import XCTest
 
 final class UserEndpoints_Tests: XCTestCase {
     func test_users_buildsCorrectly() {
-        let query: UserListQuery<DefaultExtraData.User> = .init(
+        let query: UserListQuery<NoExtraData.User> = .init(
             filter: .equal(.id, to: .unique),
             sort: [.init(key: .lastActivityAt)]
         )
         
-        let expectedEndpoint = Endpoint<UserListPayload<DefaultExtraData.User>>(
+        let expectedEndpoint = Endpoint<UserListPayload<NoExtraData.User>>(
             path: "users",
             method: .get,
             queryItems: nil,
@@ -21,7 +21,7 @@ final class UserEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<UserListPayload<DefaultExtraData.User>> = .users(query: query)
+        let endpoint: Endpoint<UserListPayload<NoExtraData.User>> = .users(query: query)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

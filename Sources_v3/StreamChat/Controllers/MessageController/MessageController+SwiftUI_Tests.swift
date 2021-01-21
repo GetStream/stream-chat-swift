@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -82,8 +82,8 @@ class MessageControllerMock: ChatMessageController {
         message_simulated ?? super.message
     }
     
-    var replies_simulated: [_ChatMessage<DefaultExtraData>]?
-    override var replies: [_ChatMessage<DefaultExtraData>] {
+    var replies_simulated: [_ChatMessage<NoExtraData>]?
+    override var replies: [_ChatMessage<NoExtraData>] {
         replies_simulated ?? super.replies
     }
     

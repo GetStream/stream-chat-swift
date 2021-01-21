@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -12,7 +12,7 @@ class UserListPayload_Tests: XCTestCase {
     }()
     
     func test_usersQueryJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserListPayload<DefaultExtraData.User>.self, from: usersJSON)
+        let payload = try JSONDecoder.default.decode(UserListPayload<NoExtraData.User>.self, from: usersJSON)
         XCTAssertEqual(payload.users.count, 20)
     }
 }

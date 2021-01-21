@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,7 +8,7 @@ import StreamChat
 import XCTest
 
 class UIConfigProvider_Tests: XCTestCase {
-    typealias ExtraData = DefaultExtraData
+    typealias ExtraData = NoExtraData
     
     func test_uiConfig_passedDownToSubview() {
         let parentView = TestView<ExtraData>()

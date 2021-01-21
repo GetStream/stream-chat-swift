@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -12,7 +12,7 @@ class ChannelListPayload_Tests: XCTestCase {
     }()
     
     func test_channelQueryJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(ChannelListPayload<DefaultExtraData>.self, from: channelJSON)
+        let payload = try JSONDecoder.default.decode(ChannelListPayload<NoExtraData>.self, from: channelJSON)
         XCTAssertEqual(payload.channels.count, 20)
     }
 }
@@ -24,7 +24,7 @@ class ChannelPayload_Tests: XCTestCase {
     }()
     
     func test_channelJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(ChannelPayload<DefaultExtraData>.self, from: channelJSON)
+        let payload = try JSONDecoder.default.decode(ChannelPayload<NoExtraData>.self, from: channelJSON)
         
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.members.count, 4)
