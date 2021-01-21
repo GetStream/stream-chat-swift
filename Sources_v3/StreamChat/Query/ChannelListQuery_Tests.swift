@@ -6,7 +6,7 @@
 import XCTest
 
 final class ChannelListFilterScope_Tests: XCTestCase {
-    typealias Key<T: FilterValue> = FilterKey<ChannelListFilterScope<NoExtraData>, T>
+    typealias Key<T: FilterValue> = FilterKey<ChannelListFilterScope, T>
     
     func test_filterKeys_matchChannelCodingKeys() {
         XCTAssertEqual(Key<ChannelId>.cid.rawValue, ChannelCodingKeys.cid.rawValue)
@@ -26,8 +26,8 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         // Check the `containMembers` helper translates to `members $in [ids]`
         let ids: [UserId] = [.unique, .unique]
         XCTAssertEqual(
-            Filter<ChannelListFilterScope<NoExtraData>>.containMembers(userIds: ids),
-            Filter<ChannelListFilterScope<NoExtraData>>.in(.members, values: ids)
+            Filter<ChannelListFilterScope>.containMembers(userIds: ids),
+            Filter<ChannelListFilterScope>.in(.members, values: ids)
         )
     }
     
