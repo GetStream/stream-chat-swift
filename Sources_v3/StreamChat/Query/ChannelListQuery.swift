@@ -8,7 +8,24 @@ import Foundation
 public protocol AnyChannelListFilterScope {}
 
 /// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `ChannelListQuery`.
-public struct ChannelListFilterScope<ExtraData: ChannelExtraData>: FilterScope, AnyChannelListFilterScope {}
+///
+/// - Note: `ChannelListFilterScope` is a typealias of `_ChannelListFilterScope` with the default extra data types.
+/// If you want to use your custom extra data types, you should create your own `ChannelListFilterScope`
+/// typealias for `_ChannelListFilterScope`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public typealias ChannelListFilterScope = _ChannelListFilterScope<NoExtraData>
+
+/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_ChannelListQuery`.
+///
+/// - Note: `_ChannelListFilterScope` type is not meant to be used directly.
+/// If you don't use custom extra data types, use `ChannelListFilterScope` typealias instead.
+/// When using custom extra data types, you should create your own `ChannelListFilterScope` typealias for `_ChannelListFilterScope`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public struct _ChannelListFilterScope<ExtraData: ChannelExtraData>: FilterScope, AnyChannelListFilterScope {}
 
 public extension Filter where Scope: AnyChannelListFilterScope {
     /// Filter to match channels containing members with specified user ids.
@@ -94,7 +111,7 @@ public struct _ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
     }
     
     /// A filter for the query (see `Filter`).
-    public let filter: Filter<ChannelListFilterScope<ExtraData>>
+    public let filter: Filter<_ChannelListFilterScope<ExtraData>>
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<ChannelListSortingKey>]
     /// A pagination.
@@ -111,7 +128,7 @@ public struct _ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
     ///   - pageSize: a page size for pagination.
     ///   - messagesLimit: a number of messages for the channel to be retrieved.
     public init(
-        filter: Filter<ChannelListFilterScope<ExtraData>>,
+        filter: Filter<_ChannelListFilterScope<ExtraData>>,
         sort: [Sorting<ChannelListSortingKey>] = [],
         pageSize: Int = .channelsPageSize,
         messagesLimit: Int = .messagesPageSize

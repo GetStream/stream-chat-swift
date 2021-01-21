@@ -118,13 +118,13 @@ extension NewChannelQueryUpdater {
 
 private extension ChannelListQueryDTO {
     func asChannelListQueryWithUpdatedFilter<ExtraData: ChannelExtraData>(
-        filterToAdd filter: Filter<ChannelListFilterScope<ExtraData>>
+        filterToAdd filter: Filter<_ChannelListFilterScope<ExtraData>>
     ) throws -> _ChannelListQuery<ExtraData> {
         let encodedFilter = try JSONDecoder.default
-            .decode(Filter<ChannelListFilterScope<ExtraData>>.self, from: filterJSONData)
+            .decode(Filter<_ChannelListFilterScope<ExtraData>>.self, from: filterJSONData)
         
         // We need to pass original `filterHash` so channel will be linked to original query, not the modified one
-        var updatedFilter: Filter<ChannelListFilterScope> = .and([encodedFilter, filter])
+        var updatedFilter: Filter<_ChannelListFilterScope> = .and([encodedFilter, filter])
         updatedFilter.explicitHash = filterHash
         
         return _ChannelListQuery(filter: updatedFilter)
