@@ -13,7 +13,7 @@ class AttachmentRequestBody_Tests: XCTestCase {
         let file: AttachmentFile = .init(type: .gif, size: 1024, mimeType: "gif")
         
         // Build the body.
-        let body = AttachmentRequestBody<NoExtraData.Attachment>(
+        let body = AttachmentRequestBody<NoExtraData>(
             type: type,
             title: title,
             url: url,
