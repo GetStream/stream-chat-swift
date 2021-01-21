@@ -279,7 +279,7 @@ final class UserUpdater_Tests: StressTestCase {
         }
         
         // Simulate `flagUser` API response with success.
-        let payload = FlagUserPayload<NoExtraData.User>(
+        let payload = FlagUserPayload<NoExtraData>(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedUser: .dummy(userId: flaggedUserId)
         )
@@ -343,7 +343,7 @@ final class UserUpdater_Tests: StressTestCase {
         }
         
         // Simulate API response with success.
-        let payload = FlagUserPayload<NoExtraData.User>(
+        let payload = FlagUserPayload<NoExtraData>(
             currentUser: .dummy(userId: .unique, role: .user),
             flaggedUser: .dummy(userId: .unique)
         )

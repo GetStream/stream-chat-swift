@@ -11,7 +11,7 @@ import Foundation
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatUser = _ChatUser<NoExtraData.User>
+public typealias ChatUser = _ChatUser<NoExtraData>
 
 /// A unique identifier of a user.
 public typealias UserId = String

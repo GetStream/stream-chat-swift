@@ -8,7 +8,7 @@ import XCTest
 final class FlagUserPayload_Tests: XCTestCase {
     func test_json_isDeserialized_withDefaultExtraData() throws {
         let json = XCTestCase.mockData(fromFile: "FlagUserPayload+DefaultExtraData", extension: "json")
-        let payload = try JSONDecoder.default.decode(FlagUserPayload<NoExtraData.User>.self, from: json)
+        let payload = try JSONDecoder.default.decode(FlagUserPayload<NoExtraData>.self, from: json)
         
         // Assert current user payload is deserialized correctly.
         let currentUser = payload.currentUser

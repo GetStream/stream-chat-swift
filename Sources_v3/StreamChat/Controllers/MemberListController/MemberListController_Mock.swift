@@ -7,8 +7,8 @@ import XCTest
 
 /// A mock for `ChatChannelMemberListController`.
 final class ChatChannelMemberListControllerMock: ChatChannelMemberListController {
-    @Atomic var members_simulated: [_ChatChannelMember<NoExtraData.User>]?
-    override var members: [_ChatChannelMember<NoExtraData.User>] {
+    @Atomic var members_simulated: [_ChatChannelMember<NoExtraData>]?
+    override var members: [_ChatChannelMember<NoExtraData>] {
         members_simulated ?? super.members
     }
     

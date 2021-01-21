@@ -12,7 +12,7 @@ import Foundation
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatChannelMember = _ChatChannelMember<NoExtraData.User>
+public typealias ChatChannelMember = _ChatChannelMember<NoExtraData>
 
 /// A type representing a chat channel member. `_ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
 ///

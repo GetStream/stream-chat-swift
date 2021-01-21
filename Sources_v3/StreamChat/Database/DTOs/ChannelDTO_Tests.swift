@@ -315,7 +315,7 @@ class ChannelDTO_Tests: XCTestCase {
 extension XCTestCase {
     // MARK: - Dummy data with extra data
     
-    var dummyCurrentUser: CurrentUserPayload<NoExtraData.User> {
+    var dummyCurrentUser: CurrentUserPayload<NoExtraData> {
         CurrentUserPayload(
             id: "dummyCurrentUser",
             name: .unique,
@@ -331,11 +331,11 @@ extension XCTestCase {
         )
     }
     
-    var dummyUser: UserPayload<NoExtraData.User> {
+    var dummyUser: UserPayload<NoExtraData> {
         dummyUser(id: .unique)
     }
     
-    func dummyUser(id: String) -> UserPayload<NoExtraData.User> {
+    func dummyUser(id: String) -> UserPayload<NoExtraData> {
         UserPayload(
             id: id,
             name: .unique,
@@ -379,7 +379,7 @@ extension XCTestCase {
     }
     
     func dummyPayload(with channelId: ChannelId) -> ChannelPayload<NoExtraData> {
-        let member: MemberPayload<NoExtraData.User> =
+        let member: MemberPayload<NoExtraData> =
             .init(
                 user: .init(
                     id: .unique,

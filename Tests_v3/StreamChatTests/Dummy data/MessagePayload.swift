@@ -26,7 +26,7 @@ extension MessagePayload {
         ownReactions: [MessageReactionPayload<T>] = [],
         deletedAt: Date? = nil,
         channel: ChannelDetailPayload<T>? = nil
-    ) -> MessagePayload<T> where T.User == NoExtraData.User {
+    ) -> MessagePayload<T> where T.User == NoExtraData {
         .init(
             id: messageId,
             type: type ?? (parentId == nil ? .regular : .reply),
