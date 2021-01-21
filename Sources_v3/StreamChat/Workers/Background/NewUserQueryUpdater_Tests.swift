@@ -116,7 +116,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         
         try database.createUserListQuery(filter: filter1)
         
-        var nonObservedQuery = UserListQuery<NoExtraData>(filter: .equal(.name, to: .unique))
+        var nonObservedQuery = UserListQuery(filter: .equal(.name, to: .unique))
         nonObservedQuery.shouldBeUpdatedInBackground = false
         
         try database.writeSynchronously { session in

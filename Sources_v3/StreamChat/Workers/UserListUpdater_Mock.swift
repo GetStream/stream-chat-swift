@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -7,7 +7,7 @@ import XCTest
 
 /// Mock implementation of UserListUpdater
 class UserListUpdaterMock<ExtraData: UserExtraData>: UserListUpdater<ExtraData> {
-    @Atomic var update_queries: [UserListQuery<ExtraData>] = []
+    @Atomic var update_queries: [_UserListQuery<ExtraData>] = []
     @Atomic var update_policy: UpdatePolicy?
     @Atomic var update_completion: ((Error?) -> Void)?
     
@@ -18,7 +18,7 @@ class UserListUpdaterMock<ExtraData: UserExtraData>: UserListUpdater<ExtraData> 
     }
         
     override func update(
-        userListQuery: UserListQuery<ExtraData>,
+        userListQuery: _UserListQuery<ExtraData>,
         policy: UpdatePolicy = .merge,
         completion: ((Error?) -> Void)? = nil
     ) {

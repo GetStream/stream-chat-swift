@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -74,7 +74,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
     
     func saveUser<ExtraData: UserExtraData>(
         payload: UserPayload<ExtraData>,
-        query: UserListQuery<ExtraData>?
+        query: _UserListQuery<ExtraData>?
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
         
@@ -120,7 +120,7 @@ extension UserDTO {
 }
 
 extension UserDTO {
-    static func userListFetchRequest<ExtraData: UserExtraData>(query: UserListQuery<ExtraData>) -> NSFetchRequest<UserDTO> {
+    static func userListFetchRequest<ExtraData: UserExtraData>(query: _UserListQuery<ExtraData>) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         
         // Fetch results controller requires at least one sorting descriptor.

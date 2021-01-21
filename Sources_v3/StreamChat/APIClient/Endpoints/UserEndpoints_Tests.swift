@@ -7,7 +7,7 @@ import XCTest
 
 final class UserEndpoints_Tests: XCTestCase {
     func test_users_buildsCorrectly() {
-        let query: UserListQuery<NoExtraData> = .init(
+        let query: UserListQuery = .init(
             filter: .equal(.id, to: .unique),
             sort: [.init(key: .lastActivityAt)]
         )

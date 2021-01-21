@@ -142,7 +142,7 @@ class UserDTO_Tests: XCTestCase {
     }
     
     func test_userWithUserListQuery_isSavedAndLoaded() {
-        let query = UserListQuery<NoExtraData>(filter: .query(.name, text: "a"))
+        let query = UserListQuery(filter: .query(.name, text: "a"))
         
         // Create user
         let payload1 = dummyUser
@@ -166,7 +166,7 @@ class UserDTO_Tests: XCTestCase {
     }
 
     func test_userListQueryWithoutFilter_matchesAllUsers() throws {
-        let query = UserListQuery<NoExtraData>()
+        let query = UserListQuery()
         
         // Save 4 users to the DB
         try database.writeSynchronously { session in
@@ -187,8 +187,8 @@ class UserDTO_Tests: XCTestCase {
     func test_userListQuery_withSorting() {
         // Create two user queries with different sortings.
         let filter = Filter<UserListFilterScope<NoExtraData>>.query(.name, text: "a")
-        let queryWithLastActiveAtSorting = UserListQuery(filter: filter, sort: [.init(key: .lastActivityAt, isAscending: false)])
-        let queryWithIdSorting = UserListQuery(filter: filter, sort: [.init(key: .id, isAscending: false)])
+        let queryWithLastActiveAtSorting = _UserListQuery(filter: filter, sort: [.init(key: .lastActivityAt, isAscending: false)])
+        let queryWithIdSorting = _UserListQuery(filter: filter, sort: [.init(key: .id, isAscending: false)])
 
         // Create dummy users payloads.
         let payload1 = dummyUser
