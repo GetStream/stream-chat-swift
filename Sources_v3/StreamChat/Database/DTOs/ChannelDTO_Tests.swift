@@ -171,7 +171,7 @@ class ChannelDTO_Tests: XCTestCase {
     
     func test_channelListQuery_withSorting() {
         // Create two channels queries with different sortings.
-        let filter: Filter<ChannelListFilterScope<NoExtraData>> = .in(.members, values: [.unique])
+        let filter: Filter<ChannelListFilterScope> = .in(.members, values: [.unique])
         let queryWithDefaultSorting = _ChannelListQuery(filter: filter)
         let queryWithUpdatedAtSorting = _ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
 

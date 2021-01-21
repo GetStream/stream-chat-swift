@@ -7,7 +7,7 @@ import XCTest
 
 final class ChannelEndpoints_Tests: XCTestCase {
     func test_channels_buildsCorrectly() {
-        let filter: Filter<ChannelListFilterScope<NoExtraData>> = .containMembers(userIds: [.unique])
+        let filter: Filter<ChannelListFilterScope> = .containMembers(userIds: [.unique])
         
         func channelListQuery(options: QueryOptions) -> ChannelListQuery {
             var query: ChannelListQuery = .init(filter: filter)
