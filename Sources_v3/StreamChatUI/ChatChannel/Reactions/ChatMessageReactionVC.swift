@@ -61,7 +61,7 @@ open class ChatMessageReactionVC<ExtraData: ExtraDataTypes>: ViewController, UIC
 
 // MARK: - _MessageControllerDelegate
 
-extension ChatMessageReactionVC: _MessageControllerDelegate {
+extension ChatMessageReactionVC: _ChatMessageControllerDelegate {
     public func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>

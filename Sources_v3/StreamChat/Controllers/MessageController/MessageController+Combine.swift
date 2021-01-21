@@ -42,13 +42,13 @@ extension _ChatMessageController {
             self.controller = controller
             state = .init(controller.state)
             
-            controller.multicastDelegate.additionalDelegates.append(AnyMessageControllerDelegate(self))
+            controller.multicastDelegate.additionalDelegates.append(AnyChatMessageControllerDelegate(self))
         }
     }
 }
 
 @available(iOS 13, *)
-extension _ChatMessageController.BasePublishers: _MessageControllerDelegate {
+extension _ChatMessageController.BasePublishers: _ChatMessageControllerDelegate {
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state.send(state)
     }
