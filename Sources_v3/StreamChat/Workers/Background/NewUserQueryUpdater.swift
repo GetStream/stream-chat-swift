@@ -119,12 +119,12 @@ extension NewUserQueryUpdater {
 
 private extension UserListQueryDTO {
     func asUserListQueryWithUpdatedFilter<ExtraData: UserExtraData>(
-        filterToAdd filter: Filter<UserListFilterScope<ExtraData>>
+        filterToAdd filter: Filter<_UserListFilterScope<ExtraData>>
     ) throws -> _UserListQuery<ExtraData> {
-        let encodedFilter = try JSONDecoder.default.decode(Filter<UserListFilterScope<ExtraData>>.self, from: filterJSONData)
+        let encodedFilter = try JSONDecoder.default.decode(Filter<_UserListFilterScope<ExtraData>>.self, from: filterJSONData)
         
         // We need to pass original `filterHash` so user will be linked to original query, not the modified one
-        var updatedFilter: Filter<UserListFilterScope<ExtraData>> = .and([encodedFilter, filter])
+        var updatedFilter: Filter<_UserListFilterScope<ExtraData>> = .and([encodedFilter, filter])
         updatedFilter.explicitHash = filterHash
         
         return _UserListQuery(filter: updatedFilter)

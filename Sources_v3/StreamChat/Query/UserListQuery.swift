@@ -7,8 +7,25 @@ import Foundation
 /// A namespace for the `FilterKey`s suitable to be used for `UserListQuery`. This scope is not aware of any extra data types.
 public protocol AnyUserListFilterScope {}
 
-/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `UserListQuery`.
-public class UserListFilterScope<ExtraData: UserExtraData>: FilterScope, AnyUserListFilterScope {}
+/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_UserListQuery`.
+///
+/// - Note: `UserListFilterScope` is a typealias of `_UserListFilterScope` with the default extra data types.
+/// If you want to use your custom extra data types, you should create your own `UserListFilterScope`
+/// typealias for `_UserListFilterScope`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public typealias UserListFilterScope = _UserListFilterScope<NoExtraData>
+
+/// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `_UserListQuery`.
+///
+/// - Note: `_UserListFilterScope` type is not meant to be used directly.
+/// If you don't use custom extra data types, use `UserListFilterScope` typealias instead.
+/// When using custom extra data types, you should create your own `UserListFilterScope` typealias for `_UserListFilterScope`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public class _UserListFilterScope<ExtraData: UserExtraData>: FilterScope, AnyUserListFilterScope {}
 
 /// Non extra-data-specific filer keys for channel list.
 public extension FilterKey where Scope: AnyUserListFilterScope {
@@ -81,7 +98,7 @@ public struct _UserListQuery<ExtraData: UserExtraData>: Encodable {
     }
     
     /// A filter for the query (see `Filter`).
-    public var filter: Filter<UserListFilterScope<ExtraData>>?
+    public var filter: Filter<_UserListFilterScope<ExtraData>>?
     
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<UserListSortingKey>]
@@ -102,7 +119,7 @@ public struct _UserListQuery<ExtraData: UserExtraData>: Encodable {
     ///   - sort: a sorting list for users.
     ///   - pageSize: a page size for pagination.
     public init(
-        filter: Filter<UserListFilterScope<ExtraData>>? = nil,
+        filter: Filter<_UserListFilterScope<ExtraData>>? = nil,
         sort: [Sorting<UserListSortingKey>] = [],
         pageSize: Int = .usersPageSize
     ) {
