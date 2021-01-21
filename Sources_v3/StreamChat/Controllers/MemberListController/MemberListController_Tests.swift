@@ -9,7 +9,7 @@ import XCTest
 final class MemberListController_Tests: StressTestCase {
     private var env: TestEnvironment!
     
-    var query: ChannelMemberListQuery<NoExtraData>!
+    var query: ChannelMemberListQuery!
     var client: ChatClient!
     var controller: ChatChannelMemberListController!
     var controllerCallbackQueueID: UUID!

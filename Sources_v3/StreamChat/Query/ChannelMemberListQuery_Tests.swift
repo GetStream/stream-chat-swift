@@ -32,7 +32,7 @@ final class MemberListFilterScope_Tests: XCTestCase {
 final class ChannelMemberListQuery_Tests: XCTestCase {
     func test_query_isEncodedCorrectly() throws {
         // Create the query.
-        let query = ChannelMemberListQuery<NoExtraData>(
+        let query = ChannelMemberListQuery(
             cid: .unique,
             filter: .equal(.id, to: "luke"),
             sort: [.init(key: .createdAt, isAscending: true)]
@@ -53,7 +53,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
     
     func test_hash_isCalculatedCorrectly() {
         // Create the query.
-        let query = ChannelMemberListQuery<NoExtraData>(
+        let query = ChannelMemberListQuery(
             cid: .unique,
             filter: .equal(.id, to: "luke"),
             sort: [.init(key: .createdAt, isAscending: true)]
@@ -71,7 +71,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
     
     func test_emptySorting_isNotEncoded() throws {
         // Create the query without any sort options.
-        let query = ChannelMemberListQuery<NoExtraData>(
+        let query = ChannelMemberListQuery(
             cid: .unique,
             filter: .equal(.id, to: "luke")
         )
@@ -90,7 +90,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
     
     func test_defaultPageSizeIsUsed_ifNotSpecified() throws {
         // Create the query with default params.
-        let query = ChannelMemberListQuery<NoExtraData>(
+        let query = ChannelMemberListQuery(
             cid: .unique,
             filter: .equal(.id, to: "luke")
         )
@@ -111,10 +111,10 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
 
-        let actual = ChannelMemberListQuery<NoExtraData>.channelMember(userId: userId, cid: cid)
+        let actual = ChannelMemberListQuery.channelMember(userId: userId, cid: cid)
         let actualJSON = try JSONEncoder.default.encode(actual)
 
-        let expected = ChannelMemberListQuery<NoExtraData>(cid: cid, filter: .equal("id", to: userId))
+        let expected = ChannelMemberListQuery(cid: cid, filter: .equal("id", to: userId))
         let expectedJSON = try JSONEncoder.default.encode(expected)
     
         // Assert queries match

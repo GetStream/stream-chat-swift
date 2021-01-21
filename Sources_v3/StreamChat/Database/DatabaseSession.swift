@@ -162,7 +162,7 @@ protocol MemberDatabaseSession {
     func saveMember<ExtraData: UserExtraData>(
         payload: MemberPayload<ExtraData>,
         channelId: ChannelId,
-        query: ChannelMemberListQuery<ExtraData>?
+        query: _ChannelMemberListQuery<ExtraData>?
     ) throws -> MemberDTO
     
     /// Fetches `MemberDTO`entity for the given `userId` and `cid`.
@@ -175,7 +175,7 @@ protocol MemberListQueryDatabaseSession {
     
     /// Creates a new `MemberListQueryDatabaseSession` object in the database based in the given `ChannelMemberListQuery`.
     @discardableResult
-    func saveQuery<ExtraData: UserExtraData>(_ query: ChannelMemberListQuery<ExtraData>) throws -> ChannelMemberListQueryDTO
+    func saveQuery<ExtraData: UserExtraData>(_ query: _ChannelMemberListQuery<ExtraData>) throws -> ChannelMemberListQueryDTO
 }
 
 protocol AttachmentDatabaseSession {

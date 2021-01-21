@@ -9,7 +9,7 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
-    var query: ChannelMemberListQuery<NoExtraData>!
+    var query: ChannelMemberListQuery!
 
     var listUpdater: ChannelMemberListUpdater<NoExtraData>!
     
@@ -19,7 +19,7 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         database = DatabaseContainerMock()
-        query = ChannelMemberListQuery(cid: .unique, filter: .query(.id, text: "Luke"))
+        query = .init(cid: .unique, filter: .query(.id, text: "Luke"))
 
         listUpdater = .init(database: database, apiClient: apiClient)
     }

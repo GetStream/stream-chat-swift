@@ -18,7 +18,24 @@ public extension FilterKey where Scope: AnyMemberListFilterScope {
 }
 
 /// A query type used for fetching channel members from the backend.
-public struct ChannelMemberListQuery<ExtraData: UserExtraData>: Encodable {
+///
+/// - Note: `ChannelMemberListQuery` is a typealias of `_ChannelMemberListQuery` with the default extra data types.
+/// If you want to use your custom extra data types, you should create your own `ChannelMemberListQuery`
+/// typealias for `_ChannelMemberListQuery`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public typealias ChannelMemberListQuery = _ChannelMemberListQuery<NoExtraData>
+
+/// A query type used for fetching channel members from the backend.
+///
+/// - Note: `_ChannelMemberListQuery` type is not meant to be used directly.
+/// If you don't use custom extra data types, use `ChannelMemberListQuery` typealias instead.
+/// When using custom extra data types, you should create your own `ChannelMemberListQuery` typealias for `_ChannelMemberListQuery`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public struct _ChannelMemberListQuery<ExtraData: UserExtraData>: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort
@@ -70,7 +87,7 @@ public struct ChannelMemberListQuery<ExtraData: UserExtraData>: Encodable {
     }
 }
 
-extension ChannelMemberListQuery {
+extension _ChannelMemberListQuery {
     var queryHash: String {
         [
             cid.rawValue,
@@ -80,7 +97,7 @@ extension ChannelMemberListQuery {
     }
 }
 
-extension ChannelMemberListQuery {
+extension _ChannelMemberListQuery {
     /// Builds `ChannelMemberListQuery` for a single member in a specific channel
     /// - Parameters:
     ///   - userId: The user identifier.
