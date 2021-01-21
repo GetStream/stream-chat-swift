@@ -157,7 +157,7 @@ class ChannelController_Tests: StressTestCase {
         let team: String = .unique
         let members: Set<UserId> = [.unique]
         let invites: Set<UserId> = [.unique]
-        let extraData: NoExtraData.Channel = .defaultValue
+        let extraData: NoExtraData = .defaultValue
 
         // Create a new `ChannelController`
         for isCurrentUserMember in [true, false] {
@@ -239,7 +239,7 @@ class ChannelController_Tests: StressTestCase {
         for isCurrentUserMember in [true, false] {
             let team: String = .unique
             let members: Set<UserId> = [.unique]
-            let extraData: NoExtraData.Channel = .defaultValue
+            let extraData: NoExtraData = .defaultValue
 
             // Create a new `ChannelController`
             let controller = try client.channelController(

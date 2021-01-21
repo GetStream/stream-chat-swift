@@ -143,7 +143,7 @@ class ChannelDTO_Tests: XCTestCase {
     }
     
     func test_channelWithChannelListQuery_isSavedAndLoaded() {
-        let query = ChannelListQuery<NoExtraData.Channel>(
+        let query = ChannelListQuery<NoExtraData>(
             filter: .and([.less(.createdAt, than: .unique), .exists(.deletedAt, exists: false)])
         )
         
@@ -171,7 +171,7 @@ class ChannelDTO_Tests: XCTestCase {
     
     func test_channelListQuery_withSorting() {
         // Create two channels queries with different sortings.
-        let filter: Filter<ChannelListFilterScope<NoExtraData.Channel>> = .in(.members, values: [.unique])
+        let filter: Filter<ChannelListFilterScope<NoExtraData>> = .in(.members, values: [.unique])
         let queryWithDefaultSorting = ChannelListQuery(filter: filter)
         let queryWithUpdatedAtSorting = ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
 
