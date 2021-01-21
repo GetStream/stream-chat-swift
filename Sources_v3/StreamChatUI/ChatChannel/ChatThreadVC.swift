@@ -71,7 +71,7 @@ open class ChatThreadVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
 
 // MARK: - _ChatChannelControllerDelegate
 
-extension ChatThreadVC: _MessageControllerDelegate {
+extension ChatThreadVC: _ChatMessageControllerDelegate {
     public func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]

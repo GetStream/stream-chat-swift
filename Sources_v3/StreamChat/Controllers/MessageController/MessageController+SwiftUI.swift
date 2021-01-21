@@ -29,7 +29,7 @@ extension _ChatMessageController {
             self.controller = controller
             state = controller.state
             
-            controller.multicastDelegate.additionalDelegates.append(AnyMessageControllerDelegate(self))
+            controller.multicastDelegate.additionalDelegates.append(AnyChatMessageControllerDelegate(self))
             
             message = controller.message
             replies = controller.replies
@@ -38,7 +38,7 @@ extension _ChatMessageController {
 }
 
 @available(iOS 13, *)
-extension _ChatMessageController.ObservableObject: _MessageControllerDelegate {
+extension _ChatMessageController.ObservableObject: _ChatMessageControllerDelegate {
     public func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
