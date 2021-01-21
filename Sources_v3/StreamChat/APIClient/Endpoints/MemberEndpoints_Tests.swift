@@ -7,7 +7,7 @@ import XCTest
 
 final class MemberEndpoints_Tests: XCTestCase {
     func test_channelMembers_buildsCorrectly() {
-        let query = ChannelMemberListQuery<NoExtraData>(
+        let query = ChannelMemberListQuery(
             cid: .unique,
             filter: .equal(.id, to: "Luke"),
             sort: [.init(key: .createdAt)]
