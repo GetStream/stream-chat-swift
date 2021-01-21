@@ -38,14 +38,23 @@ extension _ChatMessageAttachment {
             )
         }
 
+        /// Creates a new `_ChatMessageAttachment<ExtraData>.Seed` instance
+        /// - Parameters:
+        ///   - localURL: The local file URL the attachment will be uploaded from.
+        ///   - fileName: The filename. Once attachment is uploaded this value will
+        ///   be available under `_ChatMessageAttachment.title` field. If `nil` is provided the `localURL.lastPathComponent`
+        ///   will be used.
+        ///   - type: The attachment type. Attachment rendering will be chosen based on it type.
+        ///   - extraData: The extra data which can be used to include additional information about the attachment
+        /// used in client application.
         public init(
             localURL: URL,
-            fileName: String,
+            fileName: String? = nil,
             type: AttachmentType,
-            extraData: ExtraData.Attachment
+            extraData: ExtraData.Attachment = .defaultValue
         ) {
             self.localURL = localURL
-            self.fileName = fileName
+            self.fileName = fileName ?? localURL.lastPathComponent
             self.type = type
             self.extraData = extraData
         }
