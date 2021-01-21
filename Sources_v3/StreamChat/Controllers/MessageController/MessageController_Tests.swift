@@ -1130,7 +1130,7 @@ private class TestDelegate: QueueAwareDelegate, ChatMessageControllerDelegate {
     }
 }
 
-private class TestDelegateGeneric: QueueAwareDelegate, _MessageControllerDelegate {
+private class TestDelegateGeneric: QueueAwareDelegate, _ChatMessageControllerDelegate {
     @Atomic var state: DataController.State?
     @Atomic var didChangeMessage_change: EntityChange<ChatMessage>?
    

@@ -97,7 +97,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     lazy var basePublishers: BasePublishers = .init(controller: self)
     
     /// A type-erased multicast delegate.
-    var multicastDelegate: MulticastDelegate<AnyMessageControllerDelegate<ExtraData>> = .init() {
+    var multicastDelegate: MulticastDelegate<AnyChatMessageControllerDelegate<ExtraData>> = .init() {
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
@@ -455,7 +455,7 @@ private extension _ChatMessageController {
 /// `ChatMessageController` uses this protocol to communicate changes to its delegate.
 ///
 /// This protocol can be used only when no custom extra data are specified.
-/// If you're using custom extra data types, please use `_MessageControllerDelegate` instead.
+/// If you're using custom extra data types, please use `_ChatMessageControllerDelegate` instead.
 ///
 public protocol ChatMessageControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `ChatMessage` its observes.
@@ -471,12 +471,12 @@ public extension ChatMessageControllerDelegate {
     func messageController(_ controller: ChatMessageController, didChangeReplies changes: [ListChange<ChatMessage>]) {}
 }
 
-/// `_MessageControllerDelegate` uses this protocol to communicate changes to its delegate.
+/// `_ChatMessageControllerDelegate` uses this protocol to communicate changes to its delegate.
 ///
 /// If you're **not** using custom extra data types, you can use a convenience version of this protocol
-/// named `MessageControllerDelegate`, which hides the generic types, and make the usage easier.
+/// named `ChatMessageControllerDelegate`, which hides the generic types, and make the usage easier.
 ///
-public protocol _MessageControllerDelegate: DataControllerStateDelegate {
+public protocol _ChatMessageControllerDelegate: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
     
     /// The controller observed a change in the `ChatMessage` its observes.
@@ -492,7 +492,7 @@ public protocol _MessageControllerDelegate: DataControllerStateDelegate {
     )
 }
 
-public extension _MessageControllerDelegate {
+public extension _ChatMessageControllerDelegate {
     func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
@@ -504,7 +504,7 @@ public extension _MessageControllerDelegate {
     ) {}
 }
 
-final class AnyMessageControllerDelegate<ExtraData: ExtraDataTypes>: _MessageControllerDelegate {
+final class AnyChatMessageControllerDelegate<ExtraData: ExtraDataTypes>: _ChatMessageControllerDelegate {
     weak var wrappedDelegate: AnyObject?
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
     private var _messageControllerDidChangeMessage: (_ChatMessageController<ExtraData>, EntityChange<_ChatMessage<ExtraData>>)
@@ -545,8 +545,8 @@ final class AnyMessageControllerDelegate<ExtraData: ExtraDataTypes>: _MessageCon
     }
 }
 
-extension AnyMessageControllerDelegate {
-    convenience init<Delegate: _MessageControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
+extension AnyChatMessageControllerDelegate {
+    convenience init<Delegate: _ChatMessageControllerDelegate>(_ delegate: Delegate) where Delegate.ExtraData == ExtraData {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
@@ -556,7 +556,7 @@ extension AnyMessageControllerDelegate {
     }
 }
 
-extension AnyMessageControllerDelegate where ExtraData == NoExtraData {
+extension AnyChatMessageControllerDelegate where ExtraData == NoExtraData {
     convenience init(_ delegate: ChatMessageControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,
@@ -576,8 +576,8 @@ public extension _ChatMessageController {
     ///
     /// - Parameter delegate: The object used as a delegate. It's referenced weakly, so you need to keep the object
     /// alive if you want keep receiving updates.
-    func setDelegate<Delegate: _MessageControllerDelegate>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData {
-        multicastDelegate.mainDelegate = delegate.flatMap(AnyMessageControllerDelegate.init)
+    func setDelegate<Delegate: _ChatMessageControllerDelegate>(_ delegate: Delegate?) where Delegate.ExtraData == ExtraData {
+        multicastDelegate.mainDelegate = delegate.flatMap(AnyChatMessageControllerDelegate.init)
     }
 }
 
@@ -589,7 +589,7 @@ public extension ChatMessageController {
     /// instead to set the delegate, if you're using custom extra data types.
     var delegate: ChatMessageControllerDelegate? {
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? ChatMessageControllerDelegate }
-        set { multicastDelegate.mainDelegate = AnyMessageControllerDelegate(newValue) }
+        set { multicastDelegate.mainDelegate = AnyChatMessageControllerDelegate(newValue) }
     }
 }
 
