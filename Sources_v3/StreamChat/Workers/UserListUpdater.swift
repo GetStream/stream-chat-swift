@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -21,7 +21,7 @@ class UserListUpdater<ExtraData: UserExtraData>: Worker {
     ///   - policy: The update policy for the resulting user set. See `UpdatePolicy`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func update(userListQuery: UserListQuery<ExtraData>, policy: UpdatePolicy = .merge, completion: ((Error?) -> Void)? = nil) {
+    func update(userListQuery: _UserListQuery<ExtraData>, policy: UpdatePolicy = .merge, completion: ((Error?) -> Void)? = nil) {
         apiClient
             .request(endpoint: .users(query: userListQuery)) { (result: Result<UserListPayload<ExtraData>, Error>) in
                 switch result {

@@ -32,7 +32,7 @@ class UserListQuery_Tests: XCTestCase {
         let sort: [Sorting<UserListSortingKey>] = [.init(key: .lastActivityAt)]
 
         // Create UserListQuery
-        let query = UserListQuery(
+        let query = _UserListQuery(
             filter: filter,
             sort: sort,
             pageSize: 23
@@ -55,10 +55,10 @@ class UserListQuery_Tests: XCTestCase {
     func test_singleUserQuery_worksCorrectly() throws {
         let userId: UserId = .unique
         
-        let actual = UserListQuery<NoExtraData>.user(withID: userId)
+        let actual = UserListQuery.user(withID: userId)
         let actualJSON = try JSONEncoder.default.encode(actual)
 
-        let expected = UserListQuery<NoExtraData>(filter: .equal("id", to: userId))
+        let expected = UserListQuery(filter: .equal("id", to: userId))
         let expectedJSON = try JSONEncoder.default.encode(expected)
     
         // Assert queries match
@@ -73,7 +73,7 @@ class UserListQuery_Tests: XCTestCase {
         ]
         
         // Create queries with sortings
-        let queries = sortings.map { UserListQuery<NoExtraData>(sort: $0) }
+        let queries = sortings.map { UserListQuery(sort: $0) }
         
         // Assert safe sorting option is added
         queries.forEach {

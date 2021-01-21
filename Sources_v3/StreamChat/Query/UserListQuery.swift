@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -56,7 +56,24 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
 
 /// A query is used for querying specific users from backend.
 /// You can specify filter, sorting and pagination.
-public struct UserListQuery<ExtraData: UserExtraData>: Encodable {
+///
+/// - Note: `UserListQuery` is a typealias of `_UserListQuery` with the default extra data types.
+/// If you want to use your custom extra data types, you should create your own `UserListQuery` typealias for `_UserListQuery`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+typealias UserListQuery = _UserListQuery<NoExtraData>
+
+/// A query is used for querying specific users from backend.
+/// You can specify filter, sorting and pagination.
+///
+/// - Note: `_UserListQuery` type is not meant to be used directly.
+/// If you don't use custom extra data types, use `UserListQuery` typealias instead.
+/// When using custom extra data types, you should create your own `UserListQuery` typealias for `_UserListQuery`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public struct _UserListQuery<ExtraData: UserExtraData>: Encodable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort
@@ -112,7 +129,7 @@ public struct UserListQuery<ExtraData: UserExtraData>: Encodable {
     }
 }
 
-extension UserListQuery {
+extension _UserListQuery {
     /// Builds `UserListQuery` for a user with the provided `userId`
     /// - Parameter userId: The user identifier
     /// - Returns: `UserListQuery` for a specific user

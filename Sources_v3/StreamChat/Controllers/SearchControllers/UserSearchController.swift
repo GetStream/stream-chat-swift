@@ -35,9 +35,9 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     /// Filter hash this controller observes.
     let explicitFilterHash = UUID().uuidString
     
-    lazy var query: UserListQuery<ExtraData.User> = {
+    lazy var query: _UserListQuery<ExtraData.User> = {
         // Filter is just a mock, explicit hash will override it
-        var query = UserListQuery<ExtraData.User>(filter: .exists(.id), sort: [.init(key: .name, isAscending: true)])
+        var query = _UserListQuery<ExtraData.User>(filter: .exists(.id), sort: [.init(key: .name, isAscending: true)])
         // Setting `shouldBeObserved` to false prevents NewUserQueryUpdater to pick this query up
         query.shouldBeUpdatedInBackground = false
         // The initial DB fetch will return 0 users and this is expected
@@ -48,7 +48,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     }()
     
     /// Copy of last search query made, used for getting next page.
-    var lastQuery: UserListQuery<ExtraData.User>?
+    var lastQuery: _UserListQuery<ExtraData.User>?
     
     /// The users matching the query of this controller.
     ///
@@ -148,7 +148,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(term: String?, completion: ((_ error: Error?) -> Void)? = nil) {
-        var query = UserListQuery<ExtraData.User>(sort: [.init(key: .name, isAscending: true)])
+        var query = _UserListQuery<ExtraData.User>(sort: [.init(key: .name, isAscending: true)])
         if let term = term, !term.isEmpty {
             query.filter = .or([
                 .autocomplete(.name, text: term),
