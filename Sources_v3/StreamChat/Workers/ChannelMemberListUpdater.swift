@@ -10,7 +10,7 @@ class ChannelMemberListUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - query: The query used in the request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func load(_ query: ChannelMemberListQuery<ExtraData.User>, completion: ((Error?) -> Void)? = nil) {
+    func load(_ query: _ChannelMemberListQuery<ExtraData.User>, completion: ((Error?) -> Void)? = nil) {
         fetchAndSaveChannelIfNeeded(query.cid) { error in
             guard error == nil else {
                 completion?(error)

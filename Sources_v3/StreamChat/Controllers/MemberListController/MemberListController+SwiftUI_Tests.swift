@@ -7,7 +7,7 @@ import XCTest
 
 @available(iOS 13, *)
 final class MemberListController_SwiftUI_Tests: iOS13TestCase {
-    var query: ChannelMemberListQuery<NoExtraData>!
+    var query: ChannelMemberListQuery!
     var memberListController: ChatChannelMemberListControllerMock!
     
     // MARK: - Setup

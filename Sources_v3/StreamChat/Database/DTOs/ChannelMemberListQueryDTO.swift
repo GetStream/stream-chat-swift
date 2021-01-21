@@ -40,7 +40,7 @@ extension NSManagedObjectContext: MemberListQueryDatabaseSession {
         ChannelMemberListQueryDTO.load(queryHash: queryHash, context: self)
     }
     
-    func saveQuery<ExtraData: UserExtraData>(_ query: ChannelMemberListQuery<ExtraData>) throws -> ChannelMemberListQueryDTO {
+    func saveQuery<ExtraData: UserExtraData>(_ query: _ChannelMemberListQuery<ExtraData>) throws -> ChannelMemberListQueryDTO {
         guard let channelDTO = channel(cid: query.cid) else {
             throw ClientError.ChannelDoesNotExist(cid: query.cid)
         }
