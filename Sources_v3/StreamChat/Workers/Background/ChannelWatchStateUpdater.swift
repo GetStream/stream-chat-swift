@@ -57,7 +57,7 @@ final class ChannelWatchStateUpdater<ExtraData: ExtraDataTypes>: EventWorker {
             
             guard !channelIds.isEmpty else { return }
             
-            let channelListQuery = ChannelListQuery<ExtraData.Channel>(
+            let channelListQuery = _ChannelListQuery<ExtraData.Channel>(
                 filter: .in(.cid, values: channelIds),
                 pageSize: 1
             )

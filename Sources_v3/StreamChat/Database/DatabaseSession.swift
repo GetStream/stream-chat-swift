@@ -126,14 +126,14 @@ protocol ChannelDatabaseSession {
     @discardableResult
     func saveChannel<ExtraData: ExtraDataTypes>(
         payload: ChannelPayload<ExtraData>,
-        query: ChannelListQuery<ExtraData.Channel>?
+        query: _ChannelListQuery<ExtraData.Channel>?
     ) throws -> ChannelDTO
     
     /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
     @discardableResult
     func saveChannel<ExtraData: ExtraDataTypes>(
         payload: ChannelDetailPayload<ExtraData>,
-        query: ChannelListQuery<ExtraData.Channel>?
+        query: _ChannelListQuery<ExtraData.Channel>?
     ) throws -> ChannelDTO
     
     /// Fetches `ChannelDTO` with the given `cid` from the database.

@@ -1,11 +1,11 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 extension Endpoint {
-    static func channels<ExtraData: ExtraDataTypes>(query: ChannelListQuery<ExtraData.Channel>)
+    static func channels<ExtraData: ExtraDataTypes>(query: _ChannelListQuery<ExtraData.Channel>)
         -> Endpoint<ChannelListPayload<ExtraData>> {
         .init(
             path: "channels",
