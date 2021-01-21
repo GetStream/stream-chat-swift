@@ -34,7 +34,7 @@ class ChannelUpdater_Tests: StressTestCase {
     
     func test_updateChannelQuery_makesCorrectAPICall() {
         // Simulate `update(channelQuery:)` call
-        let query = ChannelQuery<ExtraData>(cid: .unique)
+        let query = _ChannelQuery<ExtraData>(cid: .unique)
         channelUpdater.update(channelQuery: query)
         
         let referenceEndpoint: Endpoint<ChannelPayload<ExtraData>> = .channel(query: query)
@@ -43,7 +43,7 @@ class ChannelUpdater_Tests: StressTestCase {
     
     func test_updateChannelQuery_successfulResponseData_areSavedToDB() {
         // Simulate `update(channelQuery:)` call
-        let query = ChannelQuery<ExtraData>(cid: .unique)
+        let query = _ChannelQuery<ExtraData>(cid: .unique)
         var completionCalled = false
         channelUpdater.update(channelQuery: query, completion: { error in
             XCTAssertNil(error)
@@ -67,7 +67,7 @@ class ChannelUpdater_Tests: StressTestCase {
     
     func test_updateChannelQuery_errorResponse_isPropagatedToCompletion() {
         // Simulate `update(channelQuery:)` call
-        let query = ChannelQuery<ExtraData>(cid: .unique)
+        let query = _ChannelQuery<ExtraData>(cid: .unique)
         var completionCalledError: Error?
         channelUpdater.update(channelQuery: query, completion: { completionCalledError = $0 })
         
@@ -81,7 +81,7 @@ class ChannelUpdater_Tests: StressTestCase {
 
     func test_updateChannelQuery_completionForCreatedChannelCalled() {
         // Simulate `update(channelQuery:)` call
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         var cid: ChannelId = .unique
 
         var channel: ChatChannel? {

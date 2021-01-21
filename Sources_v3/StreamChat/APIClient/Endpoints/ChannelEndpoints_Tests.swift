@@ -43,13 +43,13 @@ final class ChannelEndpoints_Tests: XCTestCase {
     func test_channel_buildsCorrectly() {
         let cid = ChannelId(type: .livestream, id: "qwerty")
         
-        func channelQuery(options: QueryOptions) -> ChannelQuery<NoExtraData> {
-            var query: ChannelQuery<NoExtraData> = .init(cid: cid)
+        func channelQuery(options: QueryOptions) -> ChannelQuery {
+            var query: ChannelQuery = .init(cid: cid)
             query.options = options
             return query
         }
         
-        let testCases: [(ChannelQuery<NoExtraData>, Bool)] = [
+        let testCases: [(ChannelQuery, Bool)] = [
             (channelQuery(options: .state), true),
             (channelQuery(options: .presence), true),
             (channelQuery(options: .watch), true),
