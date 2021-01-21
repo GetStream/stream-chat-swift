@@ -10,18 +10,18 @@ protocol UserDatabaseSession {
     /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>, query: UserListQuery<ExtraData>?) throws -> UserDTO
+    func saveUser<ExtraData: UserExtraData>(payload: UserPayload<ExtraData>, query: _UserListQuery<ExtraData>?) throws -> UserDTO
     
     /// Saves the provided query to the DB. Return's the matching `UserListQueryDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveQuery<ExtraData: UserExtraData>(query: UserListQuery<ExtraData>) throws -> UserListQueryDTO?
+    func saveQuery<ExtraData: UserExtraData>(query: _UserListQuery<ExtraData>) throws -> UserListQueryDTO?
     
     /// Fetches `UserDTO` with the given `id` from the DB. Returns `nil` if no `UserDTO` matching the `id` exists.
     func user(id: UserId) -> UserDTO?
     
     /// Removes the specified query from DB.
-    func deleteQuery<ExtraData: UserExtraData>(_ query: UserListQuery<ExtraData>)
+    func deleteQuery<ExtraData: UserExtraData>(_ query: _UserListQuery<ExtraData>)
 }
 
 protocol CurrentUserDatabaseSession {

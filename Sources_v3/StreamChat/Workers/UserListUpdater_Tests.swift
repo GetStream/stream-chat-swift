@@ -34,7 +34,7 @@ class UserListUpdater_Tests: StressTestCase {
     
     func test_update_makesCorrectAPICall() {
         // Simulate `update` call
-        let query = UserListQuery<NoExtraData>(filter: .equal(.id, to: "Luke"))
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         listUpdater.update(userListQuery: query)
         
         let referenceEndpoint: Endpoint<UserListPayload<NoExtraData>> = .users(query: query)
@@ -43,7 +43,7 @@ class UserListUpdater_Tests: StressTestCase {
     
     func test_update_successfullReponseData_areSavedToDB() {
         // Simulate `update` call
-        let query = UserListQuery<NoExtraData>(filter: .equal(.id, to: "Luke"))
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         var completionCalled = false
         listUpdater.update(userListQuery: query, completion: { error in
             XCTAssertNil(error)
@@ -69,7 +69,7 @@ class UserListUpdater_Tests: StressTestCase {
     
     func test_update_errorResponse_isPropagatedToCompletion() {
         // Simulate `update` call
-        let query = UserListQuery<NoExtraData>(filter: .equal(.id, to: "Luke"))
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         var completionCalledError: Error?
         listUpdater.update(userListQuery: query, completion: { completionCalledError = $0 })
         
@@ -83,7 +83,7 @@ class UserListUpdater_Tests: StressTestCase {
     
     func test_mergePolicy_takesAffect() throws {
         // Simulate `update` call
-        let query = UserListQuery<NoExtraData>(filter: .equal(.id, to: "Luke"))
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         listUpdater.update(userListQuery: query)
         
         // Simulate API response with user data
@@ -134,7 +134,7 @@ class UserListUpdater_Tests: StressTestCase {
     func test_removePolicy_takesAffect() throws {
         // Create query
         let filterHash = String.unique
-        var query = UserListQuery<NoExtraData>(filter: .equal(.id, to: "Luke"))
+        var query = UserListQuery(filter: .equal(.id, to: "Luke"))
         query.filter?.explicitHash = filterHash
         // Simulate `update` call
         // This call doesn't need `policy` argument specified since
@@ -185,7 +185,7 @@ class UserListUpdater_Tests: StressTestCase {
         let dummyUserId = UserId.unique
         
         // Simulate `update` call
-        let query = UserListQuery<NoExtraData>(filter: .equal(.id, to: "Luke"))
+        let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         var completionCalled = false
         listUpdater.update(userListQuery: query, completion: { _ in
             // At this point, DB write should have completed

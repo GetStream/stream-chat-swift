@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -38,7 +38,7 @@ extension NSManagedObjectContext {
         UserListQueryDTO.load(filterHash: filterHash, context: self)
     }
     
-    func saveQuery<ExtraData: UserExtraData>(query: UserListQuery<ExtraData>) throws -> UserListQueryDTO? {
+    func saveQuery<ExtraData: UserExtraData>(query: _UserListQuery<ExtraData>) throws -> UserListQueryDTO? {
         guard let filterHash = query.filter?.filterHash else {
             // A query without a filter doesn't have to be saved to the DB because it matches all users by default.
             return nil
@@ -62,7 +62,7 @@ extension NSManagedObjectContext {
         return newDTO
     }
     
-    func deleteQuery<ExtraData: UserExtraData>(_ query: UserListQuery<ExtraData>) {
+    func deleteQuery<ExtraData: UserExtraData>(_ query: _UserListQuery<ExtraData>) {
         guard let filterHash = query.filter?.filterHash else {
             // A query without a filter is not saved in DB.
             return
