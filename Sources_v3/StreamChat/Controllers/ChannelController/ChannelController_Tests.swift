@@ -1246,7 +1246,7 @@ class ChannelController_Tests: StressTestCase {
                 ChatMessageAttachment.Seed.dummy(),
                 ChatMessageAttachment.Seed.dummy()
             ],
-            extraData: NoExtraData.Message.defaultValue
+            extraData: NoExtraData.defaultValue
         )
         return message.id
     }
@@ -1529,7 +1529,7 @@ class ChannelController_Tests: StressTestCase {
         let text: String = .unique
 //        let command: String = .unique
 //        let arguments: String = .unique
-        let extraData: NoExtraData.Message = .defaultValue
+        let extraData: NoExtraData = .defaultValue
         let attachments: [ChatMessageAttachment.Seed] = [
             .dummy(),
             .dummy(),

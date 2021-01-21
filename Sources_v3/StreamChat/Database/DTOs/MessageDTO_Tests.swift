@@ -350,7 +350,7 @@ class MessageDTO_Tests: XCTestCase {
         let messageArguments: String = .unique
         let messageAttachmentSeeds: [ChatMessageAttachment.Seed] = [.dummy(), .dummy(), .dummy()]
         let messageShowReplyInChannel = true
-        let messageExtraData: NoExtraData.Message = .defaultValue
+        let messageExtraData: NoExtraData = .defaultValue
 
         // Create message with attachments in the database.
         try database.writeSynchronously { session in
