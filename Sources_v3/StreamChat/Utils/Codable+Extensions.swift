@@ -89,12 +89,12 @@ extension JSONEncoder.DateEncodingStrategy {
 
 extension DateFormatter {
     /// A Stream Chat date formatters.
-    public enum Stream {
+    enum Stream {
         /// Creates and returns a date object from the specified ISO 8601 formatted string representation.
         ///
         /// - Parameter string: The ISO 8601 formatted string representation of a date.
         /// - Returns: A date object, or nil if no valid date was found.
-        public static func iso8601Date(from string: String) -> Date? {
+        static func iso8601Date(from string: String) -> Date? {
             if #available(iOS 11.2, macOS 10.13, *) {
                 return Stream.iso8601DateFormatter.date(from: string)
             }
@@ -106,7 +106,7 @@ extension DateFormatter {
         ///
         /// - Parameter date: The date to be represented.
         /// - Returns: A user-readable string representing the date.
-        public static func iso8601DateString(from date: Date) -> String? {
+        static func iso8601DateString(from date: Date) -> String? {
             if #available(iOS 11.2, macOS 10.13, *) {
                 return Stream.iso8601DateFormatter.string(from: date)
             }
