@@ -111,13 +111,13 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
 class ChannelControllerMock: ChatChannelController {
     @Atomic var synchronize_called = false
     
-    var channel_simulated: _ChatChannel<DefaultExtraData>?
-    override var channel: _ChatChannel<DefaultExtraData>? {
+    var channel_simulated: _ChatChannel<NoExtraData>?
+    override var channel: _ChatChannel<NoExtraData>? {
         channel_simulated
     }
     
-    var messages_simulated: [_ChatMessage<DefaultExtraData>]?
-    override var messages: [_ChatMessage<DefaultExtraData>] {
+    var messages_simulated: [_ChatMessage<NoExtraData>]?
+    override var messages: [_ChatMessage<NoExtraData>] {
         messages_simulated ?? super.messages
     }
 

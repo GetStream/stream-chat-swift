@@ -6,7 +6,7 @@
 import XCTest
 
 final class AttachmentUploader_Tests: StressTestCase {
-    typealias ExtraData = DefaultExtraData
+    typealias ExtraData = NoExtraData
 
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!

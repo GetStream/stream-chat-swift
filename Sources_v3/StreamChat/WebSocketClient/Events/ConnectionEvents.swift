@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -23,7 +23,7 @@ public struct HealthCheckEvent: ConnectionEvent, EventWithPayload {
     
     init(connectionId: String) {
         self.connectionId = connectionId
-        payload = EventPayload<DefaultExtraData>(
+        payload = EventPayload<NoExtraData>(
             eventType: .healthCheck,
             connectionId: connectionId,
             cid: nil,

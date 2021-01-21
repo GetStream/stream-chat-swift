@@ -6,7 +6,7 @@
 import XCTest
 
 final class MissingEventsPublisher_Tests: StressTestCase {
-    typealias ExtraData = DefaultExtraData
+    typealias ExtraData = NoExtraData
     
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!

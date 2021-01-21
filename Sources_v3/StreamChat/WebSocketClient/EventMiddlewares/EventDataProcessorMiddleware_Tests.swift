@@ -1,12 +1,12 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
 import XCTest
 
 class EventDataProcessorMiddleware_Tests: XCTestCase {
-    var middleware: EventDataProcessorMiddleware<DefaultExtraData>!
+    var middleware: EventDataProcessorMiddleware<NoExtraData>!
     fileprivate var database: DatabaseContainerMock!
     
     override func setUp() {
@@ -37,7 +37,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
         let completion = try await { middleware.handle(event: testEvent, completion: $0) }
         
         // Assert the channel data is saved and the event is forwarded
-        var loadedChannel: _ChatChannel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<NoExtraData>? {
             database.viewContext.channel(cid: channelId)!.asModel()
         }
         XCTAssertEqual(loadedChannel?.cid, channelId)
@@ -51,7 +51,7 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
         }
         
         // This is not really used, we just need to have something to create the event with
-        let somePayload = EventPayload<DefaultExtraData>(eventType: .healthCheck)
+        let somePayload = EventPayload<NoExtraData>(eventType: .healthCheck)
         
         let testEvent = TestEvent(payload: somePayload)
         

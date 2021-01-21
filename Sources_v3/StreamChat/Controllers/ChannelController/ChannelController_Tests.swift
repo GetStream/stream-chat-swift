@@ -157,7 +157,7 @@ class ChannelController_Tests: StressTestCase {
         let team: String = .unique
         let members: Set<UserId> = [.unique]
         let invites: Set<UserId> = [.unique]
-        let extraData: DefaultExtraData.Channel = .defaultValue
+        let extraData: NoExtraData.Channel = .defaultValue
 
         // Create a new `ChannelController`
         for isCurrentUserMember in [true, false] {
@@ -239,7 +239,7 @@ class ChannelController_Tests: StressTestCase {
         for isCurrentUserMember in [true, false] {
             let team: String = .unique
             let members: Set<UserId> = [.unique]
-            let extraData: DefaultExtraData.Channel = .defaultValue
+            let extraData: NoExtraData.Channel = .defaultValue
 
             // Create a new `ChannelController`
             let controller = try client.channelController(
@@ -384,7 +384,7 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate an incoming message
         let newMessageId: MessageId = .unique
-        let newMessagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: newMessageId, authorUserId: .unique)
+        let newMessagePayload: MessagePayload<NoExtraData> = .dummy(messageId: newMessageId, authorUserId: .unique)
         _ = try await {
             client.databaseContainer.write({ session in
                 try session.saveMessage(payload: newMessagePayload, for: self.channelId)
@@ -400,8 +400,8 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
         
         // Insert two messages
-        let message1: MessagePayload<DefaultExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload<DefaultExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
         
         try client.databaseContainer.writeSynchronously {
             try $0.saveMessage(payload: message1, for: self.channelId)
@@ -428,11 +428,11 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
         
         // Insert two messages
-        let message1: MessagePayload<DefaultExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
-        let message2: MessagePayload<DefaultExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message1: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let message2: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
         
         // Insert reply that should be shown in channel.
-        let reply1: MessagePayload<DefaultExtraData> = .dummy(
+        let reply1: MessagePayload<NoExtraData> = .dummy(
             messageId: .unique,
             parentId: message2.id,
             showReplyInChannel: true,
@@ -440,7 +440,7 @@ class ChannelController_Tests: StressTestCase {
         )
         
         // Insert reply that should be visible only in thread.
-        let reply2: MessagePayload<DefaultExtraData> = .dummy(
+        let reply2: MessagePayload<NoExtraData> = .dummy(
             messageId: .unique,
             parentId: message2.id,
             showReplyInChannel: false,
@@ -472,14 +472,14 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false)
 
         // Create incoming deleted message
-        let incomingDeletedMessage: MessagePayload<DefaultExtraData> = .dummy(
+        let incomingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             deletedAt: .unique
         )
 
         // Create outgoing deleted message
-        let outgoingDeletedMessage: MessagePayload<DefaultExtraData> = .dummy(
+        let outgoingDeletedMessage: MessagePayload<NoExtraData> = .dummy(
             messageId: .unique,
             authorUserId: currentUserID,
             deletedAt: .unique
@@ -750,7 +750,7 @@ class ChannelController_Tests: StressTestCase {
     
     // MARK: - Channel actions propagation tests
 
-    func setupControllerForNewChannel(query: ChannelQuery<DefaultExtraData>) {
+    func setupControllerForNewChannel(query: ChannelQuery<NoExtraData>) {
         controller = ChatChannelController(
             channelQuery: query,
             client: client,
@@ -1234,7 +1234,7 @@ class ChannelController_Tests: StressTestCase {
     
     // Helper function that creates channel with message
     func setupChannelWithMessage(_ session: DatabaseSession) throws -> MessageId {
-        let dummyUserPayload: CurrentUserPayload<DefaultExtraData.User> = .dummy(userId: .unique, role: .user)
+        let dummyUserPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
         try session.saveCurrentUser(payload: dummyUserPayload)
         try session.saveChannel(payload: dummyPayload(with: channelId))
         let message = try session.createNewMessage(
@@ -1246,7 +1246,7 @@ class ChannelController_Tests: StressTestCase {
                 ChatMessageAttachment.Seed.dummy(),
                 ChatMessageAttachment.Seed.dummy()
             ],
-            extraData: DefaultExtraData.Message.defaultValue
+            extraData: NoExtraData.Message.defaultValue
         )
         return message.id
     }
@@ -1529,7 +1529,7 @@ class ChannelController_Tests: StressTestCase {
         let text: String = .unique
 //        let command: String = .unique
 //        let arguments: String = .unique
-        let extraData: DefaultExtraData.Message = .defaultValue
+        let extraData: NoExtraData.Message = .defaultValue
         let attachments: [ChatMessageAttachment.Seed] = [
             .dummy(),
             .dummy(),
@@ -1853,8 +1853,8 @@ class ChannelController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    var channelUpdater: ChannelUpdaterMock<DefaultExtraData>?
-    var eventSender: EventSenderMock<DefaultExtraData>?
+    var channelUpdater: ChannelUpdaterMock<NoExtraData>?
+    var eventSender: EventSenderMock<NoExtraData>?
     
     lazy var environment: ChatChannelController.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in

@@ -6,7 +6,7 @@
 import XCTest
 
 class ChannelUpdater_Tests: StressTestCase {
-    typealias ExtraData = DefaultExtraData
+    typealias ExtraData = NoExtraData
     
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
@@ -119,7 +119,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 try session.saveCurrentUser(payload: .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: DefaultExtraData.User.defaultValue
+                    extraData: NoExtraData.User.defaultValue
                 ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
@@ -132,7 +132,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let command: String = .unique
         let arguments: String = .unique
         let attachments: [ChatMessageAttachment.Seed] = [.dummy(), .dummy(), .dummy()]
-        let extraData: DefaultExtraData.Message = .defaultValue
+        let extraData: NoExtraData.Message = .defaultValue
         
         // Create new message
         let newMessageId: MessageId = try await { completion in
@@ -179,7 +179,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 try session.saveCurrentUser(payload: .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: DefaultExtraData.User.defaultValue
+                    extraData: NoExtraData.User.defaultValue
                 ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
@@ -208,7 +208,7 @@ class ChannelUpdater_Tests: StressTestCase {
     // MARK: - Update channel
 
     func test_updateChannel_makesCorrectAPICall() {
-        let channelPayload: ChannelEditDetailPayload<DefaultExtraData> = .unique
+        let channelPayload: ChannelEditDetailPayload<NoExtraData> = .unique
 
         // Simulate `updateChannel(channelPayload:, completion:)` call
         channelUpdater.updateChannel(channelPayload: channelPayload)

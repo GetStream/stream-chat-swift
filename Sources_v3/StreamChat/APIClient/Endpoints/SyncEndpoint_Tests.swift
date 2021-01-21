@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -10,7 +10,7 @@ final class SyncEndpoint_Tests: XCTestCase {
         let lastSyncedAt: Date = .unique
         let cids: [ChannelId] = [.unique, .unique, .unique]
 
-        let expectedEndpoint = Endpoint<MissingEventsPayload<DefaultExtraData>>(
+        let expectedEndpoint = Endpoint<MissingEventsPayload<NoExtraData>>(
             path: "sync",
             method: .post,
             queryItems: nil,
@@ -19,7 +19,7 @@ final class SyncEndpoint_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<MissingEventsPayload<DefaultExtraData>> = .missingEvents(since: lastSyncedAt, cids: cids)
+        let endpoint: Endpoint<MissingEventsPayload<NoExtraData>> = .missingEvents(since: lastSyncedAt, cids: cids)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

@@ -26,7 +26,7 @@ extension _ChatClient {
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatUserListController = _ChatUserListController<DefaultExtraData>
+public typealias ChatUserListController = _ChatUserListController<NoExtraData>
 
 /// `_ChatUserListController` is a controller class which allows observing a list of chat users based on the provided query.
 ///
@@ -185,7 +185,7 @@ extension _ChatUserListController {
     }
 }
 
-extension _ChatUserListController where ExtraData == DefaultExtraData {
+extension _ChatUserListController where ExtraData == NoExtraData {
     /// Set the delegate of `UserListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -217,7 +217,7 @@ public protocol ChatUserListControllerDelegate: DataControllerStateDelegate {
 
 public extension ChatUserListControllerDelegate {
     func controller(
-        _ controller: _ChatUserListController<DefaultExtraData>,
+        _ controller: _ChatUserListController<NoExtraData>,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {}
 }
@@ -291,7 +291,7 @@ extension AnyUserListControllerDelegate {
     }
 }
 
-extension AnyUserListControllerDelegate where ExtraData == DefaultExtraData {
+extension AnyUserListControllerDelegate where ExtraData == NoExtraData {
     convenience init(_ delegate: ChatUserListControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

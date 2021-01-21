@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -69,7 +69,7 @@ class MessageController_Combine_Tests: iOS13TestCase {
     
     func test_repliesChangesPublisher() {
         // Setup Recording publishers
-        var recording = Record<[ListChange<_ChatMessage<DefaultExtraData>>], Never>.Recording()
+        var recording = Record<[ListChange<_ChatMessage<NoExtraData>>], Never>.Recording()
         
         // Setup the chain
         messageController

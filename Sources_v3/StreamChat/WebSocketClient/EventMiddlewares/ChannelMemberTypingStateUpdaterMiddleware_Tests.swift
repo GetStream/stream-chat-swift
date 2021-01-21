@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -7,7 +7,7 @@ import XCTest
 
 final class ChannelMemberTypingStateUpdaterMiddleware_Tests: XCTestCase {
     var database: DatabaseContainerMock!
-    var middleware: ChannelMemberTypingStateUpdaterMiddleware<DefaultExtraData>!
+    var middleware: ChannelMemberTypingStateUpdaterMiddleware<NoExtraData>!
     
     // MARK: - Set up
     

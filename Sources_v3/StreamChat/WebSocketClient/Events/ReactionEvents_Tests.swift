@@ -1,12 +1,12 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
 import XCTest
 
 class ReactionEvents_Tests: XCTestCase {
-    let eventDecoder = EventDecoder<DefaultExtraData>()
+    let eventDecoder = EventDecoder<NoExtraData>()
     let userId = "broken-waterfall-5"
     let cid = ChannelId(type: .messaging, id: "general")
     let messageId = "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779"
@@ -14,7 +14,7 @@ class ReactionEvents_Tests: XCTestCase {
     func test_new() throws {
         let json = XCTestCase.mockData(fromFile: "ReactionNew")
         let event = try eventDecoder.decode(from: json) as? ReactionNewEvent
-        let reactionPayload = (event?.payload as? EventPayload<DefaultExtraData>)?[keyPath: \.reaction]
+        let reactionPayload = (event?.payload as? EventPayload<NoExtraData>)?[keyPath: \.reaction]
         XCTAssertEqual(event?.userId, userId)
         XCTAssertEqual(event?.cid, cid)
         XCTAssertEqual(event?.messageId, messageId)
@@ -28,7 +28,7 @@ class ReactionEvents_Tests: XCTestCase {
     func test_updated() throws {
         let json = XCTestCase.mockData(fromFile: "ReactionUpdated")
         let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEvent
-        let reactionPayload = (event?.payload as? EventPayload<DefaultExtraData>)?[keyPath: \.reaction]
+        let reactionPayload = (event?.payload as? EventPayload<NoExtraData>)?[keyPath: \.reaction]
         XCTAssertEqual(event?.userId, userId)
         XCTAssertEqual(event?.cid, cid)
         XCTAssertEqual(event?.messageId, messageId)
@@ -42,7 +42,7 @@ class ReactionEvents_Tests: XCTestCase {
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromFile: "ReactionDeleted")
         let event = try eventDecoder.decode(from: json) as? ReactionDeletedEvent
-        let reactionPayload = (event?.payload as? EventPayload<DefaultExtraData>)?[keyPath: \.reaction]
+        let reactionPayload = (event?.payload as? EventPayload<NoExtraData>)?[keyPath: \.reaction]
         XCTAssertEqual(event?.userId, userId)
         XCTAssertEqual(event?.cid, cid)
         XCTAssertEqual(event?.messageId, messageId)

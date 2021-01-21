@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -7,7 +7,7 @@ import XCTest
 
 final class MessageReactionsMiddleware_Tests: XCTestCase {
     var database: DatabaseContainerMock!
-    var middleware: MessageReactionsMiddleware<DefaultExtraData>!
+    var middleware: MessageReactionsMiddleware<NoExtraData>!
     
     // MARK: - Set up
     
@@ -40,7 +40,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
     }
     
     func tests_middleware_forwardsReactionEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload<DefaultExtraData> = .init(
+        let eventPayload: EventPayload<NoExtraData> = .init(
             eventType: .reactionNew,
             cid: .unique,
             reaction: .dummy(
@@ -65,13 +65,13 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
     
     func tests_middleware_handlesReactionNewEventCorrectly() throws {
         // Create reaction payload.
-        let reactionPayload: MessageReactionPayload<DefaultExtraData> = .dummy(
+        let reactionPayload: MessageReactionPayload<NoExtraData> = .dummy(
             messageId: .unique,
             user: UserPayload.dummy(userId: .unique)
         )
         
         // Create event payload.
-        let eventPayload: EventPayload<DefaultExtraData> = .init(
+        let eventPayload: EventPayload<NoExtraData> = .init(
             eventType: .reactionNew,
             cid: .unique,
             reaction: reactionPayload
@@ -110,13 +110,13 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
     
     func tests_middleware_handlesReactionUpdatedEventCorrectly() throws {
         // Create reaction payload.
-        let reactionPayload: MessageReactionPayload<DefaultExtraData> = .dummy(
+        let reactionPayload: MessageReactionPayload<NoExtraData> = .dummy(
             messageId: .unique,
             user: UserPayload.dummy(userId: .unique)
         )
         
         // Create event payload.
-        let eventPayload: EventPayload<DefaultExtraData> = .init(
+        let eventPayload: EventPayload<NoExtraData> = .init(
             eventType: .reactionNew,
             cid: .unique,
             reaction: reactionPayload
@@ -155,13 +155,13 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
     
     func tests_middleware_handlesReactionDeletedEventCorrectly() throws {
         // Create reaction payload.
-        let reactionPayload: MessageReactionPayload<DefaultExtraData> = .dummy(
+        let reactionPayload: MessageReactionPayload<NoExtraData> = .dummy(
             messageId: .unique,
             user: UserPayload.dummy(userId: .unique)
         )
         
         // Create event payload.
-        let eventPayload: EventPayload<DefaultExtraData> = .init(
+        let eventPayload: EventPayload<NoExtraData> = .init(
             eventType: .reactionNew,
             cid: .unique,
             reaction: reactionPayload

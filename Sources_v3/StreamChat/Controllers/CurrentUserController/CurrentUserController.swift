@@ -25,7 +25,7 @@ public extension _ChatClient {
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias CurrentChatUserController = _CurrentChatUserController<DefaultExtraData>
+public typealias CurrentChatUserController = _CurrentChatUserController<NoExtraData>
 
 /// `CurrentChatUserController` is a controller class which allows observing and mutating the currently logged-in
 /// user of `ChatClient`. You can also use it to explicitly connect/disconnect the `ChatClient`.
@@ -507,7 +507,7 @@ extension AnyCurrentUserControllerDelegate {
     }
 }
 
-extension AnyCurrentUserControllerDelegate where ExtraData == DefaultExtraData {
+extension AnyCurrentUserControllerDelegate where ExtraData == NoExtraData {
     convenience init(_ delegate: CurrentChatUserControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

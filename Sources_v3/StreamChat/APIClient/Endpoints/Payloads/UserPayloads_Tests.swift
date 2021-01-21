@@ -10,7 +10,7 @@ class UserPayload_Tests: XCTestCase {
     let otherUserJSON = XCTestCase.mockData(fromFile: "OtherUser")
     
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserPayload<DefaultExtraData.User>.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(UserPayload<NoExtraData.User>.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
@@ -48,7 +48,7 @@ class UserPayload_Tests: XCTestCase {
     }
     
     func test_otherUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserPayload<DefaultExtraData.User>.self, from: otherUserJSON)
+        let payload = try JSONDecoder.default.decode(UserPayload<NoExtraData.User>.self, from: otherUserJSON)
         XCTAssertEqual(payload.id, "bitter-cloud-0")
         XCTAssertEqual(payload.isBanned, true)
         XCTAssertEqual(payload.isOnline, true)
@@ -67,7 +67,7 @@ class UserPayload_Tests: XCTestCase {
 
 class UserRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
-        let payload: UserRequestBody<DefaultExtraData.User> = .init(
+        let payload: UserRequestBody<NoExtraData.User> = .init(
             id: .unique,
             name: .unique,
             imageURL: .unique(),

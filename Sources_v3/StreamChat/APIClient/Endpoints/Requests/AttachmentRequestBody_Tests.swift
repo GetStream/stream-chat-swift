@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -13,7 +13,7 @@ class AttachmentRequestBody_Tests: XCTestCase {
         let file: AttachmentFile = .init(type: .gif, size: 1024, mimeType: "gif")
         
         // Build the body.
-        let body = AttachmentRequestBody<DefaultExtraData.Attachment>(
+        let body = AttachmentRequestBody<NoExtraData.Attachment>(
             type: type,
             title: title,
             url: url,

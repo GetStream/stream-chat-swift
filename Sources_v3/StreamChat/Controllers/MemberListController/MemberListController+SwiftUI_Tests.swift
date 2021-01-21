@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -7,7 +7,7 @@ import XCTest
 
 @available(iOS 13, *)
 final class MemberListController_SwiftUI_Tests: iOS13TestCase {
-    var query: ChannelMemberListQuery<DefaultExtraData.User>!
+    var query: ChannelMemberListQuery<NoExtraData.User>!
     var memberListController: ChatChannelMemberListControllerMock!
     
     // MARK: - Setup

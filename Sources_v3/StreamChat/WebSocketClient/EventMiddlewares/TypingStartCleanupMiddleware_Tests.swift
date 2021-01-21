@@ -1,12 +1,12 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
 import XCTest
 
 class TypingStartCleanupMiddleware_Tests: XCTestCase {
-    var middleware: TypingStartCleanupMiddleware<DefaultExtraData>!
+    var middleware: TypingStartCleanupMiddleware<NoExtraData>!
     var currentUser: ChatUser!
     
     var time: VirtualTime!

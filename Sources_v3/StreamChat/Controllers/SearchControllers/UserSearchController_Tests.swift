@@ -270,7 +270,7 @@ class UserSearchController_Tests: StressTestCase {
         // Since we'll generate a bigger id for next user's id and name
         // so that insertion will be [0,1] and not [0,0]
         let userId = "abc".randomElement()!.description
-        let dummyUser = UserPayload<DefaultExtraData.User>(
+        let dummyUser = UserPayload<NoExtraData.User>(
             id: userId,
             name: userId,
             imageURL: .unique(),
@@ -300,7 +300,7 @@ class UserSearchController_Tests: StressTestCase {
         
         // Simulate DB update
         let newUserId = "def".randomElement()!.description
-        let newDummyUser = UserPayload<DefaultExtraData.User>(
+        let newDummyUser = UserPayload<NoExtraData.User>(
             id: newUserId,
             name: newUserId,
             imageURL: .unique(),
@@ -427,7 +427,7 @@ class UserSearchController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userListUpdater: UserListUpdaterMock<DefaultExtraData.User>?
+    @Atomic var userListUpdater: UserListUpdaterMock<NoExtraData.User>?
     
     lazy var environment: ChatUserSearchController.Environment =
         .init(userQueryUpdaterBuilder: { [unowned self] in
@@ -450,7 +450,7 @@ private class TestDelegate: QueueAwareDelegate, ChatUserSearchControllerDelegate
     }
     
     func controller(
-        _ controller: _ChatUserSearchController<DefaultExtraData>,
+        _ controller: _ChatUserSearchController<NoExtraData>,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         didChangeUsers_changes = changes
@@ -469,7 +469,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, _ChatUserSearchController
     }
     
     func controller(
-        _ controller: _ChatUserSearchController<DefaultExtraData>,
+        _ controller: _ChatUserSearchController<NoExtraData>,
         didChangeUsers changes: [ListChange<ChatUser>]
     ) {
         didChangeUsers_changes = changes

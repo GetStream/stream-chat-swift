@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -7,8 +7,8 @@ import XCTest
 
 /// A mock for `ChatChannelMemberListController`.
 final class ChatChannelMemberListControllerMock: ChatChannelMemberListController {
-    @Atomic var members_simulated: [_ChatChannelMember<DefaultExtraData.User>]?
-    override var members: [_ChatChannelMember<DefaultExtraData.User>] {
+    @Atomic var members_simulated: [_ChatChannelMember<NoExtraData.User>]?
+    override var members: [_ChatChannelMember<NoExtraData.User>] {
         members_simulated ?? super.members
     }
     

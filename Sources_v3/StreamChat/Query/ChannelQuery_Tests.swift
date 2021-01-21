@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -14,7 +14,7 @@ class ChannelQuery_Tests: XCTestCase {
         let watchersLimit = 10
 
         // Create ChannelQuery
-        let query = ChannelQuery<DefaultExtraData>(
+        let query = ChannelQuery<NoExtraData>(
             cid: cid,
             paginationParameter: paginationParameter,
             membersLimit: membersLimit,
@@ -39,7 +39,7 @@ class ChannelQuery_Tests: XCTestCase {
     
     func test_pathParameters() {
         // Create query without id specified
-        let query1: ChannelQuery<DefaultExtraData> = .init(channelPayload: .init(
+        let query1: ChannelQuery<NoExtraData> = .init(channelPayload: .init(
             type: .messaging,
             name: .unique,
             imageURL: .unique(),
@@ -54,7 +54,7 @@ class ChannelQuery_Tests: XCTestCase {
         
         // Create query with id and type specified
         let cid: ChannelId = .unique
-        let query2: ChannelQuery<DefaultExtraData> = .init(cid: cid)
+        let query2: ChannelQuery<NoExtraData> = .init(cid: cid)
         
         // Assert type and id are part of path
         XCTAssertEqual(query2.pathParameters, "\(query2.type)/\(query2.id!)")

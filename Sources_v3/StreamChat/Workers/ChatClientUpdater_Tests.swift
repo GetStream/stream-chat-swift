@@ -6,7 +6,7 @@
 import XCTest
 
 final class ChatClientUpdater_Tests_Tests: StressTestCase {
-    typealias ExtraData = DefaultExtraData
+    typealias ExtraData = NoExtraData
 
     // MARK: Disconnect
 

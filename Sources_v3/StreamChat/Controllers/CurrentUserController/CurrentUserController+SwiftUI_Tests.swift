@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -71,8 +71,8 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
 }
 
 class CurrentUserControllerMock: CurrentChatUserController {
-    var currentUser_simulated: _CurrentChatUser<DefaultExtraData.User>?
-    override var currentUser: _CurrentChatUser<DefaultExtraData.User>? {
+    var currentUser_simulated: _CurrentChatUser<NoExtraData.User>?
+    override var currentUser: _CurrentChatUser<NoExtraData.User>? {
         currentUser_simulated ?? super.currentUser
     }
     

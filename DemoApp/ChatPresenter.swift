@@ -19,12 +19,12 @@ extension UIViewController {
         let client = ChatClient(config: config, tokenProvider: .static(token))
 
         // Config
-        var uiConfig = UIConfig<DefaultExtraData>()
+        var uiConfig = UIConfig<NoExtraData>()
         uiConfig.navigation.channelListRouter = DemoChatChannelListRouter.self
         
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
-        let chatList = ChatChannelListVC<DefaultExtraData>()
+        let chatList = ChatChannelListVC<NoExtraData>()
         chatList.controller = controller
         chatList.uiConfig = uiConfig
         
@@ -36,7 +36,7 @@ extension UIViewController {
     }
 }
 
-class DemoChatChannelListRouter: ChatChannelListRouter<DefaultExtraData> {
+class DemoChatChannelListRouter: ChatChannelListRouter<NoExtraData> {
     override func openCreateNewChannel() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
