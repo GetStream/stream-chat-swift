@@ -44,19 +44,19 @@ extension JSONDecoder {
 
 extension JSONEncoder {
     /// A default `JSONEncoder`.
-    public static var `default`: JSONEncoder = stream
+    static var `default`: JSONEncoder = stream
     /// A default gzip `JSONEncoder`.
-    public static var defaultGzip: JSONEncoder = streamGzip
+    static var defaultGzip: JSONEncoder = streamGzip
     
     /// A Stream Chat JSON encoder.
-    public static let stream: JSONEncoder = {
+    static let stream: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .stream
         return encoder
     }()
     
     /// A Stream Chat JSON encoder with a gzipped content.
-    public static let streamGzip: JSONEncoder = {
+    static let streamGzip: JSONEncoder = {
         let encoder = JSONEncoder()
         encoder.dataEncodingStrategy = .gzip
         encoder.dateEncodingStrategy = .stream
