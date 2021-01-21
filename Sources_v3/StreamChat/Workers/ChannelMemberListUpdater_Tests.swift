@@ -9,7 +9,7 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
-    var query: ChannelMemberListQuery<NoExtraData.User>!
+    var query: ChannelMemberListQuery<NoExtraData>!
 
     var listUpdater: ChannelMemberListUpdater<NoExtraData>!
     
@@ -52,11 +52,11 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         }
         
         // Assert members endpoint is called.
-        let membersEndpoint: Endpoint<ChannelMemberListPayload<NoExtraData.User>> = .channelMembers(query: query)
+        let membersEndpoint: Endpoint<ChannelMemberListPayload<NoExtraData>> = .channelMembers(query: query)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
         
         // Simulate members response.
-        let payload = ChannelMemberListPayload<NoExtraData.User>(members: [
+        let payload = ChannelMemberListPayload<NoExtraData>(members: [
             .dummy(userId: .unique),
             .dummy(userId: .unique),
             .dummy(userId: .unique)
@@ -99,7 +99,7 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
             database.viewContext.channel(cid: query.cid)
         }
         
-        let membersEndpoint: Endpoint<ChannelMemberListPayload<NoExtraData.User>> = .channelMembers(query: query)
+        let membersEndpoint: Endpoint<ChannelMemberListPayload<NoExtraData>> = .channelMembers(query: query)
         AssertAsync {
             // Assert channel is saved to the database.
             Assert.willBeTrue(channelDTO != nil)
@@ -108,7 +108,7 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         }
         
         // Simulate members response.
-        let payload = ChannelMemberListPayload<NoExtraData.User>(members: [
+        let payload = ChannelMemberListPayload<NoExtraData>(members: [
             .dummy(userId: .unique),
             .dummy(userId: .unique),
             .dummy(userId: .unique)
@@ -182,12 +182,12 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         }
         
         // Assert members endpoint is called.
-        let membersEndpoint: Endpoint<ChannelMemberListPayload<NoExtraData.User>> = .channelMembers(query: query)
+        let membersEndpoint: Endpoint<ChannelMemberListPayload<NoExtraData>> = .channelMembers(query: query)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
 
         // Simulate members response with failure.
         let networkError = TestError()
-        apiClient.test_simulateResponse(Result<ChannelMemberListPayload<NoExtraData.User>, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<ChannelMemberListPayload<NoExtraData>, Error>.failure(networkError))
         
         // Assert the members network call error is propogated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
@@ -204,7 +204,7 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         }
         
         // Assert members endpoint is called.
-        let membersEndpoint: Endpoint<ChannelMemberListPayload<NoExtraData.User>> = .channelMembers(query: query)
+        let membersEndpoint: Endpoint<ChannelMemberListPayload<NoExtraData>> = .channelMembers(query: query)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
         
         // Update database to throw the error.
@@ -212,7 +212,7 @@ final class ChannelMemberListUpdater_Tests: StressTestCase {
         database.write_errorResponse = databaseError
         
         // Simulate members response with success.
-        let payload = ChannelMemberListPayload<NoExtraData.User>(members: [
+        let payload = ChannelMemberListPayload<NoExtraData>(members: [
             .dummy(userId: .unique),
             .dummy(userId: .unique),
             .dummy(userId: .unique)

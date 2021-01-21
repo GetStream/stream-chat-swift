@@ -25,7 +25,7 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
     
     func test_channelMemberListQuery_loadsCorrectQuery() throws {
         // Create the query.
-        let query = ChannelMemberListQuery<NoExtraData.User>(cid: .unique, filter: .query(.id, text: .unique))
+        let query = ChannelMemberListQuery<NoExtraData>(cid: .unique, filter: .query(.id, text: .unique))
         
         // Save the query to the database.
         try database.writeSynchronously {
@@ -41,7 +41,7 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
     
     func test_saveQuery_savesQueryCorrectly_ifChannelExists() throws {
         // Create the query.
-        let query = ChannelMemberListQuery<NoExtraData.User>(cid: .unique, filter: .query(.id, text: .unique))
+        let query = ChannelMemberListQuery<NoExtraData>(cid: .unique, filter: .query(.id, text: .unique))
         
         // Save channel to the database.
         try database.createChannel(cid: query.cid)
@@ -56,7 +56,7 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
     
     func test_saveQuery_throwsError_ifChannelDoesNotExist() throws {
         // Create the query.
-        let query = ChannelMemberListQuery<NoExtraData.User>(cid: .unique, filter: .query(.id, text: .unique))
+        let query = ChannelMemberListQuery<NoExtraData>(cid: .unique, filter: .query(.id, text: .unique))
         
         // Try to save query to the database.
         XCTAssertThrowsError(try database.createMemberListQuery(query: query)) { error in
@@ -67,12 +67,12 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
     
     // MARK: - Tests
 
-    private func assert(_ dto: ChannelMemberListQueryDTO, match query: ChannelMemberListQuery<NoExtraData.User>) {
+    private func assert(_ dto: ChannelMemberListQueryDTO, match query: ChannelMemberListQuery<NoExtraData>) {
         XCTAssertEqual(dto.queryHash, query.queryHash)
         
         if let filterJSONData = dto.filterJSONData {
             let filter = try? JSONDecoder.default.decode(
-                Filter<MemberListFilterScope<NoExtraData.User>>.self,
+                Filter<MemberListFilterScope<NoExtraData>>.self,
                 from: filterJSONData
             )
             XCTAssertEqual(filter?.filterHash, query.filter?.filterHash)

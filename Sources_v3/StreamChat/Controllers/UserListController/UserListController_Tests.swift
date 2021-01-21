@@ -11,7 +11,7 @@ class UserListController_Tests: StressTestCase {
     
     var client: ChatClient!
     
-    var query: UserListQuery<NoExtraData.User>!
+    var query: UserListQuery<NoExtraData>!
     
     var controller: ChatUserListController!
     var controllerCallbackQueueID: UUID!
@@ -331,7 +331,7 @@ class UserListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userListUpdater: UserListUpdaterMock<NoExtraData.User>?
+    @Atomic var userListUpdater: UserListUpdaterMock<NoExtraData>?
     
     lazy var environment: ChatUserListController.Environment =
         .init(userQueryUpdaterBuilder: { [unowned self] in

@@ -39,7 +39,7 @@ class DatabaseSession_Tests: StressTestCase {
         
         // Try to load a saved channel owner from DB
         if let userId = channelPayload.channel.createdBy?.id {
-            var loadedUser: _ChatUser<NoExtraData.User>? {
+            var loadedUser: _ChatUser<NoExtraData>? {
                 database.viewContext.user(id: userId)?.asModel()
             }
             
@@ -48,7 +48,7 @@ class DatabaseSession_Tests: StressTestCase {
         
         // Try to load the saved member from DB
         if let member = channelPayload.channel.members?.first {
-            var loadedMember: _ChatUser<NoExtraData.User>? {
+            var loadedMember: _ChatUser<NoExtraData>? {
                 database.viewContext.member(userId: member.user.id, cid: channelId)?.asModel()
             }
             
@@ -63,7 +63,7 @@ class DatabaseSession_Tests: StressTestCase {
         
         let channelPayload: ChannelDetailPayload<NoExtraData> = dummyPayload(with: channelId).channel
         
-        let userPayload: UserPayload<NoExtraData.User> = .init(
+        let userPayload: UserPayload<NoExtraData> = .init(
             id: .unique,
             name: .unique,
             imageURL: .unique(),

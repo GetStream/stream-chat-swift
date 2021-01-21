@@ -6,7 +6,7 @@
 import XCTest
 
 final class UserListFilterScope_Tests: XCTestCase {
-    typealias Key<T: FilterValue> = FilterKey<UserListFilterScope<NoExtraData.User>, T>
+    typealias Key<T: FilterValue> = FilterKey<UserListFilterScope<NoExtraData>, T>
     
     func test_filterKeys_matchChannelCodingKeys() {
         XCTAssertEqual(Key<UserId>.id.rawValue, UserPayloadsCodingKeys.id.rawValue)
@@ -28,7 +28,7 @@ final class UserListFilterScope_Tests: XCTestCase {
 class UserListQuery_Tests: XCTestCase {
     // Test UserListQuery encoded correctly
     func test_UserListQuery_encodedCorrectly() throws {
-        let filter: Filter<UserListFilterScope<NoExtraData.User>> = .equal(.id, to: "luke")
+        let filter: Filter<UserListFilterScope<NoExtraData>> = .equal(.id, to: "luke")
         let sort: [Sorting<UserListSortingKey>] = [.init(key: .lastActivityAt)]
 
         // Create UserListQuery
@@ -73,7 +73,7 @@ class UserListQuery_Tests: XCTestCase {
         ]
         
         // Create queries with sortings
-        let queries = sortings.map { UserListQuery<NoExtraData.User>(sort: $0) }
+        let queries = sortings.map { UserListQuery<NoExtraData>(sort: $0) }
         
         // Assert safe sorting option is added
         queries.forEach {

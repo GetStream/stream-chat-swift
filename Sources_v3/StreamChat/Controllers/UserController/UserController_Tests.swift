@@ -338,7 +338,7 @@ final class UserController_Tests: StressTestCase {
         controller.delegate = delegate
         
         // Create user in the database.
-        let initialExtraData: NoExtraData.User = .defaultValue
+        let initialExtraData: NoExtraData = .defaultValue
         try client.databaseContainer.createUser(id: userId, extraData: initialExtraData)
         
         // Assert `create` entity change is received by the delegate

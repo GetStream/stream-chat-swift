@@ -7,7 +7,7 @@ import XCTest
 
 final class GuestEndpoints_Tests: XCTestCase {
     func test_token_buildsCorrectly_withDefaultExtraData() {
-        let extraData = NoExtraData.User.defaultValue
+        let extraData = NoExtraData.defaultValue
         verifyEndpointBuildsCorrectly(with: extraData)
     }
     

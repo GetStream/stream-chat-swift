@@ -60,8 +60,8 @@ class UserListController_SwiftUI_Tests: iOS13TestCase {
 class UserListControllerMock: ChatUserListController {
     @Atomic var synchronize_called = false
     
-    var users_simulated: [_ChatUser<NoExtraData.User>]?
-    override var users: [_ChatUser<NoExtraData.User>] {
+    var users_simulated: [_ChatUser<NoExtraData>]?
+    override var users: [_ChatUser<NoExtraData>] {
         users_simulated ?? super.users
     }
 

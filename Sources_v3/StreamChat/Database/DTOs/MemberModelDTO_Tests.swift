@@ -17,7 +17,7 @@ class MemberModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
         
-        let userPayload: UserPayload<NoExtraData.User> = .init(
+        let userPayload: UserPayload<NoExtraData> = .init(
             id: userId,
             name: .unique,
             imageURL: .unique(),
@@ -31,7 +31,7 @@ class MemberModelDTO_Tests: XCTestCase {
             extraData: .defaultValue
         )
         
-        let payload: MemberPayload<NoExtraData.User> = .init(
+        let payload: MemberPayload<NoExtraData> = .init(
             user: userPayload,
             role: .moderator,
             createdAt: .init(timeIntervalSince1970: 4000),
@@ -44,7 +44,7 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         // Load the member from the db and check it's the same member
-        var loadedMember: _ChatChannelMember<NoExtraData.User>? {
+        var loadedMember: _ChatChannelMember<NoExtraData>? {
             database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
         
@@ -67,7 +67,7 @@ class MemberModelDTO_Tests: XCTestCase {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
         
-        let userPayload: UserPayload<NoExtraData.User> = .init(
+        let userPayload: UserPayload<NoExtraData> = .init(
             id: userId,
             name: .unique,
             imageURL: .unique(),
@@ -81,7 +81,7 @@ class MemberModelDTO_Tests: XCTestCase {
             extraData: .init()
         )
         
-        let payload: MemberPayload<NoExtraData.User> = .init(
+        let payload: MemberPayload<NoExtraData> = .init(
             user: userPayload,
             role: .moderator,
             createdAt: .unique,
@@ -104,8 +104,8 @@ class MemberModelDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create member and query.
-        let member: MemberPayload<NoExtraData.User> = .dummy(userId: userId)
-        let query = ChannelMemberListQuery<NoExtraData.User>(cid: cid, filter: .equal("id", to: userId))
+        let member: MemberPayload<NoExtraData> = .dummy(userId: userId)
+        let query = ChannelMemberListQuery<NoExtraData>(cid: cid, filter: .equal("id", to: userId))
 
         // Save channel, then member, and pass the query in.
         try database.writeSynchronously { session in

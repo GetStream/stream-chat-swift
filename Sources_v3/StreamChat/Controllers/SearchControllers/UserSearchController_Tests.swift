@@ -270,7 +270,7 @@ class UserSearchController_Tests: StressTestCase {
         // Since we'll generate a bigger id for next user's id and name
         // so that insertion will be [0,1] and not [0,0]
         let userId = "abc".randomElement()!.description
-        let dummyUser = UserPayload<NoExtraData.User>(
+        let dummyUser = UserPayload<NoExtraData>(
             id: userId,
             name: userId,
             imageURL: .unique(),
@@ -300,7 +300,7 @@ class UserSearchController_Tests: StressTestCase {
         
         // Simulate DB update
         let newUserId = "def".randomElement()!.description
-        let newDummyUser = UserPayload<NoExtraData.User>(
+        let newDummyUser = UserPayload<NoExtraData>(
             id: newUserId,
             name: newUserId,
             imageURL: .unique(),
@@ -427,7 +427,7 @@ class UserSearchController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var userListUpdater: UserListUpdaterMock<NoExtraData.User>?
+    @Atomic var userListUpdater: UserListUpdaterMock<NoExtraData>?
     
     lazy var environment: ChatUserSearchController.Environment =
         .init(userQueryUpdaterBuilder: { [unowned self] in

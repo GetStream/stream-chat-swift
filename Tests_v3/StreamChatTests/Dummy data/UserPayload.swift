@@ -5,13 +5,13 @@
 import Foundation
 @testable import StreamChat
 
-extension UserPayload where ExtraData == NoExtraData.User {
+extension UserPayload where ExtraData == NoExtraData {
     /// Returns a dummy user payload with the given `id` and `extraData`
     static func dummy(
         userId: UserId,
         name: String = .unique,
         imageUrl: URL? = .unique(),
-        extraData: NoExtraData.User = .defaultValue
+        extraData: NoExtraData = .defaultValue
     ) -> UserPayload {
         .init(
             id: userId,

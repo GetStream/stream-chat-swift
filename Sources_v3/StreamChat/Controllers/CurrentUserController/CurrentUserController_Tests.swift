@@ -142,8 +142,8 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_delegate_isNotifiedAboutCreatedUser() throws {
-        let extraData = NoExtraData.User.defaultValue
-        let currentUserPayload: CurrentUserPayload<NoExtraData.User> = .dummy(
+        let extraData = NoExtraData.defaultValue
+        let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -166,8 +166,8 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_delegate_isNotifiedAboutUpdatedUser() throws {
-        var extraData = NoExtraData.User.defaultValue
-        var currentUserPayload: CurrentUserPayload<NoExtraData.User> = .dummy(
+        var extraData = NoExtraData.defaultValue
+        var currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -183,7 +183,7 @@ final class CurrentUserController_Tests: StressTestCase {
         }
         
         // Update current user data
-        extraData = NoExtraData.User.defaultValue
+        extraData = NoExtraData.defaultValue
         currentUserPayload = .dummy(
             userId: currentUserPayload.id,
             role: currentUserPayload.role,
@@ -211,7 +211,7 @@ final class CurrentUserController_Tests: StressTestCase {
 
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {
-            let currentUserPayload: CurrentUserPayload<NoExtraData.User> = .dummy(
+            let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                 userId: .unique,
                 role: .user,
                 unreadCount: unreadCount
@@ -227,7 +227,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_updateUser_shouldMakeAPICall() throws {
         // Simulate user already set
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
@@ -257,7 +257,7 @@ final class CurrentUserController_Tests: StressTestCase {
         client.mockAPIClient.test_simulateResponse(.success(currentUserUpdateResponse))
         
         // Assert that request is made to the correct endpoint
-        let expectedEndpoint: Endpoint<UserUpdateResponse<NoExtraData.User>> = .updateUser(
+        let expectedEndpoint: Endpoint<UserUpdateResponse<NoExtraData>> = .updateUser(
             id: userPayload.id,
             payload: .init(name: expectedName, imageURL: expectedImageUrl, extraData: nil)
         )
@@ -266,7 +266,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_updateUser_shouldUpdateDB() throws {
         // Simulate user already set
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
@@ -310,7 +310,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_updateUser_whenAPICallError_shouldCompleteWithError() throws {
         // Simulate user already set
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
@@ -331,7 +331,7 @@ final class CurrentUserController_Tests: StressTestCase {
         client
             .mockAPIClient
             .test_simulateResponse(
-                Result<UserUpdateResponse<NoExtraData.User>, Error>.failure(error)
+                Result<UserUpdateResponse<NoExtraData>, Error>.failure(error)
             )
         client
             .mockAPIClient
@@ -356,7 +356,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_updateUser_whenNoDataProvided_shouldNotMakeRequest() throws {
         // Simulate user already set
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
@@ -376,7 +376,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_updateUser_whenDBFails_shouldCompleteWithDatabaseError() throws {
         // Simulate user already set
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         try client.databaseContainer.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
@@ -484,7 +484,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_addDevice_makesCorrectAPICall() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -503,7 +503,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_addDevice_forwardsNetworkError() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -535,7 +535,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_addDevice_forwardsDatabaseError() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -560,7 +560,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_addDevice_successfulResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -595,7 +595,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_removeDevice_makesCorrectAPICall() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -614,7 +614,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_removeDevice_forwardsNetworkError() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -646,7 +646,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_removeDevice_forwardsDatabaseError() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         let deviceId = userPayload.devices.first!.id
         
         // Save user to the db
@@ -672,7 +672,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_removeDevice_successfulResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         let deviceId = userPayload.devices.first!.id
         
         // Save user to the db
@@ -708,7 +708,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_updateDevices_makesCorrectAPICall() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -727,7 +727,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_updateDevices_forwardsNetworkError() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -759,7 +759,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_updateDevices_forwardsDatabaseError() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {
@@ -784,7 +784,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_updateDevices_successfulResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload<NoExtraData.User> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try client.databaseContainer.writeSynchronously {

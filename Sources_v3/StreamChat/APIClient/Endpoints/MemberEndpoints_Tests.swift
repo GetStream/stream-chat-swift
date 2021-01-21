@@ -7,13 +7,13 @@ import XCTest
 
 final class MemberEndpoints_Tests: XCTestCase {
     func test_channelMembers_buildsCorrectly() {
-        let query = ChannelMemberListQuery<NoExtraData.User>(
+        let query = ChannelMemberListQuery<NoExtraData>(
             cid: .unique,
             filter: .equal(.id, to: "Luke"),
             sort: [.init(key: .createdAt)]
         )
         
-        let expectedEndpoint = Endpoint<ChannelMemberListPayload<NoExtraData.User>>(
+        let expectedEndpoint = Endpoint<ChannelMemberListPayload<NoExtraData>>(
             path: "members",
             method: .get,
             queryItems: nil,
@@ -22,7 +22,7 @@ final class MemberEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint.
-        let endpoint: Endpoint<ChannelMemberListPayload<NoExtraData.User>> = .channelMembers(query: query)
+        let endpoint: Endpoint<ChannelMemberListPayload<NoExtraData>> = .channelMembers(query: query)
         
         // Assert endpoint is built correctly.
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

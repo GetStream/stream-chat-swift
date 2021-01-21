@@ -26,7 +26,7 @@ extension UserId {
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias CurrentChatUser = _CurrentChatUser<NoExtraData.User>
+public typealias CurrentChatUser = _CurrentChatUser<NoExtraData>
 
 /// A type representing the currently logged-in user. `_CurrentChatUser` is an immutable snapshot of a current user entity at
 /// the given time.
