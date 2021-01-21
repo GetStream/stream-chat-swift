@@ -8,10 +8,10 @@ import Foundation
 
 extension JSONDecoder {
     /// A default `JSONDecoder`.
-    public static var `default`: JSONDecoder = stream
+    static var `default`: JSONDecoder = stream
     
     /// A Stream Chat JSON decoder.
-    public static let stream: JSONDecoder = {
+    static let stream: JSONDecoder = {
         let decoder = JSONDecoder()
         
         /// A custom decoding for a date.
