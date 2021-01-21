@@ -23,7 +23,7 @@ public extension _ChatClient {
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
-    func channelController(for channelQuery: ChannelQuery<ExtraData>) -> _ChatChannelController<ExtraData> {
+    func channelController(for channelQuery: _ChannelQuery<ExtraData>) -> _ChatChannelController<ExtraData> {
         .init(channelQuery: channelQuery, client: self)
     }
     
@@ -136,7 +136,7 @@ public typealias ChatChannelController = _ChatChannelController<NoExtraData>
 ///
 public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The ChannelQuery this controller observes.
-    @Atomic public private(set) var channelQuery: ChannelQuery<ExtraData>
+    @Atomic public private(set) var channelQuery: _ChannelQuery<ExtraData>
     
     /// Flag indicating whether channel is created on backend. We need this flag to restrict channel modification requests
     /// before channel is created on backend.
@@ -261,7 +261,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     ///   - environment: Environment for this controller.
     ///   - isChannelAlreadyCreated: Flag indicating whether channel is created on backend.
     init(
-        channelQuery: ChannelQuery<ExtraData>,
+        channelQuery: _ChannelQuery<ExtraData>,
         client: _ChatClient<ExtraData>,
         environment: Environment = .init(),
         isChannelAlreadyCreated: Bool = true
@@ -345,7 +345,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     /// - Returns: Error if it occurs while setting up database observers.
     private func set(cid: ChannelId) -> Error? {
         if channelQuery.cid != cid {
-            channelQuery = ChannelQuery(cid: cid, channelQuery: channelQuery)
+            channelQuery = _ChannelQuery(cid: cid, channelQuery: channelQuery)
         }
         setupEventObservers(for: cid)
         return startDatabaseObservers()

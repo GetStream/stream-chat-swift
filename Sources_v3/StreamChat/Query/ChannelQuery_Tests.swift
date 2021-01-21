@@ -14,7 +14,7 @@ class ChannelQuery_Tests: XCTestCase {
         let watchersLimit = 10
 
         // Create ChannelQuery
-        let query = ChannelQuery<NoExtraData>(
+        let query = ChannelQuery(
             cid: cid,
             paginationParameter: paginationParameter,
             membersLimit: membersLimit,
@@ -39,7 +39,7 @@ class ChannelQuery_Tests: XCTestCase {
     
     func test_pathParameters() {
         // Create query without id specified
-        let query1: ChannelQuery<NoExtraData> = .init(channelPayload: .init(
+        let query1: ChannelQuery = .init(channelPayload: .init(
             type: .messaging,
             name: .unique,
             imageURL: .unique(),
@@ -54,7 +54,7 @@ class ChannelQuery_Tests: XCTestCase {
         
         // Create query with id and type specified
         let cid: ChannelId = .unique
-        let query2: ChannelQuery<NoExtraData> = .init(cid: cid)
+        let query2: ChannelQuery = .init(cid: cid)
         
         // Assert type and id are part of path
         XCTAssertEqual(query2.pathParameters, "\(query2.type)/\(query2.id!)")

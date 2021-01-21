@@ -15,7 +15,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func update(
-        channelQuery: ChannelQuery<ExtraData>,
+        channelQuery: _ChannelQuery<ExtraData>,
         channelCreatedCallback: ((ChannelId) -> Void)? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {

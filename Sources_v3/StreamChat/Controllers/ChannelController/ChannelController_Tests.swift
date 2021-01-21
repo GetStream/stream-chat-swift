@@ -548,7 +548,7 @@ class ChannelController_Tests: StressTestCase {
     func test_delegateContinueToReceiveEvents_afterObserversReset() throws {
         // Assign `ChannelController` that creates new channel
         controller = ChatChannelController(
-            channelQuery: ChannelQuery(cid: channelId),
+            channelQuery: _ChannelQuery(cid: channelId),
             client: client,
             environment: env.environment,
             isChannelAlreadyCreated: false
@@ -750,7 +750,7 @@ class ChannelController_Tests: StressTestCase {
     
     // MARK: - Channel actions propagation tests
 
-    func setupControllerForNewChannel(query: ChannelQuery<NoExtraData>) {
+    func setupControllerForNewChannel(query: ChannelQuery) {
         controller = ChatChannelController(
             channelQuery: query,
             client: client,
@@ -765,7 +765,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_updateChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `updateChannel` call and assert the error is returned
@@ -841,7 +841,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_muteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `muteChannel` call and assert error is returned
@@ -920,7 +920,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_unmuteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `unmuteChannel` call and assert error is returned
@@ -999,7 +999,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_deleteChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `deleteChannel` call and assert error is returned
@@ -1077,7 +1077,7 @@ class ChannelController_Tests: StressTestCase {
 
     func test_hideChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `hideChannel` call and assert error is returned
@@ -1156,7 +1156,7 @@ class ChannelController_Tests: StressTestCase {
 
     func test_showChannel_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
 
         // Simulate `showChannel` call and assert error is returned
@@ -1582,7 +1582,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_createNewMessage_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate `createNewMessage` call and assert error is returned
@@ -1609,7 +1609,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_addMembers_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         let members: Set<UserId> = [.unique]
 
@@ -1693,7 +1693,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_removeMembers_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         let members: Set<UserId> = [.unique]
 
@@ -1777,7 +1777,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_markRead_failsForNewChannels() throws {
         //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = _ChannelQuery(channelPayload: .unique)
         setupControllerForNewChannel(query: query)
         
         // Simulate `markRead` call and assert error is returned
