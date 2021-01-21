@@ -54,7 +54,7 @@ public typealias ChatClient = _ChatClient<NoExtraData>
 /// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
 ///
 /// - Note: `_ChatClient` type is not meant to be used directly. If you don't use custom extra data types, use `ChatClient`
-/// typealis instead. When using custom extra data types, you should create your own `ChatClient` typealias for `_ChatClient`.
+/// typealias instead. When using custom extra data types, you should create your own `ChatClient` typealias for `_ChatClient`.
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
 public class _ChatClient<ExtraData: ExtraDataTypes> {
