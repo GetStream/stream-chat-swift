@@ -16,7 +16,7 @@ extension Endpoint {
         )
     }
     
-    static func channel<ExtraData: ExtraDataTypes>(query: ChannelQuery<ExtraData>) -> Endpoint<ChannelPayload<ExtraData>> {
+    static func channel<ExtraData: ExtraDataTypes>(query: _ChannelQuery<ExtraData>) -> Endpoint<ChannelPayload<ExtraData>> {
         .init(
             path: "channels/\(query.pathParameters)/query",
             method: .post,

@@ -7,7 +7,7 @@ import XCTest
 
 /// Mock implementation of ChannelUpdater
 class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
-    @Atomic var update_channelQuery: ChannelQuery<ExtraData>?
+    @Atomic var update_channelQuery: _ChannelQuery<ExtraData>?
     @Atomic var update_channelCreatedCallback: ((ChannelId) -> Void)?
     @Atomic var update_completion: ((Error?) -> Void)?
 
@@ -92,7 +92,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     }
     
     override func update(
-        channelQuery: ChannelQuery<ExtraData>,
+        channelQuery: _ChannelQuery<ExtraData>,
         channelCreatedCallback: ((ChannelId) -> Void)?,
         completion: ((Error?) -> Void)?
     ) {

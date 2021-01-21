@@ -1,11 +1,28 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 /// A channel query.
-public struct ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
+///
+/// - Note: `ChannelQuery` is a typealias of `_ChannelQuery` with the default extra data types.
+/// If you want to use your custom extra data types, you should create your own `ChannelQuery`
+/// typealias for `_ChannelQuery`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public typealias ChannelQuery = _ChannelQuery<NoExtraData>
+
+/// A channel query.
+///
+/// - Note: `_ChannelQuery` type is not meant to be used directly.
+/// If you don't use custom extra data types, use `ChannelQuery` typealias instead.
+/// When using custom extra data types, you should create your own `ChannelQuery` typealias for `_ChannelQuery`.
+///
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+///
+public struct _ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     private enum CodingKeys: String, CodingKey {
         case data
         case messages
