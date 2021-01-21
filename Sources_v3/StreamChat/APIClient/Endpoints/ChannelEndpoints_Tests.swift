@@ -7,15 +7,15 @@ import XCTest
 
 final class ChannelEndpoints_Tests: XCTestCase {
     func test_channels_buildsCorrectly() {
-        let filter: Filter<ChannelListFilterScope<NoExtraData.Channel>> = .containMembers(userIds: [.unique])
+        let filter: Filter<ChannelListFilterScope<NoExtraData>> = .containMembers(userIds: [.unique])
         
-        func channelListQuery(options: QueryOptions) -> ChannelListQuery<NoExtraData.Channel> {
-            var query: ChannelListQuery<NoExtraData.Channel> = .init(filter: filter)
+        func channelListQuery(options: QueryOptions) -> ChannelListQuery<NoExtraData> {
+            var query: ChannelListQuery<NoExtraData> = .init(filter: filter)
             query.options = options
             return query
         }
         
-        let testCases: [(ChannelListQuery<NoExtraData.Channel>, Bool)] = [
+        let testCases: [(ChannelListQuery<NoExtraData>, Bool)] = [
             (channelListQuery(options: .state), true),
             (channelListQuery(options: .presence), true),
             (channelListQuery(options: .watch), true),
