@@ -132,7 +132,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let command: String = .unique
         let arguments: String = .unique
         let attachments: [ChatMessageAttachment.Seed] = [.dummy(), .dummy(), .dummy()]
-        let extraData: NoExtraData.Message = .defaultValue
+        let extraData: NoExtraData = .defaultValue
         
         // Create new message
         let newMessageId: MessageId = try await { completion in

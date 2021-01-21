@@ -619,7 +619,7 @@ final class MessageController_Tests: StressTestCase {
 //        let arguments: String = .unique
         let showReplyInChannel = true
         let quotedMessageId: MessageId = .unique
-        let extraData: NoExtraData.Message = .defaultValue
+        let extraData: NoExtraData = .defaultValue
         let attachments: [ChatMessageAttachment.Seed] = [
             .dummy(),
             .dummy(),
@@ -843,7 +843,7 @@ final class MessageController_Tests: StressTestCase {
     func test_addReaction_callsUpdater_withCorrectValues() {
         let type: MessageReactionType = "like"
         let score = 5
-        let extraData: NoExtraData.MessageReaction = .defaultValue
+        let extraData: NoExtraData = .defaultValue
         
         // Simulate `addReaction` call.
         controller.addReaction(type, score: score, extraData: extraData)
