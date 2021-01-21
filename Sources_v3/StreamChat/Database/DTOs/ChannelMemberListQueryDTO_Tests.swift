@@ -72,7 +72,7 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
         
         if let filterJSONData = dto.filterJSONData {
             let filter = try? JSONDecoder.default.decode(
-                Filter<MemberListFilterScope<NoExtraData>>.self,
+                Filter<MemberListFilterScope>.self,
                 from: filterJSONData
             )
             XCTAssertEqual(filter?.filterHash, query.filter?.filterHash)

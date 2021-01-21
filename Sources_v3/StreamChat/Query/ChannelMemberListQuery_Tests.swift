@@ -1,12 +1,12 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
 import XCTest
 
 final class MemberListFilterScope_Tests: XCTestCase {
-    typealias Key<T: FilterValue> = FilterKey<MemberListFilterScope<NoExtraData>, T>
+    typealias Key<T: FilterValue> = FilterKey<MemberListFilterScope, T>
     
     func test_filterKeys_matchChannelCodingKeys() {
         // Member specific coding keys
