@@ -1,11 +1,11 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 @testable import StreamChat
 
-extension MemberPayload where ExtraData == DefaultExtraData.User {
+extension MemberPayload where ExtraData == NoExtraData.User {
     /// Returns a dummy member payload with the given `userId` and `role`
     static func dummy(
         userId: UserId = .unique,

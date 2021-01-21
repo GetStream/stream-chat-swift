@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ import Foundation
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatChannelMember = _ChatChannelMember<DefaultExtraData.User>
+public typealias ChatChannelMember = _ChatChannelMember<NoExtraData.User>
 
 /// A type representing a chat channel member. `_ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
 ///

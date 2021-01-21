@@ -26,7 +26,7 @@ public extension _ChatClient {
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatChannelMemberController = _ChatChannelMemberController<DefaultExtraData>
+public typealias ChatChannelMemberController = _ChatChannelMemberController<NoExtraData>
 
 /// `_ChatChannelMemberController` is a controller class which allows mutating and observing changes of a specific chat member.
 ///
@@ -226,7 +226,7 @@ extension _ChatChannelMemberController {
     }
 }
 
-public extension _ChatChannelMemberController where ExtraData == DefaultExtraData {
+public extension _ChatChannelMemberController where ExtraData == NoExtraData {
     /// Set the delegate of `ChatMemberController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -331,7 +331,7 @@ extension AnyChatChannelMemberControllerDelegate {
     }
 }
 
-extension AnyChatChannelMemberControllerDelegate where ExtraData == DefaultExtraData {
+extension AnyChatChannelMemberControllerDelegate where ExtraData == NoExtraData {
     convenience init(_ delegate: ChatChannelMemberControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

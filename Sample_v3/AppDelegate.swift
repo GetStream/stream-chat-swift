@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func setUpAppearance() {
-        UIConfig<DefaultExtraData>.default.navigation.channelListRouter = MyChatChannelListRouter.self
+        UIConfig<NoExtraData>.default.navigation.channelListRouter = MyChatChannelListRouter.self
         ChatChannelListCollectionView.appearance().backgroundColor = .white
     }
 }

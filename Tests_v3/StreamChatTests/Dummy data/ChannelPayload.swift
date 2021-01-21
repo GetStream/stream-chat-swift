@@ -1,14 +1,14 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 @testable import StreamChat
 
-extension ChannelDetailPayload where ExtraData == DefaultExtraData {
+extension ChannelDetailPayload where ExtraData == NoExtraData {
     /// Returns a dummy channel detail payload with the given cid
     static func dummy(cid: ChannelId) -> ChannelDetailPayload {
-        let member: MemberPayload<DefaultExtraData.User> =
+        let member: MemberPayload<NoExtraData.User> =
             .init(
                 user: .init(
                     id: .unique,

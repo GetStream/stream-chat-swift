@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -11,7 +11,7 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: DefaultExtraData.User.defaultValue
+            extraData: NoExtraData.User.defaultValue
         )
         
         try verify(payload, isEncodedAs: ["id": payload.userId, "name": payload.name!, "image": payload.imageURL!])

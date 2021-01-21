@@ -26,7 +26,7 @@ extension _ChatClient {
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatChannelListController = _ChatChannelListController<DefaultExtraData>
+public typealias ChatChannelListController = _ChatChannelListController<NoExtraData>
 
 /// `_ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
 ///
@@ -197,7 +197,7 @@ extension _ChatChannelListController {
     }
 }
 
-extension _ChatChannelListController where ExtraData == DefaultExtraData {
+extension _ChatChannelListController where ExtraData == NoExtraData {
     /// Set the delegate of `ChannelListController` to observe the changes in the system.
     ///
     /// - Note: The delegate can be set directly only if you're **not** using custom extra data types. Due to the current
@@ -229,7 +229,7 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
 
 public extension ChatChannelListControllerDelegate {
     func controller(
-        _ controller: _ChatChannelListController<DefaultExtraData>,
+        _ controller: _ChatChannelListController<NoExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {}
 }
@@ -309,7 +309,7 @@ extension AnyChannelListControllerDelegate {
     }
 }
 
-extension AnyChannelListControllerDelegate where ExtraData == DefaultExtraData {
+extension AnyChannelListControllerDelegate where ExtraData == NoExtraData {
     convenience init(_ delegate: ChatChannelListControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

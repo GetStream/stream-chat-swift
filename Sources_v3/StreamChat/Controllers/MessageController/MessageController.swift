@@ -24,7 +24,7 @@ public extension _ChatClient {
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatMessageController = _ChatMessageController<DefaultExtraData>
+public typealias ChatMessageController = _ChatMessageController<NoExtraData>
 
 /// `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
 ///
@@ -556,7 +556,7 @@ extension AnyMessageControllerDelegate {
     }
 }
 
-extension AnyMessageControllerDelegate where ExtraData == DefaultExtraData {
+extension AnyMessageControllerDelegate where ExtraData == NoExtraData {
     convenience init(_ delegate: ChatMessageControllerDelegate?) {
         self.init(
             wrappedDelegate: delegate,

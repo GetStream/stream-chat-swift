@@ -8,7 +8,7 @@ import XCTest
 
 class ChatClient_Tests: StressTestCase {
     var userId: UserId!
-    private var testEnv: TestEnvironment<DefaultExtraData>!
+    private var testEnv: TestEnvironment<NoExtraData>!
     
     // A helper providing ChatClientConfig with in-memory DB option
     var inMemoryStorageConfig: ChatClientConfig {
@@ -39,13 +39,13 @@ class ChatClient_Tests: StressTestCase {
     }
     
     var workerBuilders: [WorkerBuilder] = [
-        MessageSender<DefaultExtraData>.init,
-        NewChannelQueryUpdater<DefaultExtraData>.init,
-        NewUserQueryUpdater<DefaultExtraData.User>.init
+        MessageSender<NoExtraData>.init,
+        NewChannelQueryUpdater<NoExtraData>.init,
+        NewUserQueryUpdater<NoExtraData.User>.init
     ]
     
     var eventWorkerBuilders: [EventWorkerBuilder] = [
-        ChannelWatchStateUpdater<DefaultExtraData>.init
+        ChannelWatchStateUpdater<NoExtraData>.init
     ]
     
     // MARK: - Database stack tests
@@ -184,7 +184,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNotNil(webSocket?.init_eventDecoder)
         
         // EventDataProcessorMiddleware must be always first
-        XCTAssert(webSocket?.init_eventNotificationCenter.middlewares[0] is EventDataProcessorMiddleware<DefaultExtraData>)
+        XCTAssert(webSocket?.init_eventNotificationCenter.middlewares[0] is EventDataProcessorMiddleware<NoExtraData>)
         
         // Assert Client sets itself as delegate for the request encoder
         XCTAssert(webSocket?.init_requestEncoder.connectionDetailsProviderDelegate === client)
@@ -208,20 +208,20 @@ class ChatClient_Tests: StressTestCase {
         let middlewares = try XCTUnwrap(testEnv.webSocketClient?.init_eventNotificationCenter.middlewares)
         
         // Assert `EventDataProcessorMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is EventDataProcessorMiddleware<DefaultExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is EventDataProcessorMiddleware<NoExtraData> }))
         // Assert `TypingStartCleanupMiddleware` exists
-        let typingStartCleanupMiddlewareIndex = middlewares.firstIndex { $0 is TypingStartCleanupMiddleware<DefaultExtraData> }
+        let typingStartCleanupMiddlewareIndex = middlewares.firstIndex { $0 is TypingStartCleanupMiddleware<NoExtraData> }
         XCTAssertNotNil(typingStartCleanupMiddlewareIndex)
         // Assert `ChannelReadUpdaterMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is ChannelReadUpdaterMiddleware<DefaultExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is ChannelReadUpdaterMiddleware<NoExtraData> }))
         // Assert `ChannelMemberTypingStateUpdaterMiddleware` exists
         let typingStateUpdaterMiddlewareIndex = middlewares
-            .firstIndex { $0 is ChannelMemberTypingStateUpdaterMiddleware<DefaultExtraData> }
+            .firstIndex { $0 is ChannelMemberTypingStateUpdaterMiddleware<NoExtraData> }
         XCTAssertNotNil(typingStateUpdaterMiddlewareIndex)
         // Assert `ChannelMemberTypingStateUpdaterMiddleware` goes after `TypingStartCleanupMiddleware`
         XCTAssertTrue(typingStateUpdaterMiddlewareIndex! > typingStartCleanupMiddlewareIndex!)
         // Assert `MessageReactionsMiddleware` exists
-        XCTAssert(middlewares.contains(where: { $0 is MessageReactionsMiddleware<DefaultExtraData> }))
+        XCTAssert(middlewares.contains(where: { $0 is MessageReactionsMiddleware<NoExtraData> }))
     }
     
     func test_connectionStatus_isExposed() {
@@ -229,13 +229,13 @@ class ChatClient_Tests: StressTestCase {
         config.shouldConnectAutomatically = false
 
         // Create an environment.
-        var clientUpdater: ChatClientUpdater<DefaultExtraData>?
+        var clientUpdater: ChatClientUpdater<NoExtraData>?
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = {
             if let updater = clientUpdater {
                 return updater
             } else {
-                let updater = ChatClientUpdater<DefaultExtraData>(client: $0)
+                let updater = ChatClientUpdater<NoExtraData>(client: $0)
                 clientUpdater = updater
                 return updater
             }
@@ -405,13 +405,13 @@ class ChatClient_Tests: StressTestCase {
         )
         
         // Check all the mandatory background workers are initialized
-        XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender<DefaultExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is NewChannelQueryUpdater<DefaultExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater<DefaultExtraData.User> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is ChannelWatchStateUpdater<DefaultExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor<DefaultExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is MissingEventsPublisher<DefaultExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader<DefaultExtraData> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is MessageSender<NoExtraData> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is NewChannelQueryUpdater<NoExtraData> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is NewUserQueryUpdater<NoExtraData.User> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is ChannelWatchStateUpdater<NoExtraData> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor<NoExtraData> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is MissingEventsPublisher<NoExtraData> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader<NoExtraData> })
     }
     
     func test_backgroundWorkersConfiguration() {

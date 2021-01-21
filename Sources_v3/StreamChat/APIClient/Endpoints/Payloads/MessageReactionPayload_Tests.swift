@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -8,7 +8,7 @@ import XCTest
 final class MessageReactionPayload_Tests: XCTestCase {
     func test_json_isDeserialized_withDefaultExtraData() throws {
         let json = XCTestCase.mockData(fromFile: "MessageReactionPayload+DefaultExtraData", extension: "json")
-        let payload = try JSONDecoder.default.decode(MessageReactionPayload<DefaultExtraData>.self, from: json)
+        let payload = try JSONDecoder.default.decode(MessageReactionPayload<NoExtraData>.self, from: json)
         
         // Assert payload is deserialized correctly.
         XCTAssertEqual(payload.type, "love")

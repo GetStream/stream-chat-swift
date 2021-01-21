@@ -9,7 +9,7 @@ import XCTest
 final class MemberListController_Tests: StressTestCase {
     private var env: TestEnvironment!
     
-    var query: ChannelMemberListQuery<DefaultExtraData.User>!
+    var query: ChannelMemberListQuery<NoExtraData.User>!
     var client: ChatClient!
     var controller: ChatChannelMemberListController!
     var controllerCallbackQueueID: UUID!
@@ -451,7 +451,7 @@ final class MemberListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var memberListUpdater: ChannelMemberListUpdaterMock<DefaultExtraData>?
+    @Atomic var memberListUpdater: ChannelMemberListUpdaterMock<NoExtraData>?
     @Atomic var memberListObserver: ListDatabaseObserverMock<ChatChannelMember, MemberDTO>?
     @Atomic var memberListObserverSynchronizeError: Error?
     

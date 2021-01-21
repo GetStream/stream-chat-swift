@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -58,7 +58,7 @@ class AttachmentDTO_Tests: XCTestCase {
     func test_attachmentPayload_isStoredAndLoadedFromDB() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let attachment: AttachmentPayload<DefaultExtraData.Attachment> = .dummy()
+        let attachment: AttachmentPayload<NoExtraData.Attachment> = .dummy()
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
         // Create channel, message and attachment in the database.
@@ -146,7 +146,7 @@ class AttachmentDTO_Tests: XCTestCase {
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let attachment: AttachmentPayload<DefaultExtraData.Attachment> = .dummy()
+        let attachment: AttachmentPayload<NoExtraData.Attachment> = .dummy()
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
         // Prepare channel and message with the attachment in DB
@@ -169,7 +169,7 @@ class AttachmentDTO_Tests: XCTestCase {
     func test_messagePayload_asModel() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let attachment: AttachmentPayload<DefaultExtraData.Attachment> = .dummy()
+        let attachment: AttachmentPayload<NoExtraData.Attachment> = .dummy()
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
         let attachmentLocalState: LocalAttachmentState = .uploading(progress: 0.5)
 
@@ -216,7 +216,7 @@ class AttachmentDTO_Tests: XCTestCase {
             }
 
             // Load the attachment for the message from the db
-            let requestBody: AttachmentRequestBody<DefaultExtraData.Attachment>? = database
+            let requestBody: AttachmentRequestBody<NoExtraData.Attachment>? = database
                 .viewContext
                 .attachment(id: attachmentId)?
                 .asRequestPayload()
@@ -236,7 +236,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         try database.createMessage(id: messageId)
         
-        let payload: AttachmentPayload<DefaultExtraData.Attachment> = .dummy()
+        let payload: AttachmentPayload<NoExtraData.Attachment> = .dummy()
         
         // Try to save an attachment and catch an error
         let error = try await {
@@ -255,7 +255,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         try database.createChannel(cid: cid, withMessages: false)
         
-        let payload: AttachmentPayload<DefaultExtraData.Attachment> = .dummy()
+        let payload: AttachmentPayload<NoExtraData.Attachment> = .dummy()
         
         // Try to save an attachment and catch an error
         let error = try await {
@@ -295,7 +295,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment?.localURL, attachmentSeed.localURL)
 
         // Save attachment payload with the same id.
-        let attachmentPayload: AttachmentPayload<DefaultExtraData.Attachment> = .dummy()
+        let attachmentPayload: AttachmentPayload<NoExtraData.Attachment> = .dummy()
         try database.writeSynchronously { session in
             try session.saveAttachment(payload: attachmentPayload, id: attachmentId)
         }

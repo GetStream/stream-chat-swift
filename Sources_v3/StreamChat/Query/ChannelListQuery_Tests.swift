@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -40,7 +40,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         
         // Create queries with sortings
         let queries = sortings.map {
-            ChannelListQuery<DefaultExtraData.Channel>(filter: .containMembers(userIds: [.unique]), sort: $0)
+            ChannelListQuery<NoExtraData.Channel>(filter: .containMembers(userIds: [.unique]), sort: $0)
         }
         
         // Assert safe sorting option is added

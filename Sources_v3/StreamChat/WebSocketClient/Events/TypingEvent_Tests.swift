@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -7,7 +7,7 @@ import XCTest
 
 class TypingEvent_Tests: XCTestCase {
     func test_Typing() throws {
-        let eventDecoder = EventDecoder<DefaultExtraData>()
+        let eventDecoder = EventDecoder<NoExtraData>()
         let cid = ChannelId(type: .messaging, id: "general")
         
         // User Started Typing Event.

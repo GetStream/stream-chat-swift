@@ -19,15 +19,15 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelDetailPayload<DefaultExtraData> = .dummy(cid: channelId)
+        let channelPayload: ChannelDetailPayload<NoExtraData> = .dummy(cid: channelId)
         
-        let quotedMessagePayload: MessagePayload<DefaultExtraData> = .dummy(
+        let quotedMessagePayload: MessagePayload<NoExtraData> = .dummy(
             messageId: .unique,
             authorUserId: userId,
             channel: channelPayload
         )
         
-        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
+        let messagePayload: MessagePayload<NoExtraData> = .dummy(
             messageId: messageId,
             quotedMessageId: quotedMessagePayload.id,
             quotedMessage: quotedMessagePayload,
@@ -48,7 +48,7 @@ class MessageDTO_Tests: XCTestCase {
         }
 
         // Load the channel from the db and check the fields are correct
-        var loadedChannel: _ChatChannel<DefaultExtraData>? {
+        var loadedChannel: _ChatChannel<NoExtraData>? {
             database.viewContext.channel(cid: channelId)?.asModel()
         }
         
@@ -158,7 +158,7 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
+        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
         
         let messagePayload: MessagePayload<SecretExtraData> = .dummy(
             messageId: messageId,
@@ -228,7 +228,7 @@ class MessageDTO_Tests: XCTestCase {
     }
     
     func test_messagePayloadNotStored_withoutChannelInfo() throws {
-        let payload: MessagePayload<DefaultExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let payload: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
         assert(payload.channel == nil, "Channel must be `nil`")
         
         XCTAssertThrowsError(
@@ -246,8 +246,8 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
-        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: messageId, authorUserId: userId)
+        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
+        let messagePayload: MessagePayload<NoExtraData> = .dummy(messageId: messageId, authorUserId: userId)
         
         try database.writeSynchronously { session in
             // Create the channel first
@@ -272,7 +272,7 @@ class MessageDTO_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: channelId, withMessages: false)
         
-        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(
+        let messagePayload: MessagePayload<NoExtraData> = .dummy(
             messageId: messageId,
             authorUserId: messageAuthorId,
             latestReactions: (0..<3).map { _ in
@@ -350,7 +350,7 @@ class MessageDTO_Tests: XCTestCase {
         let messageArguments: String = .unique
         let messageAttachmentSeeds: [ChatMessageAttachment.Seed] = [.dummy(), .dummy(), .dummy()]
         let messageShowReplyInChannel = true
-        let messageExtraData: DefaultExtraData.Message = .defaultValue
+        let messageExtraData: NoExtraData.Message = .defaultValue
 
         // Create message with attachments in the database.
         try database.writeSynchronously { session in
@@ -368,7 +368,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         // Load the message from the database and convert to request body.
-        let requestBody: MessageRequestBody<DefaultExtraData> = try XCTUnwrap(
+        let requestBody: MessageRequestBody<NoExtraData> = try XCTUnwrap(
             database.viewContext.message(id: messageId)?.asRequestBody()
         )
 
@@ -391,8 +391,8 @@ class MessageDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
         
-        let channelPayload: ChannelPayload<DefaultExtraData> = dummyPayload(with: channelId)
-        let messagePayload: MessagePayload<DefaultExtraData> = .dummy(messageId: messageId, authorUserId: userId)
+        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
+        let messagePayload: MessagePayload<NoExtraData> = .dummy(messageId: messageId, authorUserId: userId)
         
         // Asynchronously save the payload to the db
         database.write { session in
@@ -409,7 +409,7 @@ class MessageDTO_Tests: XCTestCase {
         }
         
         // Load the message from the db
-        var loadedMessage: _ChatMessage<DefaultExtraData>? {
+        var loadedMessage: _ChatMessage<NoExtraData>? {
             database.viewContext.message(id: messageId)?.asModel()
         }
         
@@ -439,7 +439,7 @@ class MessageDTO_Tests: XCTestCase {
                 try session.saveCurrentUser(payload: .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: DefaultExtraData.User.defaultValue
+                    extraData: NoExtraData.User.defaultValue
                 ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
@@ -516,7 +516,7 @@ class MessageDTO_Tests: XCTestCase {
                 try session.saveCurrentUser(payload: .dummy(
                     userId: currentUserId,
                     role: .admin,
-                    extraData: DefaultExtraData.User.defaultValue
+                    extraData: NoExtraData.User.defaultValue
                 ))
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
@@ -602,7 +602,7 @@ class MessageDTO_Tests: XCTestCase {
                 try $0.saveCurrentUser(payload: .dummy(
                     userId: .unique,
                     role: .admin,
-                    extraData: DefaultExtraData.User.defaultValue
+                    extraData: NoExtraData.User.defaultValue
                 ))
             }, completion: $0)
         }
@@ -678,7 +678,7 @@ class MessageDTO_Tests: XCTestCase {
         let replyMessageId: MessageId = .unique
         
         // Create payload for reply message
-        let payload: MessagePayload<DefaultExtraData> = .dummy(
+        let payload: MessagePayload<NoExtraData> = .dummy(
             messageId: replyMessageId,
             parentId: messageId,
             showReplyInChannel: false,

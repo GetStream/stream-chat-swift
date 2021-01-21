@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ import Foundation
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
 ///
-public typealias ChatMessageReaction = _ChatMessageReaction<DefaultExtraData>
+public typealias ChatMessageReaction = _ChatMessageReaction<NoExtraData>
 
 /// A type representing a message reaction. `_ChatMessageReaction` is an immutable snapshot
 /// of a message reaction entity at the given time.

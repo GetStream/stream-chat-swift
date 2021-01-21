@@ -85,7 +85,7 @@ extension DatabaseContainer {
     }
 
     /// Synchronously creates a new UserDTO in the DB with the given id.
-    func createUser(id: UserId = .unique, extraData: DefaultExtraData.User = .defaultValue) throws {
+    func createUser(id: UserId = .unique, extraData: NoExtraData.User = .defaultValue) throws {
         try writeSynchronously { session in
             try session.saveUser(payload: .dummy(userId: id, extraData: extraData))
         }
@@ -97,7 +97,7 @@ extension DatabaseContainer {
             try session.saveCurrentUser(payload: .dummy(
                 userId: id,
                 role: .admin,
-                extraData: DefaultExtraData.User.defaultValue
+                extraData: NoExtraData.User.defaultValue
             ))
         }
     }
@@ -116,7 +116,7 @@ extension DatabaseContainer {
     }
     
     func createChannelListQuery(
-        filter: Filter<ChannelListFilterScope<DefaultExtraData.Channel>> = .query(.cid, text: .unique)
+        filter: Filter<ChannelListFilterScope<NoExtraData.Channel>> = .query(.cid, text: .unique)
     ) throws {
         try writeSynchronously { session in
             let dto = NSEntityDescription
@@ -129,7 +129,7 @@ extension DatabaseContainer {
         }
     }
     
-    func createUserListQuery(filter: Filter<UserListFilterScope<DefaultExtraData.User>> = .query(.id, text: .unique)) throws {
+    func createUserListQuery(filter: Filter<UserListFilterScope<NoExtraData.User>> = .query(.id, text: .unique)) throws {
         try writeSynchronously { session in
             let dto = NSEntityDescription
                 .insertNewObject(
@@ -153,14 +153,14 @@ extension DatabaseContainer {
         authorId: UserId = .unique,
         cid: ChannelId = .unique,
         text: String = .unique,
-        attachments: [AttachmentPayload<DefaultExtraData.Attachment>] = [],
+        attachments: [AttachmentPayload<NoExtraData.Attachment>] = [],
         localState: LocalMessageState? = nil,
         type: MessageType? = nil
     ) throws {
         try writeSynchronously { session in
             try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
             
-            let message: MessagePayload<DefaultExtraData> = .dummy(
+            let message: MessagePayload<NoExtraData> = .dummy(
                 type: type,
                 messageId: id,
                 attachments: attachments,
@@ -177,7 +177,7 @@ extension DatabaseContainer {
         userId: UserId = .unique,
         role: MemberRole = .member,
         cid: ChannelId,
-        query: ChannelMemberListQuery<DefaultExtraData.User>? = nil
+        query: ChannelMemberListQuery<NoExtraData.User>? = nil
     ) throws {
         try writeSynchronously { session in
             try session.saveMember(

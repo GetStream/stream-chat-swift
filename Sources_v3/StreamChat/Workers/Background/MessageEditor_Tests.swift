@@ -6,7 +6,7 @@
 import XCTest
 
 final class MessageEditor_Tests: StressTestCase {
-    typealias ExtraData = DefaultExtraData
+    typealias ExtraData = NoExtraData
     
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!

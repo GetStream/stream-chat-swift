@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -79,6 +79,6 @@ extension _ChatMessageAttachment.Seed {
     }
 }
 
-extension DefaultExtraData {
-    static var dummyAttachment: _ChatMessageAttachment<DefaultExtraData> { .dummy() }
+extension NoExtraData {
+    static var dummyAttachment: _ChatMessageAttachment<NoExtraData> { .dummy() }
 }

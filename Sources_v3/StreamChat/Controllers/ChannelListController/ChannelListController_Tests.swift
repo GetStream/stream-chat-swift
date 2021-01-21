@@ -11,7 +11,7 @@ class ChannelListController_Tests: StressTestCase {
     
     var client: ChatClient!
     
-    var query: ChannelListQuery<DefaultExtraData.Channel>!
+    var query: ChannelListQuery<NoExtraData.Channel>!
     
     var controller: ChatChannelListController!
     var controllerCallbackQueueID: UUID!
@@ -385,7 +385,7 @@ class ChannelListController_Tests: StressTestCase {
 }
 
 private class TestEnvironment {
-    @Atomic var channelListUpdater: ChannelListUpdaterMock<DefaultExtraData>?
+    @Atomic var channelListUpdater: ChannelListUpdaterMock<NoExtraData>?
     
     lazy var environment: ChatChannelListController.Environment =
         .init(channelQueryUpdaterBuilder: { [unowned self] in
@@ -408,7 +408,7 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegat
     }
     
     func controller(
-        _ controller: _ChatChannelListController<DefaultExtraData>,
+        _ controller: _ChatChannelListController<NoExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         didChangeChannels_changes = changes
@@ -427,7 +427,7 @@ private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelListControlle
     }
     
     func controller(
-        _ controller: _ChatChannelListController<DefaultExtraData>,
+        _ controller: _ChatChannelListController<NoExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
     ) {
         didChangeChannels_changes = changes
