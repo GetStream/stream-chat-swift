@@ -78,7 +78,7 @@ extension ChannelDTO: EphemeralValuesContainer {
 extension NSManagedObjectContext {
     func saveChannel<ExtraData: ExtraDataTypes>(
         payload: ChannelDetailPayload<ExtraData>,
-        query: ChannelListQuery<ExtraData.Channel>?
+        query: _ChannelListQuery<ExtraData.Channel>?
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self)
         dto.name = payload.name
@@ -117,7 +117,7 @@ extension NSManagedObjectContext {
     
     func saveChannel<ExtraData: ExtraDataTypes>(
         payload: ChannelPayload<ExtraData>,
-        query: ChannelListQuery<ExtraData.Channel>?
+        query: _ChannelListQuery<ExtraData.Channel>?
     ) throws -> ChannelDTO {
         let dto = try saveChannel(payload: payload.channel, query: query)
         
@@ -145,7 +145,7 @@ extension NSManagedObjectContext {
 
 extension ChannelDTO {
     static func channelListFetchRequest<ExtraData: ChannelExtraData>(
-        query: ChannelListQuery<ExtraData>
+        query: _ChannelListQuery<ExtraData>
     ) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
         

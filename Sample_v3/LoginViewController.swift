@@ -53,7 +53,7 @@ extension LoginViewController {
         let chatClient = logIn()
         
         let channelListController = chatClient.channelListController(
-            query: ChannelListQuery(
+            query: _ChannelListQuery(
                 filter: .containMembers(userIds: [chatClient.currentUserId!]),
                 pageSize: 25
             )
