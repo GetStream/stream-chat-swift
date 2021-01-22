@@ -5,22 +5,6 @@
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
-      <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "790881FC25432B7200896F03"
-               BuildableName = "StreamChatUI.framework"
-               BlueprintName = "StreamChatUI"
-               ReferencedContainer = "container:StreamChat_v3.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-      </BuildActionEntries>
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
@@ -35,7 +19,7 @@
                BlueprintIdentifier = "7908820425432B7200896F03"
                BuildableName = "StreamChatUITests.xctest"
                BlueprintName = "StreamChatUITests"
-               ReferencedContainer = "container:StreamChat_v3.xcodeproj">
+               ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -57,15 +41,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "790881FC25432B7200896F03"
-            BuildableName = "StreamChatUI.framework"
-            BlueprintName = "StreamChatUI"
-            ReferencedContainer = "container:StreamChat_v3.xcodeproj">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">
