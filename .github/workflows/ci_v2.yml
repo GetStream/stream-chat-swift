@@ -3,17 +3,10 @@ name: CI v2
 on:
   push:
     branches:
-      - main
-    paths:
-      - 'Sources/**' # Only run if a file in /Sources changes (v2 folder)
+      - main_v2
   pull_request:
     branches:
-      - main
-    paths:
-      - 'Sources/**' # Only run if a file in /Sources changes (v2 folder)
-  release:
-    types:
-      - created
+      - main_v2
 
 env:
   carthage-cache-dir: 'carthage-cache-14122020' # When you change carthage cache directory, please append the date
