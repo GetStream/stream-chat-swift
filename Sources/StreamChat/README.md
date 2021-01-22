@@ -1,13 +1,7 @@
----
-
-⚠️ This README refers to a beta version of the SDK not suitable for using in production.
-
----
-
 # [StreamChat](https://getstream.io/chat/) (low-level) iOS SDK 
 
 <p align="center">
-  <img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Low%20Level%20SDK.png"/>
+  <img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Low%20Level%20SDK.png"/>
 </p>
 
 <p align="center">
@@ -25,7 +19,7 @@ The **StreamChat SDK**  is the official iOS SDK for [Stream Chat](https://getstr
 
 **StreamChat** is a low level client for Stream chat service and is meant to be used when you want to build a fully custom UI. 
 
-For the majority of common use cases, using our highly composable and customizable [**StreamChatUI**](https://github.com/GetStream/stream-chat-swift/tree/main_v3) is preferable.
+For the majority of common use cases, using our highly composable and customizable [**StreamChatUI**](https://github.com/GetStream/stream-chat-swift/tree/main) is preferable.
 
 --- 
 
@@ -42,13 +36,13 @@ For the majority of common use cases, using our highly composable and customizab
 ## **Quick Links** (WIP)
 
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat.
-* [Installation](https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Installation.MD): Learn more about how to install the SDK using CocoaPods, SPM, or Carthage.
+* [Installation](https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Installation.MD): Learn more about how to install the SDK using CocoaPods, SPM, or Carthage.
 * [Cheat Sheet:](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheett) Learn how to use the SDK by real-world examples.
 * [Sample app](https://github.com/GetStream/stream-chat-swift/tree/master/Example): This repo includes a fully functional sample app with example usage of the SDK with UIKit, SwiftUI, and Combine.
 
 &nbsp;
 
-* [StreamChatUI SDK](https://github.com/GetStream/stream-chat-swift/tree/main_v3): An SDK containing rich and customizable chat UI elements to easily and quickly build your chat UI with.
+* [StreamChatUI SDK](https://github.com/GetStream/stream-chat-swift/tree/main): An SDK containing rich and customizable chat UI elements to easily and quickly build your chat UI with.
 * [Swift Chat API Docs](https://github.com/GetStream/stream-chat-swift/wiki)
 * [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/)
 
@@ -65,10 +59,11 @@ import StreamChat
 
 /// The root object of the SDK
 let chatClient: ChatClient = {    
-    let config = ChatClientConfig(apiKey: APIKey("< YOU API KEY>"))
+    let config = ChatClientConfig(apiKey: APIKey("<# YOU API KEY #>"))
     // If you don't have your API key yet, visit https://getstream.io/chat/trial to get it for free.
 
-    return ChatClient(config: config)
+    // Please visit https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#creating-a-new-instance-of-chat-client for info on tokenProvider
+    return ChatClient(config: config, tokenProvider: <# YOUR tokenProvider HERE #>)
 }()
 ```
 
@@ -100,10 +95,12 @@ chatClient.channelController(for: <channel cid>).deleteChannel { error in
 
 // Using a `ChannelListController` for receiving continuous updates about available channels:
 
-class ViewController: ChannelListControllerDelegate {
+class ViewController: UIViewController, ChatChannelListControllerDelegate {
 
     let controller = chatClient.channelListController(
-        query: ChannelListQuery(filter: .in("members", [chatClient.currentUserId]))
+        query: ChannelListQuery(
+            filter: .containMembers(userIds: [chatClient.currentUserId!])
+        )
     )
 
     override func viewDidLoad() {
@@ -111,12 +108,12 @@ class ViewController: ChannelListControllerDelegate {
 
         controller.delegate = self
 
-        // Calling `synchronize()` initiates a network request and fetches the latest version of the data. Controllers
-        // which don't need explicit synchronization with remote servers don't have the `synchronize()` method.
+        // Calling `synchronize()` initiates a network request and fetches the latest version of the data.
+        // Controllers which don't need explicit synchronization with remote servers don't have the `synchronize()` method.
         controller.synchronize()
     }
     
-    func controller(_ controller: ChannelListController, didChangeChannels changes: [ListChange<Channel>]) {
+    func controller(_ controller: ChatChannelListController, didChangeChannels changes: [ListChange<ChatChannel>]) {
         // The list channels changes, update your UI
     }
 }
@@ -131,9 +128,10 @@ Typically, you'd ask a `Controller` object for the current state of its models, 
 ```swift
 
 let controller = chatClient.currentUserController()
-let currenUser: CurrentChatUser = controller.currentUser
+// Current user is `nil` if no user is set
+let currentUser: CurrentChatUser? = controller.currentUser
 
-print("Number of unread messages: \(currentUser.unreadCount.messages)")
+print("Number of unread messages: \(currentUser?.unreadCount.messages)")
 
 ```
 
@@ -143,18 +141,20 @@ Every `Controller` object exposes its properties using an `ObservableObject` wra
 
 ```swift
 struct ChannelListView: View {
-    @StateObject var channelList: ChannelListController.ObservableObject
+    @StateObject var channelList: ChatChannelListController.ObservableObject
 
     var body: some View {
         List(channelList.channels, id: \.self) { channel in
-            Text(channel.extraData.name)
+            Text(channel.name)
         }
         .onAppear { channelList.synchronize() }
     }
 }
 
 let controller = chatClient.channelListController(
-    query: ChannelListQuery(filter: .in("members", [chatClient.currentUserId]))
+    query: ChannelListQuery(
+        filter: .containMembers(userIds: [chatClient.currentUserId!])
+    )
 )
 
 let rootView = ChannelListView(channelList: controller.observableObject)
@@ -167,7 +167,9 @@ Every `Controller` object exposes its properties using `Publisher` objects:
 ```swift
 var cancellables: Set<AnyCancellable> = []
 let controller = chatClient.channelListController(
-    query: ChannelListQuery(filter: .in("members", [chatClient.currentUserId]))
+    query: ChannelListQuery(
+        filter: .containMembers(userIds: [chatClient.currentUserId!])
+    )
 )
 
 controller.channelsPublisher
