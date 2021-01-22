@@ -13,9 +13,9 @@ Pod::Spec.new do |spec|
   spec.source = { :git => "https://github.com/GetStream/stream-chat-swift.git", :tag => "#{spec.version}" }
   spec.requires_arc = true
 
-  spec.source_files  = "Sources_v3/StreamChat/**/*.swift"
-  spec.exclude_files = ["Sources_v3/StreamChat/**/*_Tests.swift", "Sources_v3/StreamChat/**/*_Mock.swift"]
-  spec.resources = ["Sources_v3/StreamChat/**/*.xcdatamodeld"]
+  spec.source_files  = "Sources/StreamChat/**/*.swift"
+  spec.exclude_files = ["Sources/StreamChat/**/*_Tests.swift", "Sources/StreamChat/**/*_Mock.swift"]
+  spec.resources = ["Sources/StreamChat/**/*.xcdatamodeld"]
 
   spec.framework = "Foundation", "UIKit"
 
