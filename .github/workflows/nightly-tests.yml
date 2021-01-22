@@ -4,6 +4,9 @@ on:
   schedule:
     - cron: '0 1 * * *' # run at 1AM UTC
 
+env:
+  HOMEBREW_NO_INSTALL_CLEANUP=1: 1 # Disable cleanup for homebrew, we don't need it on CI
+
 jobs:
   v3-stress-tests:
     name: Run Stress Tests (v3 - Debug)
