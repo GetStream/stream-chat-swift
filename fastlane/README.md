@@ -21,6 +21,11 @@ fastlane match_me
 ```
 If `readonly: true` (by default), installs all Certs and Profiles necessary for development and ad-hoc.
 If `readonly: false`, recreates all Profiles necessary for development and ad-hoc, updates them locally and remotely.
+### register_new_device_and_recreate_profiles
+```
+fastlane register_new_device_and_recreate_profiles
+```
+Register new device, regenerates profiles, updates them remotely and locally
 ### distribute_demo_app
 ```
 fastlane distribute_demo_app
