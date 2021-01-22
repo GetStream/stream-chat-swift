@@ -150,3 +150,59 @@ jobs:
       run: ./bootstrap.sh
     - name: Test SPM integration
       run: bundle exec fastlane test_spm_integration  
+
+  test-ios-11:
+    name: Test iOS 11
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Carthage dependencies
+      uses: actions/cache@v1.1.0
+      id: carthage-cache
+      with:
+        path: Carthage
+        key: ${{ runner.os }}-${{ env.carthage-cache-dir }}-${{ hashFiles('**/Cartfile.resolved') }}
+    - name: Cache RubyGems
+      uses: actions/cache@v1
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
+    - name: Install Carthage dependencies
+      run: bundle exec fastlane carthage_bootstrap
+    - name: Install iOS 11.4 Simulator
+      run: bundle exec xcversion simulators --install='iOS 11.4'
+    - name: Run all tests
+      run: bundle exec fastlane test_backend_integration device:"iPhone 7 (11.4)"
+
+  test-ios-12:
+    name: Test iOS 12
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache Carthage dependencies
+      uses: actions/cache@v1.1.0
+      id: carthage-cache
+      with:
+        path: Carthage
+        key: ${{ runner.os }}-${{ env.carthage-cache-dir }}-${{ hashFiles('**/Cartfile.resolved') }}
+    - name: Cache RubyGems
+      uses: actions/cache@v1
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Install RubyGems
+      if: steps.rubygem-cache.outputs.cache-hit != 'true'
+      run: bundle install
+    - name: Install Carthage dependencies
+      run: bundle exec fastlane carthage_bootstrap
+    - name: Install iOS 12.4 Simulator
+      run: bundle exec xcversion simulators --install='iOS 12.4'
+    - name: Run all tests
+      run: bundle exec fastlane test_backend_integration device:"iPhone 7 (12.4)"
