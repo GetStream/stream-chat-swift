@@ -100,33 +100,25 @@ lane :release do |options|
   UI.success("Github release was created as draft, please visit #{github_release["url"]} to publish it")
 end
 
-desc "Installs all Certs and Profiles necessary for development and ad-hoc"
-lane :match_me do
-  match(
-    type: "development",
-    app_identifier: [
-      "io.getstream.ChatExample",
-      "io.getstream.StreamChatClient",
-      "io.getstream.StreamChatCore",
-      "io.getstream.StreamChat",
-      "io.getstream.iOS.ChatDemoApp",
-    ],
-    readonly: true,
-    force_for_new_devices: !is_ci
-  )
-  
-  match(
-    type: "adhoc",
-    app_identifier: [
-      "io.getstream.ChatExample",
-      "io.getstream.StreamChatClient",
-      "io.getstream.StreamChatCore",
-      "io.getstream.StreamChat",
-      "io.getstream.iOS.ChatDemoApp",
-    ],
-    readonly: true,
-    force_for_new_devices: !is_ci
-  )
+desc "If `readonly: true` (by default), installs all Certs and Profiles necessary for development and ad-hoc.\nIf `readonly: false`, recreates all Profiles necessary for development and ad-hoc, updates them locally and remotely."
+lane :match_me do |options|
+  # Get `:readonly` value, fallback to `true` if it's missing.
+  readonly = options.fetch(:readonly) { true }
+
+  ["development", "adhoc"].each do |type|
+    match(
+      type: type,
+      app_identifier: [
+        "io.getstream.ChatExample",
+        "io.getstream.StreamChatClient",
+        "io.getstream.StreamChatCore",
+        "io.getstream.StreamChat",
+        "io.getstream.iOS.ChatDemoApp",
+      ],
+      readonly: readonly,
+      force_for_new_devices: !is_ci
+    )
+  end
 end
 
 desc "Builds the latest version with ad-hoc and uploads to firebase"
