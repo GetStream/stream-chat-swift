@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 env:
   carthage-cache-dir: 'carthage-cache-29102020' # When you change carthage cache directory, please append the date
