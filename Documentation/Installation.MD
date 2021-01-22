@@ -7,7 +7,7 @@ You can use several methods to install `StreamChat` iOS SDK.
 To integrate StreamChat into your Xcode project using CocoaPods, add this entry in your `Podfile`:
 
 ```ruby
-pod 'StreamChat'
+pod 'StreamChat', `~> 3.0`
 ```
 
 Then run `pod install`.
