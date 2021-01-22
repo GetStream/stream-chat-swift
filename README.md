@@ -1,11 +1,5 @@
----
-
-⚠️ This README refers to a beta version of the SDK not suitable for using in production.
-
----
-
 <p align="center">
-  <img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/iOS%20Chat%20Messaging.png"/>
+  <img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/iOS%20Chat%20Messaging.png"/>
 </p>
 
 <p align="center">
@@ -25,7 +19,9 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 
 **StreamChatUI** is a framework containing highly customizable UI components to build your chat UI with Stream chat using UIKit or SwiftUI. 
 
-If you want to build a fully custom UI and looking only for low-level chat SDK without UI components, check out [**StreamChat SDK**](https://github.com/GetStream/stream-chat-swift/tree/main_v3/Sources_v3/StreamChat).
+If you want to build a fully custom UI and looking only for low-level chat SDK without UI components, check out [**StreamChat SDK**](https://github.com/GetStream/stream-chat-swift/tree/main/Sources/StreamChat).
+
+If you want to check the last stable version (v2.x), please refer [here](https://github.com/GetStream/stream-chat-swift/tree/main_v2/)
 
 --- 
 
@@ -45,13 +41,13 @@ If you want to build a fully custom UI and looking only for low-level chat SDK w
 &nbsp;
 
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat.
-* [Installation](https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Installation_UI.MD): Learn more about how to install the SDK using CocoaPods or SPM.
+* [Installation](https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Installation_UI.MD): Learn more about how to install the SDK using CocoaPods or SPM.
 * [Cheat Sheet](https://github.com/GetStream/stream-chat-swift/wiki/UI-Cheat-Sheet): Learn how to use the SDK by real world examples.
 * [Demo app](https://github.com/GetStream/stream-chat-swift/tree/main/DemoApp): This repo includes a fully functional demo app with example usage of the SDK.
 
 &nbsp;
 
-* [StreamChat SDK (low-level)](https://github.com/GetStream/stream-chat-swift/tree/main_v3/Sources_v3/StreamChat): An SDK to use if you want to build fully-custom UI. `StreamChatUI` uses `StreamChat` for communicating with Stream chat backend.
+* [StreamChat SDK (low-level)](https://github.com/GetStream/stream-chat-swift/tree/main/Sources/StreamChat): An SDK to use if you want to build fully-custom UI. `StreamChatUI` uses `StreamChat` for communicating with Stream chat backend.
 * [SDK Documentation](https://github.com/GetStream/stream-chat-swift/wiki)
 
 
@@ -77,7 +73,7 @@ If you want to build a fully custom UI and looking only for low-level chat SDK w
   </tr>
   <tr>
     <td> A list of channels matching provided query </td>
-    <th rowspan="7"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Channel%20List%20Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="7"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Channel%20List%20Bezel.png?raw=true" width="80%" /></th>
   </tr>
    <tr> <td> Channel name and image based on the channel members or custom data</td> </tr>
   <tr> <td> Unread messages indicator </td> </tr>
@@ -100,7 +96,7 @@ If you want to build a fully custom UI and looking only for low-level chat SDK w
   </tr>
   <tr>
     <td> Easily search users by tag or name </td>
-    <th rowspan="9"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Channel%20Creation%20Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="9"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Channel%20Creation%20Bezel.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> Create group or direct message </td> </tr>
   <tr> <td> Send message and start the conversation </td> </tr>
@@ -121,7 +117,7 @@ If you want to build a fully custom UI and looking only for low-level chat SDK w
   </tr>
   <tr>
     <td> A list of message in a channel </td>
-    <th rowspan="9"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Message%20List%20Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="9"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Message%20List%20Bezel.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> Photo preview </td> </tr>
   <tr> <td> Message reactions </td> </tr>
@@ -145,7 +141,7 @@ If you want to build a fully custom UI and looking only for low-level chat SDK w
   </tr>
   <tr>
     <td> Support for multiline text, expands and shrinks as needed </td>
-    <th rowspan="6"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Message%20Composer%20Bezels.png?raw=true" width="80%" /></th>
+    <th rowspan="6"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Message%20Composer%20Bezels.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> Image and file attachments</td> </tr>
   <tr> <td> Replies to messages </td> </tr>
@@ -166,7 +162,7 @@ If you want to build a fully custom UI and looking only for low-level chat SDK w
   </tr>
   <tr>
     <td> Easily search commands by writing / symbol or tap bolt icon </td>
-    <th rowspan="5"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Commands%20Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="5"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Commands%20Bezel.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> GIPHY support out of box</td> </tr>
   <tr> <td> Supports mute, unmute, ban, unban commands </td> </tr>
@@ -186,7 +182,7 @@ If you want to build a fully custom UI and looking only for low-level chat SDK w
   </tr>
   <tr>
     <td> User mentions preview </td>
-    <th rowspan="4"><img src="https://github.com/GetStream/stream-chat-swift/blob/main_v3/Documentation/Assets/Mentions%20Bezel.png?raw=true" width="80%" /></th>
+    <th rowspan="4"><img src="https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Assets/Mentions%20Bezel.png?raw=true" width="80%" /></th>
   </tr>
   <tr> <td> Easily search for concrete user </td> </tr>
   <tr> <td> Mention as many users as you want </td> </tr>
