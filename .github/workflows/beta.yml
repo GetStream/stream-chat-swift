@@ -7,6 +7,7 @@ on:
 
 env:
   carthage-cache-dir: 'carthage-cache-29102020' # When you change carthage cache directory, please append the date
+  HOMEBREW_NO_INSTALL_CLEANUP=1: 1 # Disable cleanup for homebrew, we don't need it on CI
 
 jobs:
   beta_v2:
