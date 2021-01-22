@@ -41,8 +41,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
       
-  build-and-test-v3-debug:
-    name: Run v3 Tests (Debug)
+  build-and-test-debug:
+    name: Run Tests (Debug)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -63,7 +63,7 @@ jobs:
     - name: Run bootstrap.sh
       run: ./bootstrap.sh
     - name: Run v3 Tests (Debug)
-      run: bundle exec fastlane test_v3
+      run: bundle exec fastlane test
     - name: Post Codecov report
       run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
     - uses: 8398a7/action-slack@v3
@@ -76,8 +76,8 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
 
-  build-and-test-v3-release:
-    name: Run v3 Tests (Release)
+  build-and-test-release:
+    name: Run Tests (Release)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -97,8 +97,8 @@ jobs:
         restore-keys: ${{ runner.os }}-mint-
     - name: Run bootstrap.sh
       run: ./bootstrap.sh
-    - name: Run v3 Tests (Release)
-      run: bundle exec fastlane test_v3_release
+    - name: Run Tests (Release)
+      run: bundle exec fastlane test_release
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -109,8 +109,8 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
 
-  build-and-test-v3-ios12:
-    name: Run v3 Tests (iOS12.4)
+  build-and-test-ios12:
+    name: Run Tests (iOS12.4)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -137,8 +137,8 @@ jobs:
         xcrun simctl list runtimes
         xcrun simctl create custom-test-device "iPhone 7" "com.apple.CoreSimulator.SimRuntime.iOS-12-4"
         xcrun simctl list devices 12.4
-    - name: Run v3 Tests (Debug - iOS 12.4)
-      run: bundle exec fastlane test_v3 device:"iPhone 7 (12.4)"
+    - name: Run Tests (Debug - iOS 12.4)
+      run: bundle exec fastlane test device:"iPhone 7 (12.4)"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -149,8 +149,8 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
 
-  build-sample-v3:
-    name: Build v3 Sample
+  build-sample:
+    name: Build Sample
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -170,8 +170,8 @@ jobs:
         restore-keys: ${{ runner.os }}-mint-
     - name: Run bootstrap.sh
       run: ./bootstrap.sh
-    - name: Build v3 Sample
-      run: bundle exec fastlane build_sample_v3
+    - name: Build Sample
+      run: bundle exec fastlane build_sample
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -182,8 +182,8 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
 
-  build-sample-v3-ios12:
-    name: Build v3 Sample (iOS12.4)
+  build-sample-ios12:
+    name: Build Sample (iOS12.4)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -210,8 +210,8 @@ jobs:
         xcrun simctl list runtimes
         xcrun simctl create custom-test-device "iPhone 7" "com.apple.CoreSimulator.SimRuntime.iOS-12-4"
         xcrun simctl list devices 12.4
-    - name: Build v3 Sample
-      run: bundle exec fastlane build_sample_v3 device:"iPhone 7 (12.4)"
+    - name: Build Sample
+      run: bundle exec fastlane build_sample device:"iPhone 7 (12.4)"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
