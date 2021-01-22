@@ -4,19 +4,14 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'Sources/**' # Only run if a file outside /Sources changes (anything outside v2 is assumed to be v3)
   pull_request:
     branches:
       - main
-    paths-ignore:
-      - 'Sources/**' # Only run if a file outside /Sources changes (anything outside v2 is assumed to be v3)
   release:
     types:
       - created
       
 env:
-  carthage-cache-dir: 'carthage-cache-14122020' # When you change carthage cache directory, please append the date
   HOMEBREW_NO_INSTALL_CLEANUP=1: 1 # Disable cleanup for homebrew, we don't need it on CI
 
 jobs:
