@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "792A4F21247FF01800EAF71D"
-               BuildableName = "Sample.app"
-               BlueprintName = "Sample"
-               ReferencedContainer = "container:StreamChat_v3.xcodeproj">
+               BlueprintIdentifier = "792DDA56256FB69E001DB91B"
+               BuildableName = "ChatSample.app"
+               BlueprintName = "DemoApp"
+               ReferencedContainer = "container:StreamChat.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -44,12 +44,18 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "792A4F21247FF01800EAF71D"
-            BuildableName = "Sample.app"
-            BlueprintName = "Sample"
-            ReferencedContainer = "container:StreamChat_v3.xcodeproj">
+            BlueprintIdentifier = "792DDA56256FB69E001DB91B"
+            BuildableName = "ChatSample.app"
+            BlueprintName = "DemoApp"
+            ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <CommandLineArguments>
+         <CommandLineArgument
+            argument = "-UIViewLayoutFeedbackLoopDebuggingThreshold 100"
+            isEnabled = "YES">
+         </CommandLineArgument>
+      </CommandLineArguments>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -61,10 +67,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "792A4F21247FF01800EAF71D"
-            BuildableName = "Sample.app"
-            BlueprintName = "Sample"
-            ReferencedContainer = "container:StreamChat_v3.xcodeproj">
+            BlueprintIdentifier = "792DDA56256FB69E001DB91B"
+            BuildableName = "ChatSample.app"
+            BlueprintName = "DemoApp"
+            ReferencedContainer = "container:StreamChat.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
