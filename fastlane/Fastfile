@@ -12,102 +12,11 @@ before_all do
   end
 end
 
-desc "Release a new version"
-lane :release do |options|
-  UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
-  
-  ensure_git_branch(branch: 'main') # We can only release on default branch
-  
-  ensure_git_status_clean unless options[:no_ensure_clean]
-  
-  version_number = increment_version_number_in_plist(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj", target: "StreamChatClient")
-  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChatCore")
-  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
-
-  increment_version_number_in_plist(version_number: version_number, xcodeproj: "./Sample/Carthage/ChatExample.xcodeproj")
-  increment_version_number_in_plist(version_number: version_number, xcodeproj: "./Sample/Cocoapods/ChatExample.xcodeproj")
-  increment_version_number_in_plist(version_number: version_number, xcodeproj: "./Sample/SPM/ChatExample.xcodeproj")
-  
-  if git_tag_exists(tag: version_number)
-    UI.user_error!("Tag for version #{version_number} already exists!")
-  end
-  
-  changes = touch_changelog(release_version: version_number)
-  
-  version_bump_podspec(path: "StreamChatClient.podspec", version_number: version_number)
-  version_bump_podspec(path: "StreamChatCore.podspec", version_number: version_number)
-  version_bump_podspec(path: "StreamChat.podspec", version_number: version_number)
-  
-  #jazzy_command_start = "bundle exec jazzy --xcodebuild-arguments "
-  #jazzy_command_end = "-a GetStream.io -u getstream.io -g https://github.com/GetStream/stream-chat-swift"
-  #sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChatClient\",\"-sdk\",\"iphonesimulator\" --output \"../docs/client\" " + jazzy_command_end)
-  #sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChatCore\",\"-sdk\",\"iphonesimulator\" --output \"../docs/core\" " + jazzy_command_end)
-  #sh(jazzy_command_start + "\"-project\",\"../StreamChat.xcodeproj\",\"-scheme\",\"StreamChat\",\"-sdk\",\"iphonesimulator\" --output \"../docs/ui\" " + jazzy_command_end)
-  
-  sh("git add -A")
-  sh("git commit -m 'Bump #{version_number}'")
-  sh("git tag #{version_number}")
-                   
-  push_to_git_remote(tags: true)
-  
-  github_release = set_github_release(
-                     repository_name: "GetStream/stream-chat-swift",
-                     api_token: ENV["GITHUB_TOKEN"],
-                     name: version_number,
-                     tag_name: version_number,
-                     description: changes
-                   )
-  
-  # First pod release will not have any problems
-  pod_push(path: "StreamChatClient.podspec", allow_warnings: true)
-  
-  # Others will fail since they depend on trunk to get updated
-  
-  def release_core
-    begin
-      pod_push(path: "StreamChatCore.podspec", allow_warnings: true)
-    rescue
-      puts "pod_push failed. Waiting a minute until retry for trunk to get updated..."
-      sleep(60) # sleep for a minute, wait until trunk gets updates
-      release_core
-    end
-  end
-  
-  def release_ui
-    begin
-      pod_push(path: "StreamChat.podspec", allow_warnings: true)
-    rescue
-      puts "pod_push failed. Waiting a minute until retry for trunk to get updated..."
-      sleep(60) # sleep for a minute, wait until trunk gets updates
-      release_ui
-    end
-  end
-  
-  puts "Sleeping for 2 minutes for trunk to get updated..."
-  sleep(60 * 2)
-  release_core
-  release_ui
-  
-  slack(
-    message: "#{version_number} successfully released!",
-    payload: {
-      "Changelog" => changes,
-    },
-    default_payloads: [:git_author],
-  )
-  
-  UI.success("Successfully released #{version_number}")
-  UI.success("Github release was created as draft, please visit #{github_release["url"]} to publish it")
-end
-
 desc "Installs all Certs and Profiles necessary for development and ad-hoc"
 lane :match_me do
   match(
     type: "development",
     app_identifier: [
-      "io.getstream.ChatExample",
-      "io.getstream.StreamChatClient",
-      "io.getstream.StreamChatCore",
       "io.getstream.StreamChat",
       "io.getstream.iOS.ChatDemoApp",
     ],
@@ -118,9 +27,6 @@ lane :match_me do
   match(
     type: "adhoc",
     app_identifier: [
-      "io.getstream.ChatExample",
-      "io.getstream.StreamChatClient",
-      "io.getstream.StreamChatCore",
       "io.getstream.StreamChat",
       "io.getstream.iOS.ChatDemoApp",
     ],
@@ -129,43 +35,11 @@ lane :match_me do
   )
 end
 
-desc "Builds the latest version with ad-hoc and uploads to firebase"
-lane :beta do
-  match_me
-  
-  build_number = increment_build_number(
-                   xcodeproj: "./Sample/Carthage/ChatExample.xcodeproj",
-                   build_number: ENV["GITHUB_SHA"][0...7]
-                 )
-                 
-  carthage_bootstrap
-
-  gym(
-    project: "./Sample/Carthage/ChatExample.xcodeproj",
-    scheme: "ChatExample",
-    configuration: "Debug",
-    export_method: "ad-hoc",
-    export_options: "./fastlane/beta_gym_export_options.plist",
-    silent: true,
-    clean: true,
-    include_symbols: true,
-    output_directory: "./dist"
-  )
-  
-  message = changelog_from_git_commits(commits_count: 10)
-  
-  firebase_app_distribution(
-      app: "1:674907137625:ios:10131789dab2e7cad7f348",
-      groups: "ios-stream-testers",
-      release_notes: message
-  )
-end
-
 desc "Builds the latest version of Demo app and uploads it to Firebase"
 lane :distribute_demo_app do
 
   increment_build_number_in_plist(
-    xcodeproj: "StreamChat_v3.xcodeproj",
+    xcodeproj: "StreamChat.xcodeproj",
     target: "DemoApp",
     build_number: ENV["GITHUB_SHA"][0...7],
   )
@@ -173,7 +47,7 @@ lane :distribute_demo_app do
   match_me  
 
   gym(
-    project: "StreamChat_v3.xcodeproj",
+    project: "StreamChat.xcodeproj",
     scheme: "DemoApp",
     configuration: "Release",
     export_method: "ad-hoc",
@@ -190,86 +64,6 @@ lane :distribute_demo_app do
       app: "1:674907137625:ios:9e7b1074941f8728d7f348",
       groups: "ios-stream-testers",
       release_notes: message
-  )
-end
-
-desc "Installs Carthage dependencies necessary for development (and building Carthage Example)"
-lane :carthage_bootstrap do
-  sh("chmod +x ../carthage.sh") # We will use carthage workaround script for Xcode12
-  sh("cd ..; echo 'BUILD_LIBRARY_FOR_DISTRIBUTION=YES'>/tmp/config.xcconfig; XCODE_XCCONFIG_FILE=/tmp/config.xcconfig ./carthage.sh bootstrap --platform iOS --new-resolver --no-use-binaries --cache-builds; rm /tmp/config.xcconfig")
-end
-
-desc "Builds the project for testing"
-lane :build_for_testing do
-  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", clean: true, build_for_testing: true)
-end
-
-desc "Runs all the tests without building"
-lane :test_without_building do
-  # Integration Tests (StreamChatClientIntegrationTests) are disabled since they make HTTP/WS connections
-  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true, skip_testing: ["StreamChatClientIntegrationTests"])
-end
-
-desc "Runs integrations tests with backend. These tests make network connections so they're sometimes not reliable, hence we run them up to 3 times in case of failure"
-lane :test_backend_integration do |options|
-  @test_retries = 3
-  
-  scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", clean: true, build_for_testing: true, devices: [options[:device]])
-  
-  def run_tests(device)
-    begin
-      scan(project: "StreamChat.xcodeproj", scheme: "StreamChat", test_without_building: true, devices: [device])
-    rescue
-    
-      @test_retries -= 1
-      if @test_retries > 0
-        run_tests(device)
-      end
-    end
-  end
-  
-  run_tests(options[:device])
-end
-
-desc "Tests SDK integrations with Carthage, Cocoapods and SPM"
-lane :test_integrations do
-  test_carthage_integration
-  test_cocoapods_integration
-  test_spm_integration
-end
-
-desc "Tests integration with Carthage by building Carthage Example"
-# NOTE: lane `beta` relies on Carthage example being built, so this lane might be redundant
-lane :test_carthage_integration do
-  carthage_bootstrap
-
-  scan(
-    project: "./Sample/Carthage/ChatExample.xcodeproj",
-    scheme: "ChatExample",
-    clean: true,
-    build_for_testing: true
-  )
-end
-
-desc "Tests integration with Cocoapods by building Cocoapods Example"
-lane :test_cocoapods_integration do
-  cocoapods(use_bundle_exec: true, try_repo_update_on_error: true, clean_install: true, podfile: "./Sample/Cocoapods/")
-  
-  scan(
-    workspace: "./Sample/Cocoapods/ChatExample.xcworkspace",
-    scheme: "ChatExample",
-    clean: true,
-    build_for_testing: true
-  )
-end
-
-desc "Tests integration with SPM by building SPM Example"
-lane :test_spm_integration do
-  scan(
-    project: "./Sample/SPM/ChatExample.xcodeproj",
-    scheme: "ChatExample",
-    clean: true,
-    build_for_testing: true
   )
 end
 
@@ -304,13 +98,13 @@ def setCIEnvironmentVariable(testPlanFile)
   puts data_hash['defaultOptions']['environmentVariableEntries']
 end
 
-desc "Runs tests for v3 in Debug config"
-lane :test_v3 do |options|
+desc "Runs tests in Debug config"
+lane :test do |options|
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatTests/StreamChatTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
 
   scan(
-    project: "StreamChat_v3.xcodeproj",
+    project: "StreamChat.xcodeproj",
     scheme: "StreamChat",
     testplan: "StreamChatTestPlan",
     configuration: "Debug",
@@ -319,13 +113,13 @@ lane :test_v3 do |options|
     )
 end
 
-desc "Runs tests for v3 in Release config"
-lane :test_v3_release do
+desc "Runs tests in Release config"
+lane :test_release do
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatTests/StreamChatTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
 
   scan(
-    project: "StreamChat_v3.xcodeproj",
+    project: "StreamChat.xcodeproj",
     scheme: "StreamChat",
     testplan: "StreamChatTestPlan",
     configuration: "ReleaseTests",
@@ -333,20 +127,20 @@ lane :test_v3_release do
   )
 end
 
-desc "Runs stress tests for v3"
-lane :stress_test_v3 do
+desc "Runs stress tests for"
+lane :stress_test do
   scan(
-    project: "StreamChat_v3.xcodeproj",
+    project: "StreamChat.xcodeproj",
     scheme: "StreamChat",
     clean: true,
     build_for_testing: true
   )
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatTests/StreamChatStressTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan")
 
   stress_tests_cycles.times {
     scan(
-      project: "StreamChat_v3.xcodeproj",
+      project: "StreamChat.xcodeproj",
       scheme: "StreamChat",
       test_without_building: true,
       testplan: "StreamChatStressTestPlan"
@@ -355,20 +149,20 @@ lane :stress_test_v3 do
 end
 
 desc "Runs stress tests for v3 in Release config"
-lane :stress_test_v3_release do
+lane :stress_test_release do
   scan(
-    project: "StreamChat_v3.xcodeproj",
+    project: "StreamChat.xcodeproj",
     scheme: "StreamChat",
     configuration: "ReleaseTests",
     clean: true,
     build_for_testing: true
   )
 
-  setCIEnvironmentVariable("../Tests_v3/StreamChatTests/StreamChatStressTestPlan.xctestplan")
+  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan")
 
   stress_tests_cycles.times {
     scan(
-      project: "StreamChat_v3.xcodeproj",
+      project: "StreamChat.xcodeproj",
       scheme: "StreamChat",
       configuration: "ReleaseTests",
       test_without_building: true,
@@ -378,9 +172,9 @@ lane :stress_test_v3_release do
 end
 
 desc "Builds v3 Sample app"
-lane :build_sample_v3 do |options|
+lane :build_sample do |options|
   scan(
-    project: "StreamChat_v3.xcodeproj",
+    project: "StreamChat.xcodeproj",
     scheme: "Sample",
     clean: true,
     build_for_testing: true,
