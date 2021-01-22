@@ -25,6 +25,25 @@ If you want to check the last stable version (v2.x), please refer [here](https:/
 
 --- 
 
+## 👉 Migrating from 2.x
+
+In order to provide new features like offline support and `SwiftUI` wrappers, we had to make notable breaking changes to the public API of the SDKs.
+
+**Please don't upgrade to version 3.0 before you get familiar with the changes and their impact on your codebase.**
+
+To prevent CocoaPods from updating `StreamChat` to version 3, you can explicitly pin the SDKs to versions 2.x in your `podfile`:
+```ruby
+pod 'StreamChat', '~> 2.0'
+pod 'StreamChatCore', '~> 2.0' # if needed
+pod 'StreamChatClient', '~> 2.0' # if needed
+```
+
+- **Migrating `StreamChat` (UI components):** If you use our Chat UI components, **migration from 2.x is not recommended yet.** The UI components SDK was renamed to `StreamChatUI` and is currently only in public beta.
+
+- **Migrating `StreamChatClient` and/or `StreamChatCore`:** Our low-level frameworks (`Client` + `Core`) were merged and renamed to `StreamChat`. If you use only our low-level frameworks, you can use our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet) to get more familiar with the update API and better assess the impact of the changes on your codebase.
+
+---
+
 ## Main Features
 
 - **Uses `UIKit` patterns and paradigms:** The API follows the design of native system SKDs. It makes integration with your existing code easy and familiar.
