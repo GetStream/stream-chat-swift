@@ -121,6 +121,19 @@ lane :match_me do |options|
   end
 end
 
+desc "Register new device, regenerates profiles, updates them remotely and locally"
+lane :register_new_device_and_recreate_profiles do
+  device_name = prompt(text: "Enter the device name: ")
+  device_udid = prompt(text: "Enter the device UDID: ")
+
+  register_device(
+    name: device_name,
+    udid: device_udid
+  )
+
+  match_me(readonly: false)
+end
+
 desc "Builds the latest version with ad-hoc and uploads to firebase"
 lane :beta do
   match_me
