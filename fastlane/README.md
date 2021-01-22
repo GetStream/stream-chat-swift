@@ -19,7 +19,8 @@ or alternatively using `brew install fastlane`
 ```
 fastlane match_me
 ```
-Installs all Certs and Profiles necessary for development and ad-hoc
+If `readonly: true` (by default), installs all Certs and Profiles necessary for development and ad-hoc.
+If `readonly: false`, recreates all Profiles necessary for development and ad-hoc, updates them locally and remotely.
 ### distribute_demo_app
 ```
 fastlane distribute_demo_app
