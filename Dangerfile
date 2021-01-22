@@ -25,14 +25,17 @@ end
 ## Let's check if there are any changes in the project folder
 has_app_changes = !git.modified_files.grep(/Sources/).empty?
 ## Then, we should check if tests are updated
-has_test_changes = !git.modified_files.grep(/StreamChatCoreTests/).empty?
+# has_test_changes = !git.modified_files.grep(/StreamChatCoreTests/).empty?
+
+# if has_app_changes && !has_test_changes
+#     warn("Please adds tests!")
+# end
 
 has_meta_label = github.pr_labels.any? { |label| label.include? "meta" }
 has_no_changelog_tag = github.pr_body.include? "#no_changelog"
 has_skip_changelog_tag = github.pr_body.include? "#skip_changelog"
-has_v3_label = github.pr_labels.any? { |label| label.include? "v3" }
 
-has_changelog_escape = has_meta_label || has_no_changelog_tag || has_skip_changelog_tag || has_v3_label
+has_changelog_escape = has_meta_label || has_no_changelog_tag || has_skip_changelog_tag
 
 # Add a CHANGELOG entry for app changes
 if !has_changelog_escape && !git.modified_files.include?("CHANGELOG.md") && has_app_changes
