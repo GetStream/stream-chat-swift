@@ -3,6 +3,7 @@ name: Stress Tests (v3)
 on:
   schedule:
     - cron: '0 1 * * *' # run at 1AM UTC
+  workflow_dispatch:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP=1: 1 # Disable cleanup for homebrew, we don't need it on CI
