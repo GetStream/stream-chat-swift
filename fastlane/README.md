@@ -15,94 +15,44 @@ Install _fastlane_ using
 or alternatively using `brew install fastlane`
 
 # Available Actions
-### release
-```
-fastlane release
-```
-Release a new version
 ### match_me
 ```
 fastlane match_me
 ```
 Installs all Certs and Profiles necessary for development and ad-hoc
-### beta
-```
-fastlane beta
-```
-Builds the latest version with ad-hoc and uploads to firebase
 ### distribute_demo_app
 ```
 fastlane distribute_demo_app
 ```
 Builds the latest version of Demo app and uploads it to Firebase
-### carthage_bootstrap
-```
-fastlane carthage_bootstrap
-```
-Installs Carthage dependencies necessary for development (and building Carthage Example)
-### build_for_testing
-```
-fastlane build_for_testing
-```
-Builds the project for testing
-### test_without_building
-```
-fastlane test_without_building
-```
-Runs all the tests without building
-### test_backend_integration
-```
-fastlane test_backend_integration
-```
-Runs integrations tests with backend. These tests make network connections so they're sometimes not reliable, hence we run them up to 3 times in case of failure
-### test_integrations
-```
-fastlane test_integrations
-```
-Tests SDK integrations with Carthage, Cocoapods and SPM
-### test_carthage_integration
-```
-fastlane test_carthage_integration
-```
-Tests integration with Carthage by building Carthage Example
-### test_cocoapods_integration
-```
-fastlane test_cocoapods_integration
-```
-Tests integration with Cocoapods by building Cocoapods Example
-### test_spm_integration
-```
-fastlane test_spm_integration
-```
-Tests integration with SPM by building SPM Example
 ### get_next_issue_number
 ```
 fastlane get_next_issue_number
 ```
 Get next PR number from github to be used in CHANGELOG
-### test_v3
+### test
 ```
-fastlane test_v3
+fastlane test
 ```
-Runs tests for v3 in Debug config
-### test_v3_release
+Runs tests in Debug config
+### test_release
 ```
-fastlane test_v3_release
+fastlane test_release
 ```
-Runs tests for v3 in Release config
-### stress_test_v3
+Runs tests in Release config
+### stress_test
 ```
-fastlane stress_test_v3
+fastlane stress_test
 ```
-Runs stress tests for v3
-### stress_test_v3_release
+Runs stress tests for
+### stress_test_release
 ```
-fastlane stress_test_v3_release
+fastlane stress_test_release
 ```
 Runs stress tests for v3 in Release config
-### build_sample_v3
+### build_sample
 ```
-fastlane build_sample_v3
+fastlane build_sample
 ```
 Builds v3 Sample app
 

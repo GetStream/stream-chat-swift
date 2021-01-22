@@ -12,9 +12,9 @@
     "codeCoverage" : {
       "targets" : [
         {
-          "containerPath" : "container:StreamChat_v3.xcodeproj",
+          "containerPath" : "container:StreamChat.xcodeproj",
           "identifier" : "799C941A247D2F80001F1104",
-          "name" : "StreamChatClient"
+          "name" : "StreamChat"
         }
       ]
     }
@@ -22,9 +22,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:StreamChat_v3.xcodeproj",
+        "containerPath" : "container:StreamChat.xcodeproj",
         "identifier" : "799C9450247D59B1001F1104",
-        "name" : "StreamChatClientTests"
+        "name" : "StreamChatTests"
       }
     }
   ],
