@@ -1,4 +1,4 @@
-name: Stress Tests (v3)
+name: Stress Tests
 
 on:
   schedule:
@@ -10,7 +10,7 @@ env:
 
 jobs:
   v3-stress-tests:
-    name: Run Stress Tests (v3 - Debug)
+    name: Run Stress Tests (Debug)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -31,10 +31,10 @@ jobs:
     - name: Run bootstrap.sh
       run: ./bootstrap.sh
     - name: Run Stress Tests
-      run: bundle exec fastlane stress_test_v3
+      run: bundle exec fastlane stress_test
 
   v3-stress-tests_release:
-    name: Run Stress Tests (v3 - Release)
+    name: Run Stress Tests (Release)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -55,7 +55,7 @@ jobs:
     - name: Run bootstrap.sh
       run: ./bootstrap.sh
     - name: Run Stress Tests
-      run: bundle exec fastlane stress_test_v3_release
+      run: bundle exec fastlane stress_test_release
 
   build-and-test-v3-ios11:
     name: Run v3 Tests (iOS11.4)
@@ -81,6 +81,6 @@ jobs:
     - name: Install iOS11.4 runtime
       run: bundle exec xcversion simulators --install='iOS 11.4'
     - name: Run v3 Tests (Debug - iOS 11.4)
-      run: bundle exec fastlane test_v3 device:"iPhone 7 (11.4)"
+      run: bundle exec fastlane test device:"iPhone 7 (11.4)"
     - name: Post Codecov report
       run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
