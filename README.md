@@ -1,15 +1,3 @@
----
-
-### ⚠️ IMPORTANT: This README doesn't refer to the latest version of StreamChat SDK.
-
-The README is available only for historical reference.
-
-- If you want to start using `StreamChat` SDK, please use the [lastest version](https://github.com/GetStream/stream-chat-swift).
-
-- If you want to migrate the the latest version, please follow the [Cheet sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet) for more information and real-world code samples.
-
----
-
 
 # Official iOS/macOS SDK for [Stream Chat](https://getstream.io/chat/)
 
