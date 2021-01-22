@@ -91,7 +91,7 @@ Stream Chat SDK consists of three frameworks: `StreamChat`, `StreamChatCore` and
 To integrate StreamChat into your Xcode project using CocoaPods, add this entry in your `Podfile`:
 
 ```ruby
-pod 'StreamChat'
+pod 'StreamChat', '~> 2.0'
 ```
 
 Then run `pod install`.
@@ -99,9 +99,9 @@ Then run `pod install`.
 If you want to use only `StreamChatCore` or `StreamChatClient', you can add this entry in your `Podfile`:
 
 ```ruby
-pod 'StreamChatCore'
+pod 'StreamChatCore', '~> 2.0'
 # or
-pod 'StreamChatClient'
+pod 'StreamChatClient', '~> 2.0'
 ```
 
 In any file you'd like to use Stream Chat in, don't forget to import the frameworks:
@@ -123,7 +123,7 @@ import StreamChatClient
 To integrate Stream Chat into your Xcode project using Carthage, specify it in your `Cartfile`:
 
 ```
-github "GetStream/stream-chat-swift"
+github "GetStream/stream-chat-swift" ~> 2.0
 ```
 
 Then run: `carthage update --platform iOS --new-resolver`. It will build the frameworks: `StreamChatClient.framework`, `StreamChatCore.framework` and `StreamChat.framework` into `<Path to your Project>/Carthage/Build/iOS/` from where you can add them to your project and link them with your app target. Follow with these steps:
