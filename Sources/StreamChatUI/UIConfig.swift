@@ -189,7 +189,7 @@ public extension UIConfig {
         public var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
         /// Vertical contentOffset for message list, when next message batch should be requested
         public var offsetToPreloadMoreMessages: CGFloat = 100
-        public var messageContentView: ChatMessageContentView<ExtraData>.Type = ChatMessageContentView<ExtraData>.self
+        public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
         public var messageContentSubviews = MessageContentViewSubviews()
         public var messageActionsSubviews = MessageActionsSubviews()
         public var messageReactions = MessageReactions()
