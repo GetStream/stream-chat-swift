@@ -129,7 +129,7 @@ public extension UIConfig {
     struct Navigation {
         public var navigationBar: ChatNavigationBar.Type = ChatNavigationBar.self
         public var channelListRouter: _ChatChannelListRouter<ExtraData>.Type = _ChatChannelListRouter<ExtraData>.self
-        public var messageListRouter: ChatMessageListRouter<ExtraData>.Type = ChatMessageListRouter<ExtraData>.self
+        public var messageListRouter: _ChatMessageListRouter<ExtraData>.Type = _ChatMessageListRouter<ExtraData>.self
         public var channelDetailRouter: ChatChannelRouter<ExtraData>.Type = ChatChannelRouter<ExtraData>.self
         public var messageActionsRouter: _ChatMessageActionsRouter<ExtraData>.Type = _ChatMessageActionsRouter<ExtraData>.self
     }
