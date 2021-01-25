@@ -241,7 +241,7 @@ public extension UIConfig {
         public var attachmentSubviews = MessageAttachmentViewSubviews()
         public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.Type =
             ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.self
-        public var threadArrowView: ChatMessageThreadArrowView<ExtraData>.Type = ChatMessageThreadArrowView<ExtraData>.self
+        public var threadArrowView: _ChatMessageThreadArrowView<ExtraData>.Type = _ChatMessageThreadArrowView<ExtraData>.self
         public var threadInfoView: ChatMessageThreadInfoView<ExtraData>.Type = ChatMessageThreadInfoView<ExtraData>.self
         public var errorIndicator: _ChatMessageErrorIndicator<ExtraData>.Type = _ChatMessageErrorIndicator<ExtraData>.self
         public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type = _ChatMessageLinkPreviewView<ExtraData>.self
