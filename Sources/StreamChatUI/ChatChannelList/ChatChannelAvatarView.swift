@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelAvatarView<ExtraData: ExtraDataTypes>: AvatarView {
+public typealias ChatChannelAvatarView = _ChatChannelAvatarView<NoExtraData>
+
+open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: AvatarView {
     // MARK: - Properties
 
     public lazy var onlineIndicatorView = OnlineIndicatorView<ExtraData>().withoutAutoresizingMaskConstraints
