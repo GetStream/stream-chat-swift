@@ -9,7 +9,7 @@ open class ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMess
     open func showMessageActionsPopUp(
         messageContentFrame: CGRect,
         messageData: _ChatMessageGroupPart<ExtraData>,
-        messageActionsController: ChatMessageActionsVC<ExtraData>,
+        messageActionsController: _ChatMessageActionsVC<ExtraData>,
         messageReactionsController: ChatMessageReactionVC<ExtraData>?
     ) {
         let popup = ChatMessagePopupViewController<ExtraData>()
