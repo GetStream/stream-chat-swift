@@ -274,10 +274,10 @@ public extension UIConfig {
         public var imageGalleryItemUploadingOverlay: ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
             ChatMessageImageGallery<ExtraData>.UploadingOverlay.self
         // Interactive attachments
-        public var interactiveAttachmentView: ChatMessageInteractiveAttachmentView<ExtraData>.Type =
-            ChatMessageInteractiveAttachmentView<ExtraData>.self
-        public var interactiveAttachmentActionButton: ChatMessageInteractiveAttachmentView<ExtraData>.ActionButton.Type =
-            ChatMessageInteractiveAttachmentView<ExtraData>.ActionButton.self
+        public var interactiveAttachmentView: _ChatMessageInteractiveAttachmentView<ExtraData>.Type =
+            _ChatMessageInteractiveAttachmentView<ExtraData>.self
+        public var interactiveAttachmentActionButton: _ChatMessageInteractiveAttachmentView<ExtraData>.ActionButton.Type =
+            _ChatMessageInteractiveAttachmentView<ExtraData>.ActionButton.self
         // Giphy
         public var giphyAttachmentView: _ChatMessageGiphyView<ExtraData>.Type =
             _ChatMessageGiphyView<ExtraData>.self
