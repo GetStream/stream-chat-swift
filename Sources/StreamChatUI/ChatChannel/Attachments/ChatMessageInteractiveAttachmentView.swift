@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageInteractiveAttachmentView = _ChatMessageInteractiveAttachmentView<NoExtraData>
+
+open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var content: AttachmentListViewData<ExtraData>.ItemData? {
         didSet { updateContentIfNeeded() }
     }
