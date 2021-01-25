@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatChannelReadStatusCheckmarkView = _ChatChannelReadStatusCheckmarkView<NoExtraData>
+
+open class _ChatChannelReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public enum Status {
         case read, unread, empty
     }

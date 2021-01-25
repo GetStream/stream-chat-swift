@@ -32,7 +32,7 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: ChatSwipeableList
         uiConfigSubviews.unreadCountView.init().withoutAutoresizingMaskConstraints
     }()
     
-    public private(set) lazy var readStatusView: ChatReadStatusCheckmarkView = {
+    public private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView = {
         uiConfigSubviews.readStatusView.init().withoutAutoresizingMaskConstraints
     }()
     
