@@ -1,11 +1,13 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-open class MessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes>: View,
+public typealias ChatMessageComposerDocumentAttachmentsView = _ChatMessageComposerDocumentAttachmentsView<NoExtraData>
+
+open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes>: View,
     UIConfigProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
