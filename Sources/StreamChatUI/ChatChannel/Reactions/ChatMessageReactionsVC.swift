@@ -1,11 +1,13 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-open class ChatMessageReactionVC<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
+public typealias ChatMessageReactionsVC = _ChatMessageReactionsVC<NoExtraData>
+
+open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
     public var messageController: _ChatMessageController<ExtraData>!
 
     // MARK: - Subviews
@@ -61,7 +63,7 @@ open class ChatMessageReactionVC<ExtraData: ExtraDataTypes>: ViewController, UIC
 
 // MARK: - _MessageControllerDelegate
 
-extension ChatMessageReactionVC: _ChatMessageControllerDelegate {
+extension _ChatMessageReactionsVC: _ChatMessageControllerDelegate {
     public func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
