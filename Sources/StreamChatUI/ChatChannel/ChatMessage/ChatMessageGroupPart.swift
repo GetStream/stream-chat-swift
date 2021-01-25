@@ -4,6 +4,8 @@
 
 import StreamChat
 
+public typealias ChatMessageGroupPart = _ChatMessageGroupPart<NoExtraData>
+
 @dynamicMemberLookup
 public struct _ChatMessageGroupPart<ExtraData: ExtraDataTypes> {
     public let message: _ChatMessage<ExtraData>
