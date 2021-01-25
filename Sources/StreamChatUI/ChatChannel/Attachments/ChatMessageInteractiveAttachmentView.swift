@@ -8,7 +8,7 @@ import UIKit
 public typealias ChatMessageInteractiveAttachmentView = _ChatMessageInteractiveAttachmentView<NoExtraData>
 
 open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    public var content: AttachmentListViewData<ExtraData>.ItemData? {
+    public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
         didSet { updateContentIfNeeded() }
     }
 

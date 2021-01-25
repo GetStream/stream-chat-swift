@@ -1,10 +1,12 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 
-public struct AttachmentListViewData<ExtraData: ExtraDataTypes> {
+public typealias ChatMessageAttachmentListViewData = _ChatMessageAttachmentListViewData<NoExtraData>
+
+public struct _ChatMessageAttachmentListViewData<ExtraData: ExtraDataTypes> {
     public let attachments: [_ChatMessageAttachment<ExtraData>]
     public let didTapOnAttachment: ((_ChatMessageAttachment<ExtraData>) -> Void)?
     public let didTapOnAttachmentAction: ((_ChatMessageAttachment<ExtraData>, AttachmentAction) -> Void)?
@@ -21,7 +23,7 @@ public struct AttachmentListViewData<ExtraData: ExtraDataTypes> {
 
     var items: [ItemData] {
         attachments.map { attachment in
-            return .init(
+            .init(
                 attachment: attachment,
                 didTapOnAttachment: {
                     didTapOnAttachment?(attachment)
@@ -34,7 +36,7 @@ public struct AttachmentListViewData<ExtraData: ExtraDataTypes> {
     }
 }
 
-extension AttachmentListViewData {
+extension _ChatMessageAttachmentListViewData {
     public struct ItemData {
         public let attachment: _ChatMessageAttachment<ExtraData>
         public let didTapOnAttachment: () -> Void
