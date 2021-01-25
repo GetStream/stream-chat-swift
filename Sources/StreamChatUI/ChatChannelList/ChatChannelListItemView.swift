@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: ChatSwipeableListItemView<ExtraData> {
+open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
     // MARK: - Properties
 
     public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {

@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatSwipeableListItemView<ExtraData: ExtraDataTypes>: View, UIConfigProvider, UIGestureRecognizerDelegate {
+public typealias ChatChannelSwipeableListItemView = _ChatChannelSwipeableListItemView<NoExtraData>
+
+open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: View, UIConfigProvider, UIGestureRecognizerDelegate {
     // MARK: - Properties
 
     private var startedValue: CGFloat = 0
