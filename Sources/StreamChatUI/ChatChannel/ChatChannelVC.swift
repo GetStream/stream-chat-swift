@@ -34,7 +34,7 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
 
         guard let channel = channelController.channel else { return }
 
-        let avatar = ChatChannelAvatarView<ExtraData>()
+        let avatar = _ChatChannelAvatarView<ExtraData>()
         avatar.translatesAutoresizingMaskIntoConstraints = false
         avatar.heightAnchor.pin(equalToConstant: 32).isActive = true
         avatar.channelAndUserId = (channel, channelController.client.currentUserId)

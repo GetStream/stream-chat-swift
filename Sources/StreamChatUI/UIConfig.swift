@@ -152,7 +152,7 @@ public extension UIConfig {
     }
     
     struct ChannelListItemSubviews {
-        public var avatarView: ChatChannelAvatarView<ExtraData>.Type = ChatChannelAvatarView.self
+        public var avatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
         public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
         public var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData>.Type =
             _ChatChannelReadStatusCheckmarkView<ExtraData>.self
@@ -330,7 +330,7 @@ public extension UIConfig {
             MessageComposerSuggestionsCommandsReusableView.self
         public var suggestionsHeaderView: MessageComposerSuggestionsCommandsHeaderView<ExtraData>.Type =
             MessageComposerSuggestionsCommandsHeaderView.self
-        public var mentionAvatarView: ChatChannelAvatarView<ExtraData>.Type = ChatChannelAvatarView<ExtraData>.self
+        public var mentionAvatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView<ExtraData>.self
         public var commandIcons: [String: UIImage] = [
             "ban": UIImage(named: "command_ban", in: .streamChatUI)!,
             "flag": UIImage(named: "command_flag", in: .streamChatUI)!,
