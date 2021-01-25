@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -9,7 +9,7 @@ import UIKit
 open class ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
     // MARK: - Properties
 
-    public private(set) lazy var channelView: ChatChannelListItemView<ExtraData> = uiConfig.channelList.channelListItemView.init()
+    public private(set) lazy var channelView: _ChatChannelListItemView<ExtraData> = uiConfig.channelList.channelListItemView.init()
 
     // MARK: - UICollectionViewCell
 

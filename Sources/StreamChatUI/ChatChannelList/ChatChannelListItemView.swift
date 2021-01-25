@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
+public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
+
+open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
     // MARK: - Properties
 
     public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
@@ -156,7 +158,7 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipe
     }
 }
 
-extension ChatChannelListItemView {
+extension _ChatChannelListItemView {
     var typingMemberString: String? {
         guard let members = channelAndUserId.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
         let names = members.compactMap(\.name).sorted()
