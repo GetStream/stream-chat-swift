@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 extension ChatFileAttachmentListView {
-    open class ItemView: ChatMessageAttachmentInfoView<ExtraData> {
+    open class ItemView: _ChatMessageAttachmentInfoView<ExtraData> {
         // MARK: - Subviews
 
         public private(set) lazy var fileIconImageView: UIImageView = {
