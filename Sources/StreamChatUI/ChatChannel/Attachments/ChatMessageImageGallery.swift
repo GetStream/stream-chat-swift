@@ -8,7 +8,7 @@ import UIKit
 public typealias ChatMessageImageGallery = _ChatMessageImageGallery<NoExtraData>
 
 open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    public var content: AttachmentListViewData<ExtraData>? {
+    public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 

@@ -8,7 +8,7 @@ import UIKit
 public typealias ChatMessageFileAttachmentListView = _ChatMessageFileAttachmentListView<NoExtraData>
 
 open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    public var content: AttachmentListViewData<ExtraData>? {
+    public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
