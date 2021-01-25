@@ -300,7 +300,7 @@
 		80C6026F2514281000A6B714 /* UITableViewController+Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */; };
 		80C6027B25157E4D00A6B714 /* View+AlertTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */; };
 		80D880432546553500908B7B /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D880422546553500908B7B /* ChatScrollView.swift */; };
-		8800A26F258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A26E258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift */; };
+		8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */; };
 		8800A278258A17DD006D64C4 /* AttachmentListViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A277258A17DD006D64C4 /* AttachmentListViewData.swift */; };
 		8800A28C258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */; };
 		8802F9BD25AF1DE200475159 /* WebSocketClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8802F9BC25AF1DE200475159 /* WebSocketClient_Mock.swift */; };
@@ -1037,7 +1037,7 @@
 		80C6026E2514281000A6B714 /* UITableViewController+Cells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+Cells.swift"; sourceTree = "<group>"; };
 		80C6027A25157E4D00A6B714 /* View+AlertTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+AlertTextField.swift"; sourceTree = "<group>"; };
 		80D880422546553500908B7B /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
-		8800A26E258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAttachmentPreviewVC.swift; sourceTree = "<group>"; };
+		8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachmentPreviewVC.swift; sourceTree = "<group>"; };
 		8800A277258A17DD006D64C4 /* AttachmentListViewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentListViewData.swift; sourceTree = "<group>"; };
 		8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageFileAttachmentListView.swift; sourceTree = "<group>"; };
 		8802F9BC25AF1DE200475159 /* WebSocketClient_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketClient_Mock.swift; sourceTree = "<group>"; };
@@ -2308,7 +2308,7 @@
 			isa = PBXGroup;
 			children = (
 				8800A277258A17DD006D64C4 /* AttachmentListViewData.swift */,
-				8800A26E258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift */,
+				8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */,
 				8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */,
 				88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */,
 				88BA7F6A258B717E006CE0C5 /* ChatMessageAttachmentInfoView.swift */,
@@ -3403,7 +3403,7 @@
 				DB3CCF3F258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift in Sources */,
 				E79AC10D25831A1500C3CE5D /* MessageComposerSuggestionsCollectionViewLayout.swift in Sources */,
 				E73A8B2B2578EB2B00FBDC56 /* MessageComposerViewController.swift in Sources */,
-				8800A26F258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift in Sources */,
+				8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */,
 				228C7F022584132F00AAE9E3 /* MessageComposerQuoteBubbleView.swift in Sources */,
 				885B3D7725642B3D003E6BDF /* CurrentChatUserAvatarView.swift in Sources */,
 				DBC8A4C6257E696900B20A82 /* ChatMessageThreadInfoView.swift in Sources */,

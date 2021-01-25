@@ -5,7 +5,7 @@
 import UIKit
 import WebKit
 
-open class ChatAttachmentPreviewVC: ViewController {
+open class ChatMessageAttachmentPreviewVC: ViewController {
     public var content: URL? {
         didSet { updateContentIfNeeded() }
     }
@@ -81,7 +81,7 @@ open class ChatAttachmentPreviewVC: ViewController {
 
 // MARK: - WKNavigationDelegate
 
-extension ChatAttachmentPreviewVC: WKNavigationDelegate {
+extension ChatMessageAttachmentPreviewVC: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         activityIndicatorView.startAnimating()
     }
@@ -102,7 +102,7 @@ extension ChatAttachmentPreviewVC: WKNavigationDelegate {
 
 // MARK: - Actions
 
-extension ChatAttachmentPreviewVC {
+extension ChatMessageAttachmentPreviewVC {
     @objc open func goBack() {
         if let item = webView.backForwardList.backItem {
             webView.go(to: item)
