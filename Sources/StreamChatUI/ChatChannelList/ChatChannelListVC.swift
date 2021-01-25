@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -71,7 +71,7 @@ open class ChatChannelListVC<ExtraData: ExtraDataTypes>: ViewController,
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: "Cell",
             for: indexPath
-        ) as! ChatChannelListCollectionViewCell<ExtraData>
+        ) as! _ChatChannelListCollectionViewCell<ExtraData>
     
         cell.uiConfig = uiConfig
         cell.channelView.channelAndUserId = (controller.channels[indexPath.row], controller.client.currentUserId)
