@@ -55,8 +55,8 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(
-            MessageComposerImageAttachmentCollectionViewCell<ExtraData>.self,
-            forCellWithReuseIdentifier: MessageComposerImageAttachmentCollectionViewCell<ExtraData>.reuseId
+            _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.self,
+            forCellWithReuseIdentifier: _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.reuseId
         )
     }
     
@@ -80,9 +80,9 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView
             .dequeueReusableCell(
-                withReuseIdentifier: MessageComposerImageAttachmentCollectionViewCell<ExtraData>.reuseId,
+                withReuseIdentifier: _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.reuseId,
                 for: indexPath
-            ) as? MessageComposerImageAttachmentCollectionViewCell<ExtraData>
+            ) as? _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>
         else { return UICollectionViewCell() }
         
         cell.imageView.image = images[indexPath.row]

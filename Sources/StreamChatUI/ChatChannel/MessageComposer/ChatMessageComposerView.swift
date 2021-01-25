@@ -24,7 +24,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: View,
         .quotedMessageView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var imageAttachmentsView: MessageComposerImageAttachmentsView<ExtraData> = uiConfig
+    public private(set) lazy var imageAttachmentsView = uiConfig
         .messageComposer
         .imageAttachmentsView.init()
         .withoutAutoresizingMaskConstraints
