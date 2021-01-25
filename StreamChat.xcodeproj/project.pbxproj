@@ -302,7 +302,7 @@
 		80D880432546553500908B7B /* ChatScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80D880422546553500908B7B /* ChatScrollView.swift */; };
 		8800A26F258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A26E258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift */; };
 		8800A278258A17DD006D64C4 /* AttachmentListViewData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A277258A17DD006D64C4 /* AttachmentListViewData.swift */; };
-		8800A28C258A1924006D64C4 /* ChatFileAttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A28B258A1924006D64C4 /* ChatFileAttachmentListView.swift */; };
+		8800A28C258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */; };
 		8802F9BD25AF1DE200475159 /* WebSocketClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8802F9BC25AF1DE200475159 /* WebSocketClient_Mock.swift */; };
 		8802F9EF25AF3D4200475159 /* HTTPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8802F9EE25AF3D4200475159 /* HTTPHeader.swift */; };
 		8806570D259A51C200E31D23 /* ChatMessageInteractiveAttachmentView+ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8806570C259A51C200E31D23 /* ChatMessageInteractiveAttachmentView+ActionButton.swift */; };
@@ -1039,7 +1039,7 @@
 		80D880422546553500908B7B /* ChatScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatScrollView.swift; sourceTree = "<group>"; };
 		8800A26E258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAttachmentPreviewVC.swift; sourceTree = "<group>"; };
 		8800A277258A17DD006D64C4 /* AttachmentListViewData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentListViewData.swift; sourceTree = "<group>"; };
-		8800A28B258A1924006D64C4 /* ChatFileAttachmentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatFileAttachmentListView.swift; sourceTree = "<group>"; };
+		8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageFileAttachmentListView.swift; sourceTree = "<group>"; };
 		8802F9BC25AF1DE200475159 /* WebSocketClient_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketClient_Mock.swift; sourceTree = "<group>"; };
 		8802F9EE25AF3D4200475159 /* HTTPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPHeader.swift; sourceTree = "<group>"; };
 		8806570C259A51C200E31D23 /* ChatMessageInteractiveAttachmentView+ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageInteractiveAttachmentView+ActionButton.swift"; sourceTree = "<group>"; };
@@ -2309,7 +2309,7 @@
 			children = (
 				8800A277258A17DD006D64C4 /* AttachmentListViewData.swift */,
 				8800A26E258A04D5006D64C4 /* ChatAttachmentPreviewVC.swift */,
-				8800A28B258A1924006D64C4 /* ChatFileAttachmentListView.swift */,
+				8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */,
 				88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */,
 				88BA7F6A258B717E006CE0C5 /* ChatMessageAttachmentInfoView.swift */,
 				88AD1D6C2588D7D300ECED5B /* ChatMessageAttachmentsView.swift */,
@@ -3341,7 +3341,7 @@
 				88A11B0A2590AFBB0000AC24 /* ChatMessage+Extensions.swift in Sources */,
 				88A8CF20256E7C06004EA4C7 /* ChatMessageBubbleView.swift in Sources */,
 				DBC8A5762581476E00B20A82 /* ChatMessageListVC.swift in Sources */,
-				8800A28C258A1924006D64C4 /* ChatFileAttachmentListView.swift in Sources */,
+				8800A28C258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift in Sources */,
 				88A8CF16256E7BDA004EA4C7 /* ChatMessageContentView.swift in Sources */,
 				E79AC10A25831A1500C3CE5D /* MessageComposerMentionCollectionViewCell.swift in Sources */,
 				226C438D25802AAD008B3648 /* MessageComposerInputTextView.swift in Sources */,
