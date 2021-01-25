@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: ChatMessageReactionsBubbleView<ExtraData> {
+public typealias ChatMessageDefaultReactionsBubbleView = _ChatMessageDefaultReactionsBubbleView<NoExtraData>
+
+open class _ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageReactionsBubbleView<ExtraData> {
     // MARK: - Subviews
 
     private let contentViewBackground = UIView().withoutAutoresizingMaskConstraints
@@ -58,7 +60,7 @@ open class ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: Cha
 
 // MARK: - Private
 
-private extension ChatMessageDefaultReactionsBubbleView {
+private extension _ChatMessageDefaultReactionsBubbleView {
     var contentLayoutMargins: NSDirectionalEdgeInsets {
         guard let content = content else { return .zero }
 

@@ -1,11 +1,13 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-open class ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageReactionsBubbleView = _ChatMessageReactionsBubbleView<NoExtraData>
+
+open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
     }
@@ -45,7 +47,7 @@ open class ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: View, UICo
 
 // MARK: - Content
 
-extension ChatMessageReactionsBubbleView {
+extension _ChatMessageReactionsBubbleView {
     public struct Content {
         public let style: ChatMessageReactionsBubbleStyle
         public let reactions: [ChatMessageReactionData]
