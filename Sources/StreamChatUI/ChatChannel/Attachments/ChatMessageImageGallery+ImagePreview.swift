@@ -6,7 +6,7 @@ import Nuke
 import StreamChat
 import UIKit
 
-extension ChatMessageImageGallery {
+extension _ChatMessageImageGallery {
     open class ImagePreview: View, UIConfigProvider {
         public var content: AttachmentListViewData<ExtraData>.ItemData? {
             didSet { updateContentIfNeeded() }

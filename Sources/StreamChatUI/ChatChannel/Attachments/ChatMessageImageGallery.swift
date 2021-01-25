@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageImageGallery = _ChatMessageImageGallery<NoExtraData>
+
+open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var content: AttachmentListViewData<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }

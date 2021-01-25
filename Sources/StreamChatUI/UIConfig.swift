@@ -267,12 +267,12 @@ public extension UIConfig {
             nil: UIImage(named: "download_and_open", in: .streamChatUI)!
         ]
         // Images
-        public var imageGallery: ChatMessageImageGallery<ExtraData>.Type = ChatMessageImageGallery<ExtraData>.self
-        public var imageGalleryItem: ChatMessageImageGallery<ExtraData>.ImagePreview.Type =
-            ChatMessageImageGallery<ExtraData>.ImagePreview.self
+        public var imageGallery: _ChatMessageImageGallery<ExtraData>.Type = _ChatMessageImageGallery<ExtraData>.self
+        public var imageGalleryItem: _ChatMessageImageGallery<ExtraData>.ImagePreview.Type =
+            _ChatMessageImageGallery<ExtraData>.ImagePreview.self
         public var imageGalleryInteritemSpacing: CGFloat = 2
-        public var imageGalleryItemUploadingOverlay: ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
-            ChatMessageImageGallery<ExtraData>.UploadingOverlay.self
+        public var imageGalleryItemUploadingOverlay: _ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
+            _ChatMessageImageGallery<ExtraData>.UploadingOverlay.self
         // Interactive attachments
         public var interactiveAttachmentView: _ChatMessageInteractiveAttachmentView<ExtraData>.Type =
             _ChatMessageInteractiveAttachmentView<ExtraData>.self

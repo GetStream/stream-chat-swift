@@ -10,7 +10,7 @@ public typealias ChatMessageLinkPreviewView = _ChatMessageLinkPreviewView<NoExtr
 open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
     public var content: _ChatMessageAttachment<ExtraData>? { didSet { updateContentIfNeeded() } }
 
-    public private(set) lazy var imagePreview: ChatMessageImageGallery<ExtraData>.ImagePreview = uiConfig
+    public private(set) lazy var imagePreview = uiConfig
         .messageList
         .messageContentSubviews
         .attachmentSubviews
