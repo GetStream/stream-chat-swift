@@ -1,11 +1,13 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-open class ChatChannelListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelListVC<ExtraData>> {
+public typealias ChatChannelListRouter = _ChatChannelListRouter<NoExtraData>
+
+open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelListVC<ExtraData>> {
     open func openCurrentUserProfile(for currentUser: _CurrentChatUser<ExtraData.User>) {
         debugPrint(currentUser)
     }
