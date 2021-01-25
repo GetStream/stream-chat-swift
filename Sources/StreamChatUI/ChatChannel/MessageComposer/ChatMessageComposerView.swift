@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
+public typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
+
+open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: View,
     UIConfigProvider {
     // MARK: - Properties
     
