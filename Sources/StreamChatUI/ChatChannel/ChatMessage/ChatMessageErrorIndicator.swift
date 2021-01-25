@@ -1,11 +1,13 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-open class ChatMessageErrorIndicator<ExtraData: ExtraDataTypes>: Button, UIConfigProvider {
+public typealias ChatMessageErrorIndicator = _ChatMessageErrorIndicator<NoExtraData>
+
+open class _ChatMessageErrorIndicator<ExtraData: ExtraDataTypes>: Button, UIConfigProvider {
     override public func defaultAppearance() {
         super.defaultAppearance()
 
