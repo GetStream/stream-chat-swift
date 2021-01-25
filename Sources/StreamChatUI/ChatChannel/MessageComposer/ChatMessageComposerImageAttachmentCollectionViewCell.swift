@@ -5,7 +5,10 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerImageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell,
+public typealias ChatMessageComposerImageAttachmentCollectionViewCell =
+    _ChatMessageComposerImageAttachmentCollectionViewCell<NoExtraData>
+
+open class _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell,
     UIConfigProvider {
     // MARK: - Properties
     
