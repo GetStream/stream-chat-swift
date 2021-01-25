@@ -35,7 +35,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UIConfigProvider,
-    ChatMessageActionsVCDelegate {
+    _ChatMessageActionsVCDelegate {
     public struct DataSource {
         public var numberOfMessages: (ChatMessageListVC) -> Int
         public var messageAtIndex: (ChatMessageListVC, Int) -> _ChatMessage<ExtraData>
@@ -267,7 +267,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     // MARK: - ChatMessageActionsVCDelegate
 
     open func chatMessageActionsVC(
-        _ vc: ChatMessageActionsVC<ExtraData>,
+        _ vc: _ChatMessageActionsVC<ExtraData>,
         didTapOnInlineReplyFor message: _ChatMessage<ExtraData>
     ) {
         dismiss(animated: true) { [weak self] in
@@ -277,14 +277,14 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     }
 
     open func chatMessageActionsVC(
-        _ vc: ChatMessageActionsVC<ExtraData>,
+        _ vc: _ChatMessageActionsVC<ExtraData>,
         didTapOnThreadReplyFor message: _ChatMessage<ExtraData>
     ) {
         dismiss(animated: true)
     }
 
     open func chatMessageActionsVC(
-        _ vc: ChatMessageActionsVC<ExtraData>,
+        _ vc: _ChatMessageActionsVC<ExtraData>,
         didTapOnEdit message: _ChatMessage<ExtraData>
     ) {
         dismiss(animated: true) { [weak self] in
@@ -293,7 +293,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         }
     }
 
-    open func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC<ExtraData>) {
+    open func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>) {
         dismiss(animated: true)
     }
 
@@ -329,7 +329,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     private func didSelectMessageCell(_ cell: СhatMessageCollectionViewCell<ExtraData>) {
         guard let messageData = cell.message, messageData.isInteractionEnabled else { return }
 
-        let actionsController = ChatMessageActionsVC<ExtraData>()
+        let actionsController = _ChatMessageActionsVC<ExtraData>()
         actionsController.messageController = dataSource.controllerForMessage(self, messageData.message)
         actionsController.delegate = .init(delegate: self)
 

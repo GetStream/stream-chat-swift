@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageActionsRouter = _ChatMessageActionsRouter<NoExtraData>
 
-open class _ChatMessageActionsRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMessageActionsVC<ExtraData>> {
+open class _ChatMessageActionsRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMessageActionsVC<ExtraData>> {
     open func showMessageDeletionConfirmationAlert(confirmed: @escaping (Bool) -> Void) {
         let alert = UIAlertController(
             title: L10n.Message.Actions.Delete.confirmationTitle,

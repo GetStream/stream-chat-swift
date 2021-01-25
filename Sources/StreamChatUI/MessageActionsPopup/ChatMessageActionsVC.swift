@@ -5,16 +5,18 @@
 import StreamChat
 import UIKit
 
-public protocol ChatMessageActionsVCDelegate: AnyObject {
+public protocol _ChatMessageActionsVCDelegate: AnyObject {
     associatedtype ExtraData: ExtraDataTypes
 
-    func chatMessageActionsVC(_ vc: ChatMessageActionsVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>)
-    func chatMessageActionsVC(_ vc: ChatMessageActionsVC<ExtraData>, didTapOnThreadReplyFor message: _ChatMessage<ExtraData>)
-    func chatMessageActionsVC(_ vc: ChatMessageActionsVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>)
-    func chatMessageActionsVCDidFinish(_ vc: ChatMessageActionsVC<ExtraData>)
+    func chatMessageActionsVC(_ vc: _ChatMessageActionsVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>)
+    func chatMessageActionsVC(_ vc: _ChatMessageActionsVC<ExtraData>, didTapOnThreadReplyFor message: _ChatMessage<ExtraData>)
+    func chatMessageActionsVC(_ vc: _ChatMessageActionsVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>)
+    func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>)
 }
 
-open class ChatMessageActionsVC<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
+public typealias ChatMessageActionsVC = _ChatMessageActionsVC<NoExtraData>
+
+open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
     public var messageController: _ChatMessageController<ExtraData>!
     public var delegate: Delegate? // swiftlint:disable:this weak_delegate
     public private(set) lazy var router = uiConfig.navigation.messageActionsRouter.init(rootViewController: self)
@@ -141,18 +143,18 @@ open class ChatMessageActionsVC<ExtraData: ExtraDataTypes>: ViewController, UICo
 
 // MARK: - Delegate
 
-extension ChatMessageActionsVC {
+extension _ChatMessageActionsVC {
     public struct Delegate {
-        public var didTapOnInlineReply: (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
-        public var didTapOnThreadReply: (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
-        public var didTapOnEdit: (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
-        public var didFinish: (ChatMessageActionsVC) -> Void
+        public var didTapOnInlineReply: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
+        public var didTapOnThreadReply: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
+        public var didTapOnEdit: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
+        public var didFinish: (_ChatMessageActionsVC) -> Void
 
         public init(
-            didTapOnInlineReply: @escaping (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
-            didTapOnThreadReply: @escaping (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
-            didTapOnEdit: @escaping (ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
-            didFinish: @escaping (ChatMessageActionsVC) -> Void = { _ in }
+            didTapOnInlineReply: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
+            didTapOnThreadReply: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
+            didTapOnEdit: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
+            didFinish: @escaping (_ChatMessageActionsVC) -> Void = { _ in }
         ) {
             self.didTapOnInlineReply = didTapOnInlineReply
             self.didTapOnThreadReply = didTapOnThreadReply
@@ -160,7 +162,7 @@ extension ChatMessageActionsVC {
             self.didFinish = didFinish
         }
 
-        public init<Delegate: ChatMessageActionsVCDelegate>(delegate: Delegate) where Delegate.ExtraData == ExtraData {
+        public init<Delegate: _ChatMessageActionsVCDelegate>(delegate: Delegate) where Delegate.ExtraData == ExtraData {
             self.init(
                 didTapOnInlineReply: { [weak delegate] in delegate?.chatMessageActionsVC($0, didTapOnInlineReplyFor: $1) },
                 didTapOnThreadReply: { [weak delegate] in delegate?.chatMessageActionsVC($0, didTapOnThreadReplyFor: $1) },
