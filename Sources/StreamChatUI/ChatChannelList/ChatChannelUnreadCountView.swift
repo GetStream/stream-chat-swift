@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatUnreadCountView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatChannelUnreadCountView = _ChatChannelUnreadCountView<NoExtraData>
+
+open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: - Properties
     
     public var inset: CGFloat = 3

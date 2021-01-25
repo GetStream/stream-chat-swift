@@ -153,7 +153,7 @@ public extension UIConfig {
     
     struct ChannelListItemSubviews {
         public var avatarView: ChatChannelAvatarView<ExtraData>.Type = ChatChannelAvatarView.self
-        public var unreadCountView: ChatUnreadCountView<ExtraData>.Type = ChatUnreadCountView<ExtraData>.self
+        public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
         public var readStatusView: ChatReadStatusCheckmarkView<ExtraData>.Type = ChatReadStatusCheckmarkView<ExtraData>.self
     }
 }

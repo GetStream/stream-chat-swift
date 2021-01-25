@@ -28,7 +28,7 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: ChatSwipeableList
     
     public private(set) lazy var subtitleLabel = UILabel().withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var unreadCountView: ChatUnreadCountView = {
+    public private(set) lazy var unreadCountView: _ChatChannelUnreadCountView = {
         uiConfigSubviews.unreadCountView.init().withoutAutoresizingMaskConstraints
     }()
     
