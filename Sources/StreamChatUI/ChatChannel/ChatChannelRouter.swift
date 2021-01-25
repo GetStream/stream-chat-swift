@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelVC<ExtraData>> {
+public typealias ChatChannelRouter = _ChatChannelRouter<NoExtraData>
+
+open class _ChatChannelRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelVC<ExtraData>> {
     open func showThreadDetail(for message: _ChatMessage<ExtraData>, within channel: _ChatChannelController<ExtraData>) {
         let controller = ChatThreadVC<ExtraData>()
         controller.channelController = channel
