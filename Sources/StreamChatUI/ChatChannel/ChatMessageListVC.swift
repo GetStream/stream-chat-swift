@@ -173,7 +173,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
 
         guard gesture.state == .began else { return }
         guard let ip = collectionView.indexPathForItem(at: location) else { return }
-        guard let cell = collectionView.cellForItem(at: ip) as? СhatMessageCollectionViewCell<ExtraData> else { return }
+        guard let cell = collectionView.cellForItem(at: ip) as? _СhatMessageCollectionViewCell<ExtraData> else { return }
 
         didSelectMessageCell(cell)
     }
@@ -212,17 +212,17 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     ) -> UICollectionViewCell {
         let message = messageGroupPart(at: indexPath)
 
-        let cell: СhatMessageCollectionViewCell<ExtraData>
+        let cell: _СhatMessageCollectionViewCell<ExtraData>
         if message.isSentByCurrentUser {
             cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: uiConfig.messageList.outgoingMessageCell.reuseId,
                 for: indexPath
-            ) as! СhatMessageCollectionViewCell<ExtraData>
+            ) as! _СhatMessageCollectionViewCell<ExtraData>
         } else {
             cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: uiConfig.messageList.incomingMessageCell.reuseId,
                 for: indexPath
-            ) as! СhatMessageCollectionViewCell<ExtraData>
+            ) as! _СhatMessageCollectionViewCell<ExtraData>
         }
 
         cell.messageView.onThreadTap = { [weak self] in
@@ -326,7 +326,7 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         )
     }
 
-    private func didSelectMessageCell(_ cell: СhatMessageCollectionViewCell<ExtraData>) {
+    private func didSelectMessageCell(_ cell: _СhatMessageCollectionViewCell<ExtraData>) {
         guard let messageData = cell.message, messageData.isInteractionEnabled else { return }
 
         let actionsController = _ChatMessageActionsVC<ExtraData>()

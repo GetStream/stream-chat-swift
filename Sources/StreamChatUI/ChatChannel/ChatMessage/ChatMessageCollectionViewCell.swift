@@ -5,10 +5,13 @@
 import StreamChat
 import UIKit
 
-open class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionViewCell, UIConfigProvider {
+public typealias СhatMessageCollectionViewCell = _СhatMessageCollectionViewCell<NoExtraData>
+
+open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
     class var reuseId: String { String(describing: self) }
+
     public var message: _ChatMessageGroupPart<ExtraData>? {
-        didSet { updateContent() }
+        didSet { updateContentIfNeeded() }
     }
     
     // MARK: - Subviews
@@ -17,16 +20,7 @@ open class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollecti
     
     // MARK: - Lifecycle
 
-    override open func didMoveToSuperview() {
-        super.didMoveToSuperview()
-
-        guard superview != nil else { return }
-
-        setUpLayout()
-        updateContent()
-    }
-
-    open func setUpLayout() {
+    override open func setUpLayout() {
         contentView.addSubview(messageView)
 
         NSLayoutConstraint.activate([
@@ -36,7 +30,7 @@ open class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollecti
         ])
     }
 
-    open func updateContent() {
+    override open func updateContent() {
         messageView.message = message
     }
 
@@ -68,14 +62,14 @@ open class СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: UICollecti
     }
 }
 
-class СhatIncomingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
+class СhatIncomingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageCollectionViewCell<ExtraData> {
     override func setUpLayout() {
         super.setUpLayout()
         messageView.leadingAnchor.pin(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
     }
 }
 
-class СhatOutgoingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: СhatMessageCollectionViewCell<ExtraData> {
+class СhatOutgoingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageCollectionViewCell<ExtraData> {
     override func setUpLayout() {
         super.setUpLayout()
         messageView.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
