@@ -1,11 +1,13 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-open class ChatFileAttachmentListView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageFileAttachmentListView = _ChatMessageFileAttachmentListView<NoExtraData>
+
+open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var content: AttachmentListViewData<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }

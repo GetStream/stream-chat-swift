@@ -251,9 +251,10 @@ public extension UIConfig {
         public var loadingIndicator: LoadingIndicator<ExtraData>.Type = LoadingIndicator<ExtraData>.self
         public var attachmentsView: _ChatMessageAttachmentsView<ExtraData>.Type = _ChatMessageAttachmentsView<ExtraData>.self
         // Files
-        public var fileAttachmentListView: ChatFileAttachmentListView<ExtraData>.Type = ChatFileAttachmentListView<ExtraData>.self
-        public var fileAttachmentItemView: ChatFileAttachmentListView<ExtraData>.ItemView.Type =
-            ChatFileAttachmentListView<ExtraData>.ItemView.self
+        public var fileAttachmentListView: _ChatMessageFileAttachmentListView<ExtraData>
+            .Type = _ChatMessageFileAttachmentListView<ExtraData>.self
+        public var fileAttachmentItemView: _ChatMessageFileAttachmentListView<ExtraData>.ItemView.Type =
+            _ChatMessageFileAttachmentListView<ExtraData>.ItemView.self
         public var fileFallbackIcon = UIImage(named: "generic", in: .streamChatUI)!
         public var fileIcons = [AttachmentFileType: UIImage](
             uniqueKeysWithValues: AttachmentFileType.allCases.compactMap {

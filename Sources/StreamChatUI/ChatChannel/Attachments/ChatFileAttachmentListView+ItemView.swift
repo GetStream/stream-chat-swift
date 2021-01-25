@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-extension ChatFileAttachmentListView {
+extension _ChatMessageFileAttachmentListView {
     open class ItemView: _ChatMessageAttachmentInfoView<ExtraData> {
         // MARK: - Subviews
 
