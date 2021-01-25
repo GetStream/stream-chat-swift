@@ -12,7 +12,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMes
         messageContentFrame: CGRect,
         messageData: _ChatMessageGroupPart<ExtraData>,
         messageActionsController: _ChatMessageActionsVC<ExtraData>,
-        messageReactionsController: ChatMessageReactionVC<ExtraData>?
+        messageReactionsController: _ChatMessageReactionsVC<ExtraData>?
     ) {
         let popup = _ChatMessagePopupVC<ExtraData>()
         popup.message = messageData
