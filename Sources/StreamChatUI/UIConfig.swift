@@ -244,7 +244,7 @@ public extension UIConfig {
         public var threadArrowView: ChatMessageThreadArrowView<ExtraData>.Type = ChatMessageThreadArrowView<ExtraData>.self
         public var threadInfoView: ChatMessageThreadInfoView<ExtraData>.Type = ChatMessageThreadInfoView<ExtraData>.self
         public var errorIndicator: ChatMessageErrorIndicator<ExtraData>.Type = ChatMessageErrorIndicator<ExtraData>.self
-        public var linkPreviewView: ChatMessageLinkPreviewView<ExtraData>.Type = ChatMessageLinkPreviewView<ExtraData>.self
+        public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type = _ChatMessageLinkPreviewView<ExtraData>.self
     }
 
     struct MessageAttachmentViewSubviews {

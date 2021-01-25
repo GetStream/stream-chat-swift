@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
+public typealias ChatMessageLinkPreviewView = _ChatMessageLinkPreviewView<NoExtraData>
+
+open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
     public var content: _ChatMessageAttachment<ExtraData>? { didSet { updateContentIfNeeded() } }
 
     public private(set) lazy var imagePreview: ChatMessageImageGallery<ExtraData>.ImagePreview = uiConfig
