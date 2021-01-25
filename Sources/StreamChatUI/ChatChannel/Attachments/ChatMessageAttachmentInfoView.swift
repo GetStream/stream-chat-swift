@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageAttachmentInfoView = _ChatMessageAttachmentInfoView<NoExtraData>
+
+open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var content: AttachmentListViewData<ExtraData>.ItemData? {
         didSet { updateContentIfNeeded() }
     }
@@ -109,7 +111,7 @@ open class ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: View, UICon
 
 // MARK: - Private
 
-private extension ChatMessageAttachmentInfoView {
+private extension _ChatMessageAttachmentInfoView {
     var fileAttachmentActionIcon: UIImage? {
         guard let attachment = content?.attachment else { return nil }
 

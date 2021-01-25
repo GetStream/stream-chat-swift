@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>: ChatMessageAttachmentInfoView<ExtraData> {
+open class MessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>: _ChatMessageAttachmentInfoView<ExtraData> {
     // MARK: - Properties
     
     public var discardButtonHandler: (() -> Void)?
