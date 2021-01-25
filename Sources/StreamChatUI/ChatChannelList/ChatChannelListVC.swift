@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelListVC<ExtraData: ExtraDataTypes>: ViewController,
+public typealias ChatChannelListVC = _ChatChannelListVC<NoExtraData>
+
+open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UIConfigProvider {
@@ -109,7 +111,7 @@ open class ChatChannelListVC<ExtraData: ExtraDataTypes>: ViewController,
 
 // MARK: - _ChatChannelListControllerDelegate
 
-extension ChatChannelListVC: _ChatChannelListControllerDelegate {
+extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
     public func controller(
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
