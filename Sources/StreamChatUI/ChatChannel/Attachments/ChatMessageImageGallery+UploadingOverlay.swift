@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-extension ChatMessageImageGallery {
+extension _ChatMessageImageGallery {
     open class UploadingOverlay: ChatMessageAttachmentInfoView<ExtraData> {
         public private(set) lazy var fileSizeContainer = UIView()
             .withoutAutoresizingMaskConstraints
