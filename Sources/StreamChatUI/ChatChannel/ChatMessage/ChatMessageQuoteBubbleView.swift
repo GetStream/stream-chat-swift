@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageQuoteBubbleView<ExtraData: ExtraDataTypes>: MessageComposerQuoteBubbleView<ExtraData> {
+public typealias ChatMessageQuoteBubbleView = _ChatMessageQuoteBubbleView<NoExtraData>
+
+open class _ChatMessageQuoteBubbleView<ExtraData: ExtraDataTypes>: MessageComposerQuoteBubbleView<ExtraData> {
     public var isParentMessageSentByCurrentUser: Bool? {
         didSet {
             updateContentIfNeeded()
