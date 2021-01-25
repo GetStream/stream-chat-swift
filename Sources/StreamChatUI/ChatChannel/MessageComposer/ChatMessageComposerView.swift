@@ -29,7 +29,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: View,
         .imageAttachmentsView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var documentAttachmentsView: MessageComposerDocumentAttachmentsView<ExtraData> = uiConfig
+    public private(set) lazy var documentAttachmentsView = uiConfig
         .messageComposer
         .documentAttachmentsView.init()
         .withoutAutoresizingMaskConstraints
