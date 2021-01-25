@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class MessageActionsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageActionsView = _ChatMessageActionsView<NoExtraData>
+
+open class _ChatMessageActionsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var actionItems: [ChatMessageActionItem] = [] {
         didSet { updateContentIfNeeded() }
     }
