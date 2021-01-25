@@ -24,7 +24,7 @@ extension UIViewController {
         
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
-        let chatList = ChatChannelListVC<NoExtraData>()
+        let chatList = _ChatChannelListVC<NoExtraData>()
         chatList.controller = controller
         chatList.uiConfig = uiConfig
         

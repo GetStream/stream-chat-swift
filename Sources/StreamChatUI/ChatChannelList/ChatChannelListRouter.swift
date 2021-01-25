@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatChannelListRouter = _ChatChannelListRouter<NoExtraData>
 
-open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatChannelListVC<ExtraData>> {
+open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatChannelListVC<ExtraData>> {
     open func openCurrentUserProfile(for currentUser: _CurrentChatUser<ExtraData.User>) {
         debugPrint(currentUser)
     }
