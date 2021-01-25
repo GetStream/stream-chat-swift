@@ -205,9 +205,9 @@ public extension UIConfig {
     struct MessageReactions {
         public var reactionsBubbleView: ChatMessageReactionsBubbleView<ExtraData>.Type =
             ChatMessageDefaultReactionsBubbleView<ExtraData>.self
-        public var reactionsView: ChatMessageReactionsView<ExtraData>.Type = ChatMessageReactionsView<ExtraData>.self
-        public var reactionItemView: ChatMessageReactionsView<ExtraData>.ItemView.Type =
-            ChatMessageReactionsView<ExtraData>.ItemView.self
+        public var reactionsView: _ChatMessageReactionsView<ExtraData>.Type = _ChatMessageReactionsView<ExtraData>.self
+        public var reactionItemView: _ChatMessageReactionsView<ExtraData>.ItemView.Type =
+            _ChatMessageReactionsView<ExtraData>.ItemView.self
 
         public var availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType] = [
             .init(rawValue: "love"): ChatMessageReactionAppearance(
