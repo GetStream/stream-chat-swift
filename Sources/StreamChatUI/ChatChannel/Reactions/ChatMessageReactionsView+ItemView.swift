@@ -1,11 +1,11 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-extension ChatMessageReactionsView {
+extension _ChatMessageReactionsView {
     open class ItemView: Button, UIConfigProvider {
         public var content: Content? {
             didSet { updateContentIfNeeded() }
@@ -46,7 +46,7 @@ extension ChatMessageReactionsView {
 
 // MARK: - Content
 
-extension ChatMessageReactionsView.ItemView {
+extension _ChatMessageReactionsView.ItemView {
     public struct Content {
         public let useBigIcon: Bool
         public let reaction: ChatMessageReactionData
@@ -66,7 +66,7 @@ extension ChatMessageReactionsView.ItemView {
 
 // MARK: - Private
 
-private extension ChatMessageReactionsView.ItemView {
+private extension _ChatMessageReactionsView.ItemView {
     var reactionImage: UIImage? {
         guard let content = content else { return nil }
 
