@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		22086B38259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B37259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift */; };
+		22086B38259509350007F8C0 /* ChatMessageComposerDocumentAttachmentCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B37259509350007F8C0 /* ChatMessageComposerDocumentAttachmentCollectionViewCell.swift */; };
 		22086B40259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B3F259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift */; };
 		22086B48259509AC0007F8C0 /* MessageComposerDocumentAttachmentsCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B47259509AC0007F8C0 /* MessageComposerDocumentAttachmentsCollectionViewLayout.swift */; };
 		2210525F256FE16600A5F0DB /* MessageComposerInputSlashCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2210525E256FE16600A5F0DB /* MessageComposerInputSlashCommandView.swift */; };
@@ -743,7 +743,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		22086B37259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerDocumentAttachmentCollectionViewCell.swift; sourceTree = "<group>"; };
+		22086B37259509350007F8C0 /* ChatMessageComposerDocumentAttachmentCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerDocumentAttachmentCollectionViewCell.swift; sourceTree = "<group>"; };
 		22086B3F259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerDocumentAttachmentView.swift; sourceTree = "<group>"; };
 		22086B47259509AC0007F8C0 /* MessageComposerDocumentAttachmentsCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerDocumentAttachmentsCollectionViewLayout.swift; sourceTree = "<group>"; };
 		2210525E256FE16600A5F0DB /* MessageComposerInputSlashCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerInputSlashCommandView.swift; sourceTree = "<group>"; };
@@ -2740,7 +2740,7 @@
 				22C23505259A257B00DC805A /* ChatMessageComposerDocumentAttachmentsView.swift */,
 				22C2350D259A25A300DC805A /* ChatMessageComposerImageAttachmentsView.swift */,
 				228DC80D25704B410080A49F /* ChatMessageComposerImageAttachmentCollectionViewCell.swift */,
-				22086B37259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift */,
+				22086B37259509350007F8C0 /* ChatMessageComposerDocumentAttachmentCollectionViewCell.swift */,
 				22086B3F259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift */,
 				22086B47259509AC0007F8C0 /* MessageComposerDocumentAttachmentsCollectionViewLayout.swift */,
 				2210525E256FE16600A5F0DB /* MessageComposerInputSlashCommandView.swift */,
@@ -3371,7 +3371,7 @@
 				790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */,
 				DBC8A564258113F700B20A82 /* ChatThreadVC.swift in Sources */,
 				DB8230F2259B8DBF00E7D7FE /* ChatMessageGiphyView.swift in Sources */,
-				22086B38259509350007F8C0 /* MessageComposerDocumentAttachmentCollectionViewCell.swift in Sources */,
+				22086B38259509350007F8C0 /* ChatMessageComposerDocumentAttachmentCollectionViewCell.swift in Sources */,
 				79D86E832562BAB900DCD1D2 /* AppearanceSetting.swift in Sources */,
 				22086B40259509450007F8C0 /* MessageComposerDocumentAttachmentView.swift in Sources */,
 				792DD9FB256E67C6001DB91B /* UIConfigProvider.swift in Sources */,

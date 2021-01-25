@@ -59,8 +59,8 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(
-            MessageComposerDocumentAttachmentCollectionViewCell<ExtraData>.self,
-            forCellWithReuseIdentifier: MessageComposerDocumentAttachmentCollectionViewCell<ExtraData>.reuseId
+            _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData>.self,
+            forCellWithReuseIdentifier: _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData>.reuseId
         )
     }
     
@@ -85,9 +85,9 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView
             .dequeueReusableCell(
-                withReuseIdentifier: MessageComposerDocumentAttachmentCollectionViewCell<ExtraData>.reuseId,
+                withReuseIdentifier: _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData>.reuseId,
                 for: indexPath
-            ) as? MessageComposerDocumentAttachmentCollectionViewCell<ExtraData>
+            ) as? _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData>
         else { return UICollectionViewCell() }
         
         cell.documentAttachmentView.fileNameLabel.text = documents[indexPath.row].name
