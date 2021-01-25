@@ -31,7 +31,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: ViewController, UICon
     public var message: _ChatMessageGroupPart<ExtraData>!
     public var messageViewFrame: CGRect!
     public var actionsController: _ChatMessageActionsVC<ExtraData>!
-    public var reactionsController: ChatMessageReactionVC<ExtraData>?
+    public var reactionsController: _ChatMessageReactionsVC<ExtraData>?
 
     // MARK: - Private
 
