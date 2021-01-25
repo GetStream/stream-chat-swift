@@ -279,9 +279,10 @@ public extension UIConfig {
         public var interactiveAttachmentActionButton: ChatMessageInteractiveAttachmentView<ExtraData>.ActionButton.Type =
             ChatMessageInteractiveAttachmentView<ExtraData>.ActionButton.self
         // Giphy
-        public var giphyAttachmentView: ChatMessageGiphyView<ExtraData>.Type =
-            ChatMessageGiphyView<ExtraData>.self
-        public var giphyBadgeView: ChatMessageGiphyView<ExtraData>.GiphyBadge.Type = ChatMessageGiphyView<ExtraData>.GiphyBadge.self
+        public var giphyAttachmentView: _ChatMessageGiphyView<ExtraData>.Type =
+            _ChatMessageGiphyView<ExtraData>.self
+        public var giphyBadgeView: _ChatMessageGiphyView<ExtraData>.GiphyBadge.Type = _ChatMessageGiphyView<ExtraData>.GiphyBadge
+            .self
         public var giphyBadgeIcon: UIImage? = UIImage(named: "icon_giphy", in: .streamChatUI)
     }
 }
