@@ -1,10 +1,10 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
 
-open class MessageComposerDocumentAttachmentsCollectionViewLayout: UICollectionViewFlowLayout {
+open class ChatMessageComposerDocumentAttachmentsCollectionViewLayout: UICollectionViewFlowLayout {
     open var itemHeight: CGFloat = 70
     
     override public required init() {
