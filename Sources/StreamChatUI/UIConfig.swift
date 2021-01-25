@@ -209,24 +209,24 @@ public extension UIConfig {
         public var reactionItemView: ChatMessageReactionsView<ExtraData>.ItemView.Type =
             ChatMessageReactionsView<ExtraData>.ItemView.self
 
-        public var availableReactions: [MessageReactionType: ReactionAppearanceType] = [
-            .init(rawValue: "love"): ReactionAppearance(
+        public var availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType] = [
+            .init(rawValue: "love"): ChatMessageReactionAppearance(
                 smallIcon: UIImage(named: "reaction_love_small", in: .streamChatUI)!,
                 largeIcon: UIImage(named: "reaction_love_big", in: .streamChatUI)!
             ),
-            .init(rawValue: "haha"): ReactionAppearance(
+            .init(rawValue: "haha"): ChatMessageReactionAppearance(
                 smallIcon: UIImage(named: "reaction_lol_small", in: .streamChatUI)!,
                 largeIcon: UIImage(named: "reaction_lol_big", in: .streamChatUI)!
             ),
-            .init(rawValue: "like"): ReactionAppearance(
+            .init(rawValue: "like"): ChatMessageReactionAppearance(
                 smallIcon: UIImage(named: "reaction_thumbsup_small", in: .streamChatUI)!,
                 largeIcon: UIImage(named: "reaction_thumbsup_big", in: .streamChatUI)!
             ),
-            .init(rawValue: "sad"): ReactionAppearance(
+            .init(rawValue: "sad"): ChatMessageReactionAppearance(
                 smallIcon: UIImage(named: "reaction_thumbsdown_small", in: .streamChatUI)!,
                 largeIcon: UIImage(named: "reaction_thumbsdown_big", in: .streamChatUI)!
             ),
-            .init(rawValue: "wow"): ReactionAppearance(
+            .init(rawValue: "wow"): ChatMessageReactionAppearance(
                 smallIcon: UIImage(named: "reaction_wut_small", in: .streamChatUI)!,
                 largeIcon: UIImage(named: "reaction_wut_big", in: .streamChatUI)!
             )
