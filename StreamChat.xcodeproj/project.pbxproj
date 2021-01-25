@@ -19,7 +19,7 @@
 		224165A825910A2C00ED7F78 /* MessageComposerCheckmarkControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224165A725910A2C00ED7F78 /* MessageComposerCheckmarkControl.swift */; };
 		2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2245B2B525602465006A612D /* ChatChannelAvatarView.swift */; };
 		224FF67B2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF67A2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift */; };
-		224FF6812562F2E900725DD1 /* ChatUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6802562F2E900725DD1 /* ChatUnreadCountView.swift */; };
+		224FF6812562F2E900725DD1 /* ChatChannelUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6802562F2E900725DD1 /* ChatChannelUnreadCountView.swift */; };
 		224FF6872562F55F00725DD1 /* Date+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6862562F55F00725DD1 /* Date+Extensions.swift */; };
 		224FF6912562F58F00725DD1 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6902562F58F00725DD1 /* UIColor+Extensions.swift */; };
 		224FF6972562F5AE00725DD1 /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6962562F5AE00725DD1 /* Bundle+Extensions.swift */; };
@@ -755,7 +755,7 @@
 		224165A725910A2C00ED7F78 /* MessageComposerCheckmarkControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageComposerCheckmarkControl.swift; sourceTree = "<group>"; };
 		2245B2B525602465006A612D /* ChatChannelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelAvatarView.swift; sourceTree = "<group>"; };
 		224FF67A2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatReadStatusCheckmarkView.swift; sourceTree = "<group>"; };
-		224FF6802562F2E900725DD1 /* ChatUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatUnreadCountView.swift; sourceTree = "<group>"; };
+		224FF6802562F2E900725DD1 /* ChatChannelUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelUnreadCountView.swift; sourceTree = "<group>"; };
 		224FF6862562F55F00725DD1 /* Date+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extensions.swift"; sourceTree = "<group>"; };
 		224FF6902562F58F00725DD1 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		224FF6962562F5AE00725DD1 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
@@ -1548,7 +1548,7 @@
 				E7C4E74C259D54B5002889AC /* ChatSwipeableListItemView.swift */,
 				2245B2B525602465006A612D /* ChatChannelAvatarView.swift */,
 				224FF67A2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift */,
-				224FF6802562F2E900725DD1 /* ChatUnreadCountView.swift */,
+				224FF6802562F2E900725DD1 /* ChatChannelUnreadCountView.swift */,
 			);
 			path = ChatChannelList;
 			sourceTree = "<group>";
@@ -3386,7 +3386,7 @@
 				DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */,
 				E79AC10B25831A1500C3CE5D /* MessageComposerCommandCollectionViewCell.swift in Sources */,
 				88CABC1525933DD80061BB67 /* ChatMessageReactionsView+ItemView.swift in Sources */,
-				224FF6812562F2E900725DD1 /* ChatUnreadCountView.swift in Sources */,
+				224FF6812562F2E900725DD1 /* ChatChannelUnreadCountView.swift in Sources */,
 				224FF67B2562F1EA00725DD1 /* ChatReadStatusCheckmarkView.swift in Sources */,
 				DB70CFFB25702EB900DDF436 /* ChatMessagePopupVC.swift in Sources */,
 				2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */,
