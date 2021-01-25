@@ -62,7 +62,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     
     // MARK: - Subviews
         
-    public private(set) lazy var composerView: MessageComposerView<ExtraData> = uiConfig
+    public private(set) lazy var composerView = uiConfig
         .messageComposer
         .messageComposerView.init()
         .withoutAutoresizingMaskConstraints
