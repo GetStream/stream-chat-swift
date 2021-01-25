@@ -20,9 +20,10 @@ open class ChatChannelListItemView<ExtraData: ExtraDataTypes>: ChatSwipeableList
     
     public private(set) lazy var container = ContainerStackView().withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var avatarView: ChatChannelAvatarView<ExtraData> = {
-        uiConfigSubviews.avatarView.init().withoutAutoresizingMaskConstraints
-    }()
+    public private(set) lazy var avatarView = uiConfigSubviews
+        .avatarView
+        .init()
+        .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var titleLabel = UILabel().withoutAutoresizingMaskConstraints
     
