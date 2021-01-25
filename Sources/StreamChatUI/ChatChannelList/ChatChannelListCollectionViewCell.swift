@@ -6,7 +6,9 @@ import Foundation
 import StreamChat
 import UIKit
 
-open class ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
+public typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionViewCell<NoExtraData>
+
+open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
     // MARK: - Properties
 
     public private(set) lazy var channelView: _ChatChannelListItemView<ExtraData> = uiConfig.channelList.channelListItemView.init()
