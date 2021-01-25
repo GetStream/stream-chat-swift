@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageAttachmentsView = _ChatMessageAttachmentsView<NoExtraData>
+
+open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     /// All attachments with `type == .image` will be shown in a gallery
     /// All the other ones will be treated as files.
     public var content: AttachmentListViewData<ExtraData>? {
