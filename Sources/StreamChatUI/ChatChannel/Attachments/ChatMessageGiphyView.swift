@@ -7,7 +7,9 @@ import StreamChat
 import SwiftyGif
 import UIKit
 
-open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageGiphyView = _ChatMessageGiphyView<NoExtraData>
+
+open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     public var content: _ChatMessageAttachment<ExtraData>? {
         didSet {
             let isDifferentImage = oldValue?.imageURL != content?.imageURL
@@ -87,7 +89,7 @@ open class ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvid
     }
 }
 
-extension ChatMessageGiphyView {
+extension _ChatMessageGiphyView {
     open class GiphyBadge: View, UIConfigProvider {
         public private(set) lazy var title: UILabel = {
             let label = UILabel().withoutAutoresizingMaskConstraints
