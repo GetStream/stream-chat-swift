@@ -32,7 +32,7 @@ open class MessageComposerView<ExtraData: ExtraDataTypes>: View,
         .documentAttachmentsView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var messageInputView: MessageComposerInputContainerView<ExtraData> = uiConfig
+    public private(set) lazy var messageInputView = uiConfig
         .messageComposer
         .messageInputView.init()
         .withoutAutoresizingMaskConstraints

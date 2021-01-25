@@ -296,8 +296,8 @@ public extension UIConfig {
             MessageComposerViewController<ExtraData>.self
         public var messageComposerView: MessageComposerView<ExtraData>.Type =
             MessageComposerView<ExtraData>.self
-        public var messageInputView: MessageComposerInputContainerView<ExtraData>
-            .Type = MessageComposerInputContainerView<ExtraData>.self
+        public var messageInputView: _ChatMessageComposerInputContainerView<ExtraData>
+            .Type = _ChatMessageComposerInputContainerView<ExtraData>.self
         public var documentAttachmentView: MessageComposerDocumentAttachmentView<ExtraData>.Type =
             MessageComposerDocumentAttachmentView<ExtraData>.self
         public var documentAttachmentsFlowLayout: MessageComposerDocumentAttachmentsCollectionViewLayout.Type =
