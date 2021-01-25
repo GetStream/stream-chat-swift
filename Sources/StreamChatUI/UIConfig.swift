@@ -249,7 +249,7 @@ public extension UIConfig {
 
     struct MessageAttachmentViewSubviews {
         public var loadingIndicator: LoadingIndicator<ExtraData>.Type = LoadingIndicator<ExtraData>.self
-        public var attachmentsView: ChatMessageAttachmentsView<ExtraData>.Type = ChatMessageAttachmentsView<ExtraData>.self
+        public var attachmentsView: _ChatMessageAttachmentsView<ExtraData>.Type = _ChatMessageAttachmentsView<ExtraData>.self
         // Files
         public var fileAttachmentListView: ChatFileAttachmentListView<ExtraData>.Type = ChatFileAttachmentListView<ExtraData>.self
         public var fileAttachmentItemView: ChatFileAttachmentListView<ExtraData>.ItemView.Type =
