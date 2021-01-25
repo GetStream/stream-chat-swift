@@ -235,7 +235,7 @@ public extension UIConfig {
 
     struct MessageContentViewSubviews {
         public var authorAvatarView: AvatarView.Type = AvatarView.self
-        public var bubbleView: ChatMessageBubbleView<ExtraData>.Type = ChatMessageBubbleView<ExtraData>.self
+        public var bubbleView: _ChatMessageBubbleView<ExtraData>.Type = _ChatMessageBubbleView<ExtraData>.self
         public var metadataView: _ChatMessageMetadataView<ExtraData>.Type = _ChatMessageMetadataView<ExtraData>.self
         public var quotedMessageBubbleView: _ChatMessageQuoteBubbleView<ExtraData>.Type = _ChatMessageQuoteBubbleView.self
         public var attachmentSubviews = MessageAttachmentViewSubviews()
