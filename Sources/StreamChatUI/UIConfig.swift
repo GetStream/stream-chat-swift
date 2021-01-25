@@ -143,7 +143,7 @@ public extension UIConfig {
         public var channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self
         public var channelListSwipeableItemView: _ChatChannelSwipeableListItemView<ExtraData>.Type =
             _ChatChannelSwipeableListItemView<ExtraData>.self
-        public var channelListItemView: ChatChannelListItemView<ExtraData>.Type = ChatChannelListItemView<ExtraData>.self
+        public var channelListItemView: _ChatChannelListItemView<ExtraData>.Type = _ChatChannelListItemView<ExtraData>.self
         public var channelViewCell: ChatChannelListCollectionViewCell<ExtraData>.Type =
             ChatChannelListCollectionViewCell<ExtraData>.self
         public var newChannelButton: CreateNewChannelButton.Type = CreateNewChannelButton.self
