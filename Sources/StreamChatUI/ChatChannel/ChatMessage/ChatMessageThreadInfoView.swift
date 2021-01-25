@@ -60,7 +60,9 @@ open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: View, UIConfi
     }
 }
 
-open class ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
+public typealias ChatMessageThreadInfoView = _ChatMessageThreadInfoView<NoExtraData>
+
+open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
