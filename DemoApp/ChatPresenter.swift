@@ -36,7 +36,7 @@ extension UIViewController {
     }
 }
 
-class DemoChatChannelListRouter: ChatChannelListRouter<NoExtraData> {
+class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
     override func openCreateNewChannel() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
