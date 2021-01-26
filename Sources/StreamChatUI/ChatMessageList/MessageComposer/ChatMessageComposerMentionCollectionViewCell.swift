@@ -109,12 +109,7 @@ open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTyp
 
         contentView.embed(
             mentionView,
-            insets: .init(
-                top: 0,
-                leading: contentView.directionalLayoutMargins.leading,
-                bottom: 0,
-                trailing: contentView.directionalLayoutMargins.trailing
-            )
+            insets: contentView.directionalLayoutMargins
         )
     }
 }
