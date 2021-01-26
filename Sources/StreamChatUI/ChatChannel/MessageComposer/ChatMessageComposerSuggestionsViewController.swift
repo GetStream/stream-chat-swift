@@ -10,7 +10,9 @@ public enum SuggestionKind {
     case mention
 }
 
-open class MessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: ViewController,
+public typealias ChatMessageComposerSuggestionsViewController = _ChatMessageComposerSuggestionsViewController<NoExtraData>
+
+open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
     UICollectionViewDelegate {
     // MARK: - Property

@@ -25,7 +25,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     // MARK: - Underlying types
 
     public var userSuggestionSearchController: _ChatUserSearchController<ExtraData>!
-    public private(set) lazy var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData> =
+    public private(set) lazy var suggestionsViewController =
         uiConfig.messageComposer.suggestionsViewController.init()
 
     public enum State {
