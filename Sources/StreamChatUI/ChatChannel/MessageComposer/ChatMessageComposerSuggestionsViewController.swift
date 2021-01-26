@@ -140,14 +140,14 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
 public typealias ChatMessageComposerSuggestionsCommandDataSource = _ChatMessageComposerSuggestionsCommandDataSource<NoExtraData>
 
 open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
-    open var collectionView: MessageComposerSuggestionsCollectionView<ExtraData>
+    open var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
     open var commands: [Command]
 
     open var uiConfig: UIConfig<ExtraData> {
         collectionView.uiConfig()
     }
 
-    public init(with commands: [Command], collectionView: MessageComposerSuggestionsCollectionView<ExtraData>) {
+    public init(with commands: [Command], collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>) {
         self.commands = commands
         self.collectionView = collectionView
 
@@ -214,7 +214,7 @@ public typealias ChatMessageComposerSuggestionsMentionDataSource = _ChatMessageC
 open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
     UICollectionViewDataSource,
     _ChatUserSearchControllerDelegate {
-    var collectionView: MessageComposerSuggestionsCollectionView<ExtraData>
+    var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
     var searchController: _ChatUserSearchController<ExtraData>
 
     var uiConfig: UIConfig<ExtraData> {
@@ -222,7 +222,7 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
     }
 
     init(
-        collectionView: MessageComposerSuggestionsCollectionView<ExtraData>,
+        collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>,
         searchController: _ChatUserSearchController<ExtraData>
     ) {
         self.collectionView = collectionView
