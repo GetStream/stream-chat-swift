@@ -56,7 +56,15 @@ public extension Token {
     ///
     /// Is used by `development(userId:)` token provider.
     static func development(userId: UserId) -> Self {
-        .init(rawValue: "development", userId: userId)
+        log.assert(!userId.isEmpty, "The provided `userId` must not be empty.")
+        
+        let header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" //  {"alg": "HS256", "typ": "JWT"}
+        let payload = #"{"user_id":"\#(userId)"}"# .data(using: .utf8)!.base64EncodedString()
+        let devSignature = "devtoken"
+
+        let jwt = [header, payload, devSignature].joined(separator: ".")
+            
+        return .init(rawValue: jwt, userId: userId)
     }
 }
 

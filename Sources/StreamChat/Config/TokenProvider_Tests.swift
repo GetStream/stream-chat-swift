@@ -25,8 +25,10 @@ final class TokenProvider_Tests: StressTestCase {
         }.get()
 
         // Assert token is correct.
-        XCTAssertEqual(token.rawValue, "development")
-        XCTAssertEqual(token.userId, userId)
+        let tokenParts = token.rawValue.split(separator: ".")
+        XCTAssertEqual(tokenParts[0], "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9") // header
+        XCTAssertEqual(token.userId, userId) // payload
+        XCTAssertEqual(tokenParts[2], "devtoken") // signature
     }
 
     func test_staticProvider_propagatesToken() throws {
