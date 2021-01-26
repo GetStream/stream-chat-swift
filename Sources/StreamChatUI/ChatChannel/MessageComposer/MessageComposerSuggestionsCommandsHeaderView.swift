@@ -5,7 +5,11 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView, UIConfigProvider {
+public typealias ChatMessageComposerSuggestionsCommandsReusableView =
+    _ChatMessageComposerSuggestionsCommandsReusableView<NoExtraData>
+
+open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
+    UIConfigProvider {
     class var reuseId: String { String(describing: self) }
 
     public lazy var suggestionsHeader: MessageComposerSuggestionsCommandsHeaderView<ExtraData> = {
