@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerSendButton<ExtraData: ExtraDataTypes>: ChatSquareButton<ExtraData> {
+public typealias ChatMessageComposerSendButton = _ChatMessageComposerSendButton<NoExtraData>
+
+open class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: ChatSquareButton<ExtraData> {
     // MARK: Underlying types
     
     public enum Mode {
