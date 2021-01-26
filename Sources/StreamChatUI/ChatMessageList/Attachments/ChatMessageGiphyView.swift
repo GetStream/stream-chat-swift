@@ -64,6 +64,7 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
     override public func defaultAppearance() {
         super.defaultAppearance()
         backgroundColor = .clear
+        imageView.contentMode = .scaleAspectFill
     }
 
     override open func updateContent() {
