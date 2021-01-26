@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageQuoteBubbleView = _ChatMessageQuoteBubbleView<NoExtraData>
 
-open class _ChatMessageQuoteBubbleView<ExtraData: ExtraDataTypes>: MessageComposerQuoteBubbleView<ExtraData> {
+open class _ChatMessageQuoteBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageComposerQuoteBubbleView<ExtraData> {
     public var isParentMessageSentByCurrentUser: Bool? {
         didSet {
             updateContentIfNeeded()
