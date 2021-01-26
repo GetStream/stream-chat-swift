@@ -16,7 +16,7 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: Vi
     
     public private(set) lazy var container = UIStackView().withoutAutoresizingMaskConstraints
         
-    public private(set) lazy var textView: MessageComposerInputTextView<ExtraData> = uiConfig
+    public private(set) lazy var textView = uiConfig
         .messageComposer
         .textView.init()
         .withoutAutoresizingMaskConstraints
