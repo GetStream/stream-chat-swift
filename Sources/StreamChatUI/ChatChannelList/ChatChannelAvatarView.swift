@@ -19,21 +19,18 @@ open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: СhatAvatarView, U
     public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContent() }
     }
-    
-    override open var intrinsicContentSize: CGSize {
-        .init(width: 56, height: 56)
-    }
-    
+
     // MARK: - Overrides
     
     override open func setUpLayout() {
         super.setUpLayout()
         
         widthAnchor.pin(equalTo: heightAnchor, multiplier: 1).isActive = true
+        
         embed(imageView)
         addSubview(onlineIndicatorView)
         onlineIndicatorView.pin(anchors: [.top, .right], to: self)
-        onlineIndicatorView.widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.25).isActive = true
+        onlineIndicatorView.widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.3).isActive = true
     }
     
     // MARK: - Public

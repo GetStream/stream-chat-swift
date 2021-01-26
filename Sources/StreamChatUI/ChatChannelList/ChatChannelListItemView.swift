@@ -79,6 +79,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
             trailing: avatarView.directionalLayoutMargins.trailing
         )
         
+        avatarView.heightAnchor.pin(equalToConstant: 48).isActive = true
         container.leftStackView.addArrangedSubview(avatarView)
         
         // UIStackView embedded in UIView with flexible top and bottom constraints to make
@@ -88,13 +89,15 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         stackView.axis = .vertical
         
         containerCenterView.addSubview(stackView)
-        stackView.topAnchor.pin(greaterThanOrEqualTo: containerCenterView.topAnchor, constant: 0).isActive = true
-        stackView.bottomAnchor.pin(lessThanOrEqualTo: containerCenterView.bottomAnchor, constant: 0).isActive = true
+        stackView.topAnchor.pin(greaterThanOrEqualTo: containerCenterView.layoutMarginsGuide.topAnchor).isActive = true
+        stackView.bottomAnchor.pin(lessThanOrEqualTo: containerCenterView.layoutMarginsGuide.bottomAnchor).isActive = true
         stackView.pin(anchors: [.leading, .trailing, .centerY], to: containerCenterView)
+        stackView.spacing = subtitleLabel.font.pointSize / 10
         
         // Top part of centerStackView.
         let topCenterStackView = UIStackView()
         topCenterStackView.alignment = .top
+        topCenterStackView.spacing = UIStackView.spacingUseSystem
         topCenterStackView.addArrangedSubview(titleLabel)
         topCenterStackView.addArrangedSubview(unreadCountView)
         
@@ -107,6 +110,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         timestampLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
         
         bottomCenterStackView.addArrangedSubview(subtitleLabel)
+        bottomCenterStackView.setCustomSpacing(UIStackView.spacingUseSystem, after: subtitleLabel)
         bottomCenterStackView.addArrangedSubview(readStatusView)
         bottomCenterStackView.addArrangedSubview(timestampLabel)
         
@@ -146,6 +150,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         
         // TODO: ReadStatusView
         // Missing LLC API
+        readStatusView.isHidden = true
     }
     
     open func resetContent() {
