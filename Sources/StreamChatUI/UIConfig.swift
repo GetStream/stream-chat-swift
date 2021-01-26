@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-public struct UIConfig<ExtraData: ExtraDataTypes> {
+public typealias UIConfig = _UIConfig<NoExtraData>
+
+public struct _UIConfig<ExtraData: ExtraDataTypes> {
     public var channelList = ChannelListUI()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()
@@ -22,7 +24,7 @@ public struct UIConfig<ExtraData: ExtraDataTypes> {
 
 private var defaults: [String: Any] = [:]
 
-public extension UIConfig {
+public extension _UIConfig {
     static var `default`: Self {
         get {
             let key = String(describing: ExtraData.self)
@@ -43,7 +45,7 @@ public extension UIConfig {
 
 // MARK: - Color Palette
 
-public extension UIConfig {
+public extension _UIConfig {
     struct ColorPalette {
         // MARK: - General
 
@@ -109,7 +111,7 @@ public extension UIConfig {
     }
 }
 
-public extension UIConfig {
+public extension _UIConfig {
     struct Font {
         public var captionBold: UIFont = .streamCaptionBold
         public var footnote: UIFont = .streamFootnote
@@ -125,7 +127,7 @@ public extension UIConfig {
 
 // MARK: - Navigation
 
-public extension UIConfig {
+public extension _UIConfig {
     struct Navigation {
         public var navigationBar: ChatNavigationBar.Type = ChatNavigationBar.self
         public var channelListRouter: _ChatChannelListRouter<ExtraData>.Type = _ChatChannelListRouter<ExtraData>.self
@@ -137,7 +139,7 @@ public extension UIConfig {
 
 // MARK: - ChannelListUI
 
-public extension UIConfig {
+public extension _UIConfig {
     struct ChannelListUI {
         public var channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self
         public var channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self
@@ -162,7 +164,7 @@ public extension UIConfig {
 
 // MARK: - CurrentUser
 
-public extension UIConfig {
+public extension _UIConfig {
     struct CurrentUserUI {
         public var currentUserViewAvatarView: _CurrentChatUserAvatarView<ExtraData>.Type = _CurrentChatUserAvatarView<ExtraData>
             .self
@@ -172,7 +174,7 @@ public extension UIConfig {
 
 // MARK: - MessageListUI
 
-public extension UIConfig {
+public extension _UIConfig {
     struct LoadingIndicatorUI {
         public var image = UIImage(named: "loading_indicator", in: .streamChatUI)!
         public var rotationPeriod: TimeInterval = 1
@@ -292,7 +294,7 @@ public extension UIConfig {
 
 // MARK: - MessageComposer
 
-public extension UIConfig {
+public extension _UIConfig {
     struct MessageComposer {
         public var messageComposerViewController: _ChatMessageComposerVC<ExtraData>.Type =
             _ChatMessageComposerVC<ExtraData>.self

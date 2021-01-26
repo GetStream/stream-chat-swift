@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -19,25 +19,25 @@ private extension UIResponder {
 // MARK: - Protocols
 
 public protocol GenericUIConfigProvider: AnyObject {
-    func register<T: ExtraDataTypes>(config: UIConfig<T>)
-    func uiConfig<T: ExtraDataTypes>(_ type: T.Type) -> UIConfig<T>
+    func register<T: ExtraDataTypes>(config: _UIConfig<T>)
+    func uiConfig<T: ExtraDataTypes>(_ type: T.Type) -> _UIConfig<T>
 }
 
 public protocol UIConfigProvider: GenericUIConfigProvider {
     associatedtype ExtraData: ExtraDataTypes
-    var uiConfig: UIConfig<ExtraData> { get set }
+    var uiConfig: _UIConfig<ExtraData> { get set }
 }
 
 // MARK: - Protocol extensions for UIView
 
 public extension GenericUIConfigProvider where Self: UIResponder {
-    func register<T: ExtraDataTypes>(config: UIConfig<T>) {
+    func register<T: ExtraDataTypes>(config: _UIConfig<T>) {
         anyUIConfig = config
     }
     
-    func uiConfig<T: ExtraDataTypes>(_ type: T.Type = T.self) -> UIConfig<T> {
+    func uiConfig<T: ExtraDataTypes>(_ type: T.Type = T.self) -> _UIConfig<T> {
         // We have a config registered, return it
-        if let config = anyUIConfig as? UIConfig<T> {
+        if let config = anyUIConfig as? _UIConfig<T> {
             return config
         }
         
@@ -58,7 +58,7 @@ public extension GenericUIConfigProvider where Self: UIResponder {
 }
 
 extension UIConfigProvider where Self: UIResponder {
-    public var uiConfig: UIConfig<ExtraData> {
+    public var uiConfig: _UIConfig<ExtraData> {
         get {
             uiConfig(ExtraData.self)
         }
