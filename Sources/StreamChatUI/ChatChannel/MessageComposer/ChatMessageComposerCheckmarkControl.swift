@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
+public typealias ChatMessageComposerCheckmarkControl = _ChatMessageComposerCheckmarkControl<NoExtraData>
+
+open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
     // MARK: - Properties
     
     public var checkmarkHeight: CGFloat = 16
@@ -15,10 +17,10 @@ open class MessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: Control, 
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var checkmark: UIImageView = UIImageView()
+    public private(set) lazy var checkmark = UIImageView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var label: UILabel = UILabel()
+    public private(set) lazy var label = UILabel()
         .withoutAutoresizingMaskConstraints
         
     // MARK: - Overrides
