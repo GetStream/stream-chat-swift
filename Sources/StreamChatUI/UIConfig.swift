@@ -147,7 +147,7 @@ public extension UIConfig {
         public var channelViewCell: _ChatChannelListCollectionViewCell<ExtraData>.Type =
             _ChatChannelListCollectionViewCell<ExtraData>.self
         public var newChannelButton: CreateNewChannelButton.Type = CreateNewChannelButton.self
-        public var channelNamer: ChannelNamer.Type = ChannelNamer.self
+        public var channelNamer: ChatChannelNamer.Type = ChatChannelNamer.self
         public var channelListItemSubviews = ChannelListItemSubviews()
     }
     
@@ -185,7 +185,7 @@ public extension UIConfig {
 
         public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
-        public var channelNamer: ChannelNamer.Type = ChannelNamer.self
+        public var channelNamer: ChatChannelNamer.Type = ChatChannelNamer.self
         public var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
         /// Vertical contentOffset for message list, when next message batch should be requested
         public var offsetToPreloadMoreMessages: CGFloat = 100
