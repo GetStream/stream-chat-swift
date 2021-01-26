@@ -137,7 +137,9 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
     }
 }
 
-open class SuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
+public typealias ChatMessageComposerSuggestionsCommandDataSource = _ChatMessageComposerSuggestionsCommandDataSource<NoExtraData>
+
+open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
     open var collectionView: MessageComposerSuggestionsCollectionView<ExtraData>
     open var commands: [Command]
 

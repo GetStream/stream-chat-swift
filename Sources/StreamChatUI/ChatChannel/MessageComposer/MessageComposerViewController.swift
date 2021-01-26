@@ -329,7 +329,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
         let dataSource: UICollectionViewDataSource
         switch kind {
         case let .command(hints):
-            dataSource = SuggestionsCommandDataSource(
+            dataSource = _ChatMessageComposerSuggestionsCommandDataSource(
                 with: hints,
                 collectionView: suggestionsViewController.collectionView
             )
