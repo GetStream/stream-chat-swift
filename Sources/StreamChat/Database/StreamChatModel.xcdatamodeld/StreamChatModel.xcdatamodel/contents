@@ -35,6 +35,7 @@
         <attribute name="lastMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="memberCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="savedChangeHash" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="typeRawValue" optional="YES" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="watcherCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -260,7 +261,7 @@
     </entity>
     <elements>
         <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="223"/>
-        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="403"/>
+        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="404"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="ChannelReadDTO" positionX="9" positionY="153" width="128" height="103"/>
