@@ -13,7 +13,7 @@ open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatCh
     }
     
     open func openChat(for channel: _ChatChannel<ExtraData>) {
-        let vc = ChatChannelVC<ExtraData>()
+        let vc = _ChatChannelVC<ExtraData>()
         vc.channelController = rootViewController.controller.client.channelController(for: channel.cid)
         vc.userSuggestionSearchController = rootViewController.controller.client.userSearchController()
         
