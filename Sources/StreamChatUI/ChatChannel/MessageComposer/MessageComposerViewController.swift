@@ -334,7 +334,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
                 collectionView: suggestionsViewController.collectionView
             )
         case .mention:
-            dataSource = SuggestionsMentionDataSource(
+            dataSource = _ChatMessageComposerSuggestionsMentionDataSource(
                 collectionView: suggestionsViewController.collectionView,
                 searchController: userSuggestionSearchController
             )
