@@ -88,6 +88,7 @@ public extension _UIConfig {
         public var messageComposerBorder: UIColor = .streamGrayGainsboro
         public var messageComposerBackground: UIColor = .streamWhite
         public var messageComposerButton: UIColor = .streamGray
+        public var messageComposerDisabledButton: UIColor = .streamGrayGainsboro
         public var messageComposerStateIcon: UIColor = .streamGrayGainsboro
         public var messageComposerPlaceholder: UIColor = .streamGray
         public var messageComposerCheckmarkBorder: UIColor = .streamGray

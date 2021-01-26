@@ -51,14 +51,14 @@ open class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: _ChatSquar
             let normalStateImage = UIImage(named: "sendMessageArrow", in: .streamChatUI)
             setImageWithAnimation(normalStateImage, for: .normal)
             
-            let buttonColor: UIColor = uiConfig.colorPalette.messageComposerButton
+            let buttonColor: UIColor = uiConfig.colorPalette.messageComposerDisabledButton
             let disabledStateImage = UIImage(named: "sendMessageArrow", in: .streamChatUI)?.tinted(with: buttonColor)
             setImageWithAnimation(disabledStateImage, for: .disabled)
         case .edit:
             let normalStateImage = UIImage(named: "editMessageCheckmark", in: .streamChatUI)
             setImageWithAnimation(normalStateImage, for: .normal)
             
-            let buttonColor: UIColor = uiConfig.colorPalette.messageComposerButton
+            let buttonColor: UIColor = uiConfig.colorPalette.messageComposerDisabledButton
             let disabledStateImage = UIImage(named: "editMessageCheckmark", in: .streamChatUI)?.tinted(with: buttonColor)
             setImageWithAnimation(disabledStateImage, for: .disabled)
         }
