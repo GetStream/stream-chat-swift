@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class LoadingIndicator<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatLoadingIndicator = _ChatLoadingIndicator<NoExtraData>
+
+open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     override open var isHidden: Bool {
         didSet { updateContentIfNeeded() }
     }
@@ -33,7 +35,7 @@ open class LoadingIndicator<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
 
 // MARK: - Private
 
-private extension LoadingIndicator {
+private extension _ChatLoadingIndicator {
     static var kRotationAnimationKey: String { "rotationanimationkey" }
 
     func startRotation() {
