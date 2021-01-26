@@ -8,7 +8,7 @@ import UIKit
 /// Abstract controller representing list of messages with message composer.
 /// You should never instantiate this class. Instead stick to one of subclasses.
 /// When subclassing you must override without calling super all methods of `ChatMessageListVCDataSource`
-open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
+open class _ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
     _ChatMessageListVCDataSource,
     _ChatMessageListVCDelegate,
