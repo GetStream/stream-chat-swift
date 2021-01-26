@@ -184,7 +184,7 @@ public extension UIConfig {
             СhatOutgoingMessageCollectionViewCell<ExtraData>.self
 
         public var collectionView: ChatChannelCollectionView.Type = ChatChannelCollectionView.self
-        public var collectionLayout: ChatChannelCollectionViewLayout.Type = ChatChannelCollectionViewLayout.self
+        public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
         public var channelNamer: ChannelNamer.Type = ChannelNamer.self
         public var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
         /// Vertical contentOffset for message list, when next message batch should be requested
