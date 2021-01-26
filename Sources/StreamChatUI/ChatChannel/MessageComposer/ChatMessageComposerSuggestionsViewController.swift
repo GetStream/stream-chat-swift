@@ -198,9 +198,9 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MessageComposerCommandCollectionViewCell<ExtraData>.reuseId,
+            withReuseIdentifier: _ChatMessageComposerCommandCollectionViewCell<ExtraData>.reuseId,
             for: indexPath
-        ) as! MessageComposerCommandCollectionViewCell<ExtraData>
+        ) as! _ChatMessageComposerCommandCollectionViewCell<ExtraData>
 
         cell.uiConfig = uiConfig
         cell.commandView.command = commands[indexPath.row]

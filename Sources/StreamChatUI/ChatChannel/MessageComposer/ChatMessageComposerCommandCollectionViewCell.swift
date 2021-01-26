@@ -78,15 +78,21 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
     }
 }
 
-open class MessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionViewCell {
+public typealias ChatMessageComposerCommandCollectionViewCell = _ChatMessageComposerCommandCollectionViewCell<NoExtraData>
+
+open class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
     // MARK: Properties
 
-    var uiConfig: UIConfig<ExtraData> = .default
-    static var reuseId: String { String(describing: self) }
+    open class var reuseId: String { String(describing: self) }
 
-    public private(set) lazy var commandView: _ChatMessageComposerCommandCellView<ExtraData> = {
-        let view = uiConfig.messageComposer.suggestionsCommandCellView.init().withoutAutoresizingMaskConstraints
-        contentView.embed(view)
-        return view
-    }()
+    public private(set) lazy var commandView = uiConfig
+        .messageComposer
+        .suggestionsCommandCellView.init()
+        .withoutAutoresizingMaskConstraints
+
+    override open func setUpLayout() {
+        super.setUpLayout()
+
+        contentView.embed(commandView)
+    }
 }
