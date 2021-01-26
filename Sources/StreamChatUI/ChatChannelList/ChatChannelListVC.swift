@@ -34,7 +34,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: ViewController,
         return collection
     }()
     
-    public private(set) lazy var createNewChannelButton: CreateNewChannelButton = {
+    public private(set) lazy var createNewChannelButton: ChatChannelCreateNewButton = {
         let button = uiConfig.channelList.newChannelButton.init()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
