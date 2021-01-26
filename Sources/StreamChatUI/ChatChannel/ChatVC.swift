@@ -12,7 +12,7 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
-    MessageComposerViewControllerDelegate {
+    _ChatMessageComposerViewControllerDelegate {
     // MARK: - Properties
 
     public var channelController: _ChatChannelController<ExtraData>!
@@ -222,7 +222,7 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
 
     // MARK: - MessageComposerViewControllerDelegate
 
-    public func messageComposerViewControllerDidSendMessage(_ vc: MessageComposerViewController<ExtraData>) {
+    public func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>) {
         messageList.setNeedsScrollToMostRecentMessage()
     }
 }

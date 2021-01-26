@@ -5,12 +5,15 @@
 import StreamChat
 import UIKit
 
-public protocol MessageComposerViewControllerDelegate: AnyObject {
+public protocol _ChatMessageComposerViewControllerDelegate: AnyObject {
     associatedtype ExtraData: ExtraDataTypes
-    func messageComposerViewControllerDidSendMessage(_ vc: MessageComposerViewController<ExtraData>)
+
+    func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>)
 }
 
-open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewController,
+public typealias ChatMessageComposerVC = _ChatMessageComposerVC<NoExtraData>
+
+open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
     UITextViewDelegate,
     UIImagePickerControllerDelegate,
@@ -19,7 +22,7 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     // MARK: - Delegate
 
     public struct Delegate {
-        public var didSendMessage: ((MessageComposerViewController) -> Void)?
+        public var didSendMessage: ((_ChatMessageComposerVC) -> Void)?
     }
 
     // MARK: - Underlying types
@@ -556,11 +559,11 @@ open class MessageComposerViewController<ExtraData: ExtraDataTypes>: ViewControl
     }
 }
 
-public extension MessageComposerViewController.Delegate {
-    static func wrap<T: MessageComposerViewControllerDelegate>(
+public extension _ChatMessageComposerVC.Delegate {
+    static func wrap<T: _ChatMessageComposerViewControllerDelegate>(
         _ delegate: T
-    ) -> MessageComposerViewController.Delegate where T.ExtraData == ExtraData {
-        MessageComposerViewController.Delegate(
+    ) -> _ChatMessageComposerVC.Delegate where T.ExtraData == ExtraData {
+        _ChatMessageComposerVC.Delegate(
             didSendMessage: { [weak delegate] in delegate?.messageComposerViewControllerDidSendMessage($0) }
         )
     }
