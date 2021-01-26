@@ -21,7 +21,7 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: Vi
         .textView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var slashCommandView: MessageInputSlashCommandView<ExtraData> = uiConfig
+    public private(set) lazy var slashCommandView = uiConfig
         .messageComposer
         .slashCommandView.init()
         .withoutAutoresizingMaskConstraints

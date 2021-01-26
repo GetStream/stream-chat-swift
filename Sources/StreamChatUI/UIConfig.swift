@@ -313,7 +313,8 @@ public extension UIConfig {
         public var quotedMessageAvatarView: AvatarView.Type = AvatarView.self
         public var checkmarkControl: MessageComposerCheckmarkControl<ExtraData>.Type =
             MessageComposerCheckmarkControl<ExtraData>.self
-        public var slashCommandView: MessageInputSlashCommandView<ExtraData>.Type = MessageInputSlashCommandView<ExtraData>.self
+        public var slashCommandView: _ChatMessageInputSlashCommandView<ExtraData>
+            .Type = _ChatMessageInputSlashCommandView<ExtraData>.self
         public var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData>.Type =
             MessageComposerSuggestionsViewController<ExtraData>.self
         public var suggestionsCollectionView: MessageComposerSuggestionsCollectionView.Type =
