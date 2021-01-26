@@ -55,7 +55,7 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
         textView.textContainer.lineFragmentPadding = .zero
         
         textView.backgroundColor = .clear
-        textView.font = uiConfig.font.footnote
+        textView.font = uiConfig.font.subheadline
         textView.textContainerInset = .zero
         textView.textColor = uiConfig.colorPalette.text
 

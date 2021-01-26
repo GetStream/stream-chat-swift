@@ -40,7 +40,7 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: Cont
     }
     
     override public func defaultAppearance() {
-        label.font = uiConfig.font.footnote
+        label.font = uiConfig.font.subheadline
         label.textColor = uiConfig.colorPalette.messageComposerCheckmarkLabel
         
         checkmark.layer.cornerRadius = 4

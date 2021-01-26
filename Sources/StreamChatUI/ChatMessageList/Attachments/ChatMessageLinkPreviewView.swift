@@ -34,7 +34,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UICo
 
     public private(set) lazy var headlineLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = uiConfig.font.footnoteBold
+        label.font = uiConfig.font.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
@@ -44,7 +44,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UICo
         textView.isEditable = false
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
-        textView.font = uiConfig.font.footnote
+        textView.font = uiConfig.font.subheadline
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
