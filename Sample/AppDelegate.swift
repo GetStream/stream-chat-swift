@@ -54,7 +54,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     private func setUpAppearance() {
-        UIConfig<NoExtraData>.default.navigation.channelListRouter = MyChatChannelListRouter.self
+        UIConfig.default.navigation.channelListRouter = MyChatChannelListRouter.self
         ChatChannelListCollectionView.appearance().backgroundColor = .white
     }
 }
