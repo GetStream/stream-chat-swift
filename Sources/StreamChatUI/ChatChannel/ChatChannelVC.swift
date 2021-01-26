@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
+public typealias ChatChannelVC = _ChatChannelVC<NoExtraData>
+
+open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
     // MARK: - Properties
 
     public private(set) lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
@@ -86,7 +88,7 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
 
 // MARK: - _ChatChannelControllerDelegate
 
-extension ChatChannelVC: _ChatChannelControllerDelegate {
+extension _ChatChannelVC: _ChatChannelControllerDelegate {
     public func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
