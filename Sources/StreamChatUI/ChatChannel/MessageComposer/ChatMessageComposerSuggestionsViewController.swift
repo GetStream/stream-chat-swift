@@ -257,9 +257,9 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: MessageComposerMentionCollectionViewCell<ExtraData>.reuseId,
+            withReuseIdentifier: _ChatMessageComposerMentionCollectionViewCell<ExtraData>.reuseId,
             for: indexPath
-        ) as! MessageComposerMentionCollectionViewCell<ExtraData>
+        ) as! _ChatMessageComposerMentionCollectionViewCell<ExtraData>
 
         let user = searchController.users[indexPath.row]
         cell.mentionView.content = (user.name ?? "", user.id, user.imageURL, true)
