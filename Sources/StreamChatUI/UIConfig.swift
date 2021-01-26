@@ -327,8 +327,8 @@ public extension UIConfig {
             _ChatMessageComposerMentionCellView<ExtraData>.self
         public var suggestionsCommandCellView: _ChatMessageComposerCommandCellView<ExtraData>.Type =
             _ChatMessageComposerCommandCellView<ExtraData>.self
-        public var suggestionsCollectionViewLayout: MessageComposerSuggestionsCollectionViewLayout.Type =
-            MessageComposerSuggestionsCollectionViewLayout.self
+        public var suggestionsCollectionViewLayout: ChatMessageComposerSuggestionsCollectionViewLayout.Type =
+            ChatMessageComposerSuggestionsCollectionViewLayout.self
         public var suggestionsHeaderReusableView: _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>.Type =
             _ChatMessageComposerSuggestionsCommandsReusableView.self
         public var suggestionsHeaderView: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData>.Type =
