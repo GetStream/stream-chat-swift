@@ -25,7 +25,7 @@ open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
         
         estimatedItemSize = .init(
             width: collectionView?.bounds.width ?? 0,
-            height: 60
+            height: 64
         )
     }
     
