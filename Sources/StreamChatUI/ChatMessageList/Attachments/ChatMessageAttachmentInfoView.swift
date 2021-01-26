@@ -23,7 +23,7 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: View, UICo
 
     public private(set) lazy var fileSizeLabel: UILabel = {
         let label = UILabel()
-        label.font = uiConfig.font.footnoteBold
+        label.font = uiConfig.font.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
         return label.withoutAutoresizingMaskConstraints
     }()

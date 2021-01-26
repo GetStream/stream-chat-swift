@@ -54,11 +54,11 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
         subtitleLabel.adjustsFontForContentSizeCategory = true
-        subtitleLabel.font = uiConfig.font.footnote
+        subtitleLabel.font = uiConfig.font.subheadline
         
         timestampLabel.textColor = uiConfig.colorPalette.subtitleText
         timestampLabel.adjustsFontForContentSizeCategory = true
-        timestampLabel.font = uiConfig.font.footnote
+        timestampLabel.font = uiConfig.font.subheadline
     }
     
     override open func setUpLayout() {

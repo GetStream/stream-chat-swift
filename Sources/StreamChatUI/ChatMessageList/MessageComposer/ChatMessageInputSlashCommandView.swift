@@ -46,7 +46,7 @@ open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: View, U
         backgroundColor = uiConfig.colorPalette.slashCommandViewBackground
         
         commandLabel.textColor = uiConfig.colorPalette.slashCommandViewText
-        commandLabel.font = uiConfig.font.footnoteBold
+        commandLabel.font = uiConfig.font.subheadlineBold
         commandLabel.adjustsFontForContentSizeCategory = true
         commandLabel.textAlignment = .center
         
