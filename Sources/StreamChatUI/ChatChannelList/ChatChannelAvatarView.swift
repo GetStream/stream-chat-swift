@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatChannelAvatarView = _ChatChannelAvatarView<NoExtraData>
 
-open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: AvatarView, UIConfigProvider {
+open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: СhatAvatarView, UIConfigProvider {
     // MARK: - Properties
 
     public private(set) lazy var onlineIndicatorView = uiConfig

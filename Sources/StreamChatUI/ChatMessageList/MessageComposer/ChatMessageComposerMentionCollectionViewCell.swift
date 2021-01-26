@@ -16,7 +16,7 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View,
         }
     }
 
-    open private(set) lazy var avatarView: AvatarView = uiConfig
+    open private(set) lazy var avatarView = uiConfig
         .messageComposer
         .mentionAvatarView
         .init()
