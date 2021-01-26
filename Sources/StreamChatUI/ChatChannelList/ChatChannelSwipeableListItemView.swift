@@ -13,6 +13,8 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: View, U
     private var startedValue: CGFloat = 0
     private var maxActionWidth: CGFloat = 0
     public var trailingConstraint: NSLayoutConstraint?
+    
+    open var separatorHeight: CGFloat = 0.4
 
     public var deleteButtonAction: (() -> Void)?
 
@@ -20,6 +22,7 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: View, U
     public private(set) lazy var cellContentView: UIView = UIView().withoutAutoresizingMaskConstraints
     public private(set) lazy var deleteButton: UIButton = UIButton().withoutAutoresizingMaskConstraints
     public private(set) lazy var actionButtonStack: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
+    public private(set) lazy var bottomSeparatorView: UIView = UIView().withoutAutoresizingMaskConstraints
 
     // MARK: - View
 
@@ -43,6 +46,10 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: View, U
         cellContentView.trailingAnchor.pin(equalTo: actionButtonStack.leadingAnchor).isActive = true
         trailingConstraint = trailingAnchor.pin(equalTo: cellContentView.trailingAnchor)
         trailingConstraint?.isActive = true
+        
+        addSubview(bottomSeparatorView)
+        bottomSeparatorView.heightAnchor.pin(equalToConstant: separatorHeight).isActive = true
+        bottomSeparatorView.pin(anchors: [.bottom, .leading, .trailing], to: self)
     }
 
     override open func setUp() {
@@ -57,6 +64,9 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: View, U
 
     override public func defaultAppearance() {
         super.defaultAppearance()
+        
+        bottomSeparatorView.backgroundColor = uiConfig.colorPalette.channelListSeparator
+        
         deleteButton.setImage(UIImage(named: "icn_delete", in: .streamChatUI), for: .normal)
         deleteButton.backgroundColor = uiConfig.colorPalette.channelListActionsBackgroundColor
         deleteButton.tintColor = uiConfig.colorPalette.channelListActionDeleteChannel
