@@ -4,7 +4,7 @@
 
 import UIKit
 
-open class AvatarView: View {
+open class СhatAvatarView: View {
     // MARK: - Subviews
     
     public let imageView: UIImageView = {

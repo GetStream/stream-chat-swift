@@ -67,7 +67,12 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: Control, UICon
         didSet { updateContentIfNeeded() }
     }
 
-    public private(set) lazy var avatarView = AvatarView().withoutAutoresizingMaskConstraints
+    public private(set) lazy var avatarView = uiConfig
+        .messageList
+        .messageContentSubviews
+        .threadParticipantAvatarView.init()
+        .withoutAutoresizingMaskConstraints
+    
     public private(set) lazy var replyCountLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
         label.font = uiConfig.font.footnoteBold
