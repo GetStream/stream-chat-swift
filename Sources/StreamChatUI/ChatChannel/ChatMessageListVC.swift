@@ -56,10 +56,11 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
 
     public private(set) lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
 
-    public private(set) lazy var collectionViewLayout: ChatChannelCollectionViewLayout = uiConfig
+    public private(set) lazy var collectionViewLayout = uiConfig
         .messageList
         .collectionLayout
         .init()
+    
     public private(set) lazy var collectionView: UICollectionView = {
         let collection = uiConfig.messageList.collectionView.init(layout: collectionViewLayout)
         let incomingCell = uiConfig.messageList.incomingMessageCell
