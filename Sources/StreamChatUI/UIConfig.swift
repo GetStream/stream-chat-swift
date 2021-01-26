@@ -156,6 +156,7 @@ public extension UIConfig {
         public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
         public var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData>.Type =
             _ChatChannelReadStatusCheckmarkView<ExtraData>.self
+        public var onlineIndicator: _ChatOnlineIndicatorView<ExtraData>.Type = _ChatOnlineIndicatorView<ExtraData>.self
     }
 }
 

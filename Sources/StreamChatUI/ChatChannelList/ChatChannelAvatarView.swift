@@ -7,10 +7,14 @@ import UIKit
 
 public typealias ChatChannelAvatarView = _ChatChannelAvatarView<NoExtraData>
 
-open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: AvatarView {
+open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: AvatarView, UIConfigProvider {
     // MARK: - Properties
 
-    public lazy var onlineIndicatorView = OnlineIndicatorView<ExtraData>().withoutAutoresizingMaskConstraints
+    public private(set) lazy var onlineIndicatorView = uiConfig
+        .channelList
+        .channelListItemSubviews
+        .onlineIndicator.init()
+        .withoutAutoresizingMaskConstraints
 
     public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContent() }

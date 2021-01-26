@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class OnlineIndicatorView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatOnlineIndicatorView = _ChatOnlineIndicatorView<NoExtraData>
+
+open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: - Customizable
 
     override open func setUpLayout() {
