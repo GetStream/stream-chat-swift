@@ -311,8 +311,8 @@ public extension UIConfig {
         public var textView: _ChatMessageComposerInputTextView<ExtraData>.Type = _ChatMessageComposerInputTextView<ExtraData>.self
         public var quotedMessageView: MessageComposerQuoteBubbleView<ExtraData>.Type = MessageComposerQuoteBubbleView.self
         public var quotedMessageAvatarView: AvatarView.Type = AvatarView.self
-        public var checkmarkControl: MessageComposerCheckmarkControl<ExtraData>.Type =
-            MessageComposerCheckmarkControl<ExtraData>.self
+        public var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData>.Type =
+            _ChatMessageComposerCheckmarkControl<ExtraData>.self
         public var slashCommandView: _ChatMessageInputSlashCommandView<ExtraData>
             .Type = _ChatMessageInputSlashCommandView<ExtraData>.self
         public var suggestionsViewController: _ChatMessageComposerSuggestionsViewController<ExtraData>.Type =
