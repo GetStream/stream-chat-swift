@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -35,23 +35,23 @@ open class ChatThreadVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
 
     // MARK: - ChatMessageListVCDataSource
 
-    override public func numberOfMessagesInChatMessageListVC(_ vc: ChatMessageListVC<ExtraData>) -> Int {
+    override public func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
         controller.replies.count + 1
     }
 
-    override public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
+    override public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
         if index == controller.replies.count {
             return controller.message!
         }
         return controller.replies[index]
     }
 
-    override public func loadMoreMessagesForChatMessageListVC(_ vc: ChatMessageListVC<ExtraData>) {
+    override public func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
         controller.loadPreviousReplies()
     }
 
     override public func chatMessageListVC(
-        _ vc: ChatMessageListVC<ExtraData>,
+        _ vc: _ChatMessageListVC<ExtraData>,
         replyMessageFor message: _ChatMessage<ExtraData>,
         at index: Int
     ) -> _ChatMessage<ExtraData>? {
@@ -59,7 +59,7 @@ open class ChatThreadVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
     }
 
     override public func chatMessageListVC(
-        _ vc: ChatMessageListVC<ExtraData>,
+        _ vc: _ChatMessageListVC<ExtraData>,
         controllerFor message: _ChatMessage<ExtraData>
     ) -> _ChatMessageController<ExtraData> {
         controller.client.messageController(

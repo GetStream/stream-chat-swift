@@ -5,50 +5,52 @@
 import StreamChat
 import UIKit
 
-public protocol ChatMessageListVCDataSource: AnyObject {
+public protocol _ChatMessageListVCDataSource: AnyObject {
     associatedtype ExtraData: ExtraDataTypes
 
-    func numberOfMessagesInChatMessageListVC(_ vc: ChatMessageListVC<ExtraData>) -> Int
-    func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData>
-    func loadMoreMessagesForChatMessageListVC(_ vc: ChatMessageListVC<ExtraData>)
+    func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int
+    func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData>
+    func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>)
     func chatMessageListVC(
-        _ vc: ChatMessageListVC<ExtraData>,
+        _ vc: _ChatMessageListVC<ExtraData>,
         replyMessageFor message: _ChatMessage<ExtraData>,
         at index: Int
     ) -> _ChatMessage<ExtraData>?
     func chatMessageListVC(
-        _ vc: ChatMessageListVC<ExtraData>,
+        _ vc: _ChatMessageListVC<ExtraData>,
         controllerFor message: _ChatMessage<ExtraData>
     ) -> _ChatMessageController<ExtraData>
 }
 
-public protocol ChatMessageListVCDelegate: AnyObject {
+public protocol _ChatMessageListVCDelegate: AnyObject {
     associatedtype ExtraData: ExtraDataTypes
 
-    func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didSelectMessageAt index: Int)
-    func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>)
-    func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>)
-    func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>)
+    func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didSelectMessageAt index: Int)
+    func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>)
+    func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>)
+    func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>)
 }
 
-open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
+public typealias ChatMessageListVC = _ChatMessageListVC<NoExtraData>
+
+open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UIConfigProvider,
     _ChatMessageActionsVCDelegate {
     public struct DataSource {
-        public var numberOfMessages: (ChatMessageListVC) -> Int
-        public var messageAtIndex: (ChatMessageListVC, Int) -> _ChatMessage<ExtraData>
-        public var loadMoreMessages: (ChatMessageListVC) -> Void
-        public var replyMessageForMessageAtIndex: (ChatMessageListVC, _ChatMessage<ExtraData>, Int) -> _ChatMessage<ExtraData>?
-        public var controllerForMessage: (ChatMessageListVC, _ChatMessage<ExtraData>) -> _ChatMessageController<ExtraData>
+        public var numberOfMessages: (_ChatMessageListVC) -> Int
+        public var messageAtIndex: (_ChatMessageListVC, Int) -> _ChatMessage<ExtraData>
+        public var loadMoreMessages: (_ChatMessageListVC) -> Void
+        public var replyMessageForMessageAtIndex: (_ChatMessageListVC, _ChatMessage<ExtraData>, Int) -> _ChatMessage<ExtraData>?
+        public var controllerForMessage: (_ChatMessageListVC, _ChatMessage<ExtraData>) -> _ChatMessageController<ExtraData>
     }
 
     public struct Delegate {
-        public var didSelectMessageAtIndex: ((ChatMessageListVC, Int) -> Void)?
-        public var didTapOnRepliesForMessage: ((ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
-        public var didTapOnInlineReply: ((ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
-        public var didTapOnEdit: ((ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
+        public var didSelectMessageAtIndex: ((_ChatMessageListVC, Int) -> Void)?
+        public var didTapOnRepliesForMessage: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
+        public var didTapOnInlineReply: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
+        public var didTapOnEdit: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
     }
 
     public var dataSource: DataSource = .empty()
@@ -365,9 +367,9 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     }
 }
 
-public extension ChatMessageListVC.DataSource {
-    static func wrap<T: ChatMessageListVCDataSource>(_ ds: T) -> ChatMessageListVC.DataSource where T.ExtraData == ExtraData {
-        ChatMessageListVC.DataSource(
+public extension _ChatMessageListVC.DataSource {
+    static func wrap<T: _ChatMessageListVCDataSource>(_ ds: T) -> _ChatMessageListVC.DataSource where T.ExtraData == ExtraData {
+        _ChatMessageListVC.DataSource(
             numberOfMessages: { [unowned ds] in ds.numberOfMessagesInChatMessageListVC($0) },
             messageAtIndex: { [unowned ds] in ds.chatMessageListVC($0, messageAt: $1) },
             loadMoreMessages: { [unowned ds] in ds.loadMoreMessagesForChatMessageListVC($0) },
@@ -376,8 +378,8 @@ public extension ChatMessageListVC.DataSource {
         )
     }
 
-    static func empty() -> ChatMessageListVC.DataSource {
-        ChatMessageListVC.DataSource(
+    static func empty() -> _ChatMessageListVC.DataSource {
+        _ChatMessageListVC.DataSource(
             numberOfMessages: { _ in 0 },
             messageAtIndex: { _, _ in
                 fatalError("Method shouldn't be called on empty data source")
@@ -391,9 +393,9 @@ public extension ChatMessageListVC.DataSource {
     }
 }
 
-public extension ChatMessageListVC.Delegate {
-    static func wrap<T: ChatMessageListVCDelegate>(_ delegate: T) -> ChatMessageListVC.Delegate where T.ExtraData == ExtraData {
-        ChatMessageListVC.Delegate(
+public extension _ChatMessageListVC.Delegate {
+    static func wrap<T: _ChatMessageListVCDelegate>(_ delegate: T) -> _ChatMessageListVC.Delegate where T.ExtraData == ExtraData {
+        _ChatMessageListVC.Delegate(
             didSelectMessageAtIndex: { [weak delegate] in delegate?.chatMessageListVC($0, didSelectMessageAt: $1) },
             didTapOnRepliesForMessage: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnRepliesFor: $1) },
             didTapOnInlineReply: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnInlineReplyFor: $1) },

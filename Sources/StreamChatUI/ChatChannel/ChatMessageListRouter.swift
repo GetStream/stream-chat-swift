@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageListRouter = _ChatMessageListRouter<NoExtraData>
 
-open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<ChatMessageListVC<ExtraData>> {
+open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMessageListVC<ExtraData>> {
     open func showMessageActionsPopUp(
         messageContentFrame: CGRect,
         messageData: _ChatMessageGroupPart<ExtraData>,
