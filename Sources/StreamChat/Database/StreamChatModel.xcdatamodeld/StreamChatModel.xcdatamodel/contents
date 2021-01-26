@@ -159,6 +159,7 @@
         <attribute name="quotedMessageId" optional="YES" attributeType="String"/>
         <attribute name="reactionScores" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="replyCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="savedChangeHash" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="showReplyInChannel" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="text" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
@@ -268,7 +269,7 @@
         <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="148"/>
         <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="193"/>
-        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="464"/>
+        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="479"/>
         <element name="MessageReactionDTO" positionX="9" positionY="153" width="128" height="163"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="UserDTO" positionX="0" positionY="0" width="128" height="389"/>

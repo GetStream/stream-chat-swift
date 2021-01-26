@@ -40,7 +40,7 @@ extension MessagePayload {
 }
 
 /// An object describing the incoming message JSON payload.
-class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
+class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
     let id: String
     let type: MessageType
     let user: UserPayload<ExtraData.User>
@@ -67,6 +67,35 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
     let channel: ChannelDetailPayload<ExtraData>?
+    
+    var hasher: ChangeHasher {
+        MessageHasher(
+            id: id,
+            type: type.rawValue,
+            userChangeHash: user.changeHash,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            text: text,
+            command: command,
+            args: args,
+            parentId: parentId,
+            showReplyInChannel: showReplyInChannel,
+            quotedMessageChangeHash: quotedMessage?.changeHash,
+            mentionedUserChangeHashes: mentionedUsers.map(\.changeHash),
+            threadParticipantChangeHashes: threadParticipants.map(\.changeHash),
+            replyCount: replyCount,
+            extraData: (try? JSONEncoder.default.encode(extraData)) ?? .init(),
+            reactionScores: reactionScores.mapKeys { $0.rawValue },
+            isSilent: isSilent
+        )
+    }
+    
+    // This needs to be explicit so we can override it in
+    // `MessageDTO_Tests.test_DTO_skipsUnnecessarySave`
+    var changeHash: Int {
+        hasher.changeHash
+    }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
