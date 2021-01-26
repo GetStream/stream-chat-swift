@@ -164,7 +164,8 @@ public extension UIConfig {
 
 public extension UIConfig {
     struct CurrentUserUI {
-        public var currentUserViewAvatarView: CurrentChatUserAvatarView<ExtraData>.Type = CurrentChatUserAvatarView<ExtraData>.self
+        public var currentUserViewAvatarView: _CurrentChatUserAvatarView<ExtraData>.Type = _CurrentChatUserAvatarView<ExtraData>
+            .self
         public var avatarView: AvatarView.Type = AvatarView.self
     }
 }

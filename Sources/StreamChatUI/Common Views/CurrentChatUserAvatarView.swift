@@ -5,23 +5,24 @@
 import StreamChat
 import UIKit
 
-open class CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
+public typealias CurrentChatUserAvatarView = _CurrentChatUserAvatarView<NoExtraData>
+
+open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
     // MARK: - Properties
     
     public var controller: _CurrentChatUserController<ExtraData>? {
         didSet {
             controller?.setDelegate(self)
-            updateContent()
+            updateContentIfNeeded()
         }
     }
     
     // MARK: - Subviews
     
-    public private(set) lazy var avatarView: AvatarView = {
-        let avatar = uiConfig.currentUser.avatarView.init()
-        avatar.translatesAutoresizingMaskIntoConstraints = false
-        return avatar
-    }()
+    public private(set) lazy var avatarView = uiConfig
+        .currentUser
+        .avatarView.init()
+        .withoutAutoresizingMaskConstraints
     
     // MARK: - Overrides
     
@@ -36,37 +37,30 @@ open class CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UIConf
     
     override open var isEnabled: Bool {
         get { super.isEnabled }
-        set { super.isEnabled = newValue; updateContent() }
+        set { super.isEnabled = newValue; updateContentIfNeeded() }
     }
     
     override open var isHighlighted: Bool {
         get { super.isHighlighted }
-        set { super.isHighlighted = newValue; updateContent() }
+        set { super.isHighlighted = newValue; updateContentIfNeeded() }
     }
     
     override open var isSelected: Bool {
         get { super.isSelected }
-        set { super.isSelected = newValue; updateContent() }
-    }
-    
-    // MARK: - Init
-    
-    public required init(uiConfig: UIConfig<ExtraData> = .default) {
-        super.init(frame: .zero)
-        self.uiConfig = uiConfig
-    }
-    
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
+        set { super.isSelected = newValue; updateContentIfNeeded() }
     }
 
     // MARK: - Content
     
     override open func setUpAppearance() {
+        super.setUpAppearance()
+
         avatarView.isUserInteractionEnabled = false
     }
     
     override open func setUpLayout() {
+        super.setUpLayout()
+
         widthAnchor.pin(equalTo: heightAnchor).isActive = true
         avatarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         avatarView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
@@ -84,13 +78,13 @@ open class CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UIConf
     }
 }
 
-// MARK: - _CurrentChatUserControllerDelegate
+// MARK: - CurrentChatUserControllerDelegate
 
-extension CurrentChatUserAvatarView: _CurrentChatUserControllerDelegate {
+extension _CurrentChatUserAvatarView: _CurrentChatUserControllerDelegate {
     public func currentUserController(
         _ controller: _CurrentChatUserController<ExtraData>,
         didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
     ) {
-        updateContent()
+        updateContentIfNeeded()
     }
 }
