@@ -39,7 +39,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: View,
         .messageInputView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var sendButton: _ChatMessageComposerSendButton<ExtraData> = uiConfig
+    public private(set) lazy var sendButton = uiConfig
         .messageComposer
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
@@ -74,7 +74,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: View,
     public private(set) lazy var titleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var checkmarkControl: MessageComposerCheckmarkControl<ExtraData> = uiConfig
+    public private(set) lazy var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData> = uiConfig
         .messageComposer
         .checkmarkControl.init()
         .withoutAutoresizingMaskConstraints
