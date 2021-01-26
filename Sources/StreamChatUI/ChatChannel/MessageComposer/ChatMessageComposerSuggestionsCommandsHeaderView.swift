@@ -12,16 +12,21 @@ open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraD
     UIConfigProvider {
     class var reuseId: String { String(describing: self) }
 
-    public lazy var suggestionsHeader: MessageComposerSuggestionsCommandsHeaderView<ExtraData> = {
+    public lazy var suggestionsHeader: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData> = {
         let header = uiConfig.messageComposer.suggestionsHeaderView.init().withoutAutoresizingMaskConstraints
         embed(header)
         return header
     }()
 }
 
-open class MessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    lazy var commandImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
-    lazy var headerLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+public typealias ChatMessageComposerSuggestionsCommandsHeaderView = _ChatMessageComposerSuggestionsCommandsHeaderView<NoExtraData>
+
+open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+    public private(set) lazy var commandImageView = UIImageView()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var headerLabel = UILabel()
+        .withoutAutoresizingMaskConstraints
 
     override public func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.popupBackground

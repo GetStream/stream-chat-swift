@@ -331,8 +331,8 @@ public extension UIConfig {
             MessageComposerSuggestionsCollectionViewLayout.self
         public var suggestionsHeaderReusableView: _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>.Type =
             _ChatMessageComposerSuggestionsCommandsReusableView.self
-        public var suggestionsHeaderView: MessageComposerSuggestionsCommandsHeaderView<ExtraData>.Type =
-            MessageComposerSuggestionsCommandsHeaderView.self
+        public var suggestionsHeaderView: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData>.Type =
+            _ChatMessageComposerSuggestionsCommandsHeaderView.self
         public var mentionAvatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView<ExtraData>.self
         public var commandIcons: [String: UIImage] = [
             "ban": UIImage(named: "command_ban", in: .streamChatUI)!,
