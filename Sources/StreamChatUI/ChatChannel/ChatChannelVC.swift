@@ -44,20 +44,20 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
 
     // MARK: - ChatMessageListVCDataSource
 
-    override public func numberOfMessagesInChatMessageListVC(_ vc: ChatMessageListVC<ExtraData>) -> Int {
+    override public func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
         channelController.messages.count
     }
 
-    override public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
+    override public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
         channelController.messages[index]
     }
 
-    override public func loadMoreMessagesForChatMessageListVC(_ vc: ChatMessageListVC<ExtraData>) {
+    override public func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
         channelController.loadNextMessages()
     }
 
     override public func chatMessageListVC(
-        _ vc: ChatMessageListVC<ExtraData>,
+        _ vc: _ChatMessageListVC<ExtraData>,
         replyMessageFor message: _ChatMessage<ExtraData>,
         at index: Int
     ) -> _ChatMessage<ExtraData>? {
@@ -65,7 +65,7 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
     }
 
     override public func chatMessageListVC(
-        _ vc: ChatMessageListVC<ExtraData>,
+        _ vc: _ChatMessageListVC<ExtraData>,
         controllerFor message: _ChatMessage<ExtraData>
     ) -> _ChatMessageController<ExtraData> {
         channelController.client.messageController(
@@ -77,7 +77,7 @@ open class ChatChannelVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
     // MARK: - ChatMessageListVCDelegate
 
     override public func chatMessageListVC(
-        _ vc: ChatMessageListVC<ExtraData>,
+        _ vc: _ChatMessageListVC<ExtraData>,
         didTapOnRepliesFor message: _ChatMessage<ExtraData>
     ) {
         router.showThreadDetail(for: message, within: channelController)

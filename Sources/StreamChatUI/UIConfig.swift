@@ -177,7 +177,7 @@ public extension UIConfig {
     }
 
     struct MessageListUI {
-        public var messageListVC: ChatMessageListVC<ExtraData>.Type = ChatMessageListVC<ExtraData>.self
+        public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
         public var incomingMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
             СhatIncomingMessageCollectionViewCell<ExtraData>.self
         public var outgoingMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =

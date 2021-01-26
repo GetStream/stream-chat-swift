@@ -10,8 +10,8 @@ import UIKit
 /// When subclassing you must override without calling super all methods of `ChatMessageListVCDataSource`
 open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     UIConfigProvider,
-    ChatMessageListVCDataSource,
-    ChatMessageListVCDelegate,
+    _ChatMessageListVCDataSource,
+    _ChatMessageListVCDelegate,
     _ChatMessageComposerViewControllerDelegate {
     // MARK: - Properties
 
@@ -172,23 +172,23 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     // MARK: - ChatMessageListVCDataSource
 
     // swiftlint:disable:next unavailable_function
-    public func numberOfMessagesInChatMessageListVC(_ vc: ChatMessageListVC<ExtraData>) -> Int {
+    public func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
         fatalError("Abstract class violation")
     }
 
     // swiftlint:disable:next unavailable_function
-    public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
+    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
         fatalError("Abstract class violation")
     }
 
     // swiftlint:disable:next unavailable_function
-    public func loadMoreMessagesForChatMessageListVC(_ vc: ChatMessageListVC<ExtraData>) {
+    public func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
         fatalError("Abstract class violation")
     }
 
     // swiftlint:disable:next unavailable_function
     public func chatMessageListVC(
-        _ vc: ChatMessageListVC<ExtraData>,
+        _ vc: _ChatMessageListVC<ExtraData>,
         replyMessageFor message: _ChatMessage<ExtraData>,
         at index: Int
     ) -> _ChatMessage<ExtraData>? {
@@ -197,7 +197,7 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
 
     // swiftlint:disable:next unavailable_function
     public func chatMessageListVC(
-        _ vc: ChatMessageListVC<ExtraData>,
+        _ vc: _ChatMessageListVC<ExtraData>,
         controllerFor message: _ChatMessage<ExtraData>
     ) -> _ChatMessageController<ExtraData> {
         fatalError("Abstract class violation")
@@ -205,18 +205,18 @@ open class ChatVC<ExtraData: ExtraDataTypes>: ViewController,
 
     // MARK: - ChatMessageListVCDelegate
 
-    public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didSelectMessageAt index: Int) {
+    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didSelectMessageAt index: Int) {
         let selectedMessage = chatMessageListVC(vc, messageAt: index)
         debugPrint(selectedMessage)
     }
 
-    public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>) {}
+    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>) {}
     
-    public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>) {
+    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>) {
         messageComposerViewController.state = .quote(message)
     }
     
-    public func chatMessageListVC(_ vc: ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>) {
+    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>) {
         messageComposerViewController.state = .edit(message)
     }
 
