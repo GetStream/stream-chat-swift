@@ -1499,7 +1499,7 @@
 				8850B929255C286B003AED69 /* UIConfig.swift */,
 				888123D0255D42F000070D5A /* Utils */,
 				888123E5255D51BD00070D5A /* Common Views */,
-				7908830C2548707B00896F03 /* ChatChannel */,
+				7908830C2548707B00896F03 /* ChatMessageList */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
 				88F8364E2578D1590039AEC8 /* MessageActionsPopup */,
 				88F0D6ED257E446800F4B050 /* Resources */,
@@ -1553,7 +1553,7 @@
 			path = ChatChannelList;
 			sourceTree = "<group>";
 		};
-		7908830C2548707B00896F03 /* ChatChannel */ = {
+		7908830C2548707B00896F03 /* ChatMessageList */ = {
 			isa = PBXGroup;
 			children = (
 				88CABC0625933DC30061BB67 /* Reactions */,
@@ -1571,7 +1571,7 @@
 				DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */,
 				DBC8A563258113F700B20A82 /* ChatThreadVC.swift */,
 			);
-			path = ChatChannel;
+			path = ChatMessageList;
 			sourceTree = "<group>";
 		};
 		790B9E2E24DC21C5005455AA /* Dummy data */ = {
