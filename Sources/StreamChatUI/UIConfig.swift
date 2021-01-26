@@ -113,15 +113,15 @@ public extension _UIConfig {
 
 public extension _UIConfig {
     struct Font {
-        public var captionBold: UIFont = .streamCaptionBold
-        public var footnote: UIFont = .streamFootnote
-        public var footnoteBold: UIFont = .streamFootnoteBold
-        public var body: UIFont = .streamBody
-        public var bodyBold: UIFont = .streamBodyBold
-        public var bodyItalic: UIFont = .streamBodyItalic
-        public var headline: UIFont = .streamHeadline
-        public var headlineBold: UIFont = .streamHeadlineBold
-        public var title: UIFont = .streamTitle
+        public var footnoteBold = UIFont.preferredFont(forTextStyle: .footnote).bold
+        public var subheadline = UIFont.preferredFont(forTextStyle: .subheadline)
+        public var subheadlineBold = UIFont.preferredFont(forTextStyle: .subheadline).bold
+        public var body = UIFont.preferredFont(forTextStyle: .body).withWeight(.medium)
+        public var bodyBold = UIFont.preferredFont(forTextStyle: .body).bold
+        public var bodyItalic = UIFont.preferredFont(forTextStyle: .body).italic
+        public var headline = UIFont.preferredFont(forTextStyle: .headline)
+        public var headlineBold = UIFont.preferredFont(forTextStyle: .headline).bold
+        public var title = UIFont.preferredFont(forTextStyle: .title1)
     }
 }
 
@@ -408,18 +408,4 @@ private extension UIColor {
             return UIColor(rgb: light).withAlphaComponent(lightAlpha)
         }
     }
-}
-
-// Typography defined in Figma design.
-// Because our design guidelines don't really fit the `prefferedFont`, we need to redaclare this.
-private extension UIFont {
-    static let streamCaptionBold = UIFontMetrics(forTextStyle: .caption1).scaledFont(for: boldSystemFont(ofSize: 10))
-    static let streamFootnote = UIFontMetrics(forTextStyle: .footnote).scaledFont(for: UIFont.systemFont(ofSize: 12))
-    static let streamFootnoteBold = UIFontMetrics(forTextStyle: .footnote).scaledFont(for: boldSystemFont(ofSize: 12))
-    static let streamBody = UIFontMetrics(forTextStyle: .body).scaledFont(for: UIFont.systemFont(ofSize: 14))
-    static let streamBodyBold = UIFontMetrics(forTextStyle: .body).scaledFont(for: boldSystemFont(ofSize: 14))
-    static let streamBodyItalic = UIFontMetrics(forTextStyle: .body).scaledFont(for: italicSystemFont(ofSize: 14))
-    static let streamHeadline = UIFontMetrics(forTextStyle: .headline).scaledFont(for: UIFont.systemFont(ofSize: 16))
-    static let streamHeadlineBold = UIFontMetrics(forTextStyle: .headline).scaledFont(for: boldSystemFont(ofSize: 16))
-    static let streamTitle = UIFontMetrics(forTextStyle: .title1).scaledFont(for: boldSystemFont(ofSize: 22))
 }

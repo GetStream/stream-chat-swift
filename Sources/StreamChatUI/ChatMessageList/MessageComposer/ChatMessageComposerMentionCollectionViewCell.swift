@@ -33,7 +33,7 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View,
         backgroundColor = .clear
         usernameLabel.font = uiConfig.font.headlineBold
 
-        usernameTagLabel.font = uiConfig.font.footnoteBold
+        usernameTagLabel.font = uiConfig.font.subheadlineBold
         usernameTagLabel.textColor = uiConfig.colorPalette.subtitleText
 
         usernameLabel.textColor = uiConfig.colorPalette.text

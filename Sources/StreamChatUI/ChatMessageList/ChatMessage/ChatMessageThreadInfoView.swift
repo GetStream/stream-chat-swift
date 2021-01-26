@@ -75,7 +75,7 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: Control, UICon
     
     public private(set) lazy var replyCountLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = uiConfig.font.footnoteBold
+        label.font = uiConfig.font.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
         label.text = L10n.Message.Threads.reply
         label.textColor = tintColor
