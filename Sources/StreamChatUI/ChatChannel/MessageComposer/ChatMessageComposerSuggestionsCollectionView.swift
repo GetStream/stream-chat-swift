@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollectionView,
+public typealias ChatMessageComposerSuggestionsCollectionView = _ChatMessageComposerSuggestionsCollectionView<NoExtraData>
+
+open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollectionView,
     UIConfigProvider,
     AppearanceSetting,
     Customizable {
