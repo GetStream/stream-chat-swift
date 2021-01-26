@@ -209,7 +209,9 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
     }
 }
 
-open class SuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
+public typealias ChatMessageComposerSuggestionsMentionDataSource = _ChatMessageComposerSuggestionsMentionDataSource<NoExtraData>
+
+open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
     UICollectionViewDataSource,
     _ChatUserSearchControllerDelegate {
     var collectionView: MessageComposerSuggestionsCollectionView<ExtraData>
