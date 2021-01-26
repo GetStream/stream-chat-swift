@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageComposerCommandCellView = _ChatMessageComposerCommandCellView<NoExtraData>
+
+open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: Properties
 
     open var commandImageHeight: CGFloat = 24
@@ -82,7 +84,7 @@ open class MessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: 
     var uiConfig: UIConfig<ExtraData> = .default
     static var reuseId: String { String(describing: self) }
 
-    public private(set) lazy var commandView: MessageComposerCommandCellView<ExtraData> = {
+    public private(set) lazy var commandView: _ChatMessageComposerCommandCellView<ExtraData> = {
         let view = uiConfig.messageComposer.suggestionsCommandCellView.init().withoutAutoresizingMaskConstraints
         contentView.embed(view)
         return view
