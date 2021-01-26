@@ -12,7 +12,7 @@ import UIKit
 /// and you may jump right into middle of cell, because `collectionViewContentSize` have been changed,
 /// while `contentOffset` stay same.
 /// To fight it we lock `collectionViewContentSize`, now newly calculated cell "expands" up into invisible yet area, removing jumps.
-open class ChatChannelCollectionViewLayout: UICollectionViewFlowLayout {
+open class ChatMessageListCollectionViewLayout: UICollectionViewFlowLayout {
     // MARK: - Init & Deinit
     
     override public required init() {
