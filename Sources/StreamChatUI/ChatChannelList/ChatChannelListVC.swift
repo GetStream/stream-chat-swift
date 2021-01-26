@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -120,7 +120,8 @@ extension ChatChannelListVC: _ChatChannelListControllerDelegate {
                 case let .insert(_, index):
                     collectionView.insertItems(at: [index])
                 case let .move(_, fromIndex, toIndex):
-                    collectionView.moveItem(at: fromIndex, to: toIndex)
+                    collectionView.deleteItems(at: [fromIndex])
+                    collectionView.insertItems(at: [toIndex])
                 case let .remove(_, index):
                     collectionView.deleteItems(at: [index])
                 case let .update(_, index):

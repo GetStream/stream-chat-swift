@@ -153,7 +153,8 @@ open class ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
                 case let .insert(_, index):
                     collectionView.insertItems(at: [index])
                 case let .move(_, fromIndex, toIndex):
-                    collectionView.moveItem(at: fromIndex, to: toIndex)
+                    collectionView.deleteItems(at: [fromIndex])
+                    collectionView.insertItems(at: [toIndex])
                 case let .remove(_, index):
                     collectionView.deleteItems(at: [index])
                 case let .update(_, index):
