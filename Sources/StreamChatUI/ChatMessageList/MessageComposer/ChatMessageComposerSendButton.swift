@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageComposerSendButton = _ChatMessageComposerSendButton<NoExtraData>
 
-open class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: ChatSquareButton<ExtraData> {
+open class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: _ChatSquareButton<ExtraData> {
     // MARK: Underlying types
     
     public enum Mode {
