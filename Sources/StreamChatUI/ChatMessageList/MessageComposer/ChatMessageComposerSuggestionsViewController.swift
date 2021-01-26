@@ -143,8 +143,8 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
     open var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
     open var commands: [Command]
 
-    open var uiConfig: UIConfig<ExtraData> {
-        collectionView.uiConfig()
+    open var uiConfig: _UIConfig<ExtraData> {
+        collectionView.uiConfig
     }
 
     public init(with commands: [Command], collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>) {
@@ -217,8 +217,8 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
     var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
     var searchController: _ChatUserSearchController<ExtraData>
 
-    var uiConfig: UIConfig<ExtraData> {
-        collectionView.uiConfig()
+    var uiConfig: _UIConfig<ExtraData> {
+        collectionView.uiConfig
     }
 
     init(
