@@ -39,7 +39,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: View,
         .messageInputView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var sendButton: MessageComposerSendButton<ExtraData> = uiConfig
+    public private(set) lazy var sendButton: _ChatMessageComposerSendButton<ExtraData> = uiConfig
         .messageComposer
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
