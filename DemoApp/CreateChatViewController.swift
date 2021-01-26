@@ -27,7 +27,7 @@ class CreateChatViewController: UIViewController {
                 super.createNewMessage(text: text)
                 
                 // Present the new chat and controller
-                let vc = ChatChannelVC<ExtraData>()
+                let vc = ChatChannelVC()
                 vc.channelController = controller
                 vc.userSuggestionSearchController = controller.client.userSearchController()
                 
@@ -343,7 +343,7 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
         update(for: .selected)
         let client = searchController.client
         do {
-            composerView.controller = try searchController.client
+            composerView.controller = try client
                 .channelController(
                     createDirectMessageChannelWith: selectedUserIds,
                     name: nil,
