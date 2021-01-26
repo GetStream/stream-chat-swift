@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
+open class ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
     // MARK: - Properties
 
     public private(set) lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)

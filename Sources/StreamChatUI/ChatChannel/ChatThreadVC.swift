@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ChatThreadVC<ExtraData: ExtraDataTypes>: ChatVC<ExtraData> {
+open class ChatThreadVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
     public var controller: _ChatMessageController<ExtraData>!
 
     // MARK: - Life Cycle
