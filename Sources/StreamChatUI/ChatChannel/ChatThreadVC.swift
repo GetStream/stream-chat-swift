@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class ChatThreadVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
+public typealias ChatThreadVC = _ChatThreadVC<NoExtraData>
+
+open class _ChatThreadVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
     public var controller: _ChatMessageController<ExtraData>!
 
     // MARK: - Life Cycle
@@ -69,9 +71,9 @@ open class ChatThreadVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
     }
 }
 
-// MARK: - _ChatChannelControllerDelegate
+// MARK: - ChatChannelControllerDelegate
 
-extension ChatThreadVC: _ChatMessageControllerDelegate {
+extension _ChatThreadVC: _ChatMessageControllerDelegate {
     public func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
