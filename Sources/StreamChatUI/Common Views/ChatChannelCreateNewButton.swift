@@ -1,11 +1,11 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-open class CreateNewChannelButton: Button {
+open class ChatChannelCreateNewButton: Button {
     // MARK: - Overrides
     
     override public func defaultAppearance() {
@@ -16,15 +16,5 @@ open class CreateNewChannelButton: Button {
     open var defaultIntrinsicContentSize: CGSize?
     override open var intrinsicContentSize: CGSize {
         defaultIntrinsicContentSize ?? super.intrinsicContentSize
-    }
-    
-    // MARK: - Init
-    
-    override public init(frame: CGRect) {
-        super.init(frame: frame)
-    }
-    
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
     }
 }
