@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -11,13 +11,13 @@ class ChatChannelNavigationBarListener<ExtraData: ExtraDataTypes> {
     typealias NavbarData = (title: String?, subtitle: String?)
 
     let channelController: _ChatChannelController<ExtraData>
-    let namer: ChannelNamer
+    let namer: ChatChannelNamer
     var onDataChange: (NavbarData) -> Void = { _ in }
 
     static func make(
         for channel: ChannelId,
         in client: _ChatClient<ExtraData>,
-        using namer: ChannelNamer
+        using namer: ChatChannelNamer
     ) -> ChatChannelNavigationBarListener {
         /// if we in channel room, channel will be here, but it always safe to fallback to group chat
         let isDirect = client.channelController(for: channel).channel?.isDirectMessageChannel ?? false
@@ -26,7 +26,7 @@ class ChatChannelNavigationBarListener<ExtraData: ExtraDataTypes> {
             : GroupChatChannelNavigationBarListener(client: client, channel: channel, namer: namer)
     }
 
-    fileprivate init(client: _ChatClient<ExtraData>, channel: ChannelId, namer: ChannelNamer) {
+    fileprivate init(client: _ChatClient<ExtraData>, channel: ChannelId, namer: ChatChannelNamer) {
         self.namer = namer
         
         channelController = client.channelController(for: channel)
@@ -76,7 +76,7 @@ private class DirectChatChannelNavigationBarListener<ExtraData: ExtraDataTypes>:
 
     private var timer: Timer!
 
-    override init(client: _ChatClient<ExtraData>, channel: ChannelId, namer: ChannelNamer) {
+    override init(client: _ChatClient<ExtraData>, channel: ChannelId, namer: ChatChannelNamer) {
         memberController = client.channelController(for: channel).channel?.cachedMembers
             .first { $0.id != client.currentUserId }
             .map { client.memberController(userId: $0.id, in: channel) }

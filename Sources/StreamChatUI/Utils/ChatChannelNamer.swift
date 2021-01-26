@@ -1,11 +1,11 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 import StreamChat
 
-open class ChannelNamer {
+open class ChatChannelNamer {
     open var maxMemberNames: Int { 2 }
     open var separator: String { "," }
     
