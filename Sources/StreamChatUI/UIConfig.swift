@@ -315,8 +315,8 @@ public extension UIConfig {
             MessageComposerCheckmarkControl<ExtraData>.self
         public var slashCommandView: _ChatMessageInputSlashCommandView<ExtraData>
             .Type = _ChatMessageInputSlashCommandView<ExtraData>.self
-        public var suggestionsViewController: MessageComposerSuggestionsViewController<ExtraData>.Type =
-            MessageComposerSuggestionsViewController<ExtraData>.self
+        public var suggestionsViewController: _ChatMessageComposerSuggestionsViewController<ExtraData>.Type =
+            _ChatMessageComposerSuggestionsViewController<ExtraData>.self
         public var suggestionsCollectionView: MessageComposerSuggestionsCollectionView.Type =
             MessageComposerSuggestionsCollectionView<ExtraData>.self
         public var suggestionsMentionCollectionViewCell: MessageComposerMentionCollectionViewCell<ExtraData>.Type =
