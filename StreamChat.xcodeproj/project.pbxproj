@@ -1560,16 +1560,16 @@
 				886BDE68258A501E00E1CD00 /* Attachments */,
 				E74346B12593546000512C2D /* ChatMessage */,
 				E743468C2593521E00512C2D /* MessageComposer */,
-				DB9A3D652582783F00555D36 /* ChatVC.swift */,
-				7908832D254876C100896F03 /* ChatChannelVC.swift */,
 				DBC8A5752581476E00B20A82 /* ChatMessageListVC.swift */,
-				DBC8A563258113F700B20A82 /* ChatThreadVC.swift */,
-				882AE056257A176A004095B3 /* ChatChannelRouter.swift */,
 				DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */,
-				793061812577C557005CF846 /* ChatChannelVC_Tests.swift */,
-				DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */,
 				79088331254876C100896F03 /* ChatMessageListCollectionView.swift */,
 				79088330254876C100896F03 /* ChatMessageListCollectionViewLayout.swift */,
+				DB9A3D652582783F00555D36 /* ChatVC.swift */,
+				7908832D254876C100896F03 /* ChatChannelVC.swift */,
+				882AE056257A176A004095B3 /* ChatChannelRouter.swift */,
+				793061812577C557005CF846 /* ChatChannelVC_Tests.swift */,
+				DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */,
+				DBC8A563258113F700B20A82 /* ChatThreadVC.swift */,
 			);
 			path = ChatChannel;
 			sourceTree = "<group>";
