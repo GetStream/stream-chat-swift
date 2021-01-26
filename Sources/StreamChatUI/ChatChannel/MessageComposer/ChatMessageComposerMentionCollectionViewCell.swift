@@ -92,15 +92,23 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View,
     }
 }
 
-open class MessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: UICollectionViewCell, UIConfigProvider {
+public typealias ChatMessageComposerMentionCollectionViewCell = _ChatMessageComposerMentionCollectionViewCell<NoExtraData>
+
+open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
     // MARK: Properties
 
-    static var reuseId: String { String(describing: self) }
+    open class var reuseId: String { String(describing: self) }
 
-    public private(set) lazy var mentionView: _ChatMessageComposerMentionCellView<ExtraData> = {
-        let view = uiConfig.messageComposer.suggestionsMentionCellView.init().withoutAutoresizingMaskConstraints
+    public private(set) lazy var mentionView = uiConfig
+        .messageComposer
+        .suggestionsMentionCellView.init()
+        .withoutAutoresizingMaskConstraints
+
+    override open func setUpLayout() {
+        super.setUpLayout()
+
         contentView.embed(
-            view,
+            mentionView,
             insets: .init(
                 top: 0,
                 leading: contentView.directionalLayoutMargins.leading,
@@ -108,6 +116,5 @@ open class MessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: 
                 trailing: contentView.directionalLayoutMargins.trailing
             )
         )
-        return view
-    }()
+    }
 }
