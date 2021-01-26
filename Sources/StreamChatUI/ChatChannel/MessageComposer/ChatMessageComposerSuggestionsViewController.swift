@@ -156,7 +156,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
         registerCollectionViewCell()
 
         collectionView.register(
-            MessageComposerSuggestionsCommandsReusableView<ExtraData>.self,
+            _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "CommandsHeader"
         )
@@ -180,7 +180,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
             ofKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "CommandsHeader",
             for: indexPath
-        ) as! MessageComposerSuggestionsCommandsReusableView<ExtraData>
+        ) as! _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>
 
         headerView.suggestionsHeader.headerLabel.text = L10n.Composer.Suggestions.Commands.header
         headerView.suggestionsHeader.commandImageView.image = UIImage(
