@@ -387,7 +387,7 @@
 		88AA928E254735CF00BFA0C3 /* MessageReactionDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AA928D254735CF00BFA0C3 /* MessageReactionDTO_Tests.swift */; };
 		88AD1D5E2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */; };
 		88AD1D6D2588D7D300ECED5B /* ChatMessageAttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88AD1D6C2588D7D300ECED5B /* ChatMessageAttachmentsView.swift */; };
-		88BA7F5D258B6953006CE0C5 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BA7F5C258B6953006CE0C5 /* LoadingIndicator.swift */; };
+		88BA7F5D258B6953006CE0C5 /* ChatLoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BA7F5C258B6953006CE0C5 /* ChatLoadingIndicator.swift */; };
 		88BA7F6B258B717E006CE0C5 /* ChatMessageAttachmentInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BA7F6A258B717E006CE0C5 /* ChatMessageAttachmentInfoView.swift */; };
 		88BA7F7F258B97A8006CE0C5 /* ChatMessageImageGallery+ImagePreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BA7F7E258B97A8006CE0C5 /* ChatMessageImageGallery+ImagePreview.swift */; };
 		88BA7F87258B97C9006CE0C5 /* ChatMessageImageGallery+UploadingOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88BA7F86258B97C9006CE0C5 /* ChatMessageImageGallery+UploadingOverlay.swift */; };
@@ -1124,7 +1124,7 @@
 		88AA928D254735CF00BFA0C3 /* MessageReactionDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReactionDTO_Tests.swift; sourceTree = "<group>"; };
 		88AD1D5D2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatFileAttachmentListView+ItemView.swift"; sourceTree = "<group>"; };
 		88AD1D6C2588D7D300ECED5B /* ChatMessageAttachmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachmentsView.swift; sourceTree = "<group>"; };
-		88BA7F5C258B6953006CE0C5 /* LoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
+		88BA7F5C258B6953006CE0C5 /* ChatLoadingIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatLoadingIndicator.swift; sourceTree = "<group>"; };
 		88BA7F6A258B717E006CE0C5 /* ChatMessageAttachmentInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachmentInfoView.swift; sourceTree = "<group>"; };
 		88BA7F7E258B97A8006CE0C5 /* ChatMessageImageGallery+ImagePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageImageGallery+ImagePreview.swift"; sourceTree = "<group>"; };
 		88BA7F86258B97C9006CE0C5 /* ChatMessageImageGallery+UploadingOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageImageGallery+UploadingOverlay.swift"; sourceTree = "<group>"; };
@@ -2359,7 +2359,7 @@
 				792DD9D8256BC542001DB91B /* BaseViews.swift */,
 				E759AC4C256E694F00341865 /* OnlineIndicatorView.swift */,
 				225DDDFB25799270009C280A /* ChatSquareButton.swift */,
-				88BA7F5C258B6953006CE0C5 /* LoadingIndicator.swift */,
+				88BA7F5C258B6953006CE0C5 /* ChatLoadingIndicator.swift */,
 			);
 			path = "Common Views";
 			sourceTree = "<group>";
@@ -3333,7 +3333,7 @@
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
 				22753599257C442300D1FDB6 /* ChatMessageComposerSendButton.swift in Sources */,
 				88F836502578D16D0039AEC8 /* ChatMessageActionsView+ActionButton.swift in Sources */,
-				88BA7F5D258B6953006CE0C5 /* LoadingIndicator.swift in Sources */,
+				88BA7F5D258B6953006CE0C5 /* ChatLoadingIndicator.swift in Sources */,
 				22086B48259509AC0007F8C0 /* ChatMessageComposerDocumentAttachmentsCollectionViewLayout.swift in Sources */,
 				88A11B0A2590AFBB0000AC24 /* ChatMessage+Extensions.swift in Sources */,
 				88A8CF20256E7C06004EA4C7 /* ChatMessageBubbleView.swift in Sources */,
