@@ -51,13 +51,12 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UICon
     }
 
     // MARK: - Content
-    
-    override open func setUpAppearance() {
-        super.setUpAppearance()
 
+    override open func setUp() {
+        super.setUp()
         avatarView.isUserInteractionEnabled = false
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
 
