@@ -124,6 +124,29 @@ class ChannelDTO_Tests: XCTestCase {
         }
     }
     
+    func test_DTO_hash_sameAsPayloadHash() throws {
+        let channelId: ChannelId = .unique
+        
+        let payload = ChannelDetailPayload.dummy(cid: channelId)
+        
+        // Save the payload to the db
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, query: nil)
+        }
+        
+        // Load the channel from the db and check the fields are correct
+        var loadedChannel: ChannelDTO? {
+            database.viewContext.channel(cid: channelId)
+        }
+        
+        // Assert that hash is not changed
+        guard let dtoHash = loadedChannel?.changeHash else {
+            XCTFail("DTO is missing hash!")
+            return
+        }
+        XCTAssertEqual(Int(dtoHash), payload.changeHash)
+    }
+    
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let channelId: ChannelId = .unique
         
