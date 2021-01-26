@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageComposerMentionCellView = _ChatMessageComposerMentionCellView<NoExtraData>
+
+open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: Properties
 
     open var content: (title: String, subtitle: String, imageURL: URL?, isUserOnline: Bool)? {
@@ -95,7 +97,7 @@ open class MessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: 
 
     static var reuseId: String { String(describing: self) }
 
-    public private(set) lazy var mentionView: MessageComposerMentionCellView<ExtraData> = {
+    public private(set) lazy var mentionView: _ChatMessageComposerMentionCellView<ExtraData> = {
         let view = uiConfig.messageComposer.suggestionsMentionCellView.init().withoutAutoresizingMaskConstraints
         contentView.embed(
             view,
