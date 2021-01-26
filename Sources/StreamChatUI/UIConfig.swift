@@ -183,7 +183,7 @@ public extension UIConfig {
         public var outgoingMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
             СhatOutgoingMessageCollectionViewCell<ExtraData>.self
 
-        public var collectionView: ChatChannelCollectionView.Type = ChatChannelCollectionView.self
+        public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
         public var channelNamer: ChannelNamer.Type = ChannelNamer.self
         public var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
