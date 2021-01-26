@@ -5,7 +5,9 @@
 import StreamChat
 import UIKit
 
-open class MessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+public typealias ChatMessageComposerQuoteBubbleView = _ChatMessageComposerQuoteBubbleView<NoExtraData>
+
+open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: - Properties
     
     public var avatarViewWidth: CGFloat = 24
