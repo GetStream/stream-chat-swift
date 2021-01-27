@@ -843,15 +843,18 @@ final class MessageController_Tests: StressTestCase {
     func test_addReaction_callsUpdater_withCorrectValues() {
         let type: MessageReactionType = "like"
         let score = 5
+        let enforceUnique = true
         let extraData: NoExtraData = .defaultValue
         
         // Simulate `addReaction` call.
-        controller.addReaction(type, score: score, extraData: extraData)
+        controller.addReaction(type, score: score, enforceUnique: true, extraData: extraData)
         
         // Assert updater is called with correct `type`.
         XCTAssertEqual(env.messageUpdater.addReaction_type, type)
         // Assert updater is called with correct `score`.
         XCTAssertEqual(env.messageUpdater.addReaction_score, score)
+        // Assert updater is called with correct `enforceUnique`.
+        XCTAssertEqual(env.messageUpdater.addReaction_enforceUnique, enforceUnique)
         // Assert updater is called with correct `extraData`.
         XCTAssertEqual(env.messageUpdater.addReaction_extraData, extraData)
         // Assert updater is called with correct `messageId`.

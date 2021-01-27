@@ -239,12 +239,14 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - type: The reaction type.
     ///   - score: The reaction score.
+    ///   - enforceUnique: If set to `true`, new reaction will replace all reactions the user has (if any) on this message.
     ///   - extraData: The extra data attached to the reaction.
     ///   - messageId: The message identifier the reaction will be added to.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func addReaction(
         _ type: MessageReactionType,
         score: Int,
+        enforceUnique: Bool,
         extraData: ExtraData.MessageReaction,
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
@@ -252,6 +254,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         let endpoint: Endpoint<EmptyResponse> = .addReaction(
             type,
             score: score,
+            enforceUnique: enforceUnique,
             extraData: extraData,
             messageId: messageId
         )

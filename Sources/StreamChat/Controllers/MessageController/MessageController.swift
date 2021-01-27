@@ -308,15 +308,23 @@ public extension _ChatMessageController {
     /// - Parameters:
     ///   - type: The reaction type.
     ///   - score: The reaction score.
+    ///   - enforceUnique: If set to `true`, new reaction will replace all reactions the user has (if any) on this message.
     ///   - extraData: The reaction extra data.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     func addReaction(
         _ type: MessageReactionType,
         score: Int = 1,
+        enforceUnique: Bool = false,
         extraData: ExtraData.MessageReaction = .defaultValue,
         completion: ((Error?) -> Void)? = nil
     ) {
-        messageUpdater.addReaction(type, score: score, extraData: extraData, messageId: messageId) { error in
+        messageUpdater.addReaction(
+            type,
+            score: score,
+            enforceUnique: enforceUnique,
+            extraData: extraData,
+            messageId: messageId
+        ) { error in
             self.callback {
                 completion?(error)
             }

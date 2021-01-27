@@ -41,6 +41,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     
     @Atomic var addReaction_type: MessageReactionType?
     @Atomic var addReaction_score: Int?
+    @Atomic var addReaction_enforceUnique: Bool?
     @Atomic var addReaction_extraData: ExtraData.MessageReaction?
     @Atomic var addReaction_messageId: MessageId?
     @Atomic var addReaction_completion: ((Error?) -> Void)?
@@ -183,6 +184,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     override func addReaction(
         _ type: MessageReactionType,
         score: Int,
+        enforceUnique: Bool = false,
         extraData: ExtraData.MessageReaction,
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
@@ -191,6 +193,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         addReaction_score = score
         addReaction_extraData = extraData
         addReaction_messageId = messageId
+        addReaction_enforceUnique = enforceUnique
         addReaction_completion = completion
     }
     
