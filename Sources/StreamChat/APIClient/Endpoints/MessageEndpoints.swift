@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -50,6 +50,7 @@ extension Endpoint {
     static func addReaction<ExtraData: MessageReactionExtraData>(
         _ type: MessageReactionType,
         score: Int,
+        enforceUnique: Bool,
         extraData: ExtraData,
         messageId: MessageId
     ) -> Endpoint<EmptyResponse> {
@@ -62,6 +63,7 @@ extension Endpoint {
                 "reaction": MessageReactionRequestPayload(
                     type: type,
                     score: score,
+                    enforceUnique: enforceUnique,
                     extraData: extraData
                 )
             ]

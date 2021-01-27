@@ -829,6 +829,7 @@ final class MessageUpdater_Tests: StressTestCase {
         messageUpdater.addReaction(
             reactionType,
             score: reactionScore,
+            enforceUnique: false,
             extraData: reactionExtraData,
             messageId: messageId
         )
@@ -836,7 +837,13 @@ final class MessageUpdater_Tests: StressTestCase {
         // Assert correct endpoint is called.
         XCTAssertEqual(
             apiClient.request_endpoint,
-            AnyEndpoint(.addReaction(reactionType, score: reactionScore, extraData: reactionExtraData, messageId: messageId))
+            AnyEndpoint(.addReaction(
+                reactionType,
+                score: reactionScore,
+                enforceUnique: false,
+                extraData: reactionExtraData,
+                messageId: messageId
+            ))
         )
     }
 
@@ -846,6 +853,7 @@ final class MessageUpdater_Tests: StressTestCase {
         messageUpdater.addReaction(
             .init(rawValue: .unique),
             score: 1,
+            enforceUnique: false,
             extraData: .defaultValue,
             messageId: .unique
         ) { error in
@@ -869,6 +877,7 @@ final class MessageUpdater_Tests: StressTestCase {
         messageUpdater.addReaction(
             .init(rawValue: .unique),
             score: 1,
+            enforceUnique: false,
             extraData: .defaultValue,
             messageId: .unique
         ) {

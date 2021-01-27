@@ -99,6 +99,7 @@ final class MessageEndpoints_Tests: XCTestCase {
                 "reaction": MessageReactionRequestPayload(
                     type: reaction,
                     score: score,
+                    enforceUnique: false,
                     extraData: extraData
                 )
             ]
@@ -108,6 +109,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let endpoint: Endpoint<EmptyResponse> = .addReaction(
             reaction,
             score: score,
+            enforceUnique: false,
             extraData: extraData,
             messageId: messageId
         )
