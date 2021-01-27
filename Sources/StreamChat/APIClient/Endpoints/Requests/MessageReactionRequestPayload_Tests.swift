@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -11,6 +11,7 @@ final class MessageReactionRequestPayload_Tests: XCTestCase {
         let payload = MessageReactionRequestPayload(
             type: "like",
             score: 10,
+            enforceUnique: false,
             extraData: Mood(mood: "good one")
         )
         
@@ -21,6 +22,7 @@ final class MessageReactionRequestPayload_Tests: XCTestCase {
         AssertJSONEqual(json, [
             "type": payload.type.rawValue,
             "score": payload.score,
+            "enforce_unique": payload.enforceUnique,
             "mood": payload.extraData.mood
         ])
     }
