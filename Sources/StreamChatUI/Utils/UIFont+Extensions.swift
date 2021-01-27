@@ -9,10 +9,6 @@ extension UIFont {
         let descriptor = fontDescriptor.withSymbolicTraits(traits)
         return UIFont(descriptor: descriptor!, size: pointSize)
     }
-    
-    func withWeight(_ weight: UIFont.Weight) -> UIFont {
-        UIFont.systemFont(ofSize: pointSize, weight: weight)
-    }
 
     var bold: UIFont {
         withTraits(traits: .traitBold)

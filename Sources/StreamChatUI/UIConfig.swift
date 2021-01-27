@@ -119,7 +119,7 @@ public extension _UIConfig {
         public var footnoteBold = UIFont.preferredFont(forTextStyle: .footnote).bold
         public var subheadline = UIFont.preferredFont(forTextStyle: .subheadline)
         public var subheadlineBold = UIFont.preferredFont(forTextStyle: .subheadline).bold
-        public var body = UIFont.preferredFont(forTextStyle: .body).withWeight(.medium)
+        public var body = UIFont.preferredFont(forTextStyle: .body)
         public var bodyBold = UIFont.preferredFont(forTextStyle: .body).bold
         public var bodyItalic = UIFont.preferredFont(forTextStyle: .body).italic
         public var headline = UIFont.preferredFont(forTextStyle: .headline)
