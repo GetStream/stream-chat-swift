@@ -4,7 +4,7 @@
 
 import UIKit
 
-open class СhatAvatarView: View {
+open class ChatAvatarView: View {
     // MARK: - Subviews
     
     public let imageView: UIImageView = {

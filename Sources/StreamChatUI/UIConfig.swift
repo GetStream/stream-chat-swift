@@ -168,7 +168,7 @@ public extension _UIConfig {
     struct CurrentUserUI {
         public var currentUserViewAvatarView: _CurrentChatUserAvatarView<ExtraData>.Type = _CurrentChatUserAvatarView<ExtraData>
             .self
-        public var avatarView: СhatAvatarView.Type = СhatAvatarView.self
+        public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
     }
 }
 
@@ -238,7 +238,7 @@ public extension _UIConfig {
     }
 
     struct MessageContentViewSubviews {
-        public var authorAvatarView: СhatAvatarView.Type = СhatAvatarView.self
+        public var authorAvatarView: ChatAvatarView.Type = ChatAvatarView.self
         public var bubbleView: _ChatMessageBubbleView<ExtraData>.Type = _ChatMessageBubbleView<ExtraData>.self
         public var metadataView: _ChatMessageMetadataView<ExtraData>.Type = _ChatMessageMetadataView<ExtraData>.self
         public var quotedMessageBubbleView: _ChatMessageQuoteBubbleView<ExtraData>.Type = _ChatMessageQuoteBubbleView.self
@@ -247,7 +247,7 @@ public extension _UIConfig {
             ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.self
         public var threadArrowView: _ChatMessageThreadArrowView<ExtraData>.Type = _ChatMessageThreadArrowView<ExtraData>.self
         public var threadInfoView: _ChatMessageThreadInfoView<ExtraData>.Type = _ChatMessageThreadInfoView<ExtraData>.self
-        public var threadParticipantAvatarView: СhatAvatarView.Type = СhatAvatarView.self
+        public var threadParticipantAvatarView: ChatAvatarView.Type = ChatAvatarView.self
         public var errorIndicator: _ChatMessageErrorIndicator<ExtraData>.Type = _ChatMessageErrorIndicator<ExtraData>.self
         public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type = _ChatMessageLinkPreviewView<ExtraData>.self
     }
@@ -315,7 +315,7 @@ public extension _UIConfig {
         public var composerButton: _ChatSquareButton<ExtraData>.Type = _ChatSquareButton<ExtraData>.self
         public var textView: _ChatMessageComposerInputTextView<ExtraData>.Type = _ChatMessageComposerInputTextView<ExtraData>.self
         public var quotedMessageView: _ChatMessageComposerQuoteBubbleView<ExtraData>.Type = _ChatMessageComposerQuoteBubbleView.self
-        public var quotedMessageAvatarView: СhatAvatarView.Type = СhatAvatarView.self
+        public var quotedMessageAvatarView: ChatAvatarView.Type = ChatAvatarView.self
         public var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData>.Type =
             _ChatMessageComposerCheckmarkControl<ExtraData>.self
         public var slashCommandView: _ChatMessageInputSlashCommandView<ExtraData>
