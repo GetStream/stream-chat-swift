@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -32,13 +32,10 @@ open class ChatAvatarView: View {
 
     override public func defaultAppearance() {
         defaultIntrinsicContentSize = .init(width: 40, height: 40)
-    }
-    
-    override open func setUpAppearance() {
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
     }
-    
+
     override open func setUpLayout() {
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
