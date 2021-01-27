@@ -20,6 +20,12 @@ open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: Collec
         channelView.trailingConstraint?.constant = 0
     }
 
+    override open var isHighlighted: Bool {
+        didSet {
+            channelView.backgroundColor = isHighlighted ? channelView.highlightedBackgroundColor : channelView.normalBackgroundColor
+        }
+    }
+
     // MARK: Customizable
 
     override open func setUpLayout() {

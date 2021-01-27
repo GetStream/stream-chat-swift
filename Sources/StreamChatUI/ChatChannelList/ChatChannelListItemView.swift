@@ -10,6 +10,9 @@ public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
     // MARK: - Properties
 
+    open var normalBackgroundColor: UIColor?
+    open var highlightedBackgroundColor: UIColor?
+
     public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet {
             updateContent()
@@ -46,6 +49,8 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     override public func defaultAppearance() {
         super.defaultAppearance()
         backgroundColor = uiConfig.colorPalette.generalBackground
+        normalBackgroundColor = uiConfig.colorPalette.generalBackground
+        highlightedBackgroundColor = uiConfig.colorPalette.channelListHighlightedBackground
     }
 
     override open func setUpAppearance() {

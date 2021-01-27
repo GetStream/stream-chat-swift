@@ -64,6 +64,7 @@ public extension _UIConfig {
         public var channelListUnreadCountView: UIColor = .streamAccentRed
         public var channelListUnreadCountLabel: UIColor = .streamWhite
         public var channelListSeparator: UIColor = .streamGrayGainsboro
+        public var channelListHighlightedBackground: UIColor = .streamGrayGainsboro
 
         // MARK: - Text interactions
 
