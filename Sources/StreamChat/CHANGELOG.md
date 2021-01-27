@@ -4,6 +4,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+# Unreleased
+
+### 🐞 Fixed
+ - Fix development token not working properly [#760](https://github.com/GetStream/stream-chat-swift/pull/760)
+
+
 # [3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/3.0)
 _January 22nd, 2021_
 
