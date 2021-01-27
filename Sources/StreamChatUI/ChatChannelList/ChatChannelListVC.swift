@@ -118,19 +118,28 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
-        collectionView.performBatchUpdates({
-            for change in changes {
-                switch change {
-                case let .insert(_, index):
-                    collectionView.insertItems(at: [index])
-                case let .move(_, fromIndex, toIndex):
-                    collectionView.moveItem(at: fromIndex, to: toIndex)
-                case let .remove(_, index):
-                    collectionView.deleteItems(at: [index])
-                case let .update(_, index):
-                    collectionView.reloadItems(at: [index])
+        var movedItems: [IndexPath] = []
+        collectionView.performBatchUpdates(
+            {
+                for change in changes {
+                    switch change {
+                    case let .insert(_, index):
+                        collectionView.insertItems(at: [index])
+                    case let .move(_, fromIndex, toIndex):
+                        collectionView.moveItem(at: fromIndex, to: toIndex)
+                        movedItems.append(toIndex)
+                    case let .remove(_, index):
+                        collectionView.deleteItems(at: [index])
+                    case let .update(_, index):
+                        collectionView.reloadItems(at: [index])
+                    }
                 }
+            },
+            completion: { _ in
+                // Move changes from NSFetchController also can mean an update of the content.
+                // Since a `moveItem` in collections do not update the content of the cell, we need to reload those cells.
+                self.collectionView.reloadItems(at: movedItems)
             }
-        }, completion: nil)
+        )
     }
 }
