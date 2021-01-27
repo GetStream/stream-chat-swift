@@ -62,7 +62,7 @@ open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: View, UIConfi
     
     // MARK: - Public
     
-    override open func setUpAppearance() {
+    override public func defaultAppearance() {
         layer.masksToBounds = true
         backgroundColor = uiConfig.colorPalette.channelListUnreadCountView
         unreadCountLabel.textColor = uiConfig.colorPalette.channelListUnreadCountLabel

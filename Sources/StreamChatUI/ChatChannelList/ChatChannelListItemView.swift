@@ -51,12 +51,10 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         backgroundColor = uiConfig.colorPalette.generalBackground
         normalBackgroundColor = uiConfig.colorPalette.generalBackground
         highlightedBackgroundColor = uiConfig.colorPalette.channelListHighlightedBackground
-    }
 
-    override open func setUpAppearance() {
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.font = uiConfig.font.bodyBold
-        
+
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
         subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.font = uiConfig.font.subheadline
@@ -65,7 +63,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         timestampLabel.adjustsFontForContentSizeCategory = true
         timestampLabel.font = uiConfig.font.subheadline
     }
-    
+
     override open func setUpLayout() {
         super.setUpLayout()
 
