@@ -53,6 +53,14 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: Collectio
     override open func preferredLayoutAttributesFitting(
         _ layoutAttributes: UICollectionViewLayoutAttributes
     ) -> UICollectionViewLayoutAttributes {
+        guard hasCompletedStreamSetup else {
+            // We cannot calculate size properly right now, because our view hierarchy is not ready yet.
+            // If we just return default size, small text bubbles would not resize itself properly for no reason.
+            let attributes = layoutAttributes.copy() as! UICollectionViewLayoutAttributes
+            attributes.frame.size = .zero
+            return attributes
+        }
+
         let preferredAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
 
         let targetSize = CGSize(
