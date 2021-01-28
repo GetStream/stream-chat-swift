@@ -58,6 +58,8 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: ViewController,
         
         controller.setDelegate(self)
         controller.synchronize()
+        
+        navigationItem.backButtonTitle = ""
     }
     
     // MARK: - UICollectionViewDataSource
