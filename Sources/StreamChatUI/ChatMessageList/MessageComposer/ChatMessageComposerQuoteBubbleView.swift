@@ -10,20 +10,21 @@ public typealias ChatMessageComposerQuoteBubbleView = _ChatMessageComposerQuoteB
 open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: - Properties
     
-    public var avatarViewWidth: CGFloat = 24
-    public var attachmentPreviewWidth: CGFloat = 34
+    public var avatarViewSize: CGSize = .init(width: 24, height: 24)
+    public var attachmentPreviewSize: CGSize = .init(width: 34, height: 34)
     
     public var message: _ChatMessage<ExtraData>? {
         didSet {
             updateContentIfNeeded()
         }
     }
-    
-    lazy var textViewHeightConstraint = textView.heightAnchor.pin(greaterThanOrEqualToConstant: .zero)
-    
+        
     // MARK: - Subviews
     
-    public private(set) lazy var container = ContainerStackView()
+    public private(set) lazy var container = UIStackView()
+        .withoutAutoresizingMaskConstraints
+    
+    public private(set) lazy var contentView = UIView()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var authorAvatarView = uiConfig
@@ -36,6 +37,13 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
 
     public private(set) lazy var textView = UITextView()
         .withoutAutoresizingMaskConstraints
+    
+    // MARK: - Constraints
+    
+    public var containerConstraints: [NSLayoutConstraint] = []
+    public var authorAvatarViewConstraints: [NSLayoutConstraint] = []
+    public var attachmentPreviewConstraints: [NSLayoutConstraint] = []
+    public var textViewConstraints: [NSLayoutConstraint] = []
     
     // MARK: - Public
     
@@ -61,53 +69,79 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
 
         authorAvatarView.contentMode = .scaleAspectFit
         
-        attachmentPreview.layer.cornerRadius = attachmentPreviewWidth / 4
+        attachmentPreview.layer.cornerRadius = attachmentPreviewSize.width / 4
         attachmentPreview.layer.masksToBounds = true
         
-        container.centerStackView.layer.cornerRadius = 16
-        container.centerStackView.layer.borderWidth = 1
-        container.centerStackView.layer.borderColor = uiConfig.colorPalette.messageComposerBorder.cgColor
-        container.centerStackView.layer.masksToBounds = true
+        contentView.layer.cornerRadius = 16
+        contentView.layer.borderWidth = 1
+        contentView.layer.borderColor = uiConfig.colorPalette.messageComposerBorder.cgColor
+        contentView.layer.masksToBounds = true
     }
     
     override open func setUpLayout() {
-        embed(container)
-        
         preservesSuperviewLayoutMargins = true
         
-        container.preservesSuperviewLayoutMargins = true
-        container.isLayoutMarginsRelativeArrangement = true
+        addSubview(container)
         
-        container.leftStackView.isHidden = false
-        container.leftStackView.addArrangedSubview(authorAvatarView)
-        authorAvatarView.widthAnchor.pin(equalToConstant: avatarViewWidth).isActive = true
-        authorAvatarView.heightAnchor.pin(equalTo: authorAvatarView.widthAnchor, multiplier: 1).isActive = true
+        container.spacing = UIStackView.spacingUseSystem
+        container.alignment = .bottom
         
-        container.centerContainerStackView.spacing = UIStackView.spacingUseSystem
-        container.centerContainerStackView.alignment = .bottom
+        containerConstraints = [
+            container.leadingAnchor.pin(equalTo: leadingAnchor, constant: directionalLayoutMargins.leading),
+            container.trailingAnchor.pin(equalTo: trailingAnchor, constant: -directionalLayoutMargins.trailing),
+            container.topAnchor.pin(equalTo: topAnchor, constant: directionalLayoutMargins.top),
+            container.bottomAnchor.pin(equalTo: bottomAnchor, constant: -directionalLayoutMargins.bottom)
+        ]
         
-        container.centerStackView.isLayoutMarginsRelativeArrangement = true
-        container.centerStackView.layoutMargins = layoutMargins
+        authorAvatarViewConstraints = [
+            authorAvatarView.widthAnchor.pin(equalToConstant: avatarViewSize.width),
+            authorAvatarView.heightAnchor.pin(equalToConstant: avatarViewSize.height)
+        ]
         
-        container.centerStackView.isHidden = false
-        container.centerStackView.spacing = UIStackView.spacingUseSystem
-        container.centerStackView.alignment = .top
-        container.centerStackView.addArrangedSubview(attachmentPreview)
-
-        attachmentPreview.widthAnchor.pin(equalToConstant: attachmentPreviewWidth).isActive = true
-        attachmentPreview.heightAnchor.pin(equalTo: attachmentPreview.widthAnchor, multiplier: 1).isActive = true
-
-        container.centerStackView.addArrangedSubview(textView)
+        container.addArrangedSubview(authorAvatarView)
         
-        textView.setContentHuggingPriority(.required, for: .vertical)
+        contentView.addSubview(attachmentPreview)
         
-        textViewHeightConstraint.isActive = true
+        attachmentPreviewConstraints = [
+            attachmentPreview.widthAnchor.pin(equalToConstant: attachmentPreviewSize.width),
+            attachmentPreview.heightAnchor.pin(equalToConstant: attachmentPreviewSize.height),
+            attachmentPreview.leadingAnchor.pin(
+                equalTo: contentView.leadingAnchor,
+                constant: contentView.directionalLayoutMargins.leading
+            ),
+            attachmentPreview.topAnchor.pin(equalTo: contentView.topAnchor, constant: contentView.directionalLayoutMargins.top),
+            attachmentPreview.bottomAnchor.pin(
+                lessThanOrEqualTo: contentView.bottomAnchor,
+                constant: -contentView.directionalLayoutMargins.bottom
+            )
+        ]
         
-        container.centerStackView.layer.maskedCorners = [
+        contentView.addSubview(textView)
+        
+        textViewConstraints = [
+            textView.topAnchor.pin(equalTo: contentView.topAnchor, constant: contentView.directionalLayoutMargins.top),
+            textView.trailingAnchor.pin(
+                equalTo: contentView.trailingAnchor,
+                constant: -contentView.directionalLayoutMargins.trailing
+            ),
+            textView.bottomAnchor.pin(
+                lessThanOrEqualTo: contentView.bottomAnchor,
+                constant: -contentView.directionalLayoutMargins.bottom
+            ),
+            textView.leadingAnchor.pin(equalToSystemSpacingAfter: attachmentPreview.trailingAnchor, multiplier: 1)
+        ]
+                
+        contentView.layer.maskedCorners = [
             .layerMinXMinYCorner,
             .layerMaxXMinYCorner,
             .layerMaxXMaxYCorner
         ]
+        
+        container.addArrangedSubview(contentView)
+        
+        NSLayoutConstraint.activate(
+            [containerConstraints, authorAvatarViewConstraints, attachmentPreviewConstraints, textViewConstraints].flatMap { $0 }
+        )
     }
     
     override open func updateContent() {
@@ -121,19 +155,28 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
         }
         
         textView.text = message.text
-        
         updateAttachmentPreview(for: message)
-        
-        textViewHeightConstraint.constant = textView.calculatedTextHeight()
     }
     
     // MARK: - Helpers
+    
+    public func setAttachmentPreview(hidden: Bool) {
+        if hidden {
+            attachmentPreviewConstraints.prefix(3).forEach {
+                $0.constant = 0
+            }
+        } else {
+            attachmentPreviewConstraints[0].constant = attachmentPreviewSize.width
+            attachmentPreviewConstraints[1].constant = attachmentPreviewSize.height
+            attachmentPreviewConstraints[2].constant = contentView.directionalLayoutMargins.leading
+        }
+    }
     
     func updateAttachmentPreview(for message: _ChatMessage<ExtraData>) {
         // TODO: Take last attachment when they'll be ordered.
         guard let attachment = message.attachments.first else {
             attachmentPreview.image = nil
-            attachmentPreview.isHidden = true
+            setAttachmentPreview(hidden: true)
             return
         }
         
@@ -143,12 +186,12 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
             // I'm not sure if it will be possible to provide specific icon for all file formats
             // so probably we should stick to some generic like other apps do.
             print("set file icon")
-            attachmentPreview.isHidden = false
+            setAttachmentPreview(hidden: false)
             attachmentPreview.contentMode = .scaleAspectFit
         default:
             if let previewURL = attachment.imagePreviewURL ?? attachment.imageURL {
                 attachmentPreview.setImage(from: previewURL)
-                attachmentPreview.isHidden = false
+                setAttachmentPreview(hidden: false)
                 attachmentPreview.contentMode = .scaleAspectFill
                 // TODO: When we will have attachment examples we will set smth
                 // different for different types.
@@ -157,7 +200,7 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
                 }
             } else {
                 attachmentPreview.image = nil
-                attachmentPreview.isHidden = true
+                setAttachmentPreview(hidden: true)
             }
         }
     }
