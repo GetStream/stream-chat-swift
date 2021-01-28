@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## StreamChat
 
 ### ✅ Added
-
+- Add support for `enforce_unique` parameter on sending reactions 
+    [#770](https://github.com/GetStream/stream-chat-swift/pull/770)
 ### 🔄 Changed
 
 ### 🐞 Fixed
