@@ -1866,13 +1866,6 @@
 			path = StreamChatTestTools;
 			sourceTree = "<group>";
 		};
-		793060F225778897005CF846 /* StreamChatTestToolsTests */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = StreamChatTestToolsTests;
-			sourceTree = "<group>";
-		};
 		7930610D25778BC4005CF846 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -2213,7 +2206,6 @@
 			isa = PBXGroup;
 			children = (
 				7908824625432CC600896F03 /* StreamChatTests */,
-				793060F225778897005CF846 /* StreamChatTestToolsTests */,
 				7908823925432C9000896F03 /* StreamChatUITests */,
 				792A71F22578EFBB0082498D /* Shared */,
 				7908824925432CC600896F03 /* Info.plist */,
