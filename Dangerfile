@@ -23,7 +23,7 @@ if github.pr_body.length < 3 && git.lines_of_code > 50
 end
 
 ## Let's check if there are any changes in the project folder
-# has_app_changes = !git.modified_files.grep(/Sources/).empty?
+has_app_changes = !git.modified_files.grep(/Sources/).empty?
 ## Then, we should check if tests are updated
 # has_test_changes = !git.modified_files.grep(/StreamChatCoreTests/).empty?
 
@@ -38,18 +38,8 @@ has_skip_changelog_tag = github.pr_body.include? "#skip_changelog"
 has_changelog_escape = has_meta_label || has_no_changelog_tag || has_skip_changelog_tag
 
 # Add a CHANGELOG entry for app changes
-if !has_changelog_escape
-    has_LLC_changes = !git.modified_files.grep('/Sources/StreamChat/').empty?
-    has_LLC_changelog_changes = git.modified_files.include?("/Sources/StreamChat/CHANGELOG.md")
-    if has_LLC_changes && !has_LLC_changelog_changes
-        fail("Please include a CHANGELOG entry. \nYou can find it at [/Sources/StreamChat/CHANGELOG.md](https://github.com/GetStream/stream-chat-swift/blob/main/Sources/StreamChat/CHANGELOG.md).")
-    end
-
-    has_UI_changes = !git.modified_files.grep('/Sources/StreamChatUI/').empty?
-    has_UI_changelog_changes = git.modified_files.include?("/Sources/StreamChatUI/CHANGELOG.md")
-    if has_UI_changes && !has_UI_changelog_changes
-        fail("Please include a CHANGELOG entry. \nYou can find it at [/Sources/StreamChatUI/CHANGELOG.md](https://github.com/GetStream/stream-chat-swift/blob/main/Sources/StreamChatUI/CHANGELOG.md).")
-    end
+if !has_changelog_escape && !git.modified_files.include?("CHANGELOG.md") && has_app_changes
+    fail("Please include a CHANGELOG entry. \nYou can find it at [CHANGELOG.md](https://github.com/GetStream/stream-chat-swift/blob/main/CHANGELOG.md).")
 end
 
 # Check all commits have correct format. Disable the length rule, since it's hardcoded
