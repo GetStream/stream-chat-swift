@@ -17,8 +17,9 @@ open class _ChatMessageQuoteBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageC
     override open func setUpLayout() {
         super.setUpLayout()
         
-        container.preservesSuperviewLayoutMargins = false
-        container.isLayoutMarginsRelativeArrangement = false
+        containerConstraints.forEach {
+            $0.constant = 0
+        }
     }
     
     override open func updateContent() {
@@ -27,21 +28,18 @@ open class _ChatMessageQuoteBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageC
         guard let isParentMessageSentByCurrentUser = isParentMessageSentByCurrentUser else { return }
         authorAvatarView.removeFromSuperview()
         
-        container.leftStackView.isHidden = !isParentMessageSentByCurrentUser
-        container.rightStackView.isHidden = isParentMessageSentByCurrentUser
-        
-        container.centerStackView.layer.maskedCorners = [
+        contentView.layer.maskedCorners = [
             .layerMinXMinYCorner,
             .layerMaxXMinYCorner,
             isParentMessageSentByCurrentUser ? .layerMaxXMaxYCorner : .layerMinXMaxYCorner
         ]
     
         if isParentMessageSentByCurrentUser {
-            container.centerStackView.backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
-            container.leftStackView.addArrangedSubview(authorAvatarView)
+            contentView.backgroundColor = uiConfig.colorPalette.incomingMessageBubbleBackground
+            container.insertArrangedSubview(authorAvatarView, at: 0)
         } else {
-            container.centerStackView.backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBackground
-            container.rightStackView.addArrangedSubview(authorAvatarView)
+            contentView.backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBackground
+            container.addArrangedSubview(authorAvatarView)
         }
     }
 }
