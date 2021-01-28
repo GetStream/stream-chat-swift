@@ -627,6 +627,45 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssert(result is ClientError.ChannelDoesNotExist)
     }
     
+    func test_creatingNewMessage_updatesRelatedChannelFields() throws {
+        // Prepare the current user and channel first
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+        
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(
+                userId: currentUserId,
+                role: .admin,
+                extraData: NoExtraData.defaultValue
+            ))
+            
+            try session.saveChannel(payload: self.dummyPayload(with: cid))
+        }
+        
+        // Create a new message
+        var newMessageId: MessageId!
+        let newMessageText: String = .unique
+        let newMessageAttachmentSeeds: [_ChatMessageAttachment<NoExtraDataTypes>.Seed] = []
+                
+        try database.writeSynchronously { session in
+            let messageDTO = try session.createNewMessage(
+                in: cid,
+                text: newMessageText,
+                quotedMessageId: nil,
+                attachments: newMessageAttachmentSeeds,
+                extraData: NoExtraData.defaultValue
+            )
+            newMessageId = messageDTO.id
+        }
+        
+        let loadedMessage = try unwrapAsync(
+            database.viewContext.message(id: newMessageId)
+        )
+        
+        XCTAssertEqual(loadedMessage.channel.lastMessageAt, loadedMessage.createdAt)
+        XCTAssertEqual(loadedMessage.channel.defaultSortingAt, loadedMessage.createdAt)
+    }
+    
     func test_replies_linkedToParentMessage_onCreatingNewMessage() throws {
         // Create current user
         try database.createCurrentUser()

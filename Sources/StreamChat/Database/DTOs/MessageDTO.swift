@@ -234,6 +234,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.user = currentUserDTO.user
         message.channel = channelDTO
         
+        // We should update the channel dates so the list of channels ordering is updated.
+        // Updating it locally, makes it work also in offline.
+        channelDTO.lastMessageAt = createdDate
+        channelDTO.defaultSortingAt = createdDate
+        
         if let parentMessageId = parentMessageId,
             let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(message)
