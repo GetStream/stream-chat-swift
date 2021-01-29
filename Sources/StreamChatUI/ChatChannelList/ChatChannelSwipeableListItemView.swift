@@ -64,12 +64,13 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: View, U
 
     override public func defaultAppearance() {
         super.defaultAppearance()
-        
-        bottomSeparatorView.backgroundColor = uiConfig.colorPalette.channelListSeparator
-        
-        deleteButton.setImage(UIImage(named: "icn_delete", in: .streamChatUI), for: .normal)
-        deleteButton.backgroundColor = uiConfig.colorPalette.channelListActionsBackgroundColor
-        deleteButton.tintColor = uiConfig.colorPalette.channelListActionDeleteChannel
+
+        bottomSeparatorView.backgroundColor = uiConfig.colorPalette.border
+
+        deleteButton.setImage(uiConfig.images.messageActionDelete, for: .normal)
+
+        deleteButton.backgroundColor = uiConfig.colorPalette.background1
+        deleteButton.tintColor = uiConfig.colorPalette.alert
     }
 
     // MARK: - Button actions

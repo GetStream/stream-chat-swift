@@ -138,8 +138,7 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     override public func defaultAppearance() {
         super.defaultAppearance()
 
-        view.backgroundColor = uiConfig.colorPalette.generalBackground
-
+        view.backgroundColor = uiConfig.colorPalette.background
         let title = UILabel()
         title.textAlignment = .center
         title.font = uiConfig.font.headlineBold

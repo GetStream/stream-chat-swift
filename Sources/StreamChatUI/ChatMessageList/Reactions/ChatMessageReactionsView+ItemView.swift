@@ -70,7 +70,7 @@ private extension _ChatMessageReactionsView.ItemView {
     var reactionImage: UIImage? {
         guard let content = content else { return nil }
 
-        let appearance = uiConfig.messageList.messageReactions.availableReactions[content.reaction.type]
+        let appearance = uiConfig.images.availableReactions[content.reaction.type]
 
         return content.useBigIcon ?
             appearance?.largeIcon :
@@ -82,6 +82,6 @@ private extension _ChatMessageReactionsView.ItemView {
 
         return content.reaction.isChosenByCurrentUser ?
             tintColor :
-            uiConfig.colorPalette.inactiveReactionTint
+            uiConfig.colorPalette.inactiveTint
     }
 }

@@ -53,9 +53,7 @@ open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: ChatAvatarView, UI
         if let imageURL = channel.imageURL {
             imageView.setImage(from: imageURL)
         } else {
-            imageView.image = ["pattern1", "pattern2", "pattern3", "pattern4", "pattern5"]
-                .compactMap { UIImage(named: $0, in: .streamChatUI) }
-                .randomElement()
+            imageView.image = uiConfig.images.avatarPlaceholders.randomElement()
         }
     }
 }

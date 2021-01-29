@@ -34,11 +34,11 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     
     public private(set) lazy var subtitleLabel = UILabel().withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var unreadCountView: _ChatChannelUnreadCountView = {
+    public private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = {
         uiConfigSubviews.unreadCountView.init().withoutAutoresizingMaskConstraints
     }()
     
-    public private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView = {
+    public private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = {
         uiConfigSubviews.readStatusView.init().withoutAutoresizingMaskConstraints
     }()
     
@@ -48,9 +48,10 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
 
     override public func defaultAppearance() {
         super.defaultAppearance()
-        backgroundColor = uiConfig.colorPalette.generalBackground
-        normalBackgroundColor = uiConfig.colorPalette.generalBackground
-        highlightedBackgroundColor = uiConfig.colorPalette.channelListHighlightedBackground
+
+        backgroundColor = uiConfig.colorPalette.background
+        normalBackgroundColor = uiConfig.colorPalette.background
+        highlightedBackgroundColor = uiConfig.colorPalette.highlightedBackground
 
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.font = uiConfig.font.bodyBold

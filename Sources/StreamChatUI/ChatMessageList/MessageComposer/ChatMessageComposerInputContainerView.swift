@@ -35,8 +35,7 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: Vi
     // MARK: - Public
     
     override public func defaultAppearance() {
-        let rightAccessoryImage = UIImage(named: "dismissInCircle", in: .streamChatUI)?
-            .tinted(with: uiConfig.colorPalette.messageComposerButton)
+        let rightAccessoryImage = uiConfig.images.close1.tinted(with: uiConfig.colorPalette.inactiveTint)
         rightAccessoryButton.setImage(rightAccessoryImage, for: .normal)
     }
     
@@ -48,10 +47,10 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: Vi
         container.alignment = .center
 
         container.addArrangedSubview(slashCommandView)
-        slashCommandView.setContentHuggingPriority(.required, for: .horizontal)
+//        slashCommandView.setContentHuggingPriority(.required, for: .horizontal)
 
         container.addArrangedSubview(textView)
-        textView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+//        textView.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         container.addArrangedSubview(rightAccessoryButton)
 

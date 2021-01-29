@@ -230,7 +230,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigPro
             toDeactivate.append(contentsOf: incomingMessageIsThreadConstraints)
         }
 
-        let placeholder = UIImage(named: "pattern1", in: .streamChatUI)
+        let placeholder = uiConfig.images.userAvatarPlaceholder1
         if let imageURL = message.author.imageURL {
             authorAvatarView.imageView.setImage(from: imageURL, placeholder: placeholder)
         } else {

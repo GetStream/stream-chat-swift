@@ -33,7 +33,7 @@ open class _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData: Extr
     }
     
     override public func defaultAppearance() {
-        discardButton.setImage(UIImage(named: "discardAttachment", in: .streamChatUI), for: .normal)
+        discardButton.setImage(uiConfig.images.messageComposerDiscardAttachment, for: .normal)
         
         layer.masksToBounds = true
         layer.cornerRadius = 15

@@ -90,6 +90,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     /// This way we able to hide ugly jump
     public private(set) var hideInitialLayout = true
 
+    open var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
+
     // MARK: - Life Cycle
 
     override open func viewDidAppear(_ animated: Bool) {
@@ -120,7 +122,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     override public func defaultAppearance() {
         super.defaultAppearance()
 
-        view.backgroundColor = uiConfig.colorPalette.generalBackground
+        view.backgroundColor = uiConfig.colorPalette.background
         collectionView.backgroundColor = .clear
     }
 
@@ -281,7 +283,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
             let nextMessage = dataSource.messageAtIndex(self, indexPath.row - 1)
             guard nextMessage.author == message.author else { return true }
             let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
-            return delay > uiConfig.messageList.minTimeInvteralBetweenMessagesInGroup
+            return delay > minTimeInvteralBetweenMessagesInGroup
         }
 
         return .init(

@@ -1,13 +1,13 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-open class ChatNavigationBar: NavigationBar {
+open class ChatNavigationBar<ExtraData: ExtraDataTypes>: NavigationBar, UIConfigProvider {
     override public func defaultAppearance() {
-        let backIcon = UIImage(named: "icn_back", in: Bundle(for: Self.self), compatibleWith: nil)
+        let backIcon = uiConfig.images.back
         backIndicatorTransitionMaskImage = backIcon
         backIndicatorImage = backIcon
     }

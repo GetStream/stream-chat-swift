@@ -6,14 +6,14 @@ import UIKit
 
 extension _ChatMessageActionsView {
     open class ActionButton: Button, UIConfigProvider {
-        public var actionItem: ChatMessageActionItem? {
+        public var actionItem: ChatMessageActionItem<ExtraData>? {
             didSet { updateContentIfNeeded() }
         }
 
         // MARK: Overrides
 
         override public func defaultAppearance() {
-            backgroundColor = uiConfig.colorPalette.generalBackground
+            backgroundColor = uiConfig.colorPalette.background
             titleLabel?.font = uiConfig.font.body
             contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
             titleEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
@@ -37,11 +37,11 @@ extension _ChatMessageActionsView {
             let titleTextColor: UIColor
 
             if actionItem?.isDestructive == true {
-                imageTintСolor = uiConfig.colorPalette.messageActionErrorTint
+                imageTintСolor = uiConfig.colorPalette.alert
                 titleTextColor = imageTintСolor
             } else {
-                imageTintСolor = actionItem?.isPrimary == true ? tintColor : uiConfig.colorPalette.messageActionDefaultIconTint
-                titleTextColor = uiConfig.colorPalette.messageActionDefaultText
+                imageTintСolor = actionItem?.isPrimary == true ? tintColor : uiConfig.colorPalette.inactiveTint
+                titleTextColor = uiConfig.colorPalette.text
             }
 
             setImage(actionItem?.icon.tinted(with: imageTintСolor), for: .normal)

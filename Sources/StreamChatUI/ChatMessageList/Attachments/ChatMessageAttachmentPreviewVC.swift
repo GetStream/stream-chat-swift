@@ -2,10 +2,11 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 import WebKit
 
-open class ChatMessageAttachmentPreviewVC: ViewController {
+open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: ViewController, WKNavigationDelegate, UIConfigProvider {
     public var content: URL? {
         didSet { updateContentIfNeeded() }
     }
@@ -18,7 +19,7 @@ open class ChatMessageAttachmentPreviewVC: ViewController {
     public private(set) lazy var activityIndicatorView = UIActivityIndicatorView(style: .gray)
 
     private lazy var closeButton = UIBarButtonItem(
-        image: UIImage(named: "close", in: .streamChatUI),
+        image: uiConfig.images.close,
         style: .plain,
         target: self,
         action: #selector(close)
@@ -77,11 +78,27 @@ open class ChatMessageAttachmentPreviewVC: ViewController {
             activityIndicatorView.stopAnimating()
         }
     }
-}
 
-// MARK: - WKNavigationDelegate
+    // MARK: Actions
 
-extension ChatMessageAttachmentPreviewVC: WKNavigationDelegate {
+    @objc open func goBack() {
+        if let item = webView.backForwardList.backItem {
+            webView.go(to: item)
+        }
+    }
+
+    @objc open func goForward() {
+        if let item = webView.backForwardList.forwardItem {
+            webView.go(to: item)
+        }
+    }
+
+    @objc open func close() {
+        dismiss(animated: true)
+    }
+
+    // MARK: - WKNavigationDelegate
+
     public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         activityIndicatorView.startAnimating()
     }
@@ -97,25 +114,5 @@ extension ChatMessageAttachmentPreviewVC: WKNavigationDelegate {
 
         goBackButton.isEnabled = webView.canGoBack
         goForwardButton.isEnabled = webView.canGoForward
-    }
-}
-
-// MARK: - Actions
-
-extension ChatMessageAttachmentPreviewVC {
-    @objc open func goBack() {
-        if let item = webView.backForwardList.backItem {
-            webView.go(to: item)
-        }
-    }
-
-    @objc open func goForward() {
-        if let item = webView.backForwardList.forwardItem {
-            webView.go(to: item)
-        }
-    }
-
-    @objc open func close() {
-        dismiss(animated: true)
     }
 }

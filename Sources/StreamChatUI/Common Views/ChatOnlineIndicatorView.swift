@@ -23,8 +23,8 @@ open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: View, UIConfigPr
         layer.cornerRadius = bounds.width / 2
         layer.borderWidth = (bounds.width / 5)
         layer.masksToBounds = true
-        layer.backgroundColor = uiConfig.colorPalette.channelListAvatarOnlineIndicator.cgColor
-        layer.borderColor = uiConfig.colorPalette.channelListIndicatorBorderColor.cgColor
+        layer.backgroundColor = uiConfig.colorPalette.alternativeActiveTint.cgColor
+        layer.borderColor = uiConfig.colorPalette.lightBorder.cgColor
 
         // Create a circle shape layer with true bounds.
         let mask = CAShapeLayer()

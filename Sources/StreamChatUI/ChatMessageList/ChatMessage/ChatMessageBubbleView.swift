@@ -199,7 +199,7 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         
         let font: UIFont = uiConfig.font.body
         textView.attributedText = .init(string: message?.textContent ?? "", attributes: [
-            .foregroundColor: message?.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.messageTimestampText,
+            .foregroundColor: message?.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.subtitleText,
             .font: message?.deletedAt == nil ? font : font.italic
         ])
         textView.isVisible = layoutOptions.contains(.text)
@@ -208,17 +208,17 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         borderLayer.isHidden = message == nil
 
         borderLayer.borderColor = message?.isSentByCurrentUser == true ?
-            uiConfig.colorPalette.outgoingMessageBubbleBorder.cgColor :
-            uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
+            uiConfig.colorPalette.border.cgColor :
+            uiConfig.colorPalette.border.cgColor
 
         if message?.type == .ephemeral {
-            backgroundColor = uiConfig.colorPalette.ephemeralMessageBubbleBackground
+            backgroundColor = uiConfig.colorPalette.popoverBackground
         } else if layoutOptions.contains(.linkPreview) {
-            backgroundColor = uiConfig.colorPalette.linkMessageBubbleBackground
+            backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
         } else {
             backgroundColor = message?.isSentByCurrentUser == true ?
-                uiConfig.colorPalette.outgoingMessageBubbleBackground :
-                uiConfig.colorPalette.incomingMessageBubbleBackground
+                uiConfig.colorPalette.background2 :
+                uiConfig.colorPalette.popoverBackground
         }
 
         layer.maskedCorners = corners

@@ -33,7 +33,7 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: View, UIConfigPr
     // MARK: - Overrides
 
     override public func defaultAppearance() {
-        let color = uiConfig.colorPalette.messageTimestampText
+        let color = uiConfig.colorPalette.subtitleText
         currentUserVisabilityIndicator.textLabel.textColor = color
         currentUserVisabilityIndicator.imageView.tintColor = color
         
@@ -80,7 +80,7 @@ open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTyp
     // MARK: - Overrides
 
     override public func defaultAppearance() {
-        imageView.image = UIImage(named: "eye", in: .streamChatUI)
+        imageView.image = uiConfig.images.onlyVisibleToCurrentUser
         textLabel.text = L10n.Message.onlyVisibleToYou
     }
 

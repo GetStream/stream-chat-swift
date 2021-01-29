@@ -56,10 +56,10 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View,
         if let url = content?.imageURL {
             avatarView.imageView.setImage(from: url)
         } else {
-            avatarView.imageView.image = UIImage(named: "pattern1", in: .streamChatUI)
+            avatarView.imageView.image = uiConfig.images.userAvatarPlaceholder1
         }
 
-        suggestionTypeImageView.image = UIImage(named: "command_mention", in: .streamChatUI)
+        suggestionTypeImageView.image = uiConfig.images.messageComposerCommandsMention
     }
 
     // MARK: Private

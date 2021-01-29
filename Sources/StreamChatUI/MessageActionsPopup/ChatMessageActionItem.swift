@@ -1,10 +1,11 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
-public struct ChatMessageActionItem {
+public struct ChatMessageActionItem<ExtraData: ExtraDataTypes> {
     public let title: String
     public let icon: UIImage
     public let isPrimary: Bool
@@ -27,83 +28,83 @@ public struct ChatMessageActionItem {
 }
 
 public extension ChatMessageActionItem {
-    static func inlineReply(action: @escaping () -> Void) -> Self {
+    static func inlineReply(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData> = .default) -> Self {
         .init(
             title: L10n.Message.Actions.inlineReply,
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatUI)!,
+            icon: uiConfig.images.messageActionInlineReply,
             action: action
         )
     }
 
-    static func threadReply(action: @escaping () -> Void) -> Self {
+    static func threadReply(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData> = .default) -> Self {
         .init(
             title: L10n.Message.Actions.threadReply,
-            icon: UIImage(named: "icn_thread_reply", in: .streamChatUI)!,
+            icon: uiConfig.images.messageActionThreadReply,
             action: action
         )
     }
 
-    static func edit(action: @escaping () -> Void) -> Self {
+    static func edit(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData> = .default) -> Self {
         .init(
             title: L10n.Message.Actions.edit,
-            icon: UIImage(named: "icn_edit", in: .streamChatUI)!,
+            icon: uiConfig.images.messageActionEdit,
             action: action
         )
     }
 
-    static func copy(action: @escaping () -> Void) -> Self {
+    static func copy(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData>) -> Self {
         .init(
             title: L10n.Message.Actions.copy,
-            icon: UIImage(named: "icn_copy", in: .streamChatUI)!,
+            icon: uiConfig.images.messageActionCopy,
             action: action
         )
     }
 
-    static func unblockUser(action: @escaping () -> Void) -> Self {
+    static func unblockUser(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData> = .default) -> Self {
         .init(
             title: L10n.Message.Actions.userUnblock,
-            icon: UIImage(named: "icn_block_user", in: .streamChatUI)!,
+            icon: uiConfig.images.messageActionBlockUser,
             action: action
         )
     }
 
-    static func blockUser(action: @escaping () -> Void) -> Self {
+    static func blockUser(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData> = .default) -> Self {
         .init(
             title: L10n.Message.Actions.userBlock,
-            icon: UIImage(named: "icn_block_user", in: .streamChatUI)!,
+            icon: uiConfig.images.messageActionBlockUser,
             action: action
         )
     }
 
-    static func muteUser(action: @escaping () -> Void) -> Self {
+    static func muteUser(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData> = .default) -> Self {
         .init(
             title: L10n.Message.Actions.userMute,
-            icon: UIImage(named: "icn_mute_user", in: .streamChatUI)!,
+            icon: uiConfig.images.messageActionMuteUser,
             action: action
         )
     }
 
-    static func unmuteUser(action: @escaping () -> Void) -> Self {
+    static func unmuteUser(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData> = .default) -> Self {
         .init(
             title: L10n.Message.Actions.userUnmute,
-            icon: UIImage(named: "icn_mute_user", in: .streamChatUI)!,
+            icon: uiConfig.images.messageActionMuteUser,
             action: action
         )
     }
 
-    static func delete(action: @escaping () -> Void) -> Self {
+    static func delete(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData> = .default) -> Self {
         .init(
             title: L10n.Message.Actions.delete,
-            icon: UIImage(named: "icn_delete", in: .streamChatUI)!,
+            icon: uiConfig.images.messageActionDelete,
             isDestructive: true,
             action: action
         )
     }
 
-    static func resend(action: @escaping () -> Void) -> Self {
+    static func resend(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData> = .default) -> Self {
         .init(
             title: L10n.Message.Actions.resend,
-            icon: UIImage(named: "icn_resend", in: .streamChatUI)!,
+            icon: uiConfig.images.messageActionResend,
             isPrimary: true,
             action: action
         )

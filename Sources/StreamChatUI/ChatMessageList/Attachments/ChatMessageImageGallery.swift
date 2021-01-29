@@ -8,6 +8,8 @@ import UIKit
 public typealias ChatMessageImageGallery = _ChatMessageImageGallery<NoExtraData>
 
 open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+    open var interItemSpacing: CGFloat = 2
+
     public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
@@ -37,7 +39,7 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPr
         previews.forEach(addSubview)
         addSubview(moreImagesOverlay)
 
-        let anchorSpacing = -uiConfig.messageList.messageContentSubviews.attachmentSubviews.imageGalleryInteritemSpacing / 2
+        let anchorSpacing = interItemSpacing / 2
 
         layouts = [
             [
@@ -107,7 +109,7 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigPr
 
     override public func defaultAppearance() {
         moreImagesOverlay.textColor = .white
-        moreImagesOverlay.backgroundColor = uiConfig.colorPalette.galleryMoreImagesOverlayBackground
+        moreImagesOverlay.backgroundColor = uiConfig.colorPalette.background4
     }
 
     override open func updateContent() {
