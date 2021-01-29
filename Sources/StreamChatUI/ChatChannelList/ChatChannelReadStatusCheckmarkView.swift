@@ -45,11 +45,11 @@ open class _ChatChannelReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: View,
         case .empty:
             imageView.image = nil
         case .read:
-            imageView.image = UIImage(named: "doubleCheckmark", in: .streamChatUI)
+            imageView.image = uiConfig.images.channelListReadByAll
             imageView.tintColor = tintColor
         case .unread:
-            imageView.image = UIImage(named: "checkmark", in: .streamChatUI)
-            imageView.tintColor = uiConfig.colorPalette.unreadChatTint
+            imageView.image = uiConfig.images.channelListSent
+            imageView.tintColor = uiConfig.colorPalette.inactiveTint
         }
     }
 }

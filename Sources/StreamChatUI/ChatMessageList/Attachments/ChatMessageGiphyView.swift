@@ -95,17 +95,15 @@ extension _ChatMessageGiphyView {
         public private(set) lazy var title: UILabel = {
             let label = UILabel().withoutAutoresizingMaskConstraints
             label.text = "GIPHY"
-            label.textColor = uiConfig.colorPalette.giphyBadgeText
+            label.textColor = uiConfig.colorPalette.staticColorText
             label.font = uiConfig.font.bodyBold
             return label
         }()
 
         public private(set) lazy var lightning = UIImageView(
             image: uiConfig
-                .messageList
-                .messageContentSubviews
-                .attachmentSubviews
-                .giphyBadgeIcon
+                .images
+                .messageComposerCommandButton
         )
         public private(set) lazy var contentStack: UIStackView = {
             let stack = UIStackView(arrangedSubviews: [lightning, title]).withoutAutoresizingMaskConstraints
@@ -127,7 +125,7 @@ extension _ChatMessageGiphyView {
             super.defaultAppearance()
 
             backgroundColor = UIColor.black.withAlphaComponent(0.6)
-            lightning.tintColor = uiConfig.colorPalette.giphyBadgeText
+            lightning.tintColor = uiConfig.colorPalette.staticColorText
         }
 
         override open func layoutSubviews() {

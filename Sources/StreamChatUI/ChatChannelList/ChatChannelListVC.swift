@@ -16,7 +16,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: ViewController,
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
 
-        collectionView.backgroundColor = uiConfig.colorPalette.generalBackground
+        collectionView.backgroundColor = uiConfig.colorPalette.background
     }
     
     // MARK: - Properties
@@ -34,7 +34,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: ViewController,
         return collection
     }()
     
-    public private(set) lazy var createNewChannelButton: ChatChannelCreateNewButton = {
+    public private(set) lazy var createNewChannelButton: ChatChannelCreateNewButton<ExtraData> = {
         let button = uiConfig.channelList.newChannelButton.init()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)

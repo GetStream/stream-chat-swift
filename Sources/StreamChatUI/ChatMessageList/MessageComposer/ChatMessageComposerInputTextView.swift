@@ -53,7 +53,7 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         textColor = uiConfig.colorPalette.text
         
         placeholderLabel.font = font
-        placeholderLabel.textColor = uiConfig.colorPalette.messageComposerPlaceholder
+        placeholderLabel.textColor = uiConfig.colorPalette.subtitleText
         placeholderLabel.textAlignment = .center
         
         backgroundColor = .clear

@@ -12,6 +12,8 @@ open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: View, UIConfigProvi
         didSet { updateContentIfNeeded() }
     }
 
+    open var rotationPeriod: TimeInterval = 1
+
     // MARK: - Subviews
 
     public private(set) lazy var imageView = UIImageView()
@@ -20,7 +22,7 @@ open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: View, UIConfigProvi
     // MARK: - Overrides
 
     override public func defaultAppearance() {
-        imageView.image = uiConfig.loadingIndicator.image
+        imageView.image = uiConfig.images.loadingIndicator
     }
 
     override open func setUpLayout() {
@@ -31,26 +33,22 @@ open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: View, UIConfigProvi
     override open func updateContent() {
         isHidden ? stopRotating() : startRotation()
     }
-}
 
-// MARK: - Private
-
-private extension _ChatLoadingIndicator {
     static var kRotationAnimationKey: String { "rotationanimationkey" }
 
-    func startRotation() {
+    open func startRotation() {
         guard layer.animation(forKey: Self.kRotationAnimationKey) == nil else { return }
 
         let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
         rotationAnimation.fromValue = 0.0
         rotationAnimation.toValue = Float.pi * 2.0
-        rotationAnimation.duration = uiConfig.loadingIndicator.rotationPeriod
+        rotationAnimation.duration = rotationPeriod
         rotationAnimation.repeatCount = Float.infinity
 
         layer.add(rotationAnimation, forKey: Self.kRotationAnimationKey)
     }
 
-    func stopRotating() {
+    open func stopRotating() {
         layer.removeAnimation(forKey: Self.kRotationAnimationKey)
     }
 }

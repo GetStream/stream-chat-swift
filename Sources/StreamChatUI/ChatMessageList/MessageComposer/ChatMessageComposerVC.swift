@@ -122,8 +122,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
             dismissSuggestionsViewController()
         case let .quote(messageToQuote):
             composerView.titleLabel.text = L10n.Composer.Title.reply
-            let image = UIImage(named: "replyArrow", in: .streamChatUI)?
-                .tinted(with: uiConfig.colorPalette.messageComposerStateIcon)
+            let image = uiConfig.images.messageComposerReplyButton.tinted(with: uiConfig.colorPalette.inactiveTint)
             composerView.stateIcon.image = image
             composerView.container.topStackView.setAnimatedly(hidden: false)
             composerView.quotedMessageView.setAnimatedly(hidden: false)
@@ -132,8 +131,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
         case let .edit(message):
             composerView.sendButton.mode = .edit
             composerView.titleLabel.text = L10n.Composer.Title.edit
-            let image = UIImage(named: "editPencil", in: .streamChatUI)?
-                .tinted(with: uiConfig.colorPalette.messageComposerStateIcon)
+            let image = uiConfig.images.messageComposerEditMessage.tinted(with: uiConfig.colorPalette.inactiveTint)
             composerView.stateIcon.image = image
             composerView.container.topStackView.setAnimatedly(hidden: false)
             textView.text = message.text
@@ -332,7 +330,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
         let dataSource: UICollectionViewDataSource
         switch kind {
         case let .command(hints):
-            dataSource = _ChatMessageComposerSuggestionsCommandDataSource(
+            dataSource = _ChatMessageComposerSuggestionsCommandDataSource<ExtraData>(
                 with: hints,
                 collectionView: suggestionsViewController.collectionView
             )
@@ -549,8 +547,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
     
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         let documentsInfo: [DocumentAttachmentInfo] = urls.map {
-            let preview = uiConfig.messageComposer.documentPreviews[$0.pathExtension] ??
-                uiConfig.messageComposer.fallbackDocumentPreview
+            let preview = uiConfig.images.documentPreviews[$0.pathExtension] ?? uiConfig.images.fileFallback
             let size = (try? FileManager.default.attributesOfItem(atPath: $0.path)[.size] as? Int64) ?? 0
             return (preview, $0, size)
         }

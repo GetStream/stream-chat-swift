@@ -30,16 +30,16 @@ open class _ChatMessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>
     }
 
     override public func defaultAppearance() {
-        backgroundColor = uiConfig.colorPalette.generalBackground
+        backgroundColor = uiConfig.colorPalette.background
         layer.cornerRadius = 15
         layer.masksToBounds = true
         layer.borderWidth = 1
-        layer.borderColor = uiConfig.colorPalette.incomingMessageBubbleBorder.cgColor
+        layer.borderColor = uiConfig.colorPalette.border.cgColor
         
         fileSizeLabel.textColor = uiConfig.colorPalette.subtitleText
         fileNameLabel.textColor = uiConfig.colorPalette.text
         
-        actionIconImageView.image = UIImage(named: "discardAttachment", in: .streamChatUI)
+        actionIconImageView.image = uiConfig.images.messageComposerDiscardAttachment
     }
 
     override open func setUpLayout() {

@@ -8,7 +8,7 @@ import UIKit
 public typealias ChatMessageActionsView = _ChatMessageActionsView<NoExtraData>
 
 open class _ChatMessageActionsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    public var actionItems: [ChatMessageActionItem] = [] {
+    public var actionItems: [ChatMessageActionItem<ExtraData>] = [] {
         didSet { updateContentIfNeeded() }
     }
 
@@ -28,7 +28,7 @@ open class _ChatMessageActionsView<ExtraData: ExtraDataTypes>: View, UIConfigPro
     override public func defaultAppearance() {
         layer.cornerRadius = 16
         layer.masksToBounds = true
-        backgroundColor = uiConfig.colorPalette.outgoingMessageBubbleBorder
+        backgroundColor = uiConfig.colorPalette.border
     }
 
     override open func setUpLayout() {

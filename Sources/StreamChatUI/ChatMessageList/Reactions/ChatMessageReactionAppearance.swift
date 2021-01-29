@@ -16,7 +16,7 @@ public protocol ChatMessageReactionAppearanceType {
 public struct ChatMessageReactionAppearance: ChatMessageReactionAppearanceType {
     public let smallIcon: UIImage
     public let largeIcon: UIImage
-
+    
     public init(
         smallIcon: UIImage,
         largeIcon: UIImage

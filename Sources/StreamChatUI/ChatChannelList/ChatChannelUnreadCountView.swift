@@ -64,9 +64,11 @@ open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: View, UIConfi
     
     override public func defaultAppearance() {
         layer.masksToBounds = true
-        backgroundColor = uiConfig.colorPalette.channelListUnreadCountView
-        unreadCountLabel.textColor = uiConfig.colorPalette.channelListUnreadCountLabel
+        backgroundColor = uiConfig.colorPalette.alert
+
+        unreadCountLabel.textColor = uiConfig.colorPalette.staticColorText
         unreadCountLabel.font = uiConfig.font.footnoteBold
+        
         unreadCountLabel.adjustsFontForContentSizeCategory = true
         unreadCountLabel.textAlignment = .center
     }

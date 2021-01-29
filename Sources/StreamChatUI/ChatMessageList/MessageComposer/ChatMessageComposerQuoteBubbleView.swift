@@ -71,10 +71,10 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
         
         attachmentPreview.layer.cornerRadius = attachmentPreviewSize.width / 4
         attachmentPreview.layer.masksToBounds = true
-        
+
         contentView.layer.cornerRadius = 16
         contentView.layer.borderWidth = 1
-        contentView.layer.borderColor = uiConfig.colorPalette.messageComposerBorder.cgColor
+        contentView.layer.borderColor = uiConfig.colorPalette.border.cgColor
         contentView.layer.masksToBounds = true
     }
     
@@ -147,7 +147,7 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
     override open func updateContent() {
         guard let message = message else { return }
         
-        let placeholder = UIImage(named: "pattern1", in: .streamChatUI)
+        let placeholder = uiConfig.images.userAvatarPlaceholder1
         if let imageURL = message.author.imageURL {
             authorAvatarView.imageView.setImage(from: imageURL, placeholder: placeholder)
         } else {

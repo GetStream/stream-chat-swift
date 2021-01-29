@@ -48,8 +48,9 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
         guard let command = command else { return }
         commandNameSubtitleLabel.text = "/\(command.name) \(command.args)"
         commandNameLabel.text = command.name.firstUppercased
-        commandImageView.image = uiConfig.messageComposer.commandIcons[command.name.lowercased()] ??
-            uiConfig.messageComposer.fallbackCommandIcon
+
+        commandImageView.image = uiConfig.images.commandIcons[command.name.lowercased()]
+            ?? uiConfig.images.messageComposerCommandFallback
     }
 
     // MARK: Private

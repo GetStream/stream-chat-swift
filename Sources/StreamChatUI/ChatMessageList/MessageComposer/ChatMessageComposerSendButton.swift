@@ -48,18 +48,18 @@ open class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: _ChatSquar
     override open func updateContent() {
         switch mode {
         case .new:
-            let normalStateImage = UIImage(named: "sendMessageArrow", in: .streamChatUI)
+            let normalStateImage = uiConfig.images.messageComposerSendMessage
             setImageWithAnimation(normalStateImage, for: .normal)
-            
-            let buttonColor: UIColor = uiConfig.colorPalette.messageComposerDisabledButton
-            let disabledStateImage = UIImage(named: "sendMessageArrow", in: .streamChatUI)?.tinted(with: buttonColor)
+
+            let buttonColor: UIColor = uiConfig.colorPalette.inactiveTint
+            let disabledStateImage = uiConfig.images.messageComposerSendMessage.tinted(with: buttonColor)
             setImageWithAnimation(disabledStateImage, for: .disabled)
         case .edit:
-            let normalStateImage = UIImage(named: "editMessageCheckmark", in: .streamChatUI)
+            let normalStateImage = uiConfig.images.messageComposerSendEditedMessage
             setImageWithAnimation(normalStateImage, for: .normal)
             
-            let buttonColor: UIColor = uiConfig.colorPalette.messageComposerDisabledButton
-            let disabledStateImage = UIImage(named: "editMessageCheckmark", in: .streamChatUI)?.tinted(with: buttonColor)
+            let buttonColor: UIColor = uiConfig.colorPalette.inactiveTint
+            let disabledStateImage = uiConfig.images.messageComposerSendEditedMessage.tinted(with: buttonColor)
             setImageWithAnimation(disabledStateImage, for: .disabled)
         }
     }

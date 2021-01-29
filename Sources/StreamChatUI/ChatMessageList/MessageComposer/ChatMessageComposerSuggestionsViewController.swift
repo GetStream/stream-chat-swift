@@ -183,10 +183,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
         ) as! _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>
 
         headerView.suggestionsHeader.headerLabel.text = L10n.Composer.Suggestions.Commands.header
-        headerView.suggestionsHeader.commandImageView.image = UIImage(
-            named: "bolt",
-            in: .streamChatUI
-        )?
+        headerView.suggestionsHeader.commandImageView.image = uiConfig.images.messageComposerCommand
             .tinted(with: headerView.tintColor)
 
         return headerView
