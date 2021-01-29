@@ -11,7 +11,7 @@ open class _ChatMessageErrorIndicator<ExtraData: ExtraDataTypes>: Button, UIConf
     override public func defaultAppearance() {
         super.defaultAppearance()
 
-        setImage(UIImage(named: "error_indicator", in: .streamChatUI)!, for: .normal)
-        tintColor = uiConfig.colorPalette.outgoingMessageErrorIndicatorTint
+        setImage(uiConfig.images.messageListErrorIndicator, for: .normal)
+        tintColor = uiConfig.colorPalette.alert
     }
 }

@@ -80,7 +80,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UICo
 
     override public func defaultAppearance() {
         super.defaultAppearance()
-        authorBackground.backgroundColor = uiConfig.colorPalette.linkMessageBubbleBackground
+        authorBackground.backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
         backgroundColor = .clear
         imagePreview.layer.cornerRadius = 8
         imagePreview.clipsToBounds = true

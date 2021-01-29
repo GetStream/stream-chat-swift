@@ -115,11 +115,7 @@ private extension _ChatMessageAttachmentInfoView {
     var fileAttachmentActionIcon: UIImage? {
         guard let attachment = content?.attachment else { return nil }
 
-        return uiConfig
-            .messageList
-            .messageContentSubviews
-            .attachmentSubviews
-            .fileAttachmentActionIcons[attachment.localState]
+        return uiConfig.images.fileAttachmentActionIcons[attachment.localState]
     }
 
     var fileSize: String? {

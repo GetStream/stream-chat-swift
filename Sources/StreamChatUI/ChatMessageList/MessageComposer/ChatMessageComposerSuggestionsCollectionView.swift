@@ -35,7 +35,7 @@ open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTyp
     // MARK: - Appearance
 
     public func defaultAppearance() {
-        backgroundColor = uiConfig.colorPalette.popupBackground
+        backgroundColor = uiConfig.colorPalette.popoverBackground
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
         bounces = true

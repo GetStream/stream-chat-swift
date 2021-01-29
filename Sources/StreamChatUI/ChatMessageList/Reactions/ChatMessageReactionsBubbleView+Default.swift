@@ -74,9 +74,9 @@ private extension _ChatMessageDefaultReactionsBubbleView {
 
         switch content.style {
         case .bigIncoming, .bigOutgoing, .smallOutgoing:
-            return uiConfig.colorPalette.incomingMessageBubbleBackground
+            return uiConfig.colorPalette.popoverBackground
         case .smallIncoming:
-            return uiConfig.colorPalette.outgoingMessageBubbleBackground
+            return uiConfig.colorPalette.background2
         }
     }
 
@@ -85,9 +85,9 @@ private extension _ChatMessageDefaultReactionsBubbleView {
 
         switch content.style {
         case .smallOutgoing:
-            return uiConfig.colorPalette.incomingMessageBubbleBorder
+            return uiConfig.colorPalette.border
         case .smallIncoming:
-            return uiConfig.colorPalette.outgoingMessageBubbleBorder
+            return uiConfig.colorPalette.border
         default:
             return contentBackgroundColor
         }
@@ -110,13 +110,13 @@ private extension _ChatMessageDefaultReactionsBubbleView {
             return .tail(
                 options: .small(flipped: content.style.isIncoming),
                 colors: .init(
-                    outlineColor: uiConfig.colorPalette.generalBackground,
+                    outlineColor: uiConfig.colorPalette.background,
                     borderColor: content.style.isIncoming ?
-                        uiConfig.colorPalette.outgoingMessageBubbleBorder :
-                        uiConfig.colorPalette.incomingMessageBubbleBorder,
+                        uiConfig.colorPalette.border :
+                        uiConfig.colorPalette.border,
                     innerColor: content.style.isIncoming ?
-                        uiConfig.colorPalette.outgoingMessageBubbleBackground :
-                        uiConfig.colorPalette.incomingMessageBubbleBackground
+                        uiConfig.colorPalette.background2 :
+                        uiConfig.colorPalette.popoverBackground
                 )
             )
         }
@@ -135,8 +135,8 @@ private extension _ChatMessageDefaultReactionsBubbleView {
                     outlineColor: .clear,
                     borderColor: .clear,
                     innerColor: content.style.isIncoming ?
-                        uiConfig.colorPalette.outgoingMessageBubbleBackground :
-                        uiConfig.colorPalette.incomingMessageBubbleBackground
+                        uiConfig.colorPalette.background2 :
+                        uiConfig.colorPalette.popoverBackground
                 )
             )
         }

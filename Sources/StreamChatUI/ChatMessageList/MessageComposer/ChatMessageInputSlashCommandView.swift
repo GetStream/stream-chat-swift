@@ -43,14 +43,15 @@ open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: View, U
     
     override public func defaultAppearance() {
         layer.masksToBounds = true
-        backgroundColor = uiConfig.colorPalette.slashCommandViewBackground
-        
-        commandLabel.textColor = uiConfig.colorPalette.slashCommandViewText
+        backgroundColor = uiConfig.colorPalette.highlightedBackground
+
+        commandLabel.textColor = uiConfig.colorPalette.staticColorText
         commandLabel.font = uiConfig.font.subheadlineBold
+
         commandLabel.adjustsFontForContentSizeCategory = true
         commandLabel.textAlignment = .center
         
-        iconView.image = UIImage(named: "bolt", in: .streamChatUI)?.tinted(with: uiConfig.colorPalette.slashCommandViewText)
+        iconView.image = uiConfig.images.messageComposerCommand.tinted(with: uiConfig.colorPalette.staticColorText)
     }
     
     override open func setUpLayout() {

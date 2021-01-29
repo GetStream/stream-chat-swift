@@ -34,11 +34,10 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: ViewController, U
     override open func updateContent() {
         reactionsBubble.content = messageController.message.map { message in
             let userReactionIDs = Set(message.currentUserReactions.map(\.type))
-            let availableReactions = uiConfig.messageList.messageReactions.availableReactions
 
             return .init(
                 style: message.isSentByCurrentUser ? .bigOutgoing : .bigIncoming,
-                reactions: availableReactions
+                reactions: uiConfig.images.availableReactions
                     .keys
                     .sorted { $0.rawValue < $1.rawValue }
                     .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) },

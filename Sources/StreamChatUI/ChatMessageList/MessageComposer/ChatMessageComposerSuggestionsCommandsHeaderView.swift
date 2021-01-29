@@ -29,7 +29,7 @@ open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDat
         .withoutAutoresizingMaskConstraints
 
     override public func defaultAppearance() {
-        backgroundColor = uiConfig.colorPalette.popupBackground
+        backgroundColor = uiConfig.colorPalette.popoverBackground
 
         headerLabel.font = uiConfig.font.body
         headerLabel.textColor = uiConfig.colorPalette.subtitleText

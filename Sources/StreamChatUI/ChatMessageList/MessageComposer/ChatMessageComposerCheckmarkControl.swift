@@ -41,7 +41,7 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: Cont
     
     override public func defaultAppearance() {
         label.font = uiConfig.font.subheadline
-        label.textColor = uiConfig.colorPalette.messageComposerCheckmarkLabel
+        label.textColor = uiConfig.colorPalette.subtitleText
         
         checkmark.layer.cornerRadius = 4
         checkmark.layer.borderWidth = 2
@@ -71,11 +71,10 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: Cont
     }
     
     override open func updateContent() {
-        let isSelectedImage = UIImage(named: "threadCheckmark", in: .streamChatUI)?
-            .tinted(with: uiConfig.colorPalette.messageComposerCheckmark)
+        let isSelectedImage = uiConfig.images.messageComposerAlsoSendToChannelCheck.tinted(with: uiConfig.colorPalette.background)
         checkmark.image = isSelected ? isSelectedImage : nil
         checkmark.backgroundColor = isSelected ? tintColor : .clear
-        checkmark.layer.borderColor = isSelected ? tintColor.cgColor : uiConfig.colorPalette.messageComposerCheckmarkBorder.cgColor
+        checkmark.layer.borderColor = isSelected ? tintColor.cgColor : uiConfig.colorPalette.border2.cgColor
     }
     
     // MARK: - Actions

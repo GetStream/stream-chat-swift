@@ -5,12 +5,12 @@
 import StreamChat
 import UIKit
 
-open class ChatChannelCreateNewButton: Button {
+open class ChatChannelCreateNewButton<ExtraData: ExtraDataTypes>: Button, UIConfigProvider {
     // MARK: - Overrides
     
     override public func defaultAppearance() {
         defaultIntrinsicContentSize = .init(width: 44, height: 44)
-        setImage(UIImage(named: "icn_new_chat", in: Bundle(for: Self.self), compatibleWith: nil), for: .normal)
+        setImage(uiConfig.images.newChat, for: .normal)
     }
 
     open var defaultIntrinsicContentSize: CGSize?

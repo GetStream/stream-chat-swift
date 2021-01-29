@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -46,22 +46,25 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: ViewController, UIC
 
     // MARK: - Actions
 
-    open var messageActions: [ChatMessageActionItem] {
+    open var messageActions: [ChatMessageActionItem<ExtraData>] {
         guard
             let currentUser = messageController.client.currentUserController().currentUser,
             let message = message,
             message.deletedAt == nil
         else { return [] }
 
-        let editAction: ChatMessageActionItem = .edit { [weak self] in self?.handleEditAction() }
-        let deleteAction: ChatMessageActionItem = .delete { [weak self] in self?.handleDeleteAction() }
+        let editAction: ChatMessageActionItem<ExtraData> = .edit { [weak self] in self?.handleEditAction() }
+        let deleteAction: ChatMessageActionItem<ExtraData> = .delete { [weak self] in self?.handleDeleteAction() }
 
         switch message.localState {
         case nil:
-            var actions: [ChatMessageActionItem] = [
+            var actions: [ChatMessageActionItem<ExtraData>] = [
                 .inlineReply { [weak self] in self?.handleInlineReplyAction() },
                 .threadReply { [weak self] in self?.handleThreadReplyAction() },
-                .copy { [weak self] in self?.handleCopyAction() }
+                .copy(
+                    action: { [weak self] in self?.handleCopyAction() },
+                    uiConfig: uiConfig
+                )
             ]
 
             if message.isSentByCurrentUser {
