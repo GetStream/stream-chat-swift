@@ -16,7 +16,9 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: ViewController,
     // MARK: - Properties
 
     public var channelController: _ChatChannelController<ExtraData>!
-    public var userSuggestionSearchController: _ChatUserSearchController<ExtraData>!
+    public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> = {
+        channelController.client.userSearchController()
+    }()
 
     public private(set) lazy var messageComposerViewController = uiConfig
         .messageComposer
