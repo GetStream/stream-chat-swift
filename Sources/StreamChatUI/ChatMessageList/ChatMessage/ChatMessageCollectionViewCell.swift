@@ -57,7 +57,7 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: Collectio
             // We cannot calculate size properly right now, because our view hierarchy is not ready yet.
             // If we just return default size, small text bubbles would not resize itself properly for no reason.
             let attributes = layoutAttributes.copy() as! UICollectionViewLayoutAttributes
-            attributes.frame.size = .zero
+            attributes.frame.size.height = 300
             return attributes
         }
 
