@@ -122,14 +122,14 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashabl
         imageURL = try container.decodeIfPresent(String.self, forKey: .imageURL).flatMap(URL.init(string:))
         let config = try container.decode(ChannelConfig.self, forKey: .config)
         self.config = config
-        createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt) ?? config.createdAt
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         deletedAt = try container.decodeIfPresent(Date.self, forKey: .deletedAt)
         createdBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .createdBy)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         isFrozen = try container.decode(Bool.self, forKey: .frozen)
         team = try container.decodeIfPresent(String.self, forKey: .team) ?? ""
-        memberCount = try container.decode(Int.self, forKey: .memberCount)
+        memberCount = try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? 0
         
         members = try container.decodeIfPresent([MemberPayload<ExtraData.User>].self, forKey: .members)
         
