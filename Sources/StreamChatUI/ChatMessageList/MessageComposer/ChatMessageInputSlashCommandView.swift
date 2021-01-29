@@ -40,10 +40,10 @@ open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: View, U
     }
     
     // MARK: - Public
-    
+
     override public func defaultAppearance() {
         layer.masksToBounds = true
-        backgroundColor = uiConfig.colorPalette.highlightedBackground
+        backgroundColor = uiConfig.colorPalette.highlightedAccentBackground
 
         commandLabel.textColor = uiConfig.colorPalette.staticColorText
         commandLabel.font = uiConfig.font.subheadlineBold

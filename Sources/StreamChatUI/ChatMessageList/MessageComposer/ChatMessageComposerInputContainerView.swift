@@ -47,10 +47,10 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: Vi
         container.alignment = .center
 
         container.addArrangedSubview(slashCommandView)
-//        slashCommandView.setContentHuggingPriority(.required, for: .horizontal)
+        slashCommandView.setContentHuggingPriority(.required, for: .horizontal)
 
         container.addArrangedSubview(textView)
-//        textView.setContentHuggingPriority(.defaultLow, for: .horizontal)
+        textView.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         container.addArrangedSubview(rightAccessoryButton)
 
