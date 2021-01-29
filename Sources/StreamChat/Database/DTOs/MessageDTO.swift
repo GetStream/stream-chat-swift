@@ -441,26 +441,37 @@ private extension _ChatMessage {
         mentionedUsers = Set(dto.mentionedUsers.map { $0.asModel() })
         threadParticipants = Set(dto.threadParticipants.map(\.id))
 
-        latestReplies = MessageDTO
-            .loadReplies(for: dto.id, limit: 25, context: context)
-            .map(_ChatMessage.init)
-        
+        if dto.replies.isEmpty {
+            latestReplies = []
+        } else {
+            latestReplies = MessageDTO
+                .loadReplies(for: dto.id, limit: 5, context: context)
+                .map(_ChatMessage.init)
+        }
         localState = dto.localMessageState
         
         isFlaggedByCurrentUser = dto.flaggedBy != nil
-        
-        latestReactions = Set(
-            MessageReactionDTO
-                .loadLatestReactions(for: dto.id, limit: 10, context: context)
-                .map { $0.asModel() }
-        )
-        
-        if let currentUser = context.currentUser() {
-            currentUserReactions = Set(
+
+        if dto.reactions.isEmpty {
+            latestReactions = []
+        } else {
+            latestReactions = Set(
                 MessageReactionDTO
-                    .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
+                    .loadLatestReactions(for: dto.id, limit: 5, context: context)
                     .map { $0.asModel() }
             )
+        }
+        
+        if let currentUser = context.currentUser() {
+            if dto.reactions.isEmpty {
+                currentUserReactions = []
+            } else {
+                currentUserReactions = Set(
+                    MessageReactionDTO
+                        .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
+                        .map { $0.asModel() }
+                )
+            }
             isSentByCurrentUser = currentUser.user.id == dto.user.id
         } else {
             currentUserReactions = []
