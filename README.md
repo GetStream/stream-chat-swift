@@ -17,11 +17,11 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 
 ## Important ⚠️ 
 
-**This README refers to a beta version of `StreamChatUI` not suitable for production yet. The last stable version is [2.6](https://github.com/GetStream/stream-chat-swift/tree/main_v2/).**
+**We're currently in the final stage of releasing a new major version (3.0) of our SDKs.** Version 3.0 is already avaialable in public beta. We expect to release the production version during Q1/2021.
 
-**StreamChatUI** is a framework containing highly customizable UI components to build your chat UI with Stream chat using UIKit or SwiftUI. 
+If you want to integrate StreamChat SDKs into your app, you can already use version `3.0-beta.x`. However, please be aware that small API breaking changes can occure until a stable version is reached.
 
-If you want to build a fully custom UI and looking only for low-level chat SDK without UI components, check out [**StreamChat SDK**](https://github.com/GetStream/stream-chat-swift/tree/main/Sources/StreamChat).
+**More information about the last stable version can be found at [v2.x README](https://github.com/GetStream/stream-chat-swift/tree/main_v2/).**
 
 --- 
 
