@@ -17,7 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix development token not working properly [#760](https://github.com/GetStream/stream-chat-swift/pull/760)
 - Fix lists ordering not updating instantly. [#768](https://github.com/GetStream/stream-chat-swift/pull/768/)
 - Fix update changes incorrectly reported when a move change is present for the same index. [#768](https://github.com/GetStream/stream-chat-swift/pull/768/)
-
+- Fix issue with decoding `member_count` for `ChannelDetailPayload` 
+    [#782](https://github.com/GetStream/stream-chat-swift/pull/782)
 
 # [3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/3.0)
 _January 22nd, 2021_
