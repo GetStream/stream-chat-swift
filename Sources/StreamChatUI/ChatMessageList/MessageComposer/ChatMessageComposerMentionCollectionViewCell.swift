@@ -79,10 +79,14 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View,
 
         textStackView.addArrangedSubview(usernameLabel)
         textStackView.addArrangedSubview(usernameTagLabel)
-        textStackView.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
+        textStackView.centerYAnchor.pin(equalTo: avatarView.centerYAnchor).isActive = true
         textStackView.leadingAnchor.pin(
             equalToSystemSpacingAfter: avatarView.trailingAnchor,
             multiplier: 1
+        ).isActive = true
+
+        textStackView.trailingAnchor.pin(
+            equalTo: suggestionTypeImageView.leadingAnchor
         ).isActive = true
     }
 
@@ -106,10 +110,29 @@ open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTyp
 
     override open func setUpLayout() {
         super.setUpLayout()
-
+        
         contentView.embed(
             mentionView,
             insets: contentView.directionalLayoutMargins
         )
+    }
+
+    override open func preferredLayoutAttributesFitting(
+        _ layoutAttributes: UICollectionViewLayoutAttributes
+    ) -> UICollectionViewLayoutAttributes {
+        let preferredAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
+
+        let targetSize = CGSize(
+            width: layoutAttributes.frame.width,
+            height: UIView.layoutFittingCompressedSize.height
+        )
+
+        preferredAttributes.frame.size = contentView.systemLayoutSizeFitting(
+            targetSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+
+        return preferredAttributes
     }
 }
