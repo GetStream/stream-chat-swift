@@ -9,7 +9,7 @@ import Foundation
 /// - Note: `ChatChannel` is a typealias of `_ChatChannel` with default extra data. If you're using custom extra data, create
 /// your own typealias of `ChatChannel`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatChannel = _ChatChannel<NoExtraData>
 
@@ -18,7 +18,7 @@ public typealias ChatChannel = _ChatChannel<NoExtraData>
 /// - Note: `_ChatChannel` type is not meant to be used directly. If you're using default extra data, use `ChatChannel`
 /// typealias instead. If you're using custom extra data, create your own typealias of `ChatChannel`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 @dynamicMemberLookup
 public struct _ChatChannel<ExtraData: ExtraDataTypes> {
@@ -102,7 +102,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     
     /// Additional data associated with the channel.
     ///
-    /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+    /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
     public let extraData: ExtraData.Channel
     
