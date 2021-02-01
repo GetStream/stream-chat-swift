@@ -13,7 +13,7 @@ public protocol AnyChannelListFilterScope {}
 /// If you want to use your custom extra data types, you should create your own `ChannelListFilterScope`
 /// typealias for `_ChannelListFilterScope`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChannelListFilterScope = _ChannelListFilterScope<NoExtraData>
 
@@ -23,7 +23,7 @@ public typealias ChannelListFilterScope = _ChannelListFilterScope<NoExtraData>
 /// If you don't use custom extra data types, use `ChannelListFilterScope` typealias instead.
 /// When using custom extra data types, you should create your own `ChannelListFilterScope` typealias for `_ChannelListFilterScope`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public struct _ChannelListFilterScope<ExtraData: ChannelExtraData>: FilterScope, AnyChannelListFilterScope {}
 
@@ -85,7 +85,7 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
 /// If you want to use your custom extra data types, you should create your own `ChannelListQuery` typealias
 /// for `_ChannelListQuery`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChannelListQuery = _ChannelListQuery<NoExtraData>
 
@@ -96,7 +96,7 @@ public typealias ChannelListQuery = _ChannelListQuery<NoExtraData>
 /// If you don't use custom extra data types, use `ChannelListQuery` typealias instead.
 /// When using custom extra data types, you should create your own `ChannelListQuery` typealias for `_ChannelListQuery`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public struct _ChannelListQuery<ExtraData: ChannelExtraData>: Encodable {
     private enum CodingKeys: String, CodingKey {

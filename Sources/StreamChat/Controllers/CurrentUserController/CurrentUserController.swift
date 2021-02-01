@@ -23,7 +23,7 @@ public extension _ChatClient {
 /// - Note: `CurrentChatUserController` is a typealias of `_CurrentChatUserController` with default extra data. If you're using
 /// custom extra data, create your own typealias of `_CurrentChatUserController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias CurrentChatUserController = _CurrentChatUserController<NoExtraData>
 
@@ -36,7 +36,7 @@ public typealias CurrentChatUserController = _CurrentChatUserController<NoExtraD
 /// `CurrentChatUserController` typealias instead. If you're using custom extra data, create your own typealias
 /// of `_CurrentChatUserController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, DelegateCallable, DataStoreProvider {
     public var callbackQueue: DispatchQueue = .main

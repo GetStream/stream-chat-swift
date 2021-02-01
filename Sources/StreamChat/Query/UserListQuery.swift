@@ -13,7 +13,7 @@ public protocol AnyUserListFilterScope {}
 /// If you want to use your custom extra data types, you should create your own `UserListFilterScope`
 /// typealias for `_UserListFilterScope`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias UserListFilterScope = _UserListFilterScope<NoExtraData>
 
@@ -23,7 +23,7 @@ public typealias UserListFilterScope = _UserListFilterScope<NoExtraData>
 /// If you don't use custom extra data types, use `UserListFilterScope` typealias instead.
 /// When using custom extra data types, you should create your own `UserListFilterScope` typealias for `_UserListFilterScope`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public class _UserListFilterScope<ExtraData: UserExtraData>: FilterScope, AnyUserListFilterScope {}
 
@@ -77,7 +77,7 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
 /// - Note: `UserListQuery` is a typealias of `_UserListQuery` with the default extra data types.
 /// If you want to use your custom extra data types, you should create your own `UserListQuery` typealias for `_UserListQuery`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 typealias UserListQuery = _UserListQuery<NoExtraData>
 
@@ -88,7 +88,7 @@ typealias UserListQuery = _UserListQuery<NoExtraData>
 /// If you don't use custom extra data types, use `UserListQuery` typealias instead.
 /// When using custom extra data types, you should create your own `UserListQuery` typealias for `_UserListQuery`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public struct _UserListQuery<ExtraData: UserExtraData>: Encodable {
     private enum CodingKeys: String, CodingKey {

@@ -12,7 +12,7 @@ public typealias MessageId = String
 /// - Note: `ChatMessage` is a typealias of `_ChatMessage` with default extra data. If you're using custom extra data,
 /// create your own typealias of `_ChatMessage`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatMessage = _ChatMessage<NoExtraData>
 
@@ -21,7 +21,7 @@ public typealias ChatMessage = _ChatMessage<NoExtraData>
 /// - Note: `_ChatMessage` type is not meant to be used directly. If you're using default extra data, use `ChatMessage`
 /// typealias instead. If you're using custom extra data, create your own typealias of `_ChatMessage`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 @dynamicMemberLookup
 public struct _ChatMessage<ExtraData: ExtraDataTypes> {
@@ -64,7 +64,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     
     /// Additional data associated with the message.
     ///
-    /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+    /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
     public let extraData: ExtraData.Message
     
@@ -187,6 +187,6 @@ public enum LocalMessageState: String {
 /// You need to make your custom type conforming to this protocol if you want to use it for extending `ChatMessage` entity with
 /// your custom additional data.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public protocol MessageExtraData: ExtraData {}

@@ -23,7 +23,7 @@ extension _ChatClient {
 /// If you want to use your custom extra data types, you should create your own `ChatUserSearchController`
 /// typealias for `_ChatUserSearchController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatUserSearchController = _ChatUserSearchController<NoExtraData>
 
@@ -34,7 +34,7 @@ public typealias ChatUserSearchController = _ChatUserSearchController<NoExtraDat
 /// When using custom extra data types, you should create your own `ChatUserSearchController` typealias
 /// for `_ChatUserSearchController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.

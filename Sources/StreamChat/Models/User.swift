@@ -9,7 +9,7 @@ import Foundation
 /// - Note: `ChatUser` is a typealias of `_ChatUser` with default extra data. If you're using custom extra data,
 /// create your own typealias of `_ChatUser`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatUser = _ChatUser<NoExtraData>
 
@@ -21,7 +21,7 @@ public typealias UserId = String
 /// - Note: `_ChatUser` type is not meant to be used directly. If you're using default extra data, use `ChatUser`
 /// typealias instead. If you're using custom extra data, create your own typealias of `_ChatUser`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 @dynamicMemberLookup
 public class _ChatUser<ExtraData: UserExtraData> {
@@ -66,7 +66,7 @@ public class _ChatUser<ExtraData: UserExtraData> {
     
     /// Custom additional data of the user object. You can modify it by setting your custom `ExtraData` type.
     ///
-    /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+    /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
     ///
     public let extraData: ExtraData
     
@@ -132,6 +132,6 @@ public enum UserRole: String, Codable, Hashable {
 /// You need to make your custom type conforming to this protocol if you want to use it for extending `ChatUser` entity with your
 /// custom additional data.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public protocol UserExtraData: ExtraData {}

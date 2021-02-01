@@ -10,7 +10,7 @@ import Foundation
 /// - Note: `ChatMessageAttachment` is a typealias of `_ChatMessageAttachment` with default extra data.
 /// If you're using custom extra data, create your own typealias of `_ChatMessageAttachment`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatMessageAttachment = _ChatMessageAttachment<NoExtraData>
 
@@ -68,7 +68,7 @@ extension _ChatMessageAttachment {
 /// use`ChatMessageAttachment` typealias instead. If you're using custom extra data,
 /// create your own typealias of `_ChatMessageAttachment`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 @dynamicMemberLookup
 public struct _ChatMessageAttachment<ExtraData: ExtraDataTypes>: Hashable {
@@ -371,7 +371,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
 /// You need to make your custom type conforming to this protocol if you want to use it for extending
 /// `ChatMessageAttachment` entity with your custom additional data.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public protocol AttachmentExtraData: ExtraData {}
 

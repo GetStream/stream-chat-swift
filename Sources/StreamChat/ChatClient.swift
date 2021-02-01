@@ -44,7 +44,7 @@ public protocol ExtraDataTypes {
 ///
 /// - Note: `ChatClient` is a typealias of `_ChatClient` with the default extra data types. If you want to use your custom extra
 /// data types, you should create your own `ChatClient` typealias for `_ChatClient`. Learn more about using custom extra data in our
-/// [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatClient = _ChatClient<NoExtraData>
 
@@ -55,7 +55,7 @@ public typealias ChatClient = _ChatClient<NoExtraData>
 ///
 /// - Note: `_ChatClient` type is not meant to be used directly. If you don't use custom extra data types, use `ChatClient`
 /// typealias instead. When using custom extra data types, you should create your own `ChatClient` typealias for `_ChatClient`.
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// The `UserId` of the currently logged in user.
