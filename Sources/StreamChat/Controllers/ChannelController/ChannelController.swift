@@ -117,7 +117,7 @@ public extension _ChatClient {
 /// - Note: `ChatChannelController` is a typealias of `_ChatChannelController` with default extra data. If you're using custom
 /// extra data, create your own typealias of `_ChatChannelController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatChannelController = _ChatChannelController<NoExtraData>
 
@@ -132,7 +132,7 @@ public typealias ChatChannelController = _ChatChannelController<NoExtraData>
 /// `ChatChannelController` typealias instead. If you're using custom extra data, create your own typealias
 /// of `_ChatChannelController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The ChannelQuery this controller observes.

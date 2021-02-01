@@ -23,7 +23,7 @@ public extension _ChatClient {
 /// - Note: `ChatUserController` is a typealias of `_ChatUserController` with default extra data. If you're using custom
 /// extra data, create your own typealias of `_ChatUserController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatUserController = _ChatUserController<NoExtraData>
 
@@ -35,7 +35,7 @@ public typealias ChatUserController = _ChatUserController<NoExtraData>
 /// - Note: `ChatUserController` is a typealias of `_ChatUserController` with default extra data. If you're using custom
 /// extra data, create your own typealias of `_ChatUserController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public class _ChatUserController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The identifier of tge user this controller observes.

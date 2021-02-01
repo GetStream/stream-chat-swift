@@ -24,7 +24,7 @@ extension _ChatClient {
 /// - Note: `ChatUserListController` is a typealias of `_ChatUserListController` with default extra data. If you're using
 /// custom extra data, create your own typealias of `_ChatUserListController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatUserListController = _ChatUserListController<NoExtraData>
 
@@ -36,7 +36,7 @@ public typealias ChatUserListController = _ChatUserListController<NoExtraData>
 /// `ChatUserController` typealias instead. If you're using custom extra data, create your own typealias
 /// of `_ChatUserListController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of users.

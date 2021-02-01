@@ -10,7 +10,7 @@ import Foundation
 /// - Note: `ChatMessageReaction` is a typealias of `_ChatMessageReaction` with default extra data.
 /// If you're using custom extra data, create your own typealias of `_ChatMessageReaction`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatMessageReaction = _ChatMessageReaction<NoExtraData>
 
@@ -21,7 +21,7 @@ public typealias ChatMessageReaction = _ChatMessageReaction<NoExtraData>
 /// use `ChatMessageReaction` typealias instead. If you're using custom extra data,
 /// create your own typealias of `_ChatMessageReaction`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 @dynamicMemberLookup
 public struct _ChatMessageReaction<ExtraData: ExtraDataTypes>: Hashable {
@@ -53,6 +53,6 @@ extension _ChatMessageReaction {
 /// You need to make your custom type conforming to this protocol if you want to use it for extending `ChatMessageReaction` entity
 /// with your custom additional data.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public protocol MessageReactionExtraData: ExtraData {}
