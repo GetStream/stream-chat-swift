@@ -1,12 +1,12 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 let apiKeyString = "q95x9hkbyd6p"
 
-struct UserCredentials {
+struct UserCredentials: Codable {
     let id: String
     let name: String
     let avatarURL: URL
@@ -84,5 +84,28 @@ extension UserCredentials {
         )
     ].map {
         UserCredentials(id: $0.0, name: $0.1, avatarURL: URL(string: $0.2)!, token: $0.3, apiKey: apiKeyString)
+    }
+}
+
+extension UserCredentials {
+    enum Constants {
+        static let persistenceKey = "UserCredentials"
+    }
+    
+    func save() {
+        if let encoded = try? JSONEncoder().encode(self) {
+            UserDefaults.group?.set(encoded, forKey: Constants.persistenceKey)
+        }
+    }
+    
+    static func getLatest() -> UserCredentials? {
+        guard
+            let savedData = UserDefaults.group?.data(forKey: Constants.persistenceKey),
+            let decoded = try? JSONDecoder().decode(UserCredentials.self, from: savedData)
+        else {
+            return nil
+        }
+        
+        return decoded
     }
 }

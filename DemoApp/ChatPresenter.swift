@@ -7,16 +7,21 @@ import StreamChatUI
 import UIKit
 
 extension UIViewController {
-    // TODO: Where to put this???
-    func presentChat(userCredentials: UserCredentials) {
+    func handleDeepLink(
+        userCredentials: UserCredentials = UserCredentials.getLatest() ?? UserCredentials.builtInUsers[0],
+        deepLink: URL? = nil
+    ) {
         LogConfig.level = .error
-
+        
         // Create a token
         let token = try! Token(rawValue: userCredentials.token)
         
+        // Create config
+        var config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
+        // Set database to app group location to share data with chat widget
+        config.localStorageFolderURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: UserDefaults.groupId)
         // Create client
-        let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
-        let client = ChatClient(config: config, tokenProvider: .static(token))
+        let client = ChatClient.current! // ?? ChatClient(config: config, tokenProvider: .static(token))
 
         // Config
         UIConfig.default.navigation.channelListRouter = DemoChatChannelListRouter.self
@@ -28,9 +33,26 @@ extension UIViewController {
         
         let chatNavigationController = UINavigationController(rootViewController: chatList)
         
-        UIView.transition(with: view.window!, duration: 0.3, options: .transitionFlipFromRight, animations: {
-            self.view.window!.rootViewController = chatNavigationController
-        })
+        // If deep linking, move straight to channel
+        if let deepLink = deepLink {
+            var host = deepLink.absoluteString
+            host.removeFirst("demoapp://".count)
+            let channelVC = ChatChannelVC()
+            let channelId = ChannelId(type: .messaging, id: host)
+            channelVC.channelController = client.channelController(for: channelId)
+            channelVC.userSuggestionSearchController = client.userSearchController()
+            
+            chatNavigationController.pushViewController(channelVC, animated: false)
+            view.window!.rootViewController = chatNavigationController
+        } else {
+            UIView.transition(with: view.window!, duration: 0.3, options: .transitionFlipFromRight, animations: {
+                self.view.window!.rootViewController = chatNavigationController
+            })
+        }
+        
+        userCredentials.save()
+        
+        ChatClient.current = client
     }
 }
 

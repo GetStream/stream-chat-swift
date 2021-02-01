@@ -1,9 +1,10 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Nuke
 import StreamChat
+import StreamChatUI
 import UIKit
 
 class AvatarView: UIImageView {
@@ -98,5 +99,37 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         presentChat(userCredentials: builtInUsers[indexPath.row])
+    }
+    
+    func presentChat(userCredentials: UserCredentials) {
+        LogConfig.level = .error
+
+        // Create a token
+        let token = try! Token(rawValue: userCredentials.token)
+        
+        // Create config
+        var config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
+        // Set database to app group location to share data with chat widget
+        config.localStorageFolderURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: UserDefaults.groupId)
+        // Create client
+        let client = ChatClient(config: config, tokenProvider: .static(token))
+
+        // Config
+        UIConfig.default.navigation.channelListRouter = DemoChatChannelListRouter.self
+
+        // Channels with the current user
+        let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
+        let chatList = ChatChannelListVC()
+        chatList.controller = controller
+        
+        let chatNavigationController = UINavigationController(rootViewController: chatList)
+        
+        UIView.transition(with: view.window!, duration: 0.3, options: .transitionFlipFromRight, animations: {
+            self.view.window!.rootViewController = chatNavigationController
+        })
+        
+        ChatClient.current = client
+        
+        userCredentials.save()
     }
 }

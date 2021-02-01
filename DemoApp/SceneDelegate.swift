@@ -1,7 +1,8 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import StreamChatUI
 import UIKit
 
 extension UIColor {
@@ -14,6 +15,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = scene as? UIWindowScene else { return }
         scene.windows.forEach { $0.tintColor = .streamBlue }
+    }
+    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        print(URLContexts)
+        
+        guard let scene = scene as? UIWindowScene else { return }
+        
+        if let url = URLContexts.first?.url {
+            scene.windows.first?.rootViewController?.handleDeepLink(deepLink: url)
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {}
