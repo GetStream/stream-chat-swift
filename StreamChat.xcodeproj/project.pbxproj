@@ -3262,7 +3262,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mint run swiftlint lint ./Sources/StreamChatUI ./Tests/StreamChatUI --config .swiftlint.yml \n\n";
+			shellScript = "if which mint >/dev/null && mint which swiftlint; then\n  xcrun --sdk macosx mint run swiftlint lint ./Sources/StreamChatUI ./Tests/StreamChatUI --config .swiftlint.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
 		};
 		792DDA73256FB723001DB91B /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3280,7 +3280,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mint run swiftlint lint ./DemoApp --config .swiftlint.yml\n";
+			shellScript = "if which mint >/dev/null && mint which swiftlint; then\n  xcrun --sdk macosx mint run swiftlint lint ./DemoApp --config .swiftlint.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
 		};
 		7990A5DD256BE4CC00389DF7 /* SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3298,7 +3298,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mint run swiftlint lint ./Sample --config .swiftlint.yml\n";
+			shellScript = "if which mint >/dev/null && mint which swiftlint; then\n  xcrun --sdk macosx mint run swiftlint lint ./Sample --config .swiftlint.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n\n";
 		};
 		88F0D6EB257E40B300F4B050 /* SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -3335,7 +3335,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mint run swiftlint lint ./Sources/StreamChat ./Tests/StreamChat --config .swiftlint.yml \n";
+			shellScript = "if which mint >/dev/null && mint which swiftlint; then\n  xcrun --sdk macosx mint run swiftlint lint ./Sources/StreamChat ./Tests/StreamChat --config .swiftlint.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
