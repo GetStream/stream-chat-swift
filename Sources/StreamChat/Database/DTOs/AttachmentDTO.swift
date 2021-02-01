@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -29,7 +29,7 @@ class AttachmentDTO: NSManagedObject {
     @NSManaged var localURL: URL?
 
     /// A title.
-    @NSManaged var title: String
+    @NSManaged var title: String?
     /// An author.
     @NSManaged var author: String?
     /// A description text.
@@ -48,6 +48,8 @@ class AttachmentDTO: NSManagedObject {
     @NSManaged var file: Data?
     /// An extra data for the attachment.
     @NSManaged var extraData: Data
+    
+    @NSManaged var rawJSON: Data?
     
     // MARK: - Relationships
     
@@ -82,9 +84,9 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
     func attachment(id: AttachmentId) -> AttachmentDTO? {
         AttachmentDTO.load(id: id, context: self)
     }
-
+    
     func saveAttachment<ExtraData: AttachmentExtraData>(
-        payload: AttachmentPayload<ExtraData>,
+        payloadBox: AttachmentPayloadBox<ExtraData>,
         id: AttachmentId
     ) throws -> AttachmentDTO {
         guard let messageDTO = message(id: id.messageId) else {
@@ -94,22 +96,43 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         guard let channelDTO = channel(cid: id.cid) else {
             throw ClientError.ChannelDoesNotExist(cid: id.cid)
         }
-
+        
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
+        
+        dto.type = payloadBox.type.rawValue
         dto.localURL = nil
         dto.localState = nil
-        dto.title = payload.title
-        dto.author = payload.author
-        dto.text = payload.text
-        dto.type = payload.type.rawValue
-        dto.actions = try JSONEncoder.stream.encode(payload.actions)
-        dto.url = payload.url
-        dto.imageURL = payload.imageURL
-        dto.imagePreviewURL = payload.imagePreviewURL
-        dto.file = payload.file == nil ? nil : try JSONEncoder.stream.encode(payload.file)
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-        dto.channel = channelDTO
-        dto.message = messageDTO
+        
+        switch payloadBox.type {
+        case .custom:
+            guard
+                let rawJSON = payloadBox.payload as? RawJSON,
+                let rawJSONData = try? JSONEncoder.default.encode(rawJSON)
+            else {
+                throw ClientError("Error saving custom type attachment")
+            }
+            dto.rawJSON = rawJSONData
+        default:
+            guard
+                let payload = payloadBox.payload as? AttachmentPayload<ExtraData>
+            else {
+                throw ClientError("Error saving default type attachment")
+            }
+            
+            dto.localURL = nil
+            dto.localState = nil
+            dto.title = payload.title
+            dto.author = payload.author
+            dto.text = payload.text
+            dto.actions = try JSONEncoder.stream.encode(payload.actions)
+            dto.url = payload.url
+            dto.imageURL = payload.imageURL
+            dto.imagePreviewURL = payload.imagePreviewURL
+            dto.file = payload.file == nil ? nil : try JSONEncoder.stream.encode(payload.file)
+            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+            dto.channel = channelDTO
+            dto.message = messageDTO
+        }
         
         return dto
     }
@@ -170,21 +193,36 @@ private extension _ChatMessageAttachment {
             extraData = .defaultValue
         }
         
-        return .init(
-            id: dto.attachmentID,
-            localURL: dto.localURL,
-            localState: dto.localState,
-            title: dto.title,
-            author: dto.author,
-            text: dto.text,
-            type: .init(rawValue: dto.type),
-            actions: dto.decoded([AttachmentAction].self, from: dto.actions) ?? [],
-            url: dto.url,
-            imageURL: dto.imageURL,
-            imagePreviewURL: dto.imagePreviewURL,
-            file: dto.decoded(AttachmentFile.self, from: dto.file),
-            extraData: extraData
-        )
+        let type = AttachmentType(rawValue: dto.type)
+        switch type {
+        case .custom:
+            guard
+                let rawJSONData = dto.rawJSON,
+                let rawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: rawJSONData)
+            else {
+                log.error(
+                    "Failed to decode custom attachment data for Attachment with hash: <\(dto.attachmentID)>"
+                )
+                return .init(id: dto.attachmentID, type: type, rawJSON: nil)
+            }
+            return .init(id: dto.attachmentID, type: type, rawJSON: rawJSON)
+        default:
+            return .init(
+                id: dto.attachmentID,
+                localURL: dto.localURL,
+                localState: dto.localState,
+                title: dto.title,
+                author: dto.author,
+                text: dto.text,
+                type: .init(rawValue: dto.type),
+                actions: dto.decoded([AttachmentAction].self, from: dto.actions) ?? [],
+                url: dto.url,
+                imageURL: dto.imageURL,
+                imagePreviewURL: dto.imagePreviewURL,
+                file: dto.decoded(AttachmentFile.self, from: dto.file),
+                extraData: extraData
+            )
+        }
     }
 }
 

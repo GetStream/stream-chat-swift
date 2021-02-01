@@ -1,11 +1,46 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
+protocol AttachmentPayloadType {}
+extension RawJSON: AttachmentPayloadType {}
+
+struct AttachmentPayloadBox<ExtraData: AttachmentExtraData>: Decodable {
+    let type: AttachmentType
+    let payload: AttachmentPayloadType
+    
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case ogURL = "og_scrape_url"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        let type: AttachmentType
+        let itWasLinkOriginally = container.contains(.ogURL)
+        if itWasLinkOriginally {
+            type = .link
+        } else {
+            type = AttachmentType(rawValue: try? container.decode(String.self, forKey: .type))
+        }
+        self.type = type
+        
+        let singleValueContainer = try decoder.singleValueContainer()
+        
+        switch type {
+        case .custom:
+            payload = try singleValueContainer.decode(RawJSON.self)
+        default:
+            payload = try singleValueContainer.decode(AttachmentPayload<ExtraData>.self)
+        }
+    }
+}
+
 /// An `AttachmentPayload` represents an object describing attachment data that is received from backend.
-struct AttachmentPayload<ExtraData: AttachmentExtraData>: Decodable {
+struct AttachmentPayload<ExtraData: AttachmentExtraData>: AttachmentPayloadType, Decodable {
     private enum CodingKeys: String, CodingKey {
         case title
         case author = "author_name"

@@ -34,6 +34,7 @@
 		22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22A0921625682880001FE9F0 /* ChatNavigationBar.swift */; };
 		22ADD67C256BF1550098EFEB /* ChatMessageComposerInputContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ADD67B256BF1550098EFEB /* ChatMessageComposerInputContainerView.swift */; };
 		22ADD682256C40410098EFEB /* ChatMessageComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ADD681256C40410098EFEB /* ChatMessageComposerView.swift */; };
+		22B54C4C25C80FA90041B357 /* RawJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22B54C3E25C80E940041B357 /* RawJSON.swift */; };
 		22C23506259A257B00DC805A /* ChatMessageComposerDocumentAttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C23505259A257B00DC805A /* ChatMessageComposerDocumentAttachmentsView.swift */; };
 		22C2350E259A25A300DC805A /* ChatMessageComposerImageAttachmentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C2350D259A25A300DC805A /* ChatMessageComposerImageAttachmentsView.swift */; };
 		22C2359A259CA87B00DC805A /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C23599259CA87B00DC805A /* Animation.swift */; };
@@ -779,6 +780,7 @@
 		22A0921625682880001FE9F0 /* ChatNavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatNavigationBar.swift; sourceTree = "<group>"; };
 		22ADD67B256BF1550098EFEB /* ChatMessageComposerInputContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerInputContainerView.swift; sourceTree = "<group>"; };
 		22ADD681256C40410098EFEB /* ChatMessageComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerView.swift; sourceTree = "<group>"; };
+		22B54C3E25C80E940041B357 /* RawJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawJSON.swift; sourceTree = "<group>"; };
 		22C23505259A257B00DC805A /* ChatMessageComposerDocumentAttachmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerDocumentAttachmentsView.swift; sourceTree = "<group>"; };
 		22C2350D259A25A300DC805A /* ChatMessageComposerImageAttachmentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerImageAttachmentsView.swift; sourceTree = "<group>"; };
 		22C23599259CA87B00DC805A /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
@@ -1978,6 +1980,7 @@
 				DA4971532549C2A000AC68C2 /* AttachmentPayload_Tests.swift */,
 				88381E64258258C20047A6A3 /* FileUploadPayload.swift */,
 				88381E6D258259310047A6A3 /* FileUploadPayload_Tests.swift */,
+				22B54C3E25C80E940041B357 /* RawJSON.swift */,
 			);
 			path = Payloads;
 			sourceTree = "<group>";
@@ -3714,6 +3717,7 @@
 				7991D83B24F5427E00D21BA3 /* EphemeralValuesContainer.swift in Sources */,
 				79682C4B24BF37CB0071578E /* ChannelListPayload.swift in Sources */,
 				DA9985EE24E175AA000E9885 /* ChannelCodingKeys.swift in Sources */,
+				22B54C4C25C80FA90041B357 /* RawJSON.swift in Sources */,
 				888E8C4E252B4B1C00195E03 /* ChannelMemberBanRequestPayload.swift in Sources */,
 				79FC85E724ACCBC500A665ED /* Token.swift in Sources */,
 				79877A0E2498E4BC00015F8B /* Channel.swift in Sources */,

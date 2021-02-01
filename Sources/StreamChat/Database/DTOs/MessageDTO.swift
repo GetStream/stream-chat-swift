@@ -355,7 +355,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let attachments: Set<AttachmentDTO> = try Set(
             payload.attachments.enumerated().map { index, attachment in
                 let id = AttachmentId(cid: cid, messageId: payload.id, index: index)
-                let dto = try saveAttachment(payload: attachment, id: id)
+                let dto = try saveAttachment(payloadBox: attachment, id: id)
                 return dto
             }
         )

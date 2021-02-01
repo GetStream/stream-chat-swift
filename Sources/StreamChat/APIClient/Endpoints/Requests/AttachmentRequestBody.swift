@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ import Foundation
 /// can be overwritten by `URL` enriching on backend so it's not safe to use them.
 struct AttachmentRequestBody<ExtraData: AttachmentExtraData>: Encodable {
     let type: AttachmentType
-    let title: String
+    let title: String?
     let url: URL?
     let imageURL: URL?
     let file: AttachmentFile?
@@ -46,7 +46,7 @@ struct AttachmentRequestBody<ExtraData: AttachmentExtraData>: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type, forKey: .type)
-        try container.encode(title, forKey: (type == .image ? .fallback : .title))
+        try container.encodeIfPresent(title, forKey: (type == .image ? .fallback : .title))
         try container.encodeIfPresent(url, forKey: .assetURL)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)
         try file?.encode(to: encoder)

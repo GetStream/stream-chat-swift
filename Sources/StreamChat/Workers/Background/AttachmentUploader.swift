@@ -96,7 +96,7 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
 
             let multipartFormData = MultipartFormData(
                 fileData,
-                fileName: attachment.title,
+                fileName: attachment.title ?? UUID().uuidString,
                 mimeType: fileType.mimeType
             )
 

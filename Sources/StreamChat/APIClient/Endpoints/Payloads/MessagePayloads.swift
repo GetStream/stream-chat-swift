@@ -61,7 +61,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
     let latestReactions: [MessageReactionPayload<ExtraData>]
     let ownReactions: [MessageReactionPayload<ExtraData>]
     let reactionScores: [MessageReactionType: Int]
-    let attachments: [AttachmentPayload<ExtraData.Attachment>]
+    let attachments: [AttachmentPayloadBox<ExtraData.Attachment>]
     let isSilent: Bool
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
@@ -121,7 +121,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
-        attachments = try container.decode([AttachmentPayload<ExtraData.Attachment>].self, forKey: .attachments)
+        attachments = try container.decode([AttachmentPayloadBox<ExtraData.Attachment>].self, forKey: .attachments)
         extraData = try ExtraData.Message(from: decoder)
         
         // Some endpoints return also channel payload data for convenience
@@ -150,7 +150,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
         ownReactions: [MessageReactionPayload<ExtraData>] = [],
         reactionScores: [MessageReactionType: Int],
         isSilent: Bool,
-        attachments: [AttachmentPayload<ExtraData.Attachment>],
+        attachments: [AttachmentPayloadBox<ExtraData.Attachment>],
         channel: ChannelDetailPayload<ExtraData>? = nil
     ) {
         self.id = id

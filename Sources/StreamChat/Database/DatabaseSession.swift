@@ -186,7 +186,7 @@ protocol AttachmentDatabaseSession {
     /// with the given `messageId` in the channel with the given `cid`.
     @discardableResult
     func saveAttachment<ExtraData: AttachmentExtraData>(
-        payload: AttachmentPayload<ExtraData>,
+        payloadBox: AttachmentPayloadBox<ExtraData>,
         id: AttachmentId
     ) throws -> AttachmentDTO
     
