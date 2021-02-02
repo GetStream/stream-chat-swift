@@ -158,7 +158,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             let idx = ip.item
             let item: LayoutItem
             if idx == self.currentItems.count {
-                item = LayoutItem(offset: 0, height: 60)
+                item = LayoutItem(offset: 0, height: self.estimatedItemHeight)
             } else {
                 item = LayoutItem(
                     offset: self.currentItems[idx].maxY + self.spacing,

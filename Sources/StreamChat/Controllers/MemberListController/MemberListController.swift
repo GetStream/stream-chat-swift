@@ -24,7 +24,7 @@ extension _ChatClient {
 /// - Note: `ChatChannelMemberListController` is a typealias of `_ChatChannelMemberListController` with default extra data.
 /// If you're using custom extra data, create your own typealias of `_ChatChannelMemberListController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 public typealias ChatChannelMemberListController = _ChatChannelMemberListController<NoExtraData>
 
 /// `_ChatChannelMemberListController` is a controller class which allows observing
@@ -36,7 +36,7 @@ public typealias ChatChannelMemberListController = _ChatChannelMemberListControl
 /// `ChatChannelMemberListController` typealias instead. If you're using custom extra data, create your own typealias
 /// of `_ChatChannelMemberListController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying sorting and filtering for the list of channel members.
     @Atomic public private(set) var query: _ChannelMemberListQuery<ExtraData.User>

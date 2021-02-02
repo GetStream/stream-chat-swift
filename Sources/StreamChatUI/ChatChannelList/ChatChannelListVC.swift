@@ -23,7 +23,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: ViewController,
     
     public var controller: _ChatChannelListController<ExtraData>!
     
-    public private(set) lazy var router = uiConfig.navigation.channelListRouter.init(rootViewController: self)
+    public lazy var router = uiConfig.navigation.channelListRouter.init(rootViewController: self)
     
     public private(set) lazy var collectionView: ChatChannelListCollectionView = {
         let layout = uiConfig.channelList.channelCollectionLayout.init()

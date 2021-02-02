@@ -10,7 +10,7 @@ public typealias ChatChannelVC = _ChatChannelVC<NoExtraData>
 open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
     // MARK: - Properties
 
-    public private(set) lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
+    public lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
     
     // MARK: - Life Cycle
     

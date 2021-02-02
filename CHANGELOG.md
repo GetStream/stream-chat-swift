@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+
+# [3.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/3.0.1)
+_February 2nd, 2021_
+
 ## StreamChat
 
 ### ✅ Added
@@ -19,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fix update changes incorrectly reported when a move change is present for the same index. [#768](https://github.com/GetStream/stream-chat-swift/pull/768/)
 - Fix issue with decoding `member_count` for `ChannelDetailPayload` 
     [#782](https://github.com/GetStream/stream-chat-swift/pull/782)
+- Fix wrong extra data cheat sheet documentation link [#786](https://github.com/GetStream/stream-chat-swift/pull/786)
 
 # [3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/3.0)
 _January 22nd, 2021_

@@ -22,7 +22,7 @@ public extension _ChatClient {
 /// - Note: `ChatMessageController` is a typealias of `_ChatMessageController` with default extra data. If you're using
 /// custom extra data, create your own typealias of `_ChatMessageController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatMessageController = _ChatMessageController<NoExtraData>
 
@@ -34,7 +34,7 @@ public typealias ChatMessageController = _ChatMessageController<NoExtraData>
 /// `ChatMessageController` typealias instead. If you're using custom extra data, create your own typealias
 /// of `_ChatMessageController`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable {
     /// The `ChatClient` instance this controller belongs to.

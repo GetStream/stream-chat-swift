@@ -10,7 +10,7 @@ import Foundation
 /// - Note: `ChatChannelMember` is a typealias of `_ChatChannelMember` with default extra data. If you're using custom extra data,
 /// create your own typealias of `ChatChannelMember`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public typealias ChatChannelMember = _ChatChannelMember<NoExtraData>
 
@@ -19,7 +19,7 @@ public typealias ChatChannelMember = _ChatChannelMember<NoExtraData>
 /// - Note: `_ChatChannelMember` type is not meant to be used directly. If you're using default extra data, use `ChatChannelMember`
 /// typealias instead. If you're using custom extra data, create your own typealias of `_ChatChannelMember`.
 ///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#working-with-extra-data).
+/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
 public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
     /// The role of the user within the channel.
