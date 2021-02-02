@@ -38,7 +38,7 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
             )
         }
         
-        AssertAsync.willBeEqual(observableObject.channels, [newChannel])
+        AssertAsync.willBeEqual(Array(observableObject.channels), [newChannel])
     }
     
     func test_observableObject_reactsToDelegateStateChangesCallback() {
@@ -62,8 +62,8 @@ class ChannelListControllerMock: ChatChannelListController {
     @Atomic var synchronize_called = false
     
     var channels_simulated: [_ChatChannel<NoExtraData>]?
-    override var channels: [_ChatChannel<NoExtraData>] {
-        channels_simulated ?? super.channels
+    override var channels: LazyCachedMapCollection<_ChatChannel<NoExtraData>> {
+        channels_simulated.map { $0.lazyCachedMap { $0 } } ?? super.channels
     }
 
     var state_simulated: DataController.State?

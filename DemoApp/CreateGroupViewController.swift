@@ -49,7 +49,7 @@ class CreateGroupViewController: UIViewController {
     
     var searchController: ChatUserSearchController!
     
-    var users: [ChatUser] {
+    var users: LazyCachedMapCollection<ChatUser> {
         searchController.users
     }
     
