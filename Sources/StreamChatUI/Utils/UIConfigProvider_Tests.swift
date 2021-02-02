@@ -13,8 +13,7 @@ class UIConfigProvider_Tests: XCTestCase {
     func test_uiConfig_passedDownToSubview() {
         let parentView = TestView<ExtraData>()
         let subView = TestView<ExtraData>()
-        
-        var uiConfig = UIConfig<ExtraData>()
+        var uiConfig = UIConfig()
         // Set some random subclass to check if the config is passed down
         uiConfig.channelList.newChannelButton = TestButton.self
         
@@ -32,8 +31,7 @@ class UIConfigProvider_Tests: XCTestCase {
         let parentView = TestView<ExtraData>()
         let intermediateView = UIView()
         let subView = TestView<ExtraData>()
-        
-        var uiConfig = UIConfig<ExtraData>()
+        var uiConfig = UIConfig()
         // Set some random subclass to check if the config is passed down
         uiConfig.channelList.newChannelButton = TestButton.self
         
@@ -50,8 +48,7 @@ class UIConfigProvider_Tests: XCTestCase {
     
     func test_uiConfig_passedDownToVCView() {
         let vc = TestViewController<ExtraData>()
-        
-        var uiConfig = UIConfig<ExtraData>()
+        var uiConfig = UIConfig()
         // Set some random subclass to check if the config is passed down
         uiConfig.channelList.newChannelButton = TestButton.self
         
@@ -69,8 +66,7 @@ class UIConfigProvider_Tests: XCTestCase {
     
     func test_vcSubviews_initedFromConfig() {
         let vc = TestViewController<ExtraData>()
-        
-        var uiConfig = UIConfig<ExtraData>()
+        var uiConfig = UIConfig()
         // Set some random subclass to check if the config is passed down
         uiConfig.channelList.newChannelButton = TestButton.self
         
@@ -101,4 +97,4 @@ private class TestViewController<ExtraData: ExtraDataTypes>: UIViewController, U
     }
 }
 
-private class TestButton: CreateNewChannelButton {}
+private class TestButton: ChatChannelCreateNewButton<NoExtraData> {}
