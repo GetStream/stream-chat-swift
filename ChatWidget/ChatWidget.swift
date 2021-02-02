@@ -10,6 +10,7 @@ import WidgetKit
 import SwiftUI
 import Intents
 import StreamChat
+import StreamChatUI
 
 struct Provider: IntentTimelineProvider {
     func placeholder(in context: Context) -> SimpleEntry {
@@ -61,15 +62,17 @@ struct SimpleEntry: TimelineEntry {
 
 extension ChatChannel {
     var displayName: String {
-        if let name = name, !name.isEmpty {
+        /*if let name = name, !name.isEmpty {
             return name
         } else {
             return cid.id
-        }
+        }*/
+        
+        return ChatChannelNamer().name(for: self, as: nil)
     }
 }
 
-struct ChatWidgetEntryView : View {
+struct ChatWidgetEntryView : SwiftUI.View {
     var entry: Provider.Entry
     
     @State var images = [
@@ -81,26 +84,39 @@ struct ChatWidgetEntryView : View {
         Image(systemName: "person")
     ]
     
-    func channelView(index: Int) -> some View {
+    func channelView(index: Int) -> some SwiftUI.View {
         Link(destination: URL(string: "demoapp://\(entry.channels[index].cid.id)")!) {
             VStack {
-                images[index].frame(width: 72, height: 72, alignment: .center).background(Color.gray.opacity(0.5)).cornerRadius(36)
-                Text(entry.channels[index].displayName).lineLimit(1).font(.caption).frame(maxWidth: 72)
+                Spacer().frame(height: 20)
+                images[index]
+                    .frame(width: 72, height: 72, alignment: .center)
+                    .background(Color.gray.opacity(0.5))
+                    .cornerRadius(36)
+                Text(entry.channels[index].displayName)
+                    .lineLimit(3)
+                    .font(.caption)
+                    .frame(width: 100)
+                    .multilineTextAlignment(.center)
+                Spacer()
             }
         }
     }
 
-    var body: some View {
+    var body: some SwiftUI.View {
         HStack {
             if entry.channels.count > 0 {
                 channelView(index: 0)
             }
             if entry.channels.count > 1 {
+                Divider()
                 channelView(index: 1)
             }
             if entry.channels.count > 2 {
+                Divider()
                 channelView(index: 2)
             }
+            
+            if entry.configuration.displ
         }
     }
 }
@@ -119,7 +135,7 @@ struct ChatWidget: Widget {
 }
 
 struct ChatWidget_Previews: PreviewProvider {
-    static var previews: some View {
+    static var previews: some SwiftUI.View {
         ChatWidgetEntryView(entry: SimpleEntry(date: Date(), configuration: ConfigurationIntent(), channels: []))
             .previewContext(WidgetPreviewContext(family: .systemSmall))
     }
