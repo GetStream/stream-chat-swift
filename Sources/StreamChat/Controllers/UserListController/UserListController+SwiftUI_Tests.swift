@@ -37,7 +37,7 @@ class UserListController_SwiftUI_Tests: iOS13TestCase {
             )
         }
         
-        AssertAsync.willBeEqual(observableObject.users, [newUser])
+        AssertAsync.willBeEqual(Array(observableObject.users), [newUser])
     }
     
     func test_observableObject_reactsToDelegateStateChangesCallback() {
@@ -61,8 +61,8 @@ class UserListControllerMock: ChatUserListController {
     @Atomic var synchronize_called = false
     
     var users_simulated: [_ChatUser<NoExtraData>]?
-    override var users: [_ChatUser<NoExtraData>] {
-        users_simulated ?? super.users
+    override var users: LazyCachedMapCollection<_ChatUser<NoExtraData>> {
+        users_simulated.map { $0.lazyCachedMap { $0 } } ?? super.users
     }
 
     var state_simulated: DataController.State?

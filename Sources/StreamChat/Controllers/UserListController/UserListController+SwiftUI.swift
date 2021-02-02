@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -16,7 +16,7 @@ extension _ChatUserListController {
         public let controller: _ChatUserListController
         
         /// The users matching the query.
-        @Published public private(set) var users: [_ChatUser<ExtraData.User>] = []
+        @Published public private(set) var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> = []
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State

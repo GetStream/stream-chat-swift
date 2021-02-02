@@ -58,7 +58,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     /// To observe changes of the replies, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var replies: [_ChatMessage<ExtraData>] {
+    public var replies: LazyCachedMapCollection<_ChatMessage<ExtraData>> {
         if state == .initialized {
             startRepliesObserver { [weak self] error in
                 self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))

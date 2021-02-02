@@ -142,7 +142,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
         ]
         testFRC.test_fetchedObjects = reference1
         
-        XCTAssertEqual(observer.items, reference1.map(\.uniqueValue))
+        XCTAssertEqual(Array(observer.items), reference1.map(\.uniqueValue))
         
         // Update the simulated fetch objects
         let reference2 = [TestManagedObject()]
@@ -150,11 +150,11 @@ class ListDatabaseObserver_Tests: XCTestCase {
         
         // Access items again, the objects should not be updated because the result should be cached until
         // the callback from the change aggregator happens
-        XCTAssertEqual(observer.items, reference1.map(\.uniqueValue))
+        XCTAssertEqual(Array(observer.items), reference1.map(\.uniqueValue))
         
         // Simulate the change aggregator callback and check the items get updated
         observer.changeAggregator.onChange?([])
-        XCTAssertEqual(observer.items, reference2.map(\.uniqueValue))
+        XCTAssertEqual(Array(observer.items), reference2.map(\.uniqueValue))
     }
     
     func test_startObserving_startsFRC() throws {
@@ -212,7 +212,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
             TestManagedObject()
         ]
         testFRC.test_fetchedObjects = objects
-        XCTAssertEqual(observer.items, objects.map(\.uniqueValue))
+        XCTAssertEqual(Array(observer.items), objects.map(\.uniqueValue))
         
         // Listen to callbacks
         var receivedChanges: [ListChange<String>]?

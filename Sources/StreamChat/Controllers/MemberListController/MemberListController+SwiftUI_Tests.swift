@@ -56,7 +56,7 @@ final class MemberListController_SwiftUI_Tests: iOS13TestCase {
         }
         
         // Simulate the changes are forwarded to observable object.
-        AssertAsync.willBeEqual(observableObject.members, [newMember])
+        AssertAsync.willBeEqual(Array(observableObject.members), [newMember])
     }
     
     func test_observableObject_reactsToDelegateStateChangesCallback() {

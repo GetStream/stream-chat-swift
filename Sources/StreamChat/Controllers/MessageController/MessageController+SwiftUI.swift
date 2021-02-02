@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -19,7 +19,7 @@ extension _ChatMessageController {
         @Published public private(set) var message: _ChatMessage<ExtraData>?
         
         /// The replies to the message controller observes.
-        @Published public private(set) var replies: [_ChatMessage<ExtraData>] = []
+        @Published public private(set) var replies: LazyCachedMapCollection<_ChatMessage<ExtraData>> = []
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State
