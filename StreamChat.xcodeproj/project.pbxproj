@@ -591,12 +591,14 @@
 		DB8230F2259B8DBF00E7D7FE /* ChatMessageGiphyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB8230F1259B8DBF00E7D7FE /* ChatMessageGiphyView.swift */; };
 		DB823107259C271C00E7D7FE /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = DB823106259C271C00E7D7FE /* SwiftyGif */; };
 		DB82310F259C272E00E7D7FE /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = DB82310E259C272E00E7D7FE /* SwiftyGif */; };
+		DB842E4525C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */; };
 		DB9A3D562582689A00555D36 /* ChatMessageListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */; };
 		DB9A3D662582783F00555D36 /* ChatVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9A3D652582783F00555D36 /* ChatVC.swift */; };
 		DBC8A4BB257E5BFB00B20A82 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = DBC8A4BD257E5BFB00B20A82 /* Localizable.stringsdict */; };
 		DBC8A4C6257E696900B20A82 /* ChatMessageThreadInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC8A4C5257E696900B20A82 /* ChatMessageThreadInfoView.swift */; };
 		DBC8A564258113F700B20A82 /* ChatThreadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC8A563258113F700B20A82 /* ChatThreadVC.swift */; };
 		DBC8A5762581476E00B20A82 /* ChatMessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC8A5752581476E00B20A82 /* ChatMessageListVC.swift */; };
+		DBCAFE2425C44B920015AD58 /* LazyCachedMapCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBCAFE2325C44B920015AD58 /* LazyCachedMapCollection.swift */; };
 		DBF12128258BAFC1001919C6 /* OnlyLinkTappableTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */; };
 		E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70120152583EBC90036DACD /* CALayer+Extensions.swift */; };
 		E7166CB225BED22B00B03B07 /* UIConfig+ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7166CB125BED22B00B03B07 /* UIConfig+ColorPalette.swift */; };
@@ -1351,12 +1353,14 @@
 		DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelNavigationBarListener.swift; sourceTree = "<group>"; };
 		DB70CFFA25702EB900DDF436 /* ChatMessagePopupVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagePopupVC.swift; sourceTree = "<group>"; };
 		DB8230F1259B8DBF00E7D7FE /* ChatMessageGiphyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageGiphyView.swift; sourceTree = "<group>"; };
+		DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyCachedMapCollection_Tests.swift; sourceTree = "<group>"; };
 		DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListRouter.swift; sourceTree = "<group>"; };
 		DB9A3D652582783F00555D36 /* ChatVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVC.swift; sourceTree = "<group>"; };
 		DBC8A4BC257E5BFB00B20A82 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		DBC8A4C5257E696900B20A82 /* ChatMessageThreadInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageThreadInfoView.swift; sourceTree = "<group>"; };
 		DBC8A563258113F700B20A82 /* ChatThreadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadVC.swift; sourceTree = "<group>"; };
 		DBC8A5752581476E00B20A82 /* ChatMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListVC.swift; sourceTree = "<group>"; };
+		DBCAFE2325C44B920015AD58 /* LazyCachedMapCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyCachedMapCollection.swift; sourceTree = "<group>"; };
 		DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlyLinkTappableTextView.swift; sourceTree = "<group>"; };
 		E70120152583EBC90036DACD /* CALayer+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CALayer+Extensions.swift"; sourceTree = "<group>"; };
 		E7166CB125BED22B00B03B07 /* UIConfig+ColorPalette.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIConfig+ColorPalette.swift"; sourceTree = "<group>"; };
@@ -1756,6 +1760,8 @@
 				79280F702487CD2B00CDEB89 /* Atomic_Tests.swift */,
 				792A4F3D247FFDE700EAF71D /* Codable+Extensions.swift */,
 				792A4F3E247FFDE700EAF71D /* Data+Gzip.swift */,
+				DBCAFE2325C44B920015AD58 /* LazyCachedMapCollection.swift */,
+				DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */,
 				792A4F3B247FFBB400EAF71D /* Timers.swift */,
 				797A756524814EF8003CF16D /* SystemEnvironment.swift */,
 				797A756724814F0D003CF16D /* BundleExtensions.swift */,
@@ -3671,6 +3677,7 @@
 				79682C4A24BF37C80071578E /* MessagePayloads.swift in Sources */,
 				8AAB1C6624CB39F2009B783F /* UnreadCount.swift in Sources */,
 				79877A282498E50D00015F8B /* UserDTO.swift in Sources */,
+				DBCAFE2425C44B920015AD58 /* LazyCachedMapCollection.swift in Sources */,
 				79280F47248515FA00CDEB89 /* ChannelEvents.swift in Sources */,
 				DA640FBE2535CF9200D32944 /* UserListSortingKey.swift in Sources */,
 				79877A182498E4EE00015F8B /* ChannelEndpoints.swift in Sources */,
@@ -3760,6 +3767,7 @@
 			files = (
 				DA49714E2549C28000AC68C2 /* AttachmentDTO_Tests.swift in Sources */,
 				88F6DF94252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift in Sources */,
+				DB842E4525C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift in Sources */,
 				793C14DC24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift in Sources */,
 				79A0E9AF2498BFD800E9BD50 /* WebSocketClient_Tests.swift in Sources */,
 				DA8407232525E871005A0F62 /* UserListPayload_Tests.swift in Sources */,
