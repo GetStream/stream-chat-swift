@@ -378,7 +378,7 @@ final class MemberListController_Tests: StressTestCase {
                     (delegate.didUpdateMembers_changes ?? []).map { $0.fieldChange(\.id) }
                         .contains(.remove(member2ID, index: [0, 0]))
                 )
-            Assert.willBeEqual(self.controller.members, [])
+            Assert.willBeEqual(Array(self.controller.members), [])
         }
     }
     

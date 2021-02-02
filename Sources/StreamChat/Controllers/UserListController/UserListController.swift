@@ -50,7 +50,7 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
     /// To observe changes of the users, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var users: [_ChatUser<ExtraData.User>] { userListObserver.items }
+    public var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> { userListObserver.items }
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var worker: UserListUpdater<ExtraData.User> = self.environment
@@ -177,7 +177,7 @@ extension _ChatUserListController {
         var createUserListDabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<UserDTO>,
-            _ itemCreator: @escaping (UserDTO) -> _ChatUser<ExtraData.User>?
+            _ itemCreator: @escaping (UserDTO) -> _ChatUser<ExtraData.User>
         )
             -> ListDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)
