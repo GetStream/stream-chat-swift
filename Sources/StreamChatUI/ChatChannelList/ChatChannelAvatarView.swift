@@ -43,7 +43,7 @@ open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: ChatAvatarView, UI
 
         if channel.isDirectMessageChannel,
             let currentUserId = channelAndUserId.currentUserId,
-            let otherMember = channel.cachedMembers.first(where: { $0.id == currentUserId }),
+            let otherMember = channel.cachedMembers.first(where: { $0.id != currentUserId }),
             otherMember.isOnline {
             onlineIndicatorView.isHidden = false
         } else {
