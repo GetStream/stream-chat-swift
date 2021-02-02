@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -61,6 +61,8 @@ public extension _ChatChannel {
     /// Creates a new `_ChatChannel` object from the provided data.
     static func mock(
         cid: ChannelId,
+        name: String? = nil,
+        imageURL: URL? = nil,
         lastMessageAt: Date? = nil,
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
@@ -75,11 +77,13 @@ public extension _ChatChannel {
         watcherCount: Int = 0,
         memberCount: Int = 0,
         reads: [_ChatChannelRead<ExtraData>] = [],
-        extraData: ExtraData.Channel,
+        extraData: ExtraData.Channel = .defaultValue,
         latestMessages: [_ChatMessage<ExtraData>] = []
     ) -> Self {
         self.init(
             cid: cid,
+            name: name,
+            imageURL: imageURL,
             lastMessageAt: lastMessageAt,
             createdAt: createdAt,
             updatedAt: updatedAt,
