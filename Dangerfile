@@ -23,7 +23,8 @@ if github.pr_body.length < 3 && git.lines_of_code > 50
 end
 
 ## Let's check if there are any changes in the project folder
-has_app_changes = !git.modified_files.grep(/Sources/).empty?
+has_app_changes = !git.modified_files.grep('/Sources/StreamChat/').empty?
+
 ## Then, we should check if tests are updated
 # has_test_changes = !git.modified_files.grep(/StreamChatCoreTests/).empty?
 
