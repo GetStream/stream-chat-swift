@@ -517,6 +517,7 @@
 		8AE335A924FCF999002B6677 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A624FCF999002B6677 /* InternetConnection.swift */; };
 		8AE335AA24FCF99E002B6677 /* InternetConnection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A424FCF999002B6677 /* InternetConnection_Tests.swift */; };
 		8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */; };
+		AD472EF825C425FB00A96E70 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = AD472EF725C425FB00A96E70 /* SnapshotTesting */; };
 		AD7D633325AF577E0051219B /* UserUpdateResponse+MissingUser.json in Resources */ = {isa = PBXBuildFile; fileRef = AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */; };
 		ADCDDCC525AE1293004E15FB /* UserUpdateResponse.json in Resources */ = {isa = PBXBuildFile; fileRef = ADCDDCC425AE1293004E15FB /* UserUpdateResponse.json */; };
 		ADCDDD0025AE2784004E15FB /* UserUpdateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCDDCEC25AE2214004E15FB /* UserUpdateViewController.swift */; };
@@ -1440,6 +1441,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */,
+				AD472EF825C425FB00A96E70 /* SnapshotTesting in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2916,8 +2918,12 @@
 			);
 			dependencies = (
 				7908820825432B7200896F03 /* PBXTargetDependency */,
+				ADFCCCE825C9B77C0024505D /* PBXTargetDependency */,
 			);
 			name = StreamChatUITests;
+			packageProductDependencies = (
+				AD472EF725C425FB00A96E70 /* SnapshotTesting */,
+			);
 			productName = StreamChatUITests;
 			productReference = 7908820525432B7200896F03 /* StreamChatUITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -3097,6 +3103,7 @@
 				79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */,
 				799ADAAD2563FFA1006D43F9 /* XCRemoteSwiftPackageReference "Nuke" */,
 				DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */,
+				AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
@@ -4982,6 +4989,14 @@
 				minimumVersion = 4.0.4;
 			};
 		};
+		AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.2;
+			};
+		};
 		DB823105259C271C00E7D7FE /* XCRemoteSwiftPackageReference "SwiftyGif" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/kirualex/SwiftyGif.git";
@@ -5007,6 +5022,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 79A4AE0F2536EE5500C32A74 /* XCRemoteSwiftPackageReference "Starscream" */;
 			productName = Starscream;
+		};
+		AD472EF725C425FB00A96E70 /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AD472EF625C425FB00A96E70 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
 		};
 		DB823106259C271C00E7D7FE /* SwiftyGif */ = {
 			isa = XCSwiftPackageProductDependency;
