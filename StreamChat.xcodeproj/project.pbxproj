@@ -52,7 +52,6 @@
 		7908821225432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		7908821325432B7200896F03 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7908823325432C6400896F03 /* StreamChatUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7908823125432C6400896F03 /* StreamChatUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		7908823C25432C9000896F03 /* StreamChatUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7908823A25432C9000896F03 /* StreamChatUITests.swift */; };
 		7908824A25432CC600896F03 /* StreamChatStressTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 7908824725432CC600896F03 /* StreamChatStressTestPlan.xctestplan */; };
 		7908824B25432CC600896F03 /* StreamChatTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 7908824825432CC600896F03 /* StreamChatTestPlan.xctestplan */; };
 		7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7908829A2546D95A00896F03 /* FlagMessagePayload.swift */; };
@@ -803,7 +802,6 @@
 		7908820525432B7200896F03 /* StreamChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7908823125432C6400896F03 /* StreamChatUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamChatUI.h; sourceTree = "<group>"; };
 		7908823225432C6400896F03 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		7908823A25432C9000896F03 /* StreamChatUITests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StreamChatUITests.swift; sourceTree = "<group>"; };
 		7908824725432CC600896F03 /* StreamChatStressTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChatStressTestPlan.xctestplan; sourceTree = "<group>"; };
 		7908824825432CC600896F03 /* StreamChatTestPlan.xctestplan */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamChatTestPlan.xctestplan; sourceTree = "<group>"; };
 		7908824925432CC600896F03 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -1553,7 +1551,6 @@
 		7908823925432C9000896F03 /* StreamChatUITests */ = {
 			isa = PBXGroup;
 			children = (
-				7908823A25432C9000896F03 /* StreamChatUITests.swift */,
 				AD9F7B8525C821C300DF8CD2 /* AssertSnapshot.swift */,
 				AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */,
 			);
@@ -3483,7 +3480,6 @@
 				ADFCCD7525C9D4D10024505D /* AssertSnapshot.swift in Sources */,
 				795296C12582494000435B2E /* UIConfigProvider_Tests.swift in Sources */,
 				792A71AD2577E0510082498D /* ChatChannelVC_Tests.swift in Sources */,
-				7908823C25432C9000896F03 /* StreamChatUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
