@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -13,17 +13,18 @@ public extension _ChatClient {
         
         return .init(
             config: config,
+            tokenProvider: .anonymous,
             workerBuilders: [],
+            eventWorkerBuilders: [],
             environment: .init(
                 apiClientBuilder: APIClient_Mock.init,
                 webSocketClientBuilder: {
                     WebSocketClient_Mock(
-                        connectEndpoint: $0,
-                        sessionConfiguration: $1,
-                        requestEncoder: $2,
-                        eventDecoder: $3,
-                        eventNotificationCenter: $4,
-                        internetConnection: $5
+                        sessionConfiguration: $0,
+                        requestEncoder: $1,
+                        eventDecoder: $2,
+                        eventNotificationCenter: $3,
+                        internetConnection: $4
                     )
                 }
             )
