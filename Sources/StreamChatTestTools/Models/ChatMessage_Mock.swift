@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -19,13 +19,15 @@ public extension _ChatMessage {
         deletedAt: Date? = nil,
         arguments: String? = nil,
         parentMessageId: MessageId? = nil,
+        quotedMessageId: MessageId? = nil,
         showReplyInChannel: Bool = false,
         replyCount: Int = 0,
         extraData: ExtraData.Message = .defaultValue,
         isSilent: Bool = false,
         reactionScores: [MessageReactionType: Int] = [:],
         mentionedUsers: Set<_ChatUser<ExtraData.User>> = [],
-        attachments: Set<_ChatMessageAttachment<ExtraData>> = [],
+        threadParticipants: Set<UserId> = [],
+        attachments: [_ChatMessageAttachment<ExtraData>] = [],
         latestReplies: [_ChatMessage<ExtraData>] = [],
         localState: LocalMessageState? = nil,
         isFlaggedByCurrentUser: Bool = false,
@@ -47,10 +49,12 @@ public extension _ChatMessage {
             showReplyInChannel: showReplyInChannel,
             replyCount: replyCount,
             extraData: extraData,
+            quotedMessageId: quotedMessageId,
             isSilent: isSilent,
             reactionScores: reactionScores,
             author: author,
             mentionedUsers: mentionedUsers,
+            threadParticipants: threadParticipants,
             attachments: attachments,
             latestReplies: latestReplies,
             localState: localState,
