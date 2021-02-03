@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
-        <attribute name="actions" optional="YES" attributeType="Binary"/>
-        <attribute name="author" optional="YES" attributeType="String"/>
-        <attribute name="extraData" optional="YES" attributeType="Binary"/>
+        <attribute name="data" optional="YES" attributeType="Binary"/>
         <attribute name="file" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
-        <attribute name="imagePreviewURL" optional="YES" attributeType="URI"/>
-        <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="localProgress" optional="YES" attributeType="Double" minValueString="0" maxValueString="1" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="localStateRaw" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="localURL" optional="YES" attributeType="URI"/>
-        <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
-        <attribute name="url" optional="YES" attributeType="URI"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="attachments" inverseEntity="ChannelDTO"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="attachments" inverseEntity="MessageDTO"/>
         <uniquenessConstraints>
@@ -261,7 +255,7 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="223"/>
+        <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="179"/>
         <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="404"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
