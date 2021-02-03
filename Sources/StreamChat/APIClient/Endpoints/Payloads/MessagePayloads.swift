@@ -61,7 +61,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
     let latestReactions: [MessageReactionPayload<ExtraData>]
     let ownReactions: [MessageReactionPayload<ExtraData>]
     let reactionScores: [MessageReactionType: Int]
-    let attachments: [AttachmentPayload<ExtraData.Attachment>]
+    let attachments: [AttachmentPayload]
     let isSilent: Bool
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
@@ -121,7 +121,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
-        attachments = try container.decode([AttachmentPayload<ExtraData.Attachment>].self, forKey: .attachments)
+        attachments = try container.decode([AttachmentPayload].self, forKey: .attachments)
         extraData = try ExtraData.Message(from: decoder)
         
         // Some endpoints return also channel payload data for convenience
@@ -150,7 +150,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
         ownReactions: [MessageReactionPayload<ExtraData>] = [],
         reactionScores: [MessageReactionType: Int],
         isSilent: Bool,
-        attachments: [AttachmentPayload<ExtraData.Attachment>],
+        attachments: [AttachmentPayload],
         channel: ChannelDetailPayload<ExtraData>? = nil
     ) {
         self.id = id
@@ -188,7 +188,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let parentId: String?
     let showReplyInChannel: Bool
     let quotedMessageId: String?
-    let attachments: [AttachmentRequestBody<ExtraData.Attachment>]
+    let attachments: [Encodable]
     let extraData: ExtraData.Message
     
     init(
@@ -200,7 +200,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         parentId: String? = nil,
         showReplyInChannel: Bool = false,
         quotedMessageId: String? = nil,
-        attachments: [AttachmentRequestBody<ExtraData.Attachment>] = [],
+        attachments: [Encodable] = [],
         extraData: ExtraData.Message
     ) {
         self.id = id
@@ -226,7 +226,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         try container.encodeIfPresent(quotedMessageId, forKey: .quotedMessageId)
         
         if !attachments.isEmpty {
-            try container.encode(attachments, forKey: .attachments)
+            try container.encode(attachments.map(AnyEncodable.init), forKey: .attachments)
         }
         
         try extraData.encode(to: encoder)

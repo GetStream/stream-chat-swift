@@ -679,7 +679,7 @@ public extension _ChatChannelController {
         text: String,
 //        command: String? = nil,
 //        arguments: String? = nil,
-        attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
+        attachments: [ChatMessageAttachmentSeed] = [],
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
