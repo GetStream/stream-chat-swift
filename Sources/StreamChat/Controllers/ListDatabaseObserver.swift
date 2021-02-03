@@ -81,7 +81,11 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     /// on its delegate.
     var onChange: (([ListChange<Item>]) -> Void)? {
         didSet {
-            changeAggregator.onChange = { [unowned self] in
+            changeAggregator.onChange = { [weak self] in
+                // Ideally, this should rather be `unowned`, however, `deinit` is not always called on the same thread as this
+                // callback which can cause a race condition when the object is already being deinited on a different thread.
+                guard let self = self else { return }
+
                 self._items.reset()
                 self.onChange?($0)
             }
@@ -131,8 +135,8 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             cacheName: nil
         )
         
-        _items.computeValue = { [unowned self] in
-            (self.frc.fetchedObjects ?? []).lazyCachedMap(self.itemCreator)
+        _items.computeValue = { [weak frc, itemCreator] in
+            (frc?.fetchedObjects ?? []).lazyCachedMap(itemCreator)
         }
 
         listenForRemoveAllDataNotifications()
