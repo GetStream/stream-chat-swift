@@ -434,7 +434,7 @@ final class MessageUpdater_Tests: StressTestCase {
         let showReplyInChannel = true
         let command: String = .unique
         let arguments: String = .unique
-        let attachmentSeeds: [ChatMessageAttachment.Seed] = [
+        let attachmentSeeds: [ChatMessageAttachmentSeed] = [
             .dummy(),
             .dummy(),
             .dummy()
@@ -473,10 +473,8 @@ final class MessageUpdater_Tests: StressTestCase {
             Assert.willBeEqual(message?.parentMessageId, parentMessageId)
             Assert.willBeEqual(message?.showReplyInChannel, showReplyInChannel)
             Assert.willBeEqual(
-                message?.attachments,
-                attachmentSeeds.enumerated().map { index, seed in
-                    .init(cid: cid, messageId: newMessageId, index: index, seed: seed, localState: .pendingUpload)
-                }
+                message?.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
+                attachmentSeeds.map(\.fileName)
             )
             Assert.willBeEqual(message?.extraData, extraData)
             Assert.willBeEqual(message?.localState, .pendingSend)
@@ -961,7 +959,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Create attachment in database.
         try database.writeSynchronously {
             try $0.createNewAttachment(
-                seed: ChatMessageAttachment.Seed.dummy(),
+                seed: ChatMessageAttachmentSeed.dummy(),
                 id: attachmentId
             )
         }
@@ -1002,7 +1000,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
             let attachmentDTO = try $0.createNewAttachment(
-                seed: ChatMessageAttachment.Seed.dummy(),
+                seed: ChatMessageAttachmentSeed.dummy(),
                 id: attachmentId
             )
             attachmentDTO.localState = .uploadingFailed
@@ -1033,7 +1031,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
             let attachmentDTO = try $0.createNewAttachment(
-                seed: ChatMessageAttachment.Seed.dummy(),
+                seed: ChatMessageAttachmentSeed.dummy(),
                 id: attachmentId
             )
             attachmentDTO.localState = .uploadingFailed

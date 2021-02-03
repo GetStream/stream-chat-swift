@@ -14,7 +14,7 @@ extension MessagePayload {
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
         quotedMessage: MessagePayload<T>? = nil,
-        attachments: [AttachmentPayload<T.Attachment>] = [
+        attachments: [AttachmentPayload] = [
             .dummy(),
             .dummy(),
             .dummy()
@@ -57,25 +57,5 @@ extension MessagePayload {
 extension MessagePayload {
     func attachmentIDs(cid: ChannelId) -> [AttachmentId] {
         attachments.enumerated().map { .init(cid: cid, messageId: id, index: $0.offset) }
-    }
-
-    func attachments(cid: ChannelId) -> [_ChatMessageAttachment<ExtraData>] {
-        attachmentIDs(cid: cid).map { id in
-            .init(
-                id: id,
-                localURL: nil,
-                localState: nil,
-                title: attachments[id.index].title,
-                author: attachments[id.index].author,
-                text: attachments[id.index].text,
-                type: attachments[id.index].type,
-                actions: attachments[id.index].actions,
-                url: attachments[id.index].url,
-                imageURL: attachments[id.index].imageURL,
-                imagePreviewURL: attachments[id.index].imagePreviewURL,
-                file: attachments[id.index].file,
-                extraData: attachments[id.index].extraData
-            )
-        }
     }
 }
