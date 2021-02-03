@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🔄 Changed
 - Improve serialization performance by exposing items as `LazyCachedMapCollection` instead of `Array` [#776](https://github.com/GetStream/stream-chat-swift/pull/776)
 
+### 🐞 Fixed
+- Fix race conditions in database observers [#796](https://github.com/GetStream/stream-chat-swift/pull/796)
+
 # [3.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/3.0.1)
 _February 2nd, 2021_
 
