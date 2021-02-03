@@ -1285,6 +1285,7 @@
 		8AE335A524FCF999002B6677 /* Reachability_Vendor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability_Vendor.swift; sourceTree = "<group>"; };
 		8AE335A624FCF999002B6677 /* InternetConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternetConnection.swift; sourceTree = "<group>"; };
 		8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingPongEmojiFormatter.swift; sourceTree = "<group>"; };
+		AD0169D825CAF212009EBAD2 /* CurrentChatUserController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentChatUserController_Mock.swift; sourceTree = "<group>"; };
 		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
 		AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotVariant.swift; sourceTree = "<group>"; };
 		AD9F7B8525C821C300DF8CD2 /* AssertSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssertSnapshot.swift; sourceTree = "<group>"; };
@@ -1877,6 +1878,7 @@
 				793061682577B511005CF846 /* ChatChannelController_Mock.swift */,
 				793061712577BB48005CF846 /* ChatMessageController_Mock.swift */,
 				ADFCCD5E25C9D4350024505D /* ChatUserSearchController_Mock.swift */,
+				AD0169D825CAF212009EBAD2 /* CurrentChatUserController_Mock.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -3557,6 +3559,7 @@
 				793061692577B511005CF846 /* ChatChannelController_Mock.swift in Sources */,
 				793061722577BB48005CF846 /* ChatMessageController_Mock.swift in Sources */,
 				7930614E2577A1AF005CF846 /* ChatUser_Mock.swift in Sources */,
+				AD0169E625CAF235009EBAD2 /* CurrentChatUserController_Mock.swift in Sources */,
 				ADFCCD0825C9B8D70024505D /* ChannelUnreadCount_Mock.swift in Sources */,
 				79306136257798FC005CF846 /* ChatChannel_Mock.swift in Sources */,
 			);
