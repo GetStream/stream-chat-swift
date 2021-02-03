@@ -28,6 +28,9 @@
 		226C438D25802AAD008B3648 /* ChatMessageComposerInputTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 226C438C25802AAD008B3648 /* ChatMessageComposerInputTextView.swift */; };
 		22753599257C442300D1FDB6 /* ChatMessageComposerSendButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22753598257C442300D1FDB6 /* ChatMessageComposerSendButton.swift */; };
 		228190EB256733420048D7C6 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228190EA256733420048D7C6 /* UIFont+Extensions.swift */; };
+		2289852825CC0332007F2C26 /* AttachmentPayloadLink.json in Resources */ = {isa = PBXBuildFile; fileRef = 2289852525CC0331007F2C26 /* AttachmentPayloadLink.json */; };
+		2289852925CC0332007F2C26 /* AttachmentPayloadCustom.json in Resources */ = {isa = PBXBuildFile; fileRef = 2289852625CC0331007F2C26 /* AttachmentPayloadCustom.json */; };
+		2289852A25CC0332007F2C26 /* AttachmentPayloadImage.json in Resources */ = {isa = PBXBuildFile; fileRef = 2289852725CC0332007F2C26 /* AttachmentPayloadImage.json */; };
 		228C7EE52583AF4800AAE9E3 /* UITextView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228C7EE42583AF4800AAE9E3 /* UITextView+Extensions.swift */; };
 		228C7F022584132F00AAE9E3 /* ChatMessageComposerQuoteBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228C7F012584132F00AAE9E3 /* ChatMessageComposerQuoteBubbleView.swift */; };
 		228DC80E25704B410080A49F /* ChatMessageComposerImageAttachmentCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228DC80D25704B410080A49F /* ChatMessageComposerImageAttachmentCollectionViewCell.swift */; };
@@ -524,8 +527,6 @@
 		DA49713E2548AFF700AC68C2 /* AttachmentRequestBody_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA49713D2548AFF700AC68C2 /* AttachmentRequestBody_Tests.swift */; };
 		DA49714E2549C28000AC68C2 /* AttachmentDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */; };
 		DA4971542549C2A000AC68C2 /* AttachmentPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4971532549C2A000AC68C2 /* AttachmentPayload_Tests.swift */; };
-		DA49715B2549C45E00AC68C2 /* AttachmentPayload+CustomExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = DA4971592549C45E00AC68C2 /* AttachmentPayload+CustomExtraData.json */; };
-		DA49715C2549C45E00AC68C2 /* AttachmentPayload+NoExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = DA49715A2549C45E00AC68C2 /* AttachmentPayload+NoExtraData.json */; };
 		DA497180254AE0B200AC68C2 /* Attachment_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA49717A254AE08500AC68C2 /* Attachment_Tests.swift */; };
 		DA4AA3B22502718600FAAF6E /* ChannelController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B12502718600FAAF6E /* ChannelController+Combine.swift */; };
 		DA4AA3B8250271BD00FAAF6E /* CurrentUserController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B7250271BD00FAAF6E /* CurrentUserController+Combine.swift */; };
@@ -777,6 +778,9 @@
 		226C438C25802AAD008B3648 /* ChatMessageComposerInputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerInputTextView.swift; sourceTree = "<group>"; };
 		22753598257C442300D1FDB6 /* ChatMessageComposerSendButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerSendButton.swift; sourceTree = "<group>"; };
 		228190EA256733420048D7C6 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
+		2289852525CC0331007F2C26 /* AttachmentPayloadLink.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AttachmentPayloadLink.json; sourceTree = "<group>"; };
+		2289852625CC0331007F2C26 /* AttachmentPayloadCustom.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AttachmentPayloadCustom.json; sourceTree = "<group>"; };
+		2289852725CC0332007F2C26 /* AttachmentPayloadImage.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AttachmentPayloadImage.json; sourceTree = "<group>"; };
 		228C7EE42583AF4800AAE9E3 /* UITextView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextView+Extensions.swift"; sourceTree = "<group>"; };
 		228C7F012584132F00AAE9E3 /* ChatMessageComposerQuoteBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerQuoteBubbleView.swift; sourceTree = "<group>"; };
 		228DC80D25704B410080A49F /* ChatMessageComposerImageAttachmentCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerImageAttachmentCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -1290,8 +1294,6 @@
 		DA49713D2548AFF700AC68C2 /* AttachmentRequestBody_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentRequestBody_Tests.swift; sourceTree = "<group>"; };
 		DA49714D2549C28000AC68C2 /* AttachmentDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentDTO_Tests.swift; sourceTree = "<group>"; };
 		DA4971532549C2A000AC68C2 /* AttachmentPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPayload_Tests.swift; sourceTree = "<group>"; };
-		DA4971592549C45E00AC68C2 /* AttachmentPayload+CustomExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "AttachmentPayload+CustomExtraData.json"; sourceTree = "<group>"; };
-		DA49715A2549C45E00AC68C2 /* AttachmentPayload+NoExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "AttachmentPayload+NoExtraData.json"; sourceTree = "<group>"; };
 		DA49717A254AE08500AC68C2 /* Attachment_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Attachment_Tests.swift; sourceTree = "<group>"; };
 		DA4AA3B12502718600FAAF6E /* ChannelController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelController+Combine.swift"; sourceTree = "<group>"; };
 		DA4AA3B32502719700FAAF6E /* ChannelController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelController+Combine_Tests.swift"; sourceTree = "<group>"; };
@@ -2672,8 +2674,9 @@
 		DA4971652549C46400AC68C2 /* Attachment */ = {
 			isa = PBXGroup;
 			children = (
-				DA4971592549C45E00AC68C2 /* AttachmentPayload+CustomExtraData.json */,
-				DA49715A2549C45E00AC68C2 /* AttachmentPayload+NoExtraData.json */,
+				2289852625CC0331007F2C26 /* AttachmentPayloadCustom.json */,
+				2289852725CC0332007F2C26 /* AttachmentPayloadImage.json */,
+				2289852525CC0331007F2C26 /* AttachmentPayloadLink.json */,
 			);
 			path = Attachment;
 			sourceTree = "<group>";
@@ -3230,9 +3233,11 @@
 				798779FF2498E47700015F8B /* ChannelsQuery.json in Resources */,
 				8A0C3BC024C0ACAB00CAFD19 /* UserUnbanned.json in Resources */,
 				8A0C3BDC24C1F18700CAFD19 /* MessageNew.json in Resources */,
+				2289852A25CC0332007F2C26 /* AttachmentPayloadImage.json in Resources */,
 				8A62706224BE35E40040BFD6 /* UserStartTyping.json in Resources */,
 				88EA9B102547271B007EE76B /* MessageReactionPayload+CustomExtraData.json in Resources */,
 				7908824B25432CC600896F03 /* StreamChatTestPlan.xctestplan in Resources */,
+				2289852925CC0332007F2C26 /* AttachmentPayloadCustom.json in Resources */,
 				88381E77258259C70047A6A3 /* FileUploadPayload.json in Resources */,
 				8A0C3BDE24C1F18700CAFD19 /* MessageDeleted.json in Resources */,
 				88EA9B0F2547271B007EE76B /* MessageReactionPayload+NoExtraData.json in Resources */,
@@ -3243,12 +3248,12 @@
 				8A0C3BD124C1CD1C00CAFD19 /* ChannelHidden.json in Resources */,
 				8A0C3BD224C1CD1C00CAFD19 /* ChannelHiddenCleared.json in Resources */,
 				8AC9CBDD24C74DD0006E236C /* NotificationMessageNew.json in Resources */,
-				DA49715C2549C45E00AC68C2 /* AttachmentPayload+NoExtraData.json in Resources */,
 				AD7D633325AF577E0051219B /* UserUpdateResponse+MissingUser.json in Resources */,
 				8AC9CBE224C74DD0006E236C /* NotificationInviteRejected.json in Resources */,
 				8A0CC9EC24C602B600705CF9 /* MemberAdded.json in Resources */,
 				DA8407262525E90D005A0F62 /* UsersQuery.json in Resources */,
 				DA653BBA253F47EB00B448A0 /* Messages.json in Resources */,
+				2289852825CC0332007F2C26 /* AttachmentPayloadLink.json in Resources */,
 				F62BE7902506620000D13B86 /* MissingEventsPayload.json in Resources */,
 				8A0CC9F624C608C500705CF9 /* ReactionNew.json in Resources */,
 			);

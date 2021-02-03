@@ -1,0 +1,6 @@
+{
+  "type" : "party_invite",
+  "place" : "DeathStar",
+  "name" : "New Year Eve Party",
+  "guest_list" : "https:\/\/docs.google.com\/document\/guest_list_death_star",
+}
