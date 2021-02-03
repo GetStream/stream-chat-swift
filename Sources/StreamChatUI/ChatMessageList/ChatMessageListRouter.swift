@@ -25,7 +25,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMe
         rootViewController.present(popup, animated: true)
     }
     
-    open func showPreview(for attachment: _ChatMessageAttachment<ExtraData>) {
+    open func showPreview(for attachment: ChatMessageDefaultAttachment) {
         let preview = ChatMessageAttachmentPreviewVC<ExtraData>()
         preview.content = attachment.type == .file ? attachment.url : attachment.imageURL
         
@@ -33,7 +33,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMe
         rootViewController.present(navigation, animated: true)
     }
 
-    open func openLink(_ link: _ChatMessageAttachment<ExtraData>) {
+    open func openLink(_ link: ChatMessageDefaultAttachment) {
         let preview = ChatMessageAttachmentPreviewVC<ExtraData>()
         preview.content = link.url
 
