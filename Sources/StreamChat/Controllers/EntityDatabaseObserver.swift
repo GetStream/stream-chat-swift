@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -86,7 +86,11 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
     
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
     private(set) lazy var changeAggregator = ListChangeAggregator<DTO, Item>(itemCreator: itemCreator)
-        .onChange { [unowned self] listChanges in
+        .onChange { [weak self] listChanges in
+            // Ideally, this should rather be `unowned`, however, `deinit` is not always called on the same thread as this
+            // callback which can cause a race condition when the object is already being deinited on a different thread.
+            guard let self = self else { return }
+
             log.assert(listChanges.count <= 1, "EntityDatabaseObserver predicate shouldn't produce more than one change")
             if let entityChange = listChanges.first.map(EntityChange.init) {
                 self._item.reset()
@@ -133,8 +137,8 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
             cacheName: nil
         )
         
-        _item.computeValue = { [unowned self] in
-            guard let fetchedObjects = self.frc.fetchedObjects else { return nil }
+        _item.computeValue = { [weak frc] in
+            guard let fetchedObjects = frc?.fetchedObjects else { return nil }
             log.assert(
                 fetchedObjects.count <= 1,
                 "EntityDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(fetchedObjects)"
