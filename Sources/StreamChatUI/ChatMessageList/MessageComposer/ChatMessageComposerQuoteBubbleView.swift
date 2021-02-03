@@ -189,13 +189,14 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
             setAttachmentPreview(hidden: false)
             attachmentPreview.contentMode = .scaleAspectFit
         default:
-            if let previewURL = attachment.imagePreviewURL ?? attachment.imageURL {
+            let attachment = attachment as? ChatMessageDefaultAttachment
+            if let previewURL = attachment?.imagePreviewURL ?? attachment?.imageURL {
                 attachmentPreview.setImage(from: previewURL)
                 setAttachmentPreview(hidden: false)
                 attachmentPreview.contentMode = .scaleAspectFill
                 // TODO: When we will have attachment examples we will set smth
                 // different for different types.
-                if message.text.isEmpty, attachment.type == .image {
+                if message.text.isEmpty, attachment?.type == .image {
                     textView.text = "Photo"
                 }
             } else {

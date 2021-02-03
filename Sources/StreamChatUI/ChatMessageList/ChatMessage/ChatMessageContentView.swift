@@ -14,7 +14,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigPro
 
     public var onThreadTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
     public var onErrorIndicatorTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
-    public var onLinkTap: (_ChatMessageAttachment<ExtraData>?) -> Void = { _ in } {
+    public var onLinkTap: (ChatMessageDefaultAttachment?) -> Void = { _ in } {
         didSet { updateContentIfNeeded() }
     }
 
