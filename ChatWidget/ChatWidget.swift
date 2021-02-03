@@ -1,11 +1,3 @@
-//
-//  ChatWidget.swift
-//  ChatWidget
-//
-//  Created by Matheus Cardoso on 29/01/21.
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
-//
-
 import WidgetKit
 import SwiftUI
 import Intents
@@ -36,18 +28,6 @@ struct Provider: IntentTimelineProvider {
                 entries = [SimpleEntry(date: .init(), configuration: configuration, channels: channels)]
             }
         }
-        
-        
-        
-        //<-
-
-        // Generate a timeline consisting of five entries an hour apart, starting from the current date.
-        /*let currentDate = Date()
-        for hourOffset in 0 ..< 5 {
-            let entryDate = Calendar.current.date(byAdding: .hour, value: hourOffset, to: currentDate)!
-            let entry = SimpleEntry(date: entryDate, configuration: configuration)
-            entries.append(entry)
-        }*/
 
         let timeline = Timeline(entries: entries, policy: .atEnd)
         completion(timeline)
@@ -73,22 +53,17 @@ extension ChatChannel {
 }
 
 struct ChatWidgetEntryView : SwiftUI.View {
+    @Environment(\.widgetFamily) var widgetFamily
+    
     var entry: Provider.Entry
-    
-    @State var images = [
-        Image(systemName: "person"),
-        Image(systemName: "person"),
-        Image(systemName: "person"),
-        Image(systemName: "person"),
-        Image(systemName: "person"),
-        Image(systemName: "person")
-    ]
-    
-    func channelView(index: Int) -> some SwiftUI.View {
-        Link(destination: URL(string: "demoapp://\(entry.channels[index].cid.id)")!) {
+
+    func channelView(index: Int, isSmall: Bool = false) -> some SwiftUI.View {
+        let url = URL(string: "demoapp://\(entry.channels[index].cid.id)")!
+        
+        return Link(destination: url) {
             VStack {
                 Spacer().frame(height: 20)
-                images[index]
+                NetworkImage(url: entry.channels[index].imageURL)
                     .frame(width: 72, height: 72, alignment: .center)
                     .background(Color.gray.opacity(0.5))
                     .cornerRadius(36)
@@ -99,24 +74,42 @@ struct ChatWidgetEntryView : SwiftUI.View {
                     .multilineTextAlignment(.center)
                 Spacer()
             }
-        }
+        }.widgetURL(isSmall ? url : nil)
     }
 
     var body: some SwiftUI.View {
-        HStack {
-            if entry.channels.count > 0 {
-                channelView(index: 0)
-            }
-            if entry.channels.count > 1 {
-                Divider()
-                channelView(index: 1)
-            }
-            if entry.channels.count > 2 {
-                Divider()
-                channelView(index: 2)
+        VStack {
+            HStack {
+                if entry.channels.count > 0 {
+                    channelView(index: 0, isSmall: widgetFamily == .systemSmall)
+                }
+                if [.systemMedium, .systemLarge].contains(widgetFamily) {
+                    if entry.channels.count > 1 {
+                        Divider()
+                        channelView(index: 1)
+                    }
+                    if entry.channels.count > 2 {
+                        Divider()
+                        channelView(index: 2)
+                    }
+                }
             }
             
-            if entry.configuration.displ
+            if widgetFamily == .systemLarge {
+                HStack {
+                    if entry.channels.count > 3 {
+                        channelView(index: 3)
+                    }
+                    if entry.channels.count > 4 {
+                        Divider()
+                        channelView(index: 4)
+                    }
+                    if entry.channels.count > 5 {
+                        Divider()
+                        channelView(index: 5)
+                    }
+                }
+            }
         }
     }
 }
