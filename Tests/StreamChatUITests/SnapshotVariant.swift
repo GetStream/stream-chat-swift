@@ -11,12 +11,15 @@ enum SnapshotVariant: String, Hashable, CaseIterable {
     case extraExtraExtraLarge
     
     var traits: UITraitCollection {
-        let traits = [
+        var traits = [
             UITraitCollection(displayScale: 1),
-            .iPhoneXr(.portrait),
-            contentSizeCategoryTrait,
-            userInterfaceStyleTrait
+            contentSizeCategoryTrait
         ]
+        
+        if #available(iOS 12.0, *) {
+            traits.append(userInterfaceStyleTrait)
+        }
+        
         return UITraitCollection(traitsFrom: traits)
     }
     
@@ -31,6 +34,7 @@ enum SnapshotVariant: String, Hashable, CaseIterable {
         }
     }
     
+    @available(iOS 12.0, *)
     private var userInterfaceStyleTrait: UITraitCollection {
         switch self {
         case .large, .extraExtraExtraLarge:
