@@ -121,6 +121,22 @@ lane :test do |options|
     )
 end
 
+desc "Runs ui tests in Debug config"
+lane :test_ui do |options|
+
+  setCIEnvironmentVariable("../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan")
+
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "StreamChatUI",
+    testplan: "StreamChatUITestPlan",
+    configuration: "Debug",
+    clean: true,
+    devices: options[:device],
+    code_coverage: false
+    )
+end
+
 desc "Runs tests in Release config"
 lane :test_release do
 
