@@ -119,7 +119,6 @@
 		792A4F492480107A00EAF71D /* Sorting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F452480107A00EAF71D /* Sorting.swift */; };
 		792A4F4B248010A600EAF71D /* QueryOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F4A248010A600EAF71D /* QueryOptions.swift */; };
 		792A4F4D248011E500EAF71D /* ChannelListQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A4F4C248011E500EAF71D /* ChannelListQuery.swift */; };
-		792A71AD2577E0510082498D /* ChatChannelVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793061812577C557005CF846 /* ChatChannelVC_Tests.swift */; };
 		792A71E32578EF650082498D /* ChannelId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A71E22578EF650082498D /* ChannelId.swift */; };
 		792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792AF91524D812440010097B /* EntityDatabaseObserver.swift */; };
 		792B805024D95B5D00C2963E /* Cached.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792B804F24D95B5D00C2963E /* Cached.swift */; };
@@ -910,7 +909,6 @@
 		7930615F2577A39D005CF846 /* ChatMessage_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage_Mock.swift; sourceTree = "<group>"; };
 		793061682577B511005CF846 /* ChatChannelController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelController_Mock.swift; sourceTree = "<group>"; };
 		793061712577BB48005CF846 /* ChatMessageController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageController_Mock.swift; sourceTree = "<group>"; };
-		793061812577C557005CF846 /* ChatChannelVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC_Tests.swift; sourceTree = "<group>"; };
 		793061A02577C8B4005CF846 /* ChatClient_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClient_Mock.swift; sourceTree = "<group>"; };
 		7931818B24FD2660002F8C84 /* ChannelListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListController+Combine.swift"; sourceTree = "<group>"; };
 		7931818D24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListController+Combine_Tests.swift"; sourceTree = "<group>"; };
@@ -1610,7 +1608,6 @@
 				DB9A3D652582783F00555D36 /* ChatVC.swift */,
 				7908832D254876C100896F03 /* ChatChannelVC.swift */,
 				882AE056257A176A004095B3 /* ChatChannelRouter.swift */,
-				793061812577C557005CF846 /* ChatChannelVC_Tests.swift */,
 				DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */,
 				DBC8A563258113F700B20A82 /* ChatThreadVC.swift */,
 			);
@@ -3492,7 +3489,6 @@
 				AD016A1425CAFAF2009EBAD2 /* ChatChannelListVC_Tests.swift in Sources */,
 				ADFCCD7525C9D4D10024505D /* AssertSnapshot.swift in Sources */,
 				795296C12582494000435B2E /* UIConfigProvider_Tests.swift in Sources */,
-				792A71AD2577E0510082498D /* ChatChannelVC_Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
