@@ -41,6 +41,11 @@ Get next PR number from github to be used in CHANGELOG
 fastlane test
 ```
 Runs tests in Debug config
+### test_ui
+```
+fastlane test_ui
+```
+Runs ui tests in Debug config
 ### test_release
 ```
 fastlane test_release
