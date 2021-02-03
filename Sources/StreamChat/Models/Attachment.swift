@@ -4,82 +4,55 @@
 
 import Foundation
 
-/// A type representing a chat message attachment. `ChatMessageAttachment` is an immutable snapshot of a
-/// chat message attachment entity at the given time.
-///
-/// - Note: `ChatMessageAttachment` is a typealias of `_ChatMessageAttachment` with default extra data.
-/// If you're using custom extra data, create your own typealias of `_ChatMessageAttachment`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public typealias ChatMessageAttachment = _ChatMessageAttachment<NoExtraData>
-
-extension _ChatMessageAttachment {
-    /// A type designed to combine all the information required to create `_ChatMessageAttachment`.
-    public struct Seed: Hashable {
-        /// A local url the data for uploading will be taken from.
-        /// When an attachment in uploaded and a message is sent the `localURL` of resulting
-        /// `_ChatMessageAttachment` will be equal to this value.
-        public let localURL: URL
-        /// When the attachment is created the filename will be available under `_ChatMessageAttachment.title` field.
-        /// A `localURL.lastPathComponent` might be a good option.
-        public let fileName: String
-        /// An attachment type (see `AttachmentType`).
-        public let type: AttachmentType
-        /// An extra data for the attachment.
-        public let extraData: ExtraData.Attachment
-
-        var file: AttachmentFile {
-            let fileType = AttachmentFileType(ext: localURL.pathExtension)
-            return .init(
-                type: fileType,
-                size: localURL.fileSize,
-                mimeType: fileType.mimeType
-            )
-        }
-
-        /// Creates a new `_ChatMessageAttachment<ExtraData>.Seed` instance
-        /// - Parameters:
-        ///   - localURL: The local file URL the attachment will be uploaded from.
-        ///   - fileName: The filename. Once attachment is uploaded this value will
-        ///   be available under `_ChatMessageAttachment.title` field. If `nil` is provided the `localURL.lastPathComponent`
-        ///   will be used.
-        ///   - type: The attachment type. Attachment rendering will be chosen based on it type.
-        ///   - extraData: The extra data which can be used to include additional information about the attachment
-        /// used in client application.
-        public init(
-            localURL: URL,
-            fileName: String? = nil,
-            type: AttachmentType,
-            extraData: ExtraData.Attachment = .defaultValue
-        ) {
-            self.localURL = localURL
-            self.fileName = fileName ?? localURL.lastPathComponent
-            self.type = type
-            self.extraData = extraData
-        }
-    }
+/// A protocol for attachment model objects that are created from database `AttachmentDTO` objects and exposed.
+public protocol ChatMessageAttachment {
+    var type: AttachmentType { get }
+    var id: AttachmentId? { get }
 }
 
-/// A type representing a chat message attachment. `_ChatMessageAttachment` is an immutable snapshot of a
-/// chat message attachment entity at the given time.
-///
-/// - Note: `_ChatMessageAttachment` type is not meant to be used directly. If you're using default extra data,
-/// use`ChatMessageAttachment` typealias instead. If you're using custom extra data,
-/// create your own typealias of `_ChatMessageAttachment`.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-@dynamicMemberLookup
-public struct _ChatMessageAttachment<ExtraData: ExtraDataTypes>: Hashable {
+/// A protocol for attachment objects being manipulated outside the SDK and can be sent to backend without prior uploading.
+public protocol AttachmentEnvelope: Encodable {
+    var type: AttachmentType { get }
+}
+
+/// A type for custom attachment types introduced outside the SDK that will be exposed in `_ChatMessage<ExtraData: ExtraDataTypes>`
+/// `data` property contains raw JSON data received from backend.
+/// In order to transform this to attachment of your concrete type you should introduce custom attachment type and decode it from
+/// `data` using `Decodable` protocol.
+public struct ChatMessageRawAttachment: ChatMessageAttachment {
+    public let id: AttachmentId?
+    public let type: AttachmentType
+    public let data: Data?
+}
+
+/// A type for default built-in attachment types. Used for both exposing it in `_ChatMessage<ExtraData: ExtraDataTypes>` and
+/// sending back to backend if attachment doesn't need prior uploading. (Public sending API is in progress)
+public struct ChatMessageDefaultAttachment: ChatMessageAttachment, AttachmentEnvelope, Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case title
+        case author = "author_name"
+        case text
+        case type
+        case image
+        case url
+        case name
+        case titleLink = "title_link"
+        case thumbURL = "thumb_url"
+        case fallback
+        case imageURL = "image_url"
+        case assetURL = "asset_url"
+        case ogURL = "og_scrape_url"
+        case actions
+    }
+
     /// A unique identifier of the attachment.
-    public let id: AttachmentId
+    public var id: AttachmentId?
     /// When a new attachment is created, this value contains the URL of the source from which the attachment
     /// data are uploaded to the server. For already sent attachments this value is usually `nil`. This value is
     /// device-specific and is not synced with other devices.
-    public let localURL: URL?
+    public var localURL: URL?
     /// A local attachment state
-    public let localState: LocalAttachmentState?
+    public var localState: LocalAttachmentState?
     /// A title for the attachment.
     public let title: String
     /// An author generated by backend after enriching URL. (e.g `YouTube`)
@@ -90,45 +63,146 @@ public struct _ChatMessageAttachment<ExtraData: ExtraDataTypes>: Hashable {
     public let type: AttachmentType
     /// Actions from a command (see `Action`, `Command`).
     public let actions: [AttachmentAction]
-    /// A URL. Depends on type of the attachment (e.g. some asset URL, enriched URL, title URL)
-    public let url: URL?
+    /// A URL. Depends on type of the attachment (e.g. some asset URL, enriched URL, tappable title URL)
+    public var url: URL?
     /// An image URL.
-    public let imageURL: URL?
+    public var imageURL: URL?
     /// An image preview URL.
     public let imagePreviewURL: URL?
     /// A file description (see `AttachmentFile`).
     public let file: AttachmentFile?
-    /// An extra data for the attachment.
-    public let extraData: ExtraData.Attachment
     
-    public init(
+    init(
         id: AttachmentId,
+        type: AttachmentType,
         localURL: URL?,
         localState: LocalAttachmentState?,
         title: String,
-        author: String?,
-        text: String?,
-        type: AttachmentType,
-        actions: [AttachmentAction],
-        url: URL?,
-        imageURL: URL?,
-        imagePreviewURL: URL?,
-        file: AttachmentFile?,
-        extraData: ExtraData.Attachment
+        file: AttachmentFile? = nil
     ) {
         self.id = id
-        self.localURL = localURL
-        self.localState = localState
-        self.title = title
-        self.author = author
-        self.text = text
         self.type = type
-        self.actions = actions
-        self.url = url
-        self.imageURL = imageURL
-        self.imagePreviewURL = imagePreviewURL
+        self.localState = localState
+        self.localURL = localURL
+        self.title = title
         self.file = file
-        self.extraData = extraData
+        author = nil
+        text = nil
+        actions = []
+        imagePreviewURL = nil
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let author = try container.decodeIfPresent(String.self, forKey: .author)
+        self.author = author
+        text = try container.decodeIfPresent(String.self, forKey: .text)?.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        title = (
+            try container.decodeIfPresent(String.self, forKey: .title)
+                ?? container.decodeIfPresent(String.self, forKey: .fallback)
+                ?? container.decodeIfPresent(String.self, forKey: .name)
+                ?? ""
+        ).trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        // Parse imageURL.
+        imageURL = ChatMessageDefaultAttachment.fixedURL(
+            try container.decodeIfPresent(String.self, forKey: .image)
+                ?? container.decodeIfPresent(String.self, forKey: .imageURL)
+                ?? container.decodeIfPresent(String.self, forKey: .thumbURL)
+        )
+        
+        imagePreviewURL = ChatMessageDefaultAttachment.fixedURL(
+            try container.decodeIfPresent(String.self, forKey: .thumbURL)
+        )
+        
+        // Parse URL.
+        url = ChatMessageDefaultAttachment.fixedURL(
+            try container.decodeIfPresent(String.self, forKey: .assetURL)
+                ?? container.decodeIfPresent(String.self, forKey: .url)
+                ?? container.decodeIfPresent(String.self, forKey: .titleLink)
+                ?? container.decodeIfPresent(String.self, forKey: .ogURL)
+        )
+        
+        let type: AttachmentType
+        let itWasLinkOriginally = container.contains(.ogURL)
+        if itWasLinkOriginally {
+            type = .link
+        } else {
+            type = AttachmentType(rawValue: try? container.decode(String.self, forKey: .type))
+        }
+        // compiler is confused by expression unless we use helper variable for type
+        self.type = type
+        
+        file = (type == .file || type == .video) ? try AttachmentFile(from: decoder) : nil
+        actions = try container.decodeIfPresent([AttachmentAction].self, forKey: .actions) ?? []
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(type, forKey: .type)
+        try container.encodeIfPresent(title, forKey: (type == .image ? .fallback : .title))
+        try container.encodeIfPresent(url, forKey: .assetURL)
+        try container.encodeIfPresent(imageURL, forKey: .imageURL)
+        try file?.encode(to: encoder)
+    }
+    
+    /// Helper function to unify URL format for links coming from backend.
+    private static func fixedURL(_ urlString: String?) -> URL? {
+        guard let string = urlString else {
+            return nil
+        }
+        
+        var urlString = string
+        
+        if urlString.hasPrefix("//") {
+            urlString = "https:\(urlString)"
+        }
+        
+        if !urlString.lowercased().hasPrefix("http") {
+            urlString = "https://\(urlString)"
+        }
+        
+        return URL(string: urlString)
+    }
+}
+
+/// A type designed to combine all the information required to create new attachment that needs to be uploaded before sending.
+public struct ChatMessageAttachmentSeed: Hashable {
+    /// A local url the data for uploading will be taken from.
+    /// When an attachment in uploaded and a message is sent the `localURL` of resulting
+    /// `_ChatMessageAttachment` will be equal to this value.
+    public let localURL: URL
+    /// When the attachment is created the filename will be available under `_ChatMessageAttachment.title` field.
+    /// A `localURL.lastPathComponent` might be a good option.
+    public let fileName: String
+    /// An attachment type (see `AttachmentType`).
+    public let type: AttachmentType
+
+    var file: AttachmentFile {
+        let fileType = AttachmentFileType(ext: localURL.pathExtension)
+        return .init(
+            type: fileType,
+            size: localURL.fileSize,
+            mimeType: fileType.mimeType
+        )
+    }
+
+    /// Creates a new `ChatMessageAttachmentSeed` instance
+    /// - Parameters:
+    ///   - localURL: The local file URL the attachment will be uploaded from.
+    ///   - fileName: The filename. Once attachment is uploaded this value will
+    ///   be available under `_ChatMessageAttachment.title` field. If `nil` is provided the `localURL.lastPathComponent`
+    ///   will be used.
+    ///   - type: The attachment type. Attachment rendering will be chosen based on it type.
+    public init(
+        localURL: URL,
+        fileName: String? = nil,
+        type: AttachmentType
+    ) {
+        self.localURL = localURL
+        self.fileName = fileName ?? localURL.lastPathComponent
+        self.type = type
     }
 }
 
@@ -365,19 +439,6 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         }
         
         return AttachmentFileType.mimeTypes.first(where: { $1 == self })?.key ?? "application/octet-stream"
-    }
-}
-
-/// You need to make your custom type conforming to this protocol if you want to use it for extending
-/// `ChatMessageAttachment` entity with your custom additional data.
-///
-/// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
-///
-public protocol AttachmentExtraData: ExtraData {}
-
-public extension _ChatMessageAttachment {
-    subscript<T>(dynamicMember keyPath: KeyPath<ExtraData.Attachment, T>) -> T {
-        extraData[keyPath: keyPath]
     }
 }
 
