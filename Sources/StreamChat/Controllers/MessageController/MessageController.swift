@@ -204,7 +204,7 @@ public extension _ChatMessageController {
         text: String,
 //        command: String? = nil,
 //        arguments: String? = nil,
-        attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
+        attachments: [ChatMessageAttachmentSeed] = [],
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,

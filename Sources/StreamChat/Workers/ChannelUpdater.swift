@@ -101,7 +101,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         text: String,
         command: String?,
         arguments: String?,
-        attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
+        attachments: [ChatMessageAttachmentSeed] = [],
         quotedMessageId: MessageId?,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
