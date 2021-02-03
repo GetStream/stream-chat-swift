@@ -54,16 +54,16 @@ extension CurrentUserDatabaseSession {
 protocol MessageDatabaseSession {
     /// Creates a new `MessageDTO` object in the database. Throws an error if the message fails to be created.
     @discardableResult
-    func createNewMessage<ExtraData: ExtraDataTypes>(
+    func createNewMessage<ExtraData: MessageExtraData>(
         in cid: ChannelId,
         text: String,
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
-        attachments: [_ChatMessageAttachment<ExtraData>.Seed],
+        attachments: [ChatMessageAttachmentSeed],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
-        extraData: ExtraData.Message
+        extraData: ExtraData
     ) throws -> MessageDTO
     
     /// Saves the provided message payload to the DB. Return's the matching `MessageDTO` if the save was successful.
@@ -100,12 +100,12 @@ protocol MessageDatabaseSession {
 extension MessageDatabaseSession {
     /// Creates a new `MessageDTO` object in the database. Throws an error if the message fails to be created.
     @discardableResult
-    func createNewMessage<ExtraData: ExtraDataTypes>(
+    func createNewMessage<ExtraData: MessageExtraData>(
         in cid: ChannelId,
         text: String,
         quotedMessageId: MessageId?,
-        attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
-        extraData: ExtraData.Message = .defaultValue
+        attachments: [ChatMessageAttachmentSeed] = [],
+        extraData: ExtraData = .defaultValue
     ) throws -> MessageDTO {
         try createNewMessage(
             in: cid,
@@ -185,16 +185,16 @@ protocol AttachmentDatabaseSession {
     /// Creates a new `AttachmentDTO` object in the database with the given `payload` for the message
     /// with the given `messageId` in the channel with the given `cid`.
     @discardableResult
-    func saveAttachment<ExtraData: AttachmentExtraData>(
-        payload: AttachmentPayload<ExtraData>,
+    func saveAttachment(
+        payload: AttachmentPayload,
         id: AttachmentId
     ) throws -> AttachmentDTO
     
     /// Creates a new `AttachmentDTO` object in the database from the given model for the message
     /// with the given `messageId` in the channel with the given `cid`.
     @discardableResult
-    func createNewAttachment<ExtraData: ExtraDataTypes>(
-        seed: _ChatMessageAttachment<ExtraData>.Seed,
+    func createNewAttachment(
+        seed: ChatMessageAttachmentSeed,
         id: AttachmentId
     ) throws -> AttachmentDTO
 }
