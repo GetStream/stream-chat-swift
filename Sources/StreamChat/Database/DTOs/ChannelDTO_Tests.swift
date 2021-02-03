@@ -582,6 +582,4 @@ extension XCTestCase {
         
         return payload
     }
-    
-    var dummyNoExtraDataAttachment: _ChatMessageAttachment<NoExtraDataTypes> { .dummy() }
 }

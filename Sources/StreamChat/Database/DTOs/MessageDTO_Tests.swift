@@ -327,7 +327,10 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
         XCTAssertEqual(loadedMessage.latestReactions, latestReactions)
         XCTAssertEqual(loadedMessage.currentUserReactions, currentUserReactions)
-        XCTAssertEqual(loadedMessage.attachments, messagePayload.attachments(cid: channelId))
+        XCTAssertEqual(
+            loadedMessage.attachments.map { ($0 as? ChatMessageDefaultAttachment)?.id },
+            messagePayload.attachmentIDs(cid: channelId)
+        )
     }
     
     func test_newMessage_asRequestBody() throws {
@@ -348,7 +351,7 @@ class MessageDTO_Tests: XCTestCase {
         let messageText: String = .unique
         let messageCommand: String = .unique
         let messageArguments: String = .unique
-        let messageAttachmentSeeds: [ChatMessageAttachment.Seed] = [.dummy(), .dummy(), .dummy()]
+        let messageAttachmentSeeds: [ChatMessageAttachmentSeed] = [.dummy(), .dummy(), .dummy()]
         let messageShowReplyInChannel = true
         let messageExtraData: NoExtraData = .defaultValue
 
@@ -383,7 +386,11 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.extraData, messageExtraData)
 
         // Assert attachments are in correct order.
-        XCTAssertEqual(requestBody.attachments.map(\.title), messageAttachmentSeeds.map(\.fileName))
+        let attachmentsTitles: [String] = requestBody.attachments.compactMap { rawJSON -> String? in
+            (rawJSON as? RawJSON)?.dictionary?["fallback"]?.string
+        }
+        
+        XCTAssertEqual(attachmentsTitles, messageAttachmentSeeds.map(\.fileName))
     }
     
     func test_additionalLocalState_isStored() {
@@ -460,7 +467,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
-                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
+                    attachments: [ChatMessageAttachmentSeed](),
                     showReplyInChannel: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -475,7 +482,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
-                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
+                    attachments: [ChatMessageAttachmentSeed](),
                     showReplyInChannel: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -670,7 +677,7 @@ class MessageDTO_Tests: XCTestCase {
         let newMessageCommand: String = .unique
         let newMessageArguments: String = .unique
         let newMessageParentMessageId: String = .unique
-        let newMessageAttachmentSeeds: [_ChatMessageAttachment<NoExtraDataTypes>.Seed] = [
+        let newMessageAttachmentSeeds: [ChatMessageAttachmentSeed] = [
             .dummy(),
             .dummy()
         ]
@@ -707,10 +714,8 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.locallyCreatedAt)
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.updatedAt)
         XCTAssertEqual(
-            loadedMessage.attachments,
-            newMessageAttachmentSeeds.enumerated().map { index, seed in
-                .init(cid: cid, messageId: newMessageId, index: index, seed: seed, localState: .pendingUpload)
-            }
+            loadedMessage.attachments.map { ($0 as? ChatMessageDefaultAttachment)?.title },
+            newMessageAttachmentSeeds.map(\.fileName)
         )
     }
     
@@ -723,7 +728,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
-                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
+                    attachments: [ChatMessageAttachmentSeed](),
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -755,7 +760,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
-                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
+                    attachments: [ChatMessageAttachmentSeed](),
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -784,7 +789,7 @@ class MessageDTO_Tests: XCTestCase {
         // Create a new message
         var newMessageId: MessageId!
         let newMessageText: String = .unique
-        let newMessageAttachmentSeeds: [_ChatMessageAttachment<NoExtraDataTypes>.Seed] = []
+        let newMessageAttachmentSeeds: [ChatMessageAttachmentSeed] = []
                 
         try database.writeSynchronously { session in
             let messageDTO = try session.createNewMessage(
@@ -826,7 +831,7 @@ class MessageDTO_Tests: XCTestCase {
                 command: nil,
                 arguments: nil,
                 parentMessageId: messageId,
-                attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
+                attachments: [ChatMessageAttachmentSeed](),
                 showReplyInChannel: false,
                 quotedMessageId: nil,
                 extraData: NoExtraData.defaultValue
@@ -894,7 +899,7 @@ class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             for id in attachmentIDs {
                 try session.createNewAttachment(
-                    seed: ChatMessageAttachment.Seed.dummy(),
+                    seed: ChatMessageAttachmentSeed.dummy(),
                     id: id
                 )
             }
@@ -915,5 +920,25 @@ class MessageDTO_Tests: XCTestCase {
         }
 
         XCTAssertEqual(loadedAttachments.count, 0)
+    }
+}
+
+private extension RawJSON {
+    var string: String? {
+        switch self {
+        case let .string(value):
+            return value
+        default:
+            return nil
+        }
+    }
+
+    var dictionary: [String: RawJSON]? {
+        switch self {
+        case let .dictionary(value):
+            return value
+        default:
+            return nil
+        }
     }
 }

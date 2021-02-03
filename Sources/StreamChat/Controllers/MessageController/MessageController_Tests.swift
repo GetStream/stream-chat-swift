@@ -620,7 +620,7 @@ final class MessageController_Tests: StressTestCase {
         let showReplyInChannel = true
         let quotedMessageId: MessageId = .unique
         let extraData: NoExtraData = .defaultValue
-        let attachments: [ChatMessageAttachment.Seed] = [
+        let attachments: [ChatMessageAttachmentSeed] = [
             .dummy(),
             .dummy(),
             .dummy()

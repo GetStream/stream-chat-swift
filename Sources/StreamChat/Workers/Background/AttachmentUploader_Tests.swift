@@ -11,7 +11,7 @@ final class AttachmentUploader_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
-    var uploader: AttachmentUploader<ExtraData>!
+    var uploader: AttachmentUploader!
 
     // MARK: - Setup
 
@@ -51,7 +51,7 @@ final class AttachmentUploader_Tests: StressTestCase {
         for (index, attachmentType) in [AttachmentType.image, .file].enumerated() {
             let localURL = Bundle(for: MockNetworkURLProtocol.self).url(forResource: "FileUploadPayload", withExtension: "json")!
             let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: index)
-            let attachmentSeed = ChatMessageAttachment.Seed.dummy(localURL: localURL, type: attachmentType)
+            let attachmentSeed = ChatMessageAttachmentSeed.dummy(localURL: localURL, type: attachmentType)
 
             // Seed attachment in `.pendingUpload` state to the database.
             try database.writeSynchronously { session in
@@ -83,11 +83,25 @@ final class AttachmentUploader_Tests: StressTestCase {
 
             AssertAsync {
                 // Assert attachment state eventually becomes `.uploaded`.
-                Assert.willBeEqual(attachment.localState, .uploaded)
+                Assert.willBeEqual(
+                    (attachment.asModel() as? ChatMessageDefaultAttachment)?.localState,
+                    .uploaded
+                )
                 // Assert `attachment.imageURL` is set if attachment type is `.image`.
-                Assert.willBeEqual(attachment.imageURL, attachmentType == .image ? payload.file : nil)
+                Assert.willBeEqual(
+                    originalURLString((attachment.asModel() as? ChatMessageDefaultAttachment)?.imageURL),
+                    attachmentType == .image ? payload.file.absoluteString : nil
+                )
                 // Assert `attachment.url` is set if attachment type is not `.image`.
-                Assert.willBeEqual(attachment.url, attachmentType == .image ? nil : payload.file)
+                Assert.willBeEqual(
+                    originalURLString((attachment.asModel() as? ChatMessageDefaultAttachment)?.url),
+                    attachmentType == .image ? nil : payload.file.absoluteString
+                )
+            }
+            
+            // In ChatMessageDefaultAttachment we have private func `fixedURL` that modifies `http` part of the URL
+            func originalURLString(_ url: URL?) -> String? {
+                url?.absoluteString.replacingOccurrences(of: "https://", with: "")
             }
         }
     }
@@ -113,7 +127,7 @@ final class AttachmentUploader_Tests: StressTestCase {
         try database.writeSynchronously { session in
             for index in (0..<localStates.count) {
                 let id = AttachmentId(cid: cid, messageId: messageId, index: index)
-                let seed = ChatMessageAttachment.Seed.dummy(
+                let seed = ChatMessageAttachmentSeed.dummy(
                     localURL: Bundle(for: MockNetworkURLProtocol.self).url(forResource: "FileUploadPayload", withExtension: "json")!
                 )
 
@@ -129,7 +143,7 @@ final class AttachmentUploader_Tests: StressTestCase {
     func test_uploader_changesAttachmentState_whenLocalURLIsInvalid() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let attachmentSeed = ChatMessageAttachment.Seed.dummy(localURL: .unique())
+        let attachmentSeed = ChatMessageAttachmentSeed.dummy(localURL: .unique())
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
         // Create channel in the database.
@@ -158,7 +172,7 @@ final class AttachmentUploader_Tests: StressTestCase {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
-        let attachmentSeed = ChatMessageAttachment.Seed.dummy(
+        let attachmentSeed = ChatMessageAttachmentSeed.dummy(
             localURL: Bundle(for: MockNetworkURLProtocol.self).url(forResource: "FileUploadPayload", withExtension: "json")!
         )
 
