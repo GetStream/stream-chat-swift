@@ -325,17 +325,18 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         )
     }
 
-    private func didTapOnAttachment(_ attachment: _ChatMessageAttachment<ExtraData>, in message: _ChatMessage<ExtraData>) {
+    private func didTapOnAttachment(_ attachment: ChatMessageDefaultAttachment, in message: _ChatMessage<ExtraData>) {
         switch attachment.localState {
         case .uploadingFailed:
+            guard let id = attachment.id else { return }
             let messageController = dataSource.controllerForMessage(self, message)
-            messageController.restartFailedAttachmentUploading(with: attachment.id)
+            messageController.restartFailedAttachmentUploading(with: id)
         default:
             router.showPreview(for: attachment)
         }
     }
 
-    private func didTapOnLink(_ link: _ChatMessageAttachment<ExtraData>) {
+    private func didTapOnLink(_ link: ChatMessageDefaultAttachment) {
         router.openLink(link)
     }
 }

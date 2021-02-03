@@ -12,7 +12,7 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProv
         didSet { updateContentIfNeeded() }
     }
 
-    public var onLinkTap: (_ChatMessageAttachment<ExtraData>?) -> Void = { _ in }
+    public var onLinkTap: (ChatMessageDefaultAttachment?) -> Void = { _ in }
     
     // MARK: - Subviews
 
@@ -225,12 +225,12 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProv
 
         attachmentsView.content = message.flatMap {
             .init(
-                attachments: $0.attachments,
+                attachments: $0.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
                 didTapOnAttachment: message?.didTapOnAttachment,
                 didTapOnAttachmentAction: message?.didTapOnAttachmentAction
             )
         }
-        linkPreviewView.content = message?.attachments.first { $0.type == .link }
+        linkPreviewView.content = message?.attachments.first { $0.type == .link } as? ChatMessageDefaultAttachment
 
         attachmentsView.isVisible = layoutOptions.contains(.attachments)
         linkPreviewView.isVisible = layoutOptions.contains(.linkPreview)

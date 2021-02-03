@@ -373,7 +373,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
         }
     }
     
-    open var attachmentSeeds: [_ChatMessageAttachment<ExtraData>.Seed] {
+    open var attachmentSeeds: [ChatMessageAttachmentSeed] {
         switch selectedAttachments {
         case .media:
             return imageAttachments.map {

@@ -7,14 +7,14 @@ import StreamChat
 public typealias ChatMessageAttachmentListViewData = _ChatMessageAttachmentListViewData<NoExtraData>
 
 public struct _ChatMessageAttachmentListViewData<ExtraData: ExtraDataTypes> {
-    public let attachments: [_ChatMessageAttachment<ExtraData>]
-    public let didTapOnAttachment: ((_ChatMessageAttachment<ExtraData>) -> Void)?
-    public let didTapOnAttachmentAction: ((_ChatMessageAttachment<ExtraData>, AttachmentAction) -> Void)?
+    public let attachments: [ChatMessageDefaultAttachment]
+    public let didTapOnAttachment: ((ChatMessageDefaultAttachment) -> Void)?
+    public let didTapOnAttachmentAction: ((ChatMessageDefaultAttachment, AttachmentAction) -> Void)?
 
     public init(
-        attachments: [_ChatMessageAttachment<ExtraData>],
-        didTapOnAttachment: ((_ChatMessageAttachment<ExtraData>) -> Void)?,
-        didTapOnAttachmentAction: ((_ChatMessageAttachment<ExtraData>, AttachmentAction) -> Void)?
+        attachments: [ChatMessageDefaultAttachment],
+        didTapOnAttachment: ((ChatMessageDefaultAttachment) -> Void)?,
+        didTapOnAttachmentAction: ((ChatMessageDefaultAttachment, AttachmentAction) -> Void)?
     ) {
         self.attachments = attachments
         self.didTapOnAttachment = didTapOnAttachment
@@ -38,7 +38,7 @@ public struct _ChatMessageAttachmentListViewData<ExtraData: ExtraDataTypes> {
 
 extension _ChatMessageAttachmentListViewData {
     public struct ItemData {
-        public let attachment: _ChatMessageAttachment<ExtraData>
+        public let attachment: ChatMessageDefaultAttachment
         public let didTapOnAttachment: () -> Void
         public let didTapOnAttachmentAction: (AttachmentAction) -> Void
     }

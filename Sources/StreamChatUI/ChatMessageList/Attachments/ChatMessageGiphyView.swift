@@ -10,7 +10,7 @@ import UIKit
 public typealias ChatMessageGiphyView = _ChatMessageGiphyView<NoExtraData>
 
 open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    public var content: _ChatMessageAttachment<ExtraData>? {
+    public var content: ChatMessageDefaultAttachment? {
         didSet {
             let isDifferentImage = oldValue?.imageURL != content?.imageURL
             guard hasFailed || isDifferentImage else { return }
