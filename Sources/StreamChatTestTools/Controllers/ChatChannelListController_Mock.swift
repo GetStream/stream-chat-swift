@@ -12,8 +12,8 @@ public class ChatChannelListController_Mock<ExtraData: ExtraDataTypes>: _ChatCha
     }
     
     public private(set) var channels_mock: [_ChatChannel<ExtraData>]?
-    override public var channels: [_ChatChannel<ExtraData>] {
-        channels_mock ?? super.channels
+    override public var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> {
+        channels_mock.map { $0.lazyCachedMap { $0 } } ?? super.channels
     }
     
     public private(set) var state_mock: State?
