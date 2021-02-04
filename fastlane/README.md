@@ -61,6 +61,11 @@ Runs stress tests for v3 in Release config
 fastlane build_sample
 ```
 Builds v3 Sample app
+### spm_integration
+```
+fastlane spm_integration
+```
+Test SPM Integration
 
 ----
 
