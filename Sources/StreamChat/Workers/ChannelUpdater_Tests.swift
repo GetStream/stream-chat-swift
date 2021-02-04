@@ -131,7 +131,8 @@ class ChannelUpdater_Tests: StressTestCase {
         let text: String = .unique
         let command: String = .unique
         let arguments: String = .unique
-        let attachments: [ChatMessageAttachmentSeed] = [.dummy(), .dummy(), .dummy()]
+        let attachments: [TestAttachmentEnvelope] = [.init(), .init(), .init()]
+        let attachmentSeeds: [ChatMessageAttachmentSeed] = [.dummy(), .dummy(), .dummy()]
         let extraData: NoExtraData = .defaultValue
         
         // Create new message
@@ -142,6 +143,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 command: command,
                 arguments: arguments,
                 attachments: attachments,
+                attachmentSeeds: attachmentSeeds,
                 quotedMessageId: nil,
                 extraData: extraData
             ) { result in
@@ -163,7 +165,11 @@ class ChannelUpdater_Tests: StressTestCase {
             Assert.willBeEqual(message?.arguments, arguments)
             Assert.willBeEqual(
                 message?.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
-                attachments.map(\.fileName)
+                attachmentSeeds.map(\.fileName)
+            )
+            Assert.willBeEqual(
+                message?.attachments.compactMap { ($0 as? ChatMessageRawAttachment)?.data },
+                attachments.map { try? JSONEncoder.stream.encode($0) }
             )
             Assert.willBeEqual(message?.extraData, extraData)
             Assert.willBeEqual(message?.localState, .pendingSend)
