@@ -232,7 +232,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
-        attachments: [ChatMessageAttachmentSeed],
+        attachments: [AttachmentEnvelope],
+        attachmentSeeds: [ChatMessageAttachmentSeed],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData
@@ -260,13 +261,21 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.extraData = try JSONEncoder.default.encode(extraData)
         message.isSilent = false
         message.reactionScores = [:]
-        message.attachments = try Set(
-            attachments.enumerated().map { index, seed in
-                let id = AttachmentId(cid: cid, messageId: message.id, index: index)
-                let dto = try createNewAttachment(seed: seed, id: id)
-                return dto
-            }
-        )
+        
+        let attachmentDTOsFromSeeds: [AttachmentDTO] = try attachmentSeeds.enumerated().map { index, seed in
+            let id = AttachmentId(cid: cid, messageId: message.id, index: index)
+            let dto = try createNewAttachment(seed: seed, id: id)
+            return dto
+        }
+        
+        let attachmentDTOsFromAttachments: [AttachmentDTO] = try attachments.enumerated().map { index, attachment in
+            let id = AttachmentId(cid: cid, messageId: message.id, index: index + attachmentSeeds.count)
+            let dto = try createNewAttachment(attachment: attachment, id: id)
+            return dto
+        }
+        
+        message.attachments = Set(attachmentDTOsFromSeeds + attachmentDTOsFromAttachments)
+                
         message.showReplyInChannel = showReplyInChannel
         message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
         
@@ -485,7 +494,7 @@ private extension _ChatMessage {
                 let index2 = $1.id?.index ?? Int.max
                 return index1 < index2
             }
-        
+
         quotedMessageId = dto.quotedMessage.map(\.id)
     }
 }
