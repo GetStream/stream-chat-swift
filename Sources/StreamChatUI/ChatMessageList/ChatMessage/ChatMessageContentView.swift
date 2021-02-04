@@ -282,3 +282,22 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigPro
         onThreadTap(message)
     }
 }
+
+public typealias ChatMessageAttachmentContentView = _ChatMessageAttachmentContentView<NoExtraData>
+
+open class _ChatMessageAttachmentContentView<ExtraData: ExtraDataTypes>: _ChatMessageContentView<ExtraData> {
+    private var _messageAttachmentBubbleView: _ChatMessageAttachmentBubbleView<ExtraData>?
+    
+    override public var messageBubbleView: _ChatMessageBubbleView<ExtraData> {
+        if let messageBubbleView = _messageAttachmentBubbleView {
+            return messageBubbleView
+        } else {
+            _messageAttachmentBubbleView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .attachmentBubbleView.init()
+                .withoutAutoresizingMaskConstraints
+            return _messageAttachmentBubbleView!
+        }
+    }
+}

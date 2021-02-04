@@ -17,6 +17,8 @@ public extension _UIConfig {
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
         public var channelNamer: ChatChannelNamer.Type = ChatChannelNamer.self
         public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
+        public var messageAttachmentContentView: _ChatMessageAttachmentContentView<ExtraData>
+            .Type = _ChatMessageAttachmentContentView<ExtraData>.self
         public var messageContentSubviews = MessageContentViewSubviews()
         public var messageActionsSubviews = MessageActionsSubviews()
         public var messageReactions = MessageReactions()
