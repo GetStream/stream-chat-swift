@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### ✅ Added
 - Add support for custom attachment types with unknown structure
     [#795](https://github.com/GetStream/stream-chat-swift/pull/795)
+- Add possibility to send attachments that don't need prior uploading
+    [#799](https://github.com/GetStream/stream-chat-swift/pull/799)
 
 ### 🔄 Changed
 - Improve serialization performance by exposing items as `LazyCachedMapCollection` instead of `Array` [#776](https://github.com/GetStream/stream-chat-swift/pull/776)
