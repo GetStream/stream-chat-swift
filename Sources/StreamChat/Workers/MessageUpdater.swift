@@ -122,7 +122,8 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
     ///   - parentMessageId: The `MessageId` of the message this message replies to.
-    ///   - attachments: An array of the attachments for the message.
+    ///   - attachments: An array of the attachments for the message that already uploaded or doesn't need uploading.
+    ///   - attachmentSeeds: An array of the attachments that needs to be uploaded before sending.
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
     ///   in the response thread.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
@@ -135,7 +136,8 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         command: String?,
         arguments: String?,
         parentMessageId: MessageId,
-        attachments: [ChatMessageAttachmentSeed],
+        attachments: [AttachmentEnvelope],
+        attachmentSeeds: [ChatMessageAttachmentSeed],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData.Message,
@@ -150,6 +152,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                 arguments: arguments,
                 parentMessageId: parentMessageId,
                 attachments: attachments,
+                attachmentSeeds: attachmentSeeds,
                 showReplyInChannel: showReplyInChannel,
                 quotedMessageId: quotedMessageId,
                 extraData: extraData
