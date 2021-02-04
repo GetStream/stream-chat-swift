@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -17,8 +17,8 @@ public class ChatMessageController_Mock<ExtraData: ExtraDataTypes>: _ChatMessage
     }
 
     public private(set) var replies_mock: [_ChatMessage<ExtraData>]?
-    override public var replies: [_ChatMessage<ExtraData>] {
-        replies_mock ?? super.replies
+    override public var replies: LazyCachedMapCollection<_ChatMessage<ExtraData>> {
+        replies_mock.map { $0.lazyCachedMap { $0 } } ?? super.replies
     }
 
     public private(set) var state_mock: State?
