@@ -93,6 +93,36 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(defaultAttachmentModel.file, attachment.decodedDefaultAttachment?.file)
     }
     
+    func test_attachmentEnvelope_isStoredAndLoadedFromDB() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        let attachment: TestAttachmentEnvelope = TestAttachmentEnvelope()
+        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
+
+        // Create channel, message and attachment in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createMessage(id: messageId, cid: cid)
+        try database.writeSynchronously { session in
+            try session.createNewAttachment(attachment: attachment, id: attachmentId)
+        }
+        
+        // Load the attachment from the database.
+        let loadedAttachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
+
+        // Assert attachment has correct values.
+        XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
+        XCTAssertEqual(loadedAttachment.localURL, nil)
+        XCTAssertEqual(loadedAttachment.localState, .uploaded)
+        XCTAssertEqual(loadedAttachment.type, attachment.type.rawValue)
+        XCTAssertEqual(loadedAttachment.message.id, messageId)
+        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
+        
+        let decodedAttachmentEnvelope = try JSONDecoder.stream.decode(TestAttachmentEnvelope.self, from: loadedAttachment.data!)
+        
+        XCTAssertEqual(decodedAttachmentEnvelope.name, attachment.name)
+        XCTAssertEqual(decodedAttachmentEnvelope.number, attachment.number)
+    }
+    
     func test_messagePayload_asUploadingModel() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
