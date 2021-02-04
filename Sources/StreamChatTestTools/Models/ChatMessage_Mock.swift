@@ -27,7 +27,7 @@ public extension _ChatMessage {
         reactionScores: [MessageReactionType: Int] = [:],
         mentionedUsers: Set<_ChatUser<ExtraData.User>> = [],
         threadParticipants: Set<UserId> = [],
-        attachments: [_ChatMessageAttachment<ExtraData>] = [],
+        attachments: [ChatMessageAttachment] = [],
         latestReplies: [_ChatMessage<ExtraData>] = [],
         localState: LocalMessageState? = nil,
         isFlaggedByCurrentUser: Bool = false,
