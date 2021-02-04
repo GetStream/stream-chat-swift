@@ -14,6 +14,7 @@
 		2229C6D9256562AC00C56B63 /* ChatMessageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */; };
 		2229C6DF256562DB00C56B63 /* AttachmentPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2229C6DE256562DB00C56B63 /* AttachmentPayload.swift */; };
 		222E54A025B106D20032C459 /* ChatMessageQuoteBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 222E549F25B106D20032C459 /* ChatMessageQuoteBubbleView.swift */; };
+		2236D97B25CC68E400C47F30 /* TestAttachmentEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */; };
 		22411680258A91280034184D /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241167F258A91280034184D /* String+Extensions.swift */; };
 		224116B2258BACF90034184D /* Message.json in Resources */ = {isa = PBXBuildFile; fileRef = 224116B1258BACF90034184D /* Message.json */; };
 		224165A825910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224165A725910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift */; };
@@ -762,6 +763,7 @@
 		2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachment.swift; sourceTree = "<group>"; };
 		2229C6DE256562DB00C56B63 /* AttachmentPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPayload.swift; sourceTree = "<group>"; };
 		222E549F25B106D20032C459 /* ChatMessageQuoteBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageQuoteBubbleView.swift; sourceTree = "<group>"; };
+		2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAttachmentEnvelope.swift; sourceTree = "<group>"; };
 		2241167F258A91280034184D /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		224116B1258BACF90034184D /* Message.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Message.json; sourceTree = "<group>"; };
 		224165A725910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerCheckmarkControl.swift; sourceTree = "<group>"; };
@@ -1620,6 +1622,7 @@
 				88AA92872547332000BFA0C3 /* MessageReactionPayload.swift */,
 				2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */,
 				2229C6DE256562DB00C56B63 /* AttachmentPayload.swift */,
+				2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */,
 				792A71E22578EF650082498D /* ChannelId.swift */,
 				79D7A1CD2593A40900D3C2BF /* ChannelPayload.swift */,
 			);
@@ -3900,6 +3903,7 @@
 				F62BE7922506692700D13B86 /* MissingEventsPublisher_Tests.swift in Sources */,
 				79200D42250118A1002F4EB1 /* iOS13TestCase.swift in Sources */,
 				88EA9B0625472430007EE76B /* MessageReactionPayload_Tests.swift in Sources */,
+				2236D97B25CC68E400C47F30 /* TestAttachmentEnvelope.swift in Sources */,
 				88D85DAE252F468B00AE1030 /* ListDatabaseObserver_Mock.swift in Sources */,
 				79877A292498E51500015F8B /* ChannelDTO_Tests.swift in Sources */,
 				88CD396625B584E000399F8E /* HTTPHeader_Tests.swift in Sources */,
