@@ -65,10 +65,17 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     
     public private(set) lazy var collectionView: UICollectionView = {
         let collection = uiConfig.messageList.collectionView.init(layout: collectionViewLayout)
+        
         let incomingCell = uiConfig.messageList.incomingMessageCell
         let outgoingCell = uiConfig.messageList.outgoingMessageCell
         collection.register(incomingCell, forCellWithReuseIdentifier: incomingCell.reuseId)
         collection.register(outgoingCell, forCellWithReuseIdentifier: outgoingCell.reuseId)
+        
+        let incomingAttachmentCell = uiConfig.messageList.incomingMessageAttachmentCell
+        let outgoingAttachmentCell = uiConfig.messageList.outgoingMessageAttachmentCell
+        collection.register(incomingAttachmentCell, forCellWithReuseIdentifier: incomingAttachmentCell.reuseId)
+        collection.register(outgoingAttachmentCell, forCellWithReuseIdentifier: outgoingAttachmentCell.reuseId)
+        
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
         collection.alwaysBounceVertical = true
@@ -168,6 +175,22 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
             self.scrollToMostRecentMessageIfNeeded()
         }
     }
+    
+    open func cellReuseIdentifierForMessage(_ message: _ChatMessageGroupPart<ExtraData>) -> String {
+        if message.attachments.contains(where: { $0.type == .image || $0.type == .giphy || $0.type == .file }) {
+            if message.isSentByCurrentUser {
+                return uiConfig.messageList.outgoingMessageAttachmentCell.reuseId
+            } else {
+                return uiConfig.messageList.incomingMessageAttachmentCell.reuseId
+            }
+        } else {
+            if message.isSentByCurrentUser {
+                return uiConfig.messageList.outgoingMessageCell.reuseId
+            } else {
+                return uiConfig.messageList.incomingMessageCell.reuseId
+            }
+        }
+    }
 
     // MARK: - Actions
 
@@ -193,18 +216,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     ) -> UICollectionViewCell {
         let message = messageGroupPart(at: indexPath)
 
-        let cell: _СhatMessageCollectionViewCell<ExtraData>
-        if message.isSentByCurrentUser {
-            cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: uiConfig.messageList.outgoingMessageCell.reuseId,
-                for: indexPath
-            ) as! _СhatMessageCollectionViewCell<ExtraData>
-        } else {
-            cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: uiConfig.messageList.incomingMessageCell.reuseId,
-                for: indexPath
-            ) as! _СhatMessageCollectionViewCell<ExtraData>
-        }
+        let reuseIdentifier = cellReuseIdentifierForMessage(message)
+        let cell = collectionView.dequeueReusableCell(
+            withReuseIdentifier: reuseIdentifier,
+            for: indexPath
+        ) as! _СhatMessageCollectionViewCell<ExtraData>
 
         cell.messageView.onThreadTap = { [weak self] in
             guard let self = self, let message = $0?.message else { return }
