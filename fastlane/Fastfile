@@ -189,3 +189,14 @@ lane :build_sample do |options|
     devices: options[:device],
   )
 end
+
+desc "Test SPM Integration"
+lane :spm_integration do |options|
+  build_app(
+    project: "Integration/SPM/SwiftPackageManager.xcodeproj",
+    scheme: "SwiftPackageManager",
+    skip_package_ipa: true,
+    skip_archive: true,
+    destination: "generic/platform=iOS Simulator"
+  )
+end
