@@ -58,7 +58,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send without attachments",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -68,7 +68,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send with attachments",
                 quotedMessageId: nil,
-                attachments: [
+                attachmentSeeds: [
                     ChatMessageAttachmentSeed.dummy(),
                     ChatMessageAttachmentSeed.dummy(),
                     ChatMessageAttachmentSeed.dummy()
@@ -82,7 +82,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message without local state",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message3Id = message3.id
@@ -139,6 +139,64 @@ class MessageSender_Tests: StressTestCase {
         }
     }
     
+    func test_sender_sendsMessage_withUploadedAttachments() throws {
+        var messageId: MessageId!
+        
+        try database.writeSynchronously { session in
+            let message = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send",
+                quotedMessageId: nil,
+                attachments: [TestAttachmentEnvelope(), TestAttachmentEnvelope()],
+                extraData: ExtraData.Message.defaultValue
+            )
+            message.localMessageState = .pendingSend
+            messageId = message.id
+        }
+        
+        let messagePayload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: messageId)?.asRequestBody()
+        )
+    
+        AssertAsync.willBeTrue(apiClient.request_allRecordedCalls.contains(where: {
+            $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: messagePayload))
+        }))
+    }
+    
+    func test_sender_sendsMessage_withBothAttachmentSeedsAndUploadedAttachments() throws {
+        var messageId: MessageId!
+        
+        try database.writeSynchronously { session in
+            let message = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send",
+                quotedMessageId: nil,
+                attachments: [TestAttachmentEnvelope(), TestAttachmentEnvelope()],
+                attachmentSeeds: [.dummy()],
+                extraData: ExtraData.Message.defaultValue
+            )
+            message.localMessageState = .pendingSend
+            messageId = message.id
+        }
+        
+        let messagePayload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: messageId)?.asRequestBody()
+        )
+        
+        // Simulate attachment seed uploaded
+        try database.writeSynchronously { session in
+            let message = try XCTUnwrap(session.message(id: messageId))
+            message.attachments.forEach { $0.localState = .uploaded }
+            message.id = messageId
+        }
+        
+        AssertAsync {
+            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.contains(where: {
+                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: messagePayload))
+            }))
+        }
+    }
+    
     func test_sender_changesMessageStates_whenSending() throws {
         var message1Id: MessageId!
                 
@@ -148,7 +206,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -178,7 +236,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -207,7 +265,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send 1",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -217,7 +275,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send 2",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message2.localMessageState = .pendingSend
@@ -227,7 +285,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send 3",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message3.localMessageState = .pendingSend
@@ -294,7 +352,7 @@ class MessageSender_Tests: StressTestCase {
                 in: cidA,
                 text: "Channel A message 1",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageA1.localMessageState = .pendingSend
@@ -304,7 +362,7 @@ class MessageSender_Tests: StressTestCase {
                 in: cidA,
                 text: "Channel A message 2",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageA2.localMessageState = .pendingSend
@@ -314,7 +372,7 @@ class MessageSender_Tests: StressTestCase {
                 in: cidB,
                 text: "Channel B message 1",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageB1.localMessageState = .pendingSend
@@ -324,7 +382,7 @@ class MessageSender_Tests: StressTestCase {
                 in: cidB,
                 text: "Channel B message 2",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageB2.localMessageState = .pendingSend
@@ -387,7 +445,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send",
                 quotedMessageId: nil,
-                attachments: [ChatMessageAttachmentSeed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message.localMessageState = .pendingSend
