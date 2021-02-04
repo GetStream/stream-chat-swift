@@ -6,35 +6,8 @@
         "repositoryURL": "https://github.com/kean/Nuke.git",
         "state": {
           "branch": null,
-          "revision": "051fb936fbc0176655acb1085b15be477f3d5015",
-          "version": "8.4.0"
-        }
-      },
-      {
-        "package": "RxGesture",
-        "repositoryURL": "https://github.com/RxSwiftCommunity/RxGesture.git",
-        "state": {
-          "branch": null,
-          "revision": "d62d313d1f9dcff6c367ef98a0581831187a28ac",
-          "version": "3.0.1"
-        }
-      },
-      {
-        "package": "RxSwift",
-        "repositoryURL": "https://github.com/ReactiveX/RxSwift.git",
-        "state": {
-          "branch": null,
-          "revision": "002d325b0bdee94e7882e1114af5ff4fe1e96afa",
-          "version": "5.1.1"
-        }
-      },
-      {
-        "package": "SnapKit",
-        "repositoryURL": "https://github.com/SnapKit/SnapKit.git",
-        "state": {
-          "branch": null,
-          "revision": "d458564516e5676af9c70b4f4b2a9178294f1bc6",
-          "version": "5.0.1"
+          "revision": "961597d324949c7003c77d602bfc4d5519b47e81",
+          "version": "9.2.4"
         }
       },
       {
@@ -51,8 +24,8 @@
         "repositoryURL": "https://github.com/kirualex/SwiftyGif.git",
         "state": {
           "branch": null,
-          "revision": "4d851de4cdecb6c5453c8d529c3578dd49086408",
-          "version": "5.2.0"
+          "revision": "0cd770feed5807d9fd4fa8df5ad74b56b814b0c8",
+          "version": "5.4.0"
         }
       }
     ]
