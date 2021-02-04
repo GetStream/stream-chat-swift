@@ -193,7 +193,8 @@ public extension _ChatMessageController {
     ///
     /// - Parameters:
     ///   - text: Text of the message.
-    ///   - attachments: An array of the attachments for the message.
+    ///   - attachments: An array of the attachments for the message that already uploaded or doesn't need uploading.
+    ///   - attachmentSeeds: An array of the attachments that needs to be uploaded before sending.
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
     ///   in the response thread.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
@@ -204,7 +205,8 @@ public extension _ChatMessageController {
         text: String,
 //        command: String? = nil,
 //        arguments: String? = nil,
-        attachments: [ChatMessageAttachmentSeed] = [],
+        attachments: [AttachmentEnvelope] = [],
+        attachmentSeeds: [ChatMessageAttachmentSeed] = [],
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
@@ -217,6 +219,7 @@ public extension _ChatMessageController {
             arguments: nil,
             parentMessageId: messageId,
             attachments: attachments,
+            attachmentSeeds: attachmentSeeds,
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessageId,
             extraData: extraData

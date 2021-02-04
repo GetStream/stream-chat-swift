@@ -610,7 +610,7 @@ final class MessageController_Tests: StressTestCase {
     
     // MARK: - Create new reply
     
-    func test_createNewReply_callsChannelUpdater() {
+    func test_createNewReply_callsMessageUpdater() {
         let newMessageId: MessageId = .unique
         
         // New message values
@@ -620,7 +620,8 @@ final class MessageController_Tests: StressTestCase {
         let showReplyInChannel = true
         let quotedMessageId: MessageId = .unique
         let extraData: NoExtraData = .defaultValue
-        let attachments: [ChatMessageAttachmentSeed] = [
+        let attachments: [TestAttachmentEnvelope] = [.init(), .init(), .init()]
+        let attachmentSeeds: [ChatMessageAttachmentSeed] = [
             .dummy(),
             .dummy(),
             .dummy()
@@ -633,6 +634,7 @@ final class MessageController_Tests: StressTestCase {
 //            command: command,
 //            arguments: arguments,
             attachments: attachments,
+            attachmentSeeds: attachmentSeeds,
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessageId,
             extraData: extraData
@@ -658,7 +660,11 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(env.messageUpdater.createNewReply_parentMessageId, messageId)
         XCTAssertEqual(env.messageUpdater.createNewReply_showReplyInChannel, showReplyInChannel)
         XCTAssertEqual(env.messageUpdater.createNewReply_extraData, extraData)
-        XCTAssertEqual(env.messageUpdater.createNewReply_attachments, attachments)
+        XCTAssertEqual(
+            env.messageUpdater.createNewReply_attachments?.compactMap { $0 as? TestAttachmentEnvelope },
+            attachments
+        )
+        XCTAssertEqual(env.messageUpdater.createNewReply_attachmentSeeds, attachmentSeeds)
         XCTAssertEqual(env.messageUpdater.createNewReply_quotedMessageId, quotedMessageId)
         
         // Simulate successful update
