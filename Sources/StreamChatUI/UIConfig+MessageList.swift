@@ -12,6 +12,11 @@ public extension _UIConfig {
             СhatIncomingMessageCollectionViewCell<ExtraData>.self
         public var outgoingMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
             СhatOutgoingMessageCollectionViewCell<ExtraData>.self
+        
+        public var incomingMessageAttachmentCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
+            СhatIncomingMessageAttachmentCollectionViewCell<ExtraData>.self
+        public var outgoingMessageAttachmentCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
+            СhatOutgoingMessageAttachmentCollectionViewCell<ExtraData>.self
 
         public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self

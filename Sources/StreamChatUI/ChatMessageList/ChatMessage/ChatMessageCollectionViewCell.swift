@@ -91,3 +91,40 @@ class СhatOutgoingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatM
         messageView.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
     }
 }
+
+public typealias СhatMessageAttachmentCollectionViewCell = _СhatMessageAttachmentCollectionViewCell<NoExtraData>
+
+open class _СhatMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageCollectionViewCell<ExtraData> {
+    private var _messageAttachmentContentView: _ChatMessageAttachmentContentView<ExtraData>?
+    
+    override public var messageView: _ChatMessageContentView<ExtraData> {
+        if let messageContentView = _messageAttachmentContentView {
+            return messageContentView
+        } else {
+            _messageAttachmentContentView = uiConfig
+                .messageList
+                .messageAttachmentContentView
+                .init()
+                .withoutAutoresizingMaskConstraints
+            return _messageAttachmentContentView!
+        }
+    }
+}
+
+// swiftlint:disable:next colon
+class СhatIncomingMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>:
+    _СhatMessageAttachmentCollectionViewCell<ExtraData> {
+    override func setUpLayout() {
+        super.setUpLayout()
+        messageView.leadingAnchor.pin(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
+    }
+}
+
+// swiftlint:disable:next colon
+class СhatOutgoingMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>:
+    _СhatMessageAttachmentCollectionViewCell<ExtraData> {
+    override func setUpLayout() {
+        super.setUpLayout()
+        messageView.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
+    }
+}
