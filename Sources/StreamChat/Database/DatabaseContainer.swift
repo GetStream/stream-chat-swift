@@ -82,7 +82,7 @@ class DatabaseContainer: NSPersistentContainer {
         shouldFlushOnStart: Bool = false,
         shouldResetEphemeralValuesOnStart: Bool = true,
         modelName: String = "StreamChatModel",
-        bundle: Bundle? = nil
+        bundle: Bundle? = .streamChat
     ) throws {
         // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
         let bundle = bundle ?? Bundle(for: DatabaseContainer.self)

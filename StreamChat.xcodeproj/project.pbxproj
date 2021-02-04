@@ -184,7 +184,7 @@
 		79682C4B24BF37CB0071578E /* ChannelListPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79682C4924BF37970071578E /* ChannelListPayload.swift */; };
 		797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */; };
 		797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756524814EF8003CF16D /* SystemEnvironment.swift */; };
-		797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756724814F0D003CF16D /* BundleExtensions.swift */; };
+		797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756724814F0D003CF16D /* Bundle+Extensions.swift */; };
 		797E10A824EAF6DE00353791 /* UniqueId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797E10A724EAF6DE00353791 /* UniqueId.swift */; };
 		797EEA4624FFAF4F00C81203 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4524FFAF4F00C81203 /* DataStore.swift */; };
 		797EEA4824FFB4C200C81203 /* DataStore_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4724FFB4C200C81203 /* DataStore_Tests.swift */; };
@@ -941,7 +941,7 @@
 		796FD215250654940076C99B /* ChannelReadDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadDTO.swift; sourceTree = "<group>"; };
 		797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload.swift; sourceTree = "<group>"; };
 		797A756524814EF8003CF16D /* SystemEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment.swift; sourceTree = "<group>"; };
-		797A756724814F0D003CF16D /* BundleExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BundleExtensions.swift; sourceTree = "<group>"; };
+		797A756724814F0D003CF16D /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		797E10A724EAF6DE00353791 /* UniqueId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UniqueId.swift; sourceTree = "<group>"; };
 		797EEA4524FFAF4F00C81203 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		797EEA4724FFB4C200C81203 /* DataStore_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore_Tests.swift; sourceTree = "<group>"; };
@@ -1766,7 +1766,7 @@
 				DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */,
 				792A4F3B247FFBB400EAF71D /* Timers.swift */,
 				797A756524814EF8003CF16D /* SystemEnvironment.swift */,
-				797A756724814F0D003CF16D /* BundleExtensions.swift */,
+				797A756724814F0D003CF16D /* Bundle+Extensions.swift */,
 				792FCB4824A3BF38000290C7 /* OptionSet+Extensions.swift */,
 				792B804F24D95B5D00C2963E /* Cached.swift */,
 				792B805124D95D4300C2963E /* Cached_Tests.swift */,
@@ -3659,7 +3659,7 @@
 				79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */,
 				DAD539DB250B8A9C00CFC649 /* Controller.swift in Sources */,
 				F6ED5F76250278D7005D7327 /* SyncEndpoint.swift in Sources */,
-				797A756824814F0D003CF16D /* BundleExtensions.swift in Sources */,
+				797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */,
 				792B805024D95B5D00C2963E /* Cached.swift in Sources */,
 				7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */,
 				DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extenstions.swift in Sources */,
