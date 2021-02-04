@@ -221,3 +221,36 @@ jobs:
         SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
+
+  spm-integration:
+    name: Test Integration (SPM)
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-gem-
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
+    - name: Build Sample
+      run: bundle exec fastlane spm_integration
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
