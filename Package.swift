@@ -202,6 +202,6 @@ var streamChatSourcesExcluded: [String] { [
 ] }
 
 var streamChatUISourcesExcluded: [String] { [
-    "ChatMessageList/ChatChannelVC_Tests.swift",
-    "Utils/UIConfigProvider_Tests.swift"
+    "Utils/UIConfigProvider_Tests.swift",
+    "ChatChannelList/ChatChannelListVC_Tests.swift"
 ] }
