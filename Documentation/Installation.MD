@@ -14,7 +14,13 @@ Then run `pod install`.
 
 ## Swift Package Manager
 
-We currently don't support integrating the SDK via SPM, but it's coming very soon!
+Add the following to your `Package.swift` or in Xcode -> File -> Swift Packages -> Add Package Dependency:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/GetStream/stream-chat-swift.git", .upToNextMajor(from: "3.0"))
+]
+```
 
 ## Carthage
 
