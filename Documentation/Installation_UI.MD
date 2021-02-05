@@ -7,14 +7,22 @@ You can use several methods to install `StreamChatUI` iOS SDK.
 To integrate StreamChat into your Xcode project using CocoaPods, add this entry in your `Podfile`:
 
 ```ruby
-pod 'StreamChatUI', '~> 3.0-beta.2'
+pod 'StreamChatUI', '~> 3.0-beta.4'
 ```
 
 Then run `pod install`.
 
 ## Swift Package Manager
 
-We currently don't support integrating the SDK via SPM, but it's coming very soon!
+Add the following to your `Package.swift` or in Xcode -> File -> Swift Packages -> Add Package Dependency:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/GetStream/stream-chat-swift.git", .upToNextMajor(from: "3.0-beta.4"))
+]
+```
+
+**⚠️ Note:** Because `StreamChat` SDKs have to be distributed with its resources, the minimal Swift version requirement for this installation method is `5.3`. If you need to support older Swift version, please install it using CocoaPods.
 
 ## Carthage
 
