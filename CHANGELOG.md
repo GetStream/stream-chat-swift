@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🔄 Changed
 - Improve serialization performance by exposing items as `LazyCachedMapCollection` instead of `Array` [#776](https://github.com/GetStream/stream-chat-swift/pull/776)
+- Reduce amount of fake updates by erasing touched objects [#802](https://github.com/GetStream/stream-chat-swift/pull/802)
+- Trigger members and current user updates on UserDTO changes [#802](https://github.com/GetStream/stream-chat-swift/pull/802)
 
 ### 🐞 Fixed
 - Fix race conditions in database observers [#796](https://github.com/GetStream/stream-chat-swift/pull/796)
@@ -26,7 +28,7 @@ _February 2nd, 2021_
 ## StreamChat
 
 ### ✅ Added
-- Add support for `enforce_unique` parameter on sending reactions 
+- Add support for `enforce_unique` parameter on sending reactions
     [#770](https://github.com/GetStream/stream-chat-swift/pull/770)
 ### 🔄 Changed
 
@@ -34,14 +36,14 @@ _February 2nd, 2021_
 - Fix development token not working properly [#760](https://github.com/GetStream/stream-chat-swift/pull/760)
 - Fix lists ordering not updating instantly. [#768](https://github.com/GetStream/stream-chat-swift/pull/768/)
 - Fix update changes incorrectly reported when a move change is present for the same index. [#768](https://github.com/GetStream/stream-chat-swift/pull/768/)
-- Fix issue with decoding `member_count` for `ChannelDetailPayload` 
+- Fix issue with decoding `member_count` for `ChannelDetailPayload`
     [#782](https://github.com/GetStream/stream-chat-swift/pull/782)
 - Fix wrong extra data cheat sheet documentation link [#786](https://github.com/GetStream/stream-chat-swift/pull/786)
 
 # [3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/3.0)
 _January 22nd, 2021_
 
-## StreamChat SDK reaches another milestone with version 3.0 🎉  
+## StreamChat SDK reaches another milestone with version 3.0 🎉
 
 ### New features:
 
@@ -57,7 +59,7 @@ pod 'StreamChat', '~> 3.0'
 
 ### ⚠️ Breaking Changes ⚠️
 
-In order to provide new features like offline support and `SwiftUI` wrappers, we had to make notable breaking changes to the public API of the SDKs. 
+In order to provide new features like offline support and `SwiftUI` wrappers, we had to make notable breaking changes to the public API of the SDKs.
 
 **Please don't upgrade to version `3.0` before you get familiar with the changes and their impact on your codebase.**
 
