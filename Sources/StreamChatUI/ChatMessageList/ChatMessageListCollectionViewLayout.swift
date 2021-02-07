@@ -222,7 +222,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         }
 
         // scroll to make first item visible
-        cv.contentOffset.y = currentItems[0].maxY - cv.bounds.height
+        cv.contentOffset.y = currentItems[0].maxY - cv.bounds.height + cv.contentInset.bottom
     }
 
     override open func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
