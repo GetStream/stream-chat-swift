@@ -180,9 +180,6 @@ class AttachmentUploader: Worker {
 
             // Apply further attachment updates.
             try attachmentUpdates(attachmentDTO)
-
-            // Re-assign message id to trigger entity update.
-            messageDTO.id = id.messageId
         }, completion: {
             if let error = $0 {
                 log.error("Error changing localState for attachment with id \(id) to `\(newState)`: \(error)")
