@@ -58,9 +58,6 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Assert unread-count is correct
         XCTAssertEqual(controller.unreadCount, unreadCount)
-        
-        // Check the initial connection status.
-        XCTAssertEqual(controller.connectionStatus, .initialized)
     }
     
     func test_initialState_whenLocalDataFetchFailed() throws {
@@ -123,22 +120,6 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Assert delegate is deallocated
         XCTAssertNil(controller.delegate)
-    }
-    
-    func test_delegate_isNotifiedAboutConnectionStatusChanges() {
-        // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
-        controller.delegate = delegate
-        
-        // Assert no connection status changes received so far
-        XCTAssertTrue(delegate.didUpdateConnectionStatus_statuses.isEmpty)
-        
-        // Simulate connection status updates.
-        client.webSocketClient?.simulateConnectionStatus(.connecting)
-        client.webSocketClient?.simulateConnectionStatus(.connected(connectionId: .unique))
-        
-        // Assert updates are received
-        AssertAsync.willBeEqual(delegate.didUpdateConnectionStatus_statuses, [.connecting, .connected])
     }
     
     func test_delegate_isNotifiedAboutCreatedUser() throws {
@@ -435,44 +416,6 @@ final class CurrentUserController_Tests: StressTestCase {
         }
     }
 
-    // MARK: - Connect
-
-    func test_connect_callsClientUpdater_and_propagatesTheResult() {
-        for error in [nil, TestError()] {
-            // Simulate `connect` and capture the result.
-            var connectCompletionCalled = false
-            var connectCompletionError: Error?
-            controller.connect { [callbackQueueID] error in
-                AssertTestQueue(withId: callbackQueueID)
-                connectCompletionError = error
-                connectCompletionCalled = true
-            }
-
-            // Assert the `chatClientUpdater` is called.
-            XCTAssertTrue(env.chatClientUpdater.connect_called)
-            // The completion hasn't been called yet.
-            XCTAssertFalse(connectCompletionCalled)
-
-            // Simulate `chatClientUpdater` result.
-            env.chatClientUpdater.connect_completion!(error)
-            // Wait for completion to be called.
-            AssertAsync.willBeTrue(connectCompletionCalled)
-
-            // Assert `error` is propagated.
-            XCTAssertEqual(connectCompletionError as? TestError, error)
-        }
-    }
-
-    // MARK: - Disconnect
-
-    func test_disconnect_callsClientUpdater() {
-        // Simulate `disconnect`.
-        controller.disconnect()
-
-        // Assert the `chatClientUpdater` is called.
-        XCTAssertTrue(env.chatClientUpdater.disconnect_called)
-    }
-    
     // MARK: - Device endpoints
     
     // MARK: addDevice
@@ -817,7 +760,6 @@ private class TestDelegate: QueueAwareDelegate, CurrentChatUserControllerDelegat
     @Atomic var state: DataController.State?
     @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
-    @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -834,11 +776,6 @@ private class TestDelegate: QueueAwareDelegate, CurrentChatUserControllerDelegat
     
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
         didChangeCurrentUserUnreadCount_count = count
-        validateQueue()
-    }
-    
-    func currentUserController(_ controller: CurrentChatUserController, didUpdateConnectionStatus status: ConnectionStatus) {
-        _didUpdateConnectionStatus_statuses.mutate { $0.append(status) }
         validateQueue()
     }
 }
@@ -847,7 +784,6 @@ private class TestDelegateGeneric: QueueAwareDelegate, _CurrentChatUserControlle
     @Atomic var state: DataController.State?
     @Atomic var didChangeCurrentUser_change: EntityChange<CurrentChatUser>?
     @Atomic var didChangeCurrentUserUnreadCount_count: UnreadCount?
-    @Atomic var didUpdateConnectionStatus_statuses = [ConnectionStatus]()
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
@@ -864,11 +800,6 @@ private class TestDelegateGeneric: QueueAwareDelegate, _CurrentChatUserControlle
     
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount count: UnreadCount) {
         didChangeCurrentUserUnreadCount_count = count
-        validateQueue()
-    }
-    
-    func currentUserController(_ controller: CurrentChatUserController, didUpdateConnectionStatus status: ConnectionStatus) {
-        _didUpdateConnectionStatus_statuses.mutate { $0.append(status) }
         validateQueue()
     }
 }
@@ -888,46 +819,4 @@ private class TestEnvironment {
             self.chatClientUpdater = ChatClientUpdaterMock(client: $0)
             return self.chatClientUpdater!
         })
-}
-
-private extension WebSocketClient {
-    var typingMiddleware: TypingStartCleanupMiddleware<NoExtraData>? {
-        eventNotificationCenter.middlewares.compactMap { $0 as? TypingStartCleanupMiddleware<NoExtraData> }.first
-    }
-}
-
-private func healthCheckEventJSON(userId: UserId) -> String {
-    """
-    {
-        "created_at" : "2020-07-10T11:44:29.190502105Z",
-        "me" : {
-            "language" : "",
-            "totalUnreadCount" : 0,
-            "unread_count" : 0,
-            "image" : "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall",
-            "updated_at" : "2020-07-10T11:44:29.179977Z",
-            "unreadChannels" : 0,
-            "total_unread_count" : 0,
-            "mutes" : [],
-            "unread_channels" : 0,
-            "devices" : [],
-            "name" : "broken-waterfall-5",
-            "last_active" : "2020-07-10T11:44:29.185810874Z",
-            "banned" : false,
-            "id" : "\(userId)",
-            "roles" : [],
-            "extraData" : {
-                "name" : "Tester"
-            },
-            "role" : "user",
-            "created_at" : "2019-12-12T15:33:46.488935Z",
-            "channel_mutes" : [],
-            "online" : true,
-            "invisible" : false
-        },
-        "type" : "health.check",
-        "connection_id" : "d94b53fa-ddd4-4413-8dda-8da33cabedd9",
-        "cid" : "*"
-    }
-    """
 }
