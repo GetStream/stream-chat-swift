@@ -41,6 +41,16 @@ class AttachmentDTO: NSManagedObject {
     
     @NSManaged var message: MessageDTO
     @NSManaged var channel: ChannelDTO
+
+    override func willSave() {
+        super.willSave()
+
+        // When attachment changed, we need to propagate this change up to holding message
+        if hasPersistentChangedValues, !message.hasChanges {
+            // this will not change object, but mark it as dirty, triggering updates
+            message.id = message.id
+        }
+    }
     
     static func load(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO? {
         let request = NSFetchRequest<AttachmentDTO>(entityName: AttachmentDTO.entityName)

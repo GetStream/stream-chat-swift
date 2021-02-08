@@ -160,7 +160,7 @@ class DatabaseContainer: NSPersistentContainer {
                         self.writableContext.refresh(object, mergeChanges: false)
                     }
                 }
-                
+
                 if self.writableContext.hasChanges {
                     log.debug("Context has changes. Saving.")
                     try self.writableContext.save()
