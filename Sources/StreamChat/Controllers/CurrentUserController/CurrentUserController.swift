@@ -8,7 +8,7 @@ import Foundation
 public extension _ChatClient {
     /// Creates a new `CurrentUserController` instance.
     ///
-    /// - Returns: A new instance of `ChannelController`.
+    /// - Returns: A new instance of `CurrentChatUserController`.
     ///
     func currentUserController() -> _CurrentChatUserController<ExtraData> {
         .init(client: self)
@@ -16,9 +16,9 @@ public extension _ChatClient {
 }
 
 /// `CurrentChatUserController` is a controller class which allows observing and mutating the currently logged-in
-/// user of `ChatClient`. You can also use it to explicitly connect/disconnect the `ChatClient`.
+/// user of `ChatClient`.
 ///
-/// Learn more about `CurrentChatUserController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user).
+/// Learn more about `CurrentChatUserController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#user).
 ///
 /// - Note: `CurrentChatUserController` is a typealias of `_CurrentChatUserController` with default extra data. If you're using
 /// custom extra data, create your own typealias of `_CurrentChatUserController`.
@@ -28,9 +28,9 @@ public extension _ChatClient {
 public typealias CurrentChatUserController = _CurrentChatUserController<NoExtraData>
 
 /// `CurrentChatUserController` is a controller class which allows observing and mutating the currently logged-in
-/// user of `ChatClient`. You can also use it to explicitly connect/disconnect the `ChatClient`.
+/// user of `ChatClient`.
 ///
-/// Learn more about `CurrentChatUserController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/StreamChat-SDK-Cheat-Sheet#user).
+/// Learn more about `CurrentChatUserController` and its usage in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#user).
 ///
 /// - Note: `_CurrentChatUserController` type is not meant to be used directly. If you're using default extra data, use
 /// `CurrentChatUserController` typealias instead. If you're using custom extra data, create your own typealias
@@ -64,28 +64,6 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, 
                 $0.currentUserController(self, didChangeCurrentUserUnreadCount: change.unreadCount)
             }
         }
-    
-    /// The current connection status of the client.
-    ///
-    /// To observe changes of the connection status, set your class as a delegate of this controller or use the provided
-    /// `Combine` publishers.
-    ///
-    public var connectionStatus: ConnectionStatus {
-        client.connectionStatus
-    }
-    
-    /// The connection event observer for the connection status updates.
-    private lazy var connectionEventObserver: ConnectionEventObserver? = {
-        guard let webSocketClient = client.webSocketClient else { return nil }
-        let observer = ConnectionEventObserver(
-            notificationCenter: webSocketClient.eventNotificationCenter
-        ) { [unowned self] status in
-            self.delegateCallback {
-                $0.currentUserController(self, didUpdateConnectionStatus: status.connectionStatus)
-            }
-        }
-        return observer
-    }()
 
     /// A type-erased delegate.
     // swiftlint:disable:next weak_delegate
@@ -120,9 +98,6 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: Controller, 
     }
     
     private func startObserving() {
-        // Start connection event observing
-        _ = connectionEventObserver
-        
         do {
             try currentUserObserver.startObserving()
         } catch {
@@ -146,7 +121,7 @@ public extension _CurrentChatUserController {
     ///
     /// If `config.shouldConnectAutomatically` is set to `false` the
     /// establishing a web-socket connection has to be done manually via `connect/disconnect`
-    /// methods on the current `ChatClient`.
+    /// methods in `ChatConnectionController`.
     ///
     /// - Parameter completion: The completion to be called when the operation is completed.
     func reloadUserIfNeeded(completion: ((Error?) -> Void)? = nil) {
@@ -155,27 +130,6 @@ public extension _CurrentChatUserController {
                 completion?(error)
             }
         }
-    }
-
-    /// Connects the chat client the controller represents to the chat servers.
-    ///
-    /// When the connection is established, `ChatClient` starts receiving chat updates, and `currentUser` variable is available.
-    ///
-    /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
-    /// called with an error.
-    ///
-    func connect(completion: ((Error?) -> Void)? = nil) {
-        chatClientUpdater.connect { error in
-            self.callback {
-                completion?(error)
-            }
-        }
-    }
-
-    /// Disconnects the chat client the controller represents from the chat servers. No further updates from the servers
-    /// are received.
-    func disconnect() {
-        chatClientUpdater.disconnect()
     }
 
     /// Updates the current user data.
@@ -375,17 +329,12 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
     
     /// The controller observed a change in the `CurrentChatUser` entity.
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>)
-    
-    /// The controller observed a change in connection status.
-    func currentUserController(_ controller: CurrentChatUserController, didUpdateConnectionStatus status: ConnectionStatus)
 }
 
 public extension CurrentChatUserControllerDelegate {
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {}
     
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>) {}
-    
-    func currentUserController(_ controller: CurrentChatUserController, didUpdateConnectionStatus status: ConnectionStatus) {}
 }
 
 /// `CurrentChatUserController` uses this protocol to communicate changes to its delegate.
@@ -404,12 +353,6 @@ public protocol _CurrentChatUserControllerDelegate: AnyObject {
         _ controller: _CurrentChatUserController<ExtraData>,
         didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
     )
-    
-    /// The controller observed a change in connection status.
-    func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didUpdateConnectionStatus status: ConnectionStatus
-    )
 }
 
 public extension _CurrentChatUserControllerDelegate {
@@ -421,11 +364,6 @@ public extension _CurrentChatUserControllerDelegate {
     func currentUserController(
         _ controller: _CurrentChatUserController<ExtraData>,
         didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
-    ) {}
-    
-    func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didUpdateConnectionStatus status: ConnectionStatus
     ) {}
 }
 
@@ -442,11 +380,6 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _Curren
         EntityChange<_CurrentChatUser<ExtraData.User>>
     ) -> Void
     
-    private var _controllerDidChangeConnectionStatus: (
-        _CurrentChatUserController<ExtraData>,
-        ConnectionStatus
-    ) -> Void
-    
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeCurrentUserUnreadCount: @escaping (
@@ -456,16 +389,11 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _Curren
         controllerDidChangeCurrentUser: @escaping (
             _CurrentChatUserController<ExtraData>,
             EntityChange<_CurrentChatUser<ExtraData.User>>
-        ) -> Void,
-        controllerDidChangeConnectionStatus: @escaping (
-            _CurrentChatUserController<ExtraData>,
-            ConnectionStatus
         ) -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
         _controllerDidChangeCurrentUserUnreadCount = controllerDidChangeCurrentUserUnreadCount
         _controllerDidChangeCurrentUser = controllerDidChangeCurrentUser
-        _controllerDidChangeConnectionStatus = controllerDidChangeConnectionStatus
     }
     
     func currentUserController(
@@ -481,13 +409,6 @@ final class AnyCurrentUserControllerDelegate<ExtraData: ExtraDataTypes>: _Curren
     ) {
         _controllerDidChangeCurrentUser(controller, user)
     }
-    
-    func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didUpdateConnectionStatus status: ConnectionStatus
-    ) {
-        _controllerDidChangeConnectionStatus(controller, status)
-    }
 }
 
 extension AnyCurrentUserControllerDelegate {
@@ -499,9 +420,6 @@ extension AnyCurrentUserControllerDelegate {
             },
             controllerDidChangeCurrentUser: { [weak delegate] in
                 delegate?.currentUserController($0, didChangeCurrentUser: $1)
-            },
-            controllerDidChangeConnectionStatus: { [weak delegate] in
-                delegate?.currentUserController($0, didUpdateConnectionStatus: $1)
             }
         )
     }
@@ -516,9 +434,6 @@ extension AnyCurrentUserControllerDelegate where ExtraData == NoExtraData {
             },
             controllerDidChangeCurrentUser: { [weak delegate] in
                 delegate?.currentUserController($0, didChangeCurrentUser: $1)
-            },
-            controllerDidChangeConnectionStatus: { [weak delegate] in
-                delegate?.currentUserController($0, didUpdateConnectionStatus: $1)
             }
         )
     }
@@ -547,19 +462,5 @@ public extension CurrentChatUserController {
     var delegate: CurrentChatUserControllerDelegate? {
         get { multicastDelegate.mainDelegate?.wrappedDelegate as? CurrentChatUserControllerDelegate }
         set { multicastDelegate.mainDelegate = AnyCurrentUserControllerDelegate(newValue) }
-    }
-}
-
-/// A connection event observer to handle `ConnectionStatusUpdated` events.
-private class ConnectionEventObserver: EventObserver {
-    init(
-        notificationCenter: NotificationCenter,
-        filter: ((ConnectionStatusUpdated) -> Bool)? = nil,
-        callback: @escaping (ConnectionStatusUpdated) -> Void
-    ) {
-        super.init(notificationCenter: notificationCenter, transform: { $0 as? ConnectionStatusUpdated }) {
-            guard filter == nil || filter?($0) == true else { return }
-            callback($0)
-        }
     }
 }
