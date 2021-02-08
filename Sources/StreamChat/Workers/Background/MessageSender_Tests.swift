@@ -125,7 +125,6 @@ class MessageSender_Tests: StressTestCase {
         try database.writeSynchronously { session in
             let message2 = try XCTUnwrap(session.message(id: message2Id))
             message2.attachments.forEach { $0.localState = .uploaded }
-            message2.id = message2Id
         }
 
         // Check message2 was sent.
@@ -187,7 +186,6 @@ class MessageSender_Tests: StressTestCase {
         try database.writeSynchronously { session in
             let message = try XCTUnwrap(session.message(id: messageId))
             message.attachments.forEach { $0.localState = .uploaded }
-            message.id = messageId
         }
         
         AssertAsync {
