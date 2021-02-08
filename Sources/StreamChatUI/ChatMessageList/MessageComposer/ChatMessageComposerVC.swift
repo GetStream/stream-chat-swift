@@ -287,8 +287,9 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
     }
     
     func setInput(shrinked: Bool) {
-        composerView.attachmentButton.setAnimatedly(hidden: !shrinked)
-        composerView.commandsButton.setAnimatedly(hidden: !shrinked)
+        for button in composerView.container.leftStackView.arrangedSubviews where button !== composerView.shrinkInputButton {
+            button.setAnimatedly(hidden: !shrinked)
+        }
         composerView.shrinkInputButton.setAnimatedly(hidden: shrinked)
     }
     
