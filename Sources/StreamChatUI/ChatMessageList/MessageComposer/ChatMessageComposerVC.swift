@@ -226,7 +226,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
         delegate?.didSendMessage?(self)
     }
     
-    open func createNewMessage(text: String, quotedMessageId: MessageId? = nil) {
+    open func createNewMessage(text: String, quotedMessageId: MessageId? = nil, attachments: [AttachmentEnvelope] = []) {
         guard let cid = controller?.cid else { return }
         
         if let threadParentMessage = threadParentMessage {
@@ -237,12 +237,18 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
             
             messageController?.createNewReply(
                 text: text,
+                attachments: attachments,
                 attachmentSeeds: attachmentSeeds,
                 showReplyInChannel: composerView.checkmarkControl.isSelected,
                 quotedMessageId: quotedMessageId
             )
         } else {
-            controller?.createNewMessage(text: text, attachmentSeeds: attachmentSeeds, quotedMessageId: quotedMessageId)
+            controller?.createNewMessage(
+                text: text,
+                attachments: attachments,
+                attachmentSeeds: attachmentSeeds,
+                quotedMessageId: quotedMessageId
+            )
         }
     }
     
