@@ -20,6 +20,9 @@ class UserDTO: NSManagedObject {
     @NSManaged var userUpdatedAt: Date
     
     @NSManaged var flaggedBy: CurrentUserDTO?
+
+    @NSManaged var members: Set<MemberDTO>?
+    @NSManaged var currentUser: CurrentUserDTO?
     
     @NSManaged var savedChangeHash: Int64
     
@@ -30,10 +33,25 @@ class UserDTO: NSManagedObject {
         request.predicate = NSPredicate(format: "id == %@", userId)
         return request
     }
-    
+
     override func willSave() {
         super.willSave()
-        
+
+        // When user changed, we need to propagate this change to members and current user
+        if hasPersistentChangedValues {
+            if let currentUser = currentUser, !currentUser.hasChanges {
+                // this will not change object, but mark it as dirty, triggering updates
+                let assigningPropertyToItself = currentUser.unreadChannelsCount
+                currentUser.unreadChannelsCount = assigningPropertyToItself
+            }
+            for member in members ?? [] {
+                guard !member.hasChanges else { continue }
+                // this will not change object, but mark it as dirty, triggering updates
+                let assigningPropertyToItself = member.channelRoleRaw
+                member.channelRoleRaw = assigningPropertyToItself
+            }
+        }
+
         // Save the current hash of the entity
         // This is used during `save` calls to compare DTOs `changeHash` and
         // corresponding payload's `changeHash` to avoid unnecessary assignment of values.
