@@ -230,4 +230,49 @@ class AttachmentDTO_Tests: XCTestCase {
         // Assert attachment local URL is nil.
         XCTAssertNil(loadedAttachment?.localURL)
     }
+
+    func test_attachmentChange_triggerMessageUpdate() throws {
+        // Arrange: Store message with attachment in database
+        var messageId: MessageId!
+        var attachmentId: AttachmentId!
+
+        let cid: ChannelId = .unique
+
+        try! database.createCurrentUser()
+        try! database.createChannel(cid: cid)
+
+        try database.writeSynchronously { session in
+            let message = try session.createNewMessage(
+                in: cid,
+                text: "Message pending send",
+                quotedMessageId: nil,
+                attachments: [TestAttachmentEnvelope()],
+                attachmentSeeds: [],
+                extraData: NoExtraData.Message.defaultValue
+            )
+            message.localMessageState = .pendingSend
+            attachmentId = message.attachments.first!.attachmentID
+            messageId = message.id
+        }
+
+        // Arrange: Observe changes on message
+        let observer = EntityDatabaseObserver<MessageDTO, MessageDTO>(
+            context: database.viewContext,
+            fetchRequest: MessageDTO.message(withID: messageId),
+            itemCreator: { $0 }
+        )
+        try observer.startObserving()
+
+        var receivedChange: EntityChange<MessageDTO>?
+        observer.onChange { receivedChange = $0 }
+
+        // Act: Update attachment
+        try database.writeSynchronously { session in
+            let attachment = try XCTUnwrap(session.attachment(id: attachmentId))
+            attachment.localState = .uploadingFailed
+        }
+
+        // Assert: Members should be updated
+        XCTAssertNotNil(receivedChange)
+    }
 }
