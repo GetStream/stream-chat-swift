@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -16,11 +16,6 @@ extension _CurrentChatUserController {
     public var unreadCountPublisher: AnyPublisher<UnreadCount, Never> {
         basePublishers.unreadCount.keepAlive(self)
     }
-    
-    /// A publisher emitting a new value every time the connection status changes.
-    public var connectionStatusPublisher: AnyPublisher<ConnectionStatus, Never> {
-        basePublishers.connectionStatus.keepAlive(self)
-    }
 
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -34,14 +29,10 @@ extension _CurrentChatUserController {
         
         /// A backing subject for `unreadCountPublisher`.
         let unreadCount: CurrentValueSubject<UnreadCount, Never>
-        
-        /// A backing subject for `connectionStatusPublisher`.
-        let connectionStatus: CurrentValueSubject<ConnectionStatus, Never>
                 
         init(controller: _CurrentChatUserController<ExtraData>) {
             self.controller = controller
             unreadCount = .init(.noUnread)
-            connectionStatus = .init(controller.connectionStatus)
             
             controller.multicastDelegate.additionalDelegates.append(AnyCurrentUserControllerDelegate(self))
         }
@@ -62,12 +53,5 @@ extension _CurrentChatUserController.BasePublishers: _CurrentChatUserControllerD
         didChangeCurrentUser currentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
     ) {
         currentUserChange.send(currentUser)
-    }
-    
-    func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didUpdateConnectionStatus status: ConnectionStatus
-    ) {
-        connectionStatus.send(status)
     }
 }

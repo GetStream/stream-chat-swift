@@ -53,21 +53,6 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
         
         AssertAsync.willBeEqual(observableObject.unreadCount, newUnreadCount)
     }
-    
-    func test_observableObject_reactsToDelegateConnectionStatusChangesCallback() {
-        let observableObject = currentUserController.observableObject
-        
-        // Simulate connection status change
-        let newStatus: ConnectionStatus = .connected
-        currentUserController.delegateCallback {
-            $0.currentUserController(
-                self.currentUserController,
-                didUpdateConnectionStatus: newStatus
-            )
-        }
-        
-        AssertAsync.willBeEqual(observableObject.connectionStatus, newStatus)
-    }
 }
 
 class CurrentUserControllerMock: CurrentChatUserController {

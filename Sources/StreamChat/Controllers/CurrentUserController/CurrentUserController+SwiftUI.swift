@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -21,13 +21,9 @@ extension _CurrentChatUserController {
         /// The unread messages and channels count for the current user.
         @Published public private(set) var unreadCount: UnreadCount = .noUnread
         
-        /// The connection status.
-        @Published public private(set) var connectionStatus: ConnectionStatus
-        
         /// Creates a new `ObservableObject` wrapper with the provided controller instance.
         init(controller: _CurrentChatUserController<ExtraData>) {
             self.controller = controller
-            connectionStatus = controller.connectionStatus
             
             controller.multicastDelegate.additionalDelegates.append(AnyCurrentUserControllerDelegate(self))
             
@@ -51,12 +47,5 @@ extension _CurrentChatUserController.ObservableObject: _CurrentChatUserControlle
         didChangeCurrentUser currentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
     ) {
         self.currentUser = controller.currentUser
-    }
-    
-    public func currentUserController(
-        _ controller: _CurrentChatUserController<ExtraData>,
-        didUpdateConnectionStatus status: ConnectionStatus
-    ) {
-        connectionStatus = status
     }
 }
