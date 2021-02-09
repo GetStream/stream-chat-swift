@@ -71,7 +71,7 @@ class AttachmentUploader: Worker {
             else { return }
 
             guard
-                let attachment = session.attachment(id: attachmentID)?.asUploadingModel(),
+                let attachment = session.attachment(id: attachmentID)?.asAttachmentSeed(),
                 attachment.localState == .pendingUpload
             else {
                 self?.removeAttachmentIDAndContinue(attachmentID)
@@ -79,8 +79,7 @@ class AttachmentUploader: Worker {
             }
 
             guard
-                let localFileURL = attachment.localURL,
-                let fileData = try? Data(contentsOf: localFileURL)
+                let fileData = try? Data(contentsOf: attachment.localURL)
             else {
                 self?.updateAttachmentIfNeeded(
                     attachmentID,
@@ -92,11 +91,11 @@ class AttachmentUploader: Worker {
                 return
             }
 
-            let fileType = AttachmentFileType(ext: localFileURL.pathExtension)
+            let fileType = AttachmentFileType(ext: attachment.localURL.pathExtension)
 
             let multipartFormData = MultipartFormData(
                 fileData,
-                fileName: attachment.title,
+                fileName: attachment.fileName,
                 mimeType: fileType.mimeType
             )
 
