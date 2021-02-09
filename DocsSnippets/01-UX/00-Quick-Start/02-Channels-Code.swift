@@ -4,6 +4,8 @@ import UIKit
 import StreamChatUI
 import StreamChat
 
+fileprivate var chatClient: ChatClient!
+
 func snippet_ux_quick_start_channels_code() {
     //> import UIKit
     //> import StreamChatUI

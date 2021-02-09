@@ -2,6 +2,8 @@
 
 import StreamChat
 
+fileprivate var chatClient: ChatClient!
+
 func snippet_introduction_chatClient() {
     /// 1: Create a static token provider. Use it for testing purposes.
     let token = Token("{{ chat_user_token }}")

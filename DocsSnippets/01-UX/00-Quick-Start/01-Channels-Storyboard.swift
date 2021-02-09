@@ -1,10 +1,14 @@
 // LINK: https://getstream.io/chat/docs/ios-swift/ios_quick_start/?preview=1&language=swift#1.-using-a-storyboard
 
 import UIKit
+import StreamChat
 import StreamChatUI
+
+fileprivate var chatClient: ChatClient!
 
 func snippet_ux_quick_start_channels_storyboard() {
     //> import UIKit
+    //> import StreamChat
     //> import StreamChatUI
     
     class MyChannelListVC: ChatChannelListVC { }
