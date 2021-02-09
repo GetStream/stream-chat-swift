@@ -1593,6 +1593,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		225D807625D316B10094E555 /* Attachments */ = {
+			isa = PBXGroup;
+			children = (
+				88E26D5D2580E92000F55AB5 /* AttachmentId.swift */,
+				8875CF8D2587A7F200BBA6AC /* AttachmentId_Tests.swift */,
+				DABC6AC12546FFB600A8FC78 /* AttachmentTypes.swift */,
+				DA49717A254AE08500AC68C2 /* AttachmentTypes_Tests.swift */,
+				225D800B25D2DCB10094E555 /* ChatMessageDefaultAttachment.swift */,
+				225D7FE925D1917D0094E555 /* ChatMessageRawAttachment.swift */,
+				22692C8625D176F4007C41D0 /* ChatMessageLinkAttachment.swift */,
+				22692C8E25D18097007C41D0 /* ChatMessageGiphyAttachment.swift */,
+				22692C9625D1841E007C41D0 /* ChatMessageFileAttachment.swift */,
+				225D7FE125D191400094E555 /* ChatMessageImageAttachment.swift */,
+				225D7FF125D1B6750094E555 /* ChatMessageAttachmentSeed.swift */,
+			);
+			path = Attachments;
+			sourceTree = "<group>";
+		};
 		790881AB254327C800896F03 /* StreamChat */ = {
 			isa = PBXGroup;
 			children = (
@@ -2246,6 +2264,7 @@
 		799C9430247D2FB9001F1104 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				225D807625D316B10094E555 /* Attachments */,
 				79877A072498E4BC00015F8B /* ChannelId.swift */,
 				8A5D3EF824AF749200E2FE35 /* ChannelId_Tests.swift */,
 				79896D5D25065E6900BA8F1C /* ChannelRead.swift */,
@@ -2263,17 +2282,6 @@
 				8899BC52254318CC003CB98B /* MessageReaction.swift */,
 				88EA9AED254721C0007EE76B /* MessageReactionType.swift */,
 				88EA9AFB25472269007EE76B /* MessageReactionType_Tests.swift */,
-				88E26D5D2580E92000F55AB5 /* AttachmentId.swift */,
-				8875CF8D2587A7F200BBA6AC /* AttachmentId_Tests.swift */,
-				DABC6AC12546FFB600A8FC78 /* AttachmentTypes.swift */,
-				DA49717A254AE08500AC68C2 /* AttachmentTypes_Tests.swift */,
-				225D800B25D2DCB10094E555 /* ChatMessageDefaultAttachment.swift */,
-				225D7FE925D1917D0094E555 /* ChatMessageRawAttachment.swift */,
-				22692C8625D176F4007C41D0 /* ChatMessageLinkAttachment.swift */,
-				22692C8E25D18097007C41D0 /* ChatMessageGiphyAttachment.swift */,
-				22692C9625D1841E007C41D0 /* ChatMessageFileAttachment.swift */,
-				225D7FE125D191400094E555 /* ChatMessageImageAttachment.swift */,
-				225D7FF125D1B6750094E555 /* ChatMessageAttachmentSeed.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
