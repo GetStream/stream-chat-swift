@@ -1,11 +1,12 @@
-#!/usr/bin/swift
-
 //
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 // This script is used to generate list of excluded source files for StreamChat and StreamChatUI in Package.swift.
 // SPM currently doesn't support path expanding so we can't simply exlude files using placeholders like `*_Tests.swift`.
+
+// ⚠️ After making changes to this file, you need to run the following command to compile it:
+// $ swiftc Scripts/GenerateSPMFileLists.swift -o generateSPMFileLists
 
 import Foundation
 
@@ -57,6 +58,8 @@ for (idx, source) in streamChatSources.enumerated() {
 newGeneratedContent += "] }\n"
 
 newGeneratedContent += "\n"
+
+
 
 // StreamChatUI excluded source files
 let streamChatUIExcludedFiles = sourceFileList(at: URL(string: "Sources/StreamChatUI")!)
