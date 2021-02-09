@@ -50,9 +50,9 @@ open class View: UIView, AppearanceSetting, Customizable {
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -81,9 +81,9 @@ open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customiz
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -112,9 +112,9 @@ open class Control: UIControl, AppearanceSetting, Customizable {
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -143,9 +143,9 @@ open class Button: UIButton, AppearanceSetting, Customizable {
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -174,9 +174,9 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -202,9 +202,9 @@ open class ViewController: UIViewController, AppearanceSetting, Customizable {
         super.viewDidLoad()
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     

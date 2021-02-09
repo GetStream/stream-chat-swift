@@ -16,9 +16,9 @@ open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTyp
         guard superview != nil else { return }
 
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
 
