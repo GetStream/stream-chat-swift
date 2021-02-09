@@ -76,7 +76,7 @@ class ChatChannelListVC_Tests: XCTestCase {
             ],
             changes: []
         )
-        AssertSnapshot(vc, isEmbededInNavigationController: true)
+        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
     
     func test_chatChannelList_isEmpty() {
