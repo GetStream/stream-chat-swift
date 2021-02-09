@@ -5,36 +5,40 @@
 import StreamChat
 import UIKit
 
+/// A UIControl subclass that is designed to show the avatar of the currently logged in user.
+///
+/// It uses `CurrentChatUserController` for its input data and is able to update the avatar automatically based
+/// on the currently logged-in user.
+///
 public typealias CurrentChatUserAvatarView = _CurrentChatUserAvatarView<NoExtraData>
 
+/// A UIControl subclass that is designed to show the avatar of the currently logged in user.
+///
+/// It uses `CurrentChatUserController` for its input data and is able to update the avatar automatically based
+/// on the currently logged-in user.
+///
 open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
-    // MARK: - Properties
-    
-    public var controller: _CurrentChatUserController<ExtraData>? {
+    /// `StreamChat`'s controller that observe the currently logged-in user.
+    open var controller: _CurrentChatUserController<ExtraData>? {
         didSet {
             controller?.setDelegate(self)
             updateContentIfNeeded()
         }
     }
     
-    // MARK: - Subviews
-    
-    public private(set) lazy var avatarView = uiConfig
+    /// The view that shows the current user's avatar.
+    open private(set) lazy var avatarView: ChatAvatarView = uiConfig
         .currentUser
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
     
-    // MARK: - Overrides
-    
     override public func defaultAppearance() {
-        defaultIntrinsicContentSize = .init(width: 32, height: 32)
+        super.defaultAppearance()
+        
+        backgroundColor = .clear
+        avatarView.imageView.backgroundColor = uiConfig.colorPalette.background
     }
-    
-    open var defaultIntrinsicContentSize: CGSize?
-    override open var intrinsicContentSize: CGSize {
-        defaultIntrinsicContentSize ?? super.intrinsicContentSize
-    }
-    
+
     override open var isEnabled: Bool {
         get { super.isEnabled }
         set { super.isEnabled = newValue; updateContentIfNeeded() }
@@ -50,8 +54,6 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UICon
         set { super.isSelected = newValue; updateContentIfNeeded() }
     }
 
-    // MARK: - Content
-
     override open func setUp() {
         super.setUp()
         avatarView.isUserInteractionEnabled = false
@@ -60,10 +62,12 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UICon
     override open func setUpLayout() {
         super.setUpLayout()
 
+        heightAnchor.pin(equalToConstant: 32).isActive = true
         widthAnchor.pin(equalTo: heightAnchor).isActive = true
+
+        embed(avatarView)
         avatarView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         avatarView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
-        embed(avatarView)
     }
     
     @objc override open func updateContent() {
