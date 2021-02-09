@@ -5,7 +5,7 @@
 import SnapshotTesting
 import XCTest
 
-/// The default view controller size. Simulates an iphone in portrait mode.
+/// The default view controller size. Simulates an iPhone in portrait mode.
 let defaultScreenSize = CGSize(width: 360, height: 700)
 
 /// Snapshot of a view controller. All variants will be tested by default. For each variant, it will take a snapshot.
@@ -14,7 +14,7 @@ let defaultScreenSize = CGSize(width: 360, height: 700)
 ///
 /// - Parameters:
 ///   - vc: The view controller to be tested.
-///   - isEmbededInNavigationController: If the view controller should be embeded in a navigation controller.
+///   - isEmbeddedInNavigationController: If the view controller should be embedded in a navigation controller.
 ///   Useful to test the navigation bar.
 ///   - variants: The variants that a snapshot will be taken. All variants should be tested for a view controller.
 ///   - screenSize: The size of the view controller.
@@ -22,7 +22,7 @@ let defaultScreenSize = CGSize(width: 360, height: 700)
 ///   so that the newly captured snapshot is compared with the current reference.
 func AssertSnapshot(
     _ vc: UIViewController,
-    isEmbededInNavigationController: Bool = false,
+    isEmbeddedInNavigationController: Bool = false,
     variants: [SnapshotVariant] = SnapshotVariant.allCases,
     screenSize: CGSize = defaultScreenSize,
     record: Bool = false,
@@ -30,7 +30,7 @@ func AssertSnapshot(
     file: StaticString = #file,
     function: String = #function
 ) {
-    let viewController = isEmbededInNavigationController ? UINavigationController(rootViewController: vc) : vc
+    let viewController = isEmbeddedInNavigationController ? UINavigationController(rootViewController: vc) : vc
     variants.forEach { variant in
         assertSnapshot(
             matching: viewController,
