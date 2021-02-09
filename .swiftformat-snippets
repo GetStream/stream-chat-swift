@@ -1,0 +1,31 @@
+# Stream rules
+--header "\nCopyright © {year} Stream.io Inc. All rights reserved.\n"
+--swiftversion 5.2
+
+--exclude **/*_Vendor.swift
+
+--ifdef no-indent
+
+# Rules inferred from Swift Standard Library:
+--disable anyObjectProtocol, wrapMultilineStatementBraces
+--indent 4
+--enable isEmpty
+--disable redundantParens # it generates mistakes for e.g. "if (a || b), let x = ... {}"
+--semicolons inline
+--nospaceoperators ..., ..< # what about ==, +=?
+--commas inline
+--trimwhitespace nonblank-lines
+--stripunusedargs closure-only
+--maxwidth 132
+
+--binarygrouping 4,7
+--octalgrouping none
+--hexgrouping none
+--fractiongrouping disabled
+--exponentgrouping disabled
+--hexliteralcase lowercase
+--exponentcase lowercase
+
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
