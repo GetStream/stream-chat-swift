@@ -1,11 +1,11 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
 import XCTest
 
-class Attachment_Tests: XCTestCase {
+class AttachmentTypes_Tests: XCTestCase {
     func test_type_encodedAndDecodedCorrectly() throws {
         let types: [AttachmentType] = [.image, .video, .audio, .file, .giphy, .link, .custom("sticker")]
         
