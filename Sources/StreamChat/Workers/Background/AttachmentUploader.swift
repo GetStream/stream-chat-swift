@@ -177,9 +177,7 @@ class AttachmentUploader: Worker {
         completion: @escaping () -> Void = {}
     ) {
         database.write({ [minSignificantUploadingProgressChange] session in
-            guard
-                let attachmentDTO = session.attachment(id: id)
-            else { return }
+            guard let attachmentDTO = session.attachment(id: id) else { return }
 
             var stateHasChanged: Bool {
                 guard
