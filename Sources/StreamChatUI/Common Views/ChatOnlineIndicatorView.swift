@@ -5,17 +5,22 @@
 import StreamChat
 import UIKit
 
+/// A view used to indicate the presence of a user.
 public typealias ChatOnlineIndicatorView = _ChatOnlineIndicatorView<NoExtraData>
 
+/// A view used to indicate the presence of a user.
 open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    // MARK: - Customizable
+    override public func defaultAppearance() {
+        super.defaultAppearance()
+
+        backgroundColor = uiConfig.colorPalette.alternativeActiveTint
+        layer.borderColor = uiConfig.colorPalette.lightBorder.cgColor
+    }
 
     override open func setUpLayout() {
         super.setUpLayout()
         heightAnchor.pin(equalTo: widthAnchor).isActive = true
     }
-
-    // MARK: - Lifecycle
 
     override open func layoutSubviews() {
         super.layoutSubviews()
@@ -23,13 +28,10 @@ open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: View, UIConfigPr
         layer.cornerRadius = bounds.width / 2
         layer.borderWidth = (bounds.width / 5)
         layer.masksToBounds = true
-        layer.backgroundColor = uiConfig.colorPalette.alternativeActiveTint.cgColor
-        layer.borderColor = uiConfig.colorPalette.lightBorder.cgColor
 
         // Create a circle shape layer with true bounds.
         let mask = CAShapeLayer()
         mask.path = UIBezierPath(ovalIn: bounds.inset(by: .init(top: -1, left: -1, bottom: -1, right: -1))).cgPath
-
         layer.mask = mask
     }
 }

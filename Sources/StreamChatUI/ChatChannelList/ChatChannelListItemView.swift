@@ -84,6 +84,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         )
         
         avatarView.heightAnchor.pin(equalToConstant: 48).isActive = true
+        avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor).isActive = true
         container.leftStackView.addArrangedSubview(avatarView)
         
         // UIStackView embedded in UIView with flexible top and bottom constraints to make
@@ -140,7 +141,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         
         // Avatar
         
-        avatarView.channelAndUserId = channelAndUserId
+        avatarView.content = channelAndUserId
         
         // UnreadCount
         
@@ -160,7 +161,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     open func resetContent() {
         titleLabel.text = ""
         subtitleLabel.text = ""
-        avatarView.channelAndUserId = (nil, nil)
+        avatarView.content = (nil, nil)
         unreadCountView.unreadCount = .noUnread
         timestampLabel.text = ""
         readStatusView.status = .empty

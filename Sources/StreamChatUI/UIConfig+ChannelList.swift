@@ -23,7 +23,8 @@ public extension _UIConfig {
         public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
         public var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData>.Type =
             _ChatChannelReadStatusCheckmarkView<ExtraData>.self
-        public var onlineIndicator: _ChatOnlineIndicatorView<ExtraData>.Type = _ChatOnlineIndicatorView<ExtraData>.self
+        /// A type for the view used as an online activity indicator for avatars.
+        public var onlineIndicator: UIView.Type = _ChatOnlineIndicatorView<ExtraData>.self
     }
 }
 

@@ -206,8 +206,15 @@ var streamChatSourcesExcluded: [String] { [
 
 var streamChatUIFilesExcluded: [String] { [
     "Utils/UIConfigProvider_Tests.swift",
+    "ChatChannelList/ChatChannelAvatarView_Tests.swift",
     "ChatChannelList/ChatChannelListVC_Tests.swift",
     "ChatChannelList/__Snapshots__/ChatChannelListVC_Tests/test_chatChannelList_isPopulated.large.png",
     "ChatChannelList/__Snapshots__/ChatChannelListVC_Tests/test_chatChannelList_isPopulated.extraExtraExtraLarge.png",
-    "ChatChannelList/__Snapshots__/ChatChannelListVC_Tests/test_chatChannelList_isPopulated.small.png"
+    "ChatChannelList/__Snapshots__/ChatChannelListVC_Tests/test_chatChannelList_isPopulated.small.png",
+    "ChatChannelList/__Snapshots__/ChatChannelAvatarView_Tests/test_appearanceCustomization_usingAppearanceHook.small.png",
+    "ChatChannelList/__Snapshots__/ChatChannelAvatarView_Tests/test_appearanceCustomization_usingUIConfig.small.png",
+    "ChatChannelList/__Snapshots__/ChatChannelAvatarView_Tests/test_defaultAppearance_withDirectMessageChannel.small.png",
+    "ChatChannelList/__Snapshots__/ChatChannelAvatarView_Tests/test_appearanceCustomization_usingSubclassing.small.png",
+    "ChatChannelList/__Snapshots__/ChatChannelAvatarView_Tests/test_defaultAppearance_withDirectMessageChannel.small-with-online-indicator.png",
+    "ChatChannelList/__Snapshots__/ChatChannelAvatarView_Tests/test_emptyAppearance.small.png"
 ] }
