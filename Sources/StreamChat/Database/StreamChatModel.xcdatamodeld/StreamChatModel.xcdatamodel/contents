@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20D64" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" optional="YES" attributeType="Binary"/>
-        <attribute name="file" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="localProgress" optional="YES" attributeType="Double" minValueString="0" maxValueString="1" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="localStateRaw" optional="YES" attributeType="String" defaultValueString=""/>
@@ -255,7 +254,7 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="179"/>
+        <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="164"/>
         <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="404"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>

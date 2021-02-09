@@ -29,8 +29,6 @@ class AttachmentDTO: NSManagedObject {
     @NSManaged var localURL: URL?
     /// A title.
     @NSManaged var title: String?
-    /// A file.
-    @NSManaged var file: Data?
     
     /// An attachement raw string type.
     @NSManaged var type: String
@@ -131,7 +129,6 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.localState = .pendingUpload
         dto.type = type
         dto.title = seed.fileName
-        dto.file = try JSONEncoder.default.encode(seed.file)
         
         let attachment = ChatMessageDefaultAttachment(
             id: id,
