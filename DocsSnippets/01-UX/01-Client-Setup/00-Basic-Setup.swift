@@ -1,5 +1,3 @@
-//> https://getstream.io/chat/docs/ios-swift/ios_client_setup/?preview=1&language=swift#basic-setup
-
 // LINK: https://getstream.io/chat/docs/ios-swift/ios_client_setup/?preview=1&language=swift#basic-setup
 
 import UIKit

@@ -4,14 +4,9 @@ import StreamChat
 
 fileprivate var chatClient: ChatClient!
 
-func snippet_ux_client_setup_connecting() {
+func snippet_ux_client_setup_disconnecting() {
     //> import UIKit
     //> import StreamChat
 
-    chatClient.connectionController().connect { error in
-        if let error = error {
-            // handle possible errors
-            print(error)
-        }
-    }
+    chatClient.connectionController().disconnect()
 }
