@@ -427,7 +427,9 @@ final class MessageUpdater_Tests: StressTestCase {
             Assert.willBeEqual(message?.parentMessageId, parentMessageId)
             Assert.willBeEqual(message?.showReplyInChannel, showReplyInChannel)
             Assert.willBeEqual(
-                message?.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
+                isAttachmentModelSeparationChangesApplied ?
+                    message?.attachments.compactMap { ($0 as? ChatMessageImageAttachment)?.title } :
+                    message?.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
                 attachmentSeeds.map(\.fileName)
             )
             Assert.willBeEqual(

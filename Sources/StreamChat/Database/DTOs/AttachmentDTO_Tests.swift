@@ -41,19 +41,29 @@ class AttachmentDTO_Tests: XCTestCase {
             XCTAssertEqual(loadedAttachment.message.id, messageId)
             XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
             XCTAssertEqual(loadedAttachment.title, attachmentSeed.fileName)
-            XCTAssertEqual(
-                try loadedAttachment.file.flatMap { try JSONDecoder.default.decode(AttachmentFile.self, from: $0) },
-                attachmentSeed.file
-            )
             
-            let defaultAttachmentModel = loadedAttachment.asModel() as! ChatMessageDefaultAttachment
-            
-            XCTAssertNil(defaultAttachmentModel.author)
-            XCTAssertNil(defaultAttachmentModel.text)
-            XCTAssertNil(defaultAttachmentModel.url)
-            XCTAssertNil(defaultAttachmentModel.imageURL)
-            XCTAssertNil(defaultAttachmentModel.imagePreviewURL)
-            XCTAssert(defaultAttachmentModel.actions.isEmpty)
+            if isAttachmentModelSeparationChangesApplied {
+                switch type {
+                case .file:
+                    let fileAttachment = loadedAttachment.asModel() as! ChatMessageFileAttachment
+                    
+                    XCTAssertNil(fileAttachment.assetURL)
+                default:
+                    let imageAttachment = loadedAttachment.asModel() as! ChatMessageImageAttachment
+                    
+                    XCTAssertNil(imageAttachment.imageURL)
+                    XCTAssertNil(imageAttachment.imagePreviewURL)
+                }
+            } else {
+                let defaultAttachmentModel = loadedAttachment.asModel() as! ChatMessageDefaultAttachment
+                
+                XCTAssertNil(defaultAttachmentModel.author)
+                XCTAssertNil(defaultAttachmentModel.text)
+                XCTAssertNil(defaultAttachmentModel.url)
+                XCTAssertNil(defaultAttachmentModel.imageURL)
+                XCTAssertNil(defaultAttachmentModel.imagePreviewURL)
+                XCTAssert(defaultAttachmentModel.actions.isEmpty)
+            }
         }
     }
     
@@ -81,16 +91,24 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.message.id, messageId)
         XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
         
-        let defaultAttachmentModel = loadedAttachment.asModel() as! ChatMessageDefaultAttachment
-        
-        XCTAssertEqual(defaultAttachmentModel.title, attachment.decodedDefaultAttachment?.title)
-        XCTAssertEqual(defaultAttachmentModel.author, attachment.decodedDefaultAttachment?.author)
-        XCTAssertEqual(defaultAttachmentModel.text, attachment.decodedDefaultAttachment?.text)
-        XCTAssertEqual(defaultAttachmentModel.actions, attachment.decodedDefaultAttachment?.actions)
-        XCTAssertEqual(defaultAttachmentModel.url, attachment.decodedDefaultAttachment?.url)
-        XCTAssertEqual(defaultAttachmentModel.imageURL, attachment.decodedDefaultAttachment?.imageURL)
-        XCTAssertEqual(defaultAttachmentModel.imagePreviewURL, attachment.decodedDefaultAttachment?.imagePreviewURL)
-        XCTAssertEqual(defaultAttachmentModel.file, attachment.decodedDefaultAttachment?.file)
+        if isAttachmentModelSeparationChangesApplied {
+            let imageAttachmentModel = loadedAttachment.asModel() as! ChatMessageImageAttachment
+            
+            XCTAssertEqual(imageAttachmentModel.title, attachment.decodedDefaultAttachment?.title)
+            XCTAssertEqual(imageAttachmentModel.imageURL, attachment.decodedDefaultAttachment?.imageURL)
+            XCTAssertEqual(imageAttachmentModel.imagePreviewURL, attachment.decodedDefaultAttachment?.imagePreviewURL)
+        } else {
+            let defaultAttachmentModel = loadedAttachment.asModel() as! ChatMessageDefaultAttachment
+            
+            XCTAssertEqual(defaultAttachmentModel.title, attachment.decodedDefaultAttachment?.title)
+            XCTAssertEqual(defaultAttachmentModel.author, attachment.decodedDefaultAttachment?.author)
+            XCTAssertEqual(defaultAttachmentModel.text, attachment.decodedDefaultAttachment?.text)
+            XCTAssertEqual(defaultAttachmentModel.actions, attachment.decodedDefaultAttachment?.actions)
+            XCTAssertEqual(defaultAttachmentModel.url, attachment.decodedDefaultAttachment?.url)
+            XCTAssertEqual(defaultAttachmentModel.imageURL, attachment.decodedDefaultAttachment?.imageURL)
+            XCTAssertEqual(defaultAttachmentModel.imagePreviewURL, attachment.decodedDefaultAttachment?.imagePreviewURL)
+            XCTAssertEqual(defaultAttachmentModel.file, attachment.decodedDefaultAttachment?.file)
+        }
     }
     
     func test_attachmentEnvelope_isStoredAndLoadedFromDB() throws {
@@ -123,7 +141,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(decodedAttachmentEnvelope.number, attachment.number)
     }
     
-    func test_messagePayload_asUploadingModel() throws {
+    func test_messagePayload_asAttachmentSeed() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let attachmentType: AttachmentType = .image
@@ -146,16 +164,15 @@ class AttachmentDTO_Tests: XCTestCase {
             attachmentDTO.localURL = attachmentLocalURL
         }
         
-        // Load the attachment for the message from the db
-        let loadedAttachment: ChatMessageDefaultAttachment =
-            try XCTUnwrap(database.viewContext.attachment(id: attachmentId)?.asUploadingModel())
+        // Load the attachment seed for the message from the db
+        let loadedSeed: ChatMessageAttachmentSeed =
+            try XCTUnwrap(database.viewContext.attachment(id: attachmentId)?.asAttachmentSeed())
 
         // Assert attachment has correct values.
-        XCTAssertEqual(loadedAttachment.id, attachmentId)
-        XCTAssertEqual(loadedAttachment.localURL, attachmentLocalURL)
-        XCTAssertEqual(loadedAttachment.localState, attachmentLocalState)
-        XCTAssertEqual(loadedAttachment.type, attachmentType)
-        XCTAssertEqual(loadedAttachment.title, attachmentFileName)
+        XCTAssertEqual(loadedSeed.localURL, attachmentLocalURL)
+        XCTAssertEqual(loadedSeed.localState, attachmentLocalState)
+        XCTAssertEqual(loadedSeed.type, attachmentType)
+        XCTAssertEqual(loadedSeed.fileName, attachmentFileName)
     }
     
     func test_saveAttachment_throws_whenChannelDoesNotExist() throws {

@@ -4,6 +4,10 @@
 
 import Foundation
 
+// `ChatMessageDefaultAttachment` should be removed once changes in UI SDK will be applied.
+// Please search for this flag once the default model is removed and apply necessary changes.
+let isAttachmentModelSeparationChangesApplied = false
+
 /// A type for default built-in attachment types. Used for both exposing it in `_ChatMessage<ExtraData: ExtraDataTypes>` and
 /// sending back to backend if attachment doesn't need prior uploading. (Public sending API is in progress)
 public struct ChatMessageDefaultAttachment: ChatMessageAttachment, AttachmentEnvelope, Decodable {

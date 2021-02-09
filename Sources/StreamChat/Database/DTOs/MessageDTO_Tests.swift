@@ -328,7 +328,9 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.latestReactions, latestReactions)
         XCTAssertEqual(loadedMessage.currentUserReactions, currentUserReactions)
         XCTAssertEqual(
-            loadedMessage.attachments.map { ($0 as? ChatMessageDefaultAttachment)?.id },
+            isAttachmentModelSeparationChangesApplied ?
+                loadedMessage.attachments.map { ($0 as? ChatMessageImageAttachment)?.id } :
+                loadedMessage.attachments.map { ($0 as? ChatMessageDefaultAttachment)?.id },
             messagePayload.attachmentIDs(cid: channelId)
         )
     }
@@ -720,7 +722,9 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.locallyCreatedAt)
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.updatedAt)
         XCTAssertEqual(
-            loadedMessage.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
+            isAttachmentModelSeparationChangesApplied ?
+                loadedMessage.attachments.compactMap { ($0 as? ChatMessageImageAttachment)?.title } :
+                loadedMessage.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
             newMessageAttachmentSeeds.map(\.fileName)
         )
         XCTAssertEqual(
