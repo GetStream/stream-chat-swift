@@ -206,6 +206,16 @@ lane :build_sample do |options|
   )
 end
 
+desc "Build Docs Snippets target"
+lane :build_docs_snippets do |options|
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "DocsSnippets",
+    clean: true,
+    build_for_testing: true,
+  )
+end
+
 desc "Test SPM Integration"
 lane :spm_integration do |options|
   build_app(
