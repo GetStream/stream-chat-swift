@@ -96,7 +96,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         stackView.topAnchor.pin(greaterThanOrEqualTo: containerCenterView.layoutMarginsGuide.topAnchor).isActive = true
         stackView.bottomAnchor.pin(lessThanOrEqualTo: containerCenterView.layoutMarginsGuide.bottomAnchor).isActive = true
         stackView.pin(anchors: [.leading, .trailing, .centerY], to: containerCenterView)
-        stackView.spacing = subtitleLabel.font.pointSize / 10
+        stackView.spacing = 2
         
         // Top part of centerStackView.
         let topCenterStackView = UIStackView()
