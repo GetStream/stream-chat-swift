@@ -175,6 +175,26 @@ class DatabaseContainer_Tests: StressTestCase {
         XCTAssertNil(testObject)
     }
     
+    func test_databaseContainer_createsNewDatabase_whenPersistentStoreFailsToLoad() throws {
+        // Create a new on-disc database with the test data model
+        let dbURL = URL.newTemporaryFileURL()
+        _ = try DatabaseContainerMock(
+            kind: .onDisk(databaseFileURL: dbURL),
+            modelName: "TestDataModel",
+            bundle: Bundle(for: DatabaseContainer_Tests.self)
+        )
+                
+        // Create a new database with the same url but totally different models
+        // Should re-create the database
+        XCTAssertNoThrow(
+            try DatabaseContainerMock(
+                kind: .onDisk(databaseFileURL: dbURL),
+                modelName: "TestDataModel2",
+                bundle: Bundle(for: DatabaseContainer_Tests.self)
+            )
+        )
+    }
+    
     func test_databaseContainer_hasDefinedBehaviorForInMemoryStore_whenShouldFlushOnStartIsTrue() throws {
         // Create a new in-memory database that should flush on start and assert no error is thrown
         XCTAssertNoThrow(
