@@ -203,7 +203,7 @@ extension AttachmentDTO {
     }
     
     /// Returns an object pending to upload.
-    func asUploadingModel() -> ChatMessageDefaultAttachment? {
+    func asAttachmentSeed() -> ChatMessageAttachmentSeed? {
         guard
             let localState = localState,
             let localURL = localURL
@@ -211,13 +211,12 @@ extension AttachmentDTO {
             log.error("Failed to create pending upload model.")
             return nil
         }
-        
-        return ChatMessageDefaultAttachment(
-            id: attachmentID,
-            type: AttachmentType(rawValue: type),
+
+        return ChatMessageAttachmentSeed(
             localURL: localURL,
-            localState: localState,
-            title: title ?? ""
+            fileName: title,
+            type: AttachmentType(rawValue: type),
+            localState: localState
         )
     }
     
