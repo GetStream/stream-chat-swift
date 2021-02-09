@@ -1,4 +1,6 @@
 excluded:
+  - "Scripts"
+  - "Package.swift"
   - "DocsSnippets" # We don't need SwiftLint running for DocsSnippets (SwiftFormat will still run)
 
 disabled_rules:
