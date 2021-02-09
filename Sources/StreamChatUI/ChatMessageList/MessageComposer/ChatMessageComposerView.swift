@@ -86,9 +86,9 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: View,
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     

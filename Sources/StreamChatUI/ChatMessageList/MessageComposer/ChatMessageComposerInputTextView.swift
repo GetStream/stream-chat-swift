@@ -39,9 +39,9 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
