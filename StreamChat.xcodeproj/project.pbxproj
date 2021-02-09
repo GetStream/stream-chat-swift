@@ -1184,7 +1184,6 @@
 		884C61292594A7DB008B70DC /* AttachmentActionRequestBody_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentActionRequestBody_Tests.swift; sourceTree = "<group>"; };
 		8850B929255C286B003AED69 /* UIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIConfig.swift; sourceTree = "<group>"; };
 		8850B93B255C3168003AED69 /* ContainerStackView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContainerStackView.swift; sourceTree = "<group>"; };
-		8850B945255C3B41003AED69 /* ChatAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAvatarView.swift; sourceTree = "<group>"; };
 		8850FE86256558A200C8D534 /* ChatChannelListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListRouter.swift; sourceTree = "<group>"; };
 		8850FE90256558B200C8D534 /* ChatRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRouter.swift; sourceTree = "<group>"; };
 		885B3D7625642B3D003E6BDF /* CurrentChatUserAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentChatUserAvatarView.swift; sourceTree = "<group>"; };
@@ -2566,7 +2565,6 @@
 			children = (
 				8850B93B255C3168003AED69 /* ContainerStackView.swift */,
 				DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */,
-				8850B945255C3B41003AED69 /* ChatAvatarView.swift */,
 				885B3D7625642B3D003E6BDF /* CurrentChatUserAvatarView.swift */,
 				79B4F0DE25D305CD0063FFB5 /* CurrentChatUserAvatarView_Tests.swift */,
 				885B3D7C25642B88003E6BDF /* ChatChannelCreateNewButton.swift */,
