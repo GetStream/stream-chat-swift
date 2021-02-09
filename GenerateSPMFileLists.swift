@@ -33,7 +33,7 @@ func sourceFileList(at url: URL) -> [String] {
             let basePathRange = path.range(of: url.path + "/")!
             return String(path[basePathRange.upperBound...])
         }
-        .filter { $0.hasSuffix("_Tests.swift") || $0.hasSuffix("_Mock.swift") }
+        .filter { $0.hasSuffix("_Tests.swift") || $0.hasSuffix("_Mock.swift") || $0.contains("__Snapshots__")}
 
     return sourceFiles
 }
@@ -59,11 +59,11 @@ newGeneratedContent += "] }\n"
 newGeneratedContent += "\n"
 
 // StreamChatUI excluded source files
-let streamChatUISources = sourceFileList(at: URL(string: "Sources/StreamChatUI")!)
-newGeneratedContent += "var streamChatUISourcesExcluded: [String] { [\n"
-for (idx, source) in streamChatUISources.enumerated() {
+let streamChatUIExcludedFiles = sourceFileList(at: URL(string: "Sources/StreamChatUI")!)
+newGeneratedContent += "var streamChatUIFilesExcluded: [String] { [\n"
+for (idx, source) in streamChatUIExcludedFiles.enumerated() {
     newGeneratedContent += "    \"\(source)\""
-    if idx == streamChatUISources.endIndex - 1 {
+    if idx == streamChatUIExcludedFiles.endIndex - 1 {
         newGeneratedContent += "\n"
     } else {
         newGeneratedContent += ",\n"

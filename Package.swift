@@ -37,7 +37,7 @@ let package = Package(
         .target(
             name: "StreamChatUI",
             dependencies: ["StreamChat", "Nuke", "SwiftyGif"],
-            exclude: ["README.md", "Info.plist"] + streamChatUISourcesExcluded,
+            exclude: ["README.md", "Info.plist"] + streamChatUIFilesExcluded,
             resources: [.process("Sources/StreamChatUI/Resources")]
         )
     ]
@@ -204,7 +204,10 @@ var streamChatSourcesExcluded: [String] { [
     "ChatClient_Mock.swift"
 ] }
 
-var streamChatUISourcesExcluded: [String] { [
+var streamChatUIFilesExcluded: [String] { [
     "Utils/UIConfigProvider_Tests.swift",
-    "ChatChannelList/ChatChannelListVC_Tests.swift"
+    "ChatChannelList/ChatChannelListVC_Tests.swift",
+    "ChatChannelList/__Snapshots__/ChatChannelListVC_Tests/test_chatChannelList_isPopulated.large.png",
+    "ChatChannelList/__Snapshots__/ChatChannelListVC_Tests/test_chatChannelList_isPopulated.extraExtraExtraLarge.png",
+    "ChatChannelList/__Snapshots__/ChatChannelListVC_Tests/test_chatChannelList_isPopulated.small.png"
 ] }
