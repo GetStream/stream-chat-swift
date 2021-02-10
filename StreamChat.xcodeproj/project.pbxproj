@@ -323,6 +323,18 @@
 		804CA7CB25D4045000731116 /* 04-Remove-User-Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA7B625D4044F00731116 /* 04-Remove-User-Device.swift */; };
 		804CA7CC25D4045000731116 /* 02-Regular-Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA7B725D4044F00731116 /* 02-Regular-Launch.swift */; };
 		804CA7CD25D4045000731116 /* 03-Add-User-Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA7B825D4044F00731116 /* 03-Add-User-Device.swift */; };
+		804CA7E525D43B5900731116 /* 00-Channel-Extra-Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA7E425D43B5900731116 /* 00-Channel-Extra-Data.swift */; };
+		804CA7EE25D43C5800731116 /* 01-Custom-ExtraDataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA7ED25D43C5800731116 /* 01-Custom-ExtraDataTypes.swift */; };
+		804CA80D25D43ECA00731116 /* 02-Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA80C25D43ECA00731116 /* 02-Typealiases.swift */; };
+		804CA81725D4595F00731116 /* 00-View-Lifecycle-Methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA81625D4595F00731116 /* 00-View-Lifecycle-Methods.swift */; };
+		804CA82725D45A1800731116 /* 01-Changing-Main-Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA82625D45A1800731116 /* 01-Changing-Main-Color.swift */; };
+		804CA83025D45BEE00731116 /* 02-Changing-Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA82F25D45BEE00731116 /* 02-Changing-Appearance.swift */; };
+		804CA83925D45C5A00731116 /* 03-Changin-Appearance-2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA83825D45C5A00731116 /* 03-Changin-Appearance-2.swift */; };
+		804CA84925D45D0F00731116 /* 04-Subclassing-Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA84825D45D0F00731116 /* 04-Subclassing-Components.swift */; };
+		804CA85225D45DDC00731116 /* 05-Changing-Component-Arrangement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA85125D45DDC00731116 /* 05-Changing-Component-Arrangement.swift */; };
+		804CA85B25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA85A25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift */; };
+		804CA86B25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA86A25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift */; };
+		804CA87425D4604200731116 /* 08-Injecting-Custom-Subclass-3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA87325D4604100731116 /* 08-Injecting-Custom-Subclass-3.swift */; };
 		805A11492506FBBD0089DFC4 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */; };
 		80750A4625D1D51C0027F951 /* 01-Channels-Storyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750A4525D1D51C0027F951 /* 01-Channels-Storyboard.swift */; };
 		80750A5025D1D5810027F951 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -1137,6 +1149,18 @@
 		804CA7B625D4044F00731116 /* 04-Remove-User-Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "04-Remove-User-Device.swift"; sourceTree = "<group>"; };
 		804CA7B725D4044F00731116 /* 02-Regular-Launch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "02-Regular-Launch.swift"; sourceTree = "<group>"; };
 		804CA7B825D4044F00731116 /* 03-Add-User-Device.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "03-Add-User-Device.swift"; sourceTree = "<group>"; };
+		804CA7E425D43B5900731116 /* 00-Channel-Extra-Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Channel-Extra-Data.swift"; sourceTree = "<group>"; };
+		804CA7ED25D43C5800731116 /* 01-Custom-ExtraDataTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Custom-ExtraDataTypes.swift"; sourceTree = "<group>"; };
+		804CA80C25D43ECA00731116 /* 02-Typealiases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Typealiases.swift"; sourceTree = "<group>"; };
+		804CA81625D4595F00731116 /* 00-View-Lifecycle-Methods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-View-Lifecycle-Methods.swift"; sourceTree = "<group>"; };
+		804CA82625D45A1800731116 /* 01-Changing-Main-Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Changing-Main-Color.swift"; sourceTree = "<group>"; };
+		804CA82F25D45BEE00731116 /* 02-Changing-Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Changing-Appearance.swift"; sourceTree = "<group>"; };
+		804CA83825D45C5A00731116 /* 03-Changin-Appearance-2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "03-Changin-Appearance-2.swift"; sourceTree = "<group>"; };
+		804CA84825D45D0F00731116 /* 04-Subclassing-Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "04-Subclassing-Components.swift"; sourceTree = "<group>"; };
+		804CA85125D45DDC00731116 /* 05-Changing-Component-Arrangement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "05-Changing-Component-Arrangement.swift"; sourceTree = "<group>"; };
+		804CA85A25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "06-Injecting-Custom-Subclass.swift"; sourceTree = "<group>"; };
+		804CA86A25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "07-Injecting-Custom-Subclass-2.swift"; sourceTree = "<group>"; };
+		804CA87325D4604100731116 /* 08-Injecting-Custom-Subclass-3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "08-Injecting-Custom-Subclass-3.swift"; sourceTree = "<group>"; };
 		805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		80750A4525D1D51C0027F951 /* 01-Channels-Storyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Channels-Storyboard.swift"; sourceTree = "<group>"; };
 		80750A5825D1D5B90027F951 /* 02-Channels-Code.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Channels-Code.swift"; sourceTree = "<group>"; };
@@ -2502,6 +2526,32 @@
 			path = "04-Notifications";
 			sourceTree = "<group>";
 		};
+		804CA7E325D43B4000731116 /* 05-Custom-Data */ = {
+			isa = PBXGroup;
+			children = (
+				804CA7E425D43B5900731116 /* 00-Channel-Extra-Data.swift */,
+				804CA7ED25D43C5800731116 /* 01-Custom-ExtraDataTypes.swift */,
+				804CA80C25D43ECA00731116 /* 02-Typealiases.swift */,
+			);
+			path = "05-Custom-Data";
+			sourceTree = "<group>";
+		};
+		804CA81525D4416500731116 /* 06-Customizing-Views */ = {
+			isa = PBXGroup;
+			children = (
+				804CA81625D4595F00731116 /* 00-View-Lifecycle-Methods.swift */,
+				804CA82625D45A1800731116 /* 01-Changing-Main-Color.swift */,
+				804CA82F25D45BEE00731116 /* 02-Changing-Appearance.swift */,
+				804CA83825D45C5A00731116 /* 03-Changin-Appearance-2.swift */,
+				804CA84825D45D0F00731116 /* 04-Subclassing-Components.swift */,
+				804CA85125D45DDC00731116 /* 05-Changing-Component-Arrangement.swift */,
+				804CA85A25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift */,
+				804CA86A25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift */,
+				804CA87325D4604100731116 /* 08-Injecting-Custom-Subclass-3.swift */,
+			);
+			path = "06-Customizing-Views";
+			sourceTree = "<group>";
+		};
 		8082785225D1BAD1008039DD /* DocsSnippets */ = {
 			isa = PBXGroup;
 			children = (
@@ -2532,6 +2582,8 @@
 				804CA7AB25D4044F00731116 /* 02-User-Setup-Tokens */,
 				804CA7A025D4044F00731116 /* 03-Logging */,
 				804CA7B125D4044F00731116 /* 04-Notifications */,
+				804CA7E325D43B4000731116 /* 05-Custom-Data */,
+				804CA81525D4416500731116 /* 06-Customizing-Views */,
 			);
 			path = "01-UX";
 			sourceTree = "<group>";
@@ -4272,17 +4324,27 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				804CA84925D45D0F00731116 /* 04-Subclassing-Components.swift in Sources */,
+				804CA7EE25D43C5800731116 /* 01-Custom-ExtraDataTypes.swift in Sources */,
+				804CA86B25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift in Sources */,
+				804CA7E525D43B5900731116 /* 00-Channel-Extra-Data.swift in Sources */,
 				80750A4625D1D51C0027F951 /* 01-Channels-Storyboard.swift in Sources */,
 				80750A6325D1D8E00027F951 /* 03-Messages-Storyboard.swift in Sources */,
 				808278BE25D1C2A8008039DD /* 03-Events.swift in Sources */,
 				804CA7BB25D4045000731116 /* 05-Custom-DispatchQueue.swift in Sources */,
 				804CA7C825D4045000731116 /* 05-Handle-Push-Notifications.swift in Sources */,
 				804CA7BF25D4045000731116 /* 01-Connecting.swift in Sources */,
+				804CA87425D4604200731116 /* 08-Injecting-Custom-Subclass-3.swift in Sources */,
 				804CA7C525D4045000731116 /* 02-Development-Token.swift in Sources */,
 				804CA7C125D4045000731116 /* 04-Custom-BaseURL.swift in Sources */,
+				804CA83925D45C5A00731116 /* 03-Changin-Appearance-2.swift in Sources */,
 				804CA7BD25D4045000731116 /* 02-Disconnecting.swift in Sources */,
 				804CA7BC25D4045000731116 /* 03-Enable-Logs.swift in Sources */,
+				804CA81725D4595F00731116 /* 00-View-Lifecycle-Methods.swift in Sources */,
 				808278CA25D1CBCC008039DD /* 00-Client-Setup.swift in Sources */,
+				804CA83025D45BEE00731116 /* 02-Changing-Appearance.swift in Sources */,
+				804CA82725D45A1800731116 /* 01-Changing-Main-Color.swift in Sources */,
+				804CA85B25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift in Sources */,
 				80750A5925D1D5B90027F951 /* 02-Channels-Code.swift in Sources */,
 				804CA7C925D4045000731116 /* 00-Local-Notifications-Template.swift in Sources */,
 				804CA7C325D4045000731116 /* 03-Guest-Users.swift in Sources */,
@@ -4292,12 +4354,14 @@
 				804CA7C725D4045000731116 /* 01-Onboarding.swift in Sources */,
 				804CA7CC25D4045000731116 /* 02-Regular-Launch.swift in Sources */,
 				804CA7CB25D4045000731116 /* 04-Remove-User-Device.swift in Sources */,
+				804CA80D25D43ECA00731116 /* 02-Typealiases.swift in Sources */,
 				804CA7CA25D4045000731116 /* 06-Clear-Badge-On-Active.swift in Sources */,
 				8082787D25D1BC65008039DD /* 01-Channels.swift in Sources */,
 				804CA7BE25D4045000731116 /* 06-Background-Behavior.swift in Sources */,
 				804CA7CD25D4045000731116 /* 03-Add-User-Device.swift in Sources */,
 				804CA7BA25D4045000731116 /* 00-Logging.swift in Sources */,
 				8082786225D1BAE9008039DD /* 00-ChatClient.swift in Sources */,
+				804CA85225D45DDC00731116 /* 05-Changing-Component-Arrangement.swift in Sources */,
 				804CA7C225D4045000731116 /* 04-Anonymous-Users.swift in Sources */,
 				804CA7C625D4045000731116 /* 01-Token-Provider.swift in Sources */,
 				8082788F25D1C0B2008039DD /* 02-Messages.swift in Sources */,
