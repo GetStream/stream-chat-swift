@@ -62,25 +62,6 @@ final class MessageUpdater_Tests: StressTestCase {
         // Assert `MessageDoesNotExist` is received
         XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
     }
-    
-    func test_editMessage_propogates_MessageCanNotBeUpdatedByCurrentUser_Error() throws {
-        let anotherUserId: UserId = .unique
-        let anotherUserMessageId: MessageId = .unique
-
-        // Create current user is the database
-        try database.createCurrentUser()
-    
-        // Create message authored by another user in the database
-        try database.createMessage(id: anotherUserMessageId, authorId: anotherUserId)
-
-        // Try to edit another user's message
-        let completionError = try await {
-            messageUpdater.editMessage(messageId: anotherUserMessageId, text: .unique, completion: $0)
-        }
-        
-        // Assert `MessageCannotBeUpdatedByCurrentUser` is received
-        XCTAssertTrue(completionError is ClientError.MessageCannotBeUpdatedByCurrentUser)
-    }
 
     func test_editMessage_updatesLocalMessageCorrectly() throws {
         let pairs: [(LocalMessageState?, LocalMessageState?)] = [
@@ -160,35 +141,6 @@ final class MessageUpdater_Tests: StressTestCase {
     }
     
     // MARK: Delete message
-    
-    func test_deleteMessage_propogates_CurrentUserDoesNotExist_Error() throws {
-        // Simulate `deleteMessage(messageId:)` call
-        let completionError = try await {
-            messageUpdater.deleteMessage(messageId: .unique, completion: $0)
-        }
-        
-        // Assert `CurrentUserDoesNotExist` is received
-        XCTAssertTrue(completionError is ClientError.CurrentUserDoesNotExist)
-    }
-    
-    func test_deleteMessage_propogates_MessageCanNotBeUpdatedByCurrentUser_Error() throws {
-        let anotherUserId: UserId = .unique
-        let anotherUserMessageId: MessageId = .unique
-        
-        // Create current user is the database
-        try database.createCurrentUser()
-        
-        // Create message authored by another user in the database
-        try database.createMessage(id: anotherUserMessageId, authorId: anotherUserId)
-        
-        // Simulate `deleteMessage(messageId:)` call
-        let completionError = try await {
-            messageUpdater.deleteMessage(messageId: anotherUserMessageId, completion: $0)
-        }
-        
-        // Assert `MessageCannotBeUpdatedByCurrentUser` is received
-        XCTAssertTrue(completionError is ClientError.MessageCannotBeUpdatedByCurrentUser)
-    }
     
     func test_deleteMessage_sendsCorrectAPICall_ifMessageDoesNotExistLocally() throws {
         let messageId: MessageId = .unique
@@ -1078,25 +1030,6 @@ final class MessageUpdater_Tests: StressTestCase {
         XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
     }
 
-    func test_resendMessage_propagatesMessageCanNotBeUpdatedByCurrentUser_Error() throws {
-        let anotherUserId: UserId = .unique
-        let anotherUserMessageId: MessageId = .unique
-
-        // Create current user is the database
-        try database.createCurrentUser()
-
-        // Create message authored by another user in the database
-        try database.createMessage(id: anotherUserMessageId, authorId: anotherUserId)
-
-        // Try to resend another user's message
-        let completionError = try await {
-            messageUpdater.resendMessage(with: anotherUserMessageId, completion: $0)
-        }
-
-        // Assert `MessageCannotBeUpdatedByCurrentUser` is received
-        XCTAssertTrue(completionError is ClientError.MessageCannotBeUpdatedByCurrentUser)
-    }
-
     func test_resendMessage_propagatesMessageEditingError() throws {
         let currentUserId: UserId = .unique
         
@@ -1366,34 +1299,6 @@ final class MessageUpdater_Tests: StressTestCase {
 
         // Assert `MessageDoesNotExist` is received
         XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
-    }
-
-    func test_dispatchEphemeralMessageAction_propagatesMessageCanNotBeUpdatedByCurrentUser_Error() throws {
-        let cid: ChannelId = .unique
-        let anotherUserId: UserId = .unique
-        let anotherUserMessageId: MessageId = .unique
-
-        // Create current user is the database
-        try database.createCurrentUser()
-
-        // Create channel is the database
-        try database.createChannel(cid: cid, withMessages: false)
-
-        // Create message authored by another user in the database
-        try database.createMessage(id: anotherUserMessageId, authorId: anotherUserId, cid: cid)
-
-        // Simulate `dispatchEphemeralMessageAction` call
-        let completionError = try await {
-            messageUpdater.dispatchEphemeralMessageAction(
-                cid: cid,
-                messageId: anotherUserMessageId,
-                action: .unique,
-                completion: $0
-            )
-        }
-
-        // Assert `MessageCannotBeUpdatedByCurrentUser` is received
-        XCTAssertTrue(completionError is ClientError.MessageCannotBeUpdatedByCurrentUser)
     }
 
     func test_dispatchEphemeralMessageAction_propagatesMessageEditingError_forNonEphemeralMessage() throws {
