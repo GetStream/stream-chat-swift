@@ -108,8 +108,9 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBySt
     case audio
 
     /// Application custom types.
-    /// `.link` type is used for all enriched `URLs`.
-    case link
+    /// `.link` type is used for all enriched `URLs`, associated value is the main asset of the enriched `URL`.
+    /// Could be `audio`, `video`, `image`.
+    case link(String?)
     /// `.custom` type is used for any unrecognised type.
     case custom(String?)
     
@@ -117,6 +118,8 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBySt
         switch self {
         case let .custom(raw):
             return raw
+        case let .link(raw):
+            return "link-\(raw ?? "")"
         case .image:
             return "image"
         case .giphy:
@@ -127,12 +130,16 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBySt
             return "audio"
         case .file:
             return "file"
-        case .link:
-            return "link"
         }
     }
         
     public init(rawValue: String?) {
+        if let rawValue = rawValue,
+            rawValue.prefix(4) == "link" {
+            self = .link(rawValue.replacingOccurrences(of: "link-", with: ""))
+            return
+        }
+        
         switch rawValue {
         case "image":
             self = .image
@@ -144,10 +151,16 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBySt
             self = .audio
         case "file":
             self = .file
-        case "link":
-            self = .link
         default:
             self = .custom(rawValue)
+        }
+    }
+    
+    public var isLink: Bool {
+        if case .link = self {
+            return true
+        } else {
+            return false
         }
     }
     

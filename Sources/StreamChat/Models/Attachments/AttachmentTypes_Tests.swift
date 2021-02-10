@@ -7,7 +7,7 @@ import XCTest
 
 class AttachmentTypes_Tests: XCTestCase {
     func test_type_encodedAndDecodedCorrectly() throws {
-        let types: [AttachmentType] = [.image, .video, .audio, .file, .giphy, .link, .custom("sticker")]
+        let types: [AttachmentType] = [.image, .video, .audio, .file, .giphy, .link("video"), .custom("sticker")]
         
         // Different test for < iOS 13 because of decoding bug.
         if #available(iOS 13, *) {
@@ -26,6 +26,16 @@ class AttachmentTypes_Tests: XCTestCase {
             // Assert objects encoded correctly
             XCTAssertEqual(types.map(\.rawValue), encoded)
         }
+    }
+    
+    func test_linkAttachment_init() {
+        let linkAttachment1: AttachmentType = .link("video")
+        let linkAttachment2: AttachmentType = .init(rawValue: "link-video")
+        
+        XCTAssertEqual(linkAttachment1, linkAttachment2)
+        XCTAssertEqual(linkAttachment1.rawValue, linkAttachment2.rawValue)
+        XCTAssert(linkAttachment1.isLink)
+        XCTAssert(linkAttachment2.isLink)
     }
     
     func test_action_encodedAndDecodedCorrectly() throws {

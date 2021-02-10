@@ -8,7 +8,9 @@ import Foundation
 /// More info about enriched `URLs` can be found here:
 /// https://getstream.io/chat/docs/node/message_format/?language=swift#attachment-format
 public struct ChatMessageLinkAttachment: ChatMessageAttachment, AttachmentEnvelope, Decodable {
-    public var type: AttachmentType { .link }
+    public var type: AttachmentType { .link(underlyingType) }
+    /// A main asset type of the enriched `URL`. Could be `audio`, `video`, `image`.
+    let underlyingType: String?
     /// A unique identifier of the attachment.
     public var id: AttachmentId?
     /// An original `URL` that was enriched.
@@ -40,6 +42,7 @@ public struct ChatMessageLinkAttachment: ChatMessageAttachment, AttachmentEnvelo
         titleLink = try container.decodeIfPresent(String.self, forKey: .titleLink)?.attachmentFixedURL
         title = try container.decodeIfPresent(String.self, forKey: .title)?
             .trimmingCharacters(in: .whitespacesAndNewlines)
+        underlyingType = try container.decodeIfPresent(String.self, forKey: .type)
     }
     
     public func encode(to encoder: Encoder) throws {
