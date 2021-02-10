@@ -320,6 +320,15 @@
 		80750AEC25D2F7500027F951 /* 02-Development-Token.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750AEB25D2F7500027F951 /* 02-Development-Token.swift */; };
 		80750AF525D2F8F10027F951 /* 03-Guest-Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750AF425D2F8F10027F951 /* 03-Guest-Users.swift */; };
 		80750AFE25D2FBC80027F951 /* 04-Anonymous-Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750AFD25D2FBC80027F951 /* 04-Anonymous-Users.swift */; };
+		80750B0825D30E2E0027F951 /* 00-Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750B0725D30E2E0027F951 /* 00-Logging.swift */; };
+		80750B1925D30FB30027F951 /* 01-Only-Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750B1825D30FB30027F951 /* 01-Only-Errors.swift */; };
+		80750B3125D363F70027F951 /* 00-Local-Notifications-Template.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750B3025D363F70027F951 /* 00-Local-Notifications-Template.swift */; };
+		80750B3A25D364E30027F951 /* 01-Onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750B3925D364E30027F951 /* 01-Onboarding.swift */; };
+		80750B4325D3651E0027F951 /* 02-Regular-Launch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750B4225D3651E0027F951 /* 02-Regular-Launch.swift */; };
+		80750B4C25D3655A0027F951 /* 03-Add-User-Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750B4B25D3655A0027F951 /* 03-Add-User-Device.swift */; };
+		80750B5525D366AC0027F951 /* 04-Remove-User-Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750B5425D366AC0027F951 /* 04-Remove-User-Device.swift */; };
+		80750B7325D367AD0027F951 /* 05-Handle-Push-Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750B7225D367AD0027F951 /* 05-Handle-Push-Notifications.swift */; };
+		80750B7C25D368180027F951 /* 06-Clear-Badge-On-Active.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750B7B25D368180027F951 /* 06-Clear-Badge-On-Active.swift */; };
 		8082785525D1BAD1008039DD /* DocsSnippets.h in Headers */ = {isa = PBXBuildFile; fileRef = 8082785325D1BAD1008039DD /* DocsSnippets.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8082786225D1BAE9008039DD /* 00-ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8082786125D1BAE9008039DD /* 00-ChatClient.swift */; };
 		8082786C25D1BB56008039DD /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
@@ -1124,6 +1133,15 @@
 		80750AEB25D2F7500027F951 /* 02-Development-Token.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Development-Token.swift"; sourceTree = "<group>"; };
 		80750AF425D2F8F10027F951 /* 03-Guest-Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "03-Guest-Users.swift"; sourceTree = "<group>"; };
 		80750AFD25D2FBC80027F951 /* 04-Anonymous-Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "04-Anonymous-Users.swift"; sourceTree = "<group>"; };
+		80750B0725D30E2E0027F951 /* 00-Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Logging.swift"; sourceTree = "<group>"; };
+		80750B1825D30FB30027F951 /* 01-Only-Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Only-Errors.swift"; sourceTree = "<group>"; };
+		80750B3025D363F70027F951 /* 00-Local-Notifications-Template.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Local-Notifications-Template.swift"; sourceTree = "<group>"; };
+		80750B3925D364E30027F951 /* 01-Onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Onboarding.swift"; sourceTree = "<group>"; };
+		80750B4225D3651E0027F951 /* 02-Regular-Launch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Regular-Launch.swift"; sourceTree = "<group>"; };
+		80750B4B25D3655A0027F951 /* 03-Add-User-Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "03-Add-User-Device.swift"; sourceTree = "<group>"; };
+		80750B5425D366AC0027F951 /* 04-Remove-User-Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "04-Remove-User-Device.swift"; sourceTree = "<group>"; };
+		80750B7225D367AD0027F951 /* 05-Handle-Push-Notifications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "05-Handle-Push-Notifications.swift"; sourceTree = "<group>"; };
+		80750B7B25D368180027F951 /* 06-Clear-Badge-On-Active.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "06-Clear-Badge-On-Active.swift"; sourceTree = "<group>"; };
 		8082785125D1BAD1008039DD /* DocsSnippets.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DocsSnippets.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8082785325D1BAD1008039DD /* DocsSnippets.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DocsSnippets.h; sourceTree = "<group>"; };
 		8082785425D1BAD1008039DD /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -2463,8 +2481,24 @@
 		80750B0625D30D560027F951 /* 03-Logging */ = {
 			isa = PBXGroup;
 			children = (
+				80750B0725D30E2E0027F951 /* 00-Logging.swift */,
+				80750B1825D30FB30027F951 /* 01-Only-Errors.swift */,
 			);
 			path = "03-Logging";
+			sourceTree = "<group>";
+		};
+		80750B2825D3114A0027F951 /* 04-Notifications */ = {
+			isa = PBXGroup;
+			children = (
+				80750B3025D363F70027F951 /* 00-Local-Notifications-Template.swift */,
+				80750B3925D364E30027F951 /* 01-Onboarding.swift */,
+				80750B4225D3651E0027F951 /* 02-Regular-Launch.swift */,
+				80750B4B25D3655A0027F951 /* 03-Add-User-Device.swift */,
+				80750B5425D366AC0027F951 /* 04-Remove-User-Device.swift */,
+				80750B7225D367AD0027F951 /* 05-Handle-Push-Notifications.swift */,
+				80750B7B25D368180027F951 /* 06-Clear-Badge-On-Active.swift */,
+			);
+			path = "04-Notifications";
 			sourceTree = "<group>";
 		};
 		8082785225D1BAD1008039DD /* DocsSnippets */ = {
@@ -2496,6 +2530,7 @@
 				80750A7B25D2D2CA0027F951 /* 01-Client-Setup */,
 				80750ABE25D2DC590027F951 /* 02-User-Setup-Tokens */,
 				80750B0625D30D560027F951 /* 03-Logging */,
+				80750B2825D3114A0027F951 /* 04-Notifications */,
 			);
 			path = "01-UX";
 			sourceTree = "<group>";
@@ -4234,25 +4269,34 @@
 			files = (
 				80750A9425D2D5D30027F951 /* 01-Connecting.swift in Sources */,
 				80750A4625D1D51C0027F951 /* 01-Channels-Storyboard.swift in Sources */,
+				80750B1925D30FB30027F951 /* 01-Only-Errors.swift in Sources */,
+				80750B4325D3651E0027F951 /* 02-Regular-Launch.swift in Sources */,
 				80750A6325D1D8E00027F951 /* 03-Messages-Storyboard.swift in Sources */,
 				808278BE25D1C2A8008039DD /* 03-Events.swift in Sources */,
 				80750AAD25D2D7720027F951 /* 03-Enable-Logs.swift in Sources */,
 				808278CA25D1CBCC008039DD /* 00-Client-Setup.swift in Sources */,
 				80750AC125D2DD5C0027F951 /* 05-Custom-DispatchQueue.swift in Sources */,
+				80750B3125D363F70027F951 /* 00-Local-Notifications-Template.swift in Sources */,
+				80750B0825D30E2E0027F951 /* 00-Logging.swift in Sources */,
 				80750AFE25D2FBC80027F951 /* 04-Anonymous-Users.swift in Sources */,
+				80750B7C25D368180027F951 /* 06-Clear-Badge-On-Active.swift in Sources */,
 				80750ACA25D2DE850027F951 /* 06-Background-Behavior.swift in Sources */,
 				80750A5925D1D5B90027F951 /* 02-Channels-Code.swift in Sources */,
 				80750ADC25D2F5DD0027F951 /* 01-Token-Provider.swift in Sources */,
+				80750B7325D367AD0027F951 /* 05-Handle-Push-Notifications.swift in Sources */,
 				80750AF525D2F8F10027F951 /* 03-Guest-Users.swift in Sources */,
 				80750AD325D2DF4D0027F951 /* 00-Basic-Setup-2.swift in Sources */,
 				80750AB625D2DA760027F951 /* 04-Custom-BaseURL.swift in Sources */,
 				80750A7D25D2D2F10027F951 /* 00-Basic-Setup.swift in Sources */,
+				80750B3A25D364E30027F951 /* 01-Onboarding.swift in Sources */,
 				80750A7325D1DD5C0027F951 /* 04-Messages-Storyboard.swift in Sources */,
 				80750AA425D2D7200027F951 /* 02-Disconnecting.swift in Sources */,
 				8082787D25D1BC65008039DD /* 01-Channels.swift in Sources */,
 				8082786225D1BAE9008039DD /* 00-ChatClient.swift in Sources */,
 				80750AEC25D2F7500027F951 /* 02-Development-Token.swift in Sources */,
 				8082788F25D1C0B2008039DD /* 02-Messages.swift in Sources */,
+				80750B5525D366AC0027F951 /* 04-Remove-User-Device.swift in Sources */,
+				80750B4C25D3655A0027F951 /* 03-Add-User-Device.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
