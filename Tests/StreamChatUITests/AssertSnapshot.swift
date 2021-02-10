@@ -18,6 +18,8 @@ let defaultScreenSize = CGSize(width: 360, height: 700)
 ///   Useful to test the navigation bar.
 ///   - variants: The variants that a snapshot will be taken. All variants should be tested for a view controller.
 ///   - screenSize: The size of the view controller.
+///   - suffix: When multiple snapshots are recorded from within the same test, the suffix will be added
+///   to the name of the snapshot image file to uniquely identify it.
 ///   - record: True if a new reference should be saved. False by default,
 ///   so that the newly captured snapshot is compared with the current reference.
 func AssertSnapshot(
@@ -25,6 +27,7 @@ func AssertSnapshot(
     isEmbeddedInNavigationController: Bool = false,
     variants: [SnapshotVariant] = SnapshotVariant.allCases,
     screenSize: CGSize = defaultScreenSize,
+    suffix: String? = nil,
     record: Bool = false,
     line: UInt = #line,
     file: StaticString = #file,
@@ -35,7 +38,7 @@ func AssertSnapshot(
         assertSnapshot(
             matching: viewController,
             as: .image(size: screenSize, traits: variant.traits),
-            named: variant.rawValue,
+            named: variant.rawValue + (suffix.map { "." + $0 } ?? ""),
             record: record,
             file: file,
             testName: function,
@@ -52,11 +55,14 @@ func AssertSnapshot(
 ///   - view: The component to be tested.
 ///   - variants: The variants that a snapshot will be taken.
 ///   Only the light and dark variants should be tested in small components.
+///   - suffix: When multiple snapshots are recorded from within the same test, the suffix will be added
+///   to the name of the snapshot image file to uniquely identify it.
 ///   - record: True if a new reference should be saved. False by default,
 ///   so that the newly captured snapshot is compared with the current reference.
 func AssertSnapshot(
     _ view: UIView,
     variants: [SnapshotVariant] = SnapshotVariant.allCases,
+    suffix: String? = nil,
     record: Bool = false,
     line: UInt = #line,
     file: StaticString = #file,
@@ -66,7 +72,7 @@ func AssertSnapshot(
         assertSnapshot(
             matching: view,
             as: .image(traits: variant.traits),
-            named: variant.rawValue,
+            named: variant.rawValue + (suffix.map { "." + $0 } ?? ""),
             record: record,
             file: file,
             testName: function,
