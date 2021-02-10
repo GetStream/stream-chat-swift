@@ -232,7 +232,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigPro
 
         let placeholder = uiConfig.images.userAvatarPlaceholder1
         if let imageURL = message.author.imageURL {
-            authorAvatarView.imageView.setImage(from: imageURL, placeholder: placeholder)
+            authorAvatarView.imageView.loadImage(from: imageURL, placeholder: placeholder)
         } else {
             authorAvatarView.imageView.image = placeholder
         }

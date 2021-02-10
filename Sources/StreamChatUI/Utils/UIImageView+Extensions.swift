@@ -1,12 +1,13 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Nuke
 import UIKit
 
 extension UIImageView {
-    func setImage(from url: URL, placeholder: UIImage? = nil) {
+    func loadImage(from url: URL?, placeholder: UIImage? = nil) {
+        guard let url = url else { image = nil; return }
         let options = ImageLoadingOptions(placeholder: placeholder)
         Nuke.loadImage(with: url, options: options, into: self)
     }
