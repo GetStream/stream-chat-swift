@@ -158,8 +158,7 @@ class AttachmentUploader: Worker {
     ) {
         database.write({ [minSignificantUploadingProgressChange] session in
             guard
-                let attachmentDTO = session.attachment(id: id),
-                let messageDTO = session.message(id: id.messageId)
+                let attachmentDTO = session.attachment(id: id)
             else { return }
 
             var stateHasChanged: Bool {
