@@ -1,9 +1,9 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Combine
-import UIKit
+import Foundation
 
 @available(iOS 13, *)
 extension _ChatChannelMemberListController {

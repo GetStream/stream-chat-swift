@@ -450,15 +450,14 @@ extension URLSessionConfiguration {
             && urlCache == otherConfiguration.urlCache
             && shouldUseExtendedBackgroundIdleMode == otherConfiguration.shouldUseExtendedBackgroundIdleMode
 //            && protocolClasses == otherConfiguration.protocolClasses
-            && multipathServiceType == otherConfiguration.multipathServiceType
+//            && multipathServiceType == otherConfiguration.multipathServiceType
             && waitsForConnectivity == otherConfiguration.waitsForConnectivity
             && isDiscretionary == otherConfiguration.isDiscretionary
             && sharedContainerIdentifier == otherConfiguration.sharedContainerIdentifier
-            && sessionSendsLaunchEvents == otherConfiguration.sessionSendsLaunchEvents
+//            && sessionSendsLaunchEvents == otherConfiguration.sessionSendsLaunchEvents
 //            && connectionProxyDictionary == otherConfiguration.connectionProxyDictionary
             && waitsForConnectivity == otherConfiguration.waitsForConnectivity
             && isDiscretionary == otherConfiguration.isDiscretionary
             && sharedContainerIdentifier == otherConfiguration.sharedContainerIdentifier
-            && sessionSendsLaunchEvents == otherConfiguration.sessionSendsLaunchEvents
     }
 }
