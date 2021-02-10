@@ -1,6 +1,4 @@
-//
-// Copyright © 2021 Stream.io Inc. All rights reserved.
-//
+// LINK: https://getstream.io/chat/docs/ios-swift/ios_logging/?preview=1&language=swift#examples:
 
 import NotificationCenter
 import StreamChat

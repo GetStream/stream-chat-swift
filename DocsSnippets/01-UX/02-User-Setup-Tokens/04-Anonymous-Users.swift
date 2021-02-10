@@ -1,17 +1,11 @@
-//
-//  04-Anonymous-Users.swift
-//  DocsSnippets
-//
-//  Created by Matheus Cardoso on 09/02/21.
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
-//
+// LINK: https://getstream.io/chat/docs/ios-swift/ios_user_setup_and_tokens/?preview=1&language=swift#anonymous-users
 
 import StreamChat
 
-fileprivate var chatClient: ChatClient!
+private var chatClient: ChatClient!
 
 func snippet_ux_user_setup_tokens_anonymous_users() {
-    //> import StreamChat
+    // > import StreamChat
 
     /// 1: Create an anonymous token provider.
     let tokenProvider = TokenProvider.anonymous
@@ -22,4 +16,3 @@ func snippet_ux_user_setup_tokens_anonymous_users() {
     /// 3: Create a `ChatClient` instance with the config and the token provider.
     chatClient = ChatClient(config: config, tokenProvider: tokenProvider)
 }
-

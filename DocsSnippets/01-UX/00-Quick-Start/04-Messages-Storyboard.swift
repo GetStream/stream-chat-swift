@@ -1,6 +1,4 @@
-//
-// Copyright © 2021 Stream.io Inc. All rights reserved.
-//
+// LINK: https://getstream.io/chat/docs/ios-swift/ios_quick_start/?preview=1&language=swift#messages
 
 import StreamChat
 import StreamChatUI

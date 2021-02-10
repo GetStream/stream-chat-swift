@@ -2456,8 +2456,8 @@
 		804CA7A025D4044F00731116 /* 03-Logging */ = {
 			isa = PBXGroup;
 			children = (
-				804CA7A125D4044F00731116 /* 01-Only-Errors.swift */,
 				804CA7A225D4044F00731116 /* 00-Logging.swift */,
+				804CA7A125D4044F00731116 /* 01-Only-Errors.swift */,
 			);
 			path = "03-Logging";
 			sourceTree = "<group>";
@@ -2479,11 +2479,11 @@
 		804CA7AB25D4044F00731116 /* 02-User-Setup-Tokens */ = {
 			isa = PBXGroup;
 			children = (
-				804CA7AC25D4044F00731116 /* 04-Anonymous-Users.swift */,
-				804CA7AD25D4044F00731116 /* 03-Guest-Users.swift */,
 				804CA7AE25D4044F00731116 /* 00-Basic-Setup-2.swift */,
-				804CA7AF25D4044F00731116 /* 02-Development-Token.swift */,
 				804CA7B025D4044F00731116 /* 01-Token-Provider.swift */,
+				804CA7AF25D4044F00731116 /* 02-Development-Token.swift */,
+				804CA7AD25D4044F00731116 /* 03-Guest-Users.swift */,
+				804CA7AC25D4044F00731116 /* 04-Anonymous-Users.swift */,
 			);
 			path = "02-User-Setup-Tokens";
 			sourceTree = "<group>";
@@ -2491,13 +2491,13 @@
 		804CA7B125D4044F00731116 /* 04-Notifications */ = {
 			isa = PBXGroup;
 			children = (
-				804CA7B225D4044F00731116 /* 01-Onboarding.swift */,
-				804CA7B325D4044F00731116 /* 05-Handle-Push-Notifications.swift */,
 				804CA7B425D4044F00731116 /* 00-Local-Notifications-Template.swift */,
-				804CA7B525D4044F00731116 /* 06-Clear-Badge-On-Active.swift */,
-				804CA7B625D4044F00731116 /* 04-Remove-User-Device.swift */,
+				804CA7B225D4044F00731116 /* 01-Onboarding.swift */,
 				804CA7B725D4044F00731116 /* 02-Regular-Launch.swift */,
 				804CA7B825D4044F00731116 /* 03-Add-User-Device.swift */,
+				804CA7B625D4044F00731116 /* 04-Remove-User-Device.swift */,
+				804CA7B325D4044F00731116 /* 05-Handle-Push-Notifications.swift */,
+				804CA7B525D4044F00731116 /* 06-Clear-Badge-On-Active.swift */,
 			);
 			path = "04-Notifications";
 			sourceTree = "<group>";

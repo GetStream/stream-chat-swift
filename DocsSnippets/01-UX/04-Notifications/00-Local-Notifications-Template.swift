@@ -1,6 +1,4 @@
-//
-// Copyright © 2021 Stream.io Inc. All rights reserved.
-//
+// LINK: https://getstream.io/chat/docs/ios-swift/ios_push_notifications/?preview=1&language=swift#local-notifications-template
 
 func snippet_ux_notifications_local_notifications() {
     // coming soon
