@@ -135,7 +135,7 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: Control, UICon
     open func updateForThreadStart() {
         if let latestReplyAuthorAvatar = message?.latestReplies.first?.author.imageURL {
             avatarView.isHidden = false
-            avatarView.imageView.setImage(from: latestReplyAuthorAvatar)
+            avatarView.imageView.loadImage(from: latestReplyAuthorAvatar)
         } else {
             avatarView.isHidden = true
             avatarView.imageView.image = nil

@@ -54,7 +54,7 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View,
         usernameLabel.text = content?.title
 
         if let url = content?.imageURL {
-            avatarView.imageView.setImage(from: url)
+            avatarView.imageView.loadImage(from: url)
         } else {
             avatarView.imageView.image = uiConfig.images.userAvatarPlaceholder1
         }

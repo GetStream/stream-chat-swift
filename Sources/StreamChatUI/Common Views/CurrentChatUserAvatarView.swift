@@ -68,7 +68,7 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UICon
     
     @objc override open func updateContent() {
         if let imageURL = controller?.currentUser?.imageURL {
-            avatarView.imageView.setImage(from: imageURL)
+            avatarView.imageView.loadImage(from: imageURL)
         } else {
             avatarView.imageView.image = nil
         }
