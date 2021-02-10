@@ -265,6 +265,9 @@
 		79A0E9BC2498C31A00E9BD50 /* TypingStartCleanupMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9B82498C31300E9BD50 /* TypingStartCleanupMiddleware_Tests.swift */; };
 		79A0E9BE2498C33100E9BD50 /* TypingEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9BD2498C33100E9BD50 /* TypingEvent.swift */; };
 		79A4AE112536EE5500C32A74 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 79A4AE102536EE5500C32A74 /* Starscream */; };
+		79B4F0E625D305D40063FFB5 /* CurrentChatUserAvatarView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B4F0DE25D305CD0063FFB5 /* CurrentChatUserAvatarView_Tests.swift */; };
+		79B4F14325D3F0F70063FFB5 /* ChannelId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A71E22578EF650082498D /* ChannelId.swift */; };
+		79B4F14A25D3F1120063FFB5 /* TemporaryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9474247D7D41001F1104 /* TemporaryData.swift */; };
 		79B5517324E593C200CE9FEC /* UserPayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B5517124E593C200CE9FEC /* UserPayloads.swift */; };
 		79B5517524E595CC00CE9FEC /* CurrentUserPayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B5517424E595CC00CE9FEC /* CurrentUserPayloads.swift */; };
 		79B5517724E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B5517624E595DA00CE9FEC /* CurrentUserPayloads_Tests.swift */; };
@@ -1738,7 +1741,6 @@
 				2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */,
 				2229C6DE256562DB00C56B63 /* AttachmentPayload.swift */,
 				2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */,
-				792A71E22578EF650082498D /* ChannelId.swift */,
 				79D7A1CD2593A40900D3C2BF /* ChannelPayload.swift */,
 			);
 			path = "Dummy data";
@@ -1930,6 +1932,7 @@
 			isa = PBXGroup;
 			children = (
 				799C9463247D7919001F1104 /* Custom Assertions */,
+				792A71E22578EF650082498D /* ChannelId.swift */,
 				799C9461247D78E2001F1104 /* Await.swift */,
 				791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */,
 				7988F6B624D15F100004219B /* StressTestCase.swift */,
@@ -3702,10 +3705,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79B4F14325D3F0F70063FFB5 /* ChannelId.swift in Sources */,
 				ADEB2F8025CC0B8A00EAAEB6 /* XCTestCase+TestImages.swift in Sources */,
 				ADFCCD7625C9D4D10024505D /* SnapshotVariant.swift in Sources */,
 				AD016A1425CAFAF2009EBAD2 /* ChatChannelListVC_Tests.swift in Sources */,
 				ADFCCD7525C9D4D10024505D /* AssertSnapshot.swift in Sources */,
+				79B4F14A25D3F1120063FFB5 /* TemporaryData.swift in Sources */,
 				795296C12582494000435B2E /* UIConfigProvider_Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
