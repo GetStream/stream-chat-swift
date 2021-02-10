@@ -1,23 +1,24 @@
-// LINK: https://getstream.io/chat/docs/ios-swift/ios_quick_start/?preview=1&language=swift#2.-using-code
+//
+// Copyright © 2021 Stream.io Inc. All rights reserved.
+//
 
-import UIKit
-import StreamChatUI
 import StreamChat
+import StreamChatUI
+import UIKit
 
-fileprivate var chatClient: ChatClient!
+private var chatClient: ChatClient!
 
 func snippet_ux_quick_start_messages_code() {
-    //> import UIKit
-    //> import StreamChatUI
-    //> import StreamChat
+    // > import UIKit
+    // > import StreamChatUI
+    // > import StreamChat
 
-    class MyChannelVC: ChatChannelVC { }
+    class MyChannelVC: ChatChannelVC {}
 
     class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+        var window: UIWindow?
         
-       var window: UIWindow?
-        
-       func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
             guard let scene = scene as? UIWindowScene else { return }
         
             let channelVC = ChatChannelVC()
@@ -27,7 +28,6 @@ func snippet_ux_quick_start_messages_code() {
             window.rootViewController = UINavigationController(rootViewController: channelVC)
             self.window = window
             window.makeKeyAndVisible()
-       }
+        }
     }
 }
-
