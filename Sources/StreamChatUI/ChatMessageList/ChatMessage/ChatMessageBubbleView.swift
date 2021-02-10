@@ -166,7 +166,7 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProv
 
         layer.maskedCorners = corners
 
-        linkPreviewView.content = message?.attachments.first { $0.type == .link } as? ChatMessageDefaultAttachment
+        linkPreviewView.content = message?.attachments.first { $0.type.isLink } as? ChatMessageDefaultAttachment
 
         linkPreviewView.isVisible = layoutOptions.contains(.linkPreview)
 
@@ -320,7 +320,7 @@ private extension _ChatMessageGroupPart {
 
         if message.attachments.contains(where: { $0.type == .image || $0.type == .giphy || $0.type == .file }) {
             options.insert(.attachments)
-        } else if message.attachments.contains(where: { $0.type == .link }) {
+        } else if message.attachments.contains(where: { $0.type.isLink }) {
             // link preview is visible only when no other attachments available
             options.insert(.linkPreview)
         }
