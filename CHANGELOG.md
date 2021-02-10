@@ -18,6 +18,8 @@ _February 12, 2021_
     [#795](https://github.com/GetStream/stream-chat-swift/pull/795)
 - Add possibility to send attachments that don't need prior uploading
     [#799](https://github.com/GetStream/stream-chat-swift/pull/799)
+- Add possibility to build the framework on macOS
+    [#811](https://github.com/GetStream/stream-chat-swift/pull/811)
 
 ### 🔄 Changed
 - Improve serialization performance by exposing items as `LazyCachedMapCollection` instead of `Array` [#776](https://github.com/GetStream/stream-chat-swift/pull/776)
