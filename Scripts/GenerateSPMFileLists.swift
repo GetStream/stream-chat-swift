@@ -6,7 +6,7 @@
 // SPM currently doesn't support path expanding so we can't simply exlude files using placeholders like `*_Tests.swift`.
 
 // ⚠️ After making changes to this file, you need to run the following command to compile it:
-// $ swiftc Scripts/GenerateSPMFileLists.swift -o generateSPMFileLists
+// $ arch -x86_64 swiftc Scripts/GenerateSPMFileLists.swift -o generateSPMFileLists
 
 import Foundation
 
