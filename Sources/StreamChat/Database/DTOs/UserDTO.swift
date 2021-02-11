@@ -24,8 +24,6 @@ class UserDTO: NSManagedObject {
     @NSManaged var members: Set<MemberDTO>?
     @NSManaged var currentUser: CurrentUserDTO?
     
-    @NSManaged var savedChangeHash: Int64
-    
     /// Returns a fetch request for the dto with the provided `userId`.
     static func user(withID userId: UserId) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
@@ -51,34 +49,6 @@ class UserDTO: NSManagedObject {
                 member.channelRoleRaw = assigningPropertyToItself
             }
         }
-
-        // Save the current hash of the entity
-        // This is used during `save` calls to compare DTOs `changeHash` and
-        // corresponding payload's `changeHash` to avoid unnecessary assignment of values.
-        // Direct assignment cannot be used
-        // Since it'll generate new `willSave` calls causing recursion
-        assignIfDifferent(self, \.savedChangeHash, Int64(hasher.changeHash))
-    }
-}
-
-extension UserDTO: ChangeHashable {
-    var hasher: ChangeHasher {
-        UserHasher(
-            id: id,
-            name: name,
-            imageURL: imageURL,
-            role: userRoleRaw,
-            createdAt: userCreatedAt,
-            updatedAt: userUpdatedAt,
-            lastActiveAt: lastActivityAt,
-            isOnline: isOnline,
-            isBanned: isBanned,
-            extraData: extraData
-        )
-    }
-    
-    var changeHash: Int {
-        Int(savedChangeHash)
     }
 }
 
@@ -129,21 +99,19 @@ extension NSManagedObjectContext: UserDatabaseSession {
         query: _UserListQuery<ExtraData>?
     ) throws -> UserDTO {
         let dto = UserDTO.loadOrCreate(id: payload.id, context: self)
-        
-        if dto.changeHash != payload.changeHash {
-            dto.name = payload.name
-            dto.imageURL = payload.imageURL
-            dto.isBanned = payload.isBanned
-            dto.isOnline = payload.isOnline
-            dto.lastActivityAt = payload.lastActiveAt
-            dto.userCreatedAt = payload.createdAt
-            dto.userRoleRaw = payload.role.rawValue
-            dto.userUpdatedAt = payload.updatedAt
-            
-            // TODO: TEAMS
-            
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-        }
+
+        dto.name = payload.name
+        dto.imageURL = payload.imageURL
+        dto.isBanned = payload.isBanned
+        dto.isOnline = payload.isOnline
+        dto.lastActivityAt = payload.lastActiveAt
+        dto.userCreatedAt = payload.createdAt
+        dto.userRoleRaw = payload.role.rawValue
+        dto.userUpdatedAt = payload.updatedAt
+
+        // TODO: TEAMS
+
+        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         
         // payloadHash doesn't cover the query
         if let query = query, let queryDTO = try saveQuery(query: query) {

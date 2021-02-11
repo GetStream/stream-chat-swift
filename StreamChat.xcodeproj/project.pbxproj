@@ -54,7 +54,6 @@
 		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
 		79071F9A25BF056200A99183 /* AssignIfDifferent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79071F9825BF056200A99183 /* AssignIfDifferent.swift */; };
 		79071FA125BF056700A99183 /* AssignIfDifferent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79071F9725BF056200A99183 /* AssignIfDifferent_Tests.swift */; };
-		79071FBB25C1B2D200A99183 /* ChangeHashable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79071FBA25C1B2D100A99183 /* ChangeHashable.swift */; };
 		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		7908821225432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		7908821325432B7200896F03 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -860,7 +859,6 @@
 		7900452525374CA20096ECA1 /* User+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+SwiftUI.swift"; sourceTree = "<group>"; };
 		79071F9725BF056200A99183 /* AssignIfDifferent_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssignIfDifferent_Tests.swift; sourceTree = "<group>"; };
 		79071F9825BF056200A99183 /* AssignIfDifferent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssignIfDifferent.swift; sourceTree = "<group>"; };
-		79071FBA25C1B2D100A99183 /* ChangeHashable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeHashable.swift; sourceTree = "<group>"; };
 		790881FD25432B7200896F03 /* StreamChatUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7908820525432B7200896F03 /* StreamChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7908823125432C6400896F03 /* StreamChatUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamChatUI.h; sourceTree = "<group>"; };
@@ -1914,7 +1912,6 @@
 				881506EB258212BF0013935B /* MultipartFormData.swift */,
 				79071F9725BF056200A99183 /* AssignIfDifferent_Tests.swift */,
 				79071F9825BF056200A99183 /* AssignIfDifferent.swift */,
-				79071FBA25C1B2D100A99183 /* ChangeHashable.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -3858,7 +3855,6 @@
 				DABC6AC22546FFB600A8FC78 /* AttachmentTypes.swift in Sources */,
 				7964F3B9249A314D002A09EC /* BaseLogDestination.swift in Sources */,
 				792AF91624D812440010097B /* EntityDatabaseObserver.swift in Sources */,
-				79071FBB25C1B2D200A99183 /* ChangeHashable.swift in Sources */,
 				79B5517524E595CC00CE9FEC /* CurrentUserPayloads.swift in Sources */,
 				8A0CC9E524C5FEA900705CF9 /* MemberEvents.swift in Sources */,
 				DA4AA3BA2502731900FAAF6E /* Publisher+Extensions.swift in Sources */,
