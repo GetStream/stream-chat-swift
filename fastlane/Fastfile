@@ -12,6 +12,24 @@ before_all do
   end
 end
 
+lane :set_SDK_version do |options|
+  pathToVersionFile = "../Sources/StreamChat/Utils/SystemEnvironment+Version.swift"
+  versionGeneratedFile = "
+//
+// Copyright © 2021 Stream.io Inc. All rights reserved.
+//
+// ⚠️  Generated file, please use `fastlane :bump_SDK_version or fastlane release major|minor|patch` lanes 
+
+import Foundation
+
+extension SystemEnvironment {
+  /// A Stream Chat version.
+  public static let version: String = \"#{options[:version]}\"
+}
+"
+  File.write(pathToVersionFile, versionGeneratedFile)
+end 
+
 desc "If `readonly: true` (by default), installs all Certs and Profiles necessary for development and ad-hoc.\nIf `readonly: false`, recreates all Profiles necessary for development and ad-hoc, updates them locally and remotely."
 lane :match_me do |options|
   # Get `:readonly` value, fallback to `true` if it's missing.
