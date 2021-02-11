@@ -13,6 +13,7 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UICon
     public var controller: _CurrentChatUserController<ExtraData>? {
         didSet {
             controller?.setDelegate(self)
+            controller?.synchronize()
             updateContentIfNeeded()
         }
     }
