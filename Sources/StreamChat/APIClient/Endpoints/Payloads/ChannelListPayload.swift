@@ -55,7 +55,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     }
 }
 
-struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
+struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     let cid: ChannelId
     
     let name: String?
@@ -93,24 +93,6 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashabl
     /// The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
     public let team: String
-    
-    var hasher: ChangeHasher {
-        ChannelHasher(
-            cid: cid.rawValue,
-            name: name,
-            imageURL: imageURL,
-            extraData: (try? JSONEncoder.default.encode(extraData)) ?? .init(),
-            typeRawValue: typeRawValue,
-            lastMessageAt: lastMessageAt,
-            createdAt: createdAt,
-            deletedAt: deletedAt,
-            updatedAt: updatedAt,
-            createdByChangeHash: createdBy?.changeHash,
-            config: (try? JSONEncoder().encode(config)) ?? .init(),
-            isFrozen: isFrozen,
-            memberCount: memberCount
-        )
-    }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ChannelCodingKeys.self)

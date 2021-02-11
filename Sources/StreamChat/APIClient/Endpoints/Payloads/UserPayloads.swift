@@ -26,7 +26,7 @@ enum UserPayloadsCodingKeys: String, CodingKey {
 // MARK: - GET users
 
 /// An object describing the incoming user JSON payload.
-class UserPayload<ExtraData: UserExtraData>: Decodable, ChangeHashable {
+class UserPayload<ExtraData: UserExtraData>: Decodable {
     let id: String
     let name: String?
     let imageURL: URL?
@@ -39,27 +39,6 @@ class UserPayload<ExtraData: UserExtraData>: Decodable, ChangeHashable {
     let isBanned: Bool
     let teams: [String]
     let extraData: ExtraData
-    
-    var hasher: ChangeHasher {
-        UserHasher(
-            id: id,
-            name: name,
-            imageURL: imageURL,
-            role: role.rawValue,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            lastActiveAt: lastActiveAt,
-            isOnline: isOnline,
-            isBanned: isBanned,
-            extraData: (try? JSONEncoder.default.encode(extraData)) ?? .init()
-        )
-    }
-    
-    // This needs to be explicit so we can override it in
-    // `UserDTO_Tests.test_DTO_skipsUnnecessarySave`
-    var changeHash: Int {
-        hasher.changeHash
-    }
     
     init(
         id: String,

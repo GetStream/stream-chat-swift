@@ -25,8 +25,6 @@ class ChannelDTO: NSManagedObject {
     
     @NSManaged var isFrozen: Bool
     
-    @NSManaged var savedChangeHash: Int64
-    
     // MARK: - Relationships
     
     @NSManaged var createdBy: UserDTO
@@ -65,41 +63,6 @@ class ChannelDTO: NSManagedObject {
         new.cid = cid.rawValue
         return new
     }
-    
-    override func willSave() {
-        super.willSave()
-        
-        // Save the current hash of the entity
-        // This is used during `save` calls to compare DTOs `changeHash` and
-        // corresponding payload's `changeHash` to avoid unnecessary assignment of values.
-        // Direct assignment cannot be used
-        // Since it'll generate new `willSave` calls causing recursion
-        assignIfDifferent(self, \.savedChangeHash, Int64(hasher.changeHash))
-    }
-}
-
-extension ChannelDTO: ChangeHashable {
-    var hasher: ChangeHasher {
-        ChannelHasher(
-            cid: cid,
-            name: name,
-            imageURL: imageURL,
-            extraData: extraData,
-            typeRawValue: typeRawValue,
-            lastMessageAt: lastMessageAt,
-            createdAt: createdAt,
-            deletedAt: deletedAt,
-            updatedAt: updatedAt,
-            createdByChangeHash: createdBy.changeHash,
-            config: config,
-            isFrozen: isFrozen,
-            memberCount: Int(memberCount)
-        )
-    }
-    
-    var changeHash: Int {
-        Int(savedChangeHash)
-    }
 }
 
 // MARK: - EphemeralValuesContainer
@@ -118,26 +81,24 @@ extension NSManagedObjectContext {
         query: _ChannelListQuery<ExtraData.Channel>?
     ) throws -> ChannelDTO {
         let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self)
-        
-        if dto.changeHash != payload.changeHash {
-            dto.name = payload.name
-            dto.imageURL = payload.imageURL
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-            dto.typeRawValue = payload.typeRawValue
-            dto.config = try JSONEncoder().encode(payload.config)
-            dto.createdAt = payload.createdAt
-            dto.deletedAt = payload.deletedAt
-            dto.updatedAt = payload.updatedAt
-            dto.defaultSortingAt = payload.lastMessageAt ?? payload.createdAt
-            dto.lastMessageAt = payload.lastMessageAt
-            dto.memberCount = Int64(clamping: payload.memberCount)
-            
-            dto.isFrozen = payload.isFrozen
-            
-            if let createdByPayload = payload.createdBy {
-                let creatorDTO = try saveUser(payload: createdByPayload)
-                dto.createdBy = creatorDTO
-            }
+
+        dto.name = payload.name
+        dto.imageURL = payload.imageURL
+        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        dto.typeRawValue = payload.typeRawValue
+        dto.config = try JSONEncoder().encode(payload.config)
+        dto.createdAt = payload.createdAt
+        dto.deletedAt = payload.deletedAt
+        dto.updatedAt = payload.updatedAt
+        dto.defaultSortingAt = payload.lastMessageAt ?? payload.createdAt
+        dto.lastMessageAt = payload.lastMessageAt
+        dto.memberCount = Int64(clamping: payload.memberCount)
+
+        dto.isFrozen = payload.isFrozen
+
+        if let createdByPayload = payload.createdBy {
+            let creatorDTO = try saveUser(payload: createdByPayload)
+            dto.createdBy = creatorDTO
         }
         
         // TODO: Team
