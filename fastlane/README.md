@@ -15,6 +15,16 @@ Install _fastlane_ using
 or alternatively using `brew install fastlane`
 
 # Available Actions
+### release
+```
+fastlane release
+```
+Release a new version
+### set_SDK_version
+```
+fastlane set_SDK_version
+```
+
 ### match_me
 ```
 fastlane match_me
@@ -51,6 +61,11 @@ Runs ui tests in Debug config
 fastlane test_release
 ```
 Runs tests in Release config
+### test_release_macos
+```
+fastlane test_release_macos
+```
+Runs tests in Release config on macOS
 ### stress_test
 ```
 fastlane stress_test
