@@ -149,7 +149,7 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
         
         let placeholder = uiConfig.images.userAvatarPlaceholder1
         if let imageURL = message.author.imageURL {
-            authorAvatarView.imageView.setImage(from: imageURL, placeholder: placeholder)
+            authorAvatarView.imageView.loadImage(from: imageURL, placeholder: placeholder)
         } else {
             authorAvatarView.imageView.image = placeholder
         }
@@ -191,7 +191,7 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
         default:
             let attachment = attachment as? ChatMessageDefaultAttachment
             if let previewURL = attachment?.imagePreviewURL ?? attachment?.imageURL {
-                attachmentPreview.setImage(from: previewURL)
+                attachmentPreview.loadImage(from: previewURL)
                 setAttachmentPreview(hidden: false)
                 attachmentPreview.contentMode = .scaleAspectFill
                 // TODO: When we will have attachment examples we will set smth

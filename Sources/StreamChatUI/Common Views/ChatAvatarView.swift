@@ -4,41 +4,28 @@
 
 import UIKit
 
+/// A simple container view that holds `UIImageView` instance and applies some basic appearance styling.
 open class ChatAvatarView: View {
-    // MARK: - Subviews
+    /// The `UIImageView` instance that shows the avatar image.
+    open private(set) var imageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
     
-    public let imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
-    // MARK: - Overrides
-    
-    open var defaultIntrinsicContentSize: CGSize?
     override open var intrinsicContentSize: CGSize {
-        defaultIntrinsicContentSize ?? imageView.intrinsicContentSize
+        imageView.image?.size ?? super.intrinsicContentSize
     }
-    
-    // MARK: - Layout
     
     override open func layoutSubviews() {
         super.layoutSubviews()
-        
-        imageView.layer.cornerRadius = imageView.bounds.width / 2
+        imageView.layer.cornerRadius = min(imageView.bounds.width, imageView.bounds.height) / 2
     }
-    
-    // MARK: - Public
 
     override public func defaultAppearance() {
-        defaultIntrinsicContentSize = .init(width: 40, height: 40)
-        imageView.contentMode = .scaleAspectFit
+        super.defaultAppearance()
+        
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
     }
 
     override open func setUpLayout() {
-        imageView.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
         embed(imageView)
     }
 }

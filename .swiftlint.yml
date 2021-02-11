@@ -1,4 +1,6 @@
 excluded:
+  - "Scripts"
+  - "Package.swift"
   - "DocsSnippets" # We don't need SwiftLint running for DocsSnippets (SwiftFormat will still run)
 
 disabled_rules:
@@ -66,9 +68,10 @@ cyclomatic_complexity:
 
 custom_rules:
   constraints_forbidden:
-    included: ".*StreamChatUI" # I gave up on it. Feel free to find better regex
+    included: ".*StreamChatUI" # Matches all StreamChatUI files
+    excluded: ".*(?:_Tests)" # Doesn't apply to tests
     regex: "Anchor(.constraint)\\("
     capture_group: 1
     match_kinds:
       - identifier
-    message: "Plain constraints methods are forbidded. Use `pin(...)` alternative"
+    message: "Plain constraints methods are forbidden. Use `pin(...)` alternative"

@@ -50,9 +50,9 @@ open class View: UIView, AppearanceSetting, Customizable {
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -64,12 +64,25 @@ open class View: UIView, AppearanceSetting, Customizable {
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        (self as! Self).applyDefaultAppearance()
-        setUpAppearance()
-        updateContent()
+        // Execute previous pending updates
+        pendingUpdates?()
+
+        // Add this view's updates to pending updates
+        pendingUpdates = {
+            (self as! Self).applyDefaultAppearance()
+            self.setUpAppearance()
+            self.updateContent()
+        }
+
+        // Make sure all pending updates are executed eventually
+        DispatchQueue.main.async {
+            pendingUpdates?()
+            pendingUpdates = nil
+        }
     }
 }
 
@@ -81,9 +94,9 @@ open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customiz
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -95,12 +108,25 @@ open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customiz
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        (self as! Self).applyDefaultAppearance()
-        setUpAppearance()
-        updateContent()
+        // Execute previous pending updates
+        pendingUpdates?()
+
+        // Add this view's updates to pending updates
+        pendingUpdates = {
+            (self as! Self).applyDefaultAppearance()
+            self.setUpAppearance()
+            self.updateContent()
+        }
+
+        // Make sure all pending updates are executed eventually
+        DispatchQueue.main.async {
+            pendingUpdates?()
+            pendingUpdates = nil
+        }
     }
 }
 
@@ -112,9 +138,9 @@ open class Control: UIControl, AppearanceSetting, Customizable {
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -126,12 +152,25 @@ open class Control: UIControl, AppearanceSetting, Customizable {
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        (self as! Self).applyDefaultAppearance()
-        setUpAppearance()
-        updateContent()
+        // Execute previous pending updates
+        pendingUpdates?()
+
+        // Add this view's updates to pending updates
+        pendingUpdates = {
+            (self as! Self).applyDefaultAppearance()
+            self.setUpAppearance()
+            self.updateContent()
+        }
+
+        // Make sure all pending updates are executed eventually
+        DispatchQueue.main.async {
+            pendingUpdates?()
+            pendingUpdates = nil
+        }
     }
 }
 
@@ -143,9 +182,9 @@ open class Button: UIButton, AppearanceSetting, Customizable {
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -157,12 +196,25 @@ open class Button: UIButton, AppearanceSetting, Customizable {
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        (self as! Self).applyDefaultAppearance()
-        setUpAppearance()
-        updateContent()
+        // Execute previous pending updates
+        pendingUpdates?()
+
+        // Add this view's updates to pending updates
+        pendingUpdates = {
+            (self as! Self).applyDefaultAppearance()
+            self.setUpAppearance()
+            self.updateContent()
+        }
+
+        // Make sure all pending updates are executed eventually
+        DispatchQueue.main.async {
+            pendingUpdates?()
+            pendingUpdates = nil
+        }
     }
 }
 
@@ -174,9 +226,9 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -188,12 +240,25 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        (self as! Self).applyDefaultAppearance()
-        setUpAppearance()
-        updateContent()
+        // Execute previous pending updates
+        pendingUpdates?()
+
+        // Add this view's updates to pending updates
+        pendingUpdates = {
+            (self as! Self).applyDefaultAppearance()
+            self.setUpAppearance()
+            self.updateContent()
+        }
+
+        // Make sure all pending updates are executed eventually
+        DispatchQueue.main.async {
+            pendingUpdates?()
+            pendingUpdates = nil
+        }
     }
 }
 
@@ -202,9 +267,9 @@ open class ViewController: UIViewController, AppearanceSetting, Customizable {
         super.viewDidLoad()
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     
@@ -216,11 +281,39 @@ open class ViewController: UIViewController, AppearanceSetting, Customizable {
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
+
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        (self as! Self).applyDefaultAppearance()
-        setUpAppearance()
-        updateContent()
+        // Execute previous pending updates
+        pendingUpdates?()
+
+        // Add this view's updates to pending updates
+        pendingUpdates = {
+            (self as! Self).applyDefaultAppearance()
+            self.setUpAppearance()
+            self.updateContent()
+        }
+
+        // Make sure all pending updates are executed eventually
+        DispatchQueue.main.async {
+            pendingUpdates?()
+            pendingUpdates = nil
+        }
     }
 }
+
+// This is just a temporary workaround! Proper solution in https://stream-io.atlassian.net/browse/CIS-658
+
+private var pendingUpdates: (() -> Void)? {
+    get {
+        assert(Thread.isMainThread)
+        return _pendingUpdates
+    }
+    set {
+        assert(Thread.isMainThread)
+        _pendingUpdates = newValue
+    }
+}
+
+private var _pendingUpdates: (() -> Void)?

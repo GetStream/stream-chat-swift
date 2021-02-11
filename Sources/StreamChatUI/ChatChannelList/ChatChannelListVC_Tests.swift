@@ -25,30 +25,26 @@ class ChatChannelListVC_Tests: XCTestCase {
         vc = ChatChannelListVC()
         vc.controller = mockedChannelListController
         vc.userAvatarView.controller = mockedCurrentUserController
+        vc.uiConfig = UIConfig()
         
         NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
     }
     
     func test_chatChannelList_isPopulated() {
-        let imageUrl = TestImages.vader.url
-
         let channel = ChatChannel.mock(
-            cid: .init(type: .messaging, id: "test_channel1"),
+            cid: .unique,
             name: "Channel 1",
-            imageURL: imageUrl,
+            imageURL: TestImages.yoda.url,
             lastMessageAt: .init(timeIntervalSince1970: 1_611_951_526_000)
         )
-        let channelWithOnlineIndicator = ChatChannel.mock(
-            cid: .init(type: .messaging, id: "!members:test_channel2"),
-            name: "Channel 2",
-            imageURL: imageUrl,
+        let channelWithOnlineIndicator = ChatChannel.mockDMChannel(
             lastMessageAt: .init(timeIntervalSince1970: 1_611_951_527_000),
-            members: [.mock(id: "luke", name: "Luke Skywalker", isOnline: true)]
+            members: [.mock(id: .unique, name: "Darth Vader", imageURL: TestImages.vader.url, isOnline: true)]
         )
         let channelWithLongTextAndUnreadCount = ChatChannel.mock(
             cid: .init(type: .messaging, id: "test_channel3"),
             name: "Channel 3",
-            imageURL: imageUrl,
+            imageURL: TestImages.yoda.url,
             lastMessageAt: .init(timeIntervalSince1970: 1_611_951_528_000),
             unreadCount: .mock(messages: 4),
             latestMessages: [
@@ -60,7 +56,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         let channelWithMultipleMessages = ChatChannel.mock(
             cid: .init(type: .messaging, id: "test_channel4"),
             name: "Channel 4",
-            imageURL: imageUrl,
+            imageURL: TestImages.vader.url,
             lastMessageAt: .init(timeIntervalSince1970: 1_611_951_529_000),
             latestMessages: [
                 ChatMessage.mock(id: "2", text: "Hello", author: .mock(id: "Vader")),
@@ -76,7 +72,7 @@ class ChatChannelListVC_Tests: XCTestCase {
             ],
             changes: []
         )
-        AssertSnapshot(vc, isEmbededInNavigationController: true)
+        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
     
     func test_chatChannelList_isEmpty() {

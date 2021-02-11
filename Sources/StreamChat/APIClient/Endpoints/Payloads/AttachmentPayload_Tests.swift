@@ -13,7 +13,7 @@ final class AttachmentPayload_Tests: XCTestCase {
         let expectedRawJSON = try JSONDecoder.default.decode(RawJSON.self, from: json)
         
         // Assert `AttachmentPayload` is deserialized correctly.
-        XCTAssertEqual(payload.type, .link)
+        XCTAssertTrue(payload.type.isLink)
         XCTAssertEqual(payload.payload, expectedRawJSON)
     }
     

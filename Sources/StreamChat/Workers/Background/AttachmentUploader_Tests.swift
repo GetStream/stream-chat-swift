@@ -80,23 +80,45 @@ final class AttachmentUploader_Tests: StressTestCase {
             // Simulate successful backend response with remote file URL.
             let payload = FileUploadPayload(file: .unique())
             apiClient.uploadFile_completion?(.success(payload))
-
-            AssertAsync {
-                // Assert attachment state eventually becomes `.uploaded`.
-                Assert.willBeEqual(
-                    (attachment.asModel() as? ChatMessageDefaultAttachment)?.localState,
-                    .uploaded
-                )
-                // Assert `attachment.imageURL` is set if attachment type is `.image`.
-                Assert.willBeEqual(
-                    originalURLString((attachment.asModel() as? ChatMessageDefaultAttachment)?.imageURL),
-                    attachmentType == .image ? payload.file.absoluteString : nil
-                )
-                // Assert `attachment.url` is set if attachment type is not `.image`.
-                Assert.willBeEqual(
-                    originalURLString((attachment.asModel() as? ChatMessageDefaultAttachment)?.url),
-                    attachmentType == .image ? nil : payload.file.absoluteString
-                )
+            
+            if isAttachmentModelSeparationChangesApplied {
+                switch attachmentType {
+                case .image:
+                    var imageModel: ChatMessageImageAttachment? { attachment.asModel() as? ChatMessageImageAttachment }
+                    AssertAsync {
+                        // Assert attachment state eventually becomes `.uploaded`.
+                        Assert.willBeEqual(imageModel?.localState, .uploaded)
+                        // Assert `attachment.imageURL` is set.
+                        Assert.willBeEqual(originalURLString(imageModel?.imageURL), payload.file.absoluteString)
+                    }
+                case .file:
+                    var fileModel: ChatMessageFileAttachment? { attachment.asModel() as? ChatMessageFileAttachment }
+                    AssertAsync {
+                        // Assert attachment state eventually becomes `.uploaded`.
+                        Assert.willBeEqual(fileModel?.localState, .uploaded)
+                        // Assert `attachment.assetURL` is set.
+                        Assert.willBeEqual(originalURLString(fileModel?.assetURL), payload.file.absoluteString)
+                    }
+                default: throw TestError()
+                }
+            } else {
+                AssertAsync {
+                    // Assert attachment state eventually becomes `.uploaded`.
+                    Assert.willBeEqual(
+                        (attachment.asModel() as? ChatMessageDefaultAttachment)?.localState,
+                        .uploaded
+                    )
+                    // Assert `attachment.imageURL` is set if attachment type is `.image`.
+                    Assert.willBeEqual(
+                        originalURLString((attachment.asModel() as? ChatMessageDefaultAttachment)?.imageURL),
+                        attachmentType == .image ? payload.file.absoluteString : nil
+                    )
+                    // Assert `attachment.url` is set if attachment type is not `.image`.
+                    Assert.willBeEqual(
+                        originalURLString((attachment.asModel() as? ChatMessageDefaultAttachment)?.url),
+                        attachmentType == .image ? nil : payload.file.absoluteString
+                    )
+                }
             }
             
             // In ChatMessageDefaultAttachment we have private func `fixedURL` that modifies `http` part of the URL
