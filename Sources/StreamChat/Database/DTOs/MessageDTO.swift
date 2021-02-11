@@ -326,7 +326,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 return dto
             }
         )
-        assignIfDifferent(dto, \.attachments, attachments)
+        dto.attachments = attachments
         
         if let parentMessageId = payload.parentId,
             let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
