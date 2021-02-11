@@ -27,8 +27,8 @@ class SettingsViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         updateUserCell(with: currentUserController.currentUser)
+        currentUserController.synchronize()
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
