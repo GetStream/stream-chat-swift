@@ -1,14 +1,10 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
 
 public enum SystemEnvironment {
-    /// A Stream Chat version.
-    public static let version: String = Bundle(for: ChatClient.self)
-        .infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0.0"
-    
     static let systemName = UIDevice.current.systemName + UIDevice.current.systemVersion
     
     static var deviceModelName: String {
