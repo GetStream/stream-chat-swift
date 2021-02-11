@@ -141,116 +141,19 @@ class UserDTO_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.user(id: userId)?.isOnline, false)
     }
     
-    func test_DTO_hash_sameAsPayloadHash() throws {
-        // Create explicit userId
+    func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
+        // Arrange: Store random user payload to db
         let userId = UUID().uuidString
-        
-        // Create test payload
         let payload: UserPayload<NoExtraData> = .dummy(userId: userId)
-        
-        // Save the payload to the db
         try database.writeSynchronously { session in
             try session.saveUser(payload: payload)
         }
-        
-        // Load the user from the db and check the fields are correct
-        var loadedUserPayload: UserDTO? {
-            database.viewContext.user(id: userId)
-        }
-        
-        // Assert that hash is not changed
-        guard let dtoHash = loadedUserPayload?.changeHash else {
-            XCTFail("DTO is missing hash!")
-            return
-        }
-        XCTAssertEqual(Int(dtoHash), payload.changeHash)
-    }
-    
-    func test_DTO_skipsUnnecessarySave() throws {
-        // Test payload with explicitHash
-        class ExplicitHashUserPayload: UserPayload<NoExtraData> {
-            var explicitHash: Int?
-            
-            override var changeHash: Int {
-                explicitHash ?? super.changeHash
-            }
-        }
-        
-        // Create explicit userId
-        let userId = UUID().uuidString
-        
-        // Create test payload
-        let payload: UserPayload<NoExtraData> = .dummy(userId: userId)
-        
-        // Save the payload to the db
-        try database.writeSynchronously { session in
-            try session.saveUser(payload: payload)
-        }
-        
-        let changedPayload: ExplicitHashUserPayload = .init(
-            id: userId,
-            name: .unique,
-            imageURL: .unique(),
-            role: .user,
-            createdAt: .unique,
-            updatedAt: .unique,
-            lastActiveAt: .unique,
-            isOnline: !payload.isOnline,
-            isInvisible: !payload.isInvisible,
-            isBanned: !payload.isBanned,
-            extraData: .defaultValue
-        )
-        // Assign it's explicitHast
-        changedPayload.explicitHash = payload.changeHash
-        
-        // Save the changed payload with the same hash
-        try database.writeSynchronously { session in
-            try session.saveUser(payload: changedPayload)
-        }
-        
-        // Load the user from the db and check the fields are correct
-        var loadedUserModel: _ChatUser<NoExtraData>? {
-            database.viewContext.user(id: userId)?.asModel()
-        }
-        
-        // Assert that properties are not changed
-        XCTAssertEqual(payload.name, loadedUserModel?.name)
-        XCTAssertEqual(payload.imageURL, loadedUserModel?.imageURL)
-        XCTAssertEqual(payload.isOnline, loadedUserModel?.isOnline)
-        XCTAssertEqual(payload.isBanned, loadedUserModel?.isBanned)
-        XCTAssertEqual(payload.role, loadedUserModel?.userRole)
-        XCTAssertEqual(payload.createdAt, loadedUserModel?.userCreatedAt)
-        XCTAssertEqual(payload.updatedAt, loadedUserModel?.userUpdatedAt)
-        XCTAssertEqual(payload.lastActiveAt, loadedUserModel?.lastActiveAt)
-        XCTAssertEqual(payload.teams, loadedUserModel?.teams)
-        
-        XCTAssertNotEqual(changedPayload.name, loadedUserModel?.name)
-        XCTAssertNotEqual(changedPayload.imageURL, loadedUserModel?.imageURL)
-        XCTAssertNotEqual(changedPayload.isOnline, loadedUserModel?.isOnline)
-        XCTAssertNotEqual(changedPayload.isBanned, loadedUserModel?.isBanned)
-        XCTAssertNotEqual(changedPayload.role, loadedUserModel?.userRole)
-        XCTAssertNotEqual(changedPayload.createdAt, loadedUserModel?.userCreatedAt)
-        XCTAssertNotEqual(changedPayload.updatedAt, loadedUserModel?.userUpdatedAt)
-        XCTAssertNotEqual(changedPayload.lastActiveAt, loadedUserModel?.lastActiveAt)
-        
-        let newPayload: UserPayload<NoExtraData> = .dummy(userId: userId)
-        
-        // Save the changed payload with the same hash
-        try database.writeSynchronously { session in
-            try session.saveUser(payload: newPayload)
-        }
-        
-        // Assert that properties are changed
-        // since the `newPayload` has is different
-        XCTAssertEqual(newPayload.name, loadedUserModel?.name)
-        XCTAssertEqual(newPayload.imageURL, loadedUserModel?.imageURL)
-        XCTAssertEqual(newPayload.isOnline, loadedUserModel?.isOnline)
-        XCTAssertEqual(newPayload.isBanned, loadedUserModel?.isBanned)
-        XCTAssertEqual(newPayload.role, loadedUserModel?.userRole)
-        XCTAssertEqual(newPayload.createdAt, loadedUserModel?.userCreatedAt)
-        XCTAssertEqual(newPayload.updatedAt, loadedUserModel?.userUpdatedAt)
-        XCTAssertEqual(newPayload.lastActiveAt, loadedUserModel?.lastActiveAt)
-        XCTAssertEqual(newPayload.teams, loadedUserModel?.teams)
+
+        // Act: Save payload again
+        let user = try database.viewContext.saveUser(payload: payload)
+
+        // Assert: DTO should not contain any changes
+        XCTAssertFalse(user.hasPersistentChangedValues)
     }
     
     func test_userWithUserListQuery_isSavedAndLoaded() {
