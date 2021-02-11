@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -43,14 +43,16 @@ private class _AppearanceStorage {
     static let shared = _AppearanceStorage()
     
     fileprivate func setAppearance(_ appearance: Any, for key: String) {
-        _appearances.mutate { $0[key] = appearance }
+        log.assert(Thread.isMainThread, "The DefaultAppearance storage can be accessed only from the main thread.")
+        appearances[key] = appearance
     }
     
     fileprivate func appearance(for key: String) -> Any? {
-        appearances[key]
+        log.assert(Thread.isMainThread, "The DefaultAppearance storage can be accessed only from the main thread.")
+        return appearances[key]
     }
     
-    @Atomic private var appearances: [String: Any] = [:]
+    private var appearances: [String: Any] = [:]
 }
 
 public class Appearance<Root: AnyObject> {
