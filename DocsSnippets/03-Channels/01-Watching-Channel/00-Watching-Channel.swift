@@ -5,6 +5,8 @@ import StreamChat
 private var chatClient: ChatClient!
 
 func snippet_channels_watching_channel() {
+    // > import StreamChat
+    
     /// Channels are watched automatically when they're synchronized.
 
     /// 1: Create a `ChannelId` that represents the channel you want to watch.

@@ -5,6 +5,8 @@ import StreamChat
 private var chatClient: ChatClient!
 
 func snippet_channels_channel_pagination() {
+    // > import StreamChat
+    
     // messages
 
     let controller = chatClient.channelController(for: .init(type: .messaging, id: "general"))

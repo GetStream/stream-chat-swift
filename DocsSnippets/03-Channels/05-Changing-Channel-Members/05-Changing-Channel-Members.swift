@@ -4,15 +4,11 @@ import StreamChat
 
 private var chatClient: ChatClient!
 
-func snippet_channels_channel_updating_channel_full_update() {
+func snippet_channels_channel_changing_channel_members() {
     // > import Stream Chat
 
     let controller = chatClient.channelController(for: .init(type: .messaging, id: "general"))
 
-    controller.updateChannel(name: "My special channel", imageURL: nil, team: nil, extraData: .defaultValue) { error in
-        if let error = error {
-            // handle errors
-            print(error)
-        }
-    }
+    controller.addMembers(userIds: ["thierry", "josh"])
+    controller.removeMembers(userIds: ["tommaso"])
 }

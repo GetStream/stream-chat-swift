@@ -375,6 +375,7 @@
 		804CAA0C25D5A9BE00731116 /* 03-Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CAA0B25D5A9BE00731116 /* 03-Pagination.swift */; };
 		804CAA1D25D5AD4C00731116 /* 00-Channel-Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CAA1C25D5AD4C00731116 /* 00-Channel-Pagination.swift */; };
 		804CAA2725D5B01C00731116 /* 00-Full-Update.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CAA2625D5B01C00731116 /* 00-Full-Update.swift */; };
+		804CAA3E25D5B1AB00731116 /* 05-Changing-Channel-Members.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CAA3D25D5B1AB00731116 /* 05-Changing-Channel-Members.swift */; };
 		805A11492506FBBD0089DFC4 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */; };
 		80750A4625D1D51C0027F951 /* 01-Channels-Storyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750A4525D1D51C0027F951 /* 01-Channels-Storyboard.swift */; };
 		80750A5025D1D5810027F951 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -1241,6 +1242,7 @@
 		804CAA0B25D5A9BE00731116 /* 03-Pagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "03-Pagination.swift"; sourceTree = "<group>"; };
 		804CAA1C25D5AD4C00731116 /* 00-Channel-Pagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Channel-Pagination.swift"; sourceTree = "<group>"; };
 		804CAA2625D5B01C00731116 /* 00-Full-Update.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Full-Update.swift"; sourceTree = "<group>"; };
+		804CAA3D25D5B1AB00731116 /* 05-Changing-Channel-Members.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "05-Changing-Channel-Members.swift"; sourceTree = "<group>"; };
 		805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		80750A4525D1D51C0027F951 /* 01-Channels-Storyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Channels-Storyboard.swift"; sourceTree = "<group>"; };
 		80750A5825D1D5B90027F951 /* 02-Channels-Code.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Channels-Code.swift"; sourceTree = "<group>"; };
@@ -2749,6 +2751,7 @@
 				804CA9DA25D5A34600731116 /* 02-Querying-Channels */,
 				804CAA1B25D5ACC500731116 /* 03-Channel-Pagination */,
 				804CAA2525D5AFFB00731116 /* 04-Updating-Channel */,
+				804CAA4625D5B1B300731116 /* 05-Changing-Channel-Members */,
 			);
 			path = "03-Channels";
 			sourceTree = "<group>";
@@ -2795,6 +2798,14 @@
 				804CAA2625D5B01C00731116 /* 00-Full-Update.swift */,
 			);
 			path = "04-Updating-Channel";
+			sourceTree = "<group>";
+		};
+		804CAA4625D5B1B300731116 /* 05-Changing-Channel-Members */ = {
+			isa = PBXGroup;
+			children = (
+				804CAA3D25D5B1AB00731116 /* 05-Changing-Channel-Members.swift */,
+			);
+			path = "05-Changing-Channel-Members";
 			sourceTree = "<group>";
 		};
 		8082785225D1BAD1008039DD /* DocsSnippets */ = {
@@ -4600,6 +4611,7 @@
 				808278BE25D1C2A8008039DD /* 03-Events.swift in Sources */,
 				804CA99C25D5745D00731116 /* 03-Autocomplete-Username.swift in Sources */,
 				804CA8BE25D474A500731116 /* 02-WebSocket-Connections.swift in Sources */,
+				804CAA3E25D5B1AB00731116 /* 05-Changing-Channel-Members.swift in Sources */,
 				804CA7BB25D4045000731116 /* 05-Custom-DispatchQueue.swift in Sources */,
 				804CA9FC25D5A91400731116 /* 02-Filters-Support.swift in Sources */,
 				804CA9BF25D5781900731116 /* 01-Creating-Channel-Member-List.swift in Sources */,

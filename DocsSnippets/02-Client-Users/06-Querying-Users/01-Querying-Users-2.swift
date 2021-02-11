@@ -5,6 +5,8 @@ import StreamChat
 private var chatClient: ChatClient!
 
 func snippet_client_users_querying_users_2() {
+    // > import StreamChat
+    
     let controller = chatClient.userListController(
         query: .init(
             filter: .in(.id, values: ["john", "jack", "jessie"]),

@@ -5,6 +5,8 @@ import StreamChat
 private var chatClient: ChatClient!
 
 func snippet_channels_creating_channel_member_list() throws {
+    // > import StreamChat
+    
     /// 1: Use the `ChatClient` to create a `ChatChannelController` with a list of user ids
     let channelController = try chatClient.channelController(
         createDirectMessageChannelWith: ["john"],

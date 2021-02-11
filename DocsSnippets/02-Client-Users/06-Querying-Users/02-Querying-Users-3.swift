@@ -5,6 +5,8 @@ import StreamChat
 private var chatClient: ChatClient!
 
 func snippet_client_users_querying_users_3() {
+    // > import StreamChat
+    
     let controller = chatClient.userListController(
         query: .init(
             filter: .equal(.isBanned, to: true),

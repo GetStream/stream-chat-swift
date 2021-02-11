@@ -5,6 +5,8 @@ import StreamChat
 private var chatClient: ChatClient!
 
 func snippet_client_users_querying_users_autocomplete_id() {
+    // > import StreamChat
+    
     let controller = chatClient.userListController(
         query: .init(filter: .autocomplete(.id, text: "ro"))
     )

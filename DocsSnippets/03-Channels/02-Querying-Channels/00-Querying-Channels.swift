@@ -5,6 +5,8 @@ import StreamChat
 private var chatClient: ChatClient!
 
 func snippet_channels_querying_channels() {
+    // > import StreamChat
+    
     let controller = chatClient.channelListController(
         query: .init(
             filter: .and([.equal(.type, to: .messaging), .containMembers(userIds: ["thierry"])]),
