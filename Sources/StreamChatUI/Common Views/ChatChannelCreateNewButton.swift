@@ -11,10 +11,11 @@ public typealias ChatChannelCreateNewButton = _ChatChannelCreateNewButton<NoExtr
 /// A Button subclass that should be used for creating new channels.
 open class _ChatChannelCreateNewButton<ExtraData: ExtraDataTypes>: Button, UIConfigProvider {
     override public func defaultAppearance() {
+        super.defaultAppearance()
         defaultIntrinsicContentSize = .init(width: 44, height: 44)
         setImage(uiConfig.images.newChat, for: .normal)
     }
-
+    
     open var defaultIntrinsicContentSize: CGSize?
     override open var intrinsicContentSize: CGSize {
         defaultIntrinsicContentSize ?? super.intrinsicContentSize
