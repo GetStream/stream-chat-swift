@@ -163,7 +163,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
         XCTAssertTrue(testFRC.test_performFetchCalled)
     }
     
-    func test_updateNotReported_whenSamePropertyAssignedViaAssignIfDifferent() throws {
+    func test_updateNotReported_whenSamePropertyAssigned() throws {
         // For this test, we need an actual NSFetchedResultsController, not the test one
         let observer = ListDatabaseObserver<TestManagedObject, TestManagedObject>(
             context: database.viewContext,
@@ -193,9 +193,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
         
         // Assign the same testValue to the same entity
         try database.writeSynchronously { _ in
-            // We use similar logic in DTO `save` methods
-            // to avoid unnecessary updates to properties
-            assignIfDifferent(item, \.testValue, testValue)
+            item.testValue = testValue
         }
         
         // Assert no new change is reported

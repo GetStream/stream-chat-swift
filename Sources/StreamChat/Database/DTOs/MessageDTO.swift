@@ -41,17 +41,8 @@ class MessageDTO: NSManagedObject {
     // it in the `willSave` phase, which happens after the validation.
     @NSManaged var defaultSortingKey: Date!
     
-    @NSManaged var savedChangeHash: Int64
-    
     override func willSave() {
         super.willSave()
-        
-        // Save the current hash of the entity
-        // This is used during `save` calls to compare DTOs `changeHash` and
-        // corresponding payload's `changeHash` to avoid unnecessary assignment of values.
-        // Direct assignment cannot be used
-        // Since it'll generate new `willSave` calls causing recursion
-        assignIfDifferent(self, \.savedChangeHash, Int64(hasher.changeHash))
         
         prepareDefaultSortKeyIfNeeded()
     }
@@ -188,35 +179,6 @@ class MessageDTO: NSManagedObject {
     }
 }
 
-extension MessageDTO: ChangeHashable {
-    var hasher: ChangeHasher {
-        MessageHasher(
-            id: id,
-            type: type,
-            userChangeHash: user.changeHash,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deletedAt: deletedAt,
-            text: text,
-            command: command,
-            args: args,
-            parentId: parentMessageId,
-            showReplyInChannel: showReplyInChannel,
-            quotedMessageChangeHash: quotedMessage?.changeHash,
-            mentionedUserChangeHashes: mentionedUsers.map(\.changeHash),
-            threadParticipantChangeHashes: threadParticipants.map(\.changeHash),
-            replyCount: Int(replyCount),
-            extraData: extraData,
-            reactionScores: reactionScores,
-            isSilent: isSilent
-        )
-    }
-    
-    var changeHash: Int {
-        Int(savedChangeHash)
-    }
-}
-
 extension MessageDTO {
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     var localMessageState: LocalMessageState? {
@@ -309,46 +271,42 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
-        
-        if dto.changeHash != payload.changeHash {
-            dto.text = payload.text
-            dto.createdAt = payload.createdAt
-            dto.updatedAt = payload.updatedAt
-            dto.deletedAt = payload.deletedAt
-            dto.type = payload.type.rawValue
-            dto.command = payload.command
-            dto.args = payload.args
-            dto.parentMessageId = payload.parentId
-            dto.showReplyInChannel = payload.showReplyInChannel
-            dto.replyCount = Int32(payload.replyCount)
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-            dto.isSilent = payload.isSilent
-            
-            dto.quotedMessage = try payload.quotedMessage.flatMap { try saveMessage(payload: $0, for: cid) }
-            
-            let user = try saveUser(payload: payload.user)
-            dto.user = user
-            
-            dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
-            
-            // If user edited their message to remove mentioned users, we need to get rid of it
-            // as backend does
-            dto.mentionedUsers = try Set(payload.mentionedUsers.map {
-                let user = try saveUser(payload: $0)
-                return user
-            })
-            
-            // If user participated in thread, but deleted message later, we needs to get rid of it if backends does
-            dto.threadParticipants = try Set(
-                payload.threadParticipants.map { try saveUser(payload: $0) }
-            )
-        }
+
+        dto.text = payload.text
+        dto.createdAt = payload.createdAt
+        dto.updatedAt = payload.updatedAt
+        dto.deletedAt = payload.deletedAt
+        dto.type = payload.type.rawValue
+        dto.command = payload.command
+        dto.args = payload.args
+        dto.parentMessageId = payload.parentId
+        dto.showReplyInChannel = payload.showReplyInChannel
+        dto.replyCount = Int32(payload.replyCount)
+        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        dto.isSilent = payload.isSilent
+
+        dto.quotedMessage = try payload.quotedMessage.flatMap { try saveMessage(payload: $0, for: cid) }
+
+        let user = try saveUser(payload: payload.user)
+        dto.user = user
+
+        dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
+
+        // If user edited their message to remove mentioned users, we need to get rid of it
+        // as backend does
+        dto.mentionedUsers = try Set(payload.mentionedUsers.map {
+            let user = try saveUser(payload: $0)
+            return user
+        })
+
+        // If user participated in thread, but deleted message later, we needs to get rid of it if backends does
+        dto.threadParticipants = try Set(
+            payload.threadParticipants.map { try saveUser(payload: $0) }
+        )
 
         if let channelPayload = payload.channel {
             let channelDTO = try saveChannel(payload: channelPayload, query: nil)
-            if channelDTO.changeHash != channelPayload.changeHash {
-                dto.channel = channelDTO
-            }
+            dto.channel = channelDTO
         } else if let cid = cid {
             let channelDTO = ChannelDTO.loadOrCreate(cid: cid, context: self)
             dto.channel = channelDTO
@@ -368,7 +326,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 return dto
             }
         )
-        assignIfDifferent(dto, \.attachments, attachments)
+        dto.attachments = attachments
         
         if let parentMessageId = payload.parentId,
             let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {

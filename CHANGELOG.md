@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐞 Fixed
 - Fix race conditions in database observers [#796](https://github.com/GetStream/stream-chat-swift/pull/796)
 
+### 🚮 Removed
+- Revert changeHash that became obsolete after #802 [#813](https://github.com/GetStream/stream-chat-swift/pull/813)
+
 # [3.0.1](https://github.com/GetStream/stream-chat-swift/releases/tag/3.0.1)
 _February 2nd, 2021_
 
