@@ -1544,8 +1544,7 @@ class ChannelController_Tests: StressTestCase {
             text: text,
 //            command: command,
 //            arguments: arguments,
-            attachments: attachments,
-            attachmentSeeds: attachmentSeeds,
+            attachments: attachments + attachmentSeeds,
             quotedMessageId: quotedMessageId,
             extraData: extraData
         ) { [callbackQueueID] result in
@@ -1572,7 +1571,10 @@ class ChannelController_Tests: StressTestCase {
             env.channelUpdater?.createNewMessage_attachments?.compactMap { $0 as? TestAttachmentEnvelope },
             attachments
         )
-        XCTAssertEqual(env.channelUpdater?.createNewMessage_attachmentSeeds, attachmentSeeds)
+        XCTAssertEqual(
+            env.channelUpdater?.createNewMessage_attachments?.compactMap { $0 as? ChatMessageAttachmentSeed },
+            attachmentSeeds
+        )
         XCTAssertEqual(env.channelUpdater?.createNewMessage_quotedMessageId, quotedMessageId)
         
         // Simulate successful update

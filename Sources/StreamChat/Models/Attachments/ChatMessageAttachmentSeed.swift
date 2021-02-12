@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type designed to combine all the information required to create new attachment that needs to be uploaded before sending.
-public struct ChatMessageAttachmentSeed: Hashable {
+public struct ChatMessageAttachmentSeed: AttachmentEnvelope, Hashable {
     /// A local url the data for uploading will be taken from.
     /// When an attachment in uploaded and a message is sent the `localURL` of resulting
     /// `ChatMessageAttachment` will be equal to this value.
@@ -55,6 +55,9 @@ public struct ChatMessageAttachmentSeed: Hashable {
         self.type = type
         self.localState = localState
     }
+    
+    // Dummy encodable conformance to satisfy `AttachmentEnvelope` protocol.
+    public func encode(to encoder: Encoder) throws {}
 }
 
 private extension URL {

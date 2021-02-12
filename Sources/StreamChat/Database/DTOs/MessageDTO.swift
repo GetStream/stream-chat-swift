@@ -233,7 +233,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         arguments: String?,
         parentMessageId: MessageId?,
         attachments: [AttachmentEnvelope],
-        attachmentSeeds: [ChatMessageAttachmentSeed],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData
@@ -261,18 +260,24 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.extraData = try JSONEncoder.default.encode(extraData)
         message.isSilent = false
         message.reactionScores = [:]
+            
+        let attachmentDTOsFromSeeds: [AttachmentDTO] = try attachments
+            .compactMap { $0 as? ChatMessageAttachmentSeed }
+            .enumerated()
+            .map { index, seed in
+                let id = AttachmentId(cid: cid, messageId: message.id, index: index)
+                let dto = try createNewAttachment(seed: seed, id: id)
+                return dto
+            }
         
-        let attachmentDTOsFromSeeds: [AttachmentDTO] = try attachmentSeeds.enumerated().map { index, seed in
-            let id = AttachmentId(cid: cid, messageId: message.id, index: index)
-            let dto = try createNewAttachment(seed: seed, id: id)
-            return dto
-        }
-        
-        let attachmentDTOsFromAttachments: [AttachmentDTO] = try attachments.enumerated().map { index, attachment in
-            let id = AttachmentId(cid: cid, messageId: message.id, index: index + attachmentSeeds.count)
-            let dto = try createNewAttachment(attachment: attachment, id: id)
-            return dto
-        }
+        let attachmentDTOsFromAttachments: [AttachmentDTO] = try attachments
+            .filter { !($0 is ChatMessageAttachmentSeed) }
+            .enumerated()
+            .map { index, attachment in
+                let id = AttachmentId(cid: cid, messageId: message.id, index: index + attachmentDTOsFromSeeds.count)
+                let dto = try createNewAttachment(attachment: attachment, id: id)
+                return dto
+            }
         
         message.attachments = Set(attachmentDTOsFromSeeds + attachmentDTOsFromAttachments)
                 

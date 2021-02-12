@@ -136,7 +136,6 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         command: String?,
         arguments: String?,
         attachments: [AttachmentEnvelope],
-        attachmentSeeds: [ChatMessageAttachmentSeed],
         quotedMessageId: MessageId?,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
@@ -146,7 +145,6 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         createNewMessage_command = command
         createNewMessage_arguments = arguments
         createNewMessage_attachments = attachments
-        createNewMessage_attachmentSeeds = attachmentSeeds
         createNewMessage_quotedMessageId = quotedMessageId
         createNewMessage_extraData = extraData
         createNewMessage_completion = completion
