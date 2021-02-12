@@ -25,7 +25,7 @@ let defaultScreenSize = CGSize(width: 360, height: 700)
 func AssertSnapshot(
     _ vc: UIViewController,
     isEmbeddedInNavigationController: Bool = false,
-    variants: [SnapshotVariant] = SnapshotVariant.allCases,
+    variants: [SnapshotVariant] = .allCases,
     screenSize: CGSize = defaultScreenSize,
     suffix: String? = nil,
     record: Bool = false,
@@ -61,7 +61,8 @@ func AssertSnapshot(
 ///   so that the newly captured snapshot is compared with the current reference.
 func AssertSnapshot(
     _ view: UIView,
-    variants: [SnapshotVariant] = SnapshotVariant.allCases,
+    variants: [SnapshotVariant] = .userInterfaceStyleCases,
+    size: CGSize? = nil,
     suffix: String? = nil,
     record: Bool = false,
     line: UInt = #line,

@@ -10,6 +10,10 @@ enum SnapshotVariant: String, Hashable, CaseIterable {
     case large
     case extraExtraExtraLarge
     
+    static var userInterfaceStyleCases: [SnapshotVariant] {
+        [small, large]
+    }
+    
     var traits: UITraitCollection {
         var traits = [
             UITraitCollection(displayScale: 1),
@@ -42,5 +46,15 @@ enum SnapshotVariant: String, Hashable, CaseIterable {
         case .small:
             return UITraitCollection(userInterfaceStyle: .dark)
         }
+    }
+}
+
+extension Array where Element == SnapshotVariant {
+    static var allCases: [SnapshotVariant] {
+        SnapshotVariant.allCases
+    }
+    
+    static var userInterfaceStyleCases: [SnapshotVariant] {
+        SnapshotVariant.userInterfaceStyleCases
     }
 }
