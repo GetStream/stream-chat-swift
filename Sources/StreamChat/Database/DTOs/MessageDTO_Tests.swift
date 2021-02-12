@@ -366,8 +366,7 @@ class MessageDTO_Tests: XCTestCase {
                 command: messageCommand,
                 arguments: messageArguments,
                 parentMessageId: parentMessageId,
-                attachments: messageAttachments,
-                attachmentSeeds: messageAttachmentSeeds,
+                attachments: messageAttachments + messageAttachmentSeeds,
                 showReplyInChannel: true,
                 quotedMessageId: nil,
                 extraData: messageExtraData
@@ -472,7 +471,6 @@ class MessageDTO_Tests: XCTestCase {
                     arguments: nil,
                     parentMessageId: nil,
                     attachments: [TestAttachmentEnvelope](),
-                    attachmentSeeds: [ChatMessageAttachmentSeed](),
                     showReplyInChannel: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -488,7 +486,6 @@ class MessageDTO_Tests: XCTestCase {
                     arguments: nil,
                     parentMessageId: nil,
                     attachments: [TestAttachmentEnvelope](),
-                    attachmentSeeds: [ChatMessageAttachmentSeed](),
                     showReplyInChannel: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -580,8 +577,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: newMessageCommand,
                     arguments: newMessageArguments,
                     parentMessageId: newMessageParentMessageId,
-                    attachments: newMessageAttachments,
-                    attachmentSeeds: newMessageAttachmentSeeds,
+                    attachments: newMessageAttachments + newMessageAttachmentSeeds,
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -626,7 +622,6 @@ class MessageDTO_Tests: XCTestCase {
                     arguments: .unique,
                     parentMessageId: .unique,
                     attachments: [TestAttachmentEnvelope](),
-                    attachmentSeeds: [ChatMessageAttachmentSeed](),
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -659,7 +654,6 @@ class MessageDTO_Tests: XCTestCase {
                     arguments: .unique,
                     parentMessageId: .unique,
                     attachments: [TestAttachmentEnvelope](),
-                    attachmentSeeds: [ChatMessageAttachmentSeed](),
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -731,7 +725,6 @@ class MessageDTO_Tests: XCTestCase {
                 arguments: nil,
                 parentMessageId: messageId,
                 attachments: [TestAttachmentEnvelope](),
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 showReplyInChannel: false,
                 quotedMessageId: nil,
                 extraData: NoExtraData.defaultValue

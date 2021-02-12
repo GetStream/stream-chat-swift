@@ -61,7 +61,6 @@ protocol MessageDatabaseSession {
         arguments: String?,
         parentMessageId: MessageId?,
         attachments: [AttachmentEnvelope],
-        attachmentSeeds: [ChatMessageAttachmentSeed],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData
@@ -116,7 +115,6 @@ extension MessageDatabaseSession {
             arguments: nil,
             parentMessageId: nil,
             attachments: attachments,
-            attachmentSeeds: attachmentSeeds,
             showReplyInChannel: false,
             quotedMessageId: quotedMessageId,
             extraData: extraData
