@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [3.0.2](https://github.com/GetStream/stream-chat-swift/releases/tag/3.0.2)
+_February 12, 2021_
+
 ## StreamChat
 
 ### ✅ Added
