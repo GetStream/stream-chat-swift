@@ -51,4 +51,10 @@ open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTyp
     public func setUpLayout() {}
 
     public func updateContent() {}
+
+    open func resetAppearance() {
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
+    }
 }

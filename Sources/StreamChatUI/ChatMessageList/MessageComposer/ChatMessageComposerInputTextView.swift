@@ -85,6 +85,12 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     }
     
     open func updateContent() {}
+
+    open func resetAppearance() {
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
+    }
     
     func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)

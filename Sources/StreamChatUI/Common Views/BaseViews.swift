@@ -22,6 +22,17 @@ public protocol Customizable {
     /// Main point of updating views with the latest data.
     /// Calling super is recommended in most of the cases.
     func updateContent()
+
+    /// It's common for appearance to depend on system settings. When system settings are changed,
+    /// component needs to reset its appearance.
+    func resetAppearance()
+}
+
+public extension Customizable {
+    func resetAppearance() {
+        setUpAppearance()
+        updateContent()
+    }
 }
 
 public extension Customizable where Self: UIView {
@@ -57,32 +68,14 @@ open class View: UIView, AppearanceSetting, Customizable {
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
+    open func setUp() { TraitCollectionWatcher.activate() }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
-
-    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        guard #available(iOS 12, *) else { return }
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
-            (self as! Self).applyDefaultAppearance()
-            self.setUpAppearance()
-            self.updateContent()
-        }
-
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    open func resetAppearance() {
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
     }
 }
 
@@ -101,32 +94,14 @@ open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customiz
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
+    open func setUp() { TraitCollectionWatcher.activate() }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
-
-    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        guard #available(iOS 12, *) else { return }
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
-            (self as! Self).applyDefaultAppearance()
-            self.setUpAppearance()
-            self.updateContent()
-        }
-
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    open func resetAppearance() {
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
     }
 }
 
@@ -145,32 +120,14 @@ open class Control: UIControl, AppearanceSetting, Customizable {
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
+    open func setUp() { TraitCollectionWatcher.activate() }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
-
-    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        guard #available(iOS 12, *) else { return }
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
-            (self as! Self).applyDefaultAppearance()
-            self.setUpAppearance()
-            self.updateContent()
-        }
-
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    open func resetAppearance() {
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
     }
 }
 
@@ -189,32 +146,14 @@ open class Button: UIButton, AppearanceSetting, Customizable {
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
+    open func setUp() { TraitCollectionWatcher.activate() }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
-
-    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        guard #available(iOS 12, *) else { return }
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
-            (self as! Self).applyDefaultAppearance()
-            self.setUpAppearance()
-            self.updateContent()
-        }
-
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    open func resetAppearance() {
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
     }
 }
 
@@ -233,32 +172,14 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
+    open func setUp() { TraitCollectionWatcher.activate() }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
-
-    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        guard #available(iOS 12, *) else { return }
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
-
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
-            (self as! Self).applyDefaultAppearance()
-            self.setUpAppearance()
-            self.updateContent()
-        }
-
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    open func resetAppearance() {
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
     }
 }
 
@@ -274,46 +195,74 @@ open class ViewController: UIViewController, AppearanceSetting, Customizable {
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
+    open func setUp() { TraitCollectionWatcher.activate() }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
     open func updateContent() { /* default empty implementation */ }
+    open func resetAppearance() {
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
+    }
+}
 
-    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
+/// Observes trait collection changes and calls `Customizable.resetAppearance` in child-first DFS way
+/// on view & view controller hierarchies.
+private enum TraitCollectionWatcher {
+    private class TraitCollectionChangesObservingView: View {
+        var onTraitChange: () -> Void = {}
+        override func setUp() { /* do not call super to prevent loop */ } // swiftlint:disable:this overridden_super_call
+        override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+            super.traitCollectionDidChange(previousTraitCollection)
 
-        guard #available(iOS 12, *) else { return }
-        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+            guard #available(iOS 12, *) else { return }
+            guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+            onTraitChange()
+        }
+    }
 
-        // Execute previous pending updates
-        pendingUpdates?()
+    private weak static var activeObservingView: TraitCollectionChangesObservingView?
 
-        // Add this view's updates to pending updates
-        pendingUpdates = {
-            (self as! Self).applyDefaultAppearance()
-            self.setUpAppearance()
-            self.updateContent()
+    /// Integrate watcher in current view hierarchy if hasn't been yet.
+    /// Can be called at any point.
+    static func activate() {
+        guard activeObservingView == nil else { return }
+
+        // UIKit love to disable system calls for views that are not in hierarchy or hidden / zero sized / etc.
+        // To play it safe, we put observing point outside of visible bounds
+        let observingView = TraitCollectionChangesObservingView(frame: CGRect(x: -100, y: -100, width: 1, height: 1))
+        observingView.backgroundColor = UIColor.white.withAlphaComponent(0.1)
+        observingView.onTraitChange = {
+            DispatchQueue.main.async {
+                TraitCollectionWatcher.dfsAppearanceReset()
+            }
         }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
+        UIApplication.shared.keyWindow?.addSubview(observingView)
+        activeObservingView = observingView
+    }
+
+    private static func dfsAppearanceReset() {
+        UIApplication.shared.windows.forEach {
+            $0.dfsAppearanceReset()
+        }
+        UIApplication.shared.windows.forEach {
+            $0.rootViewController?.dfsAppearanceReset()
         }
     }
 }
 
-// This is just a temporary workaround! Proper solution in https://stream-io.atlassian.net/browse/CIS-658
-
-private var pendingUpdates: (() -> Void)? {
-    get {
-        assert(Thread.isMainThread)
-        return _pendingUpdates
-    }
-    set {
-        assert(Thread.isMainThread)
-        _pendingUpdates = newValue
+private extension UIView {
+    func dfsAppearanceReset() {
+        subviews.forEach { $0.dfsAppearanceReset() }
+        (self as? Customizable)?.resetAppearance()
     }
 }
 
-private var _pendingUpdates: (() -> Void)?
+private extension UIViewController {
+    func dfsAppearanceReset() {
+        children.forEach { $0.dfsAppearanceReset() }
+        presentedViewController?.dfsAppearanceReset()
+        (self as? Customizable)?.resetAppearance()
+    }
+}
