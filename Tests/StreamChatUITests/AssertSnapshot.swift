@@ -25,7 +25,7 @@ let defaultScreenSize = CGSize(width: 360, height: 700)
 func AssertSnapshot(
     _ vc: UIViewController,
     isEmbeddedInNavigationController: Bool = false,
-    variants: [SnapshotVariant] = .allCases,
+    variants: [SnapshotVariant] = SnapshotVariant.all,
     screenSize: CGSize = defaultScreenSize,
     suffix: String? = nil,
     record: Bool = false,
@@ -38,7 +38,7 @@ func AssertSnapshot(
         assertSnapshot(
             matching: viewController,
             as: .image(size: screenSize, traits: variant.traits),
-            named: variant.rawValue + (suffix.map { "." + $0 } ?? ""),
+            named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
             record: record,
             file: file,
             testName: function,
@@ -61,7 +61,7 @@ func AssertSnapshot(
 ///   so that the newly captured snapshot is compared with the current reference.
 func AssertSnapshot(
     _ view: UIView,
-    variants: [SnapshotVariant] = .userInterfaceStyleCases,
+    variants: [SnapshotVariant] = SnapshotVariant.all,
     size: CGSize? = nil,
     suffix: String? = nil,
     record: Bool = false,
@@ -73,7 +73,7 @@ func AssertSnapshot(
         assertSnapshot(
             matching: view,
             as: size != nil ? .image(size: size!, traits: variant.traits) : .image(traits: variant.traits),
-            named: variant.rawValue + (suffix.map { "." + $0 } ?? ""),
+            named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
             record: record,
             file: file,
             testName: function,
