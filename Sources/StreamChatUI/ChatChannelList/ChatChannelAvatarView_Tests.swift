@@ -24,14 +24,14 @@ class ChatChannelAvatarView_Tests: XCTestCase {
     func test_emptyAppearance() {
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
-        AssertSnapshot(view, variants: [.small])
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_defaultAppearance_withDirectMessageChannel() {
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.content = (channel, currentUserId)
-        AssertSnapshot(view, variants: [.small], suffix: "with online indicator")
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles, suffix: "with online indicator")
 
         // Reset the channel such that both members are offline
         channel = ChatChannel.mockDMChannel(members: [
@@ -40,7 +40,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         ])
 
         view.content = (channel, currentUserId)
-        AssertSnapshot(view, variants: [.small])
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_defaultAppearance_withNonDMChannel() {
@@ -65,7 +65,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         view.addSizeConstraints()
         view.uiConfig = config
         view.content = (channel, currentUserId)
-        AssertSnapshot(view, variants: [.small])
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_appearanceCustomization_usingAppearanceHook() {
@@ -79,14 +79,15 @@ class ChatChannelAvatarView_Tests: XCTestCase {
             NSLayoutConstraint.activate([
                 $0.onlineIndicatorView.leftAnchor.constraint(equalTo: $0.leftAnchor),
                 $0.onlineIndicatorView.bottomAnchor.constraint(equalTo: $0.bottomAnchor),
-                $0.onlineIndicatorView.widthAnchor.constraint(equalToConstant: 20)
+                $0.onlineIndicatorView.widthAnchor.constraint(equalToConstant: 20),
+                $0.onlineIndicatorView.heightAnchor.constraint(equalToConstant: 20)
             ])
         }
 
         let view = TestView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.content = (channel, currentUserId)
-        AssertSnapshot(view, variants: [.small])
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_appearanceCustomization_usingSubclassing() {
@@ -101,7 +102,8 @@ class ChatChannelAvatarView_Tests: XCTestCase {
                 NSLayoutConstraint.activate([
                     onlineIndicatorView.leftAnchor.constraint(equalTo: leftAnchor),
                     onlineIndicatorView.bottomAnchor.constraint(equalTo: bottomAnchor),
-                    onlineIndicatorView.widthAnchor.constraint(equalToConstant: 20)
+                    onlineIndicatorView.widthAnchor.constraint(equalToConstant: 20),
+                    onlineIndicatorView.heightAnchor.constraint(equalToConstant: 20)
                 ])
             }
         }
@@ -109,7 +111,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         let view = TestView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.content = (channel, currentUserId)
-        AssertSnapshot(view, variants: [.small])
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 }
 
