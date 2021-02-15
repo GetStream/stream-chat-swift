@@ -27,6 +27,7 @@ _February 12, 2021_
 - Allow delete/edit message for all users [#809](https://github.com/GetStream/stream-chat-swift/issues/809)
   By default, only admin/moderators can edit/delete other's messages, but this configurable on backend and it's not known by the client, so we allow all actions and invalid actions will cause backend to return error.
 - Simplify attachment send API by combining `attachment` and `attachmentSeeds` parameters. [#815](https://github.com/GetStream/stream-chat-swift/pull/815)
+- Change order of appearance reset calls on trait collection changes.[#817](https://github.com/GetStream/stream-chat-swift/pull/817)
 
 ### 🐞 Fixed
 - Fix race conditions in database observers [#796](https://github.com/GetStream/stream-chat-swift/pull/796)
