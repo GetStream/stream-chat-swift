@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [3.0.2](https://github.com/GetStream/stream-chat-swift/releases/tag/3.0.2)
+_February 12, 2021_
+
 ## StreamChat
 
 ### ✅ Added
@@ -21,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extracts the connection handling responsibility of `CurrentUserController` to a new `ChatConnectionController`. [#804](https://github.com/GetStream/stream-chat-swift/pull/804)
 - Allow delete/edit message for all users [#809](https://github.com/GetStream/stream-chat-swift/issues/809)
   By default, only admin/moderators can edit/delete other's messages, but this configurable on backend and it's not known by the client, so we allow all actions and invalid actions will cause backend to return error.
+- Simplify attachment send API by combining `attachment` and `attachmentSeeds` parameters. [#815](https://github.com/GetStream/stream-chat-swift/pull/815)
 
 ### 🐞 Fixed
 - Fix race conditions in database observers [#796](https://github.com/GetStream/stream-chat-swift/pull/796)

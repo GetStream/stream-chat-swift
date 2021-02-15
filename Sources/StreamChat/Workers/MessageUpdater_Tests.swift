@@ -402,8 +402,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 command: command,
                 arguments: arguments,
                 parentMessageId: parentMessageId,
-                attachments: attachments,
-                attachmentSeeds: attachmentSeeds,
+                attachments: attachments + attachmentSeeds,
                 showReplyInChannel: showReplyInChannel,
                 quotedMessageId: nil,
                 extraData: extraData
@@ -461,7 +460,6 @@ final class MessageUpdater_Tests: StressTestCase {
                 arguments: .unique,
                 parentMessageId: .unique,
                 attachments: [],
-                attachmentSeeds: [],
                 showReplyInChannel: false,
                 quotedMessageId: nil,
                 extraData: .defaultValue

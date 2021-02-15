@@ -671,8 +671,9 @@ public extension _ChatChannelController {
     /// - Parameters:
     ///   - text: Text of the message.
     ///   - extraData: Additional extra data of the message object.
-    ///   - attachments: An array of the attachments for the message that already uploaded or doesn't need uploading.
-    ///   - attachmentSeeds: An array of the attachments that needs to be uploaded before sending.
+    ///   - attachments: An array of the attachments for the message.
+    ///     `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol
+    ///     and `ChatMessageAttachmentSeed`s.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -681,7 +682,6 @@ public extension _ChatChannelController {
 //        command: String? = nil,
 //        arguments: String? = nil,
         attachments: [AttachmentEnvelope] = [],
-        attachmentSeeds: [ChatMessageAttachmentSeed] = [],
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
@@ -703,7 +703,6 @@ public extension _ChatChannelController {
             command: nil,
             arguments: nil,
             attachments: attachments,
-            attachmentSeeds: attachmentSeeds,
             quotedMessageId: quotedMessageId,
             extraData: extraData
         ) { result in

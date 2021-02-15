@@ -633,8 +633,7 @@ final class MessageController_Tests: StressTestCase {
             text: text,
 //            command: command,
 //            arguments: arguments,
-            attachments: attachments,
-            attachmentSeeds: attachmentSeeds,
+            attachments: attachments + attachmentSeeds,
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessageId,
             extraData: extraData
@@ -664,7 +663,10 @@ final class MessageController_Tests: StressTestCase {
             env.messageUpdater.createNewReply_attachments?.compactMap { $0 as? TestAttachmentEnvelope },
             attachments
         )
-        XCTAssertEqual(env.messageUpdater.createNewReply_attachmentSeeds, attachmentSeeds)
+        XCTAssertEqual(
+            env.messageUpdater.createNewReply_attachments?.compactMap { $0 as? ChatMessageAttachmentSeed },
+            attachmentSeeds
+        )
         XCTAssertEqual(env.messageUpdater.createNewReply_quotedMessageId, quotedMessageId)
         
         // Simulate successful update

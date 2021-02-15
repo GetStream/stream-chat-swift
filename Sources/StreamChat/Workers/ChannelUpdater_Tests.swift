@@ -142,8 +142,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 text: text,
                 command: command,
                 arguments: arguments,
-                attachments: attachments,
-                attachmentSeeds: attachmentSeeds,
+                attachments: attachments + attachmentSeeds,
                 quotedMessageId: nil,
                 extraData: extraData
             ) { result in
