@@ -66,6 +66,11 @@ cyclomatic_complexity:
   warning: 25
   error: 30
 
+modifier_order:
+  preferred_modifier_order:
+    - owned
+    - typeMethods
+
 custom_rules:
   constraints_forbidden:
     included: ".*StreamChatUI" # Matches all StreamChatUI files
