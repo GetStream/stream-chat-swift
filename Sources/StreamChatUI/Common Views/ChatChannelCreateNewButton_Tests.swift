@@ -10,19 +10,19 @@ import XCTest
 class ChatChannelCreateNewButton_Tests: XCTestCase {
     func test_defaultAppearance() {
         let view = ChatChannelCreateNewButton().withoutAutoresizingMaskConstraints
-        AssertSnapshot(view)
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
     
     func test_isHighlighted() {
         let view = ChatChannelCreateNewButton().withoutAutoresizingMaskConstraints
         view.isHighlighted = true
-        AssertSnapshot(view)
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
     
     func test_isDisabled() {
         let view = ChatChannelCreateNewButton().withoutAutoresizingMaskConstraints
         view.isEnabled = false
-        AssertSnapshot(view)
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_customizationUsingAppearanceHook() {
@@ -41,7 +41,7 @@ class ChatChannelCreateNewButton_Tests: XCTestCase {
         }
         
         let view = TestView().withoutAutoresizingMaskConstraints
-        AssertSnapshot(view)
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_customizationUsingSubclassingHook() {
@@ -66,7 +66,7 @@ class ChatChannelCreateNewButton_Tests: XCTestCase {
         }
         
         let view = TestView().withoutAutoresizingMaskConstraints
-        AssertSnapshot(view)
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
     
     func test_customizationUsingUIConfig() {
@@ -75,6 +75,6 @@ class ChatChannelCreateNewButton_Tests: XCTestCase {
 
         let view = ChatChannelCreateNewButton().withoutAutoresizingMaskConstraints
         view.uiConfig = config
-        AssertSnapshot(view)
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 }
