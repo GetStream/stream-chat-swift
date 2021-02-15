@@ -384,6 +384,16 @@
 		8051F70425D6F3AF00D4F938 /* 01-Query-Muted-Channels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F70325D6F3AF00D4F938 /* 01-Query-Muted-Channels.swift */; };
 		8051F70D25D6F43600D4F938 /* 02-Remove-Channel-Mute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F70C25D6F43600D4F938 /* 02-Remove-Channel-Mute.swift */; };
 		8051F71725D6F55300D4F938 /* 00-Querying-Members.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F71625D6F55300D4F938 /* 00-Querying-Members.swift */; };
+		8051F72125D99DE100D4F938 /* 00-Channel-Slow-Mode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F72025D99DE100D4F938 /* 00-Channel-Slow-Mode.swift */; };
+		8051F73125D99E5600D4F938 /* 01-Channel-Slow-Mode-2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F73025D99E5600D4F938 /* 01-Channel-Slow-Mode-2.swift */; };
+		8051F73B25D99F3600D4F938 /* 00-Multi-Tenant-Teams.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F73A25D99F3600D4F938 /* 00-Multi-Tenant-Teams.swift */; };
+		8051F74B25D9A00400D4F938 /* 01-User-Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F74A25D9A00400D4F938 /* 01-User-Search.swift */; };
+		8051F75525D9A13200D4F938 /* 00-Send-Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F75425D9A13200D4F938 /* 00-Send-Message.swift */; };
+		8051F76525D9D6F000D4F938 /* 01-Complex-Send-Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F76425D9D6F000D4F938 /* 01-Complex-Send-Message.swift */; };
+		8051F76E25D9DA5C00D4F938 /* 02-Get-Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F76D25D9DA5C00D4F938 /* 02-Get-Message.swift */; };
+		8051F77725D9DBD300D4F938 /* 03-Update-Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F77625D9DBD200D4F938 /* 03-Update-Message.swift */; };
+		8051F78025D9DC9000D4F938 /* 04-Delete-Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F77F25D9DC9000D4F938 /* 04-Delete-Message.swift */; };
+		8051F78B25D9DDFE00D4F938 /* 00-File-Uploads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8051F78A25D9DDFE00D4F938 /* 00-File-Uploads.swift */; };
 		805A11492506FBBD0089DFC4 /* UIViewController+Alert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */; };
 		80750A4625D1D51C0027F951 /* 01-Channels-Storyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80750A4525D1D51C0027F951 /* 01-Channels-Storyboard.swift */; };
 		80750A5025D1D5810027F951 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -1262,6 +1272,16 @@
 		8051F70325D6F3AF00D4F938 /* 01-Query-Muted-Channels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Query-Muted-Channels.swift"; sourceTree = "<group>"; };
 		8051F70C25D6F43600D4F938 /* 02-Remove-Channel-Mute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Remove-Channel-Mute.swift"; sourceTree = "<group>"; };
 		8051F71625D6F55300D4F938 /* 00-Querying-Members.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Querying-Members.swift"; sourceTree = "<group>"; };
+		8051F72025D99DE100D4F938 /* 00-Channel-Slow-Mode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Channel-Slow-Mode.swift"; sourceTree = "<group>"; };
+		8051F73025D99E5600D4F938 /* 01-Channel-Slow-Mode-2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Channel-Slow-Mode-2.swift"; sourceTree = "<group>"; };
+		8051F73A25D99F3600D4F938 /* 00-Multi-Tenant-Teams.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Multi-Tenant-Teams.swift"; sourceTree = "<group>"; };
+		8051F74A25D9A00400D4F938 /* 01-User-Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-User-Search.swift"; sourceTree = "<group>"; };
+		8051F75425D9A13200D4F938 /* 00-Send-Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Send-Message.swift"; sourceTree = "<group>"; };
+		8051F76425D9D6F000D4F938 /* 01-Complex-Send-Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Complex-Send-Message.swift"; sourceTree = "<group>"; };
+		8051F76D25D9DA5C00D4F938 /* 02-Get-Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Get-Message.swift"; sourceTree = "<group>"; };
+		8051F77625D9DBD200D4F938 /* 03-Update-Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "03-Update-Message.swift"; sourceTree = "<group>"; };
+		8051F77F25D9DC9000D4F938 /* 04-Delete-Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "04-Delete-Message.swift"; sourceTree = "<group>"; };
+		8051F78A25D9DDFE00D4F938 /* 00-File-Uploads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-File-Uploads.swift"; sourceTree = "<group>"; };
 		805A11472506FBB30089DFC4 /* UIViewController+Alert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Alert.swift"; sourceTree = "<group>"; };
 		80750A4525D1D51C0027F951 /* 01-Channels-Storyboard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Channels-Storyboard.swift"; sourceTree = "<group>"; };
 		80750A5825D1D5B90027F951 /* 02-Channels-Code.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Channels-Code.swift"; sourceTree = "<group>"; };
@@ -2778,6 +2798,7 @@
 				8051F6D825D6EF5600D4F938 /* 07-Deleting-Hiding-Channel */,
 				8051F6F925D6F21000D4F938 /* 08-Muting-Channels */,
 				8051F71525D6F50900D4F938 /* 09-Querying_Members */,
+				8051F71F25D99DB000D4F938 /* 10-Throttling-Slow-Mode */,
 			);
 			path = "03-Channels";
 			sourceTree = "<group>";
@@ -2873,6 +2894,53 @@
 			path = "09-Querying_Members";
 			sourceTree = "<group>";
 		};
+		8051F71F25D99DB000D4F938 /* 10-Throttling-Slow-Mode */ = {
+			isa = PBXGroup;
+			children = (
+				8051F72025D99DE100D4F938 /* 00-Channel-Slow-Mode.swift */,
+				8051F73025D99E5600D4F938 /* 01-Channel-Slow-Mode-2.swift */,
+			);
+			path = "10-Throttling-Slow-Mode";
+			sourceTree = "<group>";
+		};
+		8051F73925D99EF900D4F938 /* 04-Channel-Types */ = {
+			isa = PBXGroup;
+			children = (
+				8051F73A25D99F3600D4F938 /* 00-Multi-Tenant-Teams.swift */,
+				8051F74A25D9A00400D4F938 /* 01-User-Search.swift */,
+			);
+			path = "04-Channel-Types";
+			sourceTree = "<group>";
+		};
+		8051F75325D9A0D400D4F938 /* 05-Messages */ = {
+			isa = PBXGroup;
+			children = (
+				8051F78825D9DD4A00D4F938 /* 00-Overview */,
+				8051F78925D9DDE000D4F938 /* 01-File-Uploads */,
+			);
+			path = "05-Messages";
+			sourceTree = "<group>";
+		};
+		8051F78825D9DD4A00D4F938 /* 00-Overview */ = {
+			isa = PBXGroup;
+			children = (
+				8051F75425D9A13200D4F938 /* 00-Send-Message.swift */,
+				8051F76425D9D6F000D4F938 /* 01-Complex-Send-Message.swift */,
+				8051F76D25D9DA5C00D4F938 /* 02-Get-Message.swift */,
+				8051F77625D9DBD200D4F938 /* 03-Update-Message.swift */,
+				8051F77F25D9DC9000D4F938 /* 04-Delete-Message.swift */,
+			);
+			path = "00-Overview";
+			sourceTree = "<group>";
+		};
+		8051F78925D9DDE000D4F938 /* 01-File-Uploads */ = {
+			isa = PBXGroup;
+			children = (
+				8051F78A25D9DDFE00D4F938 /* 00-File-Uploads.swift */,
+			);
+			path = "01-File-Uploads";
+			sourceTree = "<group>";
+		};
 		8082785225D1BAD1008039DD /* DocsSnippets */ = {
 			isa = PBXGroup;
 			children = (
@@ -2882,6 +2950,8 @@
 				808278C725D1C8B2008039DD /* 01-UX */,
 				804CA89B25D4723000731116 /* 02-Client-Users */,
 				804CA9AD25D5758900731116 /* 03-Channels */,
+				8051F73925D99EF900D4F938 /* 04-Channel-Types */,
+				8051F75325D9A0D400D4F938 /* 05-Messages */,
 			);
 			path = DocsSnippets;
 			sourceTree = "<group>";
@@ -4667,7 +4737,9 @@
 				804CA92525D5668900731116 /* 00-Server-User-Updates.swift in Sources */,
 				804CA84925D45D0F00731116 /* 04-Subclassing-Components.swift in Sources */,
 				804CA7EE25D43C5800731116 /* 01-Custom-ExtraDataTypes.swift in Sources */,
+				8051F74B25D9A00400D4F938 /* 01-User-Search.swift in Sources */,
 				8051F6C725D6EA4A00D4F938 /* 03-Query-Accepted-Invites.swift in Sources */,
+				8051F76525D9D6F000D4F938 /* 01-Complex-Send-Message.swift in Sources */,
 				804CA88C25D4647D00731116 /* 00-Customization.swift in Sources */,
 				8051F71725D6F55300D4F938 /* 00-Querying-Members.swift in Sources */,
 				804CA86B25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift in Sources */,
@@ -4689,11 +4761,15 @@
 				804CA7BF25D4045000731116 /* 01-Connecting.swift in Sources */,
 				804CA9EC25D5A72C00731116 /* 01-Filters-Messaging-Team.swift in Sources */,
 				804CA87425D4604200731116 /* 08-Injecting-Custom-Subclass-3.swift in Sources */,
+				8051F78025D9DC9000D4F938 /* 04-Delete-Message.swift in Sources */,
 				804CA7C525D4045000731116 /* 02-Development-Token.swift in Sources */,
+				8051F73B25D99F3600D4F938 /* 00-Multi-Tenant-Teams.swift in Sources */,
 				804CA93525D5681500731116 /* 01-Server-Partial-Update.swift in Sources */,
 				804CAA0C25D5A9BE00731116 /* 03-Pagination.swift in Sources */,
+				8051F75525D9A13200D4F938 /* 00-Send-Message.swift in Sources */,
 				804CA7C125D4045000731116 /* 04-Custom-BaseURL.swift in Sources */,
 				804CA91225D479EF00731116 /* 05-Anonymous-Users.swift in Sources */,
+				8051F72125D99DE100D4F938 /* 00-Channel-Slow-Mode.swift in Sources */,
 				804CA83925D45C5A00731116 /* 03-Changing-Appearance-2.swift in Sources */,
 				804CA7BD25D4045000731116 /* 02-Disconnecting.swift in Sources */,
 				804CA90225D4798700731116 /* 04-Guest-Users.swift in Sources */,
@@ -4712,11 +4788,13 @@
 				8051F6AE25D6E95300D4F938 /* 01-Accepting-Invite.swift in Sources */,
 				8051F6DA25D6EF9400D4F938 /* 00-Deleting-Channel.swift in Sources */,
 				804CA7C425D4045000731116 /* 00-Basic-Setup-2.swift in Sources */,
+				8051F73125D99E5600D4F938 /* 01-Channel-Slow-Mode-2.swift in Sources */,
 				804CA96825D56DFF00731116 /* 00-Logging-Out.swift in Sources */,
 				804CA7C025D4045000731116 /* 00-Basic-Setup.swift in Sources */,
 				804CA98A25D572ED00731116 /* 01-Querying-Users-2.swift in Sources */,
 				80750A7325D1DD5C0027F951 /* 04-Messages-Storyboard.swift in Sources */,
 				804CA7C725D4045000731116 /* 01-Onboarding.swift in Sources */,
+				8051F78B25D9DDFE00D4F938 /* 00-File-Uploads.swift in Sources */,
 				8051F70D25D6F43600D4F938 /* 02-Remove-Channel-Mute.swift in Sources */,
 				804CA7CC25D4045000731116 /* 02-Regular-Launch.swift in Sources */,
 				804CA8F125D4781A00731116 /* 03-Token-Expiration.swift in Sources */,
@@ -4726,6 +4804,7 @@
 				8051F70425D6F3AF00D4F938 /* 01-Query-Muted-Channels.swift in Sources */,
 				804CA80D25D43ECA00731116 /* 02-Typealiases.swift in Sources */,
 				804CA7CA25D4045000731116 /* 06-Clear-Badge-On-Active.swift in Sources */,
+				8051F76E25D9DA5C00D4F938 /* 02-Get-Message.swift in Sources */,
 				8082787D25D1BC65008039DD /* 01-Channels.swift in Sources */,
 				804CA7BE25D4045000731116 /* 06-Background-Behavior.swift in Sources */,
 				804CA7CD25D4045000731116 /* 03-Add-User-Device.swift in Sources */,
@@ -4736,6 +4815,7 @@
 				804CA8AE25D4740F00731116 /* 01-Connecting-User.swift in Sources */,
 				804CA8E825D4768200731116 /* 02-Development-Tokens.swift .swift in Sources */,
 				804CA85225D45DDC00731116 /* 05-Changing-Component-Arrangement.swift in Sources */,
+				8051F77725D9DBD300D4F938 /* 03-Update-Message.swift in Sources */,
 				8051F6EA25D6F00300D4F938 /* 01-Hiding-Channel.swift in Sources */,
 				804CA8D825D475F900731116 /* 01-Tokens-1.swift in Sources */,
 				804CA93F25D568A100731116 /* 00-Guest-Users.swift in Sources */,
