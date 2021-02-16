@@ -249,10 +249,28 @@ lane :test_release_macos do
     testplan: "StreamChatTestPlan",
     configuration: "ReleaseTests",
     clean: true,
+    disable_xcpretty: true,
     destination: 'platform=macOS,arch=x86_64' # will select first from macOS and macOS Catalyst. Let's hope it always will be macOS
   )
 end
 
+desc "Runs tests in Debug config on macOS"
+lane :test_debug_macos do
+
+  setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
+
+  match_me
+
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "StreamChat",
+    testplan: "StreamChatTestPlan",
+    configuration: "Debug",
+    clean: true,
+    disable_xcpretty: true,
+    destination: 'platform=macOS,arch=x86_64' # will select first from macOS and macOS Catalyst. Let's hope it always will be macOS
+  )
+end
 desc "Runs stress tests for"
 lane :stress_test do
   scan(

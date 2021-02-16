@@ -13,15 +13,19 @@ class ChannelController_Combine_Tests: iOS13TestCase {
     var cancellables: Set<AnyCancellable>!
 
     override func setUp() {
+        print(-1)
         super.setUp()
         channelController = ChannelControllerMock()
         cancellables = []
+        print(0)
     }
     
     override func tearDown() {
+        print(7)
         // Release existing subscriptions and make sure the controller gets released, too
         cancellables = nil
         AssertAsync.canBeReleased(&channelController)
+        print(8)
         super.tearDown()
     }
     
@@ -45,26 +49,32 @@ class ChannelController_Combine_Tests: iOS13TestCase {
     }
 
     func test_channelChangePublisher() {
+        print(1)
         // Setup Recording publishers
         var recording = Record<EntityChange<ChatChannel>, Never>.Recording()
-        
+
+        print(2)
         // Setup the chain
         channelController
             .channelChangePublisher
             .sink(receiveValue: { recording.receive($0) })
             .store(in: &cancellables)
-        
+
+        print(3)
         // Keep only the weak reference to the controller. The existing publisher should keep it alive.
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
 
+        print(4)
         let newChannel: ChatChannel = .init(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
         controller?.channel_simulated = newChannel
         controller?.delegateCallback {
             $0.channelController(controller!, didUpdateChannel: .create(newChannel))
         }
-        
+
+        print(5)
         XCTAssertEqual(recording.output, [.create(newChannel)])
+        print(6)
     }
     
     func test_messagesChangesPublisher() {
