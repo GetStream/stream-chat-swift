@@ -58,6 +58,25 @@ private class _AppearanceStorage {
 public class Appearance<Root: AnyObject> {
     public var rules: [(Root) -> Void] = []
 
+    /// Adds a new customization rule for all instances of this type.
+    ///
+    /// Provides an easy way how to customize basic parameterss of all instances of the given type. The custom rule
+    /// is called as a part of view customization lifecycle methods:
+    /// ```
+    ///   1. setUp()
+    ///   2. setUpLayout()
+    ///   3. defaultAppearance()
+    ///   4. 👉 <custom rules>
+    ///   5. setUpAppearance()
+    ///   6. updateContent()
+    /// ```
+    ///
+    /// - Important: The closure can be executed multiple times for the same instance or not executed at all. All changes
+    /// done in the closure should be idempotent.
+    ///
+    /// - Parameter rule: The closure which will be execute for every instance of the given type when it becomes part of
+    /// the view heirarchy.
+    ///
     public func addRule(_ rule: @escaping (Root) -> Void) {
         rules.append(rule)
     }
