@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🐞 Fixed
+- Fix user devices not being removed locally when removed on the backend [#882](https://github.com/GetStream/stream-chat-swift/pull/822)
+
 ### 🔄 Changed
 
 # [3.0.2](https://github.com/GetStream/stream-chat-swift/releases/tag/3.0.2)
