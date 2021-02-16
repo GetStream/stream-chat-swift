@@ -101,6 +101,50 @@ open class _BaseChatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: Collec
     }
 }
 
+// MARK: - Text only
+
+public typealias СhatMessageTextCollectionViewCell = _СhatMessageTextCollectionViewCell<NoExtraData>
+
+open class _СhatMessageTextCollectionViewCell<ExtraData: ExtraDataTypes>: _BaseChatMessageCollectionViewCell<ExtraData> {
+    // MARK: - Subviews
+    
+    public private(set) lazy var messageView = uiConfig.messageList.messageTextContentView.init().withoutAutoresizingMaskConstraints
+    
+    // MARK: - Lifecycle
+    
+    override open func setUpLayout() {
+        contentView.addSubview(messageView)
+        
+        NSLayoutConstraint.activate([
+            messageView.topAnchor.pin(equalTo: contentView.topAnchor),
+            messageView.bottomAnchor.pin(equalTo: contentView.bottomAnchor),
+            messageView.widthAnchor.pin(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.75)
+        ])
+    }
+    
+    override open func updateContent() {
+        messageView.message = message
+        
+        messageView.onErrorIndicatorTap = { [unowned self] in delegate?.onErrorIndicatorTap(self, $0) }
+    }
+}
+
+class СhatIncomingMessageTextCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageTextCollectionViewCell<ExtraData> {
+    override func setUpLayout() {
+        super.setUpLayout()
+        messageView.leadingAnchor.pin(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
+    }
+}
+
+class СhatOutgoingMessageTextCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageTextCollectionViewCell<ExtraData> {
+    override func setUpLayout() {
+        super.setUpLayout()
+        messageView.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
+    }
+}
+
+// MARK: - Usual
+
 public typealias СhatMessageCollectionViewCell = _СhatMessageCollectionViewCell<NoExtraData>
 
 open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _BaseChatMessageCollectionViewCell<ExtraData> {
@@ -142,6 +186,8 @@ class СhatOutgoingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatM
         messageView.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
     }
 }
+
+// MARK: - Attachment
 
 public typealias СhatMessageAttachmentCollectionViewCell = _СhatMessageAttachmentCollectionViewCell<NoExtraData>
 

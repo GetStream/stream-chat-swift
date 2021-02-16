@@ -76,6 +76,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         collection.register(incomingAttachmentCell, forCellWithReuseIdentifier: incomingAttachmentCell.reuseId)
         collection.register(outgoingAttachmentCell, forCellWithReuseIdentifier: outgoingAttachmentCell.reuseId)
         
+        let incomingTextCell = uiConfig.messageList.incomingMessageTextCell
+        let outgoingTextCell = uiConfig.messageList.outgoingMessageTextCell
+        collection.register(incomingTextCell, forCellWithReuseIdentifier: incomingTextCell.reuseId)
+        collection.register(outgoingTextCell, forCellWithReuseIdentifier: outgoingTextCell.reuseId)
+        
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
         collection.alwaysBounceVertical = true
@@ -178,16 +183,27 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
     
     open func cellReuseIdentifierForMessage(_ message: _ChatMessageGroupPart<ExtraData>) -> String {
         if message.attachments.contains(where: { $0.type == .image || $0.type == .giphy || $0.type == .file }) {
+            // This is an attachment cell
             if message.isSentByCurrentUser {
                 return uiConfig.messageList.outgoingMessageAttachmentCell.reuseId
             } else {
                 return uiConfig.messageList.incomingMessageAttachmentCell.reuseId
             }
-        } else {
+        } else if message.attachments.contains(where: { $0.type.isLink })
+            || message.quotedMessage != nil
+            || message.isPartOfThread {
+            // This is the usual cell (has link or quoted msg or is part of thread
             if message.isSentByCurrentUser {
                 return uiConfig.messageList.outgoingMessageCell.reuseId
             } else {
                 return uiConfig.messageList.incomingMessageCell.reuseId
+            }
+        } else {
+            // this is a text-only cell
+            if message.isSentByCurrentUser {
+                return uiConfig.messageList.outgoingMessageTextCell.reuseId
+            } else {
+                return uiConfig.messageList.incomingMessageTextCell.reuseId
             }
         }
     }

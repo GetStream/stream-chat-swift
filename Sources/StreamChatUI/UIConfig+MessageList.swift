@@ -17,6 +17,11 @@ public extension _UIConfig {
             СhatIncomingMessageAttachmentCollectionViewCell<ExtraData>.self
         public var outgoingMessageAttachmentCell: _СhatMessageAttachmentCollectionViewCell<ExtraData>.Type =
             СhatOutgoingMessageAttachmentCollectionViewCell<ExtraData>.self
+        
+        public var incomingMessageTextCell: _СhatMessageTextCollectionViewCell<ExtraData>.Type =
+            СhatIncomingMessageTextCollectionViewCell<ExtraData>.self
+        public var outgoingMessageTextCell: _СhatMessageTextCollectionViewCell<ExtraData>.Type =
+            СhatOutgoingMessageTextCollectionViewCell<ExtraData>.self
 
         public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
@@ -24,6 +29,7 @@ public extension _UIConfig {
         public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
         public var messageAttachmentContentView: _ChatMessageAttachmentContentView<ExtraData>
             .Type = _ChatMessageAttachmentContentView<ExtraData>.self
+        public var messageTextContentView: _ChatMessageTextContentView<ExtraData>.Type = _ChatMessageTextContentView<ExtraData>.self
         public var messageContentSubviews = MessageContentViewSubviews()
         public var messageActionsSubviews = MessageActionsSubviews()
         public var messageReactions = MessageReactions()
