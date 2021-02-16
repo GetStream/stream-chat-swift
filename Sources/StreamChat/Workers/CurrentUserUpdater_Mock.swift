@@ -21,8 +21,8 @@ final class CurrentUserUpdaterMock<ExtraData: ExtraDataTypes>: CurrentUserUpdate
     @Atomic var removeDevice_currentUserId: UserId?
     @Atomic var removeDevice_completion: ((Error?) -> Void)?
     
-    @Atomic var updateDevices_currentUserId: UserId?
-    @Atomic var updateDevices_completion: ((Error?) -> Void)?
+    @Atomic var fetchDevices_currentUserId: UserId?
+    @Atomic var fetchDevices_completion: ((Error?) -> Void)?
     
     override func updateUserData(
         currentUserId: UserId,
@@ -58,9 +58,9 @@ final class CurrentUserUpdaterMock<ExtraData: ExtraDataTypes>: CurrentUserUpdate
         removeDevice_completion = completion
     }
     
-    override func updateDevices(currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
-        updateDevices_currentUserId = currentUserId
-        updateDevices_completion = completion
+    override func fetchDevices(currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
+        fetchDevices_currentUserId = currentUserId
+        fetchDevices_completion = completion
     }
     
     // Cleans up all recorded values
@@ -79,7 +79,7 @@ final class CurrentUserUpdaterMock<ExtraData: ExtraDataTypes>: CurrentUserUpdate
         removeDevice_currentUserId = nil
         removeDevice_completion = nil
         
-        updateDevices_currentUserId = nil
-        updateDevices_completion = nil
+        fetchDevices_currentUserId = nil
+        fetchDevices_completion = nil
     }
 }

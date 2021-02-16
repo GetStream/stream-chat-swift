@@ -113,7 +113,7 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
             return
         }
         
-        currentUserUpdater.updateDevices(currentUserId: currentUserId) { error in
+        currentUserUpdater.fetchDevices(currentUserId: currentUserId) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
@@ -212,7 +212,7 @@ public extension _CurrentChatUserController {
     /// `setUser` must be called before calling this.
     /// - Parameters:
     ///   - id: Device id to be removed. You can obtain registered devices via `currentUser.devices`.
-    ///   If `currentUser.devices` is not up-to-date, please make an `updateDevices` call.
+    ///   If `currentUser.devices` is not up-to-date, please make an `synchronize` call.
     ///   - completion: Called when device is successfully deregistered, or with error.
     func removeDevice(id: String, completion: ((Error?) -> Void)? = nil) {
         guard let currentUserId = currentUser?.id else {
