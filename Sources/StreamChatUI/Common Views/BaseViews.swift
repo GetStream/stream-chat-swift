@@ -68,21 +68,16 @@ open class View: UIView, AppearanceSetting, Customizable {
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }
 
@@ -112,21 +107,16 @@ open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customiz
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }
 
@@ -156,21 +146,16 @@ open class Control: UIControl, AppearanceSetting, Customizable {
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }
 
@@ -200,21 +185,16 @@ open class Button: UIButton, AppearanceSetting, Customizable {
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }
 
@@ -244,21 +224,16 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }
 
@@ -285,35 +260,31 @@ open class ViewController: UIViewController, AppearanceSetting, Customizable {
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func viewWillLayoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.viewWillLayoutSubviews()
     }
 }
 
-// This is just a temporary workaround! Proper solution in https://stream-io.atlassian.net/browse/CIS-658
+/// Closure stack, used to reverse order of appearance reloads on trait collection changes
+private enum TraitCollectionReloadStack {
+    private static var stack: [() -> Void] = []
 
-private var pendingUpdates: (() -> Void)? {
-    get {
-        assert(Thread.isMainThread)
-        return _pendingUpdates
+    static func executePendingUpdates() {
+        guard !stack.isEmpty else { return }
+        let existingUpdates = stack
+        stack.removeAll()
+        existingUpdates.reversed().forEach { $0() }
     }
-    set {
-        assert(Thread.isMainThread)
-        _pendingUpdates = newValue
+
+    static func push(_ closure: @escaping () -> Void) {
+        stack.append(closure)
     }
 }
-
-private var _pendingUpdates: (() -> Void)?
