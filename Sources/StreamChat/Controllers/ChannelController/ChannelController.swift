@@ -266,13 +266,16 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
         environment: Environment = .init(),
         isChannelAlreadyCreated: Bool = true
     ) {
+        print("-1d")
         self.channelQuery = channelQuery
         self.client = client
         self.environment = environment
         self.isChannelAlreadyCreated = isChannelAlreadyCreated
         super.init()
 
+        print("-1e")
         setChannelObserver()
+        print("-1f")
         setMessagesObserver()
     }
 

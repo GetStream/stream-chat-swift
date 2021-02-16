@@ -15,7 +15,9 @@ class ChannelController_Combine_Tests: iOS13TestCase {
     override func setUp() {
         print(-1)
         super.setUp()
+        print("-1a")
         channelController = ChannelControllerMock()
+        print("-1b")
         cancellables = []
         print(0)
     }
