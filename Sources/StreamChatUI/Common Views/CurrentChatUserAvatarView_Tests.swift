@@ -40,17 +40,10 @@ class CurrentChatUserAvatarView_Tests: XCTestCase {
     func test_customizationUsingAppearanceHook() {
         class TestView: CurrentChatUserAvatarView {}
         TestView.defaultAppearance {
-            // Modify appearance
             $0.avatarView.backgroundColor = .blue
             $0.avatarView.imageView.backgroundColor = .brown
             $0.layer.borderWidth = 1
             $0.layer.borderColor = UIColor.green.cgColor
-            
-            // Modify layout
-            NSLayoutConstraint.activate([
-                $0.widthAnchor.constraint(equalToConstant: 50),
-                $0.heightAnchor.constraint(equalToConstant: 50)
-            ])
         }
         
         let view = TestView().withoutAutoresizingMaskConstraints

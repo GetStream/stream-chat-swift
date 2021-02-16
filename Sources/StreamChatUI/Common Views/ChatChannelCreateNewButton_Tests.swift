@@ -28,16 +28,10 @@ class ChatChannelCreateNewButton_Tests: XCTestCase {
     func test_customizationUsingAppearanceHook() {
         class TestView: ChatChannelCreateNewButton {}
         TestView.defaultAppearance {
-            // Modify appearance
             $0.layer.borderWidth = 1
             $0.layer.borderColor = UIColor.green.cgColor
             $0.backgroundColor = .black
             $0.tintColor = .lightGray
-            
-            NSLayoutConstraint.activate([
-                $0.heightAnchor.constraint(equalToConstant: 20),
-                $0.widthAnchor.constraint(equalToConstant: 20)
-            ])
         }
         
         let view = TestView().withoutAutoresizingMaskConstraints
