@@ -199,7 +199,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
 
         guard gesture.state == .began else { return }
         guard let ip = collectionView.indexPathForItem(at: location) else { return }
-        guard let cell = collectionView.cellForItem(at: ip) as? _СhatMessageCollectionViewCell<ExtraData> else { return }
+        guard let cell = collectionView.cellForItem(at: ip) as? _BaseChatMessageCollectionViewCell<ExtraData> else { return }
 
         didSelectMessageCell(cell)
     }
@@ -220,21 +220,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: reuseIdentifier,
             for: indexPath
-        ) as! _СhatMessageCollectionViewCell<ExtraData>
+        ) as! _BaseChatMessageCollectionViewCell<ExtraData>
 
-        cell.messageView.onThreadTap = { [weak self] in
-            guard let self = self, let message = $0?.message else { return }
-            self.delegate?.didTapOnRepliesForMessage?(self, message)
-        }
-        cell.messageView.onErrorIndicatorTap = { [weak self, weak cell] _ in
-            guard let self = self, let cell = cell else { return }
-            self.didSelectMessageCell(cell)
-        }
-        cell.messageView.onLinkTap = { [weak self] link in
-            if let link = link {
-                self?.didTapOnLink(link)
-            }
-        }
+        cell.delegate = .wrap(self)
         cell.message = message
 
         return cell
@@ -318,7 +306,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         )
     }
 
-    private func didSelectMessageCell(_ cell: _СhatMessageCollectionViewCell<ExtraData>) {
+    private func didSelectMessageCell(_ cell: _BaseChatMessageCollectionViewCell<ExtraData>) {
         guard let messageData = cell.message, messageData.isInteractionEnabled else { return }
 
         let actionsController = _ChatMessageActionsVC<ExtraData>()
@@ -334,7 +322,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
         }
 
         router.showMessageActionsPopUp(
-            messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
+            messageContentFrame: cell.contentView.frame, // TODO: this doesn't work
             messageData: messageData,
             messageActionsController: actionsController,
             messageReactionsController: reactionsController
@@ -354,6 +342,31 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
 
     private func didTapOnLink(_ link: ChatMessageDefaultAttachment) {
         router.openLink(link)
+    }
+}
+
+extension _ChatMessageListVC: _BaseChatMessageCollectionViewCellDelegate {
+    public func chatMessageCollectionViewCell(
+        _ cell: _BaseChatMessageCollectionViewCell<ExtraData>,
+        didTapThread message: _ChatMessageGroupPart<ExtraData>?
+    ) {
+        guard let message = message?.message else { return }
+        delegate?.didTapOnRepliesForMessage?(self, message)
+    }
+    
+    public func chatMessageCollectionViewCell(
+        _ cell: _BaseChatMessageCollectionViewCell<ExtraData>,
+        didTapErrorIndicator message: _ChatMessageGroupPart<ExtraData>?
+    ) {
+        didSelectMessageCell(cell)
+    }
+    
+    public func chatMessageCollectionViewCell(
+        _ cell: _BaseChatMessageCollectionViewCell<ExtraData>,
+        didTapLink attachment: ChatMessageDefaultAttachment?
+    ) {
+        guard let attachment = attachment else { return }
+        didTapOnLink(attachment)
     }
 }
 
