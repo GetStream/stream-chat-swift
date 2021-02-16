@@ -507,28 +507,30 @@ final class CurrentUserUpdater_Tests: StressTestCase {
 
         // Save previous device to the db
         try database.writeSynchronously {
-            try $0.saveCurrentUserDevices([.dummy])
+            // Simulate 4 devices exist in the DB
+            try $0.saveCurrentUserDevices([.dummy, .dummy, .dummy, .dummy])
         }
-        
+
         // Call updateDevices
+        var callbackCalled = false
         currentUserUpdater.updateDevices(currentUserId: .unique) {
             // No error should be returned
             XCTAssertNil($0)
+            callbackCalled = true
         }
         
         // Simulate API response with devices data
         let dummyDevices = DeviceListPayload.dummy
+        assert(dummyDevices.devices.isEmpty == false)
         apiClient.test_simulateResponse(.success(dummyDevices))
-        
-        // Assert data is stored in the DB
-        var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser()?.asModel()
-        }
-        
+
         // Previous devices should not be cleared
         AssertAsync {
-            Assert.willBeEqual(currentUser?.devices.count, 2)
-            Assert.willBeEqual(currentUser?.devices.last?.id, dummyDevices.devices.last?.id)
+            Assert.willBeEqual(
+                currentUser?.devices.map(\.id).sorted(),
+                dummyDevices.devices.map(\.id).sorted()
+            )
+            Assert.willBeTrue(callbackCalled)
         }
     }
 }
