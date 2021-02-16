@@ -71,17 +71,8 @@ class ChatChannelAvatarView_Tests: XCTestCase {
     func test_appearanceCustomization_usingAppearanceHook() {
         class TestView: ChatChannelAvatarView {}
         TestView.defaultAppearance {
-            // Modify appearance
             $0.onlineIndicatorView.backgroundColor = .red
             $0.backgroundColor = .yellow
-
-            // Modify layout
-            NSLayoutConstraint.activate([
-                $0.onlineIndicatorView.leftAnchor.constraint(equalTo: $0.leftAnchor),
-                $0.onlineIndicatorView.bottomAnchor.constraint(equalTo: $0.bottomAnchor),
-                $0.onlineIndicatorView.widthAnchor.constraint(equalToConstant: 20),
-                $0.onlineIndicatorView.heightAnchor.constraint(equalToConstant: 20)
-            ])
         }
 
         let view = TestView().withoutAutoresizingMaskConstraints
