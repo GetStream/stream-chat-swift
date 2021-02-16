@@ -116,7 +116,9 @@ class CurrentUserUpdater<ExtraData: ExtraDataTypes>: Worker {
             do {
                 let devicesPayload = try result.get()
                 self?.database.write({ (session) in
-                    try session.saveCurrentUserDevices(devicesPayload.devices)
+                    // Since this call always return all device, we want' to clear the existing ones
+                    // to remove the deleted devices.
+                    try session.saveCurrentUserDevices(devicesPayload.devices, clearExisting: true)
                 }) { completion?($0) }
             } catch {
                 completion?(error)
