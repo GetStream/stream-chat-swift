@@ -291,7 +291,14 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
-        
+
+        // Assert data is stored in the DB
+        var currentUser: CurrentChatUser? {
+            database.viewContext.currentUser()?.asModel()
+        }
+
+        assert(currentUser?.devices.count == 1)
+
         // Call updateDevices
         currentUserUpdater.addDevice(token: .init(repeating: 1, count: 1), currentUserId: .unique) {
             // No error should be returned
@@ -300,11 +307,6 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         
         // Simulate API response with devices data
         apiClient.test_simulateResponse(.success(EmptyResponse()))
-        
-        // Assert data is stored in the DB
-        var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser()?.asModel()
-        }
         
         AssertAsync {
             Assert.willBeEqual(currentUser?.devices.count, 2)
@@ -494,7 +496,15 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
-        
+
+        // Assert data is stored in the DB
+        var currentUser: CurrentChatUser? {
+            database.viewContext.currentUser()?.asModel()
+        }
+
+        // Make sure no devices are stored in the DB
+        assert(currentUser?.devices.isEmpty == true)
+
         // Save previous device to the db
         try database.writeSynchronously {
             try $0.saveCurrentUserDevices([.dummy])
