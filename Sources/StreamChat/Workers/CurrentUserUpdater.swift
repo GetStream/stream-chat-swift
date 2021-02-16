@@ -86,7 +86,7 @@ class CurrentUserUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - id: Device id to be removed. You can obtain registered devices via `currentUser.devices`.
     ///   - currentUserId: The current user identifier.
-    ///   If `currentUser.devices` is not up-to-date, please make an `updateDevices` call.
+    ///   If `currentUser.devices` is not up-to-date, please make an `fetchDevices` call.
     ///   - completion: Called when device is successfully deregistered, or with error.
     func removeDevice(id: String, currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
         apiClient
@@ -111,7 +111,7 @@ class CurrentUserUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///     - currentUserId: The current user identifier.
     ///     - completion: Called when request is successfully completed, or with error.
-    func updateDevices(currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
+    func fetchDevices(currentUserId: UserId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] result in
             do {
                 let devicesPayload = try result.get()
