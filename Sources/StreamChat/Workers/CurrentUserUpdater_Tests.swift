@@ -285,7 +285,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
     }
     
     func test_addDevice_successfulResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user, devices: [.dummy])
         
         // Save user to the db
         try database.writeSynchronously {
@@ -356,7 +356,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
     }
     
     func test_removeDevice_forwardsDatabaseError() throws {
-        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user, devices: [.dummy])
         let deviceId = userPayload.devices.first!.id
         
         // Save user to the db
@@ -382,7 +382,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
     }
     
     func test_removeDevice_successfulResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user, devices: [.dummy])
         let deviceId = userPayload.devices.first!.id
         
         // Save user to the db

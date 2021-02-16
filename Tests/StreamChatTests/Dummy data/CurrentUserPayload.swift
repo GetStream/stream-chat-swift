@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -12,7 +12,7 @@ extension CurrentUserPayload {
         role: UserRole,
         unreadCount: UnreadCount? = .dummy,
         extraData: T = .defaultValue,
-        devices: [DevicePayload] = [.init(id: .unique)],
+        devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload<T>] = []
     ) -> CurrentUserPayload<T> {
         .init(
