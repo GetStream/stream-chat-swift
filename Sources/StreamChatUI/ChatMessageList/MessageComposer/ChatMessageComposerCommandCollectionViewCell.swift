@@ -5,18 +5,28 @@
 import StreamChat
 import UIKit
 
+/// A view that displays the command name, image and arguments.
 public typealias ChatMessageComposerCommandCellView = _ChatMessageComposerCommandCellView<NoExtraData>
 
+/// A view that displays the command name, image and arguments.
 open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+    /// The command that the view will display.
     open var command: Command? {
         didSet {
             updateContentIfNeeded()
         }
     }
-
+    
+    /// A view that displays the command image icon.
     open private(set) lazy var commandImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
+    
+    /// A view that displays the name of the command.
     open private(set) lazy var commandNameLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    
+    /// A view that display the command name and the possible arguments.
     open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    
+    /// A view container that holds the name and subtitle labels.
     open private(set) lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
 
     override public func defaultAppearance() {

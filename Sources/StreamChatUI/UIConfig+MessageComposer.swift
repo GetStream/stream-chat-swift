@@ -35,11 +35,13 @@ public extension _UIConfig {
             _ChatMessageComposerSuggestionsCollectionView<ExtraData>.self
         public var suggestionsMentionCollectionViewCell: _ChatMessageComposerMentionCollectionViewCell<ExtraData>.Type =
             _ChatMessageComposerMentionCollectionViewCell<ExtraData>.self
+        /// A view cell that displays the command name, image and arguments.
         public var suggestionsCommandCollectionViewCell: _ChatMessageComposerCommandCollectionViewCell<ExtraData>.Type =
             _ChatMessageComposerCommandCollectionViewCell<ExtraData>.self
         /// A type for view embed in cell while tagging users with @ symbol in composer.
         public var suggestionsMentionCellView: _ChatMessageComposerMentionCellView<ExtraData>.Type =
             _ChatMessageComposerMentionCellView<ExtraData>.self
+        /// A view that displays the command name, image and arguments.
         public var suggestionsCommandCellView: _ChatMessageComposerCommandCellView<ExtraData>.Type =
             _ChatMessageComposerCommandCellView<ExtraData>.self
         public var suggestionsCollectionViewLayout: ChatMessageComposerSuggestionsCollectionViewLayout.Type =
