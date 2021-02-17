@@ -8,8 +8,6 @@ import UIKit
 public typealias ChatMessageComposerCommandCellView = _ChatMessageComposerCommandCellView<NoExtraData>
 
 open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    // MARK: Properties
-
     open var command: Command? {
         didSet {
             updateContentIfNeeded()
@@ -20,8 +18,6 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
     open private(set) lazy var commandNameLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
     open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
     open private(set) lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
-
-    // MARK: - Appearance
 
     override public func defaultAppearance() {
         backgroundColor = .clear
@@ -51,8 +47,6 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
             ?? uiConfig.images.messageComposerCommandFallback
     }
 
-    // MARK: Private
-
     private func setupLeftImageViewConstraints() {
         commandImageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
         commandImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).isActive = true
@@ -80,8 +74,6 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
 public typealias ChatMessageComposerCommandCollectionViewCell = _ChatMessageComposerCommandCollectionViewCell<NoExtraData>
 
 open class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
-    // MARK: Properties
-
     open class var reuseId: String { String(describing: self) }
 
     public private(set) lazy var commandView = uiConfig
