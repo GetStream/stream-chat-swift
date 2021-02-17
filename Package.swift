@@ -277,7 +277,6 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatChannelList/ChatChannelUnreadCountView_Tests.swift",
     "ChatChannelList/ChatChannelAvatarView_Tests.swift",
     "ChatChannelList/ChatChannelReadStatusCheckmarkView_Tests.swift",
-    "ChatChannelList/ChatChannelListItemView_Tests.swift",
     "ChatChannelList/ChatChannelListVC_Tests.swift",
     "ChatChannelList/__Snapshots__/ChatChannelListVC_Tests/test_chatChannelList_isPopulated.extraExtraExtraLarge-light.png",
     "ChatChannelList/__Snapshots__/ChatChannelListVC_Tests/test_chatChannelList_isPopulated.small-dark.png",
