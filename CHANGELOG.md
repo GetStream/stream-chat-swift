@@ -6,7 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### 🐞 Fixed
+- `ChatViewController` title and avatar is wrong when it's pushed with an unsynced `ChannelPresenter` [#828](https://github.com/GetStream/stream-chat-swift/issues/828)
 
 # [2.6.3](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.3)
 _January 15, 2021_
