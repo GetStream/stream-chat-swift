@@ -37,6 +37,7 @@ opt_in_rules:
   - multiline_function_chains
   - unused_import
   - attributes
+  - file_name_no_space
 
 multiline_arguments:
   only_enforce_after_first_closure_on_first_line: true
@@ -51,6 +52,9 @@ trailing_whitespace:
 function_body_length:
   warning: 120
   error: 200
+
+file_name_no_space:
+  severity: error
 
 identifier_name:
   excluded: [r, g, b, a, x, y, z, dx, dy, dz, i, j, k, id, op, or, me, at, to, in]
