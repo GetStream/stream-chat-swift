@@ -161,8 +161,6 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         super.viewDidLoad()
         view.backgroundColor = style.incomingMessage.chatBackgroundColor
         
-        updateTitle()
-        
         guard let presenter = presenter else {
             return
         }
@@ -170,9 +168,13 @@ open class ChatViewController: ViewController, UITableViewDataSource, UITableVie
         if !presenter.channel.didLoad {
             presenter.rx.channelDidUpdate.asObservable()
                 .takeWhile { !$0.didLoad }
-                .subscribe(onCompleted: { [weak self] in self?.setupComposerView() })
+                .subscribe(onCompleted: { [weak self] in
+                    self?.updateTitle()
+                    self?.setupComposerView()
+                })
                 .disposed(by: disposeBag)
         } else {
+            updateTitle()
             setupComposerView()
         }
         
