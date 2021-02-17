@@ -30,7 +30,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
     func test_defaultAppearance_withDirectMessageChannel() {
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
-        view.content = (channel, currentUserId)
+        view.content = .channelAndUserId(channel: channel, currentUserId: currentUserId)
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles, suffix: "with online indicator")
 
         // Reset the channel such that both members are offline
@@ -39,7 +39,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
             .mock(id: .unique, imageURL: TestImages.yoda.url)
         ])
 
-        view.content = (channel, currentUserId)
+        view.content = .channelAndUserId(channel: channel, currentUserId: currentUserId)
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
@@ -64,7 +64,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.uiConfig = config
-        view.content = (channel, currentUserId)
+        view.content = .channelAndUserId(channel: channel, currentUserId: currentUserId)
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
@@ -77,7 +77,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
 
         let view = TestView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
-        view.content = (channel, currentUserId)
+        view.content = .channelAndUserId(channel: channel, currentUserId: currentUserId)
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
@@ -101,7 +101,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
 
         let view = TestView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
-        view.content = (channel, currentUserId)
+        view.content = .channelAndUserId(channel: channel, currentUserId: currentUserId)
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 }
