@@ -28,39 +28,32 @@ class CurrentChatUserAvatarView_Tests: XCTestCase {
         config.colorPalette.background = .yellow
         view.uiConfig = config
         
-        AssertSnapshot(view, variants: [.small])
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_defaultAppearance() {
         let view = CurrentChatUserAvatarView().withoutAutoresizingMaskConstraints
         view.controller = currentUserController
-        AssertSnapshot(view, variants: [.small])
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_customizationUsingAppearanceHook() {
         class TestView: CurrentChatUserAvatarView {}
         TestView.defaultAppearance {
-            // Modify appearance
             $0.avatarView.backgroundColor = .blue
             $0.avatarView.imageView.backgroundColor = .brown
             $0.layer.borderWidth = 1
             $0.layer.borderColor = UIColor.green.cgColor
-            
-            // Modify layout
-            NSLayoutConstraint.activate([
-                $0.widthAnchor.constraint(equalToConstant: 50),
-                $0.heightAnchor.constraint(equalToConstant: 50)
-            ])
         }
         
         let view = TestView().withoutAutoresizingMaskConstraints
         
         // Snapshot empty appearance
-        AssertSnapshot(view, variants: [.small], suffix: "empty")
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles, suffix: "empty")
         
         // Snapshot appearance with data
         view.controller = currentUserController
-        AssertSnapshot(view, variants: [.small])
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
     func test_customizationUsingSubclassingHook() {
@@ -85,10 +78,10 @@ class CurrentChatUserAvatarView_Tests: XCTestCase {
         let view = TestView().withoutAutoresizingMaskConstraints
         
         // Snapshot empty appearance
-        AssertSnapshot(view, variants: [.small], suffix: "empty")
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles, suffix: "empty")
         
         // Snapshot appearance with data
         view.controller = currentUserController
-        AssertSnapshot(view, variants: [.small])
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 }

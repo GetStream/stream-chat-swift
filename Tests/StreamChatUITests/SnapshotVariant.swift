@@ -5,42 +5,97 @@
 @testable import StreamChatUI
 import XCTest
 
-enum SnapshotVariant: String, Hashable, CaseIterable {
-    case small
-    case large
-    case extraExtraExtraLarge
+/// A Snapshot Variant is a combination of SnapshotTraits, that will result in a snapshot test with multiple UITraitCollection's.
+struct SnapshotVariant {
+    let snapshotTraits: [SnapshotTrait]
+    var snapshotName: String {
+        snapshotTraits.map(\.name).joined(separator: ".")
+    }
     
     var traits: UITraitCollection {
-        var traits = [
-            UITraitCollection(displayScale: 1),
-            contentSizeCategoryTrait
-        ]
-        
-        if #available(iOS 12.0, *) {
-            traits.append(userInterfaceStyleTrait)
-        }
-        
-        return UITraitCollection(traitsFrom: traits)
+        UITraitCollection(traitsFrom: [UITraitCollection(displayScale: 1)] + snapshotTraits.map(\.trait))
     }
+}
+
+/// A Snapshot Trait is usually just a combination of a UITraitCollection and it's name.
+struct SnapshotTrait {
+    let name: String
+    let trait: UITraitCollection
+}
+
+extension SnapshotVariant {
+    // MARK: - Combinations
     
-    private var contentSizeCategoryTrait: UITraitCollection {
-        switch self {
-        case .small:
-            return UITraitCollection(preferredContentSizeCategory: .small)
-        case .large:
-            return UITraitCollection(preferredContentSizeCategory: .large)
-        case .extraExtraExtraLarge:
-            return UITraitCollection(preferredContentSizeCategory: .extraExtraExtraLarge)
+    static let all: [SnapshotVariant] = {
+        [smallDark, defaultLight, extraExtraExtraLargeLight]
+    }()
+    
+    static let onlyUserInterfaceStyles: [SnapshotVariant] = {
+        [defaultLight, defaultDark]
+    }()
+    
+    // MARK: - Variants
+    
+    static let extraExtraExtraLargeLight: SnapshotVariant = {
+        var traits = [extraExtraExtraLargeTrait]
+        if #available(iOS 12.0, *) {
+            traits.append(lightTrait)
         }
-    }
+        return SnapshotVariant(snapshotTraits: traits)
+    }()
+    
+    static let defaultDark: SnapshotVariant = {
+        var traits = [defaultTrait]
+        if #available(iOS 12.0, *) {
+            traits.append(darkTrait)
+        }
+        return SnapshotVariant(snapshotTraits: traits)
+    }()
+    
+    static let defaultLight: SnapshotVariant = {
+        var traits = [defaultTrait]
+        if #available(iOS 12.0, *) {
+            traits.append(lightTrait)
+        }
+        return SnapshotVariant(snapshotTraits: traits)
+    }()
+    
+    static let smallDark: SnapshotVariant = {
+        var traits = [smallTrait]
+        if #available(iOS 12.0, *) {
+            traits.append(darkTrait)
+        }
+        return SnapshotVariant(snapshotTraits: traits)
+    }()
+    
+    // MARK: - Traits
+    
+    private static let extraExtraExtraLargeTrait = SnapshotTrait(
+        name: "extraExtraExtraLarge",
+        trait: UITraitCollection(preferredContentSizeCategory: .extraExtraExtraLarge)
+    )
+    private static let defaultTrait = SnapshotTrait(
+        name: "default",
+        trait: UITraitCollection(preferredContentSizeCategory: .large)
+    )
+    private static let smallTrait = SnapshotTrait(
+        name: "small",
+        trait: UITraitCollection(preferredContentSizeCategory: .small)
+    )
     
     @available(iOS 12.0, *)
-    private var userInterfaceStyleTrait: UITraitCollection {
-        switch self {
-        case .large, .extraExtraExtraLarge:
-            return UITraitCollection(userInterfaceStyle: .light)
-        case .small:
-            return UITraitCollection(userInterfaceStyle: .dark)
-        }
-    }
+    private static let lightTrait = SnapshotTrait(name: "light", trait: UITraitCollection(userInterfaceStyle: .light))
+    
+    @available(iOS 12.0, *)
+    private static let darkTrait = SnapshotTrait(name: "dark", trait: UITraitCollection(userInterfaceStyle: .dark))
+}
+
+extension Array where Element == SnapshotVariant {
+    static let all: [SnapshotVariant] = {
+        SnapshotVariant.all
+    }()
+    
+    static let onlyUserInterfaceStyles: [SnapshotVariant] = {
+        SnapshotVariant.onlyUserInterfaceStyles
+    }()
 }

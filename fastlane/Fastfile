@@ -236,7 +236,7 @@ lane :test_release do
   )
 end
 
-desc "Runs stress tests for"
+desc "Runs stress tests for v3 in Debug config"
 lane :stress_test do
   scan(
     project: "StreamChat.xcodeproj",
@@ -252,7 +252,8 @@ lane :stress_test do
       project: "StreamChat.xcodeproj",
       scheme: "StreamChat",
       test_without_building: true,
-      testplan: "StreamChatStressTestPlan"
+      testplan: "StreamChatStressTestPlan",
+      xcpretty_args: "--test" # simplify logs
     )
   }
 end
@@ -275,7 +276,8 @@ lane :stress_test_release do
       scheme: "StreamChat",
       configuration: "ReleaseTests",
       test_without_building: true,
-      testplan: "StreamChatStressTestPlan"
+      testplan: "StreamChatStressTestPlan",
+      xcpretty_args: "--test" # simplify logs
     )
   }
 end

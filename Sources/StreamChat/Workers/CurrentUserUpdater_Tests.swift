@@ -271,7 +271,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         let testError = TestError()
         database.write_errorResponse = testError
         
-        // Call updateDevices
+        // Call fetchDevices
         var completionCalledError: Error?
         currentUserUpdater.addDevice(token: .init(repeating: 1, count: 1), currentUserId: .unique) {
             completionCalledError = $0
@@ -285,14 +285,21 @@ final class CurrentUserUpdater_Tests: StressTestCase {
     }
     
     func test_addDevice_successfulResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user, devices: [.dummy])
         
         // Save user to the db
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
-        
-        // Call updateDevices
+
+        // Assert data is stored in the DB
+        var currentUser: CurrentChatUser? {
+            database.viewContext.currentUser()?.asModel()
+        }
+
+        assert(currentUser?.devices.count == 1)
+
+        // Call fetchDevices
         currentUserUpdater.addDevice(token: .init(repeating: 1, count: 1), currentUserId: .unique) {
             // No error should be returned
             XCTAssertNil($0)
@@ -300,11 +307,6 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         
         // Simulate API response with devices data
         apiClient.test_simulateResponse(.success(EmptyResponse()))
-        
-        // Assert data is stored in the DB
-        var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser()?.asModel()
-        }
         
         AssertAsync {
             Assert.willBeEqual(currentUser?.devices.count, 2)
@@ -356,7 +358,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
     }
     
     func test_removeDevice_forwardsDatabaseError() throws {
-        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user, devices: [.dummy])
         let deviceId = userPayload.devices.first!.id
         
         // Save user to the db
@@ -368,7 +370,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         let testError = TestError()
         database.write_errorResponse = testError
         
-        // Call updateDevices
+        // Call fetchDevices
         var completionCalledError: Error?
         currentUserUpdater.removeDevice(id: deviceId, currentUserId: .unique) {
             completionCalledError = $0
@@ -382,7 +384,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
     }
     
     func test_removeDevice_successfulResponse_isSavedToDB() throws {
-        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
+        let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user, devices: [.dummy])
         let deviceId = userPayload.devices.first!.id
         
         // Save user to the db
@@ -390,7 +392,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
         
-        // Call updateDevices
+        // Call fetchDevices
         currentUserUpdater.removeDevice(id: deviceId, currentUserId: .unique) {
             // No error should be returned
             XCTAssertNil($0)
@@ -409,9 +411,9 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         }
     }
     
-    // MARK: updateDevices
+    // MARK: fetchDevices
     
-    func test_updateDevices_makesCorrectAPICall() throws {
+    func test_fetchDevices_makesCorrectAPICall() throws {
         let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
@@ -420,7 +422,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         }
         
         // Call updateDevices
-        currentUserUpdater.updateDevices(currentUserId: userPayload.id) {
+        currentUserUpdater.fetchDevices(currentUserId: userPayload.id) {
             // No error should be returned
             XCTAssertNil($0)
         }
@@ -430,7 +432,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
-    func test_updateDevices_forwardsNetworkError() throws {
+    func test_fetchDevices_forwardsNetworkError() throws {
         let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
@@ -440,7 +442,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         
         // Call updateDevices
         var completionCalledError: Error?
-        currentUserUpdater.updateDevices(currentUserId: .unique) {
+        currentUserUpdater.fetchDevices(currentUserId: .unique) {
             completionCalledError = $0
         }
         
@@ -462,7 +464,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         AssertAsync.canBeReleased(&weakcurrentUserUpdater)
     }
     
-    func test_updateDevices_forwardsDatabaseError() throws {
+    func test_fetchDevices_forwardsDatabaseError() throws {
         let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
@@ -476,7 +478,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         
         // Call updateDevices
         var completionCalledError: Error?
-        currentUserUpdater.updateDevices(currentUserId: .unique) {
+        currentUserUpdater.fetchDevices(currentUserId: .unique) {
             completionCalledError = $0
         }
         
@@ -487,38 +489,48 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
-    func test_updateDevices_successfulResponse_isSavedToDB() throws {
+    func test_fetchDevices_successfulResponse_isSavedToDB() throws {
         let userPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
         
         // Save user to the db
         try database.writeSynchronously {
             try $0.saveCurrentUser(payload: userPayload)
         }
-        
-        // Save previous device to the db
-        try database.writeSynchronously {
-            try $0.saveCurrentUserDevices([.dummy])
-        }
-        
-        // Call updateDevices
-        currentUserUpdater.updateDevices(currentUserId: .unique) {
-            // No error should be returned
-            XCTAssertNil($0)
-        }
-        
-        // Simulate API response with devices data
-        let dummyDevices = DeviceListPayload.dummy
-        apiClient.test_simulateResponse(.success(dummyDevices))
-        
+
         // Assert data is stored in the DB
         var currentUser: CurrentChatUser? {
             database.viewContext.currentUser()?.asModel()
         }
+
+        // Make sure no devices are stored in the DB
+        assert(currentUser?.devices.isEmpty == true)
+
+        // Save previous device to the db
+        try database.writeSynchronously {
+            // Simulate 4 devices exist in the DB
+            try $0.saveCurrentUserDevices([.dummy, .dummy, .dummy, .dummy])
+        }
+
+        // Call updateDevices
+        var callbackCalled = false
+        currentUserUpdater.fetchDevices(currentUserId: .unique) {
+            // No error should be returned
+            XCTAssertNil($0)
+            callbackCalled = true
+        }
         
+        // Simulate API response with devices data
+        let dummyDevices = DeviceListPayload.dummy
+        assert(dummyDevices.devices.isEmpty == false)
+        apiClient.test_simulateResponse(.success(dummyDevices))
+
         // Previous devices should not be cleared
         AssertAsync {
-            Assert.willBeEqual(currentUser?.devices.count, 2)
-            Assert.willBeEqual(currentUser?.devices.last?.id, dummyDevices.devices.last?.id)
+            Assert.willBeEqual(
+                currentUser?.devices.map(\.id).sorted(),
+                dummyDevices.devices.map(\.id).sorted()
+            )
+            Assert.willBeTrue(callbackCalled)
         }
     }
 }

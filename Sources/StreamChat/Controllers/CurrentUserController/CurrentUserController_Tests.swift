@@ -73,11 +73,11 @@ final class CurrentUserController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate successful network call.
-        env.currentUserUpdater.updateDevices_completion?(nil)
+        env.currentUserUpdater.fetchDevices_completion?(nil)
         
         // Check if state changed after successful network call.
         XCTAssertEqual(controller.state, .remoteDataFetched)
-        XCTAssertNotNil(env.currentUserUpdater.updateDevices_currentUserId)
+        XCTAssertNotNil(env.currentUserUpdater.fetchDevices_currentUserId)
     }
     
     func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {
@@ -130,7 +130,7 @@ final class CurrentUserController_Tests: StressTestCase {
 
         // Simulate failed network call.
         let error = TestError()
-        env.currentUserUpdater.updateDevices_completion?(error)
+        env.currentUserUpdater.fetchDevices_completion?(error)
         
         // Check if state changed after failed network call.
         XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
@@ -149,7 +149,7 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Simulate failed update
         let testError = TestError()
-        env.currentUserUpdater.updateDevices_completion?(testError)
+        env.currentUserUpdater.fetchDevices_completion?(testError)
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)

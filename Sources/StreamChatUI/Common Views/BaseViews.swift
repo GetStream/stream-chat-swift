@@ -8,19 +8,26 @@ import UIKit
 // Just a protocol to formalize the methods required
 public protocol Customizable {
     /// Main point of customization for the view functionality.
-    /// Calling super implementation is required.
+    ///
+    /// **It's called zero or one time(s) during the view's lifetime.** Calling super implementation is required.
     func setUp()
-    
-    /// Main point of customization for appearance.
-    /// Calling super is usually not needed.
+
+    /// Main point of customization for the view appearance.
+    ///
+    /// **It's called multiple times during the view's lifetime.** The default implementation of this method is empty
+    /// so calling `super` is usually not needed.
     func setUpAppearance()
-    
-    /// Main point of customization for appearance.
-    /// Calling super implementation is not necessary if you provide complete layout for all elements.
+
+    /// Main point of customization for the view layout.
+    ///
+    /// **It's called zero or one time(s) during the view's lifetime.** Calling super is recommended but not required
+    /// if you provide a complete layout for all subviews.
     func setUpLayout()
-    
-    /// Main point of updating views with the latest data.
-    /// Calling super is recommended in most of the cases.
+
+    /// Main point of customizing the way the view updates its content.
+    ///
+    /// **It's called every time view's content changes.** Calling super is recommended but not required if you update
+    /// the content of all subviews of the view.
     func updateContent()
 }
 
@@ -45,9 +52,14 @@ public extension Customizable where Self: UIViewController {
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class View: UIView, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+    
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard superview != nil else { return }
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
         
         setUp()
         setUpLayout()
@@ -68,30 +80,30 @@ open class View: UIView, AppearanceSetting, Customizable {
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+    
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard superview != nil else { return }
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
         
         setUp()
         setUpLayout()
@@ -112,30 +124,30 @@ open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customiz
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class Control: UIControl, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+    
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard superview != nil else { return }
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
         
         setUp()
         setUpLayout()
@@ -156,30 +168,30 @@ open class Control: UIControl, AppearanceSetting, Customizable {
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class Button: UIButton, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+    
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard superview != nil else { return }
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
         
         setUp()
         setUpLayout()
@@ -200,30 +212,30 @@ open class Button: UIButton, AppearanceSetting, Customizable {
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+    
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard superview != nil else { return }
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
         
         setUp()
         setUpLayout()
@@ -244,21 +256,16 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
     }
 }
 
@@ -285,35 +292,31 @@ open class ViewController: UIViewController, AppearanceSetting, Customizable {
         guard #available(iOS 12, *) else { return }
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
-        // Execute previous pending updates
-        pendingUpdates?()
-
-        // Add this view's updates to pending updates
-        pendingUpdates = {
+        TraitCollectionReloadStack.push {
             (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
+    }
 
-        // Make sure all pending updates are executed eventually
-        DispatchQueue.main.async {
-            pendingUpdates?()
-            pendingUpdates = nil
-        }
+    override open func viewWillLayoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.viewWillLayoutSubviews()
     }
 }
 
-// This is just a temporary workaround! Proper solution in https://stream-io.atlassian.net/browse/CIS-658
+/// Closure stack, used to reverse order of appearance reloads on trait collection changes
+private enum TraitCollectionReloadStack {
+    private static var stack: [() -> Void] = []
 
-private var pendingUpdates: (() -> Void)? {
-    get {
-        assert(Thread.isMainThread)
-        return _pendingUpdates
+    static func executePendingUpdates() {
+        guard !stack.isEmpty else { return }
+        let existingUpdates = stack
+        stack.removeAll()
+        existingUpdates.reversed().forEach { $0() }
     }
-    set {
-        assert(Thread.isMainThread)
-        _pendingUpdates = newValue
+
+    static func push(_ closure: @escaping () -> Void) {
+        stack.append(closure)
     }
 }
-
-private var _pendingUpdates: (() -> Void)?

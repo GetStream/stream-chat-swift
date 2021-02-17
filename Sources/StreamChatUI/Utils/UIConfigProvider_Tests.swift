@@ -97,4 +97,4 @@ private class TestViewController<ExtraData: ExtraDataTypes>: UIViewController, U
     }
 }
 
-private class TestButton: ChatChannelCreateNewButton<NoExtraData> {}
+private class TestButton: ChatChannelCreateNewButton {}
