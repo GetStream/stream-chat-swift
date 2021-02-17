@@ -146,7 +146,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         // UnreadCount
         
         // Mock test code
-        unreadCountView.unreadCount = channelAndUserId.channel?.unreadCount ?? .noUnread
+        unreadCountView.content = channelAndUserId.channel?.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
         
         // Timestamp
@@ -162,7 +162,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         titleLabel.text = ""
         subtitleLabel.text = ""
         avatarView.content = .channelAndUserId(channel: nil, currentUserId: nil)
-        unreadCountView.unreadCount = .noUnread
+        unreadCountView.content = .noUnread
         timestampLabel.text = ""
         readStatusView.content = .empty
     }
