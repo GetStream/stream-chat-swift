@@ -259,7 +259,7 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
         ) as! _ChatMessageComposerMentionCollectionViewCell<ExtraData>
 
         let user = searchController.users[indexPath.row]
-        cell.mentionView.content = (user.name ?? "", user.id, user.imageURL, true)
+        cell.mentionView.content = user
         cell.uiConfig = uiConfig
         return cell
     }
