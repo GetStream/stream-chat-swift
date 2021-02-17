@@ -164,7 +164,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         avatarView.content = .channelAndUserId(channel: nil, currentUserId: nil)
         unreadCountView.unreadCount = .noUnread
         timestampLabel.text = ""
-        readStatusView.status = .empty
+        readStatusView.content = .empty
     }
 }
 
