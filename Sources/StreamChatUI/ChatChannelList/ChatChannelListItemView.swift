@@ -141,7 +141,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         
         // Avatar
         
-        avatarView.content = channelAndUserId
+        avatarView.content = .channelAndUserId(channel: channelAndUserId.channel, currentUserId: channelAndUserId.currentUserId)
         
         // UnreadCount
         
@@ -161,7 +161,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     open func resetContent() {
         titleLabel.text = ""
         subtitleLabel.text = ""
-        avatarView.content = (nil, nil)
+        avatarView.content = .channelAndUserId(channel: nil, currentUserId: nil)
         unreadCountView.unreadCount = .noUnread
         timestampLabel.text = ""
         readStatusView.status = .empty

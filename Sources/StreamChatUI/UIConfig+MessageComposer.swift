@@ -37,6 +37,7 @@ public extension _UIConfig {
             _ChatMessageComposerMentionCollectionViewCell<ExtraData>.self
         public var suggestionsCommandCollectionViewCell: _ChatMessageComposerCommandCollectionViewCell<ExtraData>.Type =
             _ChatMessageComposerCommandCollectionViewCell<ExtraData>.self
+        /// A type for view embed in cell while tagging users with @ symbol in composer.
         public var suggestionsMentionCellView: _ChatMessageComposerMentionCellView<ExtraData>.Type =
             _ChatMessageComposerMentionCellView<ExtraData>.self
         public var suggestionsCommandCellView: _ChatMessageComposerCommandCellView<ExtraData>.Type =
@@ -47,6 +48,8 @@ public extension _UIConfig {
             _ChatMessageComposerSuggestionsCommandsReusableView.self
         public var suggestionsHeaderView: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData>.Type =
             _ChatMessageComposerSuggestionsCommandsHeaderView.self
-        public var mentionAvatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView<ExtraData>.self
+        /// A type for the view used as avatar when picking users to mention.
+        public var mentionAvatarView: _ChatChannelAvatarView<ExtraData>
+            .Type = _ChatChannelAvatarView<ExtraData>.self
     }
 }
