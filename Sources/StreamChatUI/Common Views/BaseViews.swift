@@ -52,9 +52,14 @@ public extension Customizable where Self: UIViewController {
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class View: UIView, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+    
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard superview != nil else { return }
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
         
         setUp()
         setUpLayout()
@@ -91,9 +96,14 @@ open class View: UIView, AppearanceSetting, Customizable {
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+    
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard superview != nil else { return }
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
         
         setUp()
         setUpLayout()
@@ -130,9 +140,14 @@ open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customiz
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class Control: UIControl, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+    
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard superview != nil else { return }
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
         
         setUp()
         setUpLayout()
@@ -169,9 +184,14 @@ open class Control: UIControl, AppearanceSetting, Customizable {
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class Button: UIButton, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+    
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard superview != nil else { return }
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
         
         setUp()
         setUpLayout()
@@ -208,9 +228,14 @@ open class Button: UIButton, AppearanceSetting, Customizable {
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+    
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard superview != nil else { return }
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
         
         setUp()
         setUpLayout()
