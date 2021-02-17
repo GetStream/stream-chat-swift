@@ -1654,7 +1654,7 @@
 				E7166CD125BED4BD00B03B07 /* UIConfig+ChannelList.swift */,
 				E7166CD925BED62D00B03B07 /* UIConfig+Navigation.swift */,
 				888123D0255D42F000070D5A /* Utils */,
-				888123E5255D51BD00070D5A /* Common Views */,
+				888123E5255D51BD00070D5A /* CommonViews */,
 				7908830C2548707B00896F03 /* ChatMessageList */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
 				88F8364E2578D1590039AEC8 /* MessageActionsPopup */,
@@ -1681,10 +1681,10 @@
 		7908824625432CC600896F03 /* StreamChatTests */ = {
 			isa = PBXGroup;
 			children = (
-				790B9E2E24DC21C5005455AA /* Dummy data */,
-				79DDF815249CE38B002F4412 /* Mock Network */,
+				790B9E2E24DC21C5005455AA /* DummyData */,
+				79DDF815249CE38B002F4412 /* MockNetwork */,
 				798779F52498E47700015F8B /* MockEnpointResponses */,
-				79280F7E24891C6A00CDEB89 /* Virtual Time */,
+				79280F7E24891C6A00CDEB89 /* VirtualTime */,
 				7908824725432CC600896F03 /* StreamChatStressTestPlan.xctestplan */,
 				7908824825432CC600896F03 /* StreamChatTestPlan.xctestplan */,
 				F69C4BC524F66CC200A3D740 /* EventLogger.swift */,
@@ -1733,7 +1733,7 @@
 			path = ChatMessageList;
 			sourceTree = "<group>";
 		};
-		790B9E2E24DC21C5005455AA /* Dummy data */ = {
+		790B9E2E24DC21C5005455AA /* DummyData */ = {
 			isa = PBXGroup;
 			children = (
 				790B9E2F24DC21D7005455AA /* MessagePayload.swift */,
@@ -1750,7 +1750,7 @@
 				2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */,
 				79D7A1CD2593A40900D3C2BF /* ChannelPayload.swift */,
 			);
-			path = "Dummy data";
+			path = DummyData;
 			sourceTree = "<group>";
 		};
 		79280F3D2484E33C00CDEB89 /* Errors */ = {
@@ -1821,14 +1821,14 @@
 			path = Engine;
 			sourceTree = "<group>";
 		};
-		79280F7E24891C6A00CDEB89 /* Virtual Time */ = {
+		79280F7E24891C6A00CDEB89 /* VirtualTime */ = {
 			isa = PBXGroup;
 			children = (
 				79280F7F24891C6A00CDEB89 /* VirtualTimer.swift */,
 				79280F8024891C6A00CDEB89 /* VirtualTime_Tests.swift */,
 				79280F8124891C6A00CDEB89 /* VirtualTime.swift */,
 			);
-			path = "Virtual Time";
+			path = VirtualTime;
 			sourceTree = "<group>";
 		};
 		792A4F18247EA97000EAF71D /* DTOs */ = {
@@ -1884,7 +1884,7 @@
 			isa = PBXGroup;
 			children = (
 				F6D61D992510B3E300EB0624 /* Database */,
-				8AE335A324FCF95D002B6677 /* Internet Connection */,
+				8AE335A324FCF95D002B6677 /* InternetConnection */,
 				79BF83EA248F8EC0007611A1 /* Logger */,
 				79280F6F2487CD2B00CDEB89 /* Atomic.swift */,
 				79280F702487CD2B00CDEB89 /* Atomic_Tests.swift */,
@@ -1936,7 +1936,7 @@
 		792A71F22578EFBB0082498D /* Shared */ = {
 			isa = PBXGroup;
 			children = (
-				799C9463247D7919001F1104 /* Custom Assertions */,
+				799C9463247D7919001F1104 /* CustomAssertions */,
 				792A71E22578EF650082498D /* ChannelId.swift */,
 				799C9461247D78E2001F1104 /* Await.swift */,
 				791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */,
@@ -2353,14 +2353,14 @@
 			sourceTree = "<group>";
 			tabWidth = 4;
 		};
-		799C9463247D7919001F1104 /* Custom Assertions */ = {
+		799C9463247D7919001F1104 /* CustomAssertions */ = {
 			isa = PBXGroup;
 			children = (
 				799C9464247D7919001F1104 /* AssertJSONEqual.swift */,
 				799C9465247D7919001F1104 /* AssertResult.swift */,
 				799C9466247D7919001F1104 /* AssertAsync.swift */,
 			);
-			path = "Custom Assertions";
+			path = CustomAssertions;
 			sourceTree = "<group>";
 		};
 		79BF83EA248F8EC0007611A1 /* Logger */ = {
@@ -2374,14 +2374,14 @@
 			path = Logger;
 			sourceTree = "<group>";
 		};
-		79DDF815249CE38B002F4412 /* Mock Network */ = {
+		79DDF815249CE38B002F4412 /* MockNetwork */ = {
 			isa = PBXGroup;
 			children = (
 				79DDF816249CE38B002F4412 /* MockNetworkURLProtocol.swift */,
 				79DDF817249CE38B002F4412 /* RequestRecorderURLProtocol.swift */,
 				79DDF818249CE38B002F4412 /* AssertNetworkRequest.swift */,
 			);
-			path = "Mock Network";
+			path = MockNetwork;
 			sourceTree = "<group>";
 		};
 		8008C17E24ED647900F5BCCE /* Extensions */ = {
@@ -2565,7 +2565,7 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
-		888123E5255D51BD00070D5A /* Common Views */ = {
+		888123E5255D51BD00070D5A /* CommonViews */ = {
 			isa = PBXGroup;
 			children = (
 				8850B93B255C3168003AED69 /* ContainerStackView.swift */,
@@ -2581,7 +2581,7 @@
 				225DDDFB25799270009C280A /* ChatSquareButton.swift */,
 				88BA7F5C258B6953006CE0C5 /* ChatLoadingIndicator.swift */,
 			);
-			path = "Common Views";
+			path = CommonViews;
 			sourceTree = "<group>";
 		};
 		888E8C53252B522F00195E03 /* MemberController */ = {
@@ -2828,7 +2828,7 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		8AE335A324FCF95D002B6677 /* Internet Connection */ = {
+		8AE335A324FCF95D002B6677 /* InternetConnection */ = {
 			isa = PBXGroup;
 			children = (
 				8AE335A624FCF999002B6677 /* InternetConnection.swift */,
@@ -2836,7 +2836,7 @@
 				8AE335A524FCF999002B6677 /* Reachability_Vendor.swift */,
 				79200D4B25025B81002F4EB1 /* Error+InternetNotAvailable.swift */,
 			);
-			path = "Internet Connection";
+			path = InternetConnection;
 			sourceTree = "<group>";
 		};
 		ADCDDCC325AE127C004E15FB /* UserUpdate */ = {
