@@ -200,7 +200,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
         ) as! _ChatMessageComposerCommandCollectionViewCell<ExtraData>
 
         cell.uiConfig = uiConfig
-        cell.commandView.command = commands[indexPath.row]
+        cell.commandView.content = commands[indexPath.row]
 
         return cell
     }

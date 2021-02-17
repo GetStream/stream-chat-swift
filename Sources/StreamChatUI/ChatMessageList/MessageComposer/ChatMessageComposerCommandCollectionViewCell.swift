@@ -11,7 +11,7 @@ public typealias ChatMessageComposerCommandCellView = _ChatMessageComposerComman
 /// A view that displays the command name, image and arguments.
 open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     /// The command that the view will display.
-    open var command: Command? {
+    open var content: Command? {
         didSet {
             updateContentIfNeeded()
         }
@@ -39,11 +39,10 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
         backgroundColor = .clear
 
         commandNameLabel.font = uiConfig.font.bodyBold
+        commandNameLabel.textColor = uiConfig.colorPalette.text
 
         commandNameSubtitleLabel.font = uiConfig.font.body
         commandNameSubtitleLabel.textColor = uiConfig.colorPalette.subtitleText
-
-        commandNameLabel.textColor = uiConfig.colorPalette.text
     }
 
     override open func setUpLayout() {
@@ -55,7 +54,7 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
     }
 
     override open func updateContent() {
-        guard let command = command else { return }
+        guard let command = content else { return }
         commandNameSubtitleLabel.text = "/\(command.name) \(command.args)"
         commandNameLabel.text = command.name.firstUppercased
 
@@ -68,6 +67,7 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
         commandImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).isActive = true
         commandImageView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
         commandImageView.widthAnchor.pin(equalTo: commandImageView.heightAnchor).isActive = true
+        commandImageView.centerYAnchor.pin(equalTo: layoutMarginsGuide.centerYAnchor).isActive = true
         commandImageView.heightAnchor.pin(equalToConstant: 24).isActive = true
     }
 
@@ -83,6 +83,7 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
             equalToSystemSpacingAfter: commandImageView.trailingAnchor,
             multiplier: 1
         ).isActive = true
+        textStackView.trailingAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.trailingAnchor).isActive = true
         textStackView.centerYAnchor.pin(equalTo: commandImageView.centerYAnchor).isActive = true
     }
 }

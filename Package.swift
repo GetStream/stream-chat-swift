@@ -206,6 +206,7 @@ var streamChatSourcesExcluded: [String] { [
 ] }
 
 var streamChatUIFilesExcluded: [String] { [
+    "ChatMessageList/MessageComposer/ChatMessageComposerCommandCollectionViewCell_Tests.swift",
     "ChatMessageList/MessageComposer/ChatMessageComposerMentionCellView_Tests.swift",
     "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerMentionCellView_Tests/test_appearanceCustomization_usingSubclassing.small-dark.png",
     "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerMentionCellView_Tests/test_appearanceCustomization_usingUIConfig.small-dark.png",
@@ -246,6 +247,12 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerMentionCellView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
     "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerMentionCellView_Tests/test_appearanceCustomization_usingUIConfig.extraExtraExtraLarge-light-online-indicator-visible.png",
     "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerMentionCellView_Tests/test_emptyAppearance.small-dark.png",
+    "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerCommandCollectionViewCell_Tests/test_appearanceCustomization_usingAppearanceHook.default-light.png",
+    "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerCommandCollectionViewCell_Tests/test_defaultAppearance.default-light.png",
+    "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerCommandCollectionViewCell_Tests/test_appearanceCustomization_usingUIConfig.default-light.png",
+    "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerCommandCollectionViewCell_Tests/test_defaultAppearance.small-dark.png",
+    "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerCommandCollectionViewCell_Tests/test_defaultAppearance.extraExtraExtraLarge-light.png",
+    "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerCommandCollectionViewCell_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
     "CommonViews/CurrentChatUserAvatarView_Tests.swift",
     "CommonViews/ChatChannelCreateNewButton_Tests.swift",
     "CommonViews/__Snapshots__/ChatChannelCreateNewButton_Tests/test_isDisabled.default-light.png",
