@@ -22,6 +22,7 @@ public extension _UIConfig {
     struct ChannelListItemSubviews {
         public var avatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
         public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
+        /// A type for the view that shows a read/unread status of the last message in channel.
         public var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData>.Type =
             _ChatChannelReadStatusCheckmarkView<ExtraData>.self
         /// A type for the view used as an online activity indicator for avatars.
