@@ -10,8 +10,6 @@ public typealias ChatMessageComposerCommandCellView = _ChatMessageComposerComman
 open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
     // MARK: Properties
 
-    open var commandImageHeight: CGFloat = 24
-
     open var command: Command? {
         didSet {
             updateContentIfNeeded()
