@@ -19,7 +19,7 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
     open private(set) lazy var commandImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
     open private(set) lazy var commandNameLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
     open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    private lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
 
     // MARK: - Appearance
 
