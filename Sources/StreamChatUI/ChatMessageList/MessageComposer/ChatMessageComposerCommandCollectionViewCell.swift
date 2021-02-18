@@ -18,16 +18,22 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
     }
     
     /// A view that displays the command image icon.
-    open private(set) lazy var commandImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var commandImageView: UIImageView = UIImageView()
+        .withoutAutoresizingMaskConstraints
     
     /// A view that displays the name of the command.
-    open private(set) lazy var commandNameLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    open private(set) lazy var commandNameLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
     
     /// A view that display the command name and the possible arguments.
-    open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
     
     /// A view container that holds the name and subtitle labels.
-    open private(set) lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var textStackView: UIStackView = UIStackView()
+        .withoutAutoresizingMaskConstraints
 
     override public func defaultAppearance() {
         backgroundColor = .clear
