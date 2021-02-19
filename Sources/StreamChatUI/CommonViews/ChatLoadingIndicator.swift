@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatLoadingIndicator = _ChatLoadingIndicator<NoExtraData>
 
-open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     override open var isHidden: Bool {
         didSet { updateContentIfNeeded() }
     }

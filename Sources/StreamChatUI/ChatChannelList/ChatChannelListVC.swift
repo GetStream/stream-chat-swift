@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatChannelListVC = _ChatChannelListVC<NoExtraData>
 
-open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: ViewController,
+open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UIConfigProvider {

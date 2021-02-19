@@ -9,7 +9,7 @@ import UIKit
 
 public typealias ChatMessageGiphyView = _ChatMessageGiphyView<NoExtraData>
 
-open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     public var content: ChatMessageDefaultAttachment? {
         didSet {
             let isDifferentImage = oldValue?.imageURL != content?.imageURL
@@ -91,7 +91,7 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: View, UIConfigProvi
 }
 
 extension _ChatMessageGiphyView {
-    open class GiphyBadge: View, UIConfigProvider {
+    open class GiphyBadge: _View, UIConfigProvider {
         public private(set) lazy var title: UILabel = {
             let label = UILabel().withoutAutoresizingMaskConstraints
             label.text = "GIPHY"

@@ -8,7 +8,7 @@ import UIKit
 public typealias ChatMessageComposerImageAttachmentCollectionViewCell =
     _ChatMessageComposerImageAttachmentCollectionViewCell<NoExtraData>
 
-open class _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell,
+open class _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
     UIConfigProvider {
     // MARK: - Properties
     

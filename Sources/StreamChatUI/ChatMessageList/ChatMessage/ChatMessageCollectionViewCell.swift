@@ -7,7 +7,7 @@ import UIKit
 
 public typealias СhatMessageCollectionViewCell = _СhatMessageCollectionViewCell<NoExtraData>
 
-open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
+open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
     class var reuseId: String { String(describing: self) }
 
     public var message: _ChatMessageGroupPart<ExtraData>? {

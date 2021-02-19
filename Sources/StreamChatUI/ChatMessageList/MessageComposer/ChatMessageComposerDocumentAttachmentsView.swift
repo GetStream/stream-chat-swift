@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageComposerDocumentAttachmentsView = _ChatMessageComposerDocumentAttachmentsView<NoExtraData>
 
-open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes>: View,
+open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes>: _View,
     UIConfigProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {

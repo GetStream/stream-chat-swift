@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageInputSlashCommandView = _ChatMessageInputSlashCommandView<NoExtraData>
 
-open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     // MARK: - Properties
     
     public var commandName: String? {

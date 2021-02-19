@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageComposerImageAttachmentsView = _ChatMessageComposerImageAttachmentsView<NoExtraData>
 
-open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: View,
+open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: _View,
     UIConfigProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {

@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMessageComposerCommandCellView = _ChatMessageComposerCommandCellView<NoExtraData>
 
 /// A view that displays the command name, image and arguments.
-open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// The command that the view will display.
     open var content: Command? {
         didSet {
@@ -90,7 +90,7 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
 
 public typealias ChatMessageComposerCommandCollectionViewCell = _ChatMessageComposerCommandCollectionViewCell<NoExtraData>
 
-open class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
+open class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
     open class var reuseId: String { String(describing: self) }
 
     public private(set) lazy var commandView = uiConfig
