@@ -48,7 +48,7 @@ public extension _UIConfig {
         public var suggestionsCommandCellView: _ChatMessageComposerCommandCellView<ExtraData>.Type =
             _ChatMessageComposerCommandCellView<ExtraData>.self
         /// The collection view layout of the suggestions collection view.
-        public var suggestionsCollectionViewLayout: ChatMessageComposerSuggestionsCollectionViewLayout.Type =
+        public var suggestionsCollectionViewLayout: UICollectionViewLayout.Type =
             ChatMessageComposerSuggestionsCollectionViewLayout.self
         /// The header reusable view of the suggestion collection view.
         public var suggestionsHeaderReusableView: UICollectionReusableView.Type =
