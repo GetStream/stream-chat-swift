@@ -6,29 +6,29 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageInteractiveAttachmentView {
-    open class ActionButton: _Button, UIConfigProvider {
-        public var content: Content? {
+    internal class ActionButton: _Button, UIConfigProvider {
+        internal var content: Content? {
             didSet { updateContentIfNeeded() }
         }
 
         // MARK: - Overrides
 
-        public var defaultIntrinsicContentSize = CGSize(width: UIView.noIntrinsicMetric, height: 48)
-        override open var intrinsicContentSize: CGSize {
+        internal var defaultIntrinsicContentSize = CGSize(width: UIView.noIntrinsicMetric, height: 48)
+        override internal var intrinsicContentSize: CGSize {
             defaultIntrinsicContentSize
         }
 
-        override public func defaultAppearance() {
-            titleLabel?.font = uiConfig.font.body
+        override internal func defaultAppearance() {
+            titleLabel?.font = uiConfig.fonts.body
         }
 
-        override open func setUp() {
+        override internal func setUp() {
             super.setUp()
 
             addTarget(self, action: #selector(didTouchUpInside), for: .touchUpInside)
         }
 
-        override open func updateContent() {
+        override internal func updateContent() {
             let titleColor = content?.action.style == .primary ?
                 tintColor :
                 uiConfig.colorPalette.subtitleText
@@ -45,7 +45,7 @@ extension _ChatMessageInteractiveAttachmentView {
             )
         }
         
-        override open func tintColorDidChange() {
+        override internal func tintColorDidChange() {
             super.tintColorDidChange()
 
             updateContentIfNeeded()
@@ -53,7 +53,7 @@ extension _ChatMessageInteractiveAttachmentView {
 
         // MARK: - Actions
 
-        @objc open func didTouchUpInside() {
+        @objc internal func didTouchUpInside() {
             content?.didTap()
         }
     }
@@ -62,11 +62,11 @@ extension _ChatMessageInteractiveAttachmentView {
 // MARK: - Content
 
 extension _ChatMessageInteractiveAttachmentView.ActionButton {
-    public struct Content {
-        public let action: AttachmentAction
-        public let didTap: () -> Void
+    internal struct Content {
+        internal let action: AttachmentAction
+        internal let didTap: () -> Void
 
-        public init(action: AttachmentAction, didTap: @escaping () -> Void) {
+        internal init(action: AttachmentAction, didTap: @escaping () -> Void) {
             self.action = action
             self.didTap = didTap
         }

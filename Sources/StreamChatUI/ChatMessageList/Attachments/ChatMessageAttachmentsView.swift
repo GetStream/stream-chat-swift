@@ -5,18 +5,18 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageAttachmentsView = _ChatMessageAttachmentsView<NoExtraData>
+internal typealias ChatMessageAttachmentsView = _ChatMessageAttachmentsView<NoExtraData>
 
-open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
+internal class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
     /// All attachments with `type == .image` will be shown in a gallery
     /// All the other ones will be treated as files.
-    public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
+    internal var content: _ChatMessageAttachmentListViewData<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public private(set) lazy var imageGallery = uiConfig
+    internal private(set) lazy var imageGallery = uiConfig
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -24,7 +24,7 @@ open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConf
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var fileList = uiConfig
+    internal private(set) lazy var fileList = uiConfig
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -32,7 +32,7 @@ open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConf
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var interactiveAttachmentView = uiConfig
+    internal private(set) lazy var interactiveAttachmentView = uiConfig
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -40,7 +40,7 @@ open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConf
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var giphyView = uiConfig
+    internal private(set) lazy var giphyView = uiConfig
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -52,7 +52,7 @@ open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConf
 
     // MARK: - Overrides
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         addSubview(imageGallery)
         addSubview(fileList)
         addSubview(giphyView)
@@ -102,7 +102,7 @@ open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConf
         ]
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         let layoutOptions = calculateLayoutOptions()
 
         imageGallery.content = content.map {

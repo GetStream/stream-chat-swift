@@ -5,42 +5,42 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageContentView = _ChatMessageContentView<NoExtraData>
+internal typealias ChatMessageContentView = _ChatMessageContentView<NoExtraData>
 
-open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var message: _ChatMessageGroupPart<ExtraData>? {
+internal class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
-    public var onThreadTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
-    public var onErrorIndicatorTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
-    public var onLinkTap: (ChatMessageDefaultAttachment?) -> Void = { _ in } {
+    internal var onThreadTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
+    internal var onErrorIndicatorTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
+    internal var onLinkTap: (ChatMessageDefaultAttachment?) -> Void = { _ in } {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public var messageBubbleView: _ChatMessageBubbleView<ExtraData>?
+    internal var messageBubbleView: _ChatMessageBubbleView<ExtraData>?
     
-    public var textView: UITextView?
+    internal var textView: UITextView?
     
-    public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
+    internal var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
     
-    public var messageQuoteView: _ChatMessageQuoteView<ExtraData>?
+    internal var messageQuoteView: _ChatMessageQuoteView<ExtraData>?
     
-    public var attachmentsView: _ChatMessageAttachmentsView<ExtraData>?
+    internal var attachmentsView: _ChatMessageAttachmentsView<ExtraData>?
 
-    public var messageMetadataView: _ChatMessageMetadataView<ExtraData>?
+    internal var messageMetadataView: _ChatMessageMetadataView<ExtraData>?
     
-    public var authorAvatarView: ChatAvatarView?
+    internal var authorAvatarView: ChatAvatarView?
 
-    public var reactionsBubble: _ChatMessageReactionsBubbleView<ExtraData>?
+    internal var reactionsBubble: _ChatMessageReactionsBubbleView<ExtraData>?
 
-    public var threadArrowView: _ChatMessageThreadArrowView<ExtraData>?
+    internal var threadArrowView: _ChatMessageThreadArrowView<ExtraData>?
 
-    public var threadView: _ChatMessageThreadInfoView<ExtraData>?
+    internal var threadView: _ChatMessageThreadInfoView<ExtraData>?
 
-    public var errorIndicator: _ChatMessageErrorIndicator<ExtraData>?
+    internal var errorIndicator: _ChatMessageErrorIndicator<ExtraData>?
 
     var incomingMessageConstraints: [NSLayoutConstraint] = []
     var outgoingMessageConstraints: [NSLayoutConstraint] = []
@@ -55,7 +55,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     // MARK: - Setup family of functions
     
-    open func setupMessageBubbleView() {
+    internal func setupMessageBubbleView() {
         guard messageBubbleView == nil else { return }
         
         let messageBubbleView = uiConfig
@@ -84,7 +84,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         ]
     }
     
-    open func setupMetadataView() {
+    internal func setupMetadataView() {
         guard messageMetadataView == nil else { return }
         
         let messageMetadataView = uiConfig
@@ -122,7 +122,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setNeedsUpdateConstraints()
     }
     
-    open func setupAvatarView() {
+    internal func setupAvatarView() {
         guard authorAvatarView == nil else { return }
         
         let authorAvatarView = uiConfig
@@ -155,7 +155,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setNeedsUpdateConstraints()
     }
     
-    open func setupReactionsView() {
+    internal func setupReactionsView() {
         guard reactionsBubble == nil else { return }
         
         let reactionsBubble = uiConfig
@@ -205,7 +205,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setNeedsUpdateConstraints()
     }
     
-    open func setupThreadArrowView() {
+    internal func setupThreadArrowView() {
         guard threadArrowView == nil else { return }
         
         setupMessageBubbleView()
@@ -237,7 +237,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setNeedsUpdateConstraints()
     }
     
-    open func setupThreadView() {
+    internal func setupThreadView() {
         guard threadView == nil else { return }
         
         setupMessageBubbleView()
@@ -287,7 +287,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setNeedsUpdateConstraints()
     }
     
-    open func setupErrorIndicator() {
+    internal func setupErrorIndicator() {
         guard errorIndicator == nil else { return }
         
         setupMessageBubbleView()
@@ -322,7 +322,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setNeedsUpdateConstraints()
     }
     
-    open func setupQuoteView() {
+    internal func setupQuoteView() {
         guard messageQuoteView == nil else { return }
         
         let messageQuoteView = uiConfig
@@ -339,7 +339,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         messageQuoteView.isVisible = false
     }
     
-    open func setupLinkPreviewView() {
+    internal func setupLinkPreviewView() {
         guard linkPreviewView == nil else { return }
         
         let linkPreviewView = uiConfig
@@ -357,7 +357,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         linkPreviewView.addTarget(self, action: #selector(didTapOnLinkPreview), for: .touchUpInside)
     }
     
-    open func setupTextView() {
+    internal func setupTextView() {
         guard textView == nil else { return }
         
         let textView = OnlyLinkTappableTextView()
@@ -365,7 +365,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         textView.dataDetectorTypes = .link
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
-        textView.font = uiConfig.font.body
+        textView.font = uiConfig.fonts.body
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
@@ -375,7 +375,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         addSubview(textView)
     }
     
-    open func setupAttachmentView() {
+    internal func setupAttachmentView() {
         guard attachmentsView == nil else { return }
         
         setupMessageBubbleView()
@@ -511,7 +511,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     // MARK: wip
 
-    open func removeAllDynamicConstraints() {
+    internal func removeAllDynamicConstraints() {
         constraintsToDeactivate += outgoingMessageConstraints
         constraintsToDeactivate += incomingMessageConstraints
         constraintsToDeactivate += outgoingMessageIsThreadConstraints
@@ -531,7 +531,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     
     // MARK: - Update family of functions
 
-    override open func updateConstraints() {
+    override internal func updateConstraints() {
         super.updateConstraints()
 
         defer {
@@ -543,7 +543,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         NSLayoutConstraint.activate(constraintsToActivate)
     }
 
-    open func updateThreadViewsIfNeeded() {
+    internal func updateThreadViewsIfNeeded() {
         guard let message = message else { return /* todo */ }
 
         let isOutgoing = message.isSentByCurrentUser
@@ -576,7 +576,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     }
 
     // todo -> move to the avatar view itself
-    open func updateAvatarViewIfNeeded() {
+    internal func updateAvatarViewIfNeeded() {
         guard let message = message else { return /* todo */ }
         
         let shouldDisplayAuthorAvatarView = !message.isSentByCurrentUser && message.isLastInGroup
@@ -594,7 +594,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         }
     }
     
-    open func updateReactionsViewIfNeeded() {
+    internal func updateReactionsViewIfNeeded() {
         guard let message = message else { return /* todo */ }
         
         let shouldDisplayReactions = message.deletedAt == nil && !message.reactionScores.isEmpty
@@ -623,7 +623,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         }
     }
     
-    open func updateBubbleViewIfNeeded() {
+    internal func updateBubbleViewIfNeeded() {
         guard let message = message else { return /* todo */ }
         
         setupMessageBubbleView()
@@ -656,7 +656,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         }
     }
     
-    open func updateMetadataViewIfNeeded() {
+    internal func updateMetadataViewIfNeeded() {
         let shouldDisplayMetadataView = message?.isLastInGroup ?? false
         
         setupMetadataView()
@@ -667,7 +667,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         messageMetadataView.isVisible = shouldDisplayMetadataView
     }
     
-    open func updateQuotedMessageViewIfNeeded() {
+    internal func updateQuotedMessageViewIfNeeded() {
         guard let message = message else { return /* todo */ }
         
         let shouldDisplayQuotedMessage = message.layoutOptions.contains(.quotedMessage)
@@ -681,7 +681,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         quotedMessageView.isVisible = shouldDisplayQuotedMessage
     }
     
-    open func updateErrorIndicatorIfNeeded() {
+    internal func updateErrorIndicatorIfNeeded() {
         let shouldDisplayErrorIndicator = message?.lastActionFailed ?? false
         
         setupErrorIndicator()
@@ -690,7 +690,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         errorIndicator.isVisible = shouldDisplayErrorIndicator
     }
     
-    open func updateLinkPreviewViewIfNeeded() {
+    internal func updateLinkPreviewViewIfNeeded() {
         guard let message = message else { return /* todo */ }
         
         let shouldDisplayLinkPreviewView = message.layoutOptions.contains(.linkPreview)
@@ -703,7 +703,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         linkPreviewView.isVisible = shouldDisplayLinkPreviewView
     }
     
-    open func updateAttachmentsViewIfNeeded() {
+    internal func updateAttachmentsViewIfNeeded() {
         guard let message = message else { return /* todo */ }
         
         let shouldDisplayAttachmentsView = message.layoutOptions.contains(.attachments)
@@ -720,13 +720,13 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         attachmentsView.isVisible = shouldDisplayAttachmentsView
     }
     
-    open func updateTextViewIfNeeded() {
+    internal func updateTextViewIfNeeded() {
         guard let message = message else { return /* todo */ }
         
         setupTextView()
         let textView = self.textView!
         
-        let font: UIFont = uiConfig.font.body
+        let font: UIFont = uiConfig.fonts.body
         textView.attributedText = .init(string: message.textContent, attributes: [
             .foregroundColor: message.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.subtitleText,
             .font: message.deletedAt == nil ? font : font.italic
@@ -735,7 +735,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         textView.isVisible = message.layoutOptions.contains(.text)
     }
     
-    open func updateMessagePositionIfNeeded() { // TODO: find a better name
+    internal func updateMessagePositionIfNeeded() { // TODO: find a better name
         if message?.isSentByCurrentUser ?? false {
             constraintsToActivate.append(contentsOf: outgoingMessageConstraints)
             constraintsToDeactivate.append(contentsOf: incomingMessageConstraints)
@@ -747,7 +747,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     // ======
 
-    override open func updateContent() {
+    override internal func updateContent() {
         // When message cell is about to be reused, it sets `nil` for message value.
         // That means we need to remove all dynamic constraints to prevent layout warnings.
         guard let message = self.message else {
@@ -781,7 +781,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     // MARK: - Actions
 
-    @objc open func didTapOnErrorIndicator() {
+    @objc internal func didTapOnErrorIndicator() {
         onErrorIndicatorTap(message)
     }
 
@@ -795,19 +795,19 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     }
 }
 
-public struct ChatMessageContentViewLayoutOptions: OptionSet, Hashable {
-    public let rawValue: Int
+internal struct ChatMessageContentViewLayoutOptions: OptionSet, Hashable {
+    internal let rawValue: Int
     
-    public init(rawValue: Int) {
+    internal init(rawValue: Int) {
         self.rawValue = rawValue
     }
     
-    public static let text = Self(rawValue: 1 << 0)
-    public static let attachments = Self(rawValue: 1 << 1)
-    public static let quotedMessage = Self(rawValue: 1 << 2)
-    public static let linkPreview = Self(rawValue: 1 << 3)
+    internal static let text = Self(rawValue: 1 << 0)
+    internal static let attachments = Self(rawValue: 1 << 1)
+    internal static let quotedMessage = Self(rawValue: 1 << 2)
+    internal static let linkPreview = Self(rawValue: 1 << 3)
     
-    public static let all: Self = [.text, .attachments, .quotedMessage, .linkPreview]
+    internal static let all: Self = [.text, .attachments, .quotedMessage, .linkPreview]
 }
 
 // MARK: - Extensions

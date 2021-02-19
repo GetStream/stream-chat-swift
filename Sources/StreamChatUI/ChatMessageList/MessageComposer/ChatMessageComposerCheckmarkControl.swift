@@ -5,33 +5,33 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerCheckmarkControl = _ChatMessageComposerCheckmarkControl<NoExtraData>
+internal typealias ChatMessageComposerCheckmarkControl = _ChatMessageComposerCheckmarkControl<NoExtraData>
 
-open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
+internal class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
     // MARK: - Properties
     
-    public var checkmarkHeight: CGFloat = 16
+    internal var checkmarkHeight: CGFloat = 16
     
     // MARK: - Subviews
     
-    public private(set) lazy var container = DeprecatedContainerStackView()
+    internal private(set) lazy var container = DeprecatedContainerStackView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var checkmark = UIImageView()
+    internal private(set) lazy var checkmark = UIImageView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var label = UILabel()
+    internal private(set) lazy var label = UILabel()
         .withoutAutoresizingMaskConstraints
         
     // MARK: - Overrides
     
-    override open var isSelected: Bool {
+    override internal var isSelected: Bool {
         didSet {
             updateContentIfNeeded()
         }
     }
     
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         
         container.isUserInteractionEnabled = false
@@ -39,8 +39,8 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Con
         addTarget(self, action: #selector(toggleSelected), for: .touchUpInside)
     }
     
-    override public func defaultAppearance() {
-        label.font = uiConfig.font.subheadline
+    override internal func defaultAppearance() {
+        label.font = uiConfig.fonts.subheadline
         label.textColor = uiConfig.colorPalette.subtitleText
         
         checkmark.layer.cornerRadius = 4
@@ -48,7 +48,7 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Con
         checkmark.layer.masksToBounds = true
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         embed(container)
         
         preservesSuperviewLayoutMargins = true
@@ -70,7 +70,7 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Con
         container.centerStackView.addArrangedSubview(label)
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         let isSelectedImage = uiConfig.images.messageComposerAlsoSendToChannelCheck.tinted(with: uiConfig.colorPalette.background)
         checkmark.image = isSelected ? isSelectedImage : nil
         checkmark.backgroundColor = isSelected ? tintColor : .clear

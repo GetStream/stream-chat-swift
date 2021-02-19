@@ -16,12 +16,12 @@ struct ChatMessageQuoteAvatarAlignment: Equatable {
 }
 
 /// A view that displays a quoted message.
-public typealias ChatMessageQuoteView = _ChatMessageQuoteView<NoExtraData>
+internal typealias ChatMessageQuoteView = _ChatMessageQuoteView<NoExtraData>
 
 /// A view that displays a quoted message.
-open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+internal class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// The `ChatMessageQuoteView` content.
-    public struct Content {
+    internal struct Content {
         /// The quoted message.
         let message: _ChatMessage<ExtraData>?
         /// The avatar position in relation with the text message.
@@ -29,34 +29,34 @@ open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
     }
 
     /// The content of this view, composed by the quoted message and the desired avatar alignment.
-    public var content: Content? {
+    internal var content: Content? {
         didSet {
             updateContentIfNeeded()
         }
     }
 
     /// The container view that holds the `authorAvatarView` and the `contentContainerView`.
-    public private(set) lazy var containerView: ContainerStackView = ContainerStackView()
+    internal private(set) lazy var containerView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
     /// The avatar view of the author's quoted message.
-    public private(set) lazy var authorAvatarView: ChatAvatarView = uiConfig
+    internal private(set) lazy var authorAvatarView: ChatAvatarView = uiConfig
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
 
     /// The container view that holds the `textView` and the `attachmentPreview`.
-    public private(set) lazy var contentContainerView: ContainerStackView = ContainerStackView()
+    internal private(set) lazy var contentContainerView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
     /// The `UITextView` that contains quoted message content.
-    public private(set) lazy var textView: UITextView = UITextView()
+    internal private(set) lazy var textView: UITextView = UITextView()
         .withoutAutoresizingMaskConstraints
 
     /// The attachment preview view if the quoted message has an attachment.
-    public private(set) lazy var attachmentPreviewView: UIImageView = UIImageView()
+    internal private(set) lazy var attachmentPreviewView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         textView.isEditable = false
@@ -66,13 +66,13 @@ open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
         textView.isUserInteractionEnabled = false
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         textView.textContainer.maximumNumberOfLines = 6
         textView.textContainer.lineBreakMode = .byTruncatingTail
         textView.textContainer.lineFragmentPadding = .zero
 
         textView.backgroundColor = .clear
-        textView.font = uiConfig.font.subheadline
+        textView.font = uiConfig.fonts.subheadline
         textView.textContainerInset = .zero
         textView.textColor = uiConfig.colorPalette.text
 
@@ -84,7 +84,7 @@ open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
         contentContainerView.layer.masksToBounds = true
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         preservesSuperviewLayoutMargins = true
 
         containerView.isLayoutMarginsRelativeArrangement = true
@@ -119,7 +119,7 @@ open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
         attachmentPreviewView.layer.masksToBounds = true
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         guard let message = content?.message else { return }
         guard let avatarAlignment = content?.avatarAlignment else { return }
 

@@ -5,26 +5,26 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageBubbleView = _ChatMessageBubbleView<NoExtraData>
+internal typealias ChatMessageBubbleView = _ChatMessageBubbleView<NoExtraData>
 
-open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var message: _ChatMessageGroupPart<ExtraData>? {
+internal class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
     
     // MARK: - Subviews
 
-    public private(set) lazy var borderLayer = CAShapeLayer()
+    internal private(set) lazy var borderLayer = CAShapeLayer()
 
     // MARK: - Overrides
 
-    override open func layoutSubviews() {
+    override internal func layoutSubviews() {
         super.layoutSubviews()
 
         borderLayer.frame = bounds
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         layer.cornerRadius = 16
         layer.masksToBounds = true
         borderLayer.contentsScale = layer.contentsScale
@@ -32,13 +32,13 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigPro
         borderLayer.borderWidth = 1
     }
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         
         layer.addSublayer(borderLayer)
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         super.updateContent()
         
         borderLayer.maskedCorners = corners

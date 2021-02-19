@@ -5,33 +5,33 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageDefaultReactionsBubbleView = _ChatMessageDefaultReactionsBubbleView<NoExtraData>
+internal typealias ChatMessageDefaultReactionsBubbleView = _ChatMessageDefaultReactionsBubbleView<NoExtraData>
 
-open class _ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageReactionsBubbleView<ExtraData> {
+internal class _ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageReactionsBubbleView<ExtraData> {
     // MARK: - Subviews
 
     private let contentViewBackground = UIView().withoutAutoresizingMaskConstraints
     private let tailBehind = UIImageView().withoutAutoresizingMaskConstraints
     private let tailInFront = UIImageView().withoutAutoresizingMaskConstraints
 
-    override open var tailLeadingAnchor: NSLayoutXAxisAnchor { tailBehind.leadingAnchor }
-    override open var tailTrailingAnchor: NSLayoutXAxisAnchor { tailBehind.trailingAnchor }
+    override internal var tailLeadingAnchor: NSLayoutXAxisAnchor { tailBehind.leadingAnchor }
+    override internal var tailTrailingAnchor: NSLayoutXAxisAnchor { tailBehind.trailingAnchor }
 
     // MARK: - Overrides
 
-    override open func layoutSubviews() {
+    override internal func layoutSubviews() {
         super.layoutSubviews()
 
         contentViewBackground.layer.cornerRadius = contentViewBackground.bounds.height / 2
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
 
         contentViewBackground.layer.borderWidth = 1
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         addSubview(tailBehind)
         contentViewBackground.addSubview(contentView)
         contentViewBackground.insetsLayoutMarginsFromSafeArea = false
@@ -47,7 +47,7 @@ open class _ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: _C
         ])
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         super.updateContent()
 
         tailBehind.image = tailBackImage

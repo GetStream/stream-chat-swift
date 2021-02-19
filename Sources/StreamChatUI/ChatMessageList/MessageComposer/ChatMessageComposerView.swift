@@ -5,88 +5,88 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
+internal typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
 
-open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
+internal class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     UIConfigProvider {
     // MARK: - Properties
     
-    public var attachmentsViewHeight: CGFloat = .zero
-    public var stateIconHeight: CGFloat = .zero
+    internal var attachmentsViewHeight: CGFloat = .zero
+    internal var stateIconHeight: CGFloat = .zero
     
     // MARK: - Subviews
 
-    public private(set) lazy var container = DeprecatedContainerStackView()
+    internal private(set) lazy var container = DeprecatedContainerStackView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var messageQuoteView = uiConfig
+    internal private(set) lazy var messageQuoteView = uiConfig
         .messageQuoteView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var imageAttachmentsView = uiConfig
+    internal private(set) lazy var imageAttachmentsView = uiConfig
         .messageComposer
         .imageAttachmentsView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var documentAttachmentsView = uiConfig
+    internal private(set) lazy var documentAttachmentsView = uiConfig
         .messageComposer
         .documentAttachmentsView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var messageInputView = uiConfig
+    internal private(set) lazy var messageInputView = uiConfig
         .messageComposer
         .messageInputView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var sendButton = uiConfig
+    internal private(set) lazy var sendButton = uiConfig
         .messageComposer
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var editButton = uiConfig
+    internal private(set) lazy var editButton = uiConfig
         .messageComposer
         .editButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var attachmentButton: UIButton = uiConfig
+    internal private(set) lazy var attachmentButton: UIButton = uiConfig
         .messageComposer
         .composerButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var commandsButton: UIButton = uiConfig
+    internal private(set) lazy var commandsButton: UIButton = uiConfig
         .messageComposer
         .composerButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var shrinkInputButton: UIButton = uiConfig
+    internal private(set) lazy var shrinkInputButton: UIButton = uiConfig
         .messageComposer
         .composerButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var stateIcon: UIImageView = {
+    internal private(set) lazy var stateIcon: UIImageView = {
         let imageView = UIImageView().withoutAutoresizingMaskConstraints
         imageView.contentMode = .center
         imageView.widthAnchor.pin(equalTo: imageView.heightAnchor, multiplier: 1).isActive = true
         return imageView
     }()
     
-    public private(set) lazy var dismissButton: UIButton = uiConfig
+    internal private(set) lazy var dismissButton: UIButton = uiConfig
         .messageComposer
         .composerButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var titleLabel: UILabel = UILabel()
+    internal private(set) lazy var titleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
     
-    public private(set) lazy var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData> = uiConfig
+    internal private(set) lazy var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData> = uiConfig
         .messageComposer
         .checkmarkControl.init()
         .withoutAutoresizingMaskConstraints
     
     // MARK: - Overrides
     
-    override open func didMoveToSuperview() {
+    override internal func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard superview != nil else { return }
         
@@ -97,7 +97,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         updateContent()
     }
     
-    override open var intrinsicContentSize: CGSize {
+    override internal var intrinsicContentSize: CGSize {
         let size = CGSize(
             width: UIView.noIntrinsicMetric,
             height: container.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
@@ -105,9 +105,9 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         return size
     }
     
-    // MARK: - Public
+    // MARK: - internal
     
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
         stateIconHeight = 40
         
@@ -137,11 +137,11 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         
         titleLabel.textAlignment = .center
         titleLabel.textColor = uiConfig.colorPalette.text
-        titleLabel.font = uiConfig.font.bodyBold
+        titleLabel.font = uiConfig.fonts.bodyBold
         titleLabel.adjustsFontForContentSizeCategory = true
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         embed(container)
                 
@@ -200,7 +200,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         editButton.isHidden = true
     }
     
-    open func setCheckmarkView(hidden: Bool) {
+    internal func setCheckmarkView(hidden: Bool) {
         if container.bottomStackView.isHidden != hidden {
             container.bottomStackView.isHidden = hidden
         }

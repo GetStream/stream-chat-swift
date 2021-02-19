@@ -6,42 +6,42 @@ import StreamChat
 import UIKit
 
 /// A view that displays a collection of image attachments
-public typealias ChatMessageComposerImageAttachmentsView = _ChatMessageComposerImageAttachmentsView<NoExtraData>
+internal typealias ChatMessageComposerImageAttachmentsView = _ChatMessageComposerImageAttachmentsView<NoExtraData>
 
 /// A view that displays a collection of image attachments
-open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: _View,
+internal class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: _View,
     UIConfigProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
     /// The images data source.
-    open var content: [AttachmentPreview] = [] {
+    internal var content: [AttachmentPreview] = [] {
         didSet {
             updateContentIfNeeded()
         }
     }
 
     /// The closure handler when an image attachment has been removed.
-    open var didTapRemoveItemButton: ((Int) -> Void)?
+    internal var didTapRemoveItemButton: ((Int) -> Void)?
 
     /// The collection view layout of the image attachments collection view.
-    open private(set) lazy var flowLayout: UICollectionViewFlowLayout = uiConfig
+    internal private(set) lazy var flowLayout: UICollectionViewFlowLayout = uiConfig
         .messageComposer
         .imageAttachmentsCollectionViewLayout.init()
 
     /// The collection view of image attachments.
-    open private(set) lazy var collectionView: UICollectionView = uiConfig
+    internal private(set) lazy var collectionView: UICollectionView = uiConfig
         .messageComposer
         .imageAttachmentsCollectionView
         .init(frame: .zero, collectionViewLayout: self.flowLayout)
         .withoutAutoresizingMaskConstraints
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
     }
     
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         
         collectionView.dataSource = self
@@ -52,7 +52,7 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
         )
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         flowLayout.scrollDirection = .horizontal
         flowLayout.itemSize = CGSize(width: 100, height: 100)
         flowLayout.sectionInset = layoutMargins
@@ -60,15 +60,15 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
         embed(collectionView)
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         collectionView.reloadData()
     }
     
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    internal func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         content.count
     }
     
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let reuseId = uiConfig.messageComposer.imageAttachmentCollectionViewCell.reuseId
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: reuseId,

@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 // Just a protocol to formalize the methods required
-public protocol Customizable {
+internal protocol Customizable {
     /// Main point of customization for the view functionality.
     ///
     /// **It's called zero or one time(s) during the view's lifetime.** Calling super implementation is required.
@@ -32,7 +32,7 @@ public protocol Customizable {
     func updateContent()
 }
 
-public extension Customizable where Self: UIView {
+internal extension Customizable where Self: UIView {
     /// If the view is already in the view hierarchy it calls `updateContent()`, otherwise does nothing.
     func updateContentIfNeeded() {
         if superview != nil {
@@ -41,7 +41,7 @@ public extension Customizable where Self: UIView {
     }
 }
 
-public extension Customizable where Self: UIViewController {
+internal extension Customizable where Self: UIViewController {
     /// If the view is already loaded it calls `updateContent()`, otherwise does nothing.
     func updateContentIfNeeded() {
         if isViewLoaded {
@@ -51,7 +51,7 @@ public extension Customizable where Self: UIViewController {
 }
 
 extension UIConfigProvider where Self: _View {
-    public func uiConfigDidRegister() {
+    internal func uiConfigDidRegister() {
         if isInitialized {
             log.assertionFailure(
                 "`UIConfig` was assigned after the view has been already initialized. This is most likely caused by assigning " +
@@ -81,11 +81,11 @@ open class _View: UIView, AppearanceSetting, Customizable {
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    internal func defaultAppearance() { /* default empty implementation */ }
+    internal func setUp() { /* default empty implementation */ }
+    internal func setUpAppearance() { /* default empty implementation */ }
+    internal func setUpLayout() { /* default empty implementation */ }
+    internal func updateContent() { /* default empty implementation */ }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -125,11 +125,11 @@ open class _CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customi
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    internal func defaultAppearance() { /* default empty implementation */ }
+    internal func setUp() { /* default empty implementation */ }
+    internal func setUpAppearance() { /* default empty implementation */ }
+    internal func setUpLayout() { /* default empty implementation */ }
+    internal func updateContent() { /* default empty implementation */ }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -213,11 +213,11 @@ open class _Control: UIControl, AppearanceSetting, Customizable {
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    internal func defaultAppearance() { /* default empty implementation */ }
+    internal func setUp() { /* default empty implementation */ }
+    internal func setUpAppearance() { /* default empty implementation */ }
+    internal func setUpLayout() { /* default empty implementation */ }
+    internal func updateContent() { /* default empty implementation */ }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -257,11 +257,11 @@ open class _Button: UIButton, AppearanceSetting, Customizable {
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    internal func defaultAppearance() { /* default empty implementation */ }
+    internal func setUp() { /* default empty implementation */ }
+    internal func setUpAppearance() { /* default empty implementation */ }
+    internal func setUpLayout() { /* default empty implementation */ }
+    internal func updateContent() { /* default empty implementation */ }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -301,11 +301,11 @@ open class _NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    internal func defaultAppearance() { /* default empty implementation */ }
+    internal func setUp() { /* default empty implementation */ }
+    internal func setUpAppearance() { /* default empty implementation */ }
+    internal func setUpLayout() { /* default empty implementation */ }
+    internal func updateContent() { /* default empty implementation */ }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
@@ -337,11 +337,11 @@ open class _ViewController: UIViewController, AppearanceSetting, Customizable {
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
-    open func setUp() { /* default empty implementation */ }
-    open func setUpAppearance() { /* default empty implementation */ }
-    open func setUpLayout() { /* default empty implementation */ }
-    open func updateContent() { /* default empty implementation */ }
+    internal func defaultAppearance() { /* default empty implementation */ }
+    internal func setUp() { /* default empty implementation */ }
+    internal func setUpAppearance() { /* default empty implementation */ }
+    internal func setUpLayout() { /* default empty implementation */ }
+    internal func updateContent() { /* default empty implementation */ }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)

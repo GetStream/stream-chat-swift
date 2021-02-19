@@ -5,26 +5,26 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerDocumentAttachmentsView = _ChatMessageComposerDocumentAttachmentsView<NoExtraData>
+internal typealias ChatMessageComposerDocumentAttachmentsView = _ChatMessageComposerDocumentAttachmentsView<NoExtraData>
 
-open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes>: _View,
+internal class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes>: _View,
     UIConfigProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
     // MARK: - Properties
     
-    open var documentPreviewItemHeight: CGFloat = 70
-    open var maxNumberOfVisibleDocuments: Int = 3
+    internal var documentPreviewItemHeight: CGFloat = 70
+    internal var maxNumberOfVisibleDocuments: Int = 3
     
-    public var documents: [(preview: UIImage, name: String, size: Int64)] = [] {
+    internal var documents: [(preview: UIImage, name: String, size: Int64)] = [] {
         didSet {
             updateContentIfNeeded()
         }
     }
     
-    public var didTapRemoveItemButton: ((Int) -> Void)?
+    internal var didTapRemoveItemButton: ((Int) -> Void)?
     
-    override open var intrinsicContentSize: CGSize {
+    override internal var intrinsicContentSize: CGSize {
         let numberOfVisibleItems = CGFloat(min(documents.count, maxNumberOfVisibleDocuments))
         let itemsHeight = documentPreviewItemHeight * numberOfVisibleItems
         let spacings = flowLayout.minimumInteritemSpacing * (numberOfVisibleItems - 1)
@@ -36,24 +36,24 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
         )
     }
     
-    public private(set) lazy var flowLayout = uiConfig
+    internal private(set) lazy var flowLayout = uiConfig
         .messageComposer
         .documentAttachmentsFlowLayout
         .init()
     
     // MARK: - Subviews
     
-    public private(set) lazy var collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: flowLayout)
+    internal private(set) lazy var collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: flowLayout)
     
-    // MARK: - Public
+    // MARK: - internal
     
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
     }
     
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         
         collectionView.dataSource = self
@@ -64,7 +64,7 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
         )
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         embed(collectionView)
         
@@ -72,18 +72,18 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
         flowLayout.sectionInset = layoutMargins
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         collectionView.isScrollEnabled = documents.count > maxNumberOfVisibleDocuments ? true : false
         collectionView.reloadData()
     }
 
     // MARK: - UICollectionView
     
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    internal func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         documents.count
     }
     
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView
             .dequeueReusableCell(
                 withReuseIdentifier: _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData>.reuseId,

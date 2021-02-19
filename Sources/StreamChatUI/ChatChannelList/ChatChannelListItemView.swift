@@ -6,12 +6,12 @@ import StreamChat
 import UIKit
 
 /// An `UIView` subclass that shows summary and preview information about a given channel.
-public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
+internal typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
 /// An `UIView` subclass that shows summary and preview information about a given channel.
-open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
+internal class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
     /// The data this view component shows.
-    public var content: _ChatChannel<ExtraData>? {
+    internal var content: _ChatChannel<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -19,7 +19,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     
     /// Properties tied to `ChatChannelListItemView` layout
-    public struct Layout {
+    internal struct Layout {
         /// Constraints of `timestampLabel`
         public fileprivate(set) var timestampLabelConstraints: [NSLayoutConstraint] = []
         /// Constraints of `avatarView`
@@ -33,7 +33,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     }
     
     /// The `UILabel` instance showing the channel name.
-    open private(set) lazy var titleLabel: UILabel = uiConfig
+    internal private(set) lazy var titleLabel: UILabel = uiConfig
         .channelList
         .itemSubviews
         .titleLabel
@@ -43,7 +43,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .withBidirectionalLanguagesSupport
     
     /// The `UILabel` instance showing the last message or typing members if any.
-    open private(set) lazy var subtitleLabel: UILabel = uiConfig
+    internal private(set) lazy var subtitleLabel: UILabel = uiConfig
         .channelList
         .itemSubviews
         .subtitleLabel
@@ -53,7 +53,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .withBidirectionalLanguagesSupport
     
     /// The `UILabel` instance showing the time of the last sent message.
-    open private(set) lazy var timestampLabel: UILabel = uiConfig
+    internal private(set) lazy var timestampLabel: UILabel = uiConfig
         .channelList
         .itemSubviews
         .timestampLabel
@@ -63,7 +63,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .withBidirectionalLanguagesSupport
     
     /// The view used to show channels avatar.
-    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
+    internal private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
         .channelList
         .itemSubviews
         .avatarView
@@ -71,7 +71,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .withoutAutoresizingMaskConstraints
     
     /// The view showing number of unread messages in channel if any.
-    open private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfig
+    internal private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfig
         .channelList
         .itemSubviews
         .unreadCountView.init()
@@ -113,26 +113,26 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     /*
          TODO: ReadStatusView, Missing LLC API
      /// The view showing indicator for read status of the last message in channel.
-     open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
+     internal private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
          .readStatusView.init()
          .withoutAutoresizingMaskConstraints
       */
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
 
         backgroundColor = uiConfig.colorPalette.background
 
-        titleLabel.font = uiConfig.font.bodyBold
+        titleLabel.font = uiConfig.fonts.bodyBold
 
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
-        subtitleLabel.font = uiConfig.font.footnote
+        subtitleLabel.font = uiConfig.fonts.footnote
         
         timestampLabel.textColor = uiConfig.colorPalette.subtitleText
-        timestampLabel.font = uiConfig.font.footnote
+        timestampLabel.font = uiConfig.fonts.footnote
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         
         addSubview(titleLabel)
@@ -236,7 +236,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         )
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         titleLabel.text = titleText
         subtitleLabel.text = subtitleText
         timestampLabel.text = timestampText

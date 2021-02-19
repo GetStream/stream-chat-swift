@@ -31,7 +31,7 @@ extension CGFloat {
     static let auto: CGFloat = .infinity
 }
 
-public class ContainerStackView: UIView {
+internal class ContainerStackView: UIView {
     convenience init(
         axis: NSLayoutConstraint.Axis = .horizontal,
         alignment: Alignment = .fill,
