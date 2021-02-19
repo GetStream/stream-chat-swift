@@ -12,7 +12,7 @@ public enum SuggestionKind {
 
 public typealias ChatMessageComposerSuggestionsViewController = _ChatMessageComposerSuggestionsViewController<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: ViewController,
+open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewController,
     UIConfigProvider,
     UICollectionViewDelegate {
     // MARK: - Property

@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageImageGallery {
-    open class ImagePreview: View, UIConfigProvider {
+    open class ImagePreview: _View, UIConfigProvider {
         public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
             didSet { updateContentIfNeeded() }
         }

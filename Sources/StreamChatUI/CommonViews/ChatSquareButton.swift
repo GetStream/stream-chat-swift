@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatSquareButton = _ChatSquareButton<NoExtraData>
 
-open class _ChatSquareButton<ExtraData: ExtraDataTypes>: Button, UIConfigProvider {
+open class _ChatSquareButton<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
     // MARK: - Properties
     
     public var defaultIntrinsicContentSize: CGSize?

@@ -13,7 +13,7 @@ public protocol _ChatMessageComposerViewControllerDelegate: AnyObject {
 
 public typealias ChatMessageComposerVC = _ChatMessageComposerVC<NoExtraData>
 
-open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
+open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     UIConfigProvider,
     UITextViewDelegate,
     UIImagePickerControllerDelegate,

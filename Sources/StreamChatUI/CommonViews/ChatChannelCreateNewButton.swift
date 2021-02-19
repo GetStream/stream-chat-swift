@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatChannelCreateNewButton = _ChatChannelCreateNewButton<NoExtraData>
 
 /// A Button subclass that should be used for creating new channels.
-open class _ChatChannelCreateNewButton<ExtraData: ExtraDataTypes>: Button, UIConfigProvider {
+open class _ChatChannelCreateNewButton<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
     override public func defaultAppearance() {
         super.defaultAppearance()
         setImage(uiConfig.images.newChat, for: .normal)

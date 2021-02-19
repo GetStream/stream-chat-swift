@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageThreadArrowView = _ChatMessageThreadArrowView<NoExtraData>
 
-open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     public enum Direction {
         case toTrailing
         case toLeading
@@ -62,7 +62,7 @@ open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: View, UIConfi
 
 public typealias ChatMessageThreadInfoView = _ChatMessageThreadInfoView<NoExtraData>
 
-open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
+open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }

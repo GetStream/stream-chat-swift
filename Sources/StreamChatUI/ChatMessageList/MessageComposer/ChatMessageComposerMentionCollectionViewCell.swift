@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMessageComposerMentionCellView = _ChatMessageComposerMentionCellView<NoExtraData>
 
 /// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
-open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// Content of the cell - `ChatUser` instance from which we take all information.
     open var content: _ChatUser<ExtraData.User>? {
         didSet {
@@ -117,7 +117,7 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View,
 public typealias ChatMessageComposerMentionCollectionViewCell = _ChatMessageComposerMentionCollectionViewCell<NoExtraData>
 
 /// `UICollectionView` subclass which embeds inside `ChatMessageComposerMentionCellView`
-open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
+open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
     /// Reuse identifier for the cell used in `collectionView(cellForItem:)`
     open class var reuseId: String { String(describing: self) }
 

@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessagePopupVC = _ChatMessagePopupVC<NoExtraData>
 
-open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
+open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
     public private(set) lazy var scrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints
     public private(set) lazy var scrollContentView = UIView()

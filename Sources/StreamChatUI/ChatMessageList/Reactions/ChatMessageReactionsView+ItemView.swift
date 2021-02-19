@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageReactionsView {
-    open class ItemView: Button, UIConfigProvider {
+    open class ItemView: _Button, UIConfigProvider {
         public var content: Content? {
             didSet { updateContentIfNeeded() }
         }

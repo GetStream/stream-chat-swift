@@ -17,7 +17,7 @@ public typealias CurrentChatUserAvatarView = _CurrentChatUserAvatarView<NoExtraD
 /// It uses `CurrentChatUserController` for its input data and is able to update the avatar automatically based
 /// on the currently logged-in user.
 ///
-open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
+open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
     /// `StreamChat`'s controller that observe the currently logged-in user.
     open var controller: _CurrentChatUserController<ExtraData>? {
         didSet {

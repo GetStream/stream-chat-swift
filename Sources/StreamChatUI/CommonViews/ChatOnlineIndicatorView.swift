@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatOnlineIndicatorView = _ChatOnlineIndicatorView<NoExtraData>
 
 /// A view used to indicate the presence of a user.
-open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     override public func defaultAppearance() {
         super.defaultAppearance()
 

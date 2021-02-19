@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageLinkPreviewView = _ChatMessageLinkPreviewView<NoExtraData>
 
-open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: Control, UIConfigProvider {
+open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
     public var content: ChatMessageDefaultAttachment? { didSet { updateContentIfNeeded() } }
 
     public private(set) lazy var imagePreview = uiConfig

@@ -33,7 +33,7 @@ public protocol _ChatMessageListVCDelegate: AnyObject {
 
 public typealias ChatMessageListVC = _ChatMessageListVC<NoExtraData>
 
-open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: ViewController,
+open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UIConfigProvider,

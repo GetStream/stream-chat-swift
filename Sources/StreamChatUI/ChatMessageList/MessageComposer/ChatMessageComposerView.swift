@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
 
-open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: View,
+open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     UIConfigProvider {
     // MARK: - Properties
     

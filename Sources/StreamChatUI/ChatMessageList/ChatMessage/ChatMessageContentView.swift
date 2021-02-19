@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageContentView = _ChatMessageContentView<NoExtraData>
 
-open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }

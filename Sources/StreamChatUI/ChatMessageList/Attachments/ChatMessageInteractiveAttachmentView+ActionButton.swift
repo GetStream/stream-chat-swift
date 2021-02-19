@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageInteractiveAttachmentView {
-    open class ActionButton: Button, UIConfigProvider {
+    open class ActionButton: _Button, UIConfigProvider {
         public var content: Content? {
             didSet { updateContentIfNeeded() }
         }

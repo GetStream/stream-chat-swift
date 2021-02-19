@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageActionsView = _ChatMessageActionsView<NoExtraData>
 
-open class _ChatMessageActionsView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageActionsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     public var actionItems: [ChatMessageActionItem<ExtraData>] = [] {
         didSet { updateContentIfNeeded() }
     }

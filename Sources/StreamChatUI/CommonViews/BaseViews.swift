@@ -51,7 +51,7 @@ public extension Customizable where Self: UIViewController {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class View: UIView, AppearanceSetting, Customizable {
+open class _View: UIView, AppearanceSetting, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -95,7 +95,7 @@ open class View: UIView, AppearanceSetting, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customizable {
+open class _CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -139,7 +139,7 @@ open class CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customiz
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class Control: UIControl, AppearanceSetting, Customizable {
+open class _Control: UIControl, AppearanceSetting, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -183,7 +183,7 @@ open class Control: UIControl, AppearanceSetting, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class Button: UIButton, AppearanceSetting, Customizable {
+open class _Button: UIButton, AppearanceSetting, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -227,7 +227,7 @@ open class Button: UIButton, AppearanceSetting, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
+open class _NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -269,7 +269,7 @@ open class NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
     }
 }
 
-open class ViewController: UIViewController, AppearanceSetting, Customizable {
+open class _ViewController: UIViewController, AppearanceSetting, Customizable {
     override open func viewDidLoad() {
         super.viewDidLoad()
         

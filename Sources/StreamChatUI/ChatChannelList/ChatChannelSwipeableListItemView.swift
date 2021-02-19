@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatChannelSwipeableListItemView = _ChatChannelSwipeableListItemView<NoExtraData>
 
 /// A view with swipe functionality that is used as base view for channel list item view.
-open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: View, UIConfigProvider, UIGestureRecognizerDelegate {
+open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, UIGestureRecognizerDelegate {
     /// Constraint constant should be reset when view is being reused inside `UICollectionViewCell`.
     public var trailingConstraint: NSLayoutConstraint?
     

@@ -21,7 +21,7 @@ open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraD
 
 public typealias ChatMessageComposerSuggestionsCommandsHeaderView = _ChatMessageComposerSuggestionsCommandsHeaderView<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     public private(set) lazy var commandImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
 

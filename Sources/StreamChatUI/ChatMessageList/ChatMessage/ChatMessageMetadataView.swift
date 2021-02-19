@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageMetadataView = _ChatMessageMetadataView<NoExtraData>
 
-open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
@@ -54,7 +54,7 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: View, UIConfigPr
     }
 }
 
-open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     // MARK: - Subviews
 
     public private(set) lazy var stack: UIStackView = {

@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageImageGallery = _ChatMessageImageGallery<NoExtraData>
 
-open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     open var interItemSpacing: CGFloat = 2
 
     public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
