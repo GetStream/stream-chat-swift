@@ -6,29 +6,29 @@ import StreamChat
 import UIKit
 
 /// A view with swipe functionality that is used as base view for channel list item view.
-public typealias ChatChannelSwipeableListItemView = _ChatChannelSwipeableListItemView<NoExtraData>
+internal typealias ChatChannelSwipeableListItemView = _ChatChannelSwipeableListItemView<NoExtraData>
 
 /// A view with swipe functionality that is used as base view for channel list item view.
-open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, UIGestureRecognizerDelegate {
+internal class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, UIGestureRecognizerDelegate {
     /// Constraint constant should be reset when view is being reused inside `UICollectionViewCell`.
-    public var trailingConstraint: NSLayoutConstraint?
+    internal var trailingConstraint: NSLayoutConstraint?
     
     /// The closure that will be triggered on delete button tap.
-    public var deleteButtonAction: (() -> Void)?
+    internal var deleteButtonAction: (() -> Void)?
 
     /// The main content view which you should always use for embedding your cell content.
-    open private(set) lazy var cellContentView: UIView = UIView().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var cellContentView: UIView = UIView().withoutAutoresizingMaskConstraints
     
     /// The delete button.
-    open private(set) lazy var deleteButton: UIButton = UIButton().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var deleteButton: UIButton = UIButton().withoutAutoresizingMaskConstraints
     
     /// The `UIStackView` that arranges buttons revealed by swipe gesture.
-    open private(set) lazy var actionButtonStack: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var actionButtonStack: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
     
     /// The view used as separator when this view is embedded in `UICollectionViewCell`.
-    open private(set) lazy var bottomSeparatorView: UIView = UIView().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var bottomSeparatorView: UIView = UIView().withoutAutoresizingMaskConstraints
     
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         deleteButton.addTarget(self, action: #selector(didTapDelete), for: .touchUpInside)
@@ -38,7 +38,7 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, 
         addGestureRecognizer(pan)
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         
         addSubview(cellContentView)
@@ -63,7 +63,7 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, 
         bottomSeparatorView.pin(anchors: [.bottom, .leading, .trailing], to: self)
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
 
         bottomSeparatorView.backgroundColor = uiConfig.colorPalette.border
@@ -93,7 +93,7 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, 
         return abs(translation.x) > abs(translation.y)
     }
 
-    public func gestureRecognizer(
+    internal func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {
@@ -105,7 +105,7 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, 
         true
     }
     
-    public func gestureRecognizer(
+    internal func gestureRecognizer(
         _ gestureRecognizer: UIGestureRecognizer,
         shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
     ) -> Bool {

@@ -5,11 +5,11 @@
 import Foundation
 import StreamChat
 
-open class ChatChannelNamer {
-    open var maxMemberNames: Int { 2 }
-    open var separator: String { "," }
+internal class ChatChannelNamer {
+    internal var maxMemberNames: Int { 2 }
+    internal var separator: String { "," }
     
-    public required init() {}
+    internal required init() {}
     
     /// Generates a name for the given channel, given the current user's id.
     ///
@@ -22,7 +22,7 @@ open class ChatChannelNamer {
     ///   - channel: Channel to generate name for.
     ///   - currentUserId: Logged-in user. This parameter is used when deciding which member's names are going to be displayed.
     /// - Returns: A valid Channel name.
-    open func name<ExtraData: ExtraDataTypes>(for channel: _ChatChannel<ExtraData>, as currentUserId: UserId?) -> String {
+    internal func name<ExtraData: ExtraDataTypes>(for channel: _ChatChannel<ExtraData>, as currentUserId: UserId?) -> String {
         if let channelName = channel.name, !channelName.isEmpty {
             // If there's an assigned name and it's not empty, we use it
             return channelName

@@ -5,12 +5,12 @@
 import Foundation
 import UIKit
 
-open class ChatMessageListCollectionView: UICollectionView {
-    public required init(layout: UICollectionViewLayout) {
+internal class ChatMessageListCollectionView: UICollectionView {
+    internal required init(layout: UICollectionViewLayout) {
         super.init(frame: .zero, collectionViewLayout: layout)
     }
 
-    public required init?(coder: NSCoder) {
+    internal required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
 }

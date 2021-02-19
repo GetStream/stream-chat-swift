@@ -4,18 +4,18 @@
 
 import UIKit
 
-open class ChatMessageComposerDocumentAttachmentsCollectionViewLayout: UICollectionViewFlowLayout {
-    open var itemHeight: CGFloat = 70
+internal class ChatMessageComposerDocumentAttachmentsCollectionViewLayout: UICollectionViewFlowLayout {
+    internal var itemHeight: CGFloat = 70
     
-    override public required init() {
+    override internal required init() {
         super.init()
     }
 
-    public required init?(coder: NSCoder) {
+    internal required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
     
-    override open func prepare() {
+    override internal func prepare() {
         super.prepare()
         let width = (collectionView?.bounds.width ?? 0) - sectionInset.left - sectionInset.right
         itemSize = .init(width: width, height: itemHeight)

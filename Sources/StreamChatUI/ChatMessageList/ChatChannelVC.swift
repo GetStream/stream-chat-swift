@@ -7,14 +7,14 @@ import UIKit
 
 public typealias ChatChannelVC = _ChatChannelVC<NoExtraData>
 
-open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
+public class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
     // MARK: - Properties
 
-    public lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
+    internal lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
     
     // MARK: - Life Cycle
     
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         channelController.setDelegate(self)
@@ -31,7 +31,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
         return navbarListener
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
 
         guard let channel = channelController.channel else { return }
@@ -47,19 +47,19 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
 
     // MARK: - ChatMessageListVCDataSource
 
-    override public func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
+    override internal func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
         channelController.messages.count
     }
 
-    override public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
+    override internal func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
         channelController.messages[index]
     }
 
-    override public func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
+    override internal func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
         channelController.loadNextMessages()
     }
 
-    override public func chatMessageListVC(
+    override internal func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         replyMessageFor message: _ChatMessage<ExtraData>,
         at index: Int
@@ -67,7 +67,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
         message.quotedMessageId.flatMap { channelController.dataStore.message(id: $0) }
     }
 
-    override public func chatMessageListVC(
+    override internal func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         controllerFor message: _ChatMessage<ExtraData>
     ) -> _ChatMessageController<ExtraData> {
@@ -79,7 +79,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
 
     // MARK: - ChatMessageListVCDelegate
 
-    override public func chatMessageListVC(
+    override internal func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         didTapOnRepliesFor message: _ChatMessage<ExtraData>
     ) {
@@ -90,6 +90,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
 // MARK: - _ChatChannelControllerDelegate
 
 extension _ChatChannelVC: _ChatChannelControllerDelegate {
+    public typealias ExtraData = ExtraData
     public func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]

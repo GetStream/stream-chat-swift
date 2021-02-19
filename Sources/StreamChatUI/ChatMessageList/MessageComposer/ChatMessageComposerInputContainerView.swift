@@ -5,41 +5,41 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerInputContainerView = _ChatMessageComposerInputContainerView<NoExtraData>
+internal typealias ChatMessageComposerInputContainerView = _ChatMessageComposerInputContainerView<NoExtraData>
 
-open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+internal class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     // MARK: - Properties
     
-    open var rightAccessoryButtonHeight: CGFloat = 30
+    internal var rightAccessoryButtonHeight: CGFloat = 30
     
     // MARK: - Subviews
     
-    public private(set) lazy var container = UIStackView().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var container = UIStackView().withoutAutoresizingMaskConstraints
         
-    public private(set) lazy var textView = uiConfig
+    internal private(set) lazy var textView = uiConfig
         .messageComposer
         .textView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var slashCommandView = uiConfig
+    internal private(set) lazy var slashCommandView = uiConfig
         .messageComposer
         .slashCommandView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var rightAccessoryButton: UIButton = {
+    internal private(set) lazy var rightAccessoryButton: UIButton = {
         let button = UIButton().withoutAutoresizingMaskConstraints
         button.widthAnchor.pin(equalTo: button.heightAnchor, multiplier: 1).isActive = true
         return button
     }()
         
-    // MARK: - Public
+    // MARK: - internal
     
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         let rightAccessoryImage = uiConfig.images.close1.tinted(with: uiConfig.colorPalette.inactiveTint)
         rightAccessoryButton.setImage(rightAccessoryImage, for: .normal)
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         embed(container)
 
         container.preservesSuperviewLayoutMargins = true
@@ -57,7 +57,7 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _V
         rightAccessoryButton.heightAnchor.pin(equalToConstant: rightAccessoryButtonHeight).isActive = true
     }
 
-    public func setSlashCommandViews(hidden: Bool) {
+    internal func setSlashCommandViews(hidden: Bool) {
         slashCommandView.setAnimatedly(hidden: hidden)
         rightAccessoryButton.setAnimatedly(hidden: hidden)
         slashCommandView.invalidateIntrinsicContentSize()

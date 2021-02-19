@@ -1,14 +1,19 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
-public typealias ChatMessageActionsRouter = _ChatMessageActionsRouter<NoExtraData>
+internal typealias ChatMessageActionsRouter = _ChatMessageActionsRouter<NoExtraData>
 
-open class _ChatMessageActionsRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMessageActionsVC<ExtraData>> {
-    open func showMessageDeletionConfirmationAlert(confirmed: @escaping (Bool) -> Void) {
+internal class _ChatMessageActionsRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMessageActionsVC<ExtraData>> {
+    internal func showMessageDeletionConfirmationAlert(confirmed: @escaping (Bool) -> Void) {
+        guard let root = rootViewController else {
+            log.error("Can't preset the message delete confirmation alert because the root VC is `nil`.")
+            return
+        }
+
         let alert = UIAlertController(
             title: L10n.Message.Actions.Delete.confirmationTitle,
             message: L10n.Message.Actions.Delete.confirmationMessage,
@@ -26,6 +31,6 @@ open class _ChatMessageActionsRouter<ExtraData: ExtraDataTypes>: ChatRouter<_Cha
             handler: { _ in confirmed(true) }
         ))
 
-        rootViewController.present(alert, animated: true)
+        root.present(alert, animated: true)
     }
 }

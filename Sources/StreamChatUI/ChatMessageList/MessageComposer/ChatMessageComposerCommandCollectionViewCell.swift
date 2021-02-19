@@ -6,46 +6,46 @@ import StreamChat
 import UIKit
 
 /// A view that displays the command name, image and arguments.
-public typealias ChatMessageComposerCommandCellView = _ChatMessageComposerCommandCellView<NoExtraData>
+internal typealias ChatMessageComposerCommandCellView = _ChatMessageComposerCommandCellView<NoExtraData>
 
 /// A view that displays the command name, image and arguments.
-open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+internal class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// The command that the view will display.
-    open var content: Command? {
+    internal var content: Command? {
         didSet {
             updateContentIfNeeded()
         }
     }
     
     /// A view that displays the command image icon.
-    open private(set) lazy var commandImageView: UIImageView = UIImageView()
+    internal private(set) lazy var commandImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
     
     /// A view that displays the name of the command.
-    open private(set) lazy var commandNameLabel: UILabel = UILabel()
+    internal private(set) lazy var commandNameLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
     
     /// A view that display the command name and the possible arguments.
-    open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel()
+    internal private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
     
     /// A view container that holds the name and subtitle labels.
-    open private(set) lazy var textStackView: UIStackView = UIStackView()
+    internal private(set) lazy var textStackView: UIStackView = UIStackView()
         .withoutAutoresizingMaskConstraints
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         backgroundColor = .clear
 
-        commandNameLabel.font = uiConfig.font.bodyBold
+        commandNameLabel.font = uiConfig.fonts.bodyBold
         commandNameLabel.textColor = uiConfig.colorPalette.text
 
-        commandNameSubtitleLabel.font = uiConfig.font.body
+        commandNameSubtitleLabel.font = uiConfig.fonts.body
         commandNameSubtitleLabel.textColor = uiConfig.colorPalette.subtitleText
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         addSubview(commandImageView)
         setupLeftImageViewConstraints()
 
@@ -53,7 +53,7 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View
         setupStack()
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         guard let command = content else { return }
         commandNameSubtitleLabel.text = "/\(command.name) \(command.args)"
         commandNameLabel.text = command.name.firstUppercased
@@ -89,18 +89,18 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View
 }
 
 /// A view cell that displays a command.
-public typealias ChatMessageComposerCommandCollectionViewCell = _ChatMessageComposerCommandCollectionViewCell<NoExtraData>
+internal typealias ChatMessageComposerCommandCollectionViewCell = _ChatMessageComposerCommandCollectionViewCell<NoExtraData>
 
 /// A view cell that displays a command.
-open class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
-    open class var reuseId: String { String(describing: self) }
+internal class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+    internal class var reuseId: String { String(describing: self) }
 
-    public private(set) lazy var commandView = uiConfig
+    internal private(set) lazy var commandView = uiConfig
         .messageComposer
         .suggestionsCommandCellView.init()
         .withoutAutoresizingMaskConstraints
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
 
         contentView.embed(commandView)

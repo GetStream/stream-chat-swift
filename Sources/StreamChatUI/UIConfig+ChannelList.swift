@@ -6,31 +6,31 @@ import UIKit.UICollectionViewLayout
 
 public extension _UIConfig {
     struct ChannelListUI {
-        public var channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self
-        public var channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self
-        public var channelListSwipeableItemView: _ChatChannelSwipeableListItemView<ExtraData>.Type =
+        internal var channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self
+        internal var channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self
+        internal var channelListSwipeableItemView: _ChatChannelSwipeableListItemView<ExtraData>.Type =
             _ChatChannelSwipeableListItemView<ExtraData>.self
         /// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
-        public var channelListItemView: _ChatChannelListItemView<ExtraData>.Type = _ChatChannelListItemView<ExtraData>.self
+        internal var channelListItemView: _ChatChannelListItemView<ExtraData>.Type = _ChatChannelListItemView<ExtraData>.self
         /// A `UICollectionViewCell` subclass that shows channel information.
-        public var channelViewCell: _ChatChannelListCollectionViewCell<ExtraData>.Type =
+        internal var channelViewCell: _ChatChannelListCollectionViewCell<ExtraData>.Type =
             _ChatChannelListCollectionViewCell<ExtraData>.self
         /// A button used for creating new channels.
-        public var newChannelButton: UIButton.Type = _ChatChannelCreateNewButton<ExtraData>.self
-        public var channelNamer: ChatChannelNamer.Type = ChatChannelNamer.self
-        public var channelListItemSubviews = ChannelListItemSubviews()
+        internal var newChannelButton: UIButton.Type = _ChatChannelCreateNewButton<ExtraData>.self
+        internal var channelNamer: ChatChannelNamer.Type = ChatChannelNamer.self
+        internal var channelListItemSubviews = ChannelListItemSubviews()
     }
     
     struct ChannelListItemSubviews {
         /// A view that shows a user avatar including an indicator of the user presence (online/offline).
-        public var avatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
+        internal var avatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
         /// A type for the view that shows a number of unread messages in channel.
-        public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
+        internal var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
         /// A type for the view that shows a read/unread status of the last message in channel.
-        public var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData>.Type =
+        internal var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData>.Type =
             _ChatChannelReadStatusCheckmarkView<ExtraData>.self
         /// A type for the view used as an online activity indicator for avatars.
-        public var onlineIndicator: UIView.Type = _ChatOnlineIndicatorView<ExtraData>.self
+        internal var onlineIndicator: UIView.Type = _ChatOnlineIndicatorView<ExtraData>.self
     }
 }
 
@@ -38,8 +38,8 @@ public extension _UIConfig {
 
 public extension _UIConfig {
     struct CurrentUserUI {
-        public var currentUserViewAvatarView: _CurrentChatUserAvatarView<ExtraData>.Type = _CurrentChatUserAvatarView<ExtraData>
+        internal var currentUserViewAvatarView: _CurrentChatUserAvatarView<ExtraData>.Type = _CurrentChatUserAvatarView<ExtraData>
             .self
-        public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
+        internal var avatarView: ChatAvatarView.Type = ChatAvatarView.self
     }
 }
