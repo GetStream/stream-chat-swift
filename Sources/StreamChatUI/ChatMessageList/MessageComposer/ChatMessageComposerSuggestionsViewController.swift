@@ -218,6 +218,10 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
         collectionView.uiConfig
     }
 
+    /// Data Source Initialiser
+    /// - Parameters:
+    ///   - collectionView: The collection view of the mentions.
+    ///   - searchController: The search controller to find mentions.
     init(
         collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>,
         searchController: _ChatUserSearchController<ExtraData>
@@ -259,8 +263,10 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
         ) as! _ChatMessageComposerMentionCollectionViewCell<ExtraData>
 
         let user = searchController.users[indexPath.row]
-        cell.mentionView.content = user
+        // We need to make sure we set the uiConfig before accessing the mentionView,
+        // so the mentionView is created with the most up-to-dated uiConfig.
         cell.uiConfig = uiConfig
+        cell.mentionView.content = user
         return cell
     }
 

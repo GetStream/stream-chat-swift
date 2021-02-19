@@ -27,6 +27,7 @@ open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDat
 
     public private(set) lazy var headerLabel = UILabel()
         .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
 
     override public func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.popoverBackground

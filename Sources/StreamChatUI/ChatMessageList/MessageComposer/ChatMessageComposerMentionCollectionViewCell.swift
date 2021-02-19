@@ -122,7 +122,7 @@ open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTyp
     open class var reuseId: String { String(describing: self) }
 
     /// Instance of `ChatMessageComposerMentionCellView` which shows information about the mentioned user.
-    public private(set) lazy var mentionView: _ChatMessageComposerMentionCellView<ExtraData> = uiConfig
+    open lazy var mentionView: _ChatMessageComposerMentionCellView<ExtraData> = uiConfig
         .messageComposer
         .suggestionsMentionCellView.init()
         .withoutAutoresizingMaskConstraints
