@@ -5,14 +5,14 @@
 import StreamChat
 import UIKit
 
-public struct ChatMessageActionItem<ExtraData: ExtraDataTypes> {
-    public let title: String
-    public let icon: UIImage
-    public let isPrimary: Bool
-    public let isDestructive: Bool
-    public let action: () -> Void
+internal struct ChatMessageActionItem<ExtraData: ExtraDataTypes> {
+    internal let title: String
+    internal let icon: UIImage
+    internal let isPrimary: Bool
+    internal let isDestructive: Bool
+    internal let action: () -> Void
 
-    public init(
+    internal init(
         title: String,
         icon: UIImage,
         isPrimary: Bool = false,
@@ -27,7 +27,7 @@ public struct ChatMessageActionItem<ExtraData: ExtraDataTypes> {
     }
 }
 
-public extension ChatMessageActionItem {
+internal extension ChatMessageActionItem {
     static func inlineReply(action: @escaping () -> Void, uiConfig: _UIConfig<ExtraData> = .default) -> Self {
         .init(
             title: L10n.Message.Actions.inlineReply,

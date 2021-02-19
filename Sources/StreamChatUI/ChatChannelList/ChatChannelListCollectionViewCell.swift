@@ -7,27 +7,27 @@ import StreamChat
 import UIKit
 
 /// A `UICollectionViewCell` subclass that shows channel information.
-public typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionViewCell<NoExtraData>
+internal typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionViewCell<NoExtraData>
 
 /// A `UICollectionViewCell` subclass that shows channel information.
-open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+internal class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
 
     /// The `ChatChannelListItemView` instance used as content view.
-    open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = uiConfig.channelList.itemView.init()
+    internal private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = uiConfig.channelList.itemView.init()
 
-    override public func prepareForReuse() {
+    override internal func prepareForReuse() {
         super.prepareForReuse()
         itemView.trailingConstraint?.constant = 0
     }
 
-    override open var isHighlighted: Bool {
+    override internal var isHighlighted: Bool {
         didSet {
             itemView.backgroundColor = isHighlighted ? uiConfig.colorPalette.highlightedBackground :
                 uiConfig.colorPalette.background
         }
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         contentView.embed(itemView)
     }

@@ -9,22 +9,22 @@ import UIKit
 /// Unlike `UICollectionViewFlowLayout` we ignore some invalidation calls and persist items attributes between updates.
 /// This resolves problem when on item reload layout would change content offset and user ends up on completely different item.
 /// Layout intended for batch updates and right now I have no idea how it will react to `collectionView.reloadData()`.
-open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
-    public struct LayoutItem {
+internal class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
+    internal struct LayoutItem {
         let id = UUID()
-        public var offset: CGFloat
-        public var height: CGFloat
+        internal var offset: CGFloat
+        internal var height: CGFloat
 
-        public var maxY: CGFloat {
+        internal var maxY: CGFloat {
             offset + height
         }
 
-        public init(offset: CGFloat, height: CGFloat) {
+        internal init(offset: CGFloat, height: CGFloat) {
             self.offset = offset
             self.height = height
         }
 
-        public func attribute(for index: Int, width: CGFloat) -> UICollectionViewLayoutAttributes {
+        internal func attribute(for index: Int, width: CGFloat) -> UICollectionViewLayoutAttributes {
             let attribute = UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
             attribute.frame = CGRect(x: 0, y: offset, width: width, height: height)
             // default `zIndex` value is 0, but for some undocumented reason self-sizing
@@ -37,24 +37,24 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     }
 
     /// Layout items before currently running batch update
-    open var previousItems: [LayoutItem] = []
+    internal var previousItems: [LayoutItem] = []
     /// Actual layout
-    open var currentItems: [LayoutItem] = []
+    internal var currentItems: [LayoutItem] = []
 
     /// With better approximation you are getting better performance
-    open var estimatedItemHeight: CGFloat = 200
+    internal var estimatedItemHeight: CGFloat = 200
     /// Vertical spacing between items
-    open var spacing: CGFloat = 4
+    internal var spacing: CGFloat = 4
 
     /// Items that have been added to collectionview during currently running batch updates
-    open var appearingItems: Set<IndexPath> = []
+    internal var appearingItems: Set<IndexPath> = []
     /// Items that have been removed from collectionview during currently running batch updates
-    open var disappearingItems: Set<IndexPath> = []
+    internal var disappearingItems: Set<IndexPath> = []
     /// We need to cache attributes used for initial/final state of added/removed items to update them after AutoLayout pass.
     /// This will prevent items to appear with `estimatedItemHeight` and animating to real size
-    open var animatingAttributes: [IndexPath: UICollectionViewLayoutAttributes] = [:]
+    internal var animatingAttributes: [IndexPath: UICollectionViewLayoutAttributes] = [:]
 
-    override open var collectionViewContentSize: CGSize {
+    override internal var collectionViewContentSize: CGSize {
         // This is a workaround for `layoutAttributesForElementsInRect:` not getting invoked enough
         // times if `collectionViewContentSize.width` is not smaller than the width of the collection
         // view, minus horizontal insets. This results in visual defects when performing batch
@@ -71,7 +71,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         )
     }
 
-    open var currentCollectionViewWidth: CGFloat = 0
+    internal var currentCollectionViewWidth: CGFloat = 0
 
     /// Used to prevent layout issues during batch updates.
     ///
@@ -80,38 +80,38 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     /// `UICollectionViewFlowLayout` uses private API to get this info. We are don not have such privilege.
     /// If we return wrong attributes user will see artifacts and broken layout during batch update animation.
     /// By not returning any attributes during batch updates we are able to prevent such artifacts.
-    open var preBatchUpdatesCall = false
+    internal var preBatchUpdatesCall = false
     
     /// As we very often need to preserve scroll offset after performBatchUpdates, the simplest solution is to save original
     /// contentOffset and set it when batch updates end
-    open var restoreOffset: CGFloat?
+    internal var restoreOffset: CGFloat?
 
     // MARK: - Initialization
 
-    override public required init() {
+    override internal required init() {
         super.init()
     }
 
-    public required init?(coder: NSCoder) {
+    internal required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
 
     // MARK: - Layout invalidation
 
-    override open func invalidateLayout(with context: UICollectionViewLayoutInvalidationContext) {
+    override internal func invalidateLayout(with context: UICollectionViewLayoutInvalidationContext) {
         preBatchUpdatesCall = context.invalidateDataSourceCounts &&
             !context.invalidateEverything
         super.invalidateLayout(with: context)
     }
 
-    override open func shouldInvalidateLayout(
+    override internal func shouldInvalidateLayout(
         forPreferredLayoutAttributes preferredAttributes: UICollectionViewLayoutAttributes,
         withOriginalAttributes originalAttributes: UICollectionViewLayoutAttributes
     ) -> Bool {
         preferredAttributes.size.height != originalAttributes.size.height
     }
 
-    override open func invalidationContext(
+    override internal func invalidationContext(
         forPreferredLayoutAttributes preferredAttributes: UICollectionViewLayoutAttributes,
         withOriginalAttributes originalAttributes: UICollectionViewLayoutAttributes
     ) -> UICollectionViewLayoutInvalidationContext {
@@ -170,7 +170,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     // MARK: - Animation updates
 
-    override open func prepare(forCollectionViewUpdates updateItems: [UICollectionViewUpdateItem]) {
+    override internal func prepare(forCollectionViewUpdates updateItems: [UICollectionViewUpdateItem]) {
         previousItems = currentItems
         
         // used to determine what contentOffset should be restored after batch updates
@@ -236,7 +236,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         super.prepare(forCollectionViewUpdates: updateItems)
     }
 
-    override open func finalizeCollectionViewUpdates() {
+    override internal func finalizeCollectionViewUpdates() {
         appearingItems.removeAll()
         disappearingItems.removeAll()
         animatingAttributes.removeAll()
@@ -254,7 +254,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     // MARK: - Main layout access
 
-    override open func prepare() {
+    override internal func prepare() {
         super.prepare()
 
         guard currentItems.isEmpty else { return }
@@ -277,7 +277,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         cv.contentOffset.y = currentItems[0].maxY - cv.bounds.height + cv.contentInset.bottom
     }
 
-    override open func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+    override internal func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard !preBatchUpdatesCall else { return nil }
 
         return currentItems
@@ -294,7 +294,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     // MARK: - Layout for collection view items
 
-    override open func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+    override internal func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         guard !preBatchUpdatesCall else { return nil }
 
         guard indexPath.item < currentItems.count else { return nil }
@@ -302,7 +302,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         return currentItems[idx].attribute(for: idx, width: currentCollectionViewWidth)
     }
 
-    override open func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+    override internal func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let idx = itemIndexPath.item
         if appearingItems.contains(itemIndexPath) {
             // this is item that have been inserted into collection view in current batch update
@@ -320,7 +320,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         }
     }
 
-    override open func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+    override internal func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let idx = itemIndexPath.item
         guard let id = oldIdForItem(at: idx) else { return nil }
         if disappearingItems.contains(itemIndexPath) {
@@ -343,21 +343,21 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     // MARK: - Access Layout Item
 
-    open func idForItem(at idx: Int) -> UUID? {
+    internal func idForItem(at idx: Int) -> UUID? {
         guard previousItems.indices.contains(idx) else { return nil }
         return currentItems[idx].id
     }
 
-    open func idxForItem(with id: UUID) -> Int? {
+    internal func idxForItem(with id: UUID) -> Int? {
         currentItems.firstIndex { $0.id == id }
     }
 
-    open func oldIdForItem(at idx: Int) -> UUID? {
+    internal func oldIdForItem(at idx: Int) -> UUID? {
         guard previousItems.indices.contains(idx) else { return nil }
         return previousItems[idx].id
     }
 
-    open func oldIdxForItem(with id: UUID) -> Int? {
+    internal func oldIdxForItem(with id: UUID) -> Int? {
         previousItems.firstIndex { $0.id == id }
     }
 }

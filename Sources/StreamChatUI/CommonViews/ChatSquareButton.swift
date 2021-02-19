@@ -5,20 +5,20 @@
 import StreamChat
 import UIKit
 
-public typealias ChatSquareButton = _ChatSquareButton<NoExtraData>
+internal typealias ChatSquareButton = _ChatSquareButton<NoExtraData>
 
-open class _ChatSquareButton<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
+internal class _ChatSquareButton<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
     // MARK: - Properties
     
-    public var defaultIntrinsicContentSize: CGSize?
+    internal var defaultIntrinsicContentSize: CGSize?
     
     // MARK: - Overrides
     
-    override open var intrinsicContentSize: CGSize {
+    override internal var intrinsicContentSize: CGSize {
         defaultIntrinsicContentSize ?? super.intrinsicContentSize
     }
     
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         defaultIntrinsicContentSize = .init(width: 40, height: 40)
         imageView?.contentMode = .scaleAspectFit
     }

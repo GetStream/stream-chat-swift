@@ -5,15 +5,20 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageListRouter = _ChatMessageListRouter<NoExtraData>
+internal typealias ChatMessageListRouter = _ChatMessageListRouter<NoExtraData>
 
-open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMessageListVC<ExtraData>> {
-    open func showMessageActionsPopUp(
+internal class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMessageListVC<ExtraData>> {
+    internal func showMessageActionsPopUp(
         messageContentFrame: CGRect,
         messageData: _ChatMessageGroupPart<ExtraData>,
         messageActionsController: _ChatMessageActionsVC<ExtraData>,
         messageReactionsController: _ChatMessageReactionsVC<ExtraData>?
     ) {
+        guard let root = rootViewController else {
+            log.error("Can't preset the message action pop up because the root VC is `nil`.")
+            return
+        }
+
         let popup = _ChatMessagePopupVC<ExtraData>()
         popup.message = messageData
         popup.messageViewFrame = messageContentFrame
@@ -22,22 +27,32 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMe
         popup.modalPresentationStyle = .overFullScreen
         popup.modalTransitionStyle = .crossDissolve
 
-        rootViewController.present(popup, animated: true)
+        root.present(popup, animated: true)
     }
     
-    open func showPreview(for attachment: ChatMessageDefaultAttachment) {
+    internal func showPreview(for attachment: ChatMessageDefaultAttachment) {
+        guard let root = rootViewController else {
+            log.error("Can't preset the attachment preview because the root VC is `nil`.")
+            return
+        }
+
         let preview = ChatMessageAttachmentPreviewVC<ExtraData>()
         preview.content = attachment.type == .file ? attachment.url : attachment.imageURL
         
         let navigation = UINavigationController(rootViewController: preview)
-        rootViewController.present(navigation, animated: true)
+        root.present(navigation, animated: true)
     }
 
-    open func openLink(_ link: ChatMessageDefaultAttachment) {
+    internal func internalLink(_ link: ChatMessageDefaultAttachment) {
+        guard let root = rootViewController else {
+            log.error("Can't preset the link preview because the root VC is `nil`.")
+            return
+        }
+
         let preview = ChatMessageAttachmentPreviewVC<ExtraData>()
         preview.content = link.url
 
         let navigation = UINavigationController(rootViewController: preview)
-        rootViewController.present(navigation, animated: true)
+        root.present(navigation, animated: true)
     }
 }

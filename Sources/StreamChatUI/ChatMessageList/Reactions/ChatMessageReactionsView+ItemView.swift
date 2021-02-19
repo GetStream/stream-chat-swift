@@ -6,29 +6,29 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageReactionsView {
-    open class ItemView: _Button, UIConfigProvider {
-        public var content: Content? {
+    internal class ItemView: _Button, UIConfigProvider {
+        internal var content: Content? {
             didSet { updateContentIfNeeded() }
         }
 
         // MARK: - Overrides
 
-        override open var intrinsicContentSize: CGSize {
+        override internal var intrinsicContentSize: CGSize {
             reactionImage?.size ?? .zero
         }
 
-        override open func setUp() {
+        override internal func setUp() {
             super.setUp()
 
             addTarget(self, action: #selector(didTap), for: .touchUpInside)
         }
 
-        override open func updateContent() {
+        override internal func updateContent() {
             setImage(reactionImage, for: .normal)
             imageView?.tintColor = reactionImageTint
         }
 
-        override open func tintColorDidChange() {
+        override internal func tintColorDidChange() {
             super.tintColorDidChange()
 
             updateContentIfNeeded()
@@ -36,7 +36,7 @@ extension _ChatMessageReactionsView {
 
         // MARK: - Actions
 
-        @objc open func didTap() {
+        @objc internal func didTap() {
             guard let content = self.content else { return }
 
             content.onTap(content.reaction.type)
@@ -47,12 +47,12 @@ extension _ChatMessageReactionsView {
 // MARK: - Content
 
 extension _ChatMessageReactionsView.ItemView {
-    public struct Content {
-        public let useBigIcon: Bool
-        public let reaction: ChatMessageReactionData
-        public var onTap: (MessageReactionType) -> Void
+    internal struct Content {
+        internal let useBigIcon: Bool
+        internal let reaction: ChatMessageReactionData
+        internal var onTap: (MessageReactionType) -> Void
 
-        public init(
+        internal init(
             useBigIcon: Bool,
             reaction: ChatMessageReactionData,
             onTap: @escaping (MessageReactionType) -> Void

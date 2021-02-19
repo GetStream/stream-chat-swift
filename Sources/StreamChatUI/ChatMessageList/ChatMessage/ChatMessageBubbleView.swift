@@ -5,61 +5,61 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageBubbleView = _ChatMessageBubbleView<NoExtraData>
+internal typealias ChatMessageBubbleView = _ChatMessageBubbleView<NoExtraData>
 
-open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var message: _ChatMessageGroupPart<ExtraData>? {
+internal class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
-    public var onLinkTap: (ChatMessageDefaultAttachment?) -> Void = { _ in }
+    internal var onLinkTap: (ChatMessageDefaultAttachment?) -> Void = { _ in }
     
     // MARK: - Subviews
 
-    public private(set) lazy var textView: UITextView = {
+    internal private(set) lazy var textView: UITextView = {
         let textView = OnlyLinkTappableTextView()
         textView.isEditable = false
         textView.dataDetectorTypes = .link
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
-        textView.font = uiConfig.font.body
+        textView.font = uiConfig.fonts.body
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
         return textView.withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var linkPreviewView = uiConfig
+    internal private(set) lazy var linkPreviewView = uiConfig
         .messageList
         .messageContentSubviews
         .linkPreviewView
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var quotedMessageView = uiConfig
+    internal private(set) lazy var quotedMessageView = uiConfig
         .messageList
         .messageContentSubviews
         .quotedMessageBubbleView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var borderLayer = CAShapeLayer()
+    internal private(set) lazy var borderLayer = CAShapeLayer()
 
-    public fileprivate(set) var layoutConstraints: [ChatMessageBubbleViewLayoutOptions: [NSLayoutConstraint]] = [:]
+    internal fileprivate(set) var layoutConstraints: [ChatMessageBubbleViewLayoutOptions: [NSLayoutConstraint]] = [:]
 
     // MARK: - Overrides
 
-    override open func layoutSubviews() {
+    override internal func layoutSubviews() {
         super.layoutSubviews()
 
         borderLayer.frame = bounds
     }
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         linkPreviewView.addTarget(self, action: #selector(didTapOnLinkPreview), for: .touchUpInside)
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         layer.cornerRadius = 16
         layer.masksToBounds = true
         borderLayer.contentsScale = layer.contentsScale
@@ -67,7 +67,7 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigPro
         borderLayer.borderWidth = 1
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         layer.addSublayer(borderLayer)
 
         addSubview(quotedMessageView)
@@ -133,14 +133,14 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigPro
         // so we can skip `[.text, .attachments, .inlineReply, .linkPreview]` case
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         let layoutOptions = message?.layoutOptions ?? []
 
         quotedMessageView.isParentMessageSentByCurrentUser = message?.isSentByCurrentUser
         quotedMessageView.message = message?.quotedMessage
         quotedMessageView.isVisible = layoutOptions.contains(.quotedMessage)
         
-        let font: UIFont = uiConfig.font.body
+        let font: UIFont = uiConfig.fonts.body
         textView.attributedText = .init(string: message?.textContent ?? "", attributes: [
             .foregroundColor: message?.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.subtitleText,
             .font: message?.deletedAt == nil ? font : font.italic
@@ -203,10 +203,10 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigPro
     }
 }
 
-public typealias ChatMessageAttachmentBubbleView = _ChatMessageAttachmentBubbleView<NoExtraData>
+internal typealias ChatMessageAttachmentBubbleView = _ChatMessageAttachmentBubbleView<NoExtraData>
 
-open class _ChatMessageAttachmentBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageBubbleView<ExtraData> {
-    public private(set) lazy var attachmentsView = uiConfig
+internal class _ChatMessageAttachmentBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageBubbleView<ExtraData> {
+    internal private(set) lazy var attachmentsView = uiConfig
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -214,7 +214,7 @@ open class _ChatMessageAttachmentBubbleView<ExtraData: ExtraDataTypes>: _ChatMes
         .init()
         .withoutAutoresizingMaskConstraints
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         
         addSubview(attachmentsView)
@@ -268,7 +268,7 @@ open class _ChatMessageAttachmentBubbleView<ExtraData: ExtraDataTypes>: _ChatMes
         ]
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         super.updateContent()
         
         attachmentsView.content = message.flatMap {
@@ -287,19 +287,19 @@ open class _ChatMessageAttachmentBubbleView<ExtraData: ExtraDataTypes>: _ChatMes
 
 // MARK: - LayoutOptions
 
-public struct ChatMessageBubbleViewLayoutOptions: OptionSet, Hashable {
-    public let rawValue: Int
+internal struct ChatMessageBubbleViewLayoutOptions: OptionSet, Hashable {
+    internal let rawValue: Int
     
-    public init(rawValue: Int) {
+    internal init(rawValue: Int) {
         self.rawValue = rawValue
     }
 
-    public static let text = Self(rawValue: 1 << 0)
-    public static let attachments = Self(rawValue: 1 << 1)
-    public static let quotedMessage = Self(rawValue: 1 << 2)
-    public static let linkPreview = Self(rawValue: 1 << 3)
+    internal static let text = Self(rawValue: 1 << 0)
+    internal static let attachments = Self(rawValue: 1 << 1)
+    internal static let quotedMessage = Self(rawValue: 1 << 2)
+    internal static let linkPreview = Self(rawValue: 1 << 3)
 
-    public static let all: Self = [.text, .attachments, .quotedMessage, .linkPreview]
+    internal static let all: Self = [.text, .attachments, .quotedMessage, .linkPreview]
 }
 
 private extension _ChatMessageGroupPart {

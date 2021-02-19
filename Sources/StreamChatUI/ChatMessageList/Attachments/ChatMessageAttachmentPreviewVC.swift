@@ -6,17 +6,17 @@ import StreamChat
 import UIKit
 import WebKit
 
-open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: _ViewController, WKNavigationDelegate, UIConfigProvider {
-    public var content: URL? {
+internal class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: _ViewController, WKNavigationDelegate, UIConfigProvider {
+    internal var content: URL? {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public private(set) lazy var webView = WKWebView(frame: .zero, configuration: WKWebViewConfiguration())
+    internal private(set) lazy var webView = WKWebView(frame: .zero, configuration: WKWebViewConfiguration())
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var activityIndicatorView = UIActivityIndicatorView(style: .gray)
+    internal private(set) lazy var activityIndicatorView = UIActivityIndicatorView(style: .gray)
 
     private lazy var closeButton = UIBarButtonItem(
         image: uiConfig.images.close,
@@ -41,7 +41,7 @@ open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: _ViewContr
 
     // MARK: - Life Cycle
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         view.backgroundColor = .white
         navigationItem.leftBarButtonItem = closeButton
         navigationItem.rightBarButtonItems = [
@@ -51,13 +51,13 @@ open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: _ViewContr
         ]
     }
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         webView.navigationDelegate = self
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         view.addSubview(webView)
         NSLayoutConstraint.activate([
             webView.topAnchor.pin(equalTo: view.safeAreaLayoutGuide.topAnchor),
@@ -67,7 +67,7 @@ open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: _ViewContr
         ])
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         goBackButton.isEnabled = false
         goForwardButton.isEnabled = false
         title = content?.absoluteString
@@ -81,29 +81,29 @@ open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: _ViewContr
 
     // MARK: Actions
 
-    @objc open func goBack() {
+    @objc internal func goBack() {
         if let item = webView.backForwardList.backItem {
             webView.go(to: item)
         }
     }
 
-    @objc open func goForward() {
+    @objc internal func goForward() {
         if let item = webView.backForwardList.forwardItem {
             webView.go(to: item)
         }
     }
 
-    @objc open func close() {
+    @objc internal func close() {
         dismiss(animated: true)
     }
 
     // MARK: - WKNavigationDelegate
 
-    public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    internal func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         activityIndicatorView.startAnimating()
     }
 
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    internal func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         activityIndicatorView.stopAnimating()
 
         webView.evaluateJavaScript("document.title") { data, _ in

@@ -5,16 +5,16 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageActionsView = _ChatMessageActionsView<NoExtraData>
+internal typealias ChatMessageActionsView = _ChatMessageActionsView<NoExtraData>
 
-open class _ChatMessageActionsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var actionItems: [ChatMessageActionItem<ExtraData>] = [] {
+internal class _ChatMessageActionsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal var actionItems: [ChatMessageActionItem<ExtraData>] = [] {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: Subviews
 
-    public private(set) lazy var stackView: UIStackView = {
+    internal private(set) lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .vertical
         stackView.alignment = .fill
@@ -25,17 +25,17 @@ open class _ChatMessageActionsView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     // MARK: Overrides
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         layer.cornerRadius = 16
         layer.masksToBounds = true
         backgroundColor = uiConfig.colorPalette.border
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         embed(stackView)
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         stackView.arrangedSubviews.forEach {
             $0.removeFromSuperview()
             stackView.removeArrangedSubview($0)

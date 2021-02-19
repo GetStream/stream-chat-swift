@@ -6,13 +6,12 @@ import StreamChat
 import UIKit
 
 /// A `ChatChannelSwipeableListItemView` subclass view that shows channel information.
-public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
+internal typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
 /// A `ChatChannelSwipeableListItemView` subclass view that shows channel information.
-open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
-    
+internal class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
     /// The data this view component shows.
-    public var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
+    internal var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContentIfNeeded() }
     }
 
@@ -20,7 +19,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     public lazy var dateFormatter: DateFormatter = .makeDefault()
     
     /// Properties tied to `ChatChannelListItemView` layout
-    public struct Layout {
+    internal struct Layout {
         /// Constraints of `timestampLabel`
         public fileprivate(set) var timestampLabelConstraints: [NSLayoutConstraint] = []
         /// Constraints of `avatarView`
@@ -34,7 +33,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     }
     
     /// The `UILabel` instance showing the channel name.
-    open private(set) lazy var titleLabel: UILabel = uiConfig
+    internal private(set) lazy var titleLabel: UILabel = uiConfig
         .channelList
         .itemSubviews
         .titleLabel
@@ -43,7 +42,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         .withAdjustingFontForContentSizeCategory
     
     /// The `UILabel` instance showing the last message or typing members if any.
-    open private(set) lazy var subtitleLabel: UILabel = uiConfig
+    internal private(set) lazy var subtitleLabel: UILabel = uiConfig
         .channelList
         .itemSubviews
         .subtitleLabel
@@ -52,7 +51,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         .withAdjustingFontForContentSizeCategory
     
     /// The `UILabel` instance showing the time of the last sent message.
-    open private(set) lazy var timestampLabel: UILabel = uiConfig
+    internal private(set) lazy var timestampLabel: UILabel = uiConfig
         .channelList
         .itemSubviews
         .timestampLabel
@@ -61,7 +60,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         .withAdjustingFontForContentSizeCategory
     
     /// The view used to show channels avatar.
-    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
+    internal private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
         .channelList
         .itemSubviews
         .avatarView
@@ -69,7 +68,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         .withoutAutoresizingMaskConstraints
     
     /// The view showing number of unread messages in channel if any.
-    open private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfig
+    internal private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfig
         .channelList
         .itemSubviews
         .unreadCountView.init()
@@ -79,28 +78,28 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     public private(set) var layout = Layout()
 
     /*
-        TODO: ReadStatusView, Missing LLC API
-    /// The view showing indicator for read status of the last message in channel.
-    open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
-        .readStatusView.init()
-        .withoutAutoresizingMaskConstraints
-     */
+         TODO: ReadStatusView, Missing LLC API
+     /// The view showing indicator for read status of the last message in channel.
+     internal private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
+         .readStatusView.init()
+         .withoutAutoresizingMaskConstraints
+      */
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
 
         backgroundColor = uiConfig.colorPalette.background
 
-        titleLabel.font = uiConfig.font.bodyBold
+        titleLabel.font = uiConfig.fonts.bodyBold
 
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
-        subtitleLabel.font = uiConfig.font.footnote
+        subtitleLabel.font = uiConfig.fonts.footnote
         
         timestampLabel.textColor = uiConfig.colorPalette.subtitleText
-        timestampLabel.font = uiConfig.font.footnote
+        timestampLabel.font = uiConfig.fonts.footnote
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         
         cellContentView.addSubview(titleLabel)
@@ -146,7 +145,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         layout.titleLabelConstraints = [
             // Bottom of the label is aligned with avatar vertical center
             titleLabel.lastBaselineAnchor.pin(equalTo: visualCenterGuide.topAnchor),
-
+            
             // Pin the title label leading anchor to avatar's trailing + spacing
             titleLabel.leadingAnchor.pin(equalToSystemSpacingAfter: avatarView.trailingAnchor),
             
@@ -186,7 +185,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
             
             // Align it vertically with the subtitle
             timestampLabel.centerYAnchor.pin(equalTo: subtitleLabel.centerYAnchor),
-        
+            
             // Subtitle label shouldn't overlap
             timestampLabel.leadingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: subtitleLabel.trailingAnchor)
         ]
@@ -204,7 +203,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         )
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         if let channel = content.channel {
             titleLabel.text = uiConfig.channelList.channelNamer(channel, content.currentUserId)
         } else {
@@ -227,7 +226,6 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
 }
 
 extension _ChatChannelListItemView {
-
     /// The `subtitleLabel` will show the current typing member or the last message in the channel.
     var typingMemberOrLastMessageString: String? {
         guard let channel = content.channel else { return nil }
@@ -250,7 +248,7 @@ extension _ChatChannelListItemView {
             .joined(separator: ", ")
 
         let typingSingularText = L10n.Channel.Item.typingSingular
-        let typingPluralText  = L10n.Channel.Item.typingPlural
+        let typingPluralText = L10n.Channel.Item.typingPlural
 
         return names + " \(members.count == 1 ? typingSingularText : typingPluralText)"
     }

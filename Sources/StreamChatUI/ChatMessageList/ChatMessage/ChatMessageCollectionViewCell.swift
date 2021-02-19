@@ -5,23 +5,23 @@
 import StreamChat
 import UIKit
 
-public typealias СhatMessageCollectionViewCell = _СhatMessageCollectionViewCell<NoExtraData>
+internal typealias СhatMessageCollectionViewCell = _СhatMessageCollectionViewCell<NoExtraData>
 
-open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+internal class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
     class var reuseId: String { String(describing: self) }
 
-    public var message: _ChatMessageGroupPart<ExtraData>? {
+    internal var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public private(set) lazy var messageView = uiConfig.messageList.messageContentView.init().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var messageView = uiConfig.messageList.messageContentView.init().withoutAutoresizingMaskConstraints
     private var hasCompletedStreamSetup = false
 
     // MARK: - Lifecycle
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         contentView.addSubview(messageView)
 
         NSLayoutConstraint.activate([
@@ -31,19 +31,19 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _Collecti
         ])
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         messageView.message = message
     }
 
     // MARK: - Overrides
 
-    override open func prepareForReuse() {
+    override internal func prepareForReuse() {
         super.prepareForReuse()
 
         message = nil
     }
 
-    override open func preferredLayoutAttributesFitting(
+    override internal func preferredLayoutAttributesFitting(
         _ layoutAttributes: UICollectionViewLayoutAttributes
     ) -> UICollectionViewLayoutAttributes {
         let preferredAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
@@ -77,12 +77,12 @@ class СhatOutgoingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatM
     }
 }
 
-public typealias СhatMessageAttachmentCollectionViewCell = _СhatMessageAttachmentCollectionViewCell<NoExtraData>
+internal typealias СhatMessageAttachmentCollectionViewCell = _СhatMessageAttachmentCollectionViewCell<NoExtraData>
 
-open class _СhatMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageCollectionViewCell<ExtraData> {
+internal class _СhatMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageCollectionViewCell<ExtraData> {
     private var _messageAttachmentContentView: _ChatMessageAttachmentContentView<ExtraData>?
     
-    override public var messageView: _ChatMessageContentView<ExtraData> {
+    override internal var messageView: _ChatMessageContentView<ExtraData> {
         if let messageContentView = _messageAttachmentContentView {
             return messageContentView
         } else {

@@ -6,10 +6,10 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageFileAttachmentListView {
-    open class ItemView: _ChatMessageAttachmentInfoView<ExtraData> {
+    internal class ItemView: _ChatMessageAttachmentInfoView<ExtraData> {
         // MARK: - Subviews
 
-        public private(set) lazy var fileIconImageView: UIImageView = {
+        internal private(set) lazy var fileIconImageView: UIImageView = {
             let imageView = UIImageView().withoutAutoresizingMaskConstraints
             imageView.contentMode = .center
             return imageView
@@ -17,7 +17,7 @@ extension _ChatMessageFileAttachmentListView {
 
         // MARK: - Overrides
 
-        override public func defaultAppearance() {
+        override internal func defaultAppearance() {
             backgroundColor = uiConfig.colorPalette.popoverBackground
             layer.cornerRadius = 12
             layer.masksToBounds = true
@@ -25,7 +25,7 @@ extension _ChatMessageFileAttachmentListView {
             layer.borderColor = uiConfig.colorPalette.border.cgColor
         }
 
-        override open func setUpLayout() {
+        override internal func setUpLayout() {
             addSubview(fileIconImageView)
             addSubview(actionIconImageView)
             addSubview(fileNameAndSizeStack)
@@ -52,7 +52,7 @@ extension _ChatMessageFileAttachmentListView {
             ])
         }
 
-        override open func updateContent() {
+        override internal func updateContent() {
             super.updateContent()
 
             fileIconImageView.image = fileIcon

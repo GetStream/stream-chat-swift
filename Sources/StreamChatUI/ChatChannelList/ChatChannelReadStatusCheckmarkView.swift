@@ -6,26 +6,26 @@ import StreamChat
 import UIKit
 
 /// A view that shows a read/unread status of the last message in channel.
-public typealias ChatChannelReadStatusCheckmarkView = _ChatChannelReadStatusCheckmarkView<NoExtraData>
+internal typealias ChatChannelReadStatusCheckmarkView = _ChatChannelReadStatusCheckmarkView<NoExtraData>
 
 /// A view that shows a read/unread status of the last message in channel.
-open class _ChatChannelReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+internal class _ChatChannelReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
 
     /// An underlying type for status in the view.
     /// Right now corresponding functionality in LLC is missing and it will likely be replaced with the type from LLC.
-    public enum Status {
+    internal enum Status {
         case read, unread, empty
     }
         
     /// The data this view component shows.
-    open var content: Status = .empty {
+    internal var content: Status = .empty {
         didSet { updateContentIfNeeded() }
     }
         
     /// The `UIImageView` instance that shows the read/unread status image.
-    open private(set) lazy var imageView = UIImageView().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var imageView = UIImageView().withoutAutoresizingMaskConstraints
     
-    override open func tintColorDidChange() {
+    override internal func tintColorDidChange() {
         super.tintColorDidChange()
         updateContentIfNeeded()
     }
@@ -36,7 +36,7 @@ open class _ChatChannelReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: _View
         imageView.contentMode = .scaleAspectFit
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         embed(imageView)
     }
     

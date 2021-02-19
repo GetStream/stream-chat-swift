@@ -5,63 +5,63 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageContentView = _ChatMessageContentView<NoExtraData>
+internal typealias ChatMessageContentView = _ChatMessageContentView<NoExtraData>
 
-open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var message: _ChatMessageGroupPart<ExtraData>? {
+internal class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
-    public var onThreadTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
-    public var onErrorIndicatorTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
-    public var onLinkTap: (ChatMessageDefaultAttachment?) -> Void = { _ in } {
+    internal var onThreadTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
+    internal var onErrorIndicatorTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
+    internal var onLinkTap: (ChatMessageDefaultAttachment?) -> Void = { _ in } {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public private(set) lazy var messageBubbleView = uiConfig
+    internal private(set) lazy var messageBubbleView = uiConfig
         .messageList
         .messageContentSubviews
         .bubbleView.init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var messageMetadataView = uiConfig
+    internal private(set) lazy var messageMetadataView = uiConfig
         .messageList
         .messageContentSubviews
         .metadataView
         .init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var authorAvatarView = uiConfig
+    internal private(set) lazy var authorAvatarView = uiConfig
         .messageList
         .messageContentSubviews
         .authorAvatarView
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var reactionsBubble = uiConfig
+    internal private(set) lazy var reactionsBubble = uiConfig
         .messageList
         .messageReactions
         .reactionsBubbleView
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var threadArrowView = uiConfig
+    internal private(set) lazy var threadArrowView = uiConfig
         .messageList
         .messageContentSubviews
         .threadArrowView
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var threadView = uiConfig
+    internal private(set) lazy var threadView = uiConfig
         .messageList
         .messageContentSubviews
         .threadInfoView
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var errorIndicator = uiConfig
+    internal private(set) lazy var errorIndicator = uiConfig
         .messageList
         .messageContentSubviews
         .errorIndicator
@@ -79,7 +79,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     // MARK: - Overrides
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         reactionsBubble.isUserInteractionEnabled = false
@@ -88,7 +88,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         messageBubbleView.onLinkTap = onLinkTap
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         addSubview(messageBubbleView)
         addSubview(messageMetadataView)
         addSubview(authorAvatarView)
@@ -179,7 +179,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         )
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         // When message cell is about to be reused, it sets `nil` for message value.
         // That means we need to remove all dynamic constraints to prevent layout warnings.
         guard let message = self.message else {
@@ -274,7 +274,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     // MARK: - Actions
 
-    @objc open func didTapOnErrorIndicator() {
+    @objc internal func didTapOnErrorIndicator() {
         onErrorIndicatorTap(message)
     }
 
@@ -283,12 +283,12 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     }
 }
 
-public typealias ChatMessageAttachmentContentView = _ChatMessageAttachmentContentView<NoExtraData>
+internal typealias ChatMessageAttachmentContentView = _ChatMessageAttachmentContentView<NoExtraData>
 
-open class _ChatMessageAttachmentContentView<ExtraData: ExtraDataTypes>: _ChatMessageContentView<ExtraData> {
+internal class _ChatMessageAttachmentContentView<ExtraData: ExtraDataTypes>: _ChatMessageContentView<ExtraData> {
     private var _messageAttachmentBubbleView: _ChatMessageAttachmentBubbleView<ExtraData>?
     
-    override public var messageBubbleView: _ChatMessageBubbleView<ExtraData> {
+    override internal var messageBubbleView: _ChatMessageBubbleView<ExtraData> {
         if let messageBubbleView = _messageAttachmentBubbleView {
             return messageBubbleView
         } else {
