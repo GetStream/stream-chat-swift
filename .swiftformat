@@ -2,8 +2,6 @@
 --header "\nCopyright © {year} Stream.io Inc. All rights reserved.\n"
 --swiftversion 5.2
 
---exclude **/*_Vendor.swift
-
 --ifdef no-indent
 
 # Rules inferred from Swift Standard Library:
