@@ -11,6 +11,13 @@ extension UIView {
     }
 }
 
+extension UIViewController {
+    /// Trigger `viewDidLoad` to execute view lifecycle methods.
+    func executeLifecycleMethods() {
+        _ = view
+    }
+}
+
 extension UIControl {
     /// Action methods are dispatched through the current `UIApplication` object,
     /// which finds an appropriate object to handle the message, following the responder chain if needed.
@@ -20,7 +27,7 @@ extension UIControl {
             let target = target as NSObjectProtocol
             for actionName in actions(forTarget: target, forControlEvent: event) ?? [] {
                 let selector = Selector(actionName)
-                target.perform(selector)
+                target.perform(selector, with: self)
             }
         }
     }

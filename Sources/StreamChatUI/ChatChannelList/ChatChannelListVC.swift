@@ -5,70 +5,81 @@
 import StreamChat
 import UIKit
 
+/// A `UIViewController` subclass  that shows list of channels.
 public typealias ChatChannelListVC = _ChatChannelListVC<NoExtraData>
 
+/// A `UIViewController` subclass  that shows list of channels.
 open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UIConfigProvider {
-    override public func defaultAppearance() {
-        title = "Stream Chat"
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
-
-        collectionView.backgroundColor = uiConfig.colorPalette.background
-    }
-    
-    // MARK: - Properties
-    
+    /// The `ChatChannelListController` instance that provides channels data.
     public var controller: _ChatChannelListController<ExtraData>!
     
-    public lazy var router = uiConfig.navigation.channelListRouter.init(rootViewController: self)
+    /// The `_ChatChannelListRouter` instance responsible for navigation.
+    open private(set) lazy var router: _ChatChannelListRouter<ExtraData> = uiConfig
+        .navigation
+        .channelListRouter.init(rootViewController: self)
     
-    public private(set) lazy var collectionView: ChatChannelListCollectionView = {
-        let layout = uiConfig.channelList.channelCollectionLayout.init()
-        let collection = uiConfig.channelList.channelCollectionView.init(layout: layout)
-        collection.register(uiConfig.channelList.channelViewCell.self, forCellWithReuseIdentifier: "Cell")
-        collection.dataSource = self
-        collection.delegate = self
-        return collection
-    }()
+    /// The `UICollectionViewLayout` that used by `ChatChannelListCollectionView`.
+    open private(set) lazy var collectionViewLayout: UICollectionViewLayout = uiConfig
+        .channelList
+        .channelCollectionLayout.init()
     
-    public private(set) lazy var createNewChannelButton: UIButton = {
-        let button = uiConfig.channelList.newChannelButton.init()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
-        return button
-    }()
+    /// The `UICollectionView` instance that displays channel list.
+    open private(set) lazy var collectionView: ChatChannelListCollectionView = uiConfig
+        .channelList
+        .channelCollectionView.init(layout: collectionViewLayout)
     
-    public private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = {
-        let avatar = uiConfig.currentUser.currentUserViewAvatarView.init()
-        avatar.controller = controller.client.currentUserController()
-        avatar.translatesAutoresizingMaskIntoConstraints = false
-        avatar.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
-        return avatar
-    }()
+    /// The `UIButton` instance used for navigating to new channel screen creation,
+    open private(set) lazy var createNewChannelButton: UIButton = uiConfig
+        .channelList
+        .newChannelButton.init()
+        .withoutAutoresizingMaskConstraints
     
-    // MARK: - Life Cycle
+    /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
+    open private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = uiConfig
+        .currentUser
+        .currentUserViewAvatarView.init()
+        .withoutAutoresizingMaskConstraints
     
-    override open func viewDidLoad() {
-        super.viewDidLoad()
-        
-        view.embed(collectionView)
+    override open func setUp() {
+        super.setUp()
         
         controller.setDelegate(self)
         controller.synchronize()
         
-        navigationItem.backButtonTitle = ""
+        collectionView.register(uiConfig.channelList.channelViewCell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.dataSource = self
+        collectionView.delegate = self
+        
+        userAvatarView.controller = controller.client.currentUserController()
+        userAvatarView.addTarget(self, action: #selector(didTapOnCurrentUserAvatar), for: .touchUpInside)
+        
+        createNewChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
     }
     
-    // MARK: - UICollectionViewDataSource
+    override open func setUpLayout() {
+        super.setUpLayout()
+        
+        view.embed(collectionView)
+    }
     
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    override public func defaultAppearance() {
+        title = "Stream Chat"
+        
+        navigationItem.backButtonTitle = ""
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
+        
+        collectionView.backgroundColor = uiConfig.colorPalette.background
+    }
+        
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         controller.channels.count
     }
     
-    public func collectionView(
+    open func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
@@ -78,28 +89,22 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         ) as! _ChatChannelListCollectionViewCell<ExtraData>
     
         cell.uiConfig = uiConfig
-        cell.channelView.channelAndUserId = (controller.channels[indexPath.row], controller.client.currentUserId)
+        cell.channelView.content = (controller.channels[indexPath.row], controller.client.currentUserId)
         
         return cell
     }
-    
-    // MARK: - UICollectionViewDelegate
-    
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+    open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let channel = controller.channels[indexPath.row]
         router.openChat(for: channel)
     }
-    
-    // MARK: - UIScrollViewDelegate
-    
-    public func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        
+    open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
         let bottomEdge = scrollView.contentOffset.y + scrollView.bounds.height
         guard bottomEdge >= scrollView.contentSize.height else { return }
         controller.loadNextChannels()
     }
-    
-    // MARK: Actions
-    
+        
     @objc open func didTapOnCurrentUserAvatar(_ sender: Any) {
         guard let currentUser = userAvatarView.controller?.currentUser else { return }
         
@@ -111,10 +116,8 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 }
 
-// MARK: - _ChatChannelListControllerDelegate
-
 extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
-    public func controller(
+    open func controller(
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
