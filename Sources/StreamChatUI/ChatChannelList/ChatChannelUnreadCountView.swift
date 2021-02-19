@@ -6,21 +6,21 @@ import StreamChat
 import UIKit
 
 /// A view that shows a number of unread messages in channel.
-public typealias ChatChannelUnreadCountView = _ChatChannelUnreadCountView<NoExtraData>
+internal typealias ChatChannelUnreadCountView = _ChatChannelUnreadCountView<NoExtraData>
 
 /// A view that shows a number of unread messages in channel.
-open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+internal class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// The `UILabel` instance that holds number of unread messages.
-    open private(set) lazy var unreadCountLabel = UILabel()
+    internal private(set) lazy var unreadCountLabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
 
     /// The data this view component shows.
-    open var content: ChannelUnreadCount = .noUnread {
+    internal var content: ChannelUnreadCount = .noUnread {
         didSet { updateContentIfNeeded() }
     }
 
-    override open func layoutSubviews() {
+    override internal func layoutSubviews() {
         super.layoutSubviews()
         layer.cornerRadius = bounds.height / 2
     }
@@ -30,11 +30,11 @@ open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, UIConf
         backgroundColor = uiConfig.colorPalette.alert
 
         unreadCountLabel.textColor = uiConfig.colorPalette.staticColorText
-        unreadCountLabel.font = uiConfig.font.footnoteBold
+        unreadCountLabel.font = uiConfig.fonts.footnoteBold
         unreadCountLabel.textAlignment = .center
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         // 2 and 3 are magic numbers that look visually good
         layoutMargins = .init(top: 2, left: 3, bottom: 2, right: 3)
 

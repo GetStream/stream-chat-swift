@@ -5,4 +5,4 @@
 import Foundation
 import UIKit
 
-open class ChatChannelListCollectionViewDelegate: NSObject, UICollectionViewDelegate {}
+internal class ChatChannelListCollectionViewDelegate: NSObject, UICollectionViewDelegate {}

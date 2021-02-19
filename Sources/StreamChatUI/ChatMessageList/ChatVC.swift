@@ -15,17 +15,17 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
     _ChatMessageComposerViewControllerDelegate {
     // MARK: - Properties
 
-    public var channelController: _ChatChannelController<ExtraData>!
-    public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> = {
+    open var channelController: _ChatChannelController<ExtraData>!
+    open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> = {
         channelController.client.userSearchController()
     }()
 
-    public private(set) lazy var messageComposerViewController = uiConfig
+    internal private(set) lazy var messageComposerViewController = uiConfig
         .messageComposer
         .messageComposerViewController
         .init()
 
-    public private(set) lazy var messageList = uiConfig
+    internal private(set) lazy var messageList = uiConfig
         .messageList
         .messageListVC
         .init()
@@ -47,7 +47,7 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         resignFirstResponder()
     }
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         messageComposerViewController.delegate = .wrap(self)
@@ -114,7 +114,7 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         )
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         
         messageList.view.translatesAutoresizingMaskIntoConstraints = false
@@ -137,17 +137,17 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         messageComposerBottomConstraint?.isActive = true
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
 
         view.backgroundColor = uiConfig.colorPalette.background
         let title = UILabel()
         title.textAlignment = .center
-        title.font = uiConfig.font.headlineBold
+        title.font = uiConfig.fonts.headlineBold
 
         let subtitle = UILabel()
         subtitle.textAlignment = .center
-        subtitle.font = uiConfig.font.caption1
+        subtitle.font = uiConfig.fonts.caption1
         subtitle.textColor = uiConfig.colorPalette.subtitleText
 
         let titleView = UIStackView(arrangedSubviews: [title, subtitle])
@@ -171,19 +171,20 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     // MARK: - ChatMessageListVCDataSource
 
-    public func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
+    internal func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
         fatalError("Abstract class violation")
     }
 
-    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
+    internal func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
         fatalError("Abstract class violation")
     }
 
-    public func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
+    internal func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
         fatalError("Abstract class violation")
     }
 
-    public func chatMessageListVC(
+	// swiftlint:disable:next unavailable_function
+    internal func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         replyMessageFor message: _ChatMessage<ExtraData>,
         at index: Int
@@ -191,7 +192,8 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         fatalError("Abstract class violation")
     }
 
-    public func chatMessageListVC(
+    // swiftlint:disable:next unavailable_function
+    internal func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         controllerFor message: _ChatMessage<ExtraData>
     ) -> _ChatMessageController<ExtraData> {
@@ -200,24 +202,24 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     // MARK: - ChatMessageListVCDelegate
 
-    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didSelectMessageAt index: Int) {
+    internal func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didSelectMessageAt index: Int) {
         let selectedMessage = chatMessageListVC(vc, messageAt: index)
         debugPrint(selectedMessage)
     }
 
-    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>) {}
+    internal func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>) {}
     
-    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>) {
+    internal func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>) {
         messageComposerViewController.state = .quote(message)
     }
     
-    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>) {
+    internal func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>) {
         messageComposerViewController.state = .edit(message)
     }
 
     // MARK: - MessageComposerViewControllerDelegate
 
-    public func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>) {
+    internal func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>) {
         messageList.setNeedsScrollToMostRecentMessage()
     }
 }

@@ -6,23 +6,23 @@ import StreamChat
 import UIKit
 
 /// A view used to indicate the presence of a user.
-public typealias ChatOnlineIndicatorView = _ChatOnlineIndicatorView<NoExtraData>
+internal typealias ChatOnlineIndicatorView = _ChatOnlineIndicatorView<NoExtraData>
 
 /// A view used to indicate the presence of a user.
-open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    override public func defaultAppearance() {
+internal class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
 
         backgroundColor = uiConfig.colorPalette.alternativeActiveTint
         layer.borderColor = uiConfig.colorPalette.lightBorder.cgColor
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         heightAnchor.pin(equalTo: widthAnchor).isActive = true
     }
 
-    override open func layoutSubviews() {
+    override internal func layoutSubviews() {
         super.layoutSubviews()
         layer.cornerRadius = bounds.width / 2
         layer.borderWidth = (bounds.width / 5)

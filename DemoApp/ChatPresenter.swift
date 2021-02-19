@@ -19,7 +19,7 @@ extension UIViewController {
         let client = ChatClient(config: config, tokenProvider: .static(token))
 
         // Config
-        UIConfig.default.navigation.channelListRouter = DemoChatChannelListRouter.self
+//        UIConfig.default.navigation.channelListRouter = DemoChatChannelListRouter.self
 
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
@@ -34,14 +34,14 @@ extension UIViewController {
     }
 }
 
-class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
-    override func openCreateNewChannel() {
-        let storyboard = UIStoryboard(name: "Main", bundle: .main)
-        
-        let chatViewController = storyboard.instantiateViewController(withIdentifier: "CreateChatViewController")
-            as! CreateChatViewController
-        chatViewController.searchController = rootViewController.controller.client.userSearchController()
-        
-        navigationController?.pushViewController(chatViewController, animated: true)
-    }
-}
+// class DemoChatChannelListRouter: ChatChannelListRouter {
+//    override func openCreateNewChannel() {
+//        let storyboard = UIStoryboard(name: "Main", bundle: .main)
+//
+//        let chatViewController = storyboard.instantiateViewController(withIdentifier: "CreateChatViewController")
+//            as! CreateChatViewController
+//        chatViewController.searchController = rootViewController?.controller.client.userSearchController()
+//
+//        navigationController?.pushViewController(chatViewController, animated: true)
+//    }
+// }

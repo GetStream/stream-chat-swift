@@ -5,18 +5,18 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerSendButton = _ChatMessageComposerSendButton<NoExtraData>
+internal typealias ChatMessageComposerSendButton = _ChatMessageComposerSendButton<NoExtraData>
 
-open class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: _ChatSquareButton<ExtraData> {
+internal class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: _ChatSquareButton<ExtraData> {
     // MARK: Underlying types
     
-    public enum Mode {
+    internal enum Mode {
         case new, edit
     }
     
     // MARK: - Properties
     
-    public var mode: Mode = .new {
+    internal var mode: Mode = .new {
         didSet {
             updateContentIfNeeded()
         }
@@ -24,7 +24,7 @@ open class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: _ChatSquar
     
     // MARK: - Overrides
     
-    override open var isEnabled: Bool {
+    override internal var isEnabled: Bool {
         didSet {
             var transformToApply: CGAffineTransform
             if isEnabled, mode == .new {
@@ -38,14 +38,14 @@ open class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: _ChatSquar
         }
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         guard let size = defaultIntrinsicContentSize else { return }
         
         heightAnchor.pin(equalToConstant: size.height).isActive = true
         widthAnchor.pin(equalToConstant: size.width).isActive = true
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         switch mode {
         case .new:
             let normalStateImage = uiConfig.images.messageComposerSendMessage

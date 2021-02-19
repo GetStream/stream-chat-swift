@@ -5,9 +5,9 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerInputTextView = _ChatMessageComposerInputTextView<NoExtraData>
+internal typealias ChatMessageComposerInputTextView = _ChatMessageComposerInputTextView<NoExtraData>
 
-open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
+internal class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
     AppearanceSetting,
     Customizable,
     UIConfigProvider
@@ -18,23 +18,23 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     
     // MARK: - Subviews
     
-    public lazy var placeholderLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    internal lazy var placeholderLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
     
     // MARK: - Overrides
     
-    override public var text: String! {
+    override internal var text: String! {
         didSet {
             textDidChangeProgrammatically()
         }
     }
     
-    override public var attributedText: NSAttributedString! {
+    override internal var attributedText: NSAttributedString! {
         didSet {
             textDidChangeProgrammatically()
         }
     }
     
-    override open func didMoveToSuperview() {
+    override internal func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard superview != nil else { return }
         
@@ -45,10 +45,10 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         updateContent()
     }
     
-    // MARK: Public
+    // MARK: internal
     
-    open func defaultAppearance() {
-        font = uiConfig.font.body
+    internal func defaultAppearance() {
+        font = uiConfig.fonts.body
         textContainer.lineFragmentPadding = 10
         textColor = uiConfig.colorPalette.text
         
@@ -59,7 +59,7 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         backgroundColor = .clear
     }
     
-    open func setUp() {
+    internal func setUp() {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(textDidChange),
@@ -68,9 +68,9 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         )
     }
     
-    open func setUpAppearance() {}
+    internal func setUpAppearance() {}
     
-    open func setUpLayout() {
+    internal func setUpLayout() {
         embed(
             placeholderLabel,
             insets: .init(
@@ -87,7 +87,7 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         textViewHeightConstraint.isActive = true
     }
     
-    open func updateContent() {}
+    internal func updateContent() {}
     
     func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)

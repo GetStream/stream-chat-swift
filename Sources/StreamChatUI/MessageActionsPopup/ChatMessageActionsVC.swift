@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public protocol _ChatMessageActionsVCDelegate: AnyObject {
+internal protocol _ChatMessageActionsVCDelegate: AnyObject {
     associatedtype ExtraData: ExtraDataTypes
 
     func chatMessageActionsVC(_ vc: _ChatMessageActionsVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>)
@@ -14,12 +14,12 @@ public protocol _ChatMessageActionsVCDelegate: AnyObject {
     func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>)
 }
 
-public typealias ChatMessageActionsVC = _ChatMessageActionsVC<NoExtraData>
+internal typealias ChatMessageActionsVC = _ChatMessageActionsVC<NoExtraData>
 
-open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
-    public var messageController: _ChatMessageController<ExtraData>!
-    public var delegate: Delegate?
-    public lazy var router = uiConfig.navigation.messageActionsRouter.init(rootViewController: self)
+internal class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
+    internal var messageController: _ChatMessageController<ExtraData>!
+    internal var delegate: Delegate?
+    internal lazy var router = uiConfig.navigation.messageActionsRouter.init(rootViewController: self)
 
     private var message: _ChatMessage<ExtraData>? {
         messageController.message
@@ -36,17 +36,17 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
 
     // MARK: - Life Cycle
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         view.embed(messageActionView)
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         messageActionView.actionItems = messageActions
     }
 
     // MARK: - Actions
 
-    open var messageActions: [ChatMessageActionItem<ExtraData>] {
+    internal var messageActions: [ChatMessageActionItem<ExtraData>] {
         guard
             let currentUser = messageController.client.currentUserController().currentUser,
             let message = message,
@@ -87,31 +87,31 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
         }
     }
 
-    open func handleCopyAction() {
+    internal func handleCopyAction() {
         UIPasteboard.general.string = message?.text
 
         delegate?.didFinish(self)
     }
 
-    open func handleInlineReplyAction() {
+    internal func handleInlineReplyAction() {
         guard let message = message else { return }
 
         delegate?.didTapOnInlineReply(self, message)
     }
 
-    open func handleThreadReplyAction() {
+    internal func handleThreadReplyAction() {
         guard let message = message else { return }
 
         delegate?.didTapOnThreadReply(self, message)
     }
 
-    open func handleEditAction() {
+    internal func handleEditAction() {
         guard let message = message else { return }
 
         delegate?.didTapOnEdit(self, message)
     }
 
-    open func handleDeleteAction() {
+    internal func handleDeleteAction() {
         router.showMessageDeletionConfirmationAlert { confirmed in
             guard confirmed else { return }
 
@@ -121,13 +121,13 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
         }
     }
 
-    open func handleResendAction() {
+    internal func handleResendAction() {
         messageController.resendMessage { _ in
             self.delegate?.didFinish(self)
         }
     }
 
-    open func handleMuteAuthorAction() {
+    internal func handleMuteAuthorAction() {
         guard let author = message?.author else { return }
 
         messageController.client
@@ -135,7 +135,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
             .mute { _ in self.delegate?.didFinish(self) }
     }
 
-    open func handleUnmuteAuthorAction() {
+    internal func handleUnmuteAuthorAction() {
         guard let author = message?.author else { return }
 
         messageController.client
@@ -146,14 +146,14 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
 
 // MARK: - Delegate
 
-public extension _ChatMessageActionsVC {
+internal extension _ChatMessageActionsVC {
     struct Delegate {
-        public var didTapOnInlineReply: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
-        public var didTapOnThreadReply: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
-        public var didTapOnEdit: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
-        public var didFinish: (_ChatMessageActionsVC) -> Void
+        internal var didTapOnInlineReply: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
+        internal var didTapOnThreadReply: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
+        internal var didTapOnEdit: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
+        internal var didFinish: (_ChatMessageActionsVC) -> Void
 
-        public init(
+        internal init(
             didTapOnInlineReply: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
             didTapOnThreadReply: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
             didTapOnEdit: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
@@ -165,7 +165,7 @@ public extension _ChatMessageActionsVC {
             self.didFinish = didFinish
         }
 
-        public init<Delegate: _ChatMessageActionsVCDelegate>(delegate: Delegate) where Delegate.ExtraData == ExtraData {
+        internal init<Delegate: _ChatMessageActionsVCDelegate>(delegate: Delegate) where Delegate.ExtraData == ExtraData {
             self.init(
                 didTapOnInlineReply: { [weak delegate] in delegate?.chatMessageActionsVC($0, didTapOnInlineReplyFor: $1) },
                 didTapOnThreadReply: { [weak delegate] in delegate?.chatMessageActionsVC($0, didTapOnThreadReplyFor: $1) },

@@ -5,13 +5,13 @@
 import UIKit
 
 /// The collection view layout of the suggestions collection view.
-open class ChatMessageComposerSuggestionsCollectionViewLayout: UICollectionViewFlowLayout {
-    override public required init() {
+internal class ChatMessageComposerSuggestionsCollectionViewLayout: UICollectionViewFlowLayout {
+    override internal required init() {
         super.init()
         commonInit()
     }
 
-    public required init?(coder: NSCoder) {
+    internal required init?(coder: NSCoder) {
         super.init(coder: coder)
         commonInit()
     }
@@ -21,7 +21,7 @@ open class ChatMessageComposerSuggestionsCollectionViewLayout: UICollectionViewF
         minimumLineSpacing = 0
     }
 
-    override open func prepare() {
+    override internal func prepare() {
         super.prepare()
         estimatedItemSize = .init(width: collectionView?.bounds.width ?? 0, height: 60)
     }

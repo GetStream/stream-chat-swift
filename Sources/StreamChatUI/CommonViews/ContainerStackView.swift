@@ -4,25 +4,25 @@
 
 import UIKit
 
-public class ContainerStackView: UIStackView {
+internal class ContainerStackView: UIStackView {
     // MARK: - Subviews
     
-    public let topStackView = UIStackView()
-    public let bottomStackView = UIStackView()
-    public let leftStackView = UIStackView()
-    public let rightStackView = UIStackView()
-    public let centerStackView = UIStackView()
+    internal let topStackView = UIStackView()
+    internal let bottomStackView = UIStackView()
+    internal let leftStackView = UIStackView()
+    internal let rightStackView = UIStackView()
+    internal let centerStackView = UIStackView()
     
-    public let centerContainerStackView = UIStackView()
+    internal let centerContainerStackView = UIStackView()
         
     // MARK: - Init
 
-    override public init(frame: CGRect) {
+    override internal init(frame: CGRect) {
         super.init(frame: frame)
         commonInit()
     }
     
-    public required init(coder: NSCoder) {
+    internal required init(coder: NSCoder) {
         super.init(coder: coder)
         commonInit()
     }

@@ -5,10 +5,10 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerDocumentAttachmentCollectionViewCell =
+internal typealias ChatMessageComposerDocumentAttachmentCollectionViewCell =
     _ChatMessageComposerDocumentAttachmentCollectionViewCell<NoExtraData>
 
-open class _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
+internal class _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
     UIConfigProvider {
     // MARK: - Properties
     
@@ -16,20 +16,20 @@ open class _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData: E
     
     // MARK: - Subviews
     
-    public private(set) lazy var documentAttachmentView = uiConfig
+    internal private(set) lazy var documentAttachmentView = uiConfig
         .messageComposer
         .documentAttachmentView.init()
         .withoutAutoresizingMaskConstraints
 
-    // MARK: - Public
+    // MARK: - internal
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         contentView.embed(documentAttachmentView)
     }
         
     // MARK: - UICollectionViewLayoutAttributes
     
-    override open func preferredLayoutAttributesFitting(
+    override internal func preferredLayoutAttributesFitting(
         _ layoutAttributes: UICollectionViewLayoutAttributes
     ) -> UICollectionViewLayoutAttributes {
         let preferredAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
