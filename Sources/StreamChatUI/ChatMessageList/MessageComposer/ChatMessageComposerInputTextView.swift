@@ -71,12 +71,15 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     open func setUpAppearance() {}
     
     open func setUpLayout() {
-        embed(placeholderLabel, insets: .init(
-            top: .zero,
-            leading: textContainer.lineFragmentPadding,
-            bottom: .zero,
-            trailing: .zero
-        ))
+        embed(
+            placeholderLabel,
+            insets: .init(
+                top: .zero,
+                leading: directionalLayoutMargins.leading,
+                bottom: .zero,
+                trailing: .zero
+            )
+        )
         placeholderLabel.pin(anchors: [.centerY], to: self)
         
         isScrollEnabled = false
