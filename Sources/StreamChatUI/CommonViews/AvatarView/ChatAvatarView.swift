@@ -5,27 +5,27 @@
 import UIKit
 
 /// A view that displays the avatar image. By default a circular image.
-open class ChatAvatarView: _View {
+internal class ChatAvatarView: _View {
     /// The `UIImageView` instance that shows the avatar image.
-    open private(set) var imageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
+    internal private(set) var imageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
     
-    override open var intrinsicContentSize: CGSize {
+    override internal var intrinsicContentSize: CGSize {
         imageView.image?.size ?? super.intrinsicContentSize
     }
     
-    override open func layoutSubviews() {
+    override internal func layoutSubviews() {
         super.layoutSubviews()
         imageView.layer.cornerRadius = min(imageView.bounds.width, imageView.bounds.height) / 2
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
         
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         embed(imageView)
     }
 }

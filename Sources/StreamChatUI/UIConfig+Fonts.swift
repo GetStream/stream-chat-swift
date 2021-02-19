@@ -5,7 +5,7 @@
 import UIKit.UIFont
 
 public extension _UIConfig {
-    struct Font {
+    struct Fonts {
         public var caption1 = UIFont.preferredFont(forTextStyle: .caption1)
         public var footnoteBold = UIFont.preferredFont(forTextStyle: .footnote).bold
         public var footnote = UIFont.preferredFont(forTextStyle: .footnote)

@@ -18,19 +18,19 @@ private extension UIResponder {
 
 // MARK: - Protocols
 
-public protocol GenericUIConfigProvider: AnyObject {
+internal protocol GenericUIConfigProvider: AnyObject {
     func register<T: ExtraDataTypes>(config: _UIConfig<T>)
     func uiConfig<T: ExtraDataTypes>(_ type: T.Type) -> _UIConfig<T>
 }
 
-public protocol UIConfigProvider: GenericUIConfigProvider {
+internal protocol UIConfigProvider: GenericUIConfigProvider {
     associatedtype ExtraData: ExtraDataTypes
     var uiConfig: _UIConfig<ExtraData> { get set }
 }
 
 // MARK: - Protocol extensions for UIView
 
-public extension GenericUIConfigProvider where Self: UIResponder {
+internal extension GenericUIConfigProvider where Self: UIResponder {
     func register<T: ExtraDataTypes>(config: _UIConfig<T>) {
         anyUIConfig = config
     }
@@ -58,7 +58,7 @@ public extension GenericUIConfigProvider where Self: UIResponder {
 }
 
 extension UIConfigProvider where Self: UIResponder {
-    public var uiConfig: _UIConfig<ExtraData> {
+    internal var uiConfig: _UIConfig<ExtraData> {
         get {
             uiConfig(ExtraData.self)
         }

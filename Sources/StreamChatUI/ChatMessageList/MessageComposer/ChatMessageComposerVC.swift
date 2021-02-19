@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public protocol _ChatMessageComposerViewControllerDelegate: AnyObject {
+internal protocol _ChatMessageComposerViewControllerDelegate: AnyObject {
     associatedtype ExtraData: ExtraDataTypes
 
     func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>)
@@ -21,17 +21,17 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     UINavigationControllerDelegate {
     // MARK: - Delegate
 
-    public struct Delegate {
-        public var didSendMessage: ((_ChatMessageComposerVC) -> Void)?
+    internal struct Delegate {
+        internal var didSendMessage: ((_ChatMessageComposerVC) -> Void)?
     }
 
     // MARK: - Underlying types
 
-    public var userSuggestionSearchController: _ChatUserSearchController<ExtraData>!
-    public private(set) lazy var suggestionsViewController =
+    internal var userSuggestionSearchController: _ChatUserSearchController<ExtraData>!
+    internal private(set) lazy var suggestionsViewController =
         uiConfig.messageComposer.suggestionsViewController.init()
 
-    public enum State {
+    internal enum State {
         case initial
         case slashCommand(Command)
         case quote(_ChatMessage<ExtraData>)
@@ -41,16 +41,16 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     // MARK: - Properties
 
     public var controller: _ChatChannelController<ExtraData>?
-    public var delegate: Delegate?
+    internal var delegate: Delegate?
     var shouldShowMentions = false
     
-    public var state: State = .initial {
+    internal var state: State = .initial {
         didSet {
             updateContent()
         }
     }
     
-    public var threadParentMessage: _ChatMessage<ExtraData>? {
+    internal var threadParentMessage: _ChatMessage<ExtraData>? {
         didSet {
             updateContentIfNeeded()
         }
@@ -65,26 +65,26 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     // MARK: - Subviews
         
-    public private(set) lazy var composerView = uiConfig
+    internal private(set) lazy var composerView = uiConfig
         .messageComposer
         .messageComposerView.init()
         .withoutAutoresizingMaskConstraints
     
     /// Convenience getter for underlying `textView`.
-    public var textView: _ChatMessageComposerInputTextView<ExtraData> {
+    internal var textView: _ChatMessageComposerInputTextView<ExtraData> {
         composerView.messageInputView.textView
     }
     
-    public private(set) lazy var imagePicker: UIImagePickerController = {
+    internal private(set) lazy var imagePicker: UIImagePickerController = {
         let picker = UIImagePickerController()
-        picker.mediaTypes = ["public.image"]
+        picker.mediaTypes = ["internal.image"]
         picker.sourceType = .photoLibrary
         picker.delegate = self
         return picker
     }()
     
-    public private(set) lazy var documentPicker: UIDocumentPickerViewController = {
-        let picker = UIDocumentPickerViewController(documentTypes: ["public.item"], in: .import)
+    internal private(set) lazy var documentPicker: UIDocumentPickerViewController = {
+        let picker = UIDocumentPickerViewController(documentTypes: ["internal.item"], in: .import)
         picker.delegate = self
         picker.allowsMultipleSelection = true
         return picker
@@ -92,13 +92,13 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     // MARK: Setup
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         setupInputView()
         observeSizeChanges()
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         super.updateContent()
         switch state {
         case .initial:
@@ -182,7 +182,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
     
-    public func observeSizeChanges() {
+    internal func observeSizeChanges() {
         composerView.addObserver(self, forKeyPath: "safeAreaInsets", options: .new, context: nil)
         textView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
     }
@@ -310,7 +310,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     // MARK: Suggestions
 
-    public func showOrUpdateSuggestionsViewController(for kind: SuggestionKind, onSelectItem: @escaping ((Int) -> Void)) {
+    internal func showOrUpdateSuggestionsViewController(for kind: SuggestionKind, onSelectItem: @escaping ((Int) -> Void)) {
         guard !suggestionsViewController.isPresented else {
             updateSuggestionsDataIfNeededSource(for: kind, onSelectItem: onSelectItem)
             return
@@ -327,12 +327,12 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         suggestionsViewController.bottomAnchorView = composerView
     }
 
-    public func dismissSuggestionsViewController() {
+    internal func dismissSuggestionsViewController() {
         suggestionsViewController.removeFromParent()
         suggestionsViewController.view.removeFromSuperview()
     }
 
-    public func updateSuggestionsDataIfNeededSource(for kind: SuggestionKind, onSelectItem: @escaping ((Int) -> Void)) {
+    internal func updateSuggestionsDataIfNeededSource(for kind: SuggestionKind, onSelectItem: @escaping ((Int) -> Void)) {
         let dataSource: UICollectionViewDataSource
         switch kind {
         case let .command(hints):
@@ -352,14 +352,14 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     // MARK: Attachments
     
-    public typealias MediaAttachmentInfo = (preview: UIImage, localURL: URL)
-    public typealias DocumentAttachmentInfo = (preview: UIImage, localURL: URL, size: Int64)
+    internal typealias MediaAttachmentInfo = (preview: UIImage, localURL: URL)
+    internal typealias DocumentAttachmentInfo = (preview: UIImage, localURL: URL, size: Int64)
     
-    public enum SelectedAttachments {
+    internal enum SelectedAttachments {
         case media, documents
     }
     
-    open var selectedAttachments: SelectedAttachments? {
+    internal var selectedAttachments: SelectedAttachments? {
         if imageAttachments.isEmpty, documentAttachments.isEmpty {
             return .none
         } else {
@@ -367,19 +367,19 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
     
-    open var imageAttachments: [MediaAttachmentInfo] = [] {
+    internal var imageAttachments: [MediaAttachmentInfo] = [] {
         didSet {
             didUpdateImageAttachments()
         }
     }
     
-    open var documentAttachments: [DocumentAttachmentInfo] = [] {
+    internal var documentAttachments: [DocumentAttachmentInfo] = [] {
         didSet {
             didUpdateDocumentAttachments()
         }
     }
     
-    open var attachmentSeeds: [ChatMessageAttachmentSeed] {
+    internal var attachmentSeeds: [ChatMessageAttachmentSeed] {
         switch selectedAttachments {
         case .media:
             return imageAttachments.map {
@@ -420,7 +420,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     // MARK: Suggestions
 
-    open func promptSuggestionIfNeeded(for text: String) {
+    internal func promptSuggestionIfNeeded(for text: String) {
         if shouldShowMentions {
             if let index = (text.range(of: "@", options: .backwards)?.upperBound) {
                 let textAfterAtSymbol = String(text.suffix(from: index))
@@ -562,7 +562,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 }
 
-public extension _ChatMessageComposerVC.Delegate {
+internal extension _ChatMessageComposerVC.Delegate {
     static func wrap<T: _ChatMessageComposerViewControllerDelegate>(
         _ delegate: T
     ) -> _ChatMessageComposerVC.Delegate where T.ExtraData == ExtraData {

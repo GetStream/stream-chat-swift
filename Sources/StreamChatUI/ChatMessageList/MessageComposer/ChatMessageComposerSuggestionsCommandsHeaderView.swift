@@ -6,17 +6,17 @@ import StreamChat
 import UIKit
 
 /// The header reusable view of the suggestion collection view.
-public typealias ChatMessageComposerSuggestionsCommandsReusableView =
+internal typealias ChatMessageComposerSuggestionsCommandsReusableView =
     _ChatMessageComposerSuggestionsCommandsReusableView<NoExtraData>
 
 /// The header reusable view of the suggestion collection view.
-open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
+internal class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
     UIConfigProvider {
     /// The reuse identifier of the reusable header view.
-    open class var reuseId: String { String(describing: self) }
+    internal class var reuseId: String { String(describing: self) }
     
     /// The suggestions header view.
-    open lazy var suggestionsHeader: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData> = {
+    internal lazy var suggestionsHeader: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData> = {
         let header = uiConfig.messageComposer.suggestionsHeaderView.init().withoutAutoresizingMaskConstraints
         embed(header)
         return header
@@ -24,29 +24,29 @@ open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraD
 }
 
 /// The header view of the suggestion collection view.
-public typealias ChatMessageComposerSuggestionsCommandsHeaderView = _ChatMessageComposerSuggestionsCommandsHeaderView<NoExtraData>
+internal typealias ChatMessageComposerSuggestionsCommandsHeaderView = _ChatMessageComposerSuggestionsCommandsHeaderView<NoExtraData>
 
 /// The header view of the suggestion collection view.
-open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+internal class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// The image icon of the commands header view.
-    open private(set) lazy var commandImageView: UIImageView = UIImageView()
+    internal private(set) lazy var commandImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
     
     /// The text label of the commands header view.
-    open private(set) lazy var headerLabel: UILabel = UILabel()
+    internal private(set) lazy var headerLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.popoverBackground
 
-        headerLabel.font = uiConfig.font.body
+        headerLabel.font = uiConfig.fonts.body
         headerLabel.textColor = uiConfig.colorPalette.subtitleText
         commandImageView.contentMode = .scaleAspectFit
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         let view = UIView().withoutAutoresizingMaskConstraints
         embed(view, insets: directionalLayoutMargins)
 

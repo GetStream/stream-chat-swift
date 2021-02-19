@@ -5,34 +5,34 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerImageAttachmentCollectionViewCell =
+internal typealias ChatMessageComposerImageAttachmentCollectionViewCell =
     _ChatMessageComposerImageAttachmentCollectionViewCell<NoExtraData>
 
-open class _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
+internal class _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
     UIConfigProvider {
     // MARK: - Properties
     
     class var reuseId: String { String(describing: self) }
     
-    public var discardButtonHandler: (() -> Void)?
+    internal var discardButtonHandler: (() -> Void)?
     
     // MARK: - Subviews
     
-    public private(set) lazy var imageView: UIImageView = UIImageView()
+    internal private(set) lazy var imageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var discardButton: UIButton = UIButton()
+    internal private(set) lazy var discardButton: UIButton = UIButton()
         .withoutAutoresizingMaskConstraints
         
     // MARK: - Lifecycle
     
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         
         discardButton.addTarget(self, action: #selector(discard), for: .touchUpInside)
     }
     
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         discardButton.setImage(uiConfig.images.messageComposerDiscardAttachment, for: .normal)
         
         layer.masksToBounds = true
@@ -41,7 +41,7 @@ open class _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData: Extr
         imageView.contentMode = .scaleAspectFill
     }
         
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         contentView.embed(imageView)
         
         contentView.addSubview(discardButton)

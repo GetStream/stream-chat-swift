@@ -5,10 +5,10 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageMetadataView = _ChatMessageMetadataView<NoExtraData>
+internal typealias ChatMessageMetadataView = _ChatMessageMetadataView<NoExtraData>
 
-open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var message: _ChatMessageGroupPart<ExtraData>? {
+internal class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -17,41 +17,41 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     
     // MARK: - Subviews
 
-    public private(set) lazy var stack: UIStackView = {
+    internal private(set) lazy var stack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.spacing = UIStackView.spacingUseSystem
         return stack.withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var currentUserVisabilityIndicator = uiConfig
+    internal private(set) lazy var currentUserVisabilityIndicator = uiConfig
         .messageList
         .messageContentSubviews
         .onlyVisibleForCurrentUserIndicator
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var timestampLabel: UILabel = UILabel().withBidirectionalLanguagesSupport
+    internal private(set) lazy var timestampLabel: UILabel = UILabel().withBidirectionalLanguagesSupport
     
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         let color = uiConfig.colorPalette.subtitleText
         currentUserVisabilityIndicator.textLabel.textColor = color
         currentUserVisabilityIndicator.imageView.tintColor = color
         
-        timestampLabel.font = uiConfig.font.subheadline
+        timestampLabel.font = uiConfig.fonts.subheadline
         timestampLabel.adjustsFontForContentSizeCategory = true
         timestampLabel.textColor = color
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         stack.addArrangedSubview(currentUserVisabilityIndicator)
         stack.addArrangedSubview(timestampLabel)
         embed(stack)
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         if let createdAt = message?.createdAt {
             timestampLabel.text = dateFormatter.string(from: createdAt)
         } else {
@@ -61,37 +61,37 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     }
 }
 
-open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+internal class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     // MARK: - Subviews
 
-    public private(set) lazy var stack: UIStackView = {
+    internal private(set) lazy var stack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.spacing = UIStackView.spacingUseSystem
         return stack.withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var imageView: UIImageView = {
+    internal private(set) lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         return imageView.withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var textLabel: UILabel = {
+    internal private(set) lazy var textLabel: UILabel = {
         let label = UILabel()
-        label.font = uiConfig.font.subheadline
+        label.font = uiConfig.fonts.subheadline
         label.adjustsFontForContentSizeCategory = true
         return label.withoutAutoresizingMaskConstraints
     }()
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         imageView.image = uiConfig.images.onlyVisibleToCurrentUser
         textLabel.text = L10n.Message.onlyVisibleToYou
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         stack.addArrangedSubview(imageView)
         stack.addArrangedSubview(textLabel)
         embed(stack)
