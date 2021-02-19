@@ -88,8 +88,10 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View
     }
 }
 
+/// A view cell that displays a command.
 public typealias ChatMessageComposerCommandCollectionViewCell = _ChatMessageComposerCommandCollectionViewCell<NoExtraData>
 
+/// A view cell that displays a command.
 open class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
     open class var reuseId: String { String(describing: self) }
 
