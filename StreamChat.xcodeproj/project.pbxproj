@@ -202,7 +202,6 @@
 		8ACC7D19241924BE000750E4 /* ChatViewController+TableFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CBA241924BE000750E4 /* ChatViewController+TableFooterView.swift */; };
 		8ACC7D1A241924BE000750E4 /* ChatViewController+Reactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CBB241924BE000750E4 /* ChatViewController+Reactions.swift */; };
 		8ACC7D1B241924BE000750E4 /* ChatViewController+MessageActions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CBC241924BE000750E4 /* ChatViewController+MessageActions.swift */; };
-		8ACC7D1C241924BE000750E4 /* ChatViewController+Cells.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CBD241924BE000750E4 /* ChatViewController+Cells.swift */; };
 		8ACC7D1D241924BE000750E4 /* AttachmentFileType+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CBF241924BE000750E4 /* AttachmentFileType+Extensions.swift */; };
 		8ACC7D1E241924BE000750E4 /* FileAttachmentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CC0241924BE000750E4 /* FileAttachmentPreview.swift */; };
 		8ACC7D1F241924BE000750E4 /* AttachmentPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8ACC7CC1241924BE000750E4 /* AttachmentPreview.swift */; };
@@ -497,7 +496,6 @@
 		8ACC7CBA241924BE000750E4 /* ChatViewController+TableFooterView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChatViewController+TableFooterView.swift"; sourceTree = "<group>"; };
 		8ACC7CBB241924BE000750E4 /* ChatViewController+Reactions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Reactions.swift"; sourceTree = "<group>"; };
 		8ACC7CBC241924BE000750E4 /* ChatViewController+MessageActions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChatViewController+MessageActions.swift"; sourceTree = "<group>"; };
-		8ACC7CBD241924BE000750E4 /* ChatViewController+Cells.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ChatViewController+Cells.swift"; sourceTree = "<group>"; };
 		8ACC7CBF241924BE000750E4 /* AttachmentFileType+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "AttachmentFileType+Extensions.swift"; sourceTree = "<group>"; };
 		8ACC7CC0241924BE000750E4 /* FileAttachmentPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileAttachmentPreview.swift; sourceTree = "<group>"; };
 		8ACC7CC1241924BE000750E4 /* AttachmentPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AttachmentPreview.swift; sourceTree = "<group>"; };
@@ -1102,7 +1100,6 @@
 				8ACC7CBA241924BE000750E4 /* ChatViewController+TableFooterView.swift */,
 				8ACC7CBB241924BE000750E4 /* ChatViewController+Reactions.swift */,
 				8ACC7CBC241924BE000750E4 /* ChatViewController+MessageActions.swift */,
-				8ACC7CBD241924BE000750E4 /* ChatViewController+Cells.swift */,
 			);
 			path = "Chat View Controller";
 			sourceTree = "<group>";
@@ -1807,7 +1804,6 @@
 				8ACC7D1D241924BE000750E4 /* AttachmentFileType+Extensions.swift in Sources */,
 				8ACC7D1F241924BE000750E4 /* AttachmentPreview.swift in Sources */,
 				8ACC7D40241924BE000750E4 /* UILabel+Extensions.swift in Sources */,
-				8ACC7D1C241924BE000750E4 /* ChatViewController+Cells.swift in Sources */,
 				8ACC7D26241924BE000750E4 /* Spacing.swift in Sources */,
 				8A9D2C7424487E18007BD497 /* ChatViewStyle+Presets.swift in Sources */,
 				8ACC7D55241924BE000750E4 /* ChannelTableViewCell.swift in Sources */,

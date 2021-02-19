@@ -167,7 +167,7 @@ extension ChatViewController {
             .disposed(by: disposeBag)
     }
     
-    private func dispatchCommands(in text: String) {
+    func dispatchCommands(in text: String) {
         let trimmedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         showCommandsIfNeeded(for: trimmedText)
         
@@ -178,41 +178,7 @@ extension ChatViewController {
         }
     }
     
-    // MARK: Send Message
-    
-    /// Send a message.
-    public func send() {
-        let text = composerView.text.trimmingCharacters(in: .whitespacesAndNewlines)
-        let isMessageEditing = presenter?.editMessage != nil
-        
-        if findCommand(in: text) != nil || isMessageEditing {
-            view.endEditing(true)
-        }
-        
-        if isMessageEditing {
-            composerEditingContainerView.animate(show: false)
-        }
-        
-        presenter?.rx.send(text: text,
-                           showReplyInChannel: composerView.alsoSendToChannelButton.isSelected,
-                           parseMentionedUsers: parseMentionedUsersOnSend)
-            .subscribe(
-                onNext: { [weak self] messageResponse in
-                    if messageResponse.message.type == .error {
-                        self?.show(error: ClientError.errorMessage(messageResponse.message))
-                    }
-                },
-                onError: { [weak self] in
-                    self?.show(error: $0)
-                })
-            .disposed(by: disposeBag)
-        
-        // We don't want users to send the same message multiple times
-        // in case their internet is slow and message isn't sent immediately
-        composerView.reset()
-    }
-    
-    private func findCommand(in text: String) -> String? {
+    func findCommand(in text: String) -> String? {
         guard text.count > 1, text.hasPrefix("/") else {
             return nil
         }
