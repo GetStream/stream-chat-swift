@@ -10,7 +10,9 @@ public extension _UIConfig {
         public var channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self
         public var channelListSwipeableItemView: _ChatChannelSwipeableListItemView<ExtraData>.Type =
             _ChatChannelSwipeableListItemView<ExtraData>.self
+        /// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
         public var channelListItemView: _ChatChannelListItemView<ExtraData>.Type = _ChatChannelListItemView<ExtraData>.self
+        /// A `UICollectionViewCell` subclass that shows channel information.
         public var channelViewCell: _ChatChannelListCollectionViewCell<ExtraData>.Type =
             _ChatChannelListCollectionViewCell<ExtraData>.self
         /// A button used for creating new channels.
@@ -20,6 +22,7 @@ public extension _UIConfig {
     }
     
     struct ChannelListItemSubviews {
+        /// A view that shows a user avatar including an indicator of the user presence (online/offline).
         public var avatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
         /// A type for the view that shows a number of unread messages in channel.
         public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self

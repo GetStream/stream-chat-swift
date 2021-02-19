@@ -6,8 +6,6 @@ import Foundation
 import UIKit
 
 open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
-    // MARK: - Init & Deinit
-    
     override public init() {
         super.init()
         commonInit()
@@ -17,9 +15,7 @@ open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
         super.init(coder: coder)
         commonInit()
     }
-    
-    // MARK: - Overrides
-    
+        
     override open func prepare() {
         super.prepare()
         
@@ -28,17 +24,15 @@ open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
             height: 64
         )
     }
-    
-    // MARK: - Private
-    
-    private func commonInit() {
+        
+    open func commonInit() {
         minimumInteritemSpacing = 0
         minimumLineSpacing = 0
         
         subscribeToNotifications()
     }
     
-    private func subscribeToNotifications() {
+    open func subscribeToNotifications() {
         let center = NotificationCenter.default
         
         center.addObserver(
@@ -49,7 +43,7 @@ open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
         )
     }
     
-    @objc private func didChangeContentSizeCategory(_ notification: Notification) {
+    @objc open func didChangeContentSizeCategory(_ notification: Notification) {
         invalidateLayout()
     }
 }

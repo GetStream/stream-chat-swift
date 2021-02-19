@@ -12,6 +12,18 @@ class ChatChannelListVC_Tests: XCTestCase {
     var vc: ChatChannelListVC!
     var mockedChannelListController: ChatChannelListController_Mock<NoExtraData>!
     var mockedCurrentUserController: CurrentChatUserController_Mock<NoExtraData>!
+    var mockedRouter: ChatChannelListRouter_Mock<NoExtraData> { vc.router as! ChatChannelListRouter_Mock<NoExtraData> }
+    
+    // Workaround for setting mockedCurrentUserController to userAvatarView.
+    class TestChatChannelListVC: ChatChannelListVC {
+        var mockedCurrentUserController: CurrentChatUserController_Mock<NoExtraData>?
+        
+        override func setUp() {
+            super.setUp()
+            
+            userAvatarView.controller = mockedCurrentUserController
+        }
+    }
     
     override func setUp() {
         super.setUp()
@@ -22,10 +34,15 @@ class ChatChannelListVC_Tests: XCTestCase {
             imageURL: TestImages.yoda.url
         )
         
-        vc = ChatChannelListVC()
+        let testVC = TestChatChannelListVC()
+        testVC.mockedCurrentUserController = mockedCurrentUserController
+        vc = testVC
+        
         vc.controller = mockedChannelListController
-        vc.userAvatarView.controller = mockedCurrentUserController
-        vc.uiConfig = UIConfig()
+        
+        var uiConfig = UIConfig()
+        uiConfig.navigation.channelListRouter = ChatChannelListRouter_Mock<NoExtraData>.self
+        vc.uiConfig = uiConfig
         
         NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
     }
@@ -73,6 +90,35 @@ class ChatChannelListVC_Tests: XCTestCase {
             changes: []
         )
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
+    }
+    
+    func test_router_openCreateNewChannel() {
+        vc.executeLifecycleMethods()
+        
+        vc.createNewChannelButton.simulateEvent(.touchUpInside)
+        XCTAssertTrue(mockedRouter.openCreateNewChannelCalled)
+    }
+    
+    func test_router_openCurrentUserProfile() {
+        vc.executeLifecycleMethods()
+        
+        vc.userAvatarView.simulateEvent(.touchUpInside)
+        XCTAssertEqual(mockedRouter.openCurrentUserProfile_currentUser, vc.userAvatarView.controller?.currentUser)
+    }
+    
+    func test_router_openChat() {
+        vc.executeLifecycleMethods()
+        
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            name: "Channel",
+            imageURL: TestImages.yoda.url
+        )
+        
+        mockedChannelListController.simulate(channels: [channel], changes: [])
+                
+        vc.collectionView(vc.collectionView, didSelectItemAt: IndexPath(item: 0, section: 0))
+        XCTAssertEqual(mockedRouter.openChat_channel, vc.controller.channels.first)
     }
     
     func test_chatChannelList_isEmpty() {
