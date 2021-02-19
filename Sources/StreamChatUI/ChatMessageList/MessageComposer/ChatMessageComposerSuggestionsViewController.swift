@@ -5,31 +5,30 @@
 import StreamChat
 import UIKit
 
+/// The type of a suggestion when typing in the composer view. It can be a command or a mention.
 public enum SuggestionKind {
     case command(hints: [Command])
     case mention
 }
 
+/// A view controller that shows suggestions of commands or mentions.
 public typealias ChatMessageComposerSuggestionsViewController = _ChatMessageComposerSuggestionsViewController<NoExtraData>
 
+/// A view controller that shows suggestions of commands or mentions.
 open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewController,
     UIConfigProvider,
     UICollectionViewDelegate {
-    // MARK: - Property
-
+    
+    /// The data provider of the collection view. A custom `UICollectionViewDataSource` can be provided,
+    /// by default `ChatMessageComposerSuggestionsCommandDataSource` is used.
+    /// A subclass of `ChatMessageComposerSuggestionsCommandDataSource` can also be provided.
     public var dataSource: UICollectionViewDataSource? {
         didSet {
             updateContentIfNeeded()
         }
     }
-
-    private var frameObserver: NSKeyValueObservation?
-
-    /// Height for suggestion cell, this value should never be 0
-    /// otherwise it causes loop for height of this controller and as a result this controller height will be 0 as well.
-    /// Note: This value can be 1, it's just for purpose of 1 cell being visible.
-    private let defaultRowHeight: CGFloat = 44
-
+    
+    /// The number of visible commands without scrolling.
     open var numberOfVisibleRows: CGFloat = 4
 
     /// View to which the suggestions should be pinned.
@@ -38,27 +37,32 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
     /// the bottomAnchorView as soon as we compute the height of the
     /// contentSize of the nested collectionView
     public var bottomAnchorView: UIView?
-
+    
+    /// A closure to observer when an item is selected.
     public var didSelectItemAt: ((Int) -> Void)?
-
+    
+    /// Property to check if the suggestions view controller is currently presented.
     public var isPresented: Bool {
         view.superview != nil
     }
-
-    private var collectionViewHeightObserver: NSKeyValueObservation?
-
-    // MARK: - Subviews
-
-    open private(set) lazy var collectionView = uiConfig
+    
+    /// The collection view of the commands.
+    open private(set) lazy var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData> = uiConfig
         .messageComposer
         .suggestionsCollectionView
         .init(layout: uiConfig.messageComposer.suggestionsCollectionViewLayout.init())
         .withoutAutoresizingMaskConstraints
-
+    
+    /// The container view where collectionView is embedded.
     open private(set) lazy var containerView: UIView = UIView().withoutAutoresizingMaskConstraints
 
-    // MARK: - Overrides
-
+    // Height for suggestion cell, this value should never be 0
+    // otherwise it causes loop for height of this controller and as a result this controller height will be 0 as well.
+    // Note: This value can be 1, it's just for purpose of 1 cell being visible.
+    private let defaultRowHeight: CGFloat = 44
+    private var frameObserver: NSKeyValueObservation?
+    private var collectionViewHeightObserver: NSKeyValueObservation?
+    
     override open func setUp() {
         super.setUp()
 
@@ -113,8 +117,6 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
         collectionView.reloadData()
     }
 
-    // MARK: - Private
-
     private func updateViewFrame() {
         frameObserver = bottomAnchorView?.observe(
             \.bounds,
@@ -130,8 +132,6 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
         )
     }
 
-    // MARK: - UICollectionView
-
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         didSelectItemAt?(indexPath.row)
     }
@@ -141,12 +141,20 @@ public typealias ChatMessageComposerSuggestionsCommandDataSource = _ChatMessageC
 
 open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
     open var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
+    
+    /// The list of commands.
     open var commands: [Command]
-
+    
+    /// The uiConfig to override ui components.
     open var uiConfig: _UIConfig<ExtraData> {
         collectionView.uiConfig
     }
-
+    
+    /// Data Source Initialiser
+    ///
+    /// - Parameters:
+    ///   - commands: The list of commands.
+    ///   - collectionView: The collection view of the commands.
     public init(with commands: [Command], collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>) {
         self.commands = commands
         self.collectionView = collectionView
@@ -211,13 +219,18 @@ public typealias ChatMessageComposerSuggestionsMentionDataSource = _ChatMessageC
 open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
     UICollectionViewDataSource,
     _ChatUserSearchControllerDelegate {
-    var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
-    var searchController: _ChatUserSearchController<ExtraData>
-
+    
+    /// The collection view of the mentions.
+    open var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
+    
+    /// The search controller to search for mentions.
+    open var searchController: _ChatUserSearchController<ExtraData>
+    
+    /// The uiConfig to override ui components.
     var uiConfig: _UIConfig<ExtraData> {
         collectionView.uiConfig
     }
-
+    
     /// Data Source Initialiser
     /// - Parameters:
     ///   - collectionView: The collection view of the mentions.
@@ -241,8 +254,6 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
             forCellWithReuseIdentifier: uiConfig.messageComposer.suggestionsMentionCollectionViewCell.reuseId
         )
     }
-
-    // MARK: - CollectionViewDataSource
 
     public func collectionView(
         _ collectionView: UICollectionView,
@@ -269,8 +280,6 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
         cell.mentionView.content = user
         return cell
     }
-
-    // MARK: - ChatUserSearchControllerDelegate
 
     public func controller(
         _ controller: _ChatUserSearchController<ExtraData>,
