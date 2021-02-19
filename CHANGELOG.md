@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### 🔄 Changed
+
+# [2.6.4](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.4)
+_February 19, 2021_
+
+### 🔄 Changed
 - `open`ed up many functions in `ChatViewController` [#827](https://github.com/GetStream/stream-chat-swift/issues/827)
 
 ### 🐞 Fixed

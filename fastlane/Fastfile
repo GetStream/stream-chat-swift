@@ -14,9 +14,9 @@ end
 
 desc "Release a new version"
 lane :release do |options|
-  UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
+  UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor") unless ["patch", "minor"].include?(options[:type])
   
-  ensure_git_branch(branch: 'main') # We can only release on default branch
+  ensure_git_branch(branch: 'main_v2') # We can only release v2 on main_v2 branch
   
   ensure_git_status_clean unless options[:no_ensure_clean]
   
@@ -88,16 +88,8 @@ lane :release do |options|
   release_core
   release_ui
   
-  slack(
-    message: "#{version_number} successfully released!",
-    payload: {
-      "Changelog" => changes,
-    },
-    default_payloads: [:git_author],
-  )
-  
   UI.success("Successfully released #{version_number}")
-  UI.success("Github release was created as draft, please visit #{github_release["url"]} to publish it")
+  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
 end
 
 desc "Installs all Certs and Profiles necessary for development and ad-hoc"
