@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public protocol _ChatMessageListVCDataSource: AnyObject {
+internal protocol _ChatMessageListVCDataSource: AnyObject {
     associatedtype ExtraData: ExtraDataTypes
 
     func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int
@@ -22,7 +22,7 @@ public protocol _ChatMessageListVCDataSource: AnyObject {
     ) -> _ChatMessageController<ExtraData>
 }
 
-public protocol _ChatMessageListVCDelegate: AnyObject {
+internal protocol _ChatMessageListVCDelegate: AnyObject {
     associatedtype ExtraData: ExtraDataTypes
 
     func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didSelectMessageAt index: Int)
@@ -31,39 +31,41 @@ public protocol _ChatMessageListVCDelegate: AnyObject {
     func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>)
 }
 
-public typealias ChatMessageListVC = _ChatMessageListVC<NoExtraData>
+internal typealias ChatMessageListVC = _ChatMessageListVC<NoExtraData>
 
 open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
     UIConfigProvider,
     _ChatMessageActionsVCDelegate {
-    public struct DataSource {
-        public var numberOfMessages: (_ChatMessageListVC) -> Int
-        public var messageAtIndex: (_ChatMessageListVC, Int) -> _ChatMessage<ExtraData>
-        public var loadMoreMessages: (_ChatMessageListVC) -> Void
-        public var replyMessageForMessageAtIndex: (_ChatMessageListVC, _ChatMessage<ExtraData>, Int) -> _ChatMessage<ExtraData>?
-        public var controllerForMessage: (_ChatMessageListVC, _ChatMessage<ExtraData>) -> _ChatMessageController<ExtraData>
+    public typealias ExtraData = ExtraData
+
+    internal struct DataSource {
+        internal var numberOfMessages: (_ChatMessageListVC) -> Int
+        internal var messageAtIndex: (_ChatMessageListVC, Int) -> _ChatMessage<ExtraData>
+        internal var loadMoreMessages: (_ChatMessageListVC) -> Void
+        internal var replyMessageForMessageAtIndex: (_ChatMessageListVC, _ChatMessage<ExtraData>, Int) -> _ChatMessage<ExtraData>?
+        internal var controllerForMessage: (_ChatMessageListVC, _ChatMessage<ExtraData>) -> _ChatMessageController<ExtraData>
     }
 
-    public struct Delegate {
-        public var didSelectMessageAtIndex: ((_ChatMessageListVC, Int) -> Void)?
-        public var didTapOnRepliesForMessage: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
-        public var didTapOnInlineReply: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
-        public var didTapOnEdit: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
+    internal struct Delegate {
+        internal var didSelectMessageAtIndex: ((_ChatMessageListVC, Int) -> Void)?
+        internal var didTapOnRepliesForMessage: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
+        internal var didTapOnInlineReply: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
+        internal var didTapOnEdit: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
     }
 
-    public var dataSource: DataSource = .empty()
-    public var delegate: Delegate? // swiftlint:disable:this weak_delegate
+    internal var dataSource: DataSource = .empty()
+    internal var delegate: Delegate? // swiftlint:disable:this weak_delegate
 
-    public lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
+    internal lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
 
-    public private(set) lazy var collectionViewLayout = uiConfig
+    internal private(set) lazy var collectionViewLayout = uiConfig
         .messageList
         .collectionLayout
         .init()
     
-    public private(set) lazy var collectionView: UICollectionView = {
+    internal private(set) lazy var collectionView: UICollectionView = {
         let collection = uiConfig.messageList.collectionView.init(layout: collectionViewLayout)
         
         let incomingCell = uiConfig.messageList.incomingMessageCell
@@ -88,16 +90,16 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }()
 
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
-    public private(set) var needsToScrollToMostRecentMessage = true
+    internal private(set) var needsToScrollToMostRecentMessage = true
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
-    public private(set) var needsToScrollToMostRecentMessageAnimated = false
+    internal private(set) var needsToScrollToMostRecentMessageAnimated = false
 
     /// When controller loaded first time, message layout is in estimated state.
     /// We force layout reload on first appear, before showing message list.
     /// This way we able to hide ugly jump
-    public private(set) var hideInitialLayout = true
+    internal private(set) var hideInitialLayout = true
 
-    open var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
+    internal var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
 
     // MARK: - Life Cycle
 
@@ -111,14 +113,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
         collectionView.addGestureRecognizer(longPress)
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
 
         view.addSubview(collectionView)
@@ -126,29 +128,29 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
 
         view.backgroundColor = uiConfig.colorPalette.background
         collectionView.backgroundColor = .clear
     }
 
-    // MARK: - Public API
+    // MARK: - internal API
 
     /// Will scroll to most recent message on next `updateMessages` call
-    public func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
+    internal func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
         needsToScrollToMostRecentMessage = true
         needsToScrollToMostRecentMessageAnimated = animated
     }
 
     /// Force scroll to most recent message check without waiting for `updateMessages`
-    public func scrollToMostRecentMessageIfNeeded() {
+    internal func scrollToMostRecentMessageIfNeeded() {
         if needsToScrollToMostRecentMessage {
             scrollToMostRecentMessage(animated: needsToScrollToMostRecentMessageAnimated)
         }
     }
 
-    public func scrollToMostRecentMessage(animated: Bool = true) {
+    internal func scrollToMostRecentMessage(animated: Bool = true) {
         needsToScrollToMostRecentMessage = false
         needsToScrollToMostRecentMessageAnimated = false
 
@@ -156,7 +158,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .bottom, animated: animated)
     }
 
-    public func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
+    internal func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
         collectionView.performBatchUpdates {
             for change in changes {
                 switch change {
@@ -176,7 +178,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
     
-    open func cellReuseIdentifierForMessage(_ message: _ChatMessageGroupPart<ExtraData>) -> String {
+    internal func cellReuseIdentifierForMessage(_ message: _ChatMessageGroupPart<ExtraData>) -> String {
         if message.attachments.contains(where: { $0.type == .image || $0.type == .giphy || $0.type == .file }) {
             if message.isSentByCurrentUser {
                 return uiConfig.messageList.outgoingMessageAttachmentCell.reuseId
@@ -258,7 +260,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     // MARK: - ChatMessageActionsVCDelegate
 
-    open func chatMessageActionsVC(
+    internal func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
         didTapOnInlineReplyFor message: _ChatMessage<ExtraData>
     ) {
@@ -268,14 +270,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
 
-    open func chatMessageActionsVC(
+    internal func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
         didTapOnThreadReplyFor message: _ChatMessage<ExtraData>
     ) {
         dismiss(animated: true)
     }
 
-    open func chatMessageActionsVC(
+    internal func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
         didTapOnEdit message: _ChatMessage<ExtraData>
     ) {
@@ -285,7 +287,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
 
-    open func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>) {
+    internal func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>) {
         dismiss(animated: true)
     }
 
@@ -353,11 +355,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     private func didTapOnLink(_ link: ChatMessageDefaultAttachment) {
-        router.openLink(link)
+        router.internalLink(link)
     }
 }
 
-public extension _ChatMessageListVC.DataSource {
+internal extension _ChatMessageListVC.DataSource {
     static func wrap<T: _ChatMessageListVCDataSource>(_ ds: T) -> _ChatMessageListVC.DataSource where T.ExtraData == ExtraData {
         _ChatMessageListVC.DataSource(
             numberOfMessages: { [unowned ds] in ds.numberOfMessagesInChatMessageListVC($0) },
@@ -383,7 +385,7 @@ public extension _ChatMessageListVC.DataSource {
     }
 }
 
-public extension _ChatMessageListVC.Delegate {
+internal extension _ChatMessageListVC.Delegate {
     static func wrap<T: _ChatMessageListVCDelegate>(_ delegate: T) -> _ChatMessageListVC.Delegate where T.ExtraData == ExtraData {
         _ChatMessageListVC.Delegate(
             didSelectMessageAtIndex: { [weak delegate] in delegate?.chatMessageListVC($0, didSelectMessageAt: $1) },

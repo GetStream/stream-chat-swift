@@ -6,63 +6,63 @@ import StreamChat
 import UIKit
 
 /// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
-public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
+internal typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
 /// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
-open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
+internal class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
     /// The data this view component shows.
-    public var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
+    internal var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContentIfNeeded() }
     }
         
     private lazy var uiConfigSubviews: _UIConfig.ChannelListItemSubviews = uiConfig.channelList.channelListItemSubviews
     
     /// The `ContainerStackView` instance used to arrange view,
-    open private(set) lazy var container: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var container: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
     
     /// The `UILabel` instance showing the channel name.
-    open private(set) lazy var titleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var titleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
     
     /// The `UILabel` instance showing the last message or typing members if any.
-    open private(set) lazy var subtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var subtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
     
     /// The `UILabel` instance showing the time of the last sent message.
-    open private(set) lazy var timestampLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var timestampLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
     
     /// The view used to show channels avatar.
-    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfigSubviews
+    internal private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfigSubviews
         .avatarView
         .init()
         .withoutAutoresizingMaskConstraints
     
     /// The view showing number of unread messages in channel if any.
-    open private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfigSubviews
+    internal private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfigSubviews
         .unreadCountView.init()
         .withoutAutoresizingMaskConstraints
 
     /// The view showing indicator for read status of the last message in channel.
-    open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
+    internal private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
         .readStatusView.init()
         .withoutAutoresizingMaskConstraints
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
 
         backgroundColor = uiConfig.colorPalette.background
 
         titleLabel.adjustsFontForContentSizeCategory = true
-        titleLabel.font = uiConfig.font.bodyBold
+        titleLabel.font = uiConfig.fonts.bodyBold
 
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
         subtitleLabel.adjustsFontForContentSizeCategory = true
-        subtitleLabel.font = uiConfig.font.subheadline
+        subtitleLabel.font = uiConfig.fonts.subheadline
         
         timestampLabel.textColor = uiConfig.colorPalette.subtitleText
         timestampLabel.adjustsFontForContentSizeCategory = true
-        timestampLabel.font = uiConfig.font.subheadline
+        timestampLabel.font = uiConfig.fonts.subheadline
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
 
         cellContentView.embed(container, insets: directionalLayoutMargins)
@@ -120,7 +120,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         container.centerStackView.addArrangedSubview(containerCenterView)
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         if let channel = content.channel {
             let namer = uiConfig.channelList.channelNamer.init()
             titleLabel.text = namer.name(for: channel, as: content.currentUserId)

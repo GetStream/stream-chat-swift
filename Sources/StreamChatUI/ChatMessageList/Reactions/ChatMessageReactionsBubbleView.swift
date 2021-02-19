@@ -5,28 +5,28 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageReactionsBubbleView = _ChatMessageReactionsBubbleView<NoExtraData>
+internal typealias ChatMessageReactionsBubbleView = _ChatMessageReactionsBubbleView<NoExtraData>
 
-open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var content: Content? {
+internal class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal var content: Content? {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public private(set) lazy var contentView = uiConfig
+    internal private(set) lazy var contentView = uiConfig
         .messageList
         .messageReactions
         .reactionsView
         .init()
         .withoutAutoresizingMaskConstraints
 
-    open var tailLeadingAnchor: NSLayoutXAxisAnchor { contentView.centerXAnchor }
-    open var tailTrailingAnchor: NSLayoutXAxisAnchor { contentView.centerXAnchor }
+    internal var tailLeadingAnchor: NSLayoutXAxisAnchor { contentView.centerXAnchor }
+    internal var tailTrailingAnchor: NSLayoutXAxisAnchor { contentView.centerXAnchor }
 
     // MARK: - Overrides
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
 
         embed(contentView)
@@ -34,7 +34,7 @@ open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, UI
 
     // MARK: - Life Cycle
 
-    override open func updateContent() {
+    override internal func updateContent() {
         contentView.content = content.flatMap {
             .init(
                 useBigIcons: $0.style.isBig,
@@ -48,12 +48,12 @@ open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, UI
 // MARK: - Content
 
 extension _ChatMessageReactionsBubbleView {
-    public struct Content {
-        public let style: ChatMessageReactionsBubbleStyle
-        public let reactions: [ChatMessageReactionData]
-        public let didTapOnReaction: (MessageReactionType) -> Void
+    internal struct Content {
+        internal let style: ChatMessageReactionsBubbleStyle
+        internal let reactions: [ChatMessageReactionData]
+        internal let didTapOnReaction: (MessageReactionType) -> Void
 
-        public init(
+        internal init(
             style: ChatMessageReactionsBubbleStyle,
             reactions: [ChatMessageReactionData],
             didTapOnReaction: @escaping (MessageReactionType) -> Void

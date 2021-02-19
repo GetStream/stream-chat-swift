@@ -5,38 +5,38 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerSuggestionsCommandsReusableView =
+internal typealias ChatMessageComposerSuggestionsCommandsReusableView =
     _ChatMessageComposerSuggestionsCommandsReusableView<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
+internal class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
     UIConfigProvider {
     class var reuseId: String { String(describing: self) }
 
-    public lazy var suggestionsHeader: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData> = {
+    internal lazy var suggestionsHeader: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData> = {
         let header = uiConfig.messageComposer.suggestionsHeaderView.init().withoutAutoresizingMaskConstraints
         embed(header)
         return header
     }()
 }
 
-public typealias ChatMessageComposerSuggestionsCommandsHeaderView = _ChatMessageComposerSuggestionsCommandsHeaderView<NoExtraData>
+internal typealias ChatMessageComposerSuggestionsCommandsHeaderView = _ChatMessageComposerSuggestionsCommandsHeaderView<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public private(set) lazy var commandImageView = UIImageView()
+internal class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal private(set) lazy var commandImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var headerLabel = UILabel()
+    internal private(set) lazy var headerLabel = UILabel()
         .withoutAutoresizingMaskConstraints
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.popoverBackground
 
-        headerLabel.font = uiConfig.font.body
+        headerLabel.font = uiConfig.fonts.body
         headerLabel.textColor = uiConfig.colorPalette.subtitleText
         commandImageView.contentMode = .scaleAspectFit
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         let view = UIView().withoutAutoresizingMaskConstraints
         embed(view, insets: directionalLayoutMargins)
 

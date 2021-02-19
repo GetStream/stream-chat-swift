@@ -5,12 +5,12 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageLinkPreviewView = _ChatMessageLinkPreviewView<NoExtraData>
+internal typealias ChatMessageLinkPreviewView = _ChatMessageLinkPreviewView<NoExtraData>
 
-open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
-    public var content: ChatMessageDefaultAttachment? { didSet { updateContentIfNeeded() } }
+internal class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
+    internal var content: ChatMessageDefaultAttachment? { didSet { updateContentIfNeeded() } }
 
-    public private(set) lazy var imagePreview = uiConfig
+    internal private(set) lazy var imagePreview = uiConfig
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -18,33 +18,33 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var authorBackground: UIView = {
+    internal private(set) lazy var authorBackground: UIView = {
         let view = ShapeView().withoutAutoresizingMaskConstraints
         view.shapeLayer.maskedCorners = .layerMaxXMinYCorner
         view.layer.cornerRadius = 16
         return view
     }()
 
-    public private(set) lazy var authorLabel: UILabel = {
+    internal private(set) lazy var authorLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = uiConfig.font.bodyBold
+        label.font = uiConfig.fonts.bodyBold
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
 
-    public private(set) lazy var headlineLabel: UILabel = {
+    internal private(set) lazy var headlineLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = uiConfig.font.subheadlineBold
+        label.font = uiConfig.fonts.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
         return label
     }()
 
-    public private(set) lazy var bodyTextView: UITextView = {
+    internal private(set) lazy var bodyTextView: UITextView = {
         let textView = UITextView().withoutAutoresizingMaskConstraints
         textView.isEditable = false
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
-        textView.font = uiConfig.font.subheadline
+        textView.font = uiConfig.fonts.subheadline
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
@@ -53,13 +53,13 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
         return textView
     }()
 
-    public private(set) lazy var outlineView: UIView = {
+    internal private(set) lazy var outlineView: UIView = {
         let view = UIView().withoutAutoresizingMaskConstraints
         view.widthAnchor.pin(equalToConstant: 2).isActive = true
         return view
     }()
 
-    public private(set) lazy var textStack: UIStackView = {
+    internal private(set) lazy var textStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [authorLabel, headlineLabel, bodyTextView])
         stack.axis = .vertical
         stack.alignment = .leading
@@ -68,7 +68,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
         return stack.withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var outlineStack: UIStackView = {
+    internal private(set) lazy var outlineStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [outlineView, textStack])
         stack.axis = .horizontal
         stack.spacing = 6
@@ -78,7 +78,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
     var authorOnImageConstraint: NSLayoutConstraint?
     var noAuthorWithImageConstraint: NSLayoutConstraint?
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
         authorBackground.backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
         backgroundColor = .clear
@@ -86,7 +86,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
         imagePreview.clipsToBounds = true
     }
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         imagePreview.isUserInteractionEnabled = false
@@ -94,7 +94,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
         outlineStack.isUserInteractionEnabled = false
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8)
 
@@ -123,7 +123,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
         authorOnImageConstraint = authorLabel.firstBaselineAnchor.pin(equalTo: imagePreview.bottomAnchor)
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         super.updateContent()
 
         let isImageHidden = content?.imagePreviewURL == nil
@@ -158,7 +158,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
         authorOnImageConstraint?.isActive = !isImageHidden && !isAuthorHidden
     }
 
-    override open func tintColorDidChange() {
+    override internal func tintColorDidChange() {
         super.tintColorDidChange()
         updateContentIfNeeded()
     }

@@ -6,26 +6,26 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageImageGallery {
-    open class UploadingOverlay: _ChatMessageAttachmentInfoView<ExtraData> {
-        public private(set) lazy var fileSizeContainer = UIView()
+    internal class UploadingOverlay: _ChatMessageAttachmentInfoView<ExtraData> {
+        internal private(set) lazy var fileSizeContainer = UIView()
             .withoutAutoresizingMaskConstraints
 
         // MARK: - Overrides
 
-        override open func layoutSubviews() {
+        override internal func layoutSubviews() {
             super.layoutSubviews()
 
             fileSizeContainer.layer.cornerRadius = fileSizeContainer.bounds.height / 2
         }
 
-        override public func defaultAppearance() {
+        override internal func defaultAppearance() {
             backgroundColor = uiConfig.colorPalette.background4
             fileSizeContainer.backgroundColor = uiConfig.colorPalette.popoverBackground
             fileSizeContainer.layer.masksToBounds = true
             fileSizeLabel.textColor = .white
         }
 
-        override open func setUpLayout() {
+        override internal func setUpLayout() {
             fileSizeContainer.addSubview(spinnerAndSizeStack)
             spinnerAndSizeStack.pin(to: fileSizeContainer.layoutMarginsGuide)
             
@@ -45,7 +45,7 @@ extension _ChatMessageImageGallery {
             ])
         }
 
-        override open func updateContent() {
+        override internal func updateContent() {
             super.updateContent()
 
             if case .uploadingFailed = content?.attachment.localState {

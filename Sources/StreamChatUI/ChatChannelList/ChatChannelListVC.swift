@@ -14,36 +14,36 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDelegate,
     UIConfigProvider {
     /// The `ChatChannelListController` instance that provides channels data.
-    public var controller: _ChatChannelListController<ExtraData>!
+    open var controller: _ChatChannelListController<ExtraData>!
     
     /// The `_ChatChannelListRouter` instance responsible for navigation.
-    open private(set) lazy var router: _ChatChannelListRouter<ExtraData> = uiConfig
+    internal private(set) lazy var router: _ChatChannelListRouter<ExtraData> = uiConfig
         .navigation
         .channelListRouter.init(rootViewController: self)
     
     /// The `UICollectionViewLayout` that used by `ChatChannelListCollectionView`.
-    open private(set) lazy var collectionViewLayout: UICollectionViewLayout = uiConfig
+    internal private(set) lazy var collectionViewLayout: UICollectionViewLayout = uiConfig
         .channelList
         .channelCollectionLayout.init()
     
     /// The `UICollectionView` instance that displays channel list.
-    open private(set) lazy var collectionView: ChatChannelListCollectionView = uiConfig
+    internal private(set) lazy var collectionView: ChatChannelListCollectionView = uiConfig
         .channelList
         .channelCollectionView.init(layout: collectionViewLayout)
     
     /// The `UIButton` instance used for navigating to new channel screen creation,
-    open private(set) lazy var createNewChannelButton: UIButton = uiConfig
+    internal private(set) lazy var createNewChannelButton: UIButton = uiConfig
         .channelList
         .newChannelButton.init()
         .withoutAutoresizingMaskConstraints
     
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
-    open private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = uiConfig
+    internal private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = uiConfig
         .currentUser
         .currentUserViewAvatarView.init()
         .withoutAutoresizingMaskConstraints
     
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         
         controller.setDelegate(self)
@@ -59,13 +59,13 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         createNewChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         
         view.embed(collectionView)
     }
     
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         title = "Stream Chat"
         
         navigationItem.backButtonTitle = ""
@@ -105,18 +105,20 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         controller.loadNextChannels()
     }
         
-    @objc open func didTapOnCurrentUserAvatar(_ sender: Any) {
+    @objc internal func didTapOnCurrentUserAvatar(_ sender: Any) {
         guard let currentUser = userAvatarView.controller?.currentUser else { return }
         
         router.openCurrentUserProfile(for: currentUser)
     }
     
-    @objc open func didTapCreateNewChannel(_ sender: Any) {
+    @objc internal func didTapCreateNewChannel(_ sender: Any) {
         router.openCreateNewChannel()
     }
 }
 
 extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
+    public typealias ExtraData = ExtraData
+    
     open func controller(
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]

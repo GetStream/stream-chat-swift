@@ -5,15 +5,15 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerQuoteBubbleView = _ChatMessageComposerQuoteBubbleView<NoExtraData>
+internal typealias ChatMessageComposerQuoteBubbleView = _ChatMessageComposerQuoteBubbleView<NoExtraData>
 
-open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+internal class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     // MARK: - Properties
     
-    public var avatarViewSize: CGSize = .init(width: 24, height: 24)
-    public var attachmentPreviewSize: CGSize = .init(width: 34, height: 34)
+    internal var avatarViewSize: CGSize = .init(width: 24, height: 24)
+    internal var attachmentPreviewSize: CGSize = .init(width: 34, height: 34)
     
-    public var message: _ChatMessage<ExtraData>? {
+    internal var message: _ChatMessage<ExtraData>? {
         didSet {
             updateContentIfNeeded()
         }
@@ -21,33 +21,33 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: _View
         
     // MARK: - Subviews
     
-    public private(set) lazy var container = UIStackView()
+    internal private(set) lazy var container = UIStackView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var contentView = UIView()
+    internal private(set) lazy var contentView = UIView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var authorAvatarView = uiConfig
+    internal private(set) lazy var authorAvatarView = uiConfig
         .messageComposer
         .quotedMessageAvatarView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var attachmentPreview = UIImageView()
+    internal private(set) lazy var attachmentPreview = UIImageView()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var textView = UITextView()
+    internal private(set) lazy var textView = UITextView()
         .withoutAutoresizingMaskConstraints
     
     // MARK: - Constraints
     
-    public var containerConstraints: [NSLayoutConstraint] = []
-    public var authorAvatarViewConstraints: [NSLayoutConstraint] = []
-    public var attachmentPreviewConstraints: [NSLayoutConstraint] = []
-    public var textViewConstraints: [NSLayoutConstraint] = []
+    internal var containerConstraints: [NSLayoutConstraint] = []
+    internal var authorAvatarViewConstraints: [NSLayoutConstraint] = []
+    internal var attachmentPreviewConstraints: [NSLayoutConstraint] = []
+    internal var textViewConstraints: [NSLayoutConstraint] = []
     
-    // MARK: - Public
+    // MARK: - internal
     
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         
         textView.isEditable = false
@@ -57,13 +57,13 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: _View
         textView.isUserInteractionEnabled = false
     }
     
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         textView.textContainer.maximumNumberOfLines = 6
         textView.textContainer.lineBreakMode = .byTruncatingTail
         textView.textContainer.lineFragmentPadding = .zero
         
         textView.backgroundColor = .clear
-        textView.font = uiConfig.font.subheadline
+        textView.font = uiConfig.fonts.subheadline
         textView.textContainerInset = .zero
         textView.textColor = uiConfig.colorPalette.text
 
@@ -78,7 +78,7 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: _View
         contentView.layer.masksToBounds = true
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         preservesSuperviewLayoutMargins = true
         
         addSubview(container)
@@ -144,7 +144,7 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: _View
         )
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         guard let message = message else { return }
         
         let placeholder = uiConfig.images.userAvatarPlaceholder1
@@ -160,7 +160,7 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: _View
     
     // MARK: - Helpers
     
-    public func setAttachmentPreview(hidden: Bool) {
+    internal func setAttachmentPreview(hidden: Bool) {
         if hidden {
             attachmentPreviewConstraints.prefix(3).forEach {
                 $0.constant = 0

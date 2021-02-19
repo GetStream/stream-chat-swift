@@ -5,30 +5,30 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageAttachmentInfoView = _ChatMessageAttachmentInfoView<NoExtraData>
+internal typealias ChatMessageAttachmentInfoView = _ChatMessageAttachmentInfoView<NoExtraData>
 
-open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
+internal class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public private(set) lazy var fileNameLabel: UILabel = {
+    internal private(set) lazy var fileNameLabel: UILabel = {
         let label = UILabel()
-        label.font = uiConfig.font.bodyBold
+        label.font = uiConfig.fonts.bodyBold
         label.adjustsFontForContentSizeCategory = true
         return label.withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var fileSizeLabel: UILabel = {
+    internal private(set) lazy var fileSizeLabel: UILabel = {
         let label = UILabel()
-        label.font = uiConfig.font.subheadlineBold
+        label.font = uiConfig.fonts.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
         return label.withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var loadingIndicator = uiConfig
+    internal private(set) lazy var loadingIndicator = uiConfig
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -36,10 +36,10 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var actionIconImageView = UIImageView()
+    internal private(set) lazy var actionIconImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var spinnerAndSizeStack: UIStackView = {
+    internal private(set) lazy var spinnerAndSizeStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [loadingIndicator, fileSizeLabel])
         stack.axis = .horizontal
         stack.spacing = UIStackView.spacingUseSystem
@@ -47,7 +47,7 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
         return stack.withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var fileNameAndSizeStack: UIStackView = {
+    internal private(set) lazy var fileNameAndSizeStack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [fileNameLabel, spinnerAndSizeStack])
         stack.axis = .vertical
         stack.alignment = .leading
@@ -57,18 +57,18 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         fileSizeLabel.textColor = uiConfig.colorPalette.subtitleText
     }
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnAttachment(_:)))
         addGestureRecognizer(tapRecognizer)
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         addSubview(actionIconImageView)
         addSubview(fileNameAndSizeStack)
 
@@ -89,7 +89,7 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
         ])
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         fileNameLabel.text = content?.attachment.title
         fileSizeLabel.text = fileSize
         actionIconImageView.image = fileAttachmentActionIcon
@@ -104,7 +104,7 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
 
     // MARK: - Actions
 
-    @objc open func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
+    @objc internal func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
         content?.didTapOnAttachment()
     }
 }

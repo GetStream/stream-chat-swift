@@ -5,38 +5,38 @@
 import StreamChat
 import UIKit
 
-public typealias ChatLoadingIndicator = _ChatLoadingIndicator<NoExtraData>
+internal typealias ChatLoadingIndicator = _ChatLoadingIndicator<NoExtraData>
 
-open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    override open var isHidden: Bool {
+internal class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    override internal var isHidden: Bool {
         didSet { updateContentIfNeeded() }
     }
 
-    open var rotationPeriod: TimeInterval = 1
+    internal var rotationPeriod: TimeInterval = 1
 
     // MARK: - Subviews
 
-    public private(set) lazy var imageView = UIImageView()
+    internal private(set) lazy var imageView = UIImageView()
         .withoutAutoresizingMaskConstraints
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         imageView.image = uiConfig.images.loadingIndicator
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         embed(imageView)
         widthAnchor.pin(equalTo: heightAnchor).isActive = true
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         isHidden ? stopRotating() : startRotation()
     }
 
     static var kRotationAnimationKey: String { "rotationanimationkey" }
 
-    open func startRotation() {
+    internal func startRotation() {
         guard layer.animation(forKey: Self.kRotationAnimationKey) == nil else { return }
 
         let rotationAnimation = CABasicAnimation(keyPath: "transform.rotation")
@@ -48,7 +48,7 @@ open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProv
         layer.add(rotationAnimation, forKey: Self.kRotationAnimationKey)
     }
 
-    open func stopRotating() {
+    internal func stopRotating() {
         layer.removeAnimation(forKey: Self.kRotationAnimationKey)
     }
 }

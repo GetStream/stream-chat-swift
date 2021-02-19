@@ -6,10 +6,10 @@ import StreamChat
 import UIKit
 
 /// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
-public typealias ChatMessageComposerMentionCellView = _ChatMessageComposerMentionCellView<NoExtraData>
+internal typealias ChatMessageComposerMentionCellView = _ChatMessageComposerMentionCellView<NoExtraData>
 
 /// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
-open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+internal class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// Content of the cell - `ChatUser` instance from which we take all information.
     open var content: _ChatUser<ExtraData.User>? {
         didSet {
@@ -18,30 +18,30 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
     }
 
     /// `_ChatChannelAvatarView` instance which holds photo of user for tagging.
-    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
+    internal private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
         .messageComposer
         .mentionAvatarView
         .init()
         .withoutAutoresizingMaskConstraints
 
     /// Title label which shows users whole name.
-    open private(set) lazy var usernameLabel: UILabel = UILabel()
+    internal private(set) lazy var usernameLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
     /// Subtitle label which shows username tag etc. `@user`.
-    open private(set) lazy var usernameTagLabel: UILabel = UILabel()
+    internal private(set) lazy var usernameTagLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
     /// ImageView which is located at the right part of the cell, showing @ symbol by default.
-    open private(set) lazy var mentionSymbolImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var mentionSymbolImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
     /// StackView which holds username and userTag labels in vertical axis by default.
-    open private(set) lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.popoverBackground
-        usernameLabel.font = uiConfig.font.headlineBold
+        usernameLabel.font = uiConfig.fonts.headlineBold
 
-        usernameTagLabel.font = uiConfig.font.subheadlineBold
+        usernameTagLabel.font = uiConfig.fonts.subheadlineBold
         usernameTagLabel.textColor = uiConfig.colorPalette.subtitleText
 
         usernameLabel.textColor = uiConfig.colorPalette.text
@@ -49,7 +49,7 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
         mentionSymbolImageView.image = uiConfig.images.messageComposerCommandsMention
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         addSubview(avatarView)
         addSubview(textStackView)
         addSubview(mentionSymbolImageView)
@@ -59,7 +59,7 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
         setupmentionSymbolImageViewConstraints()
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         usernameLabel.text = content?.name
         if let subtitle = content?.id {
             usernameTagLabel.text = "@" + subtitle
@@ -114,20 +114,20 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
 }
 
 /// `UICollectionView` subclass which embeds inside `ChatMessageComposerMentionCellView`
-public typealias ChatMessageComposerMentionCollectionViewCell = _ChatMessageComposerMentionCollectionViewCell<NoExtraData>
+internal typealias ChatMessageComposerMentionCollectionViewCell = _ChatMessageComposerMentionCollectionViewCell<NoExtraData>
 
 /// `UICollectionView` subclass which embeds inside `ChatMessageComposerMentionCellView`
 open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
     /// Reuse identifier for the cell used in `collectionView(cellForItem:)`
-    open class var reuseId: String { String(describing: self) }
+    internal class var reuseId: String { String(describing: self) }
 
     /// Instance of `ChatMessageComposerMentionCellView` which shows information about the mentioned user.
-    public private(set) lazy var mentionView: _ChatMessageComposerMentionCellView<ExtraData> = uiConfig
+    internal private(set) lazy var mentionView: _ChatMessageComposerMentionCellView<ExtraData> = uiConfig
         .messageComposer
         .suggestionsMentionCellView.init()
         .withoutAutoresizingMaskConstraints
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         contentView.embed(mentionView)
     }

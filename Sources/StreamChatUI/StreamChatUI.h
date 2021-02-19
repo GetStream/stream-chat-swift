@@ -14,6 +14,6 @@ FOUNDATION_EXPORT double StreamChatUIVersionNumber;
 //! Project version string for StreamChatUI.
 FOUNDATION_EXPORT const unsigned char StreamChatUIVersionString[];
 
-// In this header, you should import all the public headers of your framework using statements like #import <StreamChatUI/PublicHeader.h>
+// In this header, you should import all the internal headers of your framework using statements like #import <StreamChatUI/internalHeader.h>
 
 

@@ -5,19 +5,19 @@
 import StreamChat
 import UIKit
 
-public enum SuggestionKind {
+internal enum SuggestionKind {
     case command(hints: [Command])
     case mention
 }
 
-public typealias ChatMessageComposerSuggestionsViewController = _ChatMessageComposerSuggestionsViewController<NoExtraData>
+internal typealias ChatMessageComposerSuggestionsViewController = _ChatMessageComposerSuggestionsViewController<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewController,
+internal class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewController,
     UIConfigProvider,
     UICollectionViewDelegate {
     // MARK: - Property
 
-    public var dataSource: UICollectionViewDataSource? {
+    internal var dataSource: UICollectionViewDataSource? {
         didSet {
             updateContentIfNeeded()
         }
@@ -30,18 +30,18 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
     /// Note: This value can be 1, it's just for purpose of 1 cell being visible.
     private let defaultRowHeight: CGFloat = 44
 
-    open var numberOfVisibleRows: CGFloat = 4
+    internal var numberOfVisibleRows: CGFloat = 4
 
     /// View to which the suggestions should be pinned.
     /// This view should be assigned as soon as instance of this
     /// class is instantiated, because we set observer to
     /// the bottomAnchorView as soon as we compute the height of the
     /// contentSize of the nested collectionView
-    public var bottomAnchorView: UIView?
+    internal var bottomAnchorView: UIView?
 
-    public var didSelectItemAt: ((Int) -> Void)?
+    internal var didSelectItemAt: ((Int) -> Void)?
 
-    public var isPresented: Bool {
+    internal var isPresented: Bool {
         view.superview != nil
     }
 
@@ -49,28 +49,28 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
 
     // MARK: - Subviews
 
-    open private(set) lazy var collectionView = uiConfig
+    internal private(set) lazy var collectionView = uiConfig
         .messageComposer
         .suggestionsCollectionView
         .init(layout: uiConfig.messageComposer.suggestionsCollectionViewLayout.init())
         .withoutAutoresizingMaskConstraints
 
-    open private(set) lazy var containerView: UIView = UIView().withoutAutoresizingMaskConstraints
+    internal private(set) lazy var containerView: UIView = UIView().withoutAutoresizingMaskConstraints
 
     // MARK: - Overrides
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         collectionView.delegate = self
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         view.backgroundColor = .clear
         view.layer.addShadow(color: uiConfig.colorPalette.shadow)
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         view.embed(containerView)
         containerView.embed(
             collectionView,
@@ -108,7 +108,7 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
         updateContent()
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         collectionView.dataSource = dataSource
         collectionView.reloadData()
     }
@@ -132,22 +132,22 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
 
     // MARK: - UICollectionView
 
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    internal func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         didSelectItemAt?(indexPath.row)
     }
 }
 
-public typealias ChatMessageComposerSuggestionsCommandDataSource = _ChatMessageComposerSuggestionsCommandDataSource<NoExtraData>
+internal typealias ChatMessageComposerSuggestionsCommandDataSource = _ChatMessageComposerSuggestionsCommandDataSource<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
-    open var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
-    open var commands: [Command]
+internal class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
+    internal var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
+    internal var commands: [Command]
 
-    open var uiConfig: _UIConfig<ExtraData> {
+    internal var uiConfig: _UIConfig<ExtraData> {
         collectionView.uiConfig
     }
 
-    public init(with commands: [Command], collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>) {
+    internal init(with commands: [Command], collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>) {
         self.commands = commands
         self.collectionView = collectionView
 
@@ -171,7 +171,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
         )
     }
 
-    public func collectionView(
+    internal func collectionView(
         _ collectionView: UICollectionView,
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
@@ -189,11 +189,11 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
         return headerView
     }
 
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    internal func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         commands.count
     }
 
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: _ChatMessageComposerCommandCollectionViewCell<ExtraData>.reuseId,
             for: indexPath
@@ -206,9 +206,9 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
     }
 }
 
-public typealias ChatMessageComposerSuggestionsMentionDataSource = _ChatMessageComposerSuggestionsMentionDataSource<NoExtraData>
+internal typealias ChatMessageComposerSuggestionsMentionDataSource = _ChatMessageComposerSuggestionsMentionDataSource<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
+internal class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
     UICollectionViewDataSource,
     _ChatUserSearchControllerDelegate {
     var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
@@ -240,7 +240,7 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
 
     // MARK: - CollectionViewDataSource
 
-    public func collectionView(
+    internal func collectionView(
         _ collectionView: UICollectionView,
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
@@ -248,11 +248,11 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
         UICollectionReusableView()
     }
 
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    internal func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         searchController.users.count
     }
 
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: _ChatMessageComposerMentionCollectionViewCell<ExtraData>.reuseId,
             for: indexPath
@@ -266,7 +266,7 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
 
     // MARK: - ChatUserSearchControllerDelegate
 
-    public func controller(
+    internal func controller(
         _ controller: _ChatUserSearchController<ExtraData>,
         didChangeUsers changes: [ListChange<_ChatUser<ExtraData.User>>]
     ) {

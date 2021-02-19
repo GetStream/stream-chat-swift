@@ -5,14 +5,14 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageReactionsVC = _ChatMessageReactionsVC<NoExtraData>
+internal typealias ChatMessageReactionsVC = _ChatMessageReactionsVC<NoExtraData>
 
-open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
-    public var messageController: _ChatMessageController<ExtraData>!
+internal class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
+    internal var messageController: _ChatMessageController<ExtraData>!
 
     // MARK: - Subviews
 
-    public private(set) lazy var reactionsBubble = uiConfig
+    internal private(set) lazy var reactionsBubble = uiConfig
         .messageList
         .messageReactions
         .reactionsBubbleView
@@ -21,17 +21,17 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
 
     // MARK: - Life Cycle
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         messageController.setDelegate(self)
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         view.embed(reactionsBubble)
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         reactionsBubble.content = messageController.message.map { message in
             let userReactionIDs = Set(message.currentUserReactions.map(\.type))
 
@@ -50,7 +50,7 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
 
     // MARK: - Actions
 
-    public func toggleReaction(_ reaction: MessageReactionType) {
+    internal func toggleReaction(_ reaction: MessageReactionType) {
         guard let message = messageController.message else { return }
 
         let shouldRemove = message.currentUserReactions.contains { $0.type == reaction }
@@ -63,7 +63,7 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
 // MARK: - _MessageControllerDelegate
 
 extension _ChatMessageReactionsVC: _ChatMessageControllerDelegate {
-    public func messageController(
+    internal func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeMessage change: EntityChange<_ChatMessage<ExtraData>>
     ) {

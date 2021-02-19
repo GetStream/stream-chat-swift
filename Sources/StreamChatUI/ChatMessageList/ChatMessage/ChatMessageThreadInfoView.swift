@@ -5,42 +5,42 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageThreadArrowView = _ChatMessageThreadArrowView<NoExtraData>
+internal typealias ChatMessageThreadArrowView = _ChatMessageThreadArrowView<NoExtraData>
 
-open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public enum Direction {
+internal class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal enum Direction {
         case toTrailing
         case toLeading
     }
 
-    override public class var layerClass: AnyClass {
+    override internal class var layerClass: AnyClass {
         CAShapeLayer.self
     }
 
-    public var shape: CAShapeLayer {
+    internal var shape: CAShapeLayer {
         layer as! CAShapeLayer
     }
 
-    public var direction: Direction = .toTrailing {
+    internal var direction: Direction = .toTrailing {
         didSet {
             setNeedsDisplay()
         }
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         shape.contentsScale = layer.contentsScale
         shape.strokeColor = uiConfig.colorPalette.border.cgColor
         shape.fillColor = nil
         shape.lineWidth = 1.0
     }
 
-    public var isLeftToRight: Bool {
+    internal var isLeftToRight: Bool {
         let isLeftToRightWithTrailing = direction == .toTrailing && traitCollection.layoutDirection == .leftToRight
         let isRightToLeftWithLeading = direction == .toLeading && traitCollection.layoutDirection == .rightToLeft
         return isLeftToRightWithTrailing || isRightToLeftWithLeading
     }
 
-    override open func draw(_ rect: CGRect) {
+    override internal func draw(_ rect: CGRect) {
         let corner: CGFloat = 16
         let height = bounds.height
         let lineCenter = shape.lineWidth / 2
@@ -60,29 +60,29 @@ open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConf
     }
 }
 
-public typealias ChatMessageThreadInfoView = _ChatMessageThreadInfoView<NoExtraData>
+internal typealias ChatMessageThreadInfoView = _ChatMessageThreadInfoView<NoExtraData>
 
-open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
-    public var message: _ChatMessageGroupPart<ExtraData>? {
+internal class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
+    internal var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
-    public private(set) lazy var avatarView = uiConfig
+    internal private(set) lazy var avatarView = uiConfig
         .messageList
         .messageContentSubviews
         .threadParticipantAvatarView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var replyCountLabel: UILabel = {
+    internal private(set) lazy var replyCountLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = uiConfig.font.subheadlineBold
+        label.font = uiConfig.fonts.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
         label.text = L10n.Message.Threads.reply
         label.textColor = tintColor
         return label
     }()
 
-    public private(set) lazy var stack: UIStackView = {
+    internal private(set) lazy var stack: UIStackView = {
         let stack = UIStackView(arrangedSubviews: [avatarView, replyCountLabel]).withoutAutoresizingMaskConstraints
         stack.distribution = .fill
         stack.alignment = .center
@@ -94,16 +94,16 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
 
     // MARK: - Overrides
 
-    override open var isHighlighted: Bool {
+    override internal var isHighlighted: Bool {
         didSet { updateAppearance() }
     }
 
-    override open func tintColorDidChange() {
+    override internal func tintColorDidChange() {
         super.tintColorDidChange()
         updateAppearance()
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         embed(stack)
         avatarView.widthAnchor.pin(equalToConstant: 16).isActive = true
@@ -112,7 +112,7 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
         replyCountLabel.setContentCompressionResistancePriority(.required, for: .vertical)
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         super.updateContent()
         if message?.parentMessageId == nil {
             updateForThreadStart()
@@ -124,7 +124,7 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
 
     // MARK: - State configurations
 
-    open func updateAppearance() {
+    internal func updateAppearance() {
         if isHighlighted {
             replyCountLabel.textColor = uiConfig.colorPalette.highlightedColorForColor(tintColor)
         } else {
@@ -132,7 +132,7 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
         }
     }
 
-    open func updateForThreadStart() {
+    internal func updateForThreadStart() {
         if let latestReplyAuthorAvatar = message?.latestReplies.first?.author.imageURL {
             avatarView.isHidden = false
             avatarView.imageView.loadImage(from: latestReplyAuthorAvatar)
@@ -147,7 +147,7 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
         }
     }
 
-    open func updateForThreadReply() {
+    internal func updateForThreadReply() {
         avatarView.isHidden = true
         avatarView.imageView.image = nil
         replyCountLabel.text = L10n.Message.Threads.reply

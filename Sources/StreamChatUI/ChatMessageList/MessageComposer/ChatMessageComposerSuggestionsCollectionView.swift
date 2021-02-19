@@ -5,13 +5,13 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerSuggestionsCollectionView = _ChatMessageComposerSuggestionsCollectionView<NoExtraData>
+internal typealias ChatMessageComposerSuggestionsCollectionView = _ChatMessageComposerSuggestionsCollectionView<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollectionView,
+internal class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollectionView,
     UIConfigProvider,
     AppearanceSetting,
     Customizable {
-    override open func didMoveToSuperview() {
+    override internal func didMoveToSuperview() {
         super.didMoveToSuperview()
         guard superview != nil else { return }
 
@@ -24,17 +24,17 @@ open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTyp
 
     // MARK: - Init
 
-    public required init(layout: UICollectionViewLayout) {
+    internal required init(layout: UICollectionViewLayout) {
         super.init(frame: .zero, collectionViewLayout: layout)
     }
 
-    public required init?(coder: NSCoder) {
+    internal required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
 
     // MARK: - Appearance
 
-    public func defaultAppearance() {
+    internal func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.popoverBackground
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
@@ -44,11 +44,11 @@ open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTyp
         layer.cornerRadius = 10
     }
     
-    public func setUp() {}
+    internal func setUp() {}
 
-    public func setUpAppearance() {}
+    internal func setUpAppearance() {}
 
-    public func setUpLayout() {}
+    internal func setUpLayout() {}
 
-    public func updateContent() {}
+    internal func updateContent() {}
 }

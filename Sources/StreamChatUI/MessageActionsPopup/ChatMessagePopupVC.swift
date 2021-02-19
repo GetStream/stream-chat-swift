@@ -5,16 +5,16 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessagePopupVC = _ChatMessagePopupVC<NoExtraData>
+internal typealias ChatMessagePopupVC = _ChatMessagePopupVC<NoExtraData>
 
-open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
-    public private(set) lazy var scrollView = UIScrollView()
+internal class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
+    internal private(set) lazy var scrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints
-    public private(set) lazy var scrollContentView = UIView()
+    internal private(set) lazy var scrollContentView = UIView()
         .withoutAutoresizingMaskConstraints
-    public private(set) lazy var contentView = UIView()
+    internal private(set) lazy var contentView = UIView()
         .withoutAutoresizingMaskConstraints
-    public private(set) lazy var blurView: UIView = {
+    internal private(set) lazy var blurView: UIView = {
         let blur: UIBlurEffect
         if #available(iOS 13.0, *) {
             blur = UIBlurEffect(style: .systemUltraThinMaterial)
@@ -25,13 +25,13 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
             .withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var messageContentView = uiConfig.messageList.messageContentView.init()
+    internal private(set) lazy var messageContentView = uiConfig.messageList.messageContentView.init()
         .withoutAutoresizingMaskConstraints
 
-    public var message: _ChatMessageGroupPart<ExtraData>!
-    public var messageViewFrame: CGRect!
-    public var actionsController: _ChatMessageActionsVC<ExtraData>!
-    public var reactionsController: _ChatMessageReactionsVC<ExtraData>?
+    internal var message: _ChatMessageGroupPart<ExtraData>!
+    internal var messageViewFrame: CGRect!
+    internal var actionsController: _ChatMessageActionsVC<ExtraData>!
+    internal var reactionsController: _ChatMessageReactionsVC<ExtraData>?
 
     // MARK: - Private
 
@@ -43,7 +43,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
 
     // MARK: - Life Cycle
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         
         scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapOnOverlay)))
@@ -51,11 +51,11 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
         scrollView.isScrollEnabled = false
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         view.backgroundColor = .clear
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         if let reactionsController = reactionsController {
             reactionsController.view.translatesAutoresizingMaskIntoConstraints = false
             addChildViewController(reactionsController, targetView: contentView)
@@ -136,12 +136,12 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
         NSLayoutConstraint.activate(constraints.compactMap { $0 })
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         messageContentView.message = message
         messageContentView.reactionsBubble.isHidden = true
     }
 
-    override open func viewWillAppear(_ animated: Bool) {
+    override internal func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         // Initially, the `applyInitialContentOffset` invocation was in `viewDidLayoutSubviews`
@@ -159,25 +159,25 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
         }
     }
     
-    override open func viewDidAppear(_ animated: Bool) {
+    override internal func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         scrollToMakeMessageVisible()
     }
 
-    open func applyInitialContentOffset() {
+    internal func applyInitialContentOffset() {
         let contentOffset = CGPoint(x: 0, y: max(0, -messageViewFrame.minY + spacing + reactionsViewHeight))
         scrollView.setContentOffset(contentOffset, animated: false)
     }
 
-    open func scrollToMakeMessageVisible() {
+    internal func scrollToMakeMessageVisible() {
         let contentRect = scrollContentView.convert(contentView.frame, to: scrollView)
         scrollView.scrollRectToVisible(contentRect, animated: true)
     }
 
     // MARK: - Actions
 
-    @objc open func didTapOnOverlay() {
+    @objc internal func didTapOnOverlay() {
         dismiss(animated: true)
     }
 }

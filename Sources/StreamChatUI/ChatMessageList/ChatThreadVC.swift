@@ -5,14 +5,14 @@
 import StreamChat
 import UIKit
 
-public typealias ChatThreadVC = _ChatThreadVC<NoExtraData>
+internal typealias ChatThreadVC = _ChatThreadVC<NoExtraData>
 
-open class _ChatThreadVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
-    public var controller: _ChatMessageController<ExtraData>!
+internal class _ChatThreadVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
+    internal var controller: _ChatMessageController<ExtraData>!
 
     // MARK: - Life Cycle
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
 
         controller.setDelegate(self)
@@ -21,7 +21,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
         messageComposerViewController.threadParentMessage = controller.message
     }
 
-    override open func viewDidAppear(_ animated: Bool) {
+    override internal func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         messageList.scrollToMostRecentMessageIfNeeded()
@@ -37,22 +37,22 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
 
     // MARK: - ChatMessageListVCDataSource
 
-    override public func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
+    override internal func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
         controller.replies.count + 1
     }
 
-    override public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
+    override internal func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
         if index == controller.replies.count {
             return controller.message!
         }
         return controller.replies[index]
     }
 
-    override public func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
+    override internal func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
         controller.loadPreviousReplies()
     }
 
-    override public func chatMessageListVC(
+    override internal func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         replyMessageFor message: _ChatMessage<ExtraData>,
         at index: Int
@@ -60,7 +60,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
         nil
     }
 
-    override public func chatMessageListVC(
+    override internal func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         controllerFor message: _ChatMessage<ExtraData>
     ) -> _ChatMessageController<ExtraData> {
@@ -74,7 +74,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
 // MARK: - ChatChannelControllerDelegate
 
 extension _ChatThreadVC: _ChatMessageControllerDelegate {
-    public func messageController(
+    internal func messageController(
         _ controller: _ChatMessageController<ExtraData>,
         didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {

@@ -5,18 +5,18 @@
 import Foundation
 import UIKit
 
-open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
-    override public init() {
+internal class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
+    override internal init() {
         super.init()
         commonInit()
     }
     
-    public required init?(coder: NSCoder) {
+    internal required init?(coder: NSCoder) {
         super.init(coder: coder)
         commonInit()
     }
         
-    override open func prepare() {
+    override internal func prepare() {
         super.prepare()
         
         estimatedItemSize = .init(

@@ -5,16 +5,16 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageInteractiveAttachmentView = _ChatMessageInteractiveAttachmentView<NoExtraData>
+internal typealias ChatMessageInteractiveAttachmentView = _ChatMessageInteractiveAttachmentView<NoExtraData>
 
-open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
+internal class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public private(set) lazy var preview = uiConfig
+    internal private(set) lazy var preview = uiConfig
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -22,18 +22,18 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var titleLabel: UILabel = {
+    internal private(set) lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = uiConfig.font.bodyItalic
+        label.font = uiConfig.fonts.bodyItalic
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center
         return label.withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var separator = UIView()
+    internal private(set) lazy var separator = UIView()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var actionsStackView: UIStackView = {
+    internal private(set) lazy var actionsStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.alignment = .fill
@@ -44,7 +44,7 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         preview.layer.cornerRadius = 8
         preview.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         preview.clipsToBounds = true
@@ -52,7 +52,7 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
         separator.backgroundColor = uiConfig.colorPalette.border
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         addSubview(preview)
         addSubview(titleLabel)
         addSubview(separator)
@@ -80,7 +80,7 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
         ])
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         preview.content = content?.attachment
 
         titleLabel.text = "\"" + (content?.attachment.title ?? "") + "\""
