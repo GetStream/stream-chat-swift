@@ -7,8 +7,8 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageImageGallery {
-    open class ImagePreview: _View, UIConfigProvider {
-        public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
+    internal class ImagePreview: _View, UIConfigProvider {
+        internal var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
             didSet { updateContentIfNeeded() }
         }
         
@@ -18,14 +18,14 @@ extension _ChatMessageImageGallery {
 
         // MARK: - Subviews
 
-        public private(set) lazy var imageView: UIImageView = {
+        internal private(set) lazy var imageView: UIImageView = {
             let imageView = UIImageView()
             imageView.contentMode = .scaleAspectFill
             imageView.layer.masksToBounds = true
             return imageView.withoutAutoresizingMaskConstraints
         }()
 
-        public private(set) lazy var loadingIndicator = uiConfig
+        internal private(set) lazy var loadingIndicator = uiConfig
             .messageList
             .messageContentSubviews
             .attachmentSubviews
@@ -33,7 +33,7 @@ extension _ChatMessageImageGallery {
             .init()
             .withoutAutoresizingMaskConstraints
 
-        public private(set) lazy var uploadingOverlay = uiConfig
+        internal private(set) lazy var uploadingOverlay = uiConfig
             .messageList
             .messageContentSubviews
             .attachmentSubviews
@@ -43,18 +43,18 @@ extension _ChatMessageImageGallery {
 
         // MARK: - Overrides
 
-        override public func defaultAppearance() {
+        override internal func defaultAppearance() {
             imageView.backgroundColor = uiConfig.colorPalette.background1
         }
 
-        override open func setUp() {
+        override internal func setUp() {
             super.setUp()
             
             let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnAttachment(_:)))
             addGestureRecognizer(tapRecognizer)
         }
 
-        override open func setUpLayout() {
+        override internal func setUpLayout() {
             embed(imageView)
             embed(uploadingOverlay)
 
@@ -63,7 +63,7 @@ extension _ChatMessageImageGallery {
             loadingIndicator.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
         }
 
-        override open func updateContent() {
+        override internal func updateContent() {
             let attachment = content?.attachment
 
             if let url = attachment?.localURL ?? attachment?.imagePreviewURL ?? attachment?.imageURL {
@@ -84,7 +84,7 @@ extension _ChatMessageImageGallery {
 
         // MARK: - Actions
 
-        @objc open func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
+        @objc internal func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
             content?.didTapOnAttachment()
         }
 

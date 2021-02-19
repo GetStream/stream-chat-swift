@@ -7,42 +7,42 @@ import StreamChat
 import UIKit
 
 /// A `UICollectionViewCell` subclass that shows channel information.
-public typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionViewCell<NoExtraData>
+internal typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionViewCell<NoExtraData>
 
 /// A `UICollectionViewCell` subclass that shows channel information.
-open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
+internal class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
     UIConfigProvider {
     /// The `ChatChannelListItemView` instance used as content view.
-    open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = uiConfig
+    internal private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = uiConfig
         .channelList
         .itemView
         .init()
         .withoutAutoresizingMaskConstraints
 
     /// The `SwipeableView` instance which is used for revealing buttons when cell is swiped.
-    open private(set) lazy var swipeableView: _SwipeableView<ExtraData> = uiConfig
+    internal private(set) lazy var swipeableView: _SwipeableView<ExtraData> = uiConfig
         .channelList
         .swipeableView.init()
         .withoutAutoresizingMaskConstraints
 
-    override public func prepareForReuse() {
+    override internal func prepareForReuse() {
         super.prepareForReuse()
         swipeableView.close()
     }
 
-    override open var isHighlighted: Bool {
+    override internal var isHighlighted: Bool {
         didSet {
             itemView.backgroundColor = isHighlighted ? uiConfig.colorPalette.highlightedBackground :
                 uiConfig.colorPalette.background
         }
     }
 
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         contentView.addGestureRecognizer(swipeableView.panGestureRecognizer)
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
 
         contentView.addSubview(swipeableView)

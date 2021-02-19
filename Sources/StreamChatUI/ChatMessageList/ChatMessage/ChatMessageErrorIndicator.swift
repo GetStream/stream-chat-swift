@@ -5,10 +5,10 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageErrorIndicator = _ChatMessageErrorIndicator<NoExtraData>
+internal typealias ChatMessageErrorIndicator = _ChatMessageErrorIndicator<NoExtraData>
 
-open class _ChatMessageErrorIndicator<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
-    override public func defaultAppearance() {
+internal class _ChatMessageErrorIndicator<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
+    internal override func defaultAppearance() {
         super.defaultAppearance()
 
         setImage(uiConfig.images.messageListErrorIndicator, for: .normal)

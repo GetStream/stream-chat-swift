@@ -5,16 +5,16 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageQuoteBubbleView = _ChatMessageQuoteBubbleView<NoExtraData>
+internal typealias ChatMessageQuoteBubbleView = _ChatMessageQuoteBubbleView<NoExtraData>
 
-open class _ChatMessageQuoteBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageComposerQuoteBubbleView<ExtraData> {
-    public var isParentMessageSentByCurrentUser: Bool? {
+internal class _ChatMessageQuoteBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageComposerQuoteBubbleView<ExtraData> {
+    internal var isParentMessageSentByCurrentUser: Bool? {
         didSet {
             updateContentIfNeeded()
         }
     }
     
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         
         containerConstraints.forEach {
@@ -22,7 +22,7 @@ open class _ChatMessageQuoteBubbleView<ExtraData: ExtraDataTypes>: _ChatMessageC
         }
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         super.updateContent()
         
         guard let isParentMessageSentByCurrentUser = isParentMessageSentByCurrentUser else { return }

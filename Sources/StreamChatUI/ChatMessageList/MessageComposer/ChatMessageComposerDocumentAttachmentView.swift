@@ -5,16 +5,16 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerDocumentAttachmentView = _ChatMessageComposerDocumentAttachmentView<NoExtraData>
+internal typealias ChatMessageComposerDocumentAttachmentView = _ChatMessageComposerDocumentAttachmentView<NoExtraData>
 
-open class _ChatMessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>: _ChatMessageAttachmentInfoView<ExtraData> {
+internal class _ChatMessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>: _ChatMessageAttachmentInfoView<ExtraData> {
     // MARK: - Properties
     
-    public var discardButtonHandler: (() -> Void)?
+    internal var discardButtonHandler: (() -> Void)?
     
     // MARK: - Subviews
 
-    public private(set) lazy var fileIconImageView: UIImageView = {
+    internal private(set) lazy var fileIconImageView: UIImageView = {
         let imageView = UIImageView().withoutAutoresizingMaskConstraints
         imageView.contentMode = .center
         return imageView
@@ -22,14 +22,14 @@ open class _ChatMessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>
 
     // MARK: - Overrides
     
-    override open func setUp() {
+    override internal func setUp() {
         super.setUp()
         
         let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(discard))
         addGestureRecognizer(tapRecognizer)
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.background
         layer.cornerRadius = 15
         layer.masksToBounds = true
@@ -42,7 +42,7 @@ open class _ChatMessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>
         actionIconImageView.image = uiConfig.images.messageComposerDiscardAttachment
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         addSubview(fileIconImageView)
         addSubview(actionIconImageView)
         addSubview(fileNameAndSizeStack)
@@ -69,7 +69,7 @@ open class _ChatMessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>
         ])
     }
     
-    override open func updateContent() {
+    override internal func updateContent() {
         loadingIndicator.isVisible = false
     }
     

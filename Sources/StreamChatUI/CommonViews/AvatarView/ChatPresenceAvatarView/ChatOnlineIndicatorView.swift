@@ -16,22 +16,22 @@ public protocol MaskProviding {
 }
 
 /// A view used to indicate the presence of a user.
-public typealias ChatOnlineIndicatorView = _ChatOnlineIndicatorView<NoExtraData>
+internal typealias ChatOnlineIndicatorView = _ChatOnlineIndicatorView<NoExtraData>
 
 /// A view used to indicate the presence of a user.
-open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, MaskProviding {
+internal class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, MaskProviding {
     override public func defaultAppearance() {
         super.defaultAppearance()
 
         backgroundColor = uiConfig.colorPalette.alternativeActiveTint
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         heightAnchor.pin(equalTo: widthAnchor).isActive = true
     }
 
-    override open func layoutSubviews() {
+    override internal func layoutSubviews() {
         super.layoutSubviews()
         
         layer.cornerRadius = bounds.width / 2

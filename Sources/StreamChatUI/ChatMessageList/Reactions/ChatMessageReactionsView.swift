@@ -5,16 +5,16 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageReactionsView = _ChatMessageReactionsView<NoExtraData>
+internal typealias ChatMessageReactionsView = _ChatMessageReactionsView<NoExtraData>
 
-open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var content: Content? {
+internal class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    internal var content: Content? {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public private(set) lazy var stackView: UIStackView = {
+    internal private(set) lazy var stackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
         stack.distribution = .fillEqually
@@ -24,11 +24,11 @@ open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, UIConfig
 
     // MARK: - Overrides
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         embed(stackView)
     }
 
-    override open func updateContent() {
+    override internal func updateContent() {
         stackView.arrangedSubviews.forEach {
             $0.removeFromSuperview()
         }
@@ -50,12 +50,12 @@ open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, UIConfig
 // MARK: - Content
 
 extension _ChatMessageReactionsView {
-    public struct Content {
-        public let useBigIcons: Bool
-        public let reactions: [ChatMessageReactionData]
-        public let didTapOnReaction: (MessageReactionType) -> Void
+    internal struct Content {
+        internal let useBigIcons: Bool
+        internal let reactions: [ChatMessageReactionData]
+        internal let didTapOnReaction: (MessageReactionType) -> Void
 
-        public init(
+        internal init(
             useBigIcons: Bool,
             reactions: [ChatMessageReactionData],
             didTapOnReaction: @escaping (MessageReactionType) -> Void

@@ -25,12 +25,12 @@ public class ChatMessageListTitleView<ExtraData: ExtraDataTypes>: UIView, UIConf
         
         let titleLabel = UILabel()
         titleLabel.textAlignment = .center
-        titleLabel.font = uiConfig.font.headlineBold
+        titleLabel.font = uiConfig.fonts.headlineBold
         self.titleLabel = titleLabel
 
         let subtitleLabel = UILabel()
         subtitleLabel.textAlignment = .center
-        subtitleLabel.font = uiConfig.font.caption1
+        subtitleLabel.font = uiConfig.fonts.caption1
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
         self.subtitleLabel = subtitleLabel
 

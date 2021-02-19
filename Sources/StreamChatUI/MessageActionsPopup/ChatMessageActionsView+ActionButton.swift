@@ -5,34 +5,34 @@
 import UIKit
 
 extension _ChatMessageActionsView {
-    open class ActionButton: _Button, UIConfigProvider {
-        public var actionItem: ChatMessageActionItem<ExtraData>? {
+    internal class ActionButton: _Button, UIConfigProvider {
+        internal var actionItem: ChatMessageActionItem<ExtraData>? {
             didSet { updateContentIfNeeded() }
         }
 
         // MARK: Overrides
 
-        override public func defaultAppearance() {
+        override internal func defaultAppearance() {
             backgroundColor = uiConfig.colorPalette.background
-            titleLabel?.font = uiConfig.font.body
+            titleLabel?.font = uiConfig.fonts.body
             contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
             titleEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
             contentHorizontalAlignment = .left
         }
 
-        override open func setUp() {
+        override internal func setUp() {
             super.setUp()
             
             addTarget(self, action: #selector(touchUpInsideHandler(_:)), for: .touchUpInside)
         }
 
-        override open func tintColorDidChange() {
+        override internal func tintColorDidChange() {
             super.tintColorDidChange()
             
             updateContentIfNeeded()
         }
         
-        override open func updateContent() {
+        override internal func updateContent() {
             let imageTintСolor: UIColor
             let titleTextColor: UIColor
 
@@ -51,7 +51,7 @@ extension _ChatMessageActionsView {
 
         // MARK: Actions
         
-        @objc open func touchUpInsideHandler(_ sender: Any) {
+        @objc internal func touchUpInsideHandler(_ sender: Any) {
             actionItem?.action()
         }
     }

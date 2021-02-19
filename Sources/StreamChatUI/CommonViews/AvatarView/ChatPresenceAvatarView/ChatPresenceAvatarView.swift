@@ -6,12 +6,12 @@ import StreamChat
 import UIKit
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).
-public typealias ChatPresenceAvatarView = _ChatPresenceAvatarView<NoExtraData>
+internal typealias ChatPresenceAvatarView = _ChatPresenceAvatarView<NoExtraData>
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).
-open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+internal class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// A view that shows the avatar image
-    open private(set) lazy var avatarView: ChatAvatarView = uiConfig
+    internal private(set) lazy var avatarView: ChatAvatarView = uiConfig
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
 
@@ -19,7 +19,7 @@ open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     ///
     /// The type of `onlineIndicatorView` is UIView & MaskProviding in UIConfig.
     /// Xcode is failing to compile due to `Segmentation fault: 11` when used here.
-    open private(set) lazy var onlineIndicatorView: UIView = uiConfig
+    internal private(set) lazy var onlineIndicatorView: UIView = uiConfig
         .onlineIndicatorView.init()
         .withoutAutoresizingMaskConstraints
     
@@ -31,12 +31,12 @@ open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         }
     }
 
-    override public func defaultAppearance() {
+    override internal func defaultAppearance() {
         super.defaultAppearance()
         onlineIndicatorView.isHidden = true
     }
 
-    override open func setUpLayout() {
+    override internal func setUpLayout() {
         super.setUpLayout()
         embed(avatarView)
         // Add online indicator view
