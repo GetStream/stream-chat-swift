@@ -2,6 +2,8 @@
 
 import StreamChat
 
+private var chatClient: ChatClient!
+
 func snippet_introduction_channels() {
     /// 1: Create a `ChannelId` that represents the channel you want to create.
     let channelId = ChannelId(type: .messaging, id: "general")
