@@ -1,10 +1,10 @@
-//
-// Copyright © 2021 Stream.io Inc. All rights reserved.
-//
+// LINK: https://getstream.io/chat/docs/ios-swift/ios_quick_start/?preview=1&language=swift#messages
 
 import StreamChat
 import StreamChatUI
 import UIKit
+
+private var chatClient: ChatClient!
 
 func snippet_ux_quick_start_messages_code() {
     // > import UIKit
@@ -13,7 +13,6 @@ func snippet_ux_quick_start_messages_code() {
 
     class MyChannelVC: ChatChannelVC {}
 
-    @available(iOS 13.0, *)
     class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         var window: UIWindow?
         

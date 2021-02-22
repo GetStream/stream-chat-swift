@@ -1,17 +1,18 @@
-//
-// Copyright © 2021 Stream.io Inc. All rights reserved.
-//
+// LINK: https://getstream.io/chat/docs/ios-swift/ios_quick_start/?preview=1&language=swift#1.-using-a-storyboard
 
+import StreamChat
 import StreamChatUI
 import UIKit
 
+private var chatClient: ChatClient!
+
 func snippet_ux_quick_start_channels_storyboard() {
     // > import UIKit
+    // > import StreamChat
     // > import StreamChatUI
     
     class MyChannelListVC: ChatChannelListVC {}
 
-    @available(iOS 13.0, *)
     class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         var window: UIWindow?
          
