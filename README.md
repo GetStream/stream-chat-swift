@@ -41,7 +41,7 @@ If you want to integrate StreamChat SDKs into your app, you can already use vers
 &nbsp;
 
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat.
-* [Installation](https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Installation_UI.MD): Learn more about how to install the SDK using CocoaPods or SPM.
+* [Installation](https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Installation.MD): Learn more about how to install the SDK using CocoaPods or SPM.
 * [Cheat Sheet](https://github.com/GetStream/stream-chat-swift/wiki/UI-Cheat-Sheet): Learn how to use the SDK by real world examples.
 * [Demo app](https://github.com/GetStream/stream-chat-swift/tree/main/DemoApp): This repo includes a fully functional demo app with example usage of the SDK.
 
