@@ -10,13 +10,13 @@ Add this entry in your `Podfile`:
 
 ```ruby
 # Installs both StreamChat and StreamChatUI frameworks
-pod 'StreamChatUI', `~> 3.1`
+pod 'StreamChatUI', '~> 3.1'
 ```
 
 ```ruby
 # In case you don't need the UI framework (you're building the UI layer yourself)
 # you can specify the StreamChat framework directly.
-pod 'StreamChat', `~> 3.1`
+pod 'StreamChat', '~> 3.1'
 ```
 
 ### Swift Package Manager
@@ -44,10 +44,10 @@ Add this entry in your `Podfile`:
 
 ```ruby
 # Installs both StreamChat and StreamChatUI frameworks
-pod 'StreamChatUI', `~> 3.2-beta`
+pod 'StreamChatUI', '~> 3.2-beta'
 
 # In case you don't need the UI frameworks (you're building the UI layer yourself)
-pod 'StreamChatUI', `~> 3.2-beta`
+pod 'StreamChatUI', '~> 3.2-beta'
 ```
 
 ### Swift Package Manager
