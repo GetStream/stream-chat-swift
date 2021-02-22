@@ -92,7 +92,9 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
-        attachments = try container.decode([AttachmentPayload].self, forKey: .attachments)
+        // Because attachment objects can be malformed, we wrap those into `OptionalDecodable`
+        // and if decoding of those fail, it assignes `nil` instead of throwing whole MessagePayload away.
+        attachments = try container.decode([OptionalDecodable<AttachmentPayload>].self, forKey: .attachments).compactMap(\.base)
         extraData = try ExtraData.Message(from: decoder)
         
         // Some endpoints return also channel payload data for convenience
