@@ -93,7 +93,7 @@ public struct ChatMessageDefaultAttachment: ChatMessageAttachment, AttachmentEnv
         if itWasLinkOriginally {
             type = .link(try? container.decode(String.self, forKey: .type))
         } else {
-            type = AttachmentType(rawValue: try? container.decode(String.self, forKey: .type))
+            type = AttachmentType(rawValue: try container.decode(String.self, forKey: .type))
         }
         // compiler is confused by expression unless we use helper variable for type
         self.type = type

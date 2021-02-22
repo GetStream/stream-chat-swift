@@ -16,7 +16,7 @@ extension AttachmentPayload {
     ) -> AttachmentPayload {
         let data: Data = """
         {
-            "type": "\(type.rawValue!)",
+            "type": "\(type.rawValue)",
             "image_url" : "\(imageURL.absoluteString)",
             "title" : "\(title)",
             "thumb_url" : "\(imagePreviewURL.absoluteString)",

@@ -90,14 +90,10 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         guard let channelDTO = channel(cid: id.cid) else {
             throw ClientError.ChannelDoesNotExist(cid: id.cid)
         }
-        
-        guard let type = payload.type.rawValue else {
-            throw ClientError.MissingAttachmentType(id: id)
-        }
-        
+
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         
-        dto.type = type
+        dto.type = payload.type.rawValue
         dto.data = try JSONEncoder.default.encode(payload.payload)
         dto.channel = channelDTO
         dto.message = messageDTO
@@ -119,15 +115,11 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         guard let channelDTO = channel(cid: id.cid) else {
             throw ClientError.ChannelDoesNotExist(cid: id.cid)
         }
-        
-        guard let type = seed.type.rawValue else {
-            throw ClientError.MissingAttachmentType(id: id)
-        }
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         dto.localURL = seed.localURL
         dto.localState = .pendingUpload
-        dto.type = type
+        dto.type = seed.type.rawValue
         dto.title = seed.fileName
         
         if isAttachmentModelSeparationChangesApplied {
@@ -146,7 +138,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         } else {
             let attachment = ChatMessageDefaultAttachment(
                 id: id,
-                type: AttachmentType(rawValue: type),
+                type: seed.type,
                 localURL: seed.localURL,
                 localState: dto.localState,
                 title: seed.fileName,
@@ -173,14 +165,10 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         guard let channelDTO = channel(cid: id.cid) else {
             throw ClientError.ChannelDoesNotExist(cid: id.cid)
         }
-        
-        guard let type = attachment.type.rawValue else {
-            throw ClientError.MissingAttachmentType(id: id)
-        }
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         
-        dto.type = type
+        dto.type = attachment.type.rawValue
         dto.localState = .uploaded
         dto.data = try JSONEncoder.stream.encode(AnyEncodable(attachment))
 
