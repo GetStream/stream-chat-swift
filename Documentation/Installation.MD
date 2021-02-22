@@ -16,7 +16,7 @@ pod 'StreamChatUI', '~> 3.1'
 ```ruby
 # In case you don't need the UI framework (you're building the UI layer yourself)
 # you can specify the StreamChat framework directly.
-pod 'StreamChat', '~> 3.1
+pod 'StreamChat', '~> 3.1'
 ```
 
 ### Swift Package Manager
