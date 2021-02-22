@@ -14,7 +14,7 @@ end
 
 desc "Release a new version"
 lane :release do |options|
-  ensure_git_branch(branch: 'main') # We can only release on default branch
+  #ensure_git_branch(branch: 'main') # We can only release on default branch
   ensure_git_status_clean unless options[:no_ensure_clean]
 
   if (!options[:version].nil?) # User passed a version, use it
