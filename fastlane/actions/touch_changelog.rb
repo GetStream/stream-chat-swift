@@ -69,10 +69,7 @@ module Fastlane
                                        description: "The release version, according to semantic versioning",
                                        is_string: true,
                                        default_value: "",
-                                       optional: false,
-                                       verify_block: proc do |value|
-                                         UI.user_error!("Please provide a release version with format MAJOR.MINOR.PATCH") unless !(value =~ /\d+\.\d+\.\d+/).nil?
-                                       end)
+                                       optional: false)
         ]
       end
 
