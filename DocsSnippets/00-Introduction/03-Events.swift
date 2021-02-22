@@ -5,8 +5,11 @@ import StreamChat
 import UIKit
 
 private var channelController: ChatChannelController!
+
+@available(iOS 13, *)
 private var cancellables: Set<AnyCancellable> = []
 
+@available(iOS 13, *)
 func snippet_introduction_events() {
     // > import UIKit
     // > import Combine
