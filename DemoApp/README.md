@@ -23,8 +23,8 @@ After logging in with a user, you'll be directed to the first screen which is th
 
 #### UI Overview
 
-This demo app is built on top of StreamChatUI. It provides local database logic and API calls, provided by the StreamChat dependency, as well as UIKit components. Use StreamChatUI if you want to build a 
-completely custom UI from scratch.
+This demo app is built on top of StreamChatUI. It provides local database logic and API calls, provided by the StreamChat dependency, as well as UIKit components. Use StreamChatUI if you want a ready-made
+fully-featured UI with some customizability options.
 
 <img align="left" src="https://i.imgur.com/SaVCtkc.png" width="33%" />
 
