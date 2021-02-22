@@ -27,7 +27,7 @@ struct AttachmentPayload: Decodable {
         if itWasLinkOriginally {
             type = .link(try? container.decode(String.self, forKey: .type))
         } else {
-            type = AttachmentType(rawValue: try? container.decode(String.self, forKey: .type))
+            type = AttachmentType(rawValue: try container.decode(String.self, forKey: .type))
         }
         self.type = type
         

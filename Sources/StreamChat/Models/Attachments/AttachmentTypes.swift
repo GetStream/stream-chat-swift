@@ -112,9 +112,9 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBySt
     /// Could be `audio`, `video`, `image`.
     case link(String?)
     /// `.custom` type is used for any unrecognised type.
-    case custom(String?)
+    case custom(String)
     
-    public var rawValue: String? {
+    public var rawValue: String {
         switch self {
         case let .custom(raw):
             return raw
@@ -133,9 +133,8 @@ public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleBySt
         }
     }
         
-    public init(rawValue: String?) {
-        if let rawValue = rawValue,
-            rawValue.prefix(4) == "link" {
+    public init(rawValue: String) {
+        if rawValue.prefix(4) == "link" {
             self = .link(rawValue.replacingOccurrences(of: "link-", with: ""))
             return
         }
