@@ -3,6 +3,7 @@
 import StreamChatUI
 import UIKit
 
+@available(iOS 13, *)
 func snippets_ux_customizing_views_changing_main_color() {
     // > import UIKit
     // > import StreamChatUI

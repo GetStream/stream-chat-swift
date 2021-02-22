@@ -5,7 +5,7 @@ import StreamChatUI
 func snippets_ux_customizing_views_view_lifecycle_methods() {
     // > import StreamChatUI
 
-    class MyView: View {
+    class MyView: _View {
         /// Main point of customization for the view functionality.
         /// It's called zero or one time(s) during the view's
         /// lifetime. Calling super implementation is required.

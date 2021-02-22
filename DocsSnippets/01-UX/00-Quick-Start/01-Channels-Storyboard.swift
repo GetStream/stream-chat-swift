@@ -6,6 +6,7 @@ import UIKit
 
 private var chatClient: ChatClient!
 
+@available(iOS 13, *)
 func snippet_ux_quick_start_channels_storyboard() {
     // > import UIKit
     // > import StreamChat

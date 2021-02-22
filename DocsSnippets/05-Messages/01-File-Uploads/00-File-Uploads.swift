@@ -16,7 +16,7 @@ func snippet_messages_file_uploads() {
     /// 3: Call `ChatChannelController.createNewMessage` to create the message.
     channelController.createNewMessage(
         text: "Hello",
-        attachmentSeeds: [.init(localURL: URL(string: "./my_image.png")!, fileName: "my_image.png", type: .image)]
+        attachments: [ChatMessageAttachmentSeed(localURL: URL(string: "./my_image.png")!, fileName: "my_image.png", type: .image)]
     ) { result in
         switch result {
         case let .success(messageId):
