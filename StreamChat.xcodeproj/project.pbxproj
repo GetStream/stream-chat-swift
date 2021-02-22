@@ -777,6 +777,13 @@
 			remoteGlobalIDString = 799C941A247D2F80001F1104;
 			remoteInfo = Sources;
 		};
+		79F458A825E3B52900E63D67 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 793060E525778896005CF846;
+			remoteInfo = StreamChatTestTools;
+		};
 		80750A4E25D1D5790027F951 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
@@ -3153,6 +3160,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				79F458A925E3B52900E63D67 /* PBXTargetDependency */,
 				7908820825432B7200896F03 /* PBXTargetDependency */,
 			);
 			name = StreamChatUITests;
@@ -4334,6 +4342,11 @@
 			isa = PBXTargetDependency;
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
 			targetProxy = 799C9457247D59B1001F1104 /* PBXContainerItemProxy */;
+		};
+		79F458A925E3B52900E63D67 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 793060E525778896005CF846 /* StreamChatTestTools */;
+			targetProxy = 79F458A825E3B52900E63D67 /* PBXContainerItemProxy */;
 		};
 		80750A4F25D1D5790027F951 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
