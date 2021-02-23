@@ -18,7 +18,7 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 ## Main Features
 
 - **Uses `UIKit` patterns and paradigms:** The API follows the design of native system SKDs. It makes integration with your existing code easy and familiar.
-- **First-class support for `SwiftUI`:** Built-it wrappers make using the SDK with the latest Apple UI framework a seamless experience. (coming Q1/2021)
+- **First-class support for `SwiftUI`:** Built-it wrappers make using the SDK with the latest Apple UI framework a seamless experience. (coming 4/2021)
 - **Familiar behavior**: The UI elements are good platform citizens and behave like native elements; they respect `tintColor`, `layoutMargins`, light/dark mode, dynamic font sizes, etc.
 - **Swift native API:** Uses Swift's powerful language features to make the SDK usage easy and type-safe.
 - **Fully open source implementation:** You have access to the comple source code of the SDK here on GitHub.
@@ -56,38 +56,25 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 --- 
 
 
-## 👉 Migrating from 2.x
+## 👉 Migrating from 1.x/2.x
 
-In order to provide new features like offline support and `SwiftUI` wrappers, we had to make notable breaking changes to the public API of the SDKs.
-
-**Please don't upgrade to version 3.0 before you get familiar with the changes and their impact on your codebase.**
-
-To prevent CocoaPods from updating `StreamChat` to version 3, you can explicitly pin the SDKs to versions 2.x in your `podfile`:
-```ruby
-pod 'StreamChat', '~> 2.0'
-pod 'StreamChatCore', '~> 2.0' # if needed
-pod 'StreamChatClient', '~> 2.0' # if needed
-```
-
-- **Migrating `StreamChat` (UI components):** If you use our Chat UI components, check [this page](https://github.com/GetStream/stream-chat-swift/wiki/Migrating-from-1.x-and-2.x) for the Migration guide. The UI components SDK was renamed to `StreamChatUI`.
-
-- **Migrating `StreamChatClient` and/or `StreamChatCore`:** Our low-level frameworks (`Client` + `Core`) were merged and renamed to `StreamChat`. If you use only our low-level frameworks, you can use our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet) to get more familiar with the update API and better assess the impact of the changes on your codebase.
+Please check [our wiki page for migration](https://github.com/GetStream/stream-chat-swift/wiki/Migrating-from-1.x-and-2.x).
 
 ---
 
 ## Roadmap
 
-* Open UI components for subclassing and customization (3/2020)
-* Local notification support (3/2020)
-* SwiftUI wrappers for UI components (4/2020)
-* Pinned messages (4/2020)
-* Better photo gallery experience (4/2020)
-* Multi-tenancy, teams (4/2020)
-* Silent messages (4/2020)
-* Expired tokens (4/2020)
-* Channel invites (4/2020)
-* Paginating reactions (4/2020)
-* Message search (5/2020)
+* Open UI components for subclassing and customization (3/2021)
+* Local notification support (3/2021)
+* SwiftUI wrappers for UI components (4/2021)
+* Pinned messages (4/2021)
+* Better photo gallery experience (4/2021)
+* Multi-tenancy, teams (4/2021)
+* Silent messages (4/2021)
+* Expired tokens (4/2021)
+* Channel invites (4/2021)
+* Paginating reactions (4/2021)
+* Message search (5/2021)
 * RxSwift wrappers (tbd)
 
 ---
