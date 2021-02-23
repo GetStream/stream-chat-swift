@@ -33,7 +33,7 @@ For the majority of common use cases, using our highly composable and customizab
 - **Supports iOS 11+, Swift 5.2:** We proudly support older versions of iOS, so your app can stay available to almost everyone.
 - **Built-in support for testing:** _Will be released Q1 2021_
 
-## **Quick Links** (WIP)
+## **Quick Links**
 
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat.
 * [Installation](https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Installation.MD): Learn more about how to install the SDK using CocoaPods, SPM, or Carthage.
