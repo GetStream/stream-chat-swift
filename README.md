@@ -65,7 +65,7 @@ Please check [our wiki page for migration](https://github.com/GetStream/stream-c
 
 ## Roadmap
 
-* Open UI components for subclassing and customization (3/2021)
+* Open UI components for subclassing and customization (3/2021, available in 🅱️ `3.2.0-beta`)
 * Local notification support (3/2021)
 * SwiftUI wrappers for UI components (4/2021)
 * Pinned messages (4/2021)
