@@ -18,7 +18,8 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 ## Main Features
 
 - **Uses `UIKit` patterns and paradigms:** The API follows the design of native system SKDs. It makes integration with your existing code easy and familiar.
-- **First-class support for `SwiftUI`:** Built-it wrappers make using the SDK with the latest Apple UI framework a seamless experience. (coming 4/2021)
+- **First-class support for `SwiftUI` and `Combine`:** Built-it wrappers make using the SDK with the latest Apple UI framework a seamless experience. (coming 4/2021)
+- **Offline support:** Browse channels and send messages while offline.
 - **Familiar behavior**: The UI elements are good platform citizens and behave like native elements; they respect `tintColor`, `layoutMargins`, light/dark mode, dynamic font sizes, etc.
 - **Swift native API:** Uses Swift's powerful language features to make the SDK usage easy and type-safe.
 - **Fully open source implementation:** You have access to the comple source code of the SDK here on GitHub.
