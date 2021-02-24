@@ -71,6 +71,7 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
 
     override public func defaultAppearance() {
         view.backgroundColor = .clear
+        view.layer.addShadow(color: uiConfig.colorPalette.shadow)
     }
 
     override open func setUpLayout() {
