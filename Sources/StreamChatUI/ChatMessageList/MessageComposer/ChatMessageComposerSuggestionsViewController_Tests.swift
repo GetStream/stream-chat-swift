@@ -13,6 +13,11 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
     // and so we can't attach it to a bottomAnchorView. The test to verify the height calculation dependent
     // on the rows should be done in the parent view controller tests.
     private let defaultSuggestionsSize = CGSize(width: 360, height: 130)
+    private var containerView: UIView = {
+        let view = UIView(frame: CGRect(x: 0, y: 0, width: 360, height: 130))
+        view.backgroundColor = UIColor.white
+        return view
+    }()
     
     // MARK: - Mock Data
     
@@ -61,7 +66,8 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             collectionView: vc.collectionView
         )
         
-        AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
+        containerView.addSubview(vc.view)
+        AssertSnapshot(containerView, variants: .onlyUserInterfaceStyles)
     }
 
     func test_commands_defaultAppearance() {
@@ -70,7 +76,8 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             collectionView: vc.collectionView
         )
         
-        AssertSnapshot(vc, screenSize: defaultSuggestionsSize)
+        containerView.addSubview(vc.view)
+        AssertSnapshot(containerView)
     }
 
     func test_commands_appearanceCustomization_usingUIConfig() {
@@ -102,7 +109,8 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             collectionView: vc.collectionView
         )
         
-        AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
+        containerView.addSubview(vc.view)
+        AssertSnapshot(containerView, variants: .onlyUserInterfaceStyles)
     }
 
     func test_commands_appearanceCustomization_usingAppearanceHook() {
@@ -119,7 +127,8 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             collectionView: vc.collectionView
         )
         
-        AssertSnapshot(vc, variants: [.defaultLight], screenSize: defaultSuggestionsSize)
+        containerView.addSubview(vc.view)
+        AssertSnapshot(containerView, variants: [.defaultLight])
     }
 
     func test_commands_appearanceCustomization_usingSubclassing() {
@@ -146,7 +155,8 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             collectionView: vc.collectionView
         )
         
-        AssertSnapshot(vc, variants: [.defaultLight], screenSize: defaultSuggestionsSize)
+        containerView.addSubview(vc.view)
+        AssertSnapshot(containerView, variants: [.defaultLight])
     }
     
     // MARK: - Mentions Tests
@@ -159,7 +169,8 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             searchController: searchController
         )
         
-        AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
+        containerView.addSubview(vc.view)
+        AssertSnapshot(containerView, variants: .onlyUserInterfaceStyles)
     }
 
     func test_mentions_defaultAppearance() {
@@ -170,7 +181,8 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             searchController: searchController
         )
         
-        AssertSnapshot(vc, screenSize: defaultSuggestionsSize)
+        containerView.addSubview(vc.view)
+        AssertSnapshot(containerView)
     }
 
     func test_mentions_appearanceCustomization_usingUIConfig() {
@@ -204,7 +216,8 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             searchController: searchController
         )
         
-        AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
+        containerView.addSubview(vc.view)
+        AssertSnapshot(containerView, variants: .onlyUserInterfaceStyles)
     }
 
     func test_mentions_appearanceCustomization_usingAppearanceHook() {
@@ -221,7 +234,8 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             searchController: searchController
         )
         
-        AssertSnapshot(vc, variants: [.defaultLight], screenSize: defaultSuggestionsSize)
+        containerView.addSubview(vc.view)
+        AssertSnapshot(containerView, variants: [.defaultLight])
     }
 
     func test_mentions_appearanceCustomization_usingSubclassing() {
@@ -248,6 +262,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             searchController: searchController
         )
         
-        AssertSnapshot(vc, variants: [.defaultLight], screenSize: defaultSuggestionsSize)
+        containerView.addSubview(vc.view)
+        AssertSnapshot(containerView, variants: [.defaultLight])
     }
 }
