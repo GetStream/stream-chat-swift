@@ -9,7 +9,8 @@ extension CALayer {
         masksToBounds = false
         shadowOffset = .zero
         shadowRadius = 8
-        shadowColor = color.withAlphaComponent(0.85).cgColor
-        shadowOpacity = 1
+        shadowOpacity = 0.85
+        shadowColor = color.cgColor
+        isOpaque = true
     }
 }
