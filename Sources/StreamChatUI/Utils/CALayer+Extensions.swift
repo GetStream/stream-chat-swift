@@ -9,6 +9,6 @@ extension CALayer {
         masksToBounds = false
         shadowOffset = .zero
         shadowRadius = 8
-        shadowOpacity = 1
+        shadowOpacity = 0.9
     }
 }
