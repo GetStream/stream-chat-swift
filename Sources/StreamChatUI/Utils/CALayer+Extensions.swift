@@ -11,6 +11,5 @@ extension CALayer {
         shadowRadius = 8
         shadowOpacity = 0.85
         shadowColor = color.cgColor
-        isOpaque = true
     }
 }

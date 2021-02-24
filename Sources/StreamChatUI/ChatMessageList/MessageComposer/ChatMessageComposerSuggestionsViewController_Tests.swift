@@ -42,6 +42,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         vc = ChatMessageComposerSuggestionsViewController()
+        vc.view.backgroundColor = .white
         config.images.commandIcons["yodafy"] = TestImages.yoda.image
         config.images.messageComposerCommandFallback = TestImages.vader.image
         vc.uiConfig = config
