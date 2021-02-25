@@ -225,6 +225,11 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         // so it's corners are properly masked
         messageBubbleView.addSubview(attachmentsView)
         
+        // Visibility of these views are controlled in their respective `update` methods
+        quotedMessageView.isVisible = false
+        linkPreviewView.isVisible = false
+        attachmentsView.isVisible = false
+        
         layoutConstraints[.attachments] = [
             attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
             attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
@@ -392,12 +397,128 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     }
 
     // todo -> move to the avatar view itself
-    func updateAvatarView() {
+    open func updateAvatarView() {
+        guard let message = message else { return /* todo */ }
+        
         let placeholder = uiConfig.images.userAvatarPlaceholder1
-        if let imageURL = message?.author.imageURL {
+        if let imageURL = message.author.imageURL {
             authorAvatarView.imageView.loadImage(from: imageURL, placeholder: placeholder)
         } else {
             authorAvatarView.imageView.image = placeholder
+        }
+        
+        authorAvatarView.isVisible = !message.isSentByCurrentUser && message.isLastInGroup
+    }
+    
+    open func updateReactionsView() {
+        guard let message = message else { return /* todo */ }
+        
+        let userReactionIDs = Set(message.currentUserReactions.map(\.type))
+        
+        let isOutgoing = message.isSentByCurrentUser
+        
+        reactionsBubble.content = .init(
+            style: isOutgoing ? .smallOutgoing : .smallIncoming,
+            reactions: message.message.reactionScores.keys
+                .sorted { $0.rawValue < $1.rawValue }
+                .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) },
+            didTapOnReaction: { _ in }
+        )
+        
+        if message.deletedAt == nil && !message.reactionScores.isEmpty {
+            constraintsToActivate.append(bubbleToReactionsConstraint!)
+        } else {
+            constraintsToDeactivate.append(bubbleToReactionsConstraint!)
+        }
+        
+        reactionsBubble.isVisible = message.deletedAt == nil && !message.reactionScores.isEmpty
+    }
+    
+    open func updateBubbleView() {
+        guard let message = message else { return /* todo */ }
+        
+        messageBubbleView.message = message
+        
+        if message.isLastInGroup {
+            constraintsToActivate.append(bubbleToMetadataConstraint!)
+        } else {
+            constraintsToDeactivate.append(bubbleToMetadataConstraint!)
+        }
+        
+        if message.lastActionFailed {
+            constraintsToActivate.append(bubbleToErrorIndicatorConstraint!)
+        } else {
+            constraintsToDeactivate.append(bubbleToErrorIndicatorConstraint!)
+        }
+        
+        if message.type == .ephemeral {
+            messageBubbleView.backgroundColor = uiConfig.colorPalette.popoverBackground
+        } else if message.layoutOptions.contains(.linkPreview) {
+            messageBubbleView.backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
+        } else {
+            messageBubbleView.backgroundColor = message.isSentByCurrentUser == true ?
+                uiConfig.colorPalette.background2 :
+                uiConfig.colorPalette.popoverBackground
+        }
+    }
+    
+    open func updateMetadataView() {
+        messageMetadataView.message = message
+
+        messageMetadataView.isVisible = message?.isLastInGroup ?? false
+    }
+    
+    open func updateQuotedMessageView() {
+        guard let message = message else { return /* todo */ }
+        
+        quotedMessageView.isParentMessageSentByCurrentUser = message.isSentByCurrentUser
+        quotedMessageView.message = message.quotedMessage
+        quotedMessageView.isVisible = message.layoutOptions.contains(.quotedMessage)
+    }
+    
+    open func updateErrorIndicator() {
+        errorIndicator.isVisible = message?.lastActionFailed ?? false
+    }
+    
+    open func updateLinkPreviewView() {
+        guard let message = message else { return /* todo */ }
+        
+        linkPreviewView.content = message.attachments.first { $0.type.isLink } as? ChatMessageDefaultAttachment
+        
+        linkPreviewView.isVisible = message.layoutOptions.contains(.linkPreview)
+    }
+    
+    open func updateAttachmentsView() {
+        guard let message = message else { return /* todo */ }
+        
+        attachmentsView.content = .init(
+            attachments: message.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
+            didTapOnAttachment: message.didTapOnAttachment,
+            didTapOnAttachmentAction: message.didTapOnAttachmentAction
+        )
+        
+        attachmentsView.isVisible = message.layoutOptions.contains(.attachments)
+    }
+    
+    open func updateTextView() {
+        guard let message = message else { return /* todo */ }
+        
+        let font: UIFont = uiConfig.font.body
+        textView.attributedText = .init(string: message.textContent, attributes: [
+            .foregroundColor: message.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.subtitleText,
+            .font: message.deletedAt == nil ? font : font.italic
+        ])
+        
+        textView.isVisible = message.layoutOptions.contains(.text)
+    }
+    
+    open func updateMessagePosition() { // TODO find a better name
+        if message?.isSentByCurrentUser ?? false {
+            constraintsToActivate.append(contentsOf: outgoingMessageConstraints)
+            constraintsToDeactivate.append(contentsOf: incomingMessageConstraints)
+        } else {
+            constraintsToActivate.append(contentsOf: incomingMessageConstraints)
+            constraintsToDeactivate.append(contentsOf: outgoingMessageConstraints)
         }
     }
 
@@ -411,100 +532,24 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
             return
         }
 
-//        var constraintsToActivate: [NSLayoutConstraint] = []
-//        var constraintsToDeactivate: [NSLayoutConstraint] = []
-
-        let isOutgoing = message.isSentByCurrentUser
-
-        messageBubbleView.message = message
-        messageMetadataView.message = message
-
-        let userReactionIDs = Set(message.currentUserReactions.map(\.type))
-
-        reactionsBubble.content = .init(
-            style: isOutgoing ? .smallOutgoing : .smallIncoming,
-            reactions: message.message.reactionScores.keys
-                .sorted { $0.rawValue < $1.rawValue }
-                .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) },
-            didTapOnReaction: { _ in }
-        )
-
+        // Base views in the message
+        updateBubbleView()
+        updateMetadataView()
+        updateReactionsView()
         updateThreadViews()
         updateAvatarView()
+        updateMessagePosition()
+        updateErrorIndicator()
 
-        if isOutgoing {
-            constraintsToActivate.append(contentsOf: outgoingMessageConstraints)
-            constraintsToDeactivate.append(contentsOf: incomingMessageConstraints)
-        } else {
-            constraintsToActivate.append(contentsOf: incomingMessageConstraints)
-            constraintsToDeactivate.append(contentsOf: outgoingMessageConstraints)
-        }
-
-        let shouldAddBubbleToReactionsConstraint = message.deletedAt == nil && !message.reactionScores.isEmpty
-        if shouldAddBubbleToReactionsConstraint {
-            constraintsToActivate.append(bubbleToReactionsConstraint!)
-        } else {
-            constraintsToDeactivate.append(bubbleToReactionsConstraint!)
-        }
+        // Additional views
+        updateTextView()
+        updateQuotedMessageView()
+        updateLinkPreviewView()
+        updateAttachmentsView()
         
-        if message.isLastInGroup {
-            constraintsToActivate.append(bubbleToMetadataConstraint!)
-        } else {
-            constraintsToDeactivate.append(bubbleToMetadataConstraint!)
-        }
-
-        if message.lastActionFailed {
-            constraintsToActivate.append(bubbleToErrorIndicatorConstraint!)
-        } else {
-            constraintsToDeactivate.append(bubbleToErrorIndicatorConstraint!)
-        }
-
-//        NSLayoutConstraint.deactivate(toDeactivate)
-//        NSLayoutConstraint.activate(toActivate)
-
-        authorAvatarView.isVisible = !isOutgoing && message.isLastInGroup
-        messageMetadataView.isVisible = message.isLastInGroup
-        reactionsBubble.isVisible = shouldAddBubbleToReactionsConstraint
-        errorIndicator.isVisible = message.lastActionFailed
-        
-        // --
-        let layoutOptions = message.layoutOptions
-        
-        quotedMessageView.isParentMessageSentByCurrentUser = message.isSentByCurrentUser
-        quotedMessageView.message = message.quotedMessage
-        quotedMessageView.isVisible = layoutOptions.contains(.quotedMessage)
-        
-        let font: UIFont = uiConfig.font.body
-        textView.attributedText = .init(string: message.textContent, attributes: [
-            .foregroundColor: message.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.subtitleText,
-            .font: message.deletedAt == nil ? font : font.italic
-        ])
-        textView.isVisible = layoutOptions.contains(.text)
-        
-        if message.type == .ephemeral {
-            messageBubbleView.backgroundColor = uiConfig.colorPalette.popoverBackground
-        } else if layoutOptions.contains(.linkPreview) {
-            messageBubbleView.backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
-        } else {
-            messageBubbleView.backgroundColor = message.isSentByCurrentUser == true ?
-                uiConfig.colorPalette.background2 :
-                uiConfig.colorPalette.popoverBackground
-        }
-        
-        linkPreviewView.content = message.attachments.first { $0.type.isLink } as? ChatMessageDefaultAttachment
-        
-        linkPreviewView.isVisible = layoutOptions.contains(.linkPreview)
-        
-        attachmentsView.content = .init(
-            attachments: message.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
-            didTapOnAttachment: message.didTapOnAttachment,
-            didTapOnAttachmentAction: message.didTapOnAttachmentAction
-        )
-        
-        attachmentsView.isVisible = layoutOptions.contains(.attachments)
-        
+        // Necessary constraints
         layoutConstraints.values.flatMap { $0 }.forEach { constraintsToDeactivate.append($0) }
-        layoutConstraints[layoutOptions]?.forEach { constraintsToActivate.append($0) }
+        layoutConstraints[message.layoutOptions]?.forEach { constraintsToActivate.append($0) }
 
         setNeedsUpdateConstraints()
     }
