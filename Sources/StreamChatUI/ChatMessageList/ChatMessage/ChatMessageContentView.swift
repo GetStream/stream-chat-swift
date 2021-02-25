@@ -52,6 +52,14 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         .messageContentSubviews
         .quotedMessageBubbleView.init()
         .withoutAutoresizingMaskConstraints
+    
+    public private(set) lazy var attachmentsView = uiConfig
+        .messageList
+        .messageContentSubviews
+        .attachmentSubviews
+        .attachmentsView
+        .init()
+        .withoutAutoresizingMaskConstraints
     // --
 
     public private(set) lazy var messageMetadataView = uiConfig
@@ -212,6 +220,58 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         addSubview(quotedMessageView)
         addSubview(linkPreviewView)
         addSubview(textView)
+        
+        // We add `attachmentsView` as a subview to `bubbleView`
+        // so it's corners are properly masked
+        messageBubbleView.addSubview(attachmentsView)
+        
+        layoutConstraints[.attachments] = [
+            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
+            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
+            attachmentsView.topAnchor.pin(equalTo: messageBubbleView.topAnchor),
+            attachmentsView.bottomAnchor.pin(equalTo: messageBubbleView.bottomAnchor),
+            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
+        ]
+        
+        layoutConstraints[[.text, .attachments]] = [
+            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
+            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
+            attachmentsView.topAnchor.pin(equalTo: messageBubbleView.topAnchor),
+            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
+            
+            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
+            textView.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
+            textView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
+        ]
+        
+        layoutConstraints[[.attachments, .quotedMessage]] = [
+            quotedMessageView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
+            quotedMessageView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
+            quotedMessageView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
+            
+            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
+            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
+            attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
+            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
+            attachmentsView.bottomAnchor.pin(equalTo: messageBubbleView.bottomAnchor)
+        ]
+        
+        layoutConstraints[[.text, .attachments, .quotedMessage]] = [
+            quotedMessageView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
+            quotedMessageView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
+            quotedMessageView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
+            
+            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
+            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
+            attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
+            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
+            
+            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
+            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
+            textView.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
+            textView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
+        ]
         
         layoutConstraints[.text] = [
             textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
@@ -392,8 +452,17 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         
         linkPreviewView.isVisible = layoutOptions.contains(.linkPreview)
         
+        attachmentsView.content = .init(
+            attachments: message.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
+            didTapOnAttachment: message.didTapOnAttachment,
+            didTapOnAttachmentAction: message.didTapOnAttachmentAction
+        )
+        
+        attachmentsView.isVisible = layoutOptions.contains(.attachments)
+        
         layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
         layoutConstraints[layoutOptions]?.forEach { $0.isActive = true }
+        
         // --
     }
 
@@ -409,90 +478,6 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     
     @objc func didTapOnLinkPreview() {
         onLinkTap(linkPreviewView.content)
-    }
-}
-
-public typealias ChatMessageAttachmentContentView = _ChatMessageAttachmentContentView<NoExtraData>
-
-open class _ChatMessageAttachmentContentView<ExtraData: ExtraDataTypes>: _ChatMessageContentView<ExtraData> {
-    public private(set) lazy var attachmentsView = uiConfig
-        .messageList
-        .messageContentSubviews
-        .attachmentSubviews
-        .attachmentsView
-        .init()
-        .withoutAutoresizingMaskConstraints
-    
-    override open func setUpLayout() {
-        super.setUpLayout()
-        
-        // We add `attachmentsView` as a subview to `bubbleView`
-        // so it's corners are properly masked
-        messageBubbleView.addSubview(attachmentsView)
-        
-        layoutConstraints[.attachments] = [
-            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
-            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
-            attachmentsView.topAnchor.pin(equalTo: messageBubbleView.topAnchor),
-            attachmentsView.bottomAnchor.pin(equalTo: messageBubbleView.bottomAnchor),
-            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
-        ]
-        
-        layoutConstraints[[.text, .attachments]] = [
-            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
-            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
-            attachmentsView.topAnchor.pin(equalTo: messageBubbleView.topAnchor),
-            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
-            
-            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
-            textView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
-        ]
-        
-        layoutConstraints[[.attachments, .quotedMessage]] = [
-            quotedMessageView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            quotedMessageView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            quotedMessageView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
-            
-            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
-            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
-            attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
-            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
-            attachmentsView.bottomAnchor.pin(equalTo: messageBubbleView.bottomAnchor)
-        ]
-        
-        layoutConstraints[[.text, .attachments, .quotedMessage]] = [
-            quotedMessageView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            quotedMessageView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            quotedMessageView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
-            
-            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
-            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
-            attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
-            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
-            
-            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
-            textView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
-        ]
-    }
-    
-    override open func updateContent() {
-        super.updateContent()
-        
-        attachmentsView.content = message.flatMap {
-            .init(
-                attachments: $0.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
-                didTapOnAttachment: message?.didTapOnAttachment,
-                didTapOnAttachmentAction: message?.didTapOnAttachmentAction
-            )
-        }
-        
-        let layoutOptions = message?.layoutOptions ?? []
-        
-        attachmentsView.isVisible = layoutOptions.contains(.attachments)
     }
 }
 
