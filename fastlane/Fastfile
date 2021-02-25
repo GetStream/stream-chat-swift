@@ -312,3 +312,21 @@ lane :spm_integration do |options|
     destination: "generic/platform=iOS Simulator"
   )
 end
+
+desc "Test CocoaPods Integration"
+lane :cocoapods_integration do
+
+  cocoapods(
+    clean_install: true,
+    podfile: "Integration/CocoaPods/"
+  )
+
+  build_app(
+    workspace: "Integration/CocoaPods/CocoaPods.xcworkspace",
+    scheme: "CocoaPods",
+    skip_package_ipa: true,
+    skip_archive: true,
+    clean: true,
+    destination: "generic/platform=iOS Simulator"
+  )
+end
