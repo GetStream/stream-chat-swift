@@ -590,56 +590,24 @@ public class ChatMessageTextContentView<ExtraData: ExtraDataTypes>: _ChatMessage
     override open func updateContent() {
         // When message cell is about to be reused, it sets `nil` for message value.
         // That means we need to remove all dynamic constraints to prevent layout warnings.
-        guard let message = self.message else {
+        guard message != nil else {
             removeAllDynamicConstraints()
             return
         }
         
-        let isOutgoing = message.isSentByCurrentUser
-        
-        messageBubbleView.message = message
-        messageMetadataView.message = message
-        
-        let userReactionIDs = Set(message.currentUserReactions.map(\.type))
-        
-        reactionsBubble.content = .init(
-            style: isOutgoing ? .smallOutgoing : .smallIncoming,
-            reactions: message.message.reactionScores.keys
-                .sorted { $0.rawValue < $1.rawValue }
-                .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) },
-            didTapOnReaction: { _ in }
-        )
-        
+        // Base views in the message
+        updateBubbleView()
+        updateMetadataView()
+        updateReactionsView()
         updateThreadViews()
         updateAvatarView()
+        updateMessagePosition()
+        updateErrorIndicator()
         
-        if isOutgoing {
-            constraintsToActivate.append(contentsOf: outgoingMessageConstraints)
-            constraintsToDeactivate.append(contentsOf: incomingMessageConstraints)
-        } else {
-            constraintsToActivate.append(contentsOf: incomingMessageConstraints)
-            constraintsToDeactivate.append(contentsOf: outgoingMessageConstraints)
-        }
+        // Text view
+        updateTextView()
         
-        let shouldAddBubbleToReactionsConstraint = message.deletedAt == nil && !message.reactionScores.isEmpty
-        if shouldAddBubbleToReactionsConstraint {
-            constraintsToActivate.append(bubbleToReactionsConstraint!)
-        } else {
-            constraintsToDeactivate.append(bubbleToReactionsConstraint!)
-        }
-        
-        if message.isLastInGroup {
-            constraintsToActivate.append(bubbleToMetadataConstraint!)
-        } else {
-            constraintsToDeactivate.append(bubbleToMetadataConstraint!)
-        }
-        
-        if message.lastActionFailed {
-            constraintsToActivate.append(bubbleToErrorIndicatorConstraint!)
-        } else {
-            constraintsToDeactivate.append(bubbleToErrorIndicatorConstraint!)
-        }
-        
+        // Necessary constraints
         constraintsToActivate += [
             textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
             textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
@@ -647,60 +615,8 @@ public class ChatMessageTextContentView<ExtraData: ExtraDataTypes>: _ChatMessage
             textView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
         ]
         
-        //        NSLayoutConstraint.deactivate(constraintsToDeactivate)
-        //        NSLayoutConstraint.activate(constraintsToActivate)
-        
-        authorAvatarView.isVisible = !isOutgoing && message.isLastInGroup
-        messageMetadataView.isVisible = message.isLastInGroup
-        reactionsBubble.isVisible = shouldAddBubbleToReactionsConstraint
-        errorIndicator.isVisible = message.lastActionFailed
-        
-        // --
-        
-        
-        //
-        //
-        //        let layoutOptions = message.layoutOptions
-        //
-        //        quotedMessageView.isParentMessageSentByCurrentUser = message.isSentByCurrentUser
-        //        quotedMessageView.message = message.quotedMessage
-        quotedMessageView.isVisible = false
-        //
-        let font: UIFont = uiConfig.font.body
-        textView.attributedText = .init(string: message.textContent, attributes: [
-            .foregroundColor: message.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.subtitleText,
-            .font: message.deletedAt == nil ? font : font.italic
-        ])
-        textView.isVisible = true
-        //
-        //        if message.type == .ephemeral {
-        //            messageBubbleView.backgroundColor = uiConfig.colorPalette.popoverBackground
-        //        } else if layoutOptions.contains(.linkPreview) {
-        //            messageBubbleView.backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
-        //        } else {
-                    messageBubbleView.backgroundColor = message.isSentByCurrentUser == true ?
-                        uiConfig.colorPalette.background2 :
-                        uiConfig.colorPalette.popoverBackground
-        //        }
-        //
-        //        linkPreviewView.content = message.attachments.first { $0.type.isLink } as? ChatMessageDefaultAttachment
-        //
-        //        linkPreviewView.isVisible = layoutOptions.contains(.linkPreview)
-        //
-        //        attachmentsView.content = .init(
-        //            attachments: message.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
-        //            didTapOnAttachment: message.didTapOnAttachment,
-        //            didTapOnAttachmentAction: message.didTapOnAttachmentAction
-        //        )
-        //
-        //        attachmentsView.isVisible = layoutOptions.contains(.attachments)
-        //
-        //        layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
-        //        layoutConstraints[layoutOptions]?.forEach { $0.isActive = true }
-        
-        // --
-        
         setNeedsUpdateConstraints()
+        updateConstraintsIfNeeded()
     }
 }
 
