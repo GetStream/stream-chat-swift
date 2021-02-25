@@ -86,6 +86,11 @@ Build Docs Snippets target
 fastlane spm_integration
 ```
 Test SPM Integration
+### cocoapods_integration
+```
+fastlane cocoapods_integration
+```
+Test CocoaPods Integration
 
 ----
 
