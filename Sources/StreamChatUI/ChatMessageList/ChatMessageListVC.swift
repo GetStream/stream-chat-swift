@@ -62,15 +62,22 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         .messageList
         .collectionLayout
         .init()
-    
+
+    /// Registers the provided message cell to be used in the collection view.
+    ///
+    /// - Note: For performance optimization reasons, each cell is registered using multiple reuse identifiers to reduce
+    /// cell layout changes.
+    ///
+    /// - Parameter cellType: The cell type to be registered.
+    ///
+    open func registerMessageCell(_ cellType: _СhatMessageCollectionViewCell<ExtraData>.Type) {
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessageReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessageReuseId)
+    }
+
     public private(set) lazy var collectionView: UICollectionView = {
         let collection = uiConfig.messageList.collectionView.init(layout: collectionViewLayout)
-        
-        let incomingCell = uiConfig.messageList.incomingMessageCell
-        let outgoingCell = uiConfig.messageList.outgoingMessageCell
-        collection.register(incomingCell, forCellWithReuseIdentifier: incomingCell.reuseId)
-        collection.register(outgoingCell, forCellWithReuseIdentifier: outgoingCell.reuseId)
-        
+
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
         collection.alwaysBounceVertical = true
@@ -95,6 +102,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
         collectionView.addGestureRecognizer(longPress)
+
+        registerMessageCell(uiConfig.messageList.defaultMessageCell)
     }
 
     override open func setUpLayout() {
@@ -157,9 +166,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     open func cellReuseIdentifierForMessage(_ message: _ChatMessageGroupPart<ExtraData>) -> String {
         if message.isSentByCurrentUser {
-            return uiConfig.messageList.outgoingMessageCell.reuseId
+            return uiConfig.messageList.defaultMessageCell.outgoingMessageReuseId
         } else {
-            return uiConfig.messageList.incomingMessageCell.reuseId
+            return uiConfig.messageList.defaultMessageCell.incomingMessageReuseId
         }
     }
 

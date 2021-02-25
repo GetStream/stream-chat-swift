@@ -8,10 +8,9 @@ import UIKit.UIImage
 public extension _UIConfig {
     struct MessageListUI {
         public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
-        public var incomingMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
-            СhatIncomingMessageCollectionViewCell<ExtraData>.self
-        public var outgoingMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
-            СhatOutgoingMessageCollectionViewCell<ExtraData>.self
+
+        public var defaultMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
+            _СhatMessageCollectionViewCell<ExtraData>.self
 
         public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
