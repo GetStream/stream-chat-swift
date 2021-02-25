@@ -5,11 +5,12 @@
 import StreamChat
 import UIKit
 
-/// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
+/// A `ChatChannelSwipeableListItemView` subclass view that shows channel information.
 public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
-/// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
+/// A `ChatChannelSwipeableListItemView` subclass view that shows channel information.
 open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
+    
     /// The data this view component shows.
     public var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContentIfNeeded() }
@@ -17,17 +18,20 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         
     private lazy var uiConfigSubviews: _UIConfig.ChannelListItemSubviews = uiConfig.channelList.channelListItemSubviews
     
-    /// The `ContainerStackView` instance used to arrange view,
-    open private(set) lazy var container: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
-    
     /// The `UILabel` instance showing the channel name.
-    open private(set) lazy var titleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    open private(set) lazy var titleLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
     
     /// The `UILabel` instance showing the last message or typing members if any.
-    open private(set) lazy var subtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    open private(set) lazy var subtitleLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
     
     /// The `UILabel` instance showing the time of the last sent message.
-    open private(set) lazy var timestampLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    open private(set) lazy var timestampLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
     
     /// The view used to show channels avatar.
     open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfigSubviews
@@ -53,74 +57,105 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
 
         backgroundColor = uiConfig.colorPalette.background
 
-        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.font = uiConfig.font.bodyBold
 
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
-        subtitleLabel.adjustsFontForContentSizeCategory = true
-        subtitleLabel.font = uiConfig.font.subheadline
+        subtitleLabel.font = uiConfig.font.footnote
         
         timestampLabel.textColor = uiConfig.colorPalette.subtitleText
-        timestampLabel.adjustsFontForContentSizeCategory = true
-        timestampLabel.font = uiConfig.font.subheadline
+        timestampLabel.font = uiConfig.font.footnote
     }
 
     override open func setUpLayout() {
         super.setUpLayout()
+        
+        cellContentView.addSubview(titleLabel)
+        cellContentView.addSubview(subtitleLabel)
+        cellContentView.addSubview(timestampLabel)
+        cellContentView.addSubview(avatarView)
+        cellContentView.addSubview(unreadCountView)
+        
+        var constraintsToActivate: [NSLayoutConstraint] = []
+        
+        // A helper layout guide that helps to visually center views around the vertical center of the cell
+        // with defined vertical spacing
+        let visualCenterGuide = UILayoutGuide()
+        cellContentView.addLayoutGuide(visualCenterGuide)
+        
+        // Helper vertical center layout guide
+        constraintsToActivate += [
+            // Pin the center guide to the vertical center
+            visualCenterGuide.centerYAnchor.pin(equalTo: cellContentView.centerYAnchor),
+            
+            // Set its height to the current vertical margin to match the current spacing
+            visualCenterGuide.heightAnchor.pin(equalToConstant: layoutMargins.top)
+        ]
+        
+        // Avatar view
+        constraintsToActivate += [
+            // Default avatar view size
+            avatarView.heightAnchor.pin(equalToConstant: 48),
+            
+            // Pin size/width ratio to 1:1
+            avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor),
+            
+            // Align avatar to the left
+            avatarView.leadingAnchor.pin(equalTo: cellContentView.layoutMarginsGuide.leadingAnchor),
+            
+            // Always center the avatar vertically
+            avatarView.centerYAnchor.pin(equalTo: visualCenterGuide.centerYAnchor),
+            
+            // Avatar top and bottom should always be inside the cell
+            avatarView.topAnchor.pin(greaterThanOrEqualTo: cellContentView.layoutMarginsGuide.topAnchor),
+            avatarView.bottomAnchor.pin(lessThanOrEqualTo: cellContentView.layoutMarginsGuide.bottomAnchor)
+        ]
+        
+        // Title label
+        constraintsToActivate += [
+            // Bottom of the label is aligned with avatar vertical center
+            titleLabel.lastBaselineAnchor.pin(equalTo: visualCenterGuide.topAnchor),
 
-        cellContentView.embed(container, insets: directionalLayoutMargins)
-                
-        container.leftStackView.isHidden = false
-        container.leftStackView.alignment = .center
-        container.leftStackView.isLayoutMarginsRelativeArrangement = true
-        container.leftStackView.directionalLayoutMargins = .init(
-            top: 0,
-            leading: 0,
-            bottom: 0,
-            trailing: avatarView.directionalLayoutMargins.trailing
-        )
+            // Pin the title label leading anchor to avatar's trailing + spacing
+            titleLabel.leadingAnchor.pin(equalToSystemSpacingAfter: avatarView.trailingAnchor),
+            
+            // Title label top should always be inside the cell
+            titleLabel.topAnchor.pin(greaterThanOrEqualTo: cellContentView.layoutMarginsGuide.topAnchor)
+        ]
+
+        // Subtitle label
+        constraintsToActivate += [
+            // Top of the label is aligned with avatar vertical center
+            subtitleLabel.topAnchor.pin(equalTo: visualCenterGuide.bottomAnchor),
+            
+            // Pin the subtitle label leading anchor to avatar's trailing + spacing
+            subtitleLabel.leadingAnchor.pin(equalToSystemSpacingAfter: avatarView.trailingAnchor)
+        ]
+
+        // Unread count view
+        constraintsToActivate += [
+            // Pin the label to the trailing anchor
+            unreadCountView.trailingAnchor.pin(equalTo: cellContentView.layoutMarginsGuide.trailingAnchor),
+            
+            // Align it vertically with the title
+            unreadCountView.centerYAnchor.pin(equalTo: titleLabel.centerYAnchor),
+            
+            // Title label shouldn't overlap
+            unreadCountView.leadingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: titleLabel.trailingAnchor)
+        ]
+
+        // Timestamp label
+        constraintsToActivate += [
+            // Pin the label to the trailing anchor
+            timestampLabel.trailingAnchor.pin(equalTo: cellContentView.layoutMarginsGuide.trailingAnchor),
+            
+            // Align it vertically with the subtitle
+            timestampLabel.centerYAnchor.pin(equalTo: subtitleLabel.centerYAnchor),
         
-        avatarView.heightAnchor.pin(equalToConstant: 48).isActive = true
-        avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor).isActive = true
-        container.leftStackView.addArrangedSubview(avatarView)
+            // Subtitle label shouldn't overlap
+            timestampLabel.leadingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: subtitleLabel.trailingAnchor)
+        ]
         
-        // UIStackView embedded in UIView with flexible top and bottom constraints to make
-        // containing UIStackView centred and preserving content size.
-        let containerCenterView = UIView()
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        
-        containerCenterView.addSubview(stackView)
-        stackView.topAnchor.pin(greaterThanOrEqualTo: containerCenterView.layoutMarginsGuide.topAnchor).isActive = true
-        stackView.bottomAnchor.pin(lessThanOrEqualTo: containerCenterView.layoutMarginsGuide.bottomAnchor).isActive = true
-        stackView.pin(anchors: [.leading, .centerY], to: containerCenterView)
-        stackView.trailingAnchor.pin(equalTo: containerCenterView.trailingAnchor).with(priority: .streamAlmostRequire)
-            .isActive = true
-        stackView.spacing = 2
-        
-        let topCenterStackView = UIStackView()
-        topCenterStackView.alignment = .top
-        topCenterStackView.spacing = UIStackView.spacingUseSystem
-        topCenterStackView.addArrangedSubview(titleLabel)
-        topCenterStackView.addArrangedSubview(unreadCountView)
-        
-        let bottomCenterStackView = UIStackView()
-        bottomCenterStackView.spacing = UIStackView.spacingUseSystem
-        
-        subtitleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        subtitleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        timestampLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        
-        bottomCenterStackView.addArrangedSubview(subtitleLabel)
-        bottomCenterStackView.setCustomSpacing(UIStackView.spacingUseSystem, after: subtitleLabel)
-        bottomCenterStackView.addArrangedSubview(readStatusView)
-        bottomCenterStackView.addArrangedSubview(timestampLabel)
-        
-        stackView.addArrangedSubview(topCenterStackView)
-        stackView.addArrangedSubview(bottomCenterStackView)
-        
-        container.centerStackView.isHidden = false
-        container.centerStackView.addArrangedSubview(containerCenterView)
+        NSLayoutConstraint.activate(constraintsToActivate)
     }
     
     override open func updateContent() {
