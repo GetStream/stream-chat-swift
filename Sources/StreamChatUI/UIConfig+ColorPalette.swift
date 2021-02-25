@@ -68,7 +68,11 @@ private extension UIColor {
     static let streamAccentBlue = mode(0x005fff, 0x005fff)
     static let streamAccentRed = mode(0xff3742, 0xff3742)
     static let streamAccentGreen = mode(0x20e070, 0x20e070)
-    static let streamModalShadow = mode(0, lightAlpha: 0.15, 0, darkAlpha: 1)
+    
+    // Currently we are not using the correct shadow color from figma's color palette. This is to avoid
+    // an issue with snapshots inconsistency between Intel vs M1. We can't use shadows with transparency.
+    // So we apply a light gray color to fake the transparency.
+    static let streamModalShadow = mode(0xd6d6d6, lightAlpha: 1, 0, darkAlpha: 1)
 
     static let streamWhiteStatic = mode(0xffffff, 0xffffff)
 
