@@ -71,11 +71,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         collection.register(incomingCell, forCellWithReuseIdentifier: incomingCell.reuseId)
         collection.register(outgoingCell, forCellWithReuseIdentifier: outgoingCell.reuseId)
         
-        let incomingAttachmentCell = uiConfig.messageList.incomingMessageAttachmentCell
-        let outgoingAttachmentCell = uiConfig.messageList.outgoingMessageAttachmentCell
-        collection.register(incomingAttachmentCell, forCellWithReuseIdentifier: incomingAttachmentCell.reuseId)
-        collection.register(outgoingAttachmentCell, forCellWithReuseIdentifier: outgoingAttachmentCell.reuseId)
-        
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
         collection.alwaysBounceVertical = true
@@ -161,18 +156,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     open func cellReuseIdentifierForMessage(_ message: _ChatMessageGroupPart<ExtraData>) -> String {
-        if message.attachments.contains(where: { $0.type == .image || $0.type == .giphy || $0.type == .file }) {
-            if message.isSentByCurrentUser {
-                return uiConfig.messageList.outgoingMessageAttachmentCell.reuseId
-            } else {
-                return uiConfig.messageList.incomingMessageAttachmentCell.reuseId
-            }
+        if message.isSentByCurrentUser {
+            return uiConfig.messageList.outgoingMessageCell.reuseId
         } else {
-            if message.isSentByCurrentUser {
-                return uiConfig.messageList.outgoingMessageCell.reuseId
-            } else {
-                return uiConfig.messageList.incomingMessageCell.reuseId
-            }
+            return uiConfig.messageList.incomingMessageCell.reuseId
         }
     }
 
