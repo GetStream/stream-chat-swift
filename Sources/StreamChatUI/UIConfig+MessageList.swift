@@ -13,7 +13,7 @@ public extension _UIConfig {
             _СhatMessageCollectionViewCell<ExtraData>.self
 
         public var textOnlyMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
-            TextOnlyCell<ExtraData>.self
+            _ChatMessageTextCollectionViewCell<ExtraData>.self
 
         public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
