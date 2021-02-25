@@ -40,10 +40,13 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         .unreadCountView.init()
         .withoutAutoresizingMaskConstraints
 
+    /*
+        TODO: ReadStatusView, Missing LLC API
     /// The view showing indicator for read status of the last message in channel.
     open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
         .readStatusView.init()
         .withoutAutoresizingMaskConstraints
+     */
 
     override public func defaultAppearance() {
         super.defaultAppearance()
@@ -136,10 +139,6 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         unreadCountView.invalidateIntrinsicContentSize()
                 
         timestampLabel.text = content.channel?.lastMessageAt?.getFormattedDate(format: "hh:mm a")
-        
-        // TODO: ReadStatusView
-        // Missing LLC API
-        readStatusView.isHidden = true
     }
 }
 
