@@ -1,0 +1,3 @@
+# We never want to commit the lock file for this folder because the main
+# point of the test is to always use the latest version.
+Podfile.lock
