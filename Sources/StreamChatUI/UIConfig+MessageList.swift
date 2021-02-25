@@ -12,6 +12,9 @@ public extension _UIConfig {
         public var defaultMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
             _СhatMessageCollectionViewCell<ExtraData>.self
 
+        public var textOnlyMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
+            TextOnlyCell<ExtraData>.self
+
         public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
         public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()

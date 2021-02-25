@@ -104,14 +104,14 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         .init()
         .withoutAutoresizingMaskConstraints
 
-    private var incomingMessageConstraints: [NSLayoutConstraint] = []
-    private var outgoingMessageConstraints: [NSLayoutConstraint] = []
-    private var bubbleToReactionsConstraint: NSLayoutConstraint?
-    private var bubbleToMetadataConstraint: NSLayoutConstraint?
-    private var bubbleToErrorIndicatorConstraint: NSLayoutConstraint?
+    var incomingMessageConstraints: [NSLayoutConstraint] = []
+    var outgoingMessageConstraints: [NSLayoutConstraint] = []
+    var bubbleToReactionsConstraint: NSLayoutConstraint?
+    var bubbleToMetadataConstraint: NSLayoutConstraint?
+    var bubbleToErrorIndicatorConstraint: NSLayoutConstraint?
 
-    private var incomingMessageIsThreadConstraints: [NSLayoutConstraint] = []
-    private var outgoingMessageIsThreadConstraints: [NSLayoutConstraint] = []
+    var incomingMessageIsThreadConstraints: [NSLayoutConstraint] = []
+    var outgoingMessageIsThreadConstraints: [NSLayoutConstraint] = []
     
     public fileprivate(set) var layoutConstraints: [ChatMessageContentViewLayoutOptions: [NSLayoutConstraint]] = [:]
 
@@ -333,30 +333,92 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         // --
     }
 
+    // MARK: wip
+
+    open func removeAllDynamicConstraints() {
+        constraintsToDeactivate += outgoingMessageConstraints
+        constraintsToDeactivate += incomingMessageConstraints
+        constraintsToDeactivate += outgoingMessageIsThreadConstraints
+        constraintsToDeactivate += incomingMessageIsThreadConstraints
+
+        constraintsToDeactivate += [
+            bubbleToReactionsConstraint,
+            bubbleToErrorIndicatorConstraint,
+            bubbleToMetadataConstraint
+        ].compactMap { $0 }
+
+        setNeedsUpdateConstraints()
+    }
+
+    public var constraintsToActivate: [NSLayoutConstraint] = []
+    public var constraintsToDeactivate: [NSLayoutConstraint] = []
+
+    override open func updateConstraints() {
+        super.updateConstraints()
+
+        defer {
+            constraintsToActivate = []
+            constraintsToDeactivate = []
+        }
+
+        NSLayoutConstraint.deactivate(constraintsToDeactivate)
+        NSLayoutConstraint.activate(constraintsToActivate)
+    }
+
+    open func updateThreadViews() {
+        guard let message = message else { return /* todo */ }
+
+        let isOutgoing = message.isSentByCurrentUser
+        let isPartOfThread = message.isPartOfThread
+
+        threadView.message = message
+
+        threadArrowView.direction = isOutgoing ? .toLeading : .toTrailing
+
+        threadView.isHidden = !isPartOfThread
+        threadArrowView.isHidden = !isPartOfThread
+        if isPartOfThread {
+            if isOutgoing {
+                constraintsToActivate.append(contentsOf: outgoingMessageIsThreadConstraints)
+                constraintsToDeactivate.append(contentsOf: incomingMessageIsThreadConstraints)
+            } else {
+                constraintsToActivate.append(contentsOf: incomingMessageIsThreadConstraints)
+                constraintsToDeactivate.append(contentsOf: outgoingMessageIsThreadConstraints)
+            }
+        } else {
+            constraintsToDeactivate.append(contentsOf: outgoingMessageIsThreadConstraints)
+            constraintsToDeactivate.append(contentsOf: incomingMessageIsThreadConstraints)
+        }
+    }
+
+    // todo -> move to the avatar view itself
+    func updateAvatarView() {
+        let placeholder = uiConfig.images.userAvatarPlaceholder1
+        if let imageURL = message?.author.imageURL {
+            authorAvatarView.imageView.loadImage(from: imageURL, placeholder: placeholder)
+        } else {
+            authorAvatarView.imageView.image = placeholder
+        }
+    }
+
+    // ======
+
     override open func updateContent() {
         // When message cell is about to be reused, it sets `nil` for message value.
         // That means we need to remove all dynamic constraints to prevent layout warnings.
         guard let message = self.message else {
-            NSLayoutConstraint.deactivate(outgoingMessageConstraints)
-            NSLayoutConstraint.deactivate(incomingMessageConstraints)
-            NSLayoutConstraint.deactivate(outgoingMessageIsThreadConstraints)
-            NSLayoutConstraint.deactivate(incomingMessageIsThreadConstraints)
-            bubbleToReactionsConstraint?.isActive = false
-            bubbleToErrorIndicatorConstraint?.isActive = false
-            bubbleToMetadataConstraint?.isActive = false
+            removeAllDynamicConstraints()
             return
         }
 
-        var toActivate: [NSLayoutConstraint] = []
-        var toDeactivate: [NSLayoutConstraint] = []
+//        var constraintsToActivate: [NSLayoutConstraint] = []
+//        var constraintsToDeactivate: [NSLayoutConstraint] = []
 
         let isOutgoing = message.isSentByCurrentUser
         let isPartOfThread = message.isPartOfThread
 
         messageBubbleView.message = message
         messageMetadataView.message = message
-        threadView.message = message
-        threadArrowView.direction = isOutgoing ? .toLeading : .toTrailing
 
         let userReactionIDs = Set(message.currentUserReactions.map(\.type))
 
@@ -368,20 +430,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
             didTapOnReaction: { _ in }
         )
 
-        threadView.isHidden = !isPartOfThread
-        threadArrowView.isHidden = !isPartOfThread
-        if isPartOfThread {
-            if isOutgoing {
-                toActivate.append(contentsOf: outgoingMessageIsThreadConstraints)
-                toDeactivate.append(contentsOf: incomingMessageIsThreadConstraints)
-            } else {
-                toActivate.append(contentsOf: incomingMessageIsThreadConstraints)
-                toDeactivate.append(contentsOf: outgoingMessageIsThreadConstraints)
-            }
-        } else {
-            toDeactivate.append(contentsOf: outgoingMessageIsThreadConstraints)
-            toDeactivate.append(contentsOf: incomingMessageIsThreadConstraints)
-        }
+        updateThreadViews()
 
         let placeholder = uiConfig.images.userAvatarPlaceholder1
         if let imageURL = message.author.imageURL {
@@ -391,33 +440,33 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         }
 
         if isOutgoing {
-            toActivate.append(contentsOf: outgoingMessageConstraints)
-            toDeactivate.append(contentsOf: incomingMessageConstraints)
+            constraintsToActivate.append(contentsOf: outgoingMessageConstraints)
+            constraintsToDeactivate.append(contentsOf: incomingMessageConstraints)
         } else {
-            toActivate.append(contentsOf: incomingMessageConstraints)
-            toDeactivate.append(contentsOf: outgoingMessageConstraints)
+            constraintsToActivate.append(contentsOf: incomingMessageConstraints)
+            constraintsToDeactivate.append(contentsOf: outgoingMessageConstraints)
         }
 
         if message.deletedAt == nil, !message.reactionScores.isEmpty {
-            toActivate.append(bubbleToReactionsConstraint!)
+            constraintsToActivate.append(bubbleToReactionsConstraint!)
         } else {
-            toDeactivate.append(bubbleToReactionsConstraint!)
+            constraintsToDeactivate.append(bubbleToReactionsConstraint!)
         }
         
         if message.isLastInGroup {
-            toActivate.append(bubbleToMetadataConstraint!)
+            constraintsToActivate.append(bubbleToMetadataConstraint!)
         } else {
-            toDeactivate.append(bubbleToMetadataConstraint!)
+            constraintsToDeactivate.append(bubbleToMetadataConstraint!)
         }
 
         if message.lastActionFailed {
-            toActivate.append(bubbleToErrorIndicatorConstraint!)
+            constraintsToActivate.append(bubbleToErrorIndicatorConstraint!)
         } else {
-            toDeactivate.append(bubbleToErrorIndicatorConstraint!)
+            constraintsToDeactivate.append(bubbleToErrorIndicatorConstraint!)
         }
 
-        NSLayoutConstraint.deactivate(toDeactivate)
-        NSLayoutConstraint.activate(toActivate)
+//        NSLayoutConstraint.deactivate(toDeactivate)
+//        NSLayoutConstraint.activate(toActivate)
 
         authorAvatarView.isVisible = !isOutgoing && message.isLastInGroup
         messageMetadataView.isVisible = bubbleToMetadataConstraint?.isActive ?? false
@@ -462,8 +511,12 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         
         layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
         layoutConstraints[layoutOptions]?.forEach { $0.isActive = true }
-        
+
+
+
         // --
+
+        setNeedsUpdateConstraints()
     }
 
     // MARK: - Actions
@@ -498,7 +551,7 @@ public struct ChatMessageContentViewLayoutOptions: OptionSet, Hashable {
 
 // MARK: - Extensions
 
-private extension _ChatMessageGroupPart {
+extension _ChatMessageGroupPart {
     var textContent: String {
         guard message.type != .ephemeral else {
             return ""
@@ -512,7 +565,7 @@ private extension _ChatMessageGroupPart {
     }
 }
 
-private extension _ChatMessageGroupPart {
+extension _ChatMessageGroupPart {
     var layoutOptions: ChatMessageContentViewLayoutOptions {
         guard message.deletedAt == nil else {
             return [.text]
