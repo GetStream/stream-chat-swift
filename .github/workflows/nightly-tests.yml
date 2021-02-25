@@ -14,13 +14,15 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
       uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-gem-
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
     - name: Cache Mint
       uses: actions/cache@v2
       id: mint-cache
@@ -38,13 +40,15 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
       uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-gem-
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
     - name: Cache Mint
       uses: actions/cache@v2
       id: mint-cache
@@ -62,13 +66,15 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
       uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-gem-
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
     - name: Cache Mint
       uses: actions/cache@v2
       id: mint-cache
