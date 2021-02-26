@@ -9,6 +9,9 @@ extension UILayoutPriority {
     /// override any default constraints and customize layout
     static let streamRequire = UILayoutPriority(rawValue: 900)
     static let streamAlmostRequire: UILayoutPriority = .streamRequire - 1
+
+    /// The default low priority used for the default layouts. It's higher than the system `defaultLow`.
+    static let streamLow = UILayoutPriority.defaultLow + 10
 }
 
 extension NSLayoutConstraint {
