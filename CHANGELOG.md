@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [3.2.0-beta.2](https://github.com/GetStream/stream-chat-swift/releases/tag/3.2.0-beta.2)
+_February 26, 2021_
+
 ### 🐞 Fixed
 - Fix localized strings not being loaded correctly when the SDK is integrated using CocoaPods [#845](https://github.com/GetStream/stream-chat-swift/pull/845)
 - Fix message list crash when rotating screen [#847](https://github.com/GetStream/stream-chat-swift/pull/847)
