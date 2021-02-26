@@ -107,15 +107,24 @@ extension NSLayoutXAxisAnchor {
      receiver [= | ≥ | ≤] 'anchor' + 'multiplier' * system space,
      where the value of the system space is determined from information available from the anchors.
      */
-    @objc func pin(equalToSystemSpacingAfter anchor: NSLayoutXAxisAnchor, multiplier: CGFloat) -> NSLayoutConstraint {
+    @objc func pin(
+        equalToSystemSpacingAfter anchor: NSLayoutXAxisAnchor,
+        multiplier: CGFloat = 1
+    ) -> NSLayoutConstraint {
         constraint(equalToSystemSpacingAfter: anchor, multiplier: multiplier).with(priority: .streamRequire)
     }
 
-    @objc func pin(greaterThanOrEqualToSystemSpacingAfter anchor: NSLayoutXAxisAnchor, multiplier: CGFloat) -> NSLayoutConstraint {
+    @objc func pin(
+        greaterThanOrEqualToSystemSpacingAfter anchor: NSLayoutXAxisAnchor,
+        multiplier: CGFloat = 1
+    ) -> NSLayoutConstraint {
         constraint(greaterThanOrEqualToSystemSpacingAfter: anchor, multiplier: multiplier).with(priority: .streamRequire)
     }
 
-    @objc func pin(lessThanOrEqualToSystemSpacingAfter anchor: NSLayoutXAxisAnchor, multiplier: CGFloat) -> NSLayoutConstraint {
+    @objc func pin(
+        lessThanOrEqualToSystemSpacingAfter anchor: NSLayoutXAxisAnchor,
+        multiplier: CGFloat = 1
+    ) -> NSLayoutConstraint {
         constraint(lessThanOrEqualToSystemSpacingAfter: anchor, multiplier: multiplier).with(priority: .streamRequire)
     }
 }
@@ -128,15 +137,24 @@ extension NSLayoutYAxisAnchor {
      If either the receiver or 'anchor' is the firstBaselineAnchor or lastBaselineAnchor of a view with text content
      then the spacing will depend on the fonts involved and will change when those do.
      */
-    @objc func pin(equalToSystemSpacingBelow anchor: NSLayoutYAxisAnchor, multiplier: CGFloat) -> NSLayoutConstraint {
+    @objc func pin(
+        equalToSystemSpacingBelow anchor: NSLayoutYAxisAnchor,
+        multiplier: CGFloat = 1
+    ) -> NSLayoutConstraint {
         constraint(equalToSystemSpacingBelow: anchor, multiplier: multiplier).with(priority: .streamRequire)
     }
 
-    @objc func pin(greaterThanOrEqualToSystemSpacingBelow anchor: NSLayoutYAxisAnchor, multiplier: CGFloat) -> NSLayoutConstraint {
+    @objc func pin(
+        greaterThanOrEqualToSystemSpacingBelow anchor: NSLayoutYAxisAnchor,
+        multiplier: CGFloat = 1
+    ) -> NSLayoutConstraint {
         constraint(greaterThanOrEqualToSystemSpacingBelow: anchor, multiplier: multiplier).with(priority: .streamRequire)
     }
 
-    @objc func pin(lessThanOrEqualToSystemSpacingBelow anchor: NSLayoutYAxisAnchor, multiplier: CGFloat) -> NSLayoutConstraint {
+    @objc func pin(
+        lessThanOrEqualToSystemSpacingBelow anchor: NSLayoutYAxisAnchor,
+        multiplier: CGFloat = 1
+    ) -> NSLayoutConstraint {
         constraint(lessThanOrEqualToSystemSpacingBelow: anchor, multiplier: multiplier).with(priority: .streamRequire)
     }
 }
