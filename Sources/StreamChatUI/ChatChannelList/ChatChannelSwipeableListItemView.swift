@@ -59,7 +59,9 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, 
         trailingConstraint?.isActive = true
         
         addSubview(bottomSeparatorView)
-        bottomSeparatorView.heightAnchor.pin(equalToConstant: 0.4).isActive = true
+        // Some retina devices might not properly render views that have height below < 0.5.
+        // Table views use 1 / contentScaleFactor to calculate the separator cell height.
+        bottomSeparatorView.heightAnchor.pin(equalToConstant: 1 / contentScaleFactor).isActive = true
         bottomSeparatorView.pin(anchors: [.bottom, .leading, .trailing], to: self)
     }
 
