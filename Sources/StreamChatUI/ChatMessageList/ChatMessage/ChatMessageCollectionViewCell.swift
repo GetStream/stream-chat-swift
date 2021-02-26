@@ -114,13 +114,3 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _Collecti
         return preferredAttributes
     }
 }
-
-// MARK: - TextOnlyCell
-
-public typealias ChatMessageTextCollectionViewCell = _ChatMessageTextCollectionViewCell<NoExtraData>
-
-open class _ChatMessageTextCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageCollectionViewCell<ExtraData> {
-    override public static var messageContentViewClass: _ChatMessageContentView<ExtraData>.Type {
-        ChatMessageTextContentView<ExtraData>.self
-    }
-}

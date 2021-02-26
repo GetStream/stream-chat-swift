@@ -20,89 +20,27 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     // MARK: - Subviews
 
-    public private(set) lazy var messageBubbleView = uiConfig
-        .messageList
-        .messageContentSubviews
-        .bubbleView.init()
-        .withoutAutoresizingMaskConstraints
+    public private(set) var messageBubbleView: _ChatMessageBubbleView<ExtraData>?
     
-    // --
-    public private(set) lazy var textView: UITextView = {
-        let textView = OnlyLinkTappableTextView()
-        textView.isEditable = false
-        textView.dataDetectorTypes = .link
-        textView.isScrollEnabled = false
-        textView.backgroundColor = .clear
-        textView.font = uiConfig.font.body
-        textView.adjustsFontForContentSizeCategory = true
-        textView.textContainerInset = .zero
-        textView.textContainer.lineFragmentPadding = 0
-        return textView.withoutAutoresizingMaskConstraints
-    }()
+    public private(set) var textView: UITextView?
     
-    public private(set) lazy var linkPreviewView = uiConfig
-        .messageList
-        .messageContentSubviews
-        .linkPreviewView
-        .init()
-        .withoutAutoresizingMaskConstraints
+    public private(set) var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
     
-    public private(set) lazy var quotedMessageView = uiConfig
-        .messageList
-        .messageContentSubviews
-        .quotedMessageBubbleView.init()
-        .withoutAutoresizingMaskConstraints
+    public private(set) var quotedMessageView: _ChatMessageQuoteBubbleView<ExtraData>?
     
-    public private(set) lazy var attachmentsView = uiConfig
-        .messageList
-        .messageContentSubviews
-        .attachmentSubviews
-        .attachmentsView
-        .init()
-        .withoutAutoresizingMaskConstraints
-    // --
+    public private(set) var attachmentsView: _ChatMessageAttachmentsView<ExtraData>?
 
-    public private(set) lazy var messageMetadataView = uiConfig
-        .messageList
-        .messageContentSubviews
-        .metadataView
-        .init()
-        .withoutAutoresizingMaskConstraints
+    public private(set) var messageMetadataView: _ChatMessageMetadataView<ExtraData>?
     
-    public private(set) lazy var authorAvatarView = uiConfig
-        .messageList
-        .messageContentSubviews
-        .authorAvatarView
-        .init()
-        .withoutAutoresizingMaskConstraints
+    public private(set) var authorAvatarView: ChatAvatarView?
 
-    public private(set) lazy var reactionsBubble = uiConfig
-        .messageList
-        .messageReactions
-        .reactionsBubbleView
-        .init()
-        .withoutAutoresizingMaskConstraints
+    public private(set) var reactionsBubble: _ChatMessageReactionsBubbleView<ExtraData>?
 
-    public private(set) lazy var threadArrowView = uiConfig
-        .messageList
-        .messageContentSubviews
-        .threadArrowView
-        .init()
-        .withoutAutoresizingMaskConstraints
+    public private(set) var threadArrowView: _ChatMessageThreadArrowView<ExtraData>?
 
-    public private(set) lazy var threadView = uiConfig
-        .messageList
-        .messageContentSubviews
-        .threadInfoView
-        .init()
-        .withoutAutoresizingMaskConstraints
+    public private(set) var threadView: _ChatMessageThreadInfoView<ExtraData>?
 
-    public private(set) lazy var errorIndicator = uiConfig
-        .messageList
-        .messageContentSubviews
-        .errorIndicator
-        .init()
-        .withoutAutoresizingMaskConstraints
+    public private(set) var errorIndicator: _ChatMessageErrorIndicator<ExtraData>?
 
     var incomingMessageConstraints: [NSLayoutConstraint] = []
     var outgoingMessageConstraints: [NSLayoutConstraint] = []
@@ -113,229 +51,457 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     var incomingMessageIsThreadConstraints: [NSLayoutConstraint] = []
     var outgoingMessageIsThreadConstraints: [NSLayoutConstraint] = []
     
-    public fileprivate(set) var layoutConstraints: [ChatMessageContentViewLayoutOptions: [NSLayoutConstraint]] = [:]
+    var didSetUpConstraints = false
 
-    // MARK: - Overrides
-
-    override open func setUp() {
-        super.setUp()
-
-        reactionsBubble.isUserInteractionEnabled = false
-        threadView.addTarget(self, action: #selector(didTapOnThread), for: .touchUpInside)
-        errorIndicator.addTarget(self, action: #selector(didTapOnErrorIndicator), for: .touchUpInside)
-        linkPreviewView.addTarget(self, action: #selector(didTapOnLinkPreview), for: .touchUpInside)
-    }
-
-    override open func setUpLayout() {
+    // MARK: - Setup family of functions
+    
+    open func setupMessageBubbleView() {
+        guard messageBubbleView == nil else { return }
+        
+        let messageBubbleView = uiConfig
+            .messageList
+            .messageContentSubviews
+            .bubbleView.init()
+            .withoutAutoresizingMaskConstraints
+        self.messageBubbleView = messageBubbleView
+        
         addSubview(messageBubbleView)
+        
+        constraintsToActivate += [
+            messageBubbleView.trailingAnchor.pin(equalTo: trailingAnchor).almostRequired,
+            messageBubbleView.topAnchor.pin(equalTo: topAnchor).with(priority: .defaultHigh),
+            messageBubbleView.bottomAnchor.pin(equalTo: bottomAnchor).with(priority: .defaultHigh)
+        ]
+        
+        setNeedsUpdateConstraints()
+        
+        outgoingMessageConstraints += [
+            messageBubbleView.leadingAnchor.pin(equalTo: leadingAnchor)
+        ]
+    }
+    
+    open func setupMetadataView() {
+        guard messageMetadataView == nil else { return }
+        
+        let messageMetadataView = uiConfig
+            .messageList
+            .messageContentSubviews
+            .metadataView
+            .init()
+            .withoutAutoresizingMaskConstraints
+        
+        self.messageMetadataView = messageMetadataView
+        
         addSubview(messageMetadataView)
+        
+        constraintsToActivate += [
+            messageMetadataView.heightAnchor.pin(equalToConstant: 16),
+            messageMetadataView.bottomAnchor.pin(equalTo: bottomAnchor)
+        ]
+        
+        setupMessageBubbleView()
+        let messageBubbleView = self.messageBubbleView!
+        
+        incomingMessageConstraints += [
+            messageMetadataView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor).with(priority: .defaultHigh)
+        ]
+        
+        outgoingMessageConstraints += [
+            messageMetadataView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor).with(priority: .defaultHigh)
+        ]
+        
+        bubbleToMetadataConstraint = messageMetadataView.topAnchor.pin(
+            equalToSystemSpacingBelow: messageBubbleView.bottomAnchor,
+            multiplier: 1
+        )
+        
+        setNeedsUpdateConstraints()
+    }
+    
+    open func setupAvatarView() {
+        guard authorAvatarView == nil else { return }
+        
+        let authorAvatarView = uiConfig
+            .messageList
+            .messageContentSubviews
+            .authorAvatarView
+            .init()
+            .withoutAutoresizingMaskConstraints
+        self.authorAvatarView = authorAvatarView
+        
         addSubview(authorAvatarView)
-        addSubview(reactionsBubble)
-        addSubview(threadArrowView)
-        addSubview(threadView)
-        addSubview(errorIndicator)
-
-        errorIndicator.setContentCompressionResistancePriority(.required, for: .horizontal)
-        errorIndicator.setContentCompressionResistancePriority(.required, for: .vertical)
-
-        incomingMessageIsThreadConstraints = [
-            threadView.bottomAnchor.pin(equalTo: bottomAnchor),
-            messageMetadataView.leadingAnchor.pin(equalToSystemSpacingAfter: threadView.trailingAnchor, multiplier: 1)
-        ]
-
-        outgoingMessageIsThreadConstraints = [
-            threadView.bottomAnchor.pin(equalTo: bottomAnchor),
-            threadView.leadingAnchor.pin(equalToSystemSpacingAfter: messageMetadataView.trailingAnchor, multiplier: 1)
-        ]
-
-        NSLayoutConstraint.activate([
+        
+        constraintsToActivate += [
             authorAvatarView.widthAnchor.pin(equalToConstant: 32),
             authorAvatarView.heightAnchor.pin(equalToConstant: 32),
             authorAvatarView.leadingAnchor.pin(equalTo: leadingAnchor),
-            authorAvatarView.bottomAnchor.pin(equalTo: bottomAnchor),
-            
-            reactionsBubble.topAnchor.pin(equalTo: topAnchor),
-            
-            messageBubbleView.trailingAnchor.pin(equalTo: trailingAnchor).almostRequired,
-            messageBubbleView.topAnchor.pin(equalTo: topAnchor).with(priority: .defaultHigh),
-            messageBubbleView.bottomAnchor.pin(equalTo: bottomAnchor).with(priority: .defaultHigh),
-            
-            messageMetadataView.heightAnchor.pin(equalToConstant: 16),
-            messageMetadataView.bottomAnchor.pin(equalTo: bottomAnchor),
-            
-            threadArrowView.widthAnchor.pin(equalToConstant: 16),
-            threadArrowView.topAnchor.pin(equalTo: messageBubbleView.centerYAnchor),
-            threadArrowView.bottomAnchor.pin(equalTo: threadView.centerYAnchor),
-            
-            threadView.topAnchor.pin(equalToSystemSpacingBelow: messageBubbleView.bottomAnchor, multiplier: 1),
-            
-            errorIndicator.bottomAnchor.pin(equalTo: messageBubbleView.bottomAnchor),
-            errorIndicator.trailingAnchor.pin(equalTo: trailingAnchor)
-        ])
-
+            authorAvatarView.bottomAnchor.pin(equalTo: bottomAnchor)
+        ]
+        
+        setupMessageBubbleView()
+        let messageBubbleView = self.messageBubbleView!
+        
+        incomingMessageConstraints += [
+            messageBubbleView.leadingAnchor.pin(
+                equalToSystemSpacingAfter: authorAvatarView.trailingAnchor,
+                multiplier: 1
+            )
+        ]
+        
+        setNeedsUpdateConstraints()
+    }
+    
+    open func setupReactionsView() {
+        guard reactionsBubble == nil else { return }
+        
+        let reactionsBubble = uiConfig
+            .messageList
+            .messageReactions
+            .reactionsBubbleView
+            .init()
+            .withoutAutoresizingMaskConstraints
+        self.reactionsBubble = reactionsBubble
+        
+        addSubview(reactionsBubble)
+        
+        reactionsBubble.isUserInteractionEnabled = false
+        
+        constraintsToActivate += [
+            reactionsBubble.topAnchor.pin(equalTo: topAnchor)
+        ]
+        
         // this one is ugly: reactions view is part of message content, but is not part of it frame horizontally.
         // In same time we want to prevent reactions view to slip out of screen / cell.
         // We maybe should rethink layout of content view and make reactions part of frame horizontally as well.
         // This will solve superview access hack
         if let superview = self.superview {
-            reactionsBubble.trailingAnchor.pin(lessThanOrEqualTo: superview.trailingAnchor).isActive = true
-            reactionsBubble.leadingAnchor.pin(greaterThanOrEqualTo: superview.leadingAnchor).isActive = true
+            constraintsToActivate += [
+                reactionsBubble.trailingAnchor.pin(lessThanOrEqualTo: superview.trailingAnchor),
+                reactionsBubble.leadingAnchor.pin(greaterThanOrEqualTo: superview.leadingAnchor)
+            ]
         }
-
-        incomingMessageConstraints = [
+        
+        setupMessageBubbleView()
+        let messageBubbleView = self.messageBubbleView!
+        
+        incomingMessageConstraints += [
             reactionsBubble.centerXAnchor.pin(equalTo: messageBubbleView.trailingAnchor, constant: 8),
-            reactionsBubble.tailLeadingAnchor.pin(equalTo: messageBubbleView.trailingAnchor, constant: -5),
-            
-            messageMetadataView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor).with(priority: .defaultHigh),
-            messageBubbleView.leadingAnchor.pin(
-                equalToSystemSpacingAfter: authorAvatarView.trailingAnchor,
-                multiplier: 1
-            ),
-            threadArrowView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
-            threadView.leadingAnchor.pin(equalTo: threadArrowView.trailingAnchor)
+            reactionsBubble.tailLeadingAnchor.pin(equalTo: messageBubbleView.trailingAnchor, constant: -5)
         ]
-
-        outgoingMessageConstraints = [
+        
+        outgoingMessageConstraints += [
             reactionsBubble.centerXAnchor.pin(equalTo: messageBubbleView.leadingAnchor, constant: -8),
-            reactionsBubble.tailTrailingAnchor.pin(equalTo: messageBubbleView.leadingAnchor, constant: 5),
-            
-            messageMetadataView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor).with(priority: .defaultHigh),
-            messageBubbleView.leadingAnchor.pin(equalTo: leadingAnchor),
-            threadArrowView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
-            threadView.trailingAnchor.pin(equalTo: threadArrowView.leadingAnchor)
+            reactionsBubble.tailTrailingAnchor.pin(equalTo: messageBubbleView.leadingAnchor, constant: 5)
         ]
-
+        
         bubbleToReactionsConstraint = messageBubbleView.topAnchor.pin(
             equalTo: reactionsBubble.centerYAnchor
         )
-        bubbleToMetadataConstraint = messageMetadataView.topAnchor.pin(
-            equalToSystemSpacingBelow: messageBubbleView.bottomAnchor,
-            multiplier: 1
-        )
+        
+        setNeedsUpdateConstraints()
+    }
+    
+    open func setupThreadArrowView() {
+        guard threadArrowView == nil else { return }
+        
+        setupMessageBubbleView()
+        let messageBubbleView = self.messageBubbleView!
+        
+        let threadArrowView = uiConfig
+            .messageList
+            .messageContentSubviews
+            .threadArrowView
+            .init()
+            .withoutAutoresizingMaskConstraints
+        self.threadArrowView = threadArrowView
+        
+        addSubview(threadArrowView)
+        
+        constraintsToActivate += [
+            threadArrowView.widthAnchor.pin(equalToConstant: 16),
+            threadArrowView.topAnchor.pin(equalTo: messageBubbleView.centerYAnchor)
+        ]
+        
+        incomingMessageConstraints += [
+            threadArrowView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor)
+        ]
+        
+        outgoingMessageConstraints += [
+            threadArrowView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor)
+        ]
+        
+        setNeedsUpdateConstraints()
+    }
+    
+    open func setupThreadView() {
+        guard threadView == nil else { return }
+        
+        setupMessageBubbleView()
+        let messageBubbleView = self.messageBubbleView!
+        
+        setupThreadArrowView()
+        let threadArrowView = self.threadArrowView!
+        
+        let threadView = uiConfig
+            .messageList
+            .messageContentSubviews
+            .threadInfoView
+            .init()
+            .withoutAutoresizingMaskConstraints
+        self.threadView = threadView
+        
+        addSubview(threadView)
+        
+        threadView.addTarget(self, action: #selector(didTapOnThread), for: .touchUpInside)
+        
+        constraintsToActivate += [
+            threadArrowView.bottomAnchor.pin(equalTo: threadView.centerYAnchor),
+            threadView.topAnchor.pin(equalToSystemSpacingBelow: messageBubbleView.bottomAnchor, multiplier: 1)
+        ]
+        
+        setupMetadataView()
+        let messageMetadataView = self.messageMetadataView!
+
+        incomingMessageIsThreadConstraints = [
+            threadView.bottomAnchor.pin(equalTo: bottomAnchor),
+            messageMetadataView.leadingAnchor.pin(equalToSystemSpacingAfter: threadView.trailingAnchor, multiplier: 1)
+        ]
+        
+        outgoingMessageIsThreadConstraints = [
+            threadView.bottomAnchor.pin(equalTo: bottomAnchor),
+            threadView.leadingAnchor.pin(equalToSystemSpacingAfter: messageMetadataView.trailingAnchor, multiplier: 1)
+        ]
+        
+        incomingMessageConstraints += [
+            threadView.leadingAnchor.pin(equalTo: threadArrowView.trailingAnchor)
+        ]
+        
+        outgoingMessageConstraints += [
+            threadView.trailingAnchor.pin(equalTo: threadArrowView.leadingAnchor)
+        ]
+        
+        setNeedsUpdateConstraints()
+    }
+    
+    open func setupErrorIndicator() {
+        guard errorIndicator == nil else { return }
+        
+        setupMessageBubbleView()
+        let messageBubbleView = self.messageBubbleView!
+        
+        let errorIndicator = uiConfig
+            .messageList
+            .messageContentSubviews
+            .errorIndicator
+            .init()
+            .withoutAutoresizingMaskConstraints
+        self.errorIndicator = errorIndicator
+        
+        errorIndicator.isVisible = false
+        
+        addSubview(errorIndicator)
+        
+        errorIndicator.addTarget(self, action: #selector(didTapOnErrorIndicator), for: .touchUpInside)
+        
+        errorIndicator.setContentCompressionResistancePriority(.required, for: .horizontal)
+        errorIndicator.setContentCompressionResistancePriority(.required, for: .vertical)
+        
+        constraintsToActivate += [
+            errorIndicator.bottomAnchor.pin(equalTo: messageBubbleView.bottomAnchor),
+            errorIndicator.trailingAnchor.pin(equalTo: trailingAnchor)
+        ]
+        
         bubbleToErrorIndicatorConstraint = messageBubbleView.trailingAnchor.pin(
             equalTo: errorIndicator.centerXAnchor
         )
         
-        // --
+        setNeedsUpdateConstraints()
+    }
+    
+    open func setupQuoteView() {
+        guard quotedMessageView == nil else { return }
+        
+        let quotedMessageView = uiConfig
+            .messageList
+            .messageContentSubviews
+            .quotedMessageBubbleView.init()
+            .withoutAutoresizingMaskConstraints
+        
+        self.quotedMessageView = quotedMessageView
+        
         addSubview(quotedMessageView)
+        
+        quotedMessageView.isVisible = false
+    }
+    
+    open func setupLinkPreviewView() {
+        guard linkPreviewView == nil else { return }
+        
+        let linkPreviewView = uiConfig
+            .messageList
+            .messageContentSubviews
+            .linkPreviewView
+            .init()
+            .withoutAutoresizingMaskConstraints
+        self.linkPreviewView = linkPreviewView
+        
         addSubview(linkPreviewView)
+        
+        linkPreviewView.isVisible = false
+        
+        linkPreviewView.addTarget(self, action: #selector(didTapOnLinkPreview), for: .touchUpInside)
+    }
+    
+    open func setupTextView() {
+        guard textView == nil else { return }
+        
+        let textView = OnlyLinkTappableTextView()
+        textView.isEditable = false
+        textView.dataDetectorTypes = .link
+        textView.isScrollEnabled = false
+        textView.backgroundColor = .clear
+        textView.font = uiConfig.font.body
+        textView.adjustsFontForContentSizeCategory = true
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        self.textView = textView
+        
         addSubview(textView)
+    }
+    
+    open func setupAttachmentView() {
+        guard attachmentsView == nil else { return }
+        
+        setupMessageBubbleView()
+        let messageBubbleView = self.messageBubbleView!
+        
+        let attachmentsView = uiConfig
+            .messageList
+            .messageContentSubviews
+            .attachmentSubviews
+            .attachmentsView
+            .init()
+            .withoutAutoresizingMaskConstraints
+        self.attachmentsView = attachmentsView
         
         // We add `attachmentsView` as a subview to `bubbleView`
         // so it's corners are properly masked
         messageBubbleView.addSubview(attachmentsView)
         
-        // Visibility of these views are controlled in their respective `update` methods
-        quotedMessageView.isVisible = false
-        linkPreviewView.isVisible = false
         attachmentsView.isVisible = false
-        
-        layoutConstraints[.attachments] = [
-            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
-            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
-            attachmentsView.topAnchor.pin(equalTo: messageBubbleView.topAnchor),
-            attachmentsView.bottomAnchor.pin(equalTo: messageBubbleView.bottomAnchor),
-            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
-        ]
-        
-        layoutConstraints[[.text, .attachments]] = [
-            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
-            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
-            attachmentsView.topAnchor.pin(equalTo: messageBubbleView.topAnchor),
-            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
-            
-            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
-            textView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
-        ]
-        
-        layoutConstraints[[.attachments, .quotedMessage]] = [
-            quotedMessageView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            quotedMessageView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            quotedMessageView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
-            
-            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
-            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
-            attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
-            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
-            attachmentsView.bottomAnchor.pin(equalTo: messageBubbleView.bottomAnchor)
-        ]
-        
-        layoutConstraints[[.text, .attachments, .quotedMessage]] = [
-            quotedMessageView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            quotedMessageView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            quotedMessageView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
-            
-            attachmentsView.leadingAnchor.pin(equalTo: messageBubbleView.leadingAnchor),
-            attachmentsView.trailingAnchor.pin(equalTo: messageBubbleView.trailingAnchor),
-            attachmentsView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
-            attachmentsView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
-            
-            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView.bottomAnchor, multiplier: 1),
-            textView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
-        ]
-        
-        layoutConstraints[.text] = [
-            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
-            textView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
-        ]
-        
+    }
+    
+    private func getConstraints(for layoutOptions: ChatMessageContentViewLayoutOptions) -> [NSLayoutConstraint] {
+        switch layoutOptions {
+        case [.attachments]:
+            return [
+                attachmentsView!.leadingAnchor.pin(equalTo: messageBubbleView!.leadingAnchor),
+                attachmentsView!.trailingAnchor.pin(equalTo: messageBubbleView!.trailingAnchor),
+                attachmentsView!.topAnchor.pin(equalTo: messageBubbleView!.topAnchor),
+                attachmentsView!.bottomAnchor.pin(equalTo: messageBubbleView!.bottomAnchor),
+                attachmentsView!.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
+            ]
+        case [.text, .attachments]:
+            return [
+                attachmentsView!.leadingAnchor.pin(equalTo: messageBubbleView!.leadingAnchor),
+                attachmentsView!.trailingAnchor.pin(equalTo: messageBubbleView!.trailingAnchor),
+                attachmentsView!.topAnchor.pin(equalTo: messageBubbleView!.topAnchor),
+                attachmentsView!.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
+                
+                textView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                textView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                textView!.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView!.bottomAnchor, multiplier: 1),
+                textView!.bottomAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.bottomAnchor)
+            ]
+        case [.attachments, .quotedMessage]:
+            return [
+                quotedMessageView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                quotedMessageView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                quotedMessageView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                
+                attachmentsView!.leadingAnchor.pin(equalTo: messageBubbleView!.leadingAnchor),
+                attachmentsView!.trailingAnchor.pin(equalTo: messageBubbleView!.trailingAnchor),
+                attachmentsView!.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView!.bottomAnchor, multiplier: 1),
+                attachmentsView!.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
+                attachmentsView!.bottomAnchor.pin(equalTo: messageBubbleView!.bottomAnchor)
+            ]
+        case [.text, .attachments, .quotedMessage]:
+            return [
+                quotedMessageView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                quotedMessageView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                quotedMessageView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                
+                attachmentsView!.leadingAnchor.pin(equalTo: messageBubbleView!.leadingAnchor),
+                attachmentsView!.trailingAnchor.pin(equalTo: messageBubbleView!.trailingAnchor),
+                attachmentsView!.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView!.bottomAnchor, multiplier: 1),
+                attachmentsView!.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
+                
+                textView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                textView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                textView!.topAnchor.pin(equalToSystemSpacingBelow: attachmentsView!.bottomAnchor, multiplier: 1),
+                textView!.bottomAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.bottomAnchor)
+            ]
+        case [.text]:
+            return [
+                textView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                textView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                textView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                textView!.bottomAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.bottomAnchor)
+            ]
+        case [.quotedMessage]:
+            return [
+                quotedMessageView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                quotedMessageView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                quotedMessageView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                quotedMessageView!.bottomAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.bottomAnchor)
+            ]
+        case [.text, .linkPreview]:
+            return [
+                textView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                textView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                textView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                
+                linkPreviewView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                linkPreviewView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                linkPreviewView!.topAnchor.pin(equalToSystemSpacingBelow: textView!.bottomAnchor, multiplier: 1),
+                linkPreviewView!.bottomAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.bottomAnchor),
+                linkPreviewView!.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
+            ]
         // link preview cannot exist without text, we can skip `[.linkPreview]` case
-        
-        layoutConstraints[.quotedMessage] = [
-            quotedMessageView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            quotedMessageView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            quotedMessageView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
-            quotedMessageView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
-        ]
-        
-        layoutConstraints[[.text, .linkPreview]] = [
-            textView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
-            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            
-            linkPreviewView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            linkPreviewView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            linkPreviewView.topAnchor.pin(equalToSystemSpacingBelow: textView.bottomAnchor, multiplier: 1),
-            linkPreviewView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor),
-            linkPreviewView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
-        ]
-        
-        layoutConstraints[[.text, .quotedMessage]] = [
-            quotedMessageView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            quotedMessageView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            quotedMessageView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
-            
-            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
-            textView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
-        ]
-        
-        layoutConstraints[[.text, .quotedMessage, .linkPreview]] = [
-            quotedMessageView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            quotedMessageView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            quotedMessageView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
-            
-            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView.bottomAnchor, multiplier: 1),
-            
-            linkPreviewView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            linkPreviewView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            linkPreviewView.topAnchor.pin(equalToSystemSpacingBelow: textView.bottomAnchor, multiplier: 1),
-            linkPreviewView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor),
-            linkPreviewView.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
-        ]
-        
+        case [.text, .quotedMessage]:
+            return [
+                quotedMessageView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                quotedMessageView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                quotedMessageView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                
+                textView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                textView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                textView!.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView!.bottomAnchor, multiplier: 1),
+                textView!.bottomAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.bottomAnchor)
+            ]
+        case [.text, .quotedMessage, .linkPreview]:
+            return [
+                quotedMessageView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                quotedMessageView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                quotedMessageView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                
+                textView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                textView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                textView!.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView!.bottomAnchor, multiplier: 1),
+                
+                linkPreviewView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                linkPreviewView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                linkPreviewView!.topAnchor.pin(equalToSystemSpacingBelow: textView!.bottomAnchor, multiplier: 1),
+                linkPreviewView!.bottomAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.bottomAnchor),
+                linkPreviewView!.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6)
+            ]
         // link preview is not visible when any attachment presented,
-        // so we can skip `[.text, .attachments, .inlineReply, .linkPreview]` case
+        // so we can skip `[.text, .attachments, .quotedMessage, .linkPreview]` case
         // --
+        default:
+            return []
+        }
     }
 
     // MARK: wip
@@ -357,6 +523,8 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     public var constraintsToActivate: [NSLayoutConstraint] = []
     public var constraintsToDeactivate: [NSLayoutConstraint] = []
+    
+    // MARK: - Update family of functions
 
     override open func updateConstraints() {
         super.updateConstraints()
@@ -370,18 +538,24 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         NSLayoutConstraint.activate(constraintsToActivate)
     }
 
-    open func updateThreadViews() {
+    open func updateThreadViewsIfNeeded() {
         guard let message = message else { return /* todo */ }
 
         let isOutgoing = message.isSentByCurrentUser
         let isPartOfThread = message.isPartOfThread
+        
+        setupThreadView()
+        let threadView = self.threadView!
+        
+        setupThreadArrowView()
+        let threadArrowView = self.threadArrowView!
 
         threadView.message = message
 
         threadArrowView.direction = isOutgoing ? .toLeading : .toTrailing
 
-        threadView.isHidden = !isPartOfThread
-        threadArrowView.isHidden = !isPartOfThread
+        threadView.isVisible = isPartOfThread
+        threadArrowView.isVisible = isPartOfThread
         if isPartOfThread {
             if isOutgoing {
                 constraintsToActivate.append(contentsOf: outgoingMessageIsThreadConstraints)
@@ -397,8 +571,15 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     }
 
     // todo -> move to the avatar view itself
-    open func updateAvatarView() {
+    open func updateAvatarViewIfNeeded() {
         guard let message = message else { return /* todo */ }
+        
+        let shouldDisplayAuthorAvatarView = !message.isSentByCurrentUser && message.isLastInGroup
+        
+        setupAvatarView()
+        let authorAvatarView = self.authorAvatarView!
+        
+        authorAvatarView.isVisible = shouldDisplayAuthorAvatarView
         
         let placeholder = uiConfig.images.userAvatarPlaceholder1
         if let imageURL = message.author.imageURL {
@@ -406,12 +587,17 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         } else {
             authorAvatarView.imageView.image = placeholder
         }
-        
-        authorAvatarView.isVisible = !message.isSentByCurrentUser && message.isLastInGroup
     }
     
-    open func updateReactionsView() {
+    open func updateReactionsViewIfNeeded() {
         guard let message = message else { return /* todo */ }
+        
+        let shouldDisplayReactions = message.deletedAt == nil && !message.reactionScores.isEmpty
+        
+        setupReactionsView()
+        let reactionsBubble = self.reactionsBubble!
+        
+        reactionsBubble.isVisible = shouldDisplayReactions
         
         let userReactionIDs = Set(message.currentUserReactions.map(\.type))
         
@@ -425,17 +611,20 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
             didTapOnReaction: { _ in }
         )
         
-        if message.deletedAt == nil && !message.reactionScores.isEmpty {
+        if shouldDisplayReactions {
             constraintsToActivate.append(bubbleToReactionsConstraint!)
         } else {
             constraintsToDeactivate.append(bubbleToReactionsConstraint!)
         }
-        
-        reactionsBubble.isVisible = message.deletedAt == nil && !message.reactionScores.isEmpty
     }
     
-    open func updateBubbleView() {
+    open func updateBubbleViewIfNeeded() {
         guard let message = message else { return /* todo */ }
+        
+        setupMessageBubbleView()
+        setupMetadataView()
+        setupErrorIndicator()
+        let messageBubbleView = self.messageBubbleView!
         
         messageBubbleView.message = message
         
@@ -462,34 +651,59 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         }
     }
     
-    open func updateMetadataView() {
+    open func updateMetadataViewIfNeeded() {
+        let shouldDisplayMetadataView = message?.isLastInGroup ?? false
+        
+        setupMetadataView()
+        let messageMetadataView = self.messageMetadataView!
+        
         messageMetadataView.message = message
 
-        messageMetadataView.isVisible = message?.isLastInGroup ?? false
+        messageMetadataView.isVisible = shouldDisplayMetadataView
     }
     
-    open func updateQuotedMessageView() {
+    open func updateQuotedMessageViewIfNeeded() {
         guard let message = message else { return /* todo */ }
+        
+        let shouldDisplayQuotedMessage = message.layoutOptions.contains(.quotedMessage)
+        
+        setupQuoteView()
+        let quotedMessageView = self.quotedMessageView!
         
         quotedMessageView.isParentMessageSentByCurrentUser = message.isSentByCurrentUser
         quotedMessageView.message = message.quotedMessage
-        quotedMessageView.isVisible = message.layoutOptions.contains(.quotedMessage)
+        quotedMessageView.isVisible = shouldDisplayQuotedMessage
     }
     
-    open func updateErrorIndicator() {
-        errorIndicator.isVisible = message?.lastActionFailed ?? false
+    open func updateErrorIndicatorIfNeeded() {
+        let shouldDisplayErrorIndicator = message?.lastActionFailed ?? false
+        
+        setupErrorIndicator()
+        let errorIndicator = self.errorIndicator!
+        
+        errorIndicator.isVisible = shouldDisplayErrorIndicator
     }
     
-    open func updateLinkPreviewView() {
+    open func updateLinkPreviewViewIfNeeded() {
         guard let message = message else { return /* todo */ }
+        
+        let shouldDisplayLinkPreviewView = message.layoutOptions.contains(.linkPreview)
+        
+        setupLinkPreviewView()
+        let linkPreviewView = self.linkPreviewView!
         
         linkPreviewView.content = message.attachments.first { $0.type.isLink } as? ChatMessageDefaultAttachment
         
-        linkPreviewView.isVisible = message.layoutOptions.contains(.linkPreview)
+        linkPreviewView.isVisible = shouldDisplayLinkPreviewView
     }
     
-    open func updateAttachmentsView() {
+    open func updateAttachmentsViewIfNeeded() {
         guard let message = message else { return /* todo */ }
+        
+        let shouldDisplayAttachmentsView = message.layoutOptions.contains(.attachments)
+        
+        setupAttachmentView()
+        let attachmentsView = self.attachmentsView!
         
         attachmentsView.content = .init(
             attachments: message.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
@@ -497,11 +711,14 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
             didTapOnAttachmentAction: message.didTapOnAttachmentAction
         )
         
-        attachmentsView.isVisible = message.layoutOptions.contains(.attachments)
+        attachmentsView.isVisible = shouldDisplayAttachmentsView
     }
     
-    open func updateTextView() {
+    open func updateTextViewIfNeeded() {
         guard let message = message else { return /* todo */ }
+        
+        setupTextView()
+        let textView = self.textView!
         
         let font: UIFont = uiConfig.font.body
         textView.attributedText = .init(string: message.textContent, attributes: [
@@ -512,7 +729,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         textView.isVisible = message.layoutOptions.contains(.text)
     }
     
-    open func updateMessagePosition() { // TODO find a better name
+    open func updateMessagePositionIfNeeded() { // TODO: find a better name
         if message?.isSentByCurrentUser ?? false {
             constraintsToActivate.append(contentsOf: outgoingMessageConstraints)
             constraintsToDeactivate.append(contentsOf: incomingMessageConstraints)
@@ -533,23 +750,25 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         }
 
         // Base views in the message
-        updateBubbleView()
-        updateMetadataView()
-        updateReactionsView()
-        updateThreadViews()
-        updateAvatarView()
-        updateMessagePosition()
-        updateErrorIndicator()
+        updateBubbleViewIfNeeded()
+        updateMetadataViewIfNeeded()
+        updateReactionsViewIfNeeded()
+        updateThreadViewsIfNeeded()
+        updateAvatarViewIfNeeded()
+        updateMessagePositionIfNeeded()
+        updateErrorIndicatorIfNeeded()
 
         // Additional views
-        updateTextView()
-        updateQuotedMessageView()
-        updateLinkPreviewView()
-        updateAttachmentsView()
+        updateTextViewIfNeeded()
+        updateQuotedMessageViewIfNeeded()
+        updateLinkPreviewViewIfNeeded()
+        updateAttachmentsViewIfNeeded()
         
         // Necessary constraints
-        layoutConstraints.values.flatMap { $0 }.forEach { constraintsToDeactivate.append($0) }
-        layoutConstraints[message.layoutOptions]?.forEach { constraintsToActivate.append($0) }
+        if !didSetUpConstraints {
+            constraintsToActivate.append(contentsOf: getConstraints(for: message.layoutOptions))
+            didSetUpConstraints = true
+        }
 
         setNeedsUpdateConstraints()
     }
@@ -565,6 +784,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     }
     
     @objc func didTapOnLinkPreview() {
+        guard let linkPreviewView = linkPreviewView else { return } // todo
         onLinkTap(linkPreviewView.content)
     }
 }
@@ -582,42 +802,6 @@ public struct ChatMessageContentViewLayoutOptions: OptionSet, Hashable {
     public static let linkPreview = Self(rawValue: 1 << 3)
     
     public static let all: Self = [.text, .attachments, .quotedMessage, .linkPreview]
-}
-
-// MARK: - TextOnlyContentView
-
-public class ChatMessageTextContentView<ExtraData: ExtraDataTypes>: _ChatMessageContentView<ExtraData> {
-    override open func updateContent() {
-        // When message cell is about to be reused, it sets `nil` for message value.
-        // That means we need to remove all dynamic constraints to prevent layout warnings.
-        guard message != nil else {
-            removeAllDynamicConstraints()
-            return
-        }
-        
-        // Base views in the message
-        updateBubbleView()
-        updateMetadataView()
-        updateReactionsView()
-        updateThreadViews()
-        updateAvatarView()
-        updateMessagePosition()
-        updateErrorIndicator()
-        
-        // Text view
-        updateTextView()
-        
-        // Necessary constraints
-        constraintsToActivate += [
-            textView.leadingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.leadingAnchor),
-            textView.trailingAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.trailingAnchor),
-            textView.topAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.topAnchor),
-            textView.bottomAnchor.pin(equalTo: messageBubbleView.layoutMarginsGuide.bottomAnchor)
-        ]
-        
-        setNeedsUpdateConstraints()
-        updateConstraintsIfNeeded()
-    }
 }
 
 // MARK: - Extensions
