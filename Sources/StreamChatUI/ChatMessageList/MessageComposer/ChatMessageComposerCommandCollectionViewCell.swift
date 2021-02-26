@@ -51,6 +51,7 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View
 
         addSubview(textStackView)
         setupStack()
+        commandNameSubtitleLabel.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
     }
 
     override open func updateContent() {
