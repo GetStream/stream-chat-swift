@@ -58,7 +58,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     /// To observe changes of the replies, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var replies: [_ChatMessage<ExtraData>] {
+    public var replies: LazyCachedMapCollection<_ChatMessage<ExtraData>> {
         if state == .initialized {
             startRepliesObserver { [weak self] error in
                 self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
@@ -194,6 +194,8 @@ public extension _ChatMessageController {
     /// - Parameters:
     ///   - text: Text of the message.
     ///   - attachments: An array of the attachments for the message.
+    ///    `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol
+    ///     and `ChatMessageAttachmentSeed`s.
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
     ///   in the response thread.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
@@ -204,7 +206,7 @@ public extension _ChatMessageController {
         text: String,
 //        command: String? = nil,
 //        arguments: String? = nil,
-        attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
+        attachments: [AttachmentEnvelope] = [],
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,

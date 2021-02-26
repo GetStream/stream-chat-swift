@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = "StreamChat"
-  spec.version = "3.0.1"
+  spec.version = "3.2.0-beta.2"
   spec.summary = "StreamChat iOS Client"
   spec.description = "stream-chat-swift is the official Swift client for Stream Chat, a service for building chat applications."
 
@@ -15,7 +15,7 @@ Pod::Spec.new do |spec|
 
   spec.source_files  = "Sources/StreamChat/**/*.swift"
   spec.exclude_files = ["Sources/StreamChat/**/*_Tests.swift", "Sources/StreamChat/**/*_Mock.swift"]
-  spec.resources = ["Sources/StreamChat/**/*.xcdatamodeld"]
+  spec.resource_bundles = { "StreamChat" => ["Sources/StreamChat/**/*.xcdatamodeld"] }
 
   spec.framework = "Foundation", "UIKit"
 

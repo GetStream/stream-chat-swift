@@ -91,7 +91,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
-    ///   - attachments: Attachments for the message.
+    ///   - attachments: An array of the attachments for the message.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
@@ -101,7 +101,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         text: String,
         command: String?,
         arguments: String?,
-        attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
+        attachments: [AttachmentEnvelope] = [],
         quotedMessageId: MessageId?,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil

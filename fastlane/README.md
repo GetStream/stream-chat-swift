@@ -15,6 +15,16 @@ Install _fastlane_ using
 or alternatively using `brew install fastlane`
 
 # Available Actions
+### release
+```
+fastlane release
+```
+Release a new version
+### set_SDK_version
+```
+fastlane set_SDK_version
+```
+
 ### match_me
 ```
 fastlane match_me
@@ -41,6 +51,11 @@ Get next PR number from github to be used in CHANGELOG
 fastlane test
 ```
 Runs tests in Debug config
+### test_ui
+```
+fastlane test_ui
+```
+Runs ui tests in Debug config
 ### test_release
 ```
 fastlane test_release
@@ -50,7 +65,7 @@ Runs tests in Release config
 ```
 fastlane stress_test
 ```
-Runs stress tests for
+Runs stress tests for v3 in Debug config
 ### stress_test_release
 ```
 fastlane stress_test_release
@@ -61,6 +76,21 @@ Runs stress tests for v3 in Release config
 fastlane build_sample
 ```
 Builds v3 Sample app
+### build_docs_snippets
+```
+fastlane build_docs_snippets
+```
+Build Docs Snippets target
+### spm_integration
+```
+fastlane spm_integration
+```
+Test SPM Integration
+### cocoapods_integration
+```
+fastlane cocoapods_integration
+```
+Test CocoaPods Integration
 
 ----
 

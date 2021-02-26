@@ -5,118 +5,136 @@
 import StreamChat
 import UIKit
 
+/// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
 public typealias ChatMessageComposerMentionCellView = _ChatMessageComposerMentionCellView<NoExtraData>
 
-open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    // MARK: Properties
-
-    open var content: (title: String, subtitle: String, imageURL: URL?, isUserOnline: Bool)? {
+/// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
+open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    /// Content of the cell - `ChatUser` instance from which we take all information.
+    open var content: _ChatUser<ExtraData.User>? {
         didSet {
             updateContentIfNeeded()
         }
     }
 
-    open private(set) lazy var avatarView = uiConfig
+    /// `_ChatChannelAvatarView` instance which holds photo of user for tagging.
+    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
         .messageComposer
         .mentionAvatarView
         .init()
         .withoutAutoresizingMaskConstraints
 
-    open private(set) lazy var usernameLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    open private(set) lazy var usernameTagLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    open private(set) lazy var suggestionTypeImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
-    private lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
-
-    // MARK: - Appearance
+    /// Title label which shows users whole name.
+    open private(set) lazy var usernameLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+    /// Subtitle label which shows username tag etc. `@user`.
+    open private(set) lazy var usernameTagLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+    /// ImageView which is located at the right part of the cell, showing @ symbol by default.
+    open private(set) lazy var mentionSymbolImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
+    /// StackView which holds username and userTag labels in vertical axis by default.
+    open private(set) lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
 
     override public func defaultAppearance() {
-        backgroundColor = .clear
+        backgroundColor = uiConfig.colorPalette.popoverBackground
         usernameLabel.font = uiConfig.font.headlineBold
 
         usernameTagLabel.font = uiConfig.font.subheadlineBold
         usernameTagLabel.textColor = uiConfig.colorPalette.subtitleText
 
         usernameLabel.textColor = uiConfig.colorPalette.text
+
+        mentionSymbolImageView.image = uiConfig.images.messageComposerCommandsMention
     }
 
     override open func setUpLayout() {
         addSubview(avatarView)
         addSubview(textStackView)
-        addSubview(suggestionTypeImageView)
+        addSubview(mentionSymbolImageView)
 
         setupLeftImageViewConstraints()
         setupStack()
-        setupSuggestionTypeImageViewConstraints()
+        setupmentionSymbolImageViewConstraints()
     }
 
     override open func updateContent() {
-        usernameTagLabel.text = content?.subtitle
-        usernameLabel.text = content?.title
-
-        if let url = content?.imageURL {
-            avatarView.imageView.setImage(from: url)
+        usernameLabel.text = content?.name
+        if let subtitle = content?.id {
+            usernameTagLabel.text = "@" + subtitle
         } else {
-            avatarView.imageView.image = uiConfig.images.userAvatarPlaceholder1
+            usernameTagLabel.text = ""
         }
 
-        suggestionTypeImageView.image = uiConfig.images.messageComposerCommandsMention
+        avatarView.content = .user(user: content)
     }
-
-    // MARK: Private
 
     private func setupLeftImageViewConstraints() {
         avatarView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
-        avatarView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).isActive = true
-        avatarView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
+
+        avatarView.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor).isActive = true
+        avatarView.bottomAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor).isActive = true
+
+        avatarView.centerYAnchor.pin(equalTo: mentionSymbolImageView.centerYAnchor).isActive = true
         avatarView.widthAnchor.pin(equalToConstant: 40).isActive = true
         avatarView.heightAnchor.pin(equalTo: avatarView.widthAnchor).isActive = true
     }
 
     private func setupStack() {
         textStackView.axis = .vertical
-        textStackView.distribution = .equalSpacing
+        textStackView.distribution = .fillProportionally
+        textStackView.spacing = 2
         textStackView.alignment = .leading
 
         textStackView.addArrangedSubview(usernameLabel)
         textStackView.addArrangedSubview(usernameTagLabel)
         textStackView.centerYAnchor.pin(equalTo: avatarView.centerYAnchor).isActive = true
-        textStackView.leadingAnchor.pin(
-            equalToSystemSpacingAfter: avatarView.trailingAnchor,
-            multiplier: 1
-        ).isActive = true
+        textStackView.leadingAnchor.pin(equalToSystemSpacingAfter: avatarView.trailingAnchor, multiplier: 1).isActive = true
 
-        textStackView.trailingAnchor.pin(
-            equalTo: suggestionTypeImageView.leadingAnchor
-        ).isActive = true
+        // We need to set both - `avatarView` and `textStackView` top and bottom anchors to
+        // make this view as much flexible as possible in terms of right layout.
+        // Setting those 2 constraints with low priority ensures 2 things:
+        // - When avatarView height value is less than `textStackView`, `textStackView` takes over
+        // expanding of the cell height according to it's height. (Both labels filled, big font)
+        // - When avatarView height value is more than `textStackView`, `avatarView` takes over expanding
+        // of the cell and those pinning constraints are ignored (small font / only id of user is filled in one label)
+        textStackView.topAnchor.pin(equalTo: topAnchor).with(priority: .defaultLow).isActive = true
+        bottomAnchor.pin(equalTo: textStackView.bottomAnchor).with(priority: .defaultLow).isActive = true
+
+        textStackView.trailingAnchor.pin(equalTo: mentionSymbolImageView.leadingAnchor).isActive = true
+        textStackView.setContentCompressionResistancePriority(.required, for: .vertical)
     }
 
-    private func setupSuggestionTypeImageViewConstraints() {
-        suggestionTypeImageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
-        suggestionTypeImageView.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
+    private func setupmentionSymbolImageViewConstraints() {
+        mentionSymbolImageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor).isActive = true
+        mentionSymbolImageView.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
+        mentionSymbolImageView.setContentCompressionResistancePriority(.required, for: .horizontal)
     }
 }
 
+/// `UICollectionView` subclass which embeds inside `ChatMessageComposerMentionCellView`
 public typealias ChatMessageComposerMentionCollectionViewCell = _ChatMessageComposerMentionCollectionViewCell<NoExtraData>
 
-open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
-    // MARK: Properties
-
+/// `UICollectionView` subclass which embeds inside `ChatMessageComposerMentionCellView`
+open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+    /// Reuse identifier for the cell used in `collectionView(cellForItem:)`
     open class var reuseId: String { String(describing: self) }
 
-    public private(set) lazy var mentionView = uiConfig
+    /// Instance of `ChatMessageComposerMentionCellView` which shows information about the mentioned user.
+    open lazy var mentionView: _ChatMessageComposerMentionCellView<ExtraData> = uiConfig
         .messageComposer
         .suggestionsMentionCellView.init()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpLayout() {
         super.setUpLayout()
-        
-        contentView.embed(
-            mentionView,
-            insets: contentView.directionalLayoutMargins
-        )
+        contentView.embed(mentionView)
     }
 
+    // We need this method for `UICollectionViewCells` resize properly inside collectionView
+    // and respect collectionView width. Without this method, the collectionViewCell content
+    // autoresizes itself and ignores bounds of parent collectionView
     override open func preferredLayoutAttributesFitting(
         _ layoutAttributes: UICollectionViewLayoutAttributes
     ) -> UICollectionViewLayoutAttributes {

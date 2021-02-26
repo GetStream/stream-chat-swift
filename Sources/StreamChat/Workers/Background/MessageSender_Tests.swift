@@ -58,7 +58,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send without attachments",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -68,10 +68,10 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send with attachments",
                 quotedMessageId: nil,
-                attachments: [
-                    _ChatMessageAttachment<ExtraData>.Seed.dummy(),
-                    _ChatMessageAttachment<ExtraData>.Seed.dummy(),
-                    _ChatMessageAttachment<ExtraData>.Seed.dummy()
+                attachmentSeeds: [
+                    ChatMessageAttachmentSeed.dummy(),
+                    ChatMessageAttachmentSeed.dummy(),
+                    ChatMessageAttachmentSeed.dummy()
                 ],
                 extraData: ExtraData.Message.defaultValue
             )
@@ -82,7 +82,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message without local state",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message3Id = message3.id
@@ -125,7 +125,6 @@ class MessageSender_Tests: StressTestCase {
         try database.writeSynchronously { session in
             let message2 = try XCTUnwrap(session.message(id: message2Id))
             message2.attachments.forEach { $0.localState = .uploaded }
-            message2.id = message2Id
         }
 
         // Check message2 was sent.
@@ -139,6 +138,63 @@ class MessageSender_Tests: StressTestCase {
         }
     }
     
+    func test_sender_sendsMessage_withUploadedAttachments() throws {
+        var messageId: MessageId!
+        
+        try database.writeSynchronously { session in
+            let message = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send",
+                quotedMessageId: nil,
+                attachments: [TestAttachmentEnvelope(), TestAttachmentEnvelope()],
+                extraData: ExtraData.Message.defaultValue
+            )
+            message.localMessageState = .pendingSend
+            messageId = message.id
+        }
+        
+        let messagePayload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: messageId)?.asRequestBody()
+        )
+    
+        AssertAsync.willBeTrue(apiClient.request_allRecordedCalls.contains(where: {
+            $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: messagePayload))
+        }))
+    }
+    
+    func test_sender_sendsMessage_withBothAttachmentSeedsAndUploadedAttachments() throws {
+        var messageId: MessageId!
+        
+        try database.writeSynchronously { session in
+            let message = try session.createNewMessage(
+                in: self.cid,
+                text: "Message pending send",
+                quotedMessageId: nil,
+                attachments: [TestAttachmentEnvelope(), TestAttachmentEnvelope()],
+                attachmentSeeds: [.dummy()],
+                extraData: ExtraData.Message.defaultValue
+            )
+            message.localMessageState = .pendingSend
+            messageId = message.id
+        }
+        
+        let messagePayload: MessageRequestBody<ExtraData> = try XCTUnwrap(
+            database.viewContext.message(id: messageId)?.asRequestBody()
+        )
+        
+        // Simulate attachment seed uploaded
+        try database.writeSynchronously { session in
+            let message = try XCTUnwrap(session.message(id: messageId))
+            message.attachments.forEach { $0.localState = .uploaded }
+        }
+        
+        AssertAsync {
+            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.contains(where: {
+                $0.endpoint == AnyEndpoint(.sendMessage(cid: self.cid, messagePayload: messagePayload))
+            }))
+        }
+    }
+    
     func test_sender_changesMessageStates_whenSending() throws {
         var message1Id: MessageId!
                 
@@ -148,7 +204,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -178,7 +234,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -207,7 +263,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send 1",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -217,7 +273,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send 2",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message2.localMessageState = .pendingSend
@@ -227,7 +283,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send 3",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message3.localMessageState = .pendingSend
@@ -294,7 +350,7 @@ class MessageSender_Tests: StressTestCase {
                 in: cidA,
                 text: "Channel A message 1",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageA1.localMessageState = .pendingSend
@@ -304,7 +360,7 @@ class MessageSender_Tests: StressTestCase {
                 in: cidA,
                 text: "Channel A message 2",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageA2.localMessageState = .pendingSend
@@ -314,7 +370,7 @@ class MessageSender_Tests: StressTestCase {
                 in: cidB,
                 text: "Channel B message 1",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageB1.localMessageState = .pendingSend
@@ -324,7 +380,7 @@ class MessageSender_Tests: StressTestCase {
                 in: cidB,
                 text: "Channel B message 2",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageB2.localMessageState = .pendingSend
@@ -387,7 +443,7 @@ class MessageSender_Tests: StressTestCase {
                 in: self.cid,
                 text: "Message pending send",
                 quotedMessageId: nil,
-                attachments: [_ChatMessageAttachment<ExtraData>.Seed](),
+                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message.localMessageState = .pendingSend
@@ -399,7 +455,7 @@ class MessageSender_Tests: StressTestCase {
         
         // Simulate successful API response with assigned attachment
         let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
-        let attachment: AttachmentPayload<ExtraData.Attachment> = .init(type: .giphy, title: .unique, imagePreviewURL: nil)
+        let attachment: AttachmentPayload = .dummy(type: .giphy, title: .unique)
         let messagePayload: MessagePayload<ExtraData> = .dummy(
             messageId: messageId,
             attachments: [attachment],
@@ -409,7 +465,17 @@ class MessageSender_Tests: StressTestCase {
         callback(.success(.init(message: messagePayload)))
         
         // Check the changes are reflected in DB
-        AssertAsync.willBeEqual(database.viewContext.message(id: messageId)?.attachments.first?.title, attachment.title)
+        if isAttachmentModelSeparationChangesApplied {
+            AssertAsync.willBeEqual(
+                (database.viewContext.message(id: messageId)?.attachments.first?.asModel() as? ChatMessageGiphyAttachment)?.title,
+                attachment.decodedGiphyAttachment?.title
+            )
+        } else {
+            AssertAsync.willBeEqual(
+                (database.viewContext.message(id: messageId)?.attachments.first?.asModel() as? ChatMessageDefaultAttachment)?.title,
+                attachment.decodedDefaultAttachment?.title
+            )
+        }
     }
     
     // MARK: - Life cycle tests

@@ -82,7 +82,7 @@ class DatabaseContainer: NSPersistentContainer {
         shouldFlushOnStart: Bool = false,
         shouldResetEphemeralValuesOnStart: Bool = true,
         modelName: String = "StreamChatModel",
-        bundle: Bundle? = nil
+        bundle: Bundle? = .streamChat
     ) throws {
         // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
         let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
@@ -152,7 +152,15 @@ class DatabaseContainer: NSPersistentContainer {
             log.debug("Starting a database session.")
             do {
                 try actions(self.writableContext)
-                
+                // If you touch ManagedObject and update one of it properties to same value
+                // Object will be marked as `updated` even it hasn't changed.
+                // By reseting such objects we remove updates that are not updates.
+                for object in self.writableContext.updatedObjects {
+                    if object.changedValues().isEmpty {
+                        self.writableContext.refresh(object, mergeChanges: false)
+                    }
+                }
+
                 if self.writableContext.hasChanges {
                     log.debug("Context has changes. Saving.")
                     try self.writableContext.save()

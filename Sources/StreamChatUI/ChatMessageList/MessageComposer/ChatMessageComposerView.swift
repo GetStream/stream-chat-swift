@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
 
-open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: View,
+open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     UIConfigProvider {
     // MARK: - Properties
     
@@ -86,9 +86,9 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: View,
         guard superview != nil else { return }
         
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
     

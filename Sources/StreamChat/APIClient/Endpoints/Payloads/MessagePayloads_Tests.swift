@@ -7,6 +7,7 @@ import XCTest
 
 class MessagePayload_Tests: XCTestCase {
     let messageJSON = XCTestCase.mockData(fromFile: "Message")
+    let messageJSONWithCorruptedAttachments = XCTestCase.mockData(fromFile: "MessageWithBrokenAttachments")
     
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
         let box = try JSONDecoder.default.decode(MessagePayload<NoExtraData>.Boxed.self, from: messageJSON)
@@ -33,6 +34,34 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.isSilent, true)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
         XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
+    }
+
+    func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {
+        let box = try JSONDecoder.default.decode(MessagePayload<NoExtraData>.Boxed.self, from: messageJSONWithCorruptedAttachments)
+        let payload = box.message
+
+        XCTAssertEqual(payload.id, "7baa1533-3294-4c0c-9a62-c9d0928bf733")
+        XCTAssertEqual(payload.type.rawValue, "regular")
+        XCTAssertEqual(payload.user.id, "broken-waterfall-5")
+        XCTAssertEqual(payload.createdAt, "2020-07-16T15:39:03.010717Z".toDate())
+        XCTAssertEqual(payload.updatedAt, "2020-08-17T13:15:39.895109Z".toDate())
+        XCTAssertEqual(payload.deletedAt, "2020-07-16T15:55:03.010717Z".toDate())
+        XCTAssertEqual(payload.text, "No, I am your father!")
+        XCTAssertEqual(payload.command, nil)
+        XCTAssertEqual(payload.args, nil)
+        XCTAssertEqual(payload.parentId, "3294-4c0c-9a62-c9d0928bf733")
+        XCTAssertEqual(payload.showReplyInChannel, true)
+        XCTAssertEqual(payload.mentionedUsers.map(\.id), [])
+        XCTAssertEqual(payload.threadParticipants.map(\.id), ["josh"])
+        XCTAssertEqual(payload.replyCount, 0)
+        XCTAssertEqual(payload.extraData, .defaultValue)
+        XCTAssertEqual(payload.latestReactions.count, 1)
+        XCTAssertEqual(payload.ownReactions.count, 1)
+        XCTAssertEqual(payload.reactionScores, ["love": 1])
+        XCTAssertEqual(payload.isSilent, true)
+        XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
+        XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
+        XCTAssertEqual(payload.attachments.count, 1)
     }
     
     func test_messagePayload_isSerialized_withCustomExtraData() throws {

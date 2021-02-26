@@ -1,5 +1,7 @@
 excluded:
-  - "Utils/Internet Connection/Reachability_Vendor.swift"
+  - "Scripts"
+  - "Package.swift"
+  - "DocsSnippets" # We don't need SwiftLint running for DocsSnippets (SwiftFormat will still run)
 
 disabled_rules:
   - large_tuple
@@ -35,6 +37,7 @@ opt_in_rules:
   - multiline_function_chains
   - unused_import
   - attributes
+  - file_name_no_space
 
 multiline_arguments:
   only_enforce_after_first_closure_on_first_line: true
@@ -49,6 +52,9 @@ trailing_whitespace:
 function_body_length:
   warning: 120
   error: 200
+
+file_name_no_space:
+  severity: error
 
 identifier_name:
   excluded: [r, g, b, a, x, y, z, dx, dy, dz, i, j, k, id, op, or, me, at, to, in]
@@ -66,9 +72,10 @@ cyclomatic_complexity:
 
 custom_rules:
   constraints_forbidden:
-    included: ".*StreamChatUI" # I gave up on it. Feel free to find better regex
+    included: ".*StreamChatUI" # Matches all StreamChatUI files
+    excluded: ".*(?:_Tests)" # Doesn't apply to tests
     regex: "Anchor(.constraint)\\("
     capture_group: 1
     match_kinds:
       - identifier
-    message: "Plain constraints methods are forbidded. Use `pin(...)` alternative"
+    message: "Plain constraints methods are forbidden. Use `pin(...)` alternative"

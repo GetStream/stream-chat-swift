@@ -41,17 +41,8 @@ class MessageDTO: NSManagedObject {
     // it in the `willSave` phase, which happens after the validation.
     @NSManaged var defaultSortingKey: Date!
     
-    @NSManaged var savedChangeHash: Int64
-    
     override func willSave() {
         super.willSave()
-        
-        // Save the current hash of the entity
-        // This is used during `save` calls to compare DTOs `changeHash` and
-        // corresponding payload's `changeHash` to avoid unnecessary assignment of values.
-        // Direct assignment cannot be used
-        // Since it'll generate new `willSave` calls causing recursion
-        assignIfDifferent(self, \.savedChangeHash, Int64(hasher.changeHash))
         
         prepareDefaultSortKeyIfNeeded()
     }
@@ -188,35 +179,6 @@ class MessageDTO: NSManagedObject {
     }
 }
 
-extension MessageDTO: ChangeHashable {
-    var hasher: ChangeHasher {
-        MessageHasher(
-            id: id,
-            type: type,
-            userChangeHash: user.changeHash,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deletedAt: deletedAt,
-            text: text,
-            command: command,
-            args: args,
-            parentId: parentMessageId,
-            showReplyInChannel: showReplyInChannel,
-            quotedMessageChangeHash: quotedMessage?.changeHash,
-            mentionedUserChangeHashes: mentionedUsers.map(\.changeHash),
-            threadParticipantChangeHashes: threadParticipants.map(\.changeHash),
-            replyCount: Int(replyCount),
-            extraData: extraData,
-            reactionScores: reactionScores,
-            isSilent: isSilent
-        )
-    }
-    
-    var changeHash: Int {
-        Int(savedChangeHash)
-    }
-}
-
 extension MessageDTO {
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     var localMessageState: LocalMessageState? {
@@ -226,16 +188,16 @@ extension MessageDTO {
 }
 
 extension NSManagedObjectContext: MessageDatabaseSession {
-    func createNewMessage<ExtraData: ExtraDataTypes>(
+    func createNewMessage<ExtraData: MessageExtraData>(
         in cid: ChannelId,
         text: String,
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
-        attachments: [_ChatMessageAttachment<ExtraData>.Seed],
+        attachments: [AttachmentEnvelope],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
-        extraData: ExtraData.Message
+        extraData: ExtraData
     ) throws -> MessageDTO {
         guard let currentUserDTO = currentUser() else {
             throw ClientError.CurrentUserDoesNotExist()
@@ -260,13 +222,27 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.extraData = try JSONEncoder.default.encode(extraData)
         message.isSilent = false
         message.reactionScores = [:]
-        message.attachments = try Set(
-            attachments.enumerated().map { index, seed in
+            
+        let attachmentDTOsFromSeeds: [AttachmentDTO] = try attachments
+            .compactMap { $0 as? ChatMessageAttachmentSeed }
+            .enumerated()
+            .map { index, seed in
                 let id = AttachmentId(cid: cid, messageId: message.id, index: index)
                 let dto = try createNewAttachment(seed: seed, id: id)
                 return dto
             }
-        )
+        
+        let attachmentDTOsFromAttachments: [AttachmentDTO] = try attachments
+            .filter { !($0 is ChatMessageAttachmentSeed) }
+            .enumerated()
+            .map { index, attachment in
+                let id = AttachmentId(cid: cid, messageId: message.id, index: index + attachmentDTOsFromSeeds.count)
+                let dto = try createNewAttachment(attachment: attachment, id: id)
+                return dto
+            }
+        
+        message.attachments = Set(attachmentDTOsFromSeeds + attachmentDTOsFromAttachments)
+                
         message.showReplyInChannel = showReplyInChannel
         message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
         
@@ -300,46 +276,42 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
         
         let dto = MessageDTO.loadOrCreate(id: payload.id, context: self)
-        
-        if dto.changeHash != payload.changeHash {
-            dto.text = payload.text
-            dto.createdAt = payload.createdAt
-            dto.updatedAt = payload.updatedAt
-            dto.deletedAt = payload.deletedAt
-            dto.type = payload.type.rawValue
-            dto.command = payload.command
-            dto.args = payload.args
-            dto.parentMessageId = payload.parentId
-            dto.showReplyInChannel = payload.showReplyInChannel
-            dto.replyCount = Int32(payload.replyCount)
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
-            dto.isSilent = payload.isSilent
-            
-            dto.quotedMessage = try payload.quotedMessage.flatMap { try saveMessage(payload: $0, for: cid) }
-            
-            let user = try saveUser(payload: payload.user)
-            dto.user = user
-            
-            dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
-            
-            // If user edited their message to remove mentioned users, we need to get rid of it
-            // as backend does
-            dto.mentionedUsers = try Set(payload.mentionedUsers.map {
-                let user = try saveUser(payload: $0)
-                return user
-            })
-            
-            // If user participated in thread, but deleted message later, we needs to get rid of it if backends does
-            dto.threadParticipants = try Set(
-                payload.threadParticipants.map { try saveUser(payload: $0) }
-            )
-        }
+
+        dto.text = payload.text
+        dto.createdAt = payload.createdAt
+        dto.updatedAt = payload.updatedAt
+        dto.deletedAt = payload.deletedAt
+        dto.type = payload.type.rawValue
+        dto.command = payload.command
+        dto.args = payload.args
+        dto.parentMessageId = payload.parentId
+        dto.showReplyInChannel = payload.showReplyInChannel
+        dto.replyCount = Int32(payload.replyCount)
+        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        dto.isSilent = payload.isSilent
+
+        dto.quotedMessage = try payload.quotedMessage.flatMap { try saveMessage(payload: $0, for: cid) }
+
+        let user = try saveUser(payload: payload.user)
+        dto.user = user
+
+        dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
+
+        // If user edited their message to remove mentioned users, we need to get rid of it
+        // as backend does
+        dto.mentionedUsers = try Set(payload.mentionedUsers.map {
+            let user = try saveUser(payload: $0)
+            return user
+        })
+
+        // If user participated in thread, but deleted message later, we needs to get rid of it if backends does
+        dto.threadParticipants = try Set(
+            payload.threadParticipants.map { try saveUser(payload: $0) }
+        )
 
         if let channelPayload = payload.channel {
             let channelDTO = try saveChannel(payload: channelPayload, query: nil)
-            if channelDTO.changeHash != channelPayload.changeHash {
-                dto.channel = channelDTO
-            }
+            dto.channel = channelDTO
         } else if let cid = cid {
             let channelDTO = ChannelDTO.loadOrCreate(cid: cid, context: self)
             dto.channel = channelDTO
@@ -359,7 +331,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 return dto
             }
         )
-        assignIfDifferent(dto, \.attachments, attachments)
+        dto.attachments = attachments
         
         if let parentMessageId = payload.parentId,
             let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
@@ -441,26 +413,37 @@ private extension _ChatMessage {
         mentionedUsers = Set(dto.mentionedUsers.map { $0.asModel() })
         threadParticipants = Set(dto.threadParticipants.map(\.id))
 
-        latestReplies = MessageDTO
-            .loadReplies(for: dto.id, limit: 25, context: context)
-            .map(_ChatMessage.init)
-        
+        if dto.replies.isEmpty {
+            latestReplies = []
+        } else {
+            latestReplies = MessageDTO
+                .loadReplies(for: dto.id, limit: 5, context: context)
+                .map(_ChatMessage.init)
+        }
         localState = dto.localMessageState
         
         isFlaggedByCurrentUser = dto.flaggedBy != nil
-        
-        latestReactions = Set(
-            MessageReactionDTO
-                .loadLatestReactions(for: dto.id, limit: 10, context: context)
-                .map { $0.asModel() }
-        )
-        
-        if let currentUser = context.currentUser() {
-            currentUserReactions = Set(
+
+        if dto.reactions.isEmpty {
+            latestReactions = []
+        } else {
+            latestReactions = Set(
                 MessageReactionDTO
-                    .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
+                    .loadLatestReactions(for: dto.id, limit: 5, context: context)
                     .map { $0.asModel() }
             )
+        }
+        
+        if let currentUser = context.currentUser() {
+            if dto.reactions.isEmpty {
+                currentUserReactions = []
+            } else {
+                currentUserReactions = Set(
+                    MessageReactionDTO
+                        .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
+                        .map { $0.asModel() }
+                )
+            }
             isSentByCurrentUser = currentUser.user.id == dto.user.id
         } else {
             currentUserReactions = []
@@ -469,8 +452,12 @@ private extension _ChatMessage {
         
         attachments = dto.attachments
             .map { $0.asModel() }
-            .sorted { $0.id.index < $1.id.index }
-        
+            .sorted {
+                let index1 = $0.id?.index ?? Int.max
+                let index2 = $1.id?.index ?? Int.max
+                return index1 < index2
+            }
+
         quotedMessageId = dto.quotedMessage.map(\.id)
     }
 }

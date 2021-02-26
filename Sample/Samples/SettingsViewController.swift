@@ -21,10 +21,14 @@ class SettingsViewController: UITableViewController {
         }
     }
     
+    lazy var connectionController: ChatConnectionController = {
+        currentUserController.client.connectionController()
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         updateUserCell(with: currentUserController.currentUser)
+        currentUserController.synchronize()
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -61,7 +65,7 @@ extension SettingsViewController {
     }
     
     func logout() {
-        currentUserController.disconnect()
+        connectionController.disconnect()
         moveToStoryboard(.main, options: .transitionFlipFromRight)
     }
 }
@@ -78,14 +82,14 @@ extension SettingsViewController {
     func webSocketsConnectionSwitchValueChanged(_ sender: Any) {
         if webSocketsConnectionSwitch.isOn {
             webSocketsConnectionSwitch.isEnabled = false
-            currentUserController.connect { [weak self] error in
+            connectionController.connect { [weak self] error in
                 DispatchQueue.main.async {
                     self?.webSocketsConnectionSwitch.isEnabled = true
                     self?.webSocketsConnectionSwitch.setOn(error == nil, animated: true)
                 }
             }
         } else {
-            currentUserController.disconnect()
+            connectionController.disconnect()
         }
     }
 }

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -12,13 +12,12 @@ public protocol ExtraData: Codable & Hashable {
 
 /// A type representing no extra data for the given model object.
 public struct NoExtraData: Codable,
-                           Hashable,
-                           UserExtraData,
-                           ChannelExtraData,
-                           MessageExtraData,
-                           MessageReactionExtraData,
-                           AttachmentExtraData,
-                           ExtraDataTypes {
+    Hashable,
+    UserExtraData,
+    ChannelExtraData,
+    MessageExtraData,
+    MessageReactionExtraData,
+    ExtraDataTypes {
     /// Returns a concrete `NoExtraData` instance.
     public static var defaultValue: Self { .init() }
 }

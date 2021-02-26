@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 import WebKit
 
-open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: ViewController, WKNavigationDelegate, UIConfigProvider {
+open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: _ViewController, WKNavigationDelegate, UIConfigProvider {
     public var content: URL? {
         didSet { updateContentIfNeeded() }
     }

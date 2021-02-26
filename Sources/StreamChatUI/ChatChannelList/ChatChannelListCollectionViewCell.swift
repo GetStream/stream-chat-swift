@@ -6,14 +6,13 @@ import Foundation
 import StreamChat
 import UIKit
 
+/// A `UICollectionViewCell` subclass that shows channel information.
 public typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionViewCell<NoExtraData>
 
-open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
-    // MARK: - Properties
-
-    public private(set) lazy var channelView: _ChatChannelListItemView<ExtraData> = uiConfig.channelList.channelListItemView.init()
-
-    // MARK: - UICollectionViewCell
+/// A `UICollectionViewCell` subclass that shows channel information.
+open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+    /// The `ChatChannelListItemView` instance used as content view.
+    open private(set) lazy var channelView: _ChatChannelListItemView<ExtraData> = uiConfig.channelList.channelListItemView.init()
 
     override public func prepareForReuse() {
         super.prepareForReuse()
@@ -22,18 +21,15 @@ open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: Collec
 
     override open var isHighlighted: Bool {
         didSet {
-            channelView.backgroundColor = isHighlighted ? channelView.highlightedBackgroundColor : channelView.normalBackgroundColor
+            channelView.backgroundColor = isHighlighted ? uiConfig.colorPalette.highlightedBackground :
+                uiConfig.colorPalette.background
         }
     }
-
-    // MARK: Customizable
 
     override open func setUpLayout() {
         super.setUpLayout()
         contentView.embed(channelView)
     }
-
-    // MARK: - Layout
     
     override open func preferredLayoutAttributesFitting(
         _ layoutAttributes: UICollectionViewLayoutAttributes

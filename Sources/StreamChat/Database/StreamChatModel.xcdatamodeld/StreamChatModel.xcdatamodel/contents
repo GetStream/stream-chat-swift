@@ -1,20 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20D64" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
-        <attribute name="actions" optional="YES" attributeType="Binary"/>
-        <attribute name="author" optional="YES" attributeType="String"/>
-        <attribute name="extraData" optional="YES" attributeType="Binary"/>
-        <attribute name="file" optional="YES" attributeType="Binary"/>
+        <attribute name="data" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
-        <attribute name="imagePreviewURL" optional="YES" attributeType="URI"/>
-        <attribute name="imageURL" optional="YES" attributeType="URI"/>
         <attribute name="localProgress" optional="YES" attributeType="Double" minValueString="0" maxValueString="1" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="localStateRaw" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="localURL" optional="YES" attributeType="URI"/>
-        <attribute name="text" optional="YES" attributeType="String"/>
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
-        <attribute name="url" optional="YES" attributeType="URI"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="attachments" inverseEntity="ChannelDTO"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="attachments" inverseEntity="MessageDTO"/>
         <uniquenessConstraints>
@@ -35,7 +28,6 @@
         <attribute name="lastMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="memberCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="savedChangeHash" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="typeRawValue" optional="YES" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="watcherCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
@@ -159,7 +151,6 @@
         <attribute name="quotedMessageId" optional="YES" attributeType="String"/>
         <attribute name="reactionScores" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="replyCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="savedChangeHash" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="showReplyInChannel" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="text" attributeType="String"/>
         <attribute name="type" attributeType="String"/>
@@ -220,7 +211,6 @@
         <attribute name="isOnline" attributeType="Boolean" usesScalarValueType="YES"/>
         <attribute name="lastActivityAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="name" optional="YES" attributeType="String"/>
-        <attribute name="savedChangeHash" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="userCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="userRoleRaw" attributeType="String"/>
         <attribute name="userUpdatedAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -261,18 +251,18 @@
         </uniquenessConstraints>
     </entity>
     <elements>
-        <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="223"/>
-        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="404"/>
+        <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="164"/>
+        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="389"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="ChannelReadDTO" positionX="9" positionY="153" width="128" height="103"/>
         <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="148"/>
         <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="MemberDTO" positionX="0" positionY="0" width="128" height="193"/>
-        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="479"/>
+        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="464"/>
         <element name="MessageReactionDTO" positionX="9" positionY="153" width="128" height="163"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
-        <element name="UserDTO" positionX="0" positionY="0" width="128" height="389"/>
+        <element name="UserDTO" positionX="0" positionY="0" width="128" height="374"/>
         <element name="UserListQueryDTO" positionX="9" positionY="153" width="128" height="103"/>
     </elements>
 </model>

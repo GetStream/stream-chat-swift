@@ -7,14 +7,14 @@ import UIKit
 
 public typealias ChatMessageContentView = _ChatMessageContentView<NoExtraData>
 
-open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
     public var onThreadTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
     public var onErrorIndicatorTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
-    public var onLinkTap: (_ChatMessageAttachment<ExtraData>?) -> Void = { _ in } {
+    public var onLinkTap: (ChatMessageDefaultAttachment?) -> Void = { _ in } {
         didSet { updateContentIfNeeded() }
     }
 
@@ -232,7 +232,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigPro
 
         let placeholder = uiConfig.images.userAvatarPlaceholder1
         if let imageURL = message.author.imageURL {
-            authorAvatarView.imageView.setImage(from: imageURL, placeholder: placeholder)
+            authorAvatarView.imageView.loadImage(from: imageURL, placeholder: placeholder)
         } else {
             authorAvatarView.imageView.image = placeholder
         }
@@ -280,5 +280,24 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: View, UIConfigPro
 
     @objc func didTapOnThread() {
         onThreadTap(message)
+    }
+}
+
+public typealias ChatMessageAttachmentContentView = _ChatMessageAttachmentContentView<NoExtraData>
+
+open class _ChatMessageAttachmentContentView<ExtraData: ExtraDataTypes>: _ChatMessageContentView<ExtraData> {
+    private var _messageAttachmentBubbleView: _ChatMessageAttachmentBubbleView<ExtraData>?
+    
+    override public var messageBubbleView: _ChatMessageBubbleView<ExtraData> {
+        if let messageBubbleView = _messageAttachmentBubbleView {
+            return messageBubbleView
+        } else {
+            _messageAttachmentBubbleView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .attachmentBubbleView.init()
+                .withoutAutoresizingMaskConstraints
+            return _messageAttachmentBubbleView!
+        }
     }
 }

@@ -15,40 +15,33 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 
 --- 
 
-## Important ⚠️ 
-
-**We're currently in the final stage of releasing a new major version (3.0) of our SDKs.** Version 3.0 is already avaialable in public beta. We expect to release the production version during Q1/2021.
-
-If you want to integrate StreamChat SDKs into your app, you can already use version `3.0-beta.x`. However, please be aware that small API breaking changes can occure until a stable version is reached.
-
-**More information about the last stable version can be found at [v2.x README](https://github.com/GetStream/stream-chat-swift/tree/main_v2/).**
-
----
-
 ## Main Features
 
 - **Uses `UIKit` patterns and paradigms:** The API follows the design of native system SKDs. It makes integration with your existing code easy and familiar.
-- **First-class support for `SwiftUI`:** Built-it wrappers make using the SDK with the latest Apple UI framework a seamless experience. (coming Q1/2021)
+- **First-class support for `SwiftUI` and `Combine`:** Built-it wrappers make using the SDK with the latest Apple UI framework a seamless experience. (coming 4/2021)
+- **Offline support:** Browse channels and send messages while offline.
 - **Familiar behavior**: The UI elements are good platform citizens and behave like native elements; they respect `tintColor`, `layoutMargins`, light/dark mode, dynamic font sizes, etc.
 - **Swift native API:** Uses Swift's powerful language features to make the SDK usage easy and type-safe.
 - **Fully open source implementation:** You have access to the comple source code of the SDK here on GitHub.
 - **Supports iOS 11+, Swift 5.2:** We proudly support older versions of iOS, so your app can stay available to almost everyone.
 
-## **Quick Links** (WIP)
+## **Quick Links**
 
 * [iOS/Swift Chat Tutorial](https://getstream.io/tutorials/ios-chat/): Learn how to use the SDK by following our simple tutorial.
 
 &nbsp;
 
 * [Register](https://getstream.io/chat/trial/) to get an API key for Stream Chat.
-* [Installation](https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Installation_UI.MD): Learn more about how to install the SDK using CocoaPods or SPM.
+* [Installation](https://github.com/GetStream/stream-chat-swift/blob/main/Documentation/Installation.MD): Learn more about how to install the SDK using CocoaPods or SPM.
 * [Cheat Sheet](https://github.com/GetStream/stream-chat-swift/wiki/UI-Cheat-Sheet): Learn how to use the SDK by real world examples.
 * [Demo app](https://github.com/GetStream/stream-chat-swift/tree/main/DemoApp): This repo includes a fully functional demo app with example usage of the SDK.
 
 &nbsp;
 
 * [StreamChat SDK (low-level)](https://github.com/GetStream/stream-chat-swift/tree/main/Sources/StreamChat): An SDK to use if you want to build fully-custom UI. `StreamChatUI` uses `StreamChat` for communicating with Stream chat backend.
-* [SDK Documentation](https://github.com/GetStream/stream-chat-swift/wiki)
+* [Wiki](https://github.com/GetStream/stream-chat-swift/wiki) and [Platform Documentation](https://getstream.io/chat/docs/ios-swift/?language=swift)
+
+* Information about the 2.x version can be found at [v2.x README](https://github.com/GetStream/stream-chat-swift/tree/main_v2/).
 
 
 ## Main Principles
@@ -64,26 +57,28 @@ If you want to integrate StreamChat SDKs into your app, you can already use vers
 --- 
 
 
-## 👉 Migrating from 2.x
+## 👉 Migrating from 1.x/2.x
 
-In order to provide new features like offline support and `SwiftUI` wrappers, we had to make notable breaking changes to the public API of the SDKs.
-
-**Please don't upgrade to version 3.0 before you get familiar with the changes and their impact on your codebase.**
-
-To prevent CocoaPods from updating `StreamChat` to version 3, you can explicitly pin the SDKs to versions 2.x in your `podfile`:
-```ruby
-pod 'StreamChat', '~> 2.0'
-pod 'StreamChatCore', '~> 2.0' # if needed
-pod 'StreamChatClient', '~> 2.0' # if needed
-```
-
-- **Migrating `StreamChat` (UI components):** If you use our Chat UI components, **migration from 2.x is not recommended yet.** The UI components SDK was renamed to `StreamChatUI` and is currently only in public beta.
-
-- **Migrating `StreamChatClient` and/or `StreamChatCore`:** Our low-level frameworks (`Client` + `Core`) were merged and renamed to `StreamChat`. If you use only our low-level frameworks, you can use our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet) to get more familiar with the update API and better assess the impact of the changes on your codebase.
+Please check [our wiki page for migration](https://github.com/GetStream/stream-chat-swift/wiki/Migrating-from-1.x-and-2.x).
 
 ---
 
+## Roadmap
 
+* Open UI components for subclassing and customization (3/2021, available in 🅱️ `3.2.0-beta`)
+* Local notification support (3/2021)
+* SwiftUI wrappers for UI components (4/2021)
+* Pinned messages (4/2021)
+* Better photo gallery experience (4/2021)
+* Multi-tenancy, teams (4/2021)
+* Silent messages (4/2021)
+* Expired tokens (4/2021)
+* Channel invites (4/2021)
+* Paginating reactions (4/2021)
+* Message search (5/2021)
+* RxSwift wrappers (tbd)
+
+---
 ## Quick Overview
 
 ### Channel List

@@ -327,7 +327,12 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
         XCTAssertEqual(loadedMessage.latestReactions, latestReactions)
         XCTAssertEqual(loadedMessage.currentUserReactions, currentUserReactions)
-        XCTAssertEqual(loadedMessage.attachments, messagePayload.attachments(cid: channelId))
+        XCTAssertEqual(
+            isAttachmentModelSeparationChangesApplied ?
+                loadedMessage.attachments.map { ($0 as? ChatMessageImageAttachment)?.id } :
+                loadedMessage.attachments.map { ($0 as? ChatMessageDefaultAttachment)?.id },
+            messagePayload.attachmentIDs(cid: channelId)
+        )
     }
     
     func test_newMessage_asRequestBody() throws {
@@ -348,7 +353,8 @@ class MessageDTO_Tests: XCTestCase {
         let messageText: String = .unique
         let messageCommand: String = .unique
         let messageArguments: String = .unique
-        let messageAttachmentSeeds: [ChatMessageAttachment.Seed] = [.dummy(), .dummy(), .dummy()]
+        let messageAttachments: [TestAttachmentEnvelope] = [.init(), .init()]
+        let messageAttachmentSeeds: [ChatMessageAttachmentSeed] = [.dummy(), .dummy(), .dummy()]
         let messageShowReplyInChannel = true
         let messageExtraData: NoExtraData = .defaultValue
 
@@ -360,7 +366,7 @@ class MessageDTO_Tests: XCTestCase {
                 command: messageCommand,
                 arguments: messageArguments,
                 parentMessageId: parentMessageId,
-                attachments: messageAttachmentSeeds,
+                attachments: messageAttachments + messageAttachmentSeeds,
                 showReplyInChannel: true,
                 quotedMessageId: nil,
                 extraData: messageExtraData
@@ -383,7 +389,11 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.extraData, messageExtraData)
 
         // Assert attachments are in correct order.
-        XCTAssertEqual(requestBody.attachments.map(\.title), messageAttachmentSeeds.map(\.fileName))
+        let attachmentsTitles: [String] = requestBody.attachments.compactMap { rawJSON -> String? in
+            (rawJSON as? RawJSON)?.dictionary?["fallback"]?.string
+        }
+        
+        XCTAssertEqual(attachmentsTitles, messageAttachmentSeeds.map(\.fileName))
     }
     
     func test_additionalLocalState_isStored() {
@@ -460,7 +470,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
-                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
+                    attachments: [TestAttachmentEnvelope](),
                     showReplyInChannel: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -475,7 +485,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
-                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
+                    attachments: [TestAttachmentEnvelope](),
                     showReplyInChannel: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -503,144 +513,27 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(message2?.defaultSortingKey, message2?.createdAt)
         }
     }
-    
-    func test_DTO_hash_sameAsPayloadHash() throws {
-        let currentUserId: UserId = .unique
-        let messageAuthorId: UserId = .unique
-        let messageId: MessageId = .unique
+
+    func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
+        // Arrange: Store random message payload to db
         let channelId: ChannelId = .unique
-        
-        try database.createCurrentUser(id: currentUserId)
+        try database.createCurrentUser(id: .unique)
         try database.createChannel(cid: channelId, withMessages: false)
-        
         let messagePayload: MessagePayload<NoExtraData> = .dummy(
-            messageId: messageId,
-            authorUserId: messageAuthorId,
+            messageId: .unique,
+            authorUserId: .unique,
             channel: ChannelDetailPayload<NoExtraData>.dummy(cid: channelId)
         )
-        
-        // Synchronously save the payload to the db
+
         try database.writeSynchronously { session in
-            // Save the message
             try session.saveMessage(payload: messagePayload, for: channelId)
         }
-        
-        // Load the message from the db and check the fields are correct
-        let loadedMessage: MessageDTO? = database.viewContext.message(id: messageId)
-        
-        // Assert that hash is not changed
-        guard let dtoHash = loadedMessage?.changeHash else {
-            XCTFail("DTO is missing hash!")
-            return
-        }
-        XCTAssertEqual(Int(dtoHash), messagePayload.changeHash)
-    }
-    
-    func test_DTO_skipsUnnecessarySave() throws {
-        // Test payload with explicitHash
-        class ExplicitHashMessagePayload: MessagePayload<NoExtraData> {
-            var explicitHash: Int?
-            
-            override var changeHash: Int {
-                explicitHash ?? super.changeHash
-            }
-        }
-        
-        let currentUserId: UserId = .unique
-        let messageAuthorId: UserId = .unique
-        let messageId: MessageId = .unique
-        let channelId: ChannelId = .unique
-        
-        try database.createCurrentUser(id: currentUserId)
-        try database.createChannel(cid: channelId, withMessages: false)
-        
-        let messagePayload: MessagePayload<NoExtraData> = .dummy(
-            messageId: messageId,
-            authorUserId: messageAuthorId,
-            channel: ChannelDetailPayload<NoExtraData>.dummy(cid: channelId)
-        )
-        
-        // Synchronously save the payload to the db
-        try database.writeSynchronously { session in
-            // Save the message
-            try session.saveMessage(payload: messagePayload, for: channelId)
-        }
-        
-        let changedPayload: ExplicitHashMessagePayload = .init(
-            id: messageId,
-            type: .regular,
-            user: .dummy(userId: messageAuthorId),
-            createdAt: .unique,
-            updatedAt: .unique,
-            text: .unique,
-            showReplyInChannel: !messagePayload.showReplyInChannel,
-            mentionedUsers: [],
-            replyCount: .random(in: 0...1000),
-            extraData: .defaultValue,
-            reactionScores: [:],
-            isSilent: !messagePayload.isSilent,
-            attachments: []
-        )
-        // Assign it's explicitHast
-        changedPayload.explicitHash = messagePayload.changeHash
-        
-        // Save the changed payload with the same hash
-        try database.writeSynchronously { session in
-            try session.saveMessage(payload: changedPayload, for: channelId)
-        }
-        
-        // Load the message from the db and check the fields are correct
-        var loadedMessage: MessageDTO? { database.viewContext.message(id: messageId) }
-        
-        // Assert that properties are not changed
-        XCTAssertEqual(loadedMessage?.type, messagePayload.type.rawValue)
-        XCTAssertEqual(loadedMessage?.createdAt, messagePayload.createdAt)
-        XCTAssertEqual(loadedMessage?.updatedAt, messagePayload.updatedAt)
-        XCTAssertEqual(loadedMessage?.deletedAt, messagePayload.deletedAt)
-        XCTAssertEqual(loadedMessage?.text, messagePayload.text)
-        XCTAssertEqual(loadedMessage?.command, messagePayload.command)
-        XCTAssertEqual(loadedMessage?.args, messagePayload.args)
-        XCTAssertEqual(loadedMessage?.parentMessageId, messagePayload.parentId)
-        XCTAssertEqual(loadedMessage?.showReplyInChannel, messagePayload.showReplyInChannel)
-        XCTAssertEqual(loadedMessage?.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
-        XCTAssertEqual(loadedMessage?.replyCount, Int32(messagePayload.replyCount))
-        XCTAssertEqual(
-            loadedMessage?.reactionScores,
-            messagePayload.reactionScores.mapKeys { $0.rawValue }
-        )
-        XCTAssertEqual(loadedMessage?.isSilent, messagePayload.isSilent)
-        
-        let newPayload: MessagePayload<NoExtraData> = .dummy(
-            messageId: messageId,
-            authorUserId: messageAuthorId,
-            channel: ChannelDetailPayload<NoExtraData>.dummy(cid: channelId)
-        )
-        
-        // Save the changed payload with the same hash
-        try database.writeSynchronously { session in
-            try session.saveMessage(payload: newPayload, for: channelId)
-        }
-        
-        // Assert that properties are changed
-        // since the `newPayload` has is different
-        XCTAssertEqual(loadedMessage?.id, newPayload.id)
-        XCTAssertEqual(loadedMessage?.type, newPayload.type.rawValue)
-        XCTAssertEqual(loadedMessage?.user.id, newPayload.user.id)
-        XCTAssertEqual(loadedMessage?.createdAt, newPayload.createdAt)
-        XCTAssertEqual(loadedMessage?.updatedAt, newPayload.updatedAt)
-        XCTAssertEqual(loadedMessage?.deletedAt, newPayload.deletedAt)
-        XCTAssertEqual(loadedMessage?.text, newPayload.text)
-        XCTAssertEqual(loadedMessage?.command, newPayload.command)
-        XCTAssertEqual(loadedMessage?.args, newPayload.args)
-        XCTAssertEqual(loadedMessage?.parentMessageId, newPayload.parentId)
-        XCTAssertEqual(loadedMessage?.showReplyInChannel, newPayload.showReplyInChannel)
-        XCTAssertEqual(loadedMessage?.mentionedUsers.map(\.id), newPayload.mentionedUsers.map(\.id))
-        XCTAssertEqual(loadedMessage?.replyCount, Int32(newPayload.replyCount))
-        XCTAssertEqual(
-            loadedMessage?.reactionScores,
-            newPayload.reactionScores.mapKeys { $0.rawValue }
-        )
-        XCTAssertEqual(loadedMessage?.isSilent, newPayload.isSilent)
+
+        // Act: Save payload again
+        let message = try database.viewContext.saveMessage(payload: messagePayload, for: channelId)
+
+        // Assert: DTO should not contain any changes
+        XCTAssertFalse(message.hasPersistentChangedValues)
     }
     
     // MARK: - New message tests
@@ -670,7 +563,8 @@ class MessageDTO_Tests: XCTestCase {
         let newMessageCommand: String = .unique
         let newMessageArguments: String = .unique
         let newMessageParentMessageId: String = .unique
-        let newMessageAttachmentSeeds: [_ChatMessageAttachment<NoExtraDataTypes>.Seed] = [
+        let newMessageAttachments: [TestAttachmentEnvelope] = [.init(), .init()]
+        let newMessageAttachmentSeeds: [ChatMessageAttachmentSeed] = [
             .dummy(),
             .dummy()
         ]
@@ -683,7 +577,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: newMessageCommand,
                     arguments: newMessageArguments,
                     parentMessageId: newMessageParentMessageId,
-                    attachments: newMessageAttachmentSeeds,
+                    attachments: newMessageAttachments + newMessageAttachmentSeeds,
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -707,10 +601,14 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.locallyCreatedAt)
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.updatedAt)
         XCTAssertEqual(
-            loadedMessage.attachments,
-            newMessageAttachmentSeeds.enumerated().map { index, seed in
-                .init(cid: cid, messageId: newMessageId, index: index, seed: seed, localState: .pendingUpload)
-            }
+            isAttachmentModelSeparationChangesApplied ?
+                loadedMessage.attachments.compactMap { ($0 as? ChatMessageImageAttachment)?.title } :
+                loadedMessage.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
+            newMessageAttachmentSeeds.map(\.fileName)
+        )
+        XCTAssertEqual(
+            loadedMessage.attachments.compactMap { ($0 as? ChatMessageRawAttachment)?.data },
+            newMessageAttachments.map { try? JSONEncoder.stream.encode($0) }
         )
     }
     
@@ -723,7 +621,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
-                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
+                    attachments: [TestAttachmentEnvelope](),
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -755,7 +653,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
-                    attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
+                    attachments: [TestAttachmentEnvelope](),
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -784,14 +682,14 @@ class MessageDTO_Tests: XCTestCase {
         // Create a new message
         var newMessageId: MessageId!
         let newMessageText: String = .unique
-        let newMessageAttachmentSeeds: [_ChatMessageAttachment<NoExtraDataTypes>.Seed] = []
+        let newMessageAttachmentSeeds: [ChatMessageAttachmentSeed] = []
                 
         try database.writeSynchronously { session in
             let messageDTO = try session.createNewMessage(
                 in: cid,
                 text: newMessageText,
                 quotedMessageId: nil,
-                attachments: newMessageAttachmentSeeds,
+                attachmentSeeds: newMessageAttachmentSeeds,
                 extraData: NoExtraData.defaultValue
             )
             newMessageId = messageDTO.id
@@ -826,7 +724,7 @@ class MessageDTO_Tests: XCTestCase {
                 command: nil,
                 arguments: nil,
                 parentMessageId: messageId,
-                attachments: [_ChatMessageAttachment<NoExtraDataTypes>.Seed](),
+                attachments: [TestAttachmentEnvelope](),
                 showReplyInChannel: false,
                 quotedMessageId: nil,
                 extraData: NoExtraData.defaultValue
@@ -894,7 +792,7 @@ class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             for id in attachmentIDs {
                 try session.createNewAttachment(
-                    seed: ChatMessageAttachment.Seed.dummy(),
+                    seed: ChatMessageAttachmentSeed.dummy(),
                     id: id
                 )
             }
@@ -915,5 +813,25 @@ class MessageDTO_Tests: XCTestCase {
         }
 
         XCTAssertEqual(loadedAttachments.count, 0)
+    }
+}
+
+private extension RawJSON {
+    var string: String? {
+        switch self {
+        case let .string(value):
+            return value
+        default:
+            return nil
+        }
+    }
+
+    var dictionary: [String: RawJSON]? {
+        switch self {
+        case let .dictionary(value):
+            return value
+        default:
+            return nil
+        }
     }
 }

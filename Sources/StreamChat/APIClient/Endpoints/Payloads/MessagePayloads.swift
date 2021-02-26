@@ -40,7 +40,7 @@ extension MessagePayload {
 }
 
 /// An object describing the incoming message JSON payload.
-class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
+class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let id: String
     let type: MessageType
     let user: UserPayload<ExtraData.User>
@@ -61,41 +61,12 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
     let latestReactions: [MessageReactionPayload<ExtraData>]
     let ownReactions: [MessageReactionPayload<ExtraData>]
     let reactionScores: [MessageReactionType: Int]
-    let attachments: [AttachmentPayload<ExtraData.Attachment>]
+    let attachments: [AttachmentPayload]
     let isSilent: Bool
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
     let channel: ChannelDetailPayload<ExtraData>?
-    
-    var hasher: ChangeHasher {
-        MessageHasher(
-            id: id,
-            type: type.rawValue,
-            userChangeHash: user.changeHash,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deletedAt: deletedAt,
-            text: text,
-            command: command,
-            args: args,
-            parentId: parentId,
-            showReplyInChannel: showReplyInChannel,
-            quotedMessageChangeHash: quotedMessage?.changeHash,
-            mentionedUserChangeHashes: mentionedUsers.map(\.changeHash),
-            threadParticipantChangeHashes: threadParticipants.map(\.changeHash),
-            replyCount: replyCount,
-            extraData: (try? JSONEncoder.default.encode(extraData)) ?? .init(),
-            reactionScores: reactionScores.mapKeys { $0.rawValue },
-            isSilent: isSilent
-        )
-    }
-    
-    // This needs to be explicit so we can override it in
-    // `MessageDTO_Tests.test_DTO_skipsUnnecessarySave`
-    var changeHash: Int {
-        hasher.changeHash
-    }
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: MessagePayloadsCodingKeys.self)
@@ -121,7 +92,9 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
         reactionScores = try container
             .decodeIfPresent([String: Int].self, forKey: .reactionScores)?
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
-        attachments = try container.decode([AttachmentPayload<ExtraData.Attachment>].self, forKey: .attachments)
+        // Because attachment objects can be malformed, we wrap those into `OptionalDecodable`
+        // and if decoding of those fail, it assignes `nil` instead of throwing whole MessagePayload away.
+        attachments = try container.decode([OptionalDecodable<AttachmentPayload>].self, forKey: .attachments).compactMap(\.base)
         extraData = try ExtraData.Message(from: decoder)
         
         // Some endpoints return also channel payload data for convenience
@@ -150,7 +123,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable, ChangeHashable {
         ownReactions: [MessageReactionPayload<ExtraData>] = [],
         reactionScores: [MessageReactionType: Int],
         isSilent: Bool,
-        attachments: [AttachmentPayload<ExtraData.Attachment>],
+        attachments: [AttachmentPayload],
         channel: ChannelDetailPayload<ExtraData>? = nil
     ) {
         self.id = id
@@ -188,7 +161,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let parentId: String?
     let showReplyInChannel: Bool
     let quotedMessageId: String?
-    let attachments: [AttachmentRequestBody<ExtraData.Attachment>]
+    let attachments: [Encodable]
     let extraData: ExtraData.Message
     
     init(
@@ -200,7 +173,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         parentId: String? = nil,
         showReplyInChannel: Bool = false,
         quotedMessageId: String? = nil,
-        attachments: [AttachmentRequestBody<ExtraData.Attachment>] = [],
+        attachments: [Encodable] = [],
         extraData: ExtraData.Message
     ) {
         self.id = id
@@ -226,7 +199,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         try container.encodeIfPresent(quotedMessageId, forKey: .quotedMessageId)
         
         if !attachments.isEmpty {
-            try container.encode(attachments, forKey: .attachments)
+            try container.encode(attachments.map(AnyEncodable.init), forKey: .attachments)
         }
         
         try extraData.encode(to: encoder)

@@ -55,7 +55,7 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
             )
         }
         
-        AssertAsync.willBeEqual(observableObject.replies, [newReply])
+        AssertAsync.willBeEqual(Array(observableObject.replies), [newReply])
     }
     
     func test_observableObject_reactsToDelegateStateChangesCallback() {
@@ -83,8 +83,8 @@ class MessageControllerMock: ChatMessageController {
     }
     
     var replies_simulated: [_ChatMessage<NoExtraData>]?
-    override var replies: [_ChatMessage<NoExtraData>] {
-        replies_simulated ?? super.replies
+    override var replies: LazyCachedMapCollection<_ChatMessage<NoExtraData>> {
+        replies_simulated.map { $0.lazyCachedMap { $0 } } ?? super.replies
     }
     
     var state_simulated: DataController.State?

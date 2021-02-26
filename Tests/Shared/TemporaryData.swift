@@ -62,3 +62,7 @@ extension Date {
     /// Returns a new random date
     static var unique: Date { Date(timeIntervalSince1970: .random(in: 1...1_500_000_000)) }
 }
+
+extension Int {
+    static var unique: Int { .random(in: 1..<1000) }
+}

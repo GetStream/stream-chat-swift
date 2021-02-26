@@ -222,7 +222,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         }
 
         // scroll to make first item visible
-        cv.contentOffset.y = currentItems[0].maxY - cv.bounds.height
+        cv.contentOffset.y = currentItems[0].maxY - cv.bounds.height + cv.contentInset.bottom
     }
 
     override open func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
@@ -261,7 +261,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             // this is item that already presented in collection view, but collection view decided to reload it
             // by removing and inserting it back (4head)
             // to properly animate possible change of such item, we need to return its attributes BEFORE batch update
-            let id = idForItem(at: idx)
+            guard let id = idForItem(at: idx) else { return nil }
             return oldIdxForItem(with: id).map { oldIdx in
                 previousItems[oldIdx].attribute(for: oldIdx, width: currentCollectionViewWidth)
             }
@@ -270,7 +270,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     override open func finalLayoutAttributesForDisappearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let idx = itemIndexPath.item
-        let id = oldIdForItem(at: idx)
+        guard let id = oldIdForItem(at: idx) else { return nil }
         if disappearingItems.contains(itemIndexPath) {
             // item gets removed from collection view, we don't do any special delete animations for now, so just return
             // item attributes BEFORE batch update and let it fade away
@@ -291,16 +291,18 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     // MARK: - Access Layout Item
 
-    open func idForItem(at idx: Int) -> UUID {
-        currentItems[idx].id
+    open func idForItem(at idx: Int) -> UUID? {
+        guard previousItems.indices.contains(idx) else { return nil }
+        return currentItems[idx].id
     }
 
     open func idxForItem(with id: UUID) -> Int? {
         currentItems.firstIndex { $0.id == id }
     }
 
-    open func oldIdForItem(at idx: Int) -> UUID {
-        previousItems[idx].id
+    open func oldIdForItem(at idx: Int) -> UUID? {
+        guard previousItems.indices.contains(idx) else { return nil }
+        return previousItems[idx].id
     }
 
     open func oldIdxForItem(with id: UUID) -> Int? {

@@ -32,9 +32,6 @@ public protocol ExtraDataTypes {
     
     /// An extra data type for `ChatMessageReaction`.
     associatedtype MessageReaction: MessageReactionExtraData = NoExtraData
-    
-    /// An extra data type for `ChatMessageAttachment`.
-    associatedtype Attachment: AttachmentExtraData = NoExtraData
 }
 
 /// The root object representing a Stream Chat.
@@ -228,7 +225,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
                 NewChannelQueryUpdater<ExtraData>.init,
                 NewUserQueryUpdater<ExtraData.User>.init,
                 MessageEditor<ExtraData>.init,
-                AttachmentUploader<ExtraData>.init
+                AttachmentUploader.init
             ]
             
             // All production event workers

@@ -47,7 +47,7 @@ public class _ChatChannelMemberListController<ExtraData: ExtraDataTypes>: DataCo
     /// The channel members matching the query.
     /// To observe the member list changes, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var members: [_ChatChannelMember<ExtraData.User>] {
+    public var members: LazyCachedMapCollection<_ChatChannelMember<ExtraData.User>> {
         startObservingIfNeeded()
         return memberListObserver.items
     }
@@ -184,7 +184,7 @@ extension _ChatChannelMemberListController {
         var memberListObserverBuilder: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<MemberDTO>,
-            _ itemCreator: @escaping (MemberDTO) -> _ChatChannelMember<ExtraData.User>?,
+            _ itemCreator: @escaping (MemberDTO) -> _ChatChannelMember<ExtraData.User>,
             _ controllerType: NSFetchedResultsController<MemberDTO>.Type
         ) -> ListDatabaseObserver<_ChatChannelMember<ExtraData.User>, MemberDTO> = ListDatabaseObserver.init
     }

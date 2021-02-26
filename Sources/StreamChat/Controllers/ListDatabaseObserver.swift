@@ -75,13 +75,17 @@ extension ListChange: Equatable where Item: Equatable {}
 class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     /// The current collection of items matching the provided fetch request. To receive granular updates to this collection,
     /// you can use the `onChange` callback.
-    @Cached var items: [Item]
+    @Cached var items: LazyCachedMapCollection<Item>
     
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerDidChangeContent`
     /// on its delegate.
     var onChange: (([ListChange<Item>]) -> Void)? {
         didSet {
-            changeAggregator.onChange = { [unowned self] in
+            changeAggregator.onChange = { [weak self] in
+                // Ideally, this should rather be `unowned`, however, `deinit` is not always called on the same thread as this
+                // callback which can cause a race condition when the object is already being deinited on a different thread.
+                guard let self = self else { return }
+
                 self._items.reset()
                 self.onChange?($0)
             }
@@ -95,7 +99,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     /// Used for observing the changes in the DB.
     private(set) var frc: NSFetchedResultsController<DTO>!
     
-    let itemCreator: (DTO) -> Item?
+    let itemCreator: (DTO) -> Item
     let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
     
@@ -118,7 +122,7 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
     init(
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
-        itemCreator: @escaping (DTO) -> Item?,
+        itemCreator: @escaping (DTO) -> Item,
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         self.context = context
@@ -131,7 +135,9 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             cacheName: nil
         )
         
-        _items.computeValue = { [unowned self] in (self.frc.fetchedObjects ?? []).lazy.compactMap(self.itemCreator) }
+        _items.computeValue = { [weak frc, itemCreator] in
+            (frc?.fetchedObjects ?? []).lazyCachedMap(itemCreator)
+        }
 
         listenForRemoveAllDataNotifications()
     }

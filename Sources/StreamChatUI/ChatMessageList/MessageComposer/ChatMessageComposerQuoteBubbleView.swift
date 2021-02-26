@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageComposerQuoteBubbleView = _ChatMessageComposerQuoteBubbleView<NoExtraData>
 
-open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     // MARK: - Properties
     
     public var avatarViewSize: CGSize = .init(width: 24, height: 24)
@@ -149,7 +149,7 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
         
         let placeholder = uiConfig.images.userAvatarPlaceholder1
         if let imageURL = message.author.imageURL {
-            authorAvatarView.imageView.setImage(from: imageURL, placeholder: placeholder)
+            authorAvatarView.imageView.loadImage(from: imageURL, placeholder: placeholder)
         } else {
             authorAvatarView.imageView.image = placeholder
         }
@@ -189,13 +189,14 @@ open class _ChatMessageComposerQuoteBubbleView<ExtraData: ExtraDataTypes>: View,
             setAttachmentPreview(hidden: false)
             attachmentPreview.contentMode = .scaleAspectFit
         default:
-            if let previewURL = attachment.imagePreviewURL ?? attachment.imageURL {
-                attachmentPreview.setImage(from: previewURL)
+            let attachment = attachment as? ChatMessageDefaultAttachment
+            if let previewURL = attachment?.imagePreviewURL ?? attachment?.imageURL {
+                attachmentPreview.loadImage(from: previewURL)
                 setAttachmentPreview(hidden: false)
                 attachmentPreview.contentMode = .scaleAspectFill
                 // TODO: When we will have attachment examples we will set smth
                 // different for different types.
-                if message.text.isEmpty, attachment.type == .image {
+                if message.text.isEmpty, attachment?.type == .image {
                     textView.text = "Photo"
                 }
             } else {

@@ -103,19 +103,8 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
     
     func presentChat(userCredentials: UserCredentials) {
         LogConfig.level = .error
-
-        // Create a token
-        let token = try! Token(rawValue: userCredentials.token)
         
-        // Create config
-        var config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
-        // Set database to app group location to share data with chat widget
-        config.localStorageFolderURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: UserDefaults.groupId)
-        // Create client
-        let client = ChatClient(config: config, tokenProvider: .static(token))
-
-        // Config
-        UIConfig.default.navigation.channelListRouter = DemoChatChannelListRouter.self
+        let client = ChatClient.forCredentials(userCredentials)
 
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))

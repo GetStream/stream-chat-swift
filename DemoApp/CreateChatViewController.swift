@@ -15,7 +15,7 @@ class CreateChatViewController: UIViewController {
     
     // Composer subclass intended to be only used in this VC
     class DemoComposerVC: _ChatMessageComposerVC<NoExtraData> {
-        override func createNewMessage(text: String, quotedMessageId: MessageId? = nil) {
+        override func createNewMessage(text: String, quotedMessageId: MessageId? = nil, attachments: [AttachmentEnvelope] = []) {
             guard let navController = parent?.parent as? UINavigationController,
                 let controller = controller else { return }
             // Create the Channel on backend
@@ -66,7 +66,7 @@ class CreateChatViewController: UIViewController {
     
     var searchController: ChatUserSearchController!
     
-    var users: [ChatUser] {
+    var users: LazyCachedMapCollection<ChatUser> {
         searchController.users
     }
     

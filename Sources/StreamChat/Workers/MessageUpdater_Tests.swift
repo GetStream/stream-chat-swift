@@ -62,25 +62,6 @@ final class MessageUpdater_Tests: StressTestCase {
         // Assert `MessageDoesNotExist` is received
         XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
     }
-    
-    func test_editMessage_propogates_MessageCanNotBeUpdatedByCurrentUser_Error() throws {
-        let anotherUserId: UserId = .unique
-        let anotherUserMessageId: MessageId = .unique
-
-        // Create current user is the database
-        try database.createCurrentUser()
-    
-        // Create message authored by another user in the database
-        try database.createMessage(id: anotherUserMessageId, authorId: anotherUserId)
-
-        // Try to edit another user's message
-        let completionError = try await {
-            messageUpdater.editMessage(messageId: anotherUserMessageId, text: .unique, completion: $0)
-        }
-        
-        // Assert `MessageCannotBeUpdatedByCurrentUser` is received
-        XCTAssertTrue(completionError is ClientError.MessageCannotBeUpdatedByCurrentUser)
-    }
 
     func test_editMessage_updatesLocalMessageCorrectly() throws {
         let pairs: [(LocalMessageState?, LocalMessageState?)] = [
@@ -160,35 +141,6 @@ final class MessageUpdater_Tests: StressTestCase {
     }
     
     // MARK: Delete message
-    
-    func test_deleteMessage_propogates_CurrentUserDoesNotExist_Error() throws {
-        // Simulate `deleteMessage(messageId:)` call
-        let completionError = try await {
-            messageUpdater.deleteMessage(messageId: .unique, completion: $0)
-        }
-        
-        // Assert `CurrentUserDoesNotExist` is received
-        XCTAssertTrue(completionError is ClientError.CurrentUserDoesNotExist)
-    }
-    
-    func test_deleteMessage_propogates_MessageCanNotBeUpdatedByCurrentUser_Error() throws {
-        let anotherUserId: UserId = .unique
-        let anotherUserMessageId: MessageId = .unique
-        
-        // Create current user is the database
-        try database.createCurrentUser()
-        
-        // Create message authored by another user in the database
-        try database.createMessage(id: anotherUserMessageId, authorId: anotherUserId)
-        
-        // Simulate `deleteMessage(messageId:)` call
-        let completionError = try await {
-            messageUpdater.deleteMessage(messageId: anotherUserMessageId, completion: $0)
-        }
-        
-        // Assert `MessageCannotBeUpdatedByCurrentUser` is received
-        XCTAssertTrue(completionError is ClientError.MessageCannotBeUpdatedByCurrentUser)
-    }
     
     func test_deleteMessage_sendsCorrectAPICall_ifMessageDoesNotExistLocally() throws {
         let messageId: MessageId = .unique
@@ -434,7 +386,8 @@ final class MessageUpdater_Tests: StressTestCase {
         let showReplyInChannel = true
         let command: String = .unique
         let arguments: String = .unique
-        let attachmentSeeds: [ChatMessageAttachment.Seed] = [
+        let attachments: [TestAttachmentEnvelope] = [.init(), .init(), .init()]
+        let attachmentSeeds: [ChatMessageAttachmentSeed] = [
             .dummy(),
             .dummy(),
             .dummy()
@@ -449,7 +402,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 command: command,
                 arguments: arguments,
                 parentMessageId: parentMessageId,
-                attachments: attachmentSeeds,
+                attachments: attachments + attachmentSeeds,
                 showReplyInChannel: showReplyInChannel,
                 quotedMessageId: nil,
                 extraData: extraData
@@ -473,10 +426,14 @@ final class MessageUpdater_Tests: StressTestCase {
             Assert.willBeEqual(message?.parentMessageId, parentMessageId)
             Assert.willBeEqual(message?.showReplyInChannel, showReplyInChannel)
             Assert.willBeEqual(
-                message?.attachments,
-                attachmentSeeds.enumerated().map { index, seed in
-                    .init(cid: cid, messageId: newMessageId, index: index, seed: seed, localState: .pendingUpload)
-                }
+                isAttachmentModelSeparationChangesApplied ?
+                    message?.attachments.compactMap { ($0 as? ChatMessageImageAttachment)?.title } :
+                    message?.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
+                attachmentSeeds.map(\.fileName)
+            )
+            Assert.willBeEqual(
+                message?.attachments.compactMap { ($0 as? ChatMessageRawAttachment)?.data },
+                attachments.map { try? JSONEncoder.stream.encode($0) }
             )
             Assert.willBeEqual(message?.extraData, extraData)
             Assert.willBeEqual(message?.localState, .pendingSend)
@@ -961,7 +918,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Create attachment in database.
         try database.writeSynchronously {
             try $0.createNewAttachment(
-                seed: ChatMessageAttachment.Seed.dummy(),
+                seed: ChatMessageAttachmentSeed.dummy(),
                 id: attachmentId
             )
         }
@@ -1002,7 +959,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
             let attachmentDTO = try $0.createNewAttachment(
-                seed: ChatMessageAttachment.Seed.dummy(),
+                seed: ChatMessageAttachmentSeed.dummy(),
                 id: attachmentId
             )
             attachmentDTO.localState = .uploadingFailed
@@ -1033,7 +990,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
             let attachmentDTO = try $0.createNewAttachment(
-                seed: ChatMessageAttachment.Seed.dummy(),
+                seed: ChatMessageAttachmentSeed.dummy(),
                 id: attachmentId
             )
             attachmentDTO.localState = .uploadingFailed
@@ -1071,25 +1028,6 @@ final class MessageUpdater_Tests: StressTestCase {
 
         // Assert `MessageDoesNotExist` is received
         XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
-    }
-
-    func test_resendMessage_propagatesMessageCanNotBeUpdatedByCurrentUser_Error() throws {
-        let anotherUserId: UserId = .unique
-        let anotherUserMessageId: MessageId = .unique
-
-        // Create current user is the database
-        try database.createCurrentUser()
-
-        // Create message authored by another user in the database
-        try database.createMessage(id: anotherUserMessageId, authorId: anotherUserId)
-
-        // Try to resend another user's message
-        let completionError = try await {
-            messageUpdater.resendMessage(with: anotherUserMessageId, completion: $0)
-        }
-
-        // Assert `MessageCannotBeUpdatedByCurrentUser` is received
-        XCTAssertTrue(completionError is ClientError.MessageCannotBeUpdatedByCurrentUser)
     }
 
     func test_resendMessage_propagatesMessageEditingError() throws {
@@ -1361,34 +1299,6 @@ final class MessageUpdater_Tests: StressTestCase {
 
         // Assert `MessageDoesNotExist` is received
         XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
-    }
-
-    func test_dispatchEphemeralMessageAction_propagatesMessageCanNotBeUpdatedByCurrentUser_Error() throws {
-        let cid: ChannelId = .unique
-        let anotherUserId: UserId = .unique
-        let anotherUserMessageId: MessageId = .unique
-
-        // Create current user is the database
-        try database.createCurrentUser()
-
-        // Create channel is the database
-        try database.createChannel(cid: cid, withMessages: false)
-
-        // Create message authored by another user in the database
-        try database.createMessage(id: anotherUserMessageId, authorId: anotherUserId, cid: cid)
-
-        // Simulate `dispatchEphemeralMessageAction` call
-        let completionError = try await {
-            messageUpdater.dispatchEphemeralMessageAction(
-                cid: cid,
-                messageId: anotherUserMessageId,
-                action: .unique,
-                completion: $0
-            )
-        }
-
-        // Assert `MessageCannotBeUpdatedByCurrentUser` is received
-        XCTAssertTrue(completionError is ClientError.MessageCannotBeUpdatedByCurrentUser)
     }
 
     func test_dispatchEphemeralMessageAction_propagatesMessageEditingError_forNonEphemeralMessage() throws {

@@ -5,28 +5,39 @@
 import StreamChat
 import UIKit
 
+/// The header reusable view of the suggestion collection view.
 public typealias ChatMessageComposerSuggestionsCommandsReusableView =
     _ChatMessageComposerSuggestionsCommandsReusableView<NoExtraData>
 
+/// The header reusable view of the suggestion collection view.
 open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
     UIConfigProvider {
-    class var reuseId: String { String(describing: self) }
-
-    public lazy var suggestionsHeader: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData> = {
+    
+    /// The reuse identifier of the reusable header view.
+    open class var reuseId: String { String(describing: self) }
+    
+    /// The suggestions header view.
+    open lazy var suggestionsHeader: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData> = {
         let header = uiConfig.messageComposer.suggestionsHeaderView.init().withoutAutoresizingMaskConstraints
         embed(header)
         return header
     }()
 }
 
+/// The header view of the suggestion collection view.
 public typealias ChatMessageComposerSuggestionsCommandsHeaderView = _ChatMessageComposerSuggestionsCommandsHeaderView<NoExtraData>
 
-open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    public private(set) lazy var commandImageView = UIImageView()
+/// The header view of the suggestion collection view.
+open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    
+    /// The image icon of the commands header view.
+    open private(set) lazy var commandImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
-
-    public private(set) lazy var headerLabel = UILabel()
+    
+    /// The text label of the commands header view.
+    open private(set) lazy var headerLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
 
     override public func defaultAppearance() {
         backgroundColor = uiConfig.colorPalette.popoverBackground

@@ -411,7 +411,7 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is ChannelWatchStateUpdater<NoExtraData> })
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor<NoExtraData> })
         XCTAssert(client.backgroundWorkers.contains { $0 is MissingEventsPublisher<NoExtraData> })
-        XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader<NoExtraData> })
+        XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader })
     }
     
     func test_backgroundWorkersConfiguration() {

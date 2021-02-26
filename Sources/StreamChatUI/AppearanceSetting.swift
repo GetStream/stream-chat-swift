@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -43,19 +43,40 @@ private class _AppearanceStorage {
     static let shared = _AppearanceStorage()
     
     fileprivate func setAppearance(_ appearance: Any, for key: String) {
-        _appearances.mutate { $0[key] = appearance }
+        log.assert(Thread.isMainThread, "The DefaultAppearance storage can be accessed only from the main thread.")
+        appearances[key] = appearance
     }
     
     fileprivate func appearance(for key: String) -> Any? {
-        appearances[key]
+        log.assert(Thread.isMainThread, "The DefaultAppearance storage can be accessed only from the main thread.")
+        return appearances[key]
     }
     
-    @Atomic private var appearances: [String: Any] = [:]
+    private var appearances: [String: Any] = [:]
 }
 
 public class Appearance<Root: AnyObject> {
     public var rules: [(Root) -> Void] = []
 
+    /// Adds a new customization rule for all instances of this type.
+    ///
+    /// Provides an easy way how to customize basic parameterss of all instances of the given type. The custom rule
+    /// is called as a part of view customization lifecycle methods:
+    /// ```
+    ///   1. setUp()
+    ///   2. setUpLayout()
+    ///   3. defaultAppearance()
+    ///   4. 👉 <custom rules>
+    ///   5. setUpAppearance()
+    ///   6. updateContent()
+    /// ```
+    ///
+    /// - Important: The closure can be executed multiple times for the same instance or not executed at all. All changes
+    /// done in the closure should be idempotent.
+    ///
+    /// - Parameter rule: The closure which will be execute for every instance of the given type when it becomes part of
+    /// the view heirarchy.
+    ///
     public func addRule(_ rule: @escaping (Root) -> Void) {
         rules.append(rule)
     }

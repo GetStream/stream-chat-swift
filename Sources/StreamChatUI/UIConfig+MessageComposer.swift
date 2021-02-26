@@ -29,24 +29,35 @@ public extension _UIConfig {
             _ChatMessageComposerCheckmarkControl<ExtraData>.self
         public var slashCommandView: _ChatMessageInputSlashCommandView<ExtraData>
             .Type = _ChatMessageInputSlashCommandView<ExtraData>.self
+        /// A view controller that shows suggestions of commands or mentions.
         public var suggestionsViewController: _ChatMessageComposerSuggestionsViewController<ExtraData>.Type =
             _ChatMessageComposerSuggestionsViewController<ExtraData>.self
+        /// The collection view of the suggestions view controller.
         public var suggestionsCollectionView: _ChatMessageComposerSuggestionsCollectionView.Type =
             _ChatMessageComposerSuggestionsCollectionView<ExtraData>.self
+        /// A view cell that displays the the suggested mention.
         public var suggestionsMentionCollectionViewCell: _ChatMessageComposerMentionCollectionViewCell<ExtraData>.Type =
             _ChatMessageComposerMentionCollectionViewCell<ExtraData>.self
+        /// A view cell that displays the suggested command.
         public var suggestionsCommandCollectionViewCell: _ChatMessageComposerCommandCollectionViewCell<ExtraData>.Type =
             _ChatMessageComposerCommandCollectionViewCell<ExtraData>.self
+        /// A type for view embed in cell while tagging users with @ symbol in composer.
         public var suggestionsMentionCellView: _ChatMessageComposerMentionCellView<ExtraData>.Type =
             _ChatMessageComposerMentionCellView<ExtraData>.self
+        /// A view that displays the command name, image and arguments.
         public var suggestionsCommandCellView: _ChatMessageComposerCommandCellView<ExtraData>.Type =
             _ChatMessageComposerCommandCellView<ExtraData>.self
-        public var suggestionsCollectionViewLayout: ChatMessageComposerSuggestionsCollectionViewLayout.Type =
+        /// The collection view layout of the suggestions collection view.
+        public var suggestionsCollectionViewLayout: UICollectionViewLayout.Type =
             ChatMessageComposerSuggestionsCollectionViewLayout.self
-        public var suggestionsHeaderReusableView: _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>.Type =
-            _ChatMessageComposerSuggestionsCommandsReusableView.self
+        /// The header reusable view of the suggestion collection view.
+        public var suggestionsHeaderReusableView: UICollectionReusableView.Type =
+            _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>.self
+        /// The header view of the suggestion collection view.
         public var suggestionsHeaderView: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData>.Type =
-            _ChatMessageComposerSuggestionsCommandsHeaderView.self
-        public var mentionAvatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView<ExtraData>.self
+            _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData>.self
+        /// A type for the view used as avatar when picking users to mention.
+        public var mentionAvatarView: _ChatChannelAvatarView<ExtraData>
+            .Type = _ChatChannelAvatarView<ExtraData>.self
     }
 }

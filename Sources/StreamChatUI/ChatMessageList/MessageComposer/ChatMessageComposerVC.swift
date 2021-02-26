@@ -13,7 +13,7 @@ public protocol _ChatMessageComposerViewControllerDelegate: AnyObject {
 
 public typealias ChatMessageComposerVC = _ChatMessageComposerVC<NoExtraData>
 
-open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
+open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     UIConfigProvider,
     UITextViewDelegate,
     UIImagePickerControllerDelegate,
@@ -226,7 +226,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
         delegate?.didSendMessage?(self)
     }
     
-    open func createNewMessage(text: String, quotedMessageId: MessageId? = nil) {
+    open func createNewMessage(text: String, quotedMessageId: MessageId? = nil, attachments: [AttachmentEnvelope] = []) {
         guard let cid = controller?.cid else { return }
         
         if let threadParentMessage = threadParentMessage {
@@ -237,12 +237,16 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
             
             messageController?.createNewReply(
                 text: text,
-                attachments: attachmentSeeds,
+                attachments: attachments + attachmentSeeds,
                 showReplyInChannel: composerView.checkmarkControl.isSelected,
                 quotedMessageId: quotedMessageId
             )
         } else {
-            controller?.createNewMessage(text: text, attachments: attachmentSeeds, quotedMessageId: quotedMessageId)
+            controller?.createNewMessage(
+                text: text,
+                attachments: attachments + attachmentSeeds,
+                quotedMessageId: quotedMessageId
+            )
         }
     }
     
@@ -281,8 +285,9 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
     }
     
     func setInput(shrinked: Bool) {
-        composerView.attachmentButton.setAnimatedly(hidden: !shrinked)
-        composerView.commandsButton.setAnimatedly(hidden: !shrinked)
+        for button in composerView.container.leftStackView.arrangedSubviews where button !== composerView.shrinkInputButton {
+            button.setAnimatedly(hidden: !shrinked)
+        }
         composerView.shrinkInputButton.setAnimatedly(hidden: shrinked)
     }
     
@@ -373,7 +378,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: ViewController,
         }
     }
     
-    open var attachmentSeeds: [_ChatMessageAttachment<ExtraData>.Seed] {
+    open var attachmentSeeds: [ChatMessageAttachmentSeed] {
         switch selectedAttachments {
         case .media:
             return imageAttachments.map {

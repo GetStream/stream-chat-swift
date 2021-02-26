@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -61,6 +61,8 @@ public extension _ChatChannel {
     /// Creates a new `_ChatChannel` object from the provided data.
     static func mock(
         cid: ChannelId,
+        name: String? = nil,
+        imageURL: URL? = nil,
         lastMessageAt: Date? = nil,
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
@@ -75,11 +77,57 @@ public extension _ChatChannel {
         watcherCount: Int = 0,
         memberCount: Int = 0,
         reads: [_ChatChannelRead<ExtraData>] = [],
-        extraData: ExtraData.Channel,
+        extraData: ExtraData.Channel = .defaultValue,
         latestMessages: [_ChatMessage<ExtraData>] = []
     ) -> Self {
         self.init(
             cid: cid,
+            name: name,
+            imageURL: imageURL,
+            lastMessageAt: lastMessageAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            createdBy: createdBy,
+            config: config,
+            isFrozen: isFrozen,
+            members: members,
+            currentlyTypingMembers: currentlyTypingMembers,
+            watchers: watchers,
+            unreadCount: unreadCount,
+            watcherCount: watcherCount,
+            memberCount: memberCount,
+            reads: reads,
+            extraData: extraData,
+            latestMessages: latestMessages
+        )
+    }
+    
+    /// Creates a new `_ChatChannel` object for  from the provided data.
+    static func mockDMChannel(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        lastMessageAt: Date? = nil,
+        createdAt: Date = .init(),
+        updatedAt: Date = .init(),
+        deletedAt: Date? = nil,
+        createdBy: _ChatUser<ExtraData.User>? = nil,
+        config: ChannelConfig = .mock(),
+        isFrozen: Bool = false,
+        members: Set<_ChatChannelMember<ExtraData.User>> = [],
+        currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
+        watchers: Set<_ChatUser<ExtraData.User>> = [],
+        unreadCount: ChannelUnreadCount = .noUnread,
+        watcherCount: Int = 0,
+        memberCount: Int = 0,
+        reads: [_ChatChannelRead<ExtraData>] = [],
+        extraData: ExtraData.Channel = .defaultValue,
+        latestMessages: [_ChatMessage<ExtraData>] = []
+    ) -> Self {
+        self.init(
+            cid: .init(type: .messaging, id: "!members" + .newUniqueId),
+            name: name,
+            imageURL: imageURL,
             lastMessageAt: lastMessageAt,
             createdAt: createdAt,
             updatedAt: updatedAt,

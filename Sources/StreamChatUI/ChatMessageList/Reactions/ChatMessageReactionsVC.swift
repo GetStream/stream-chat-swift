@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageReactionsVC = _ChatMessageReactionsVC<NoExtraData>
 
-open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
+open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
     public var messageController: _ChatMessageController<ExtraData>!
 
     // MARK: - Subviews

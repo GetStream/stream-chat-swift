@@ -5,7 +5,7 @@
 import UIKit
 
 extension _ChatMessageActionsView {
-    open class ActionButton: Button, UIConfigProvider {
+    open class ActionButton: _Button, UIConfigProvider {
         public var actionItem: ChatMessageActionItem<ExtraData>? {
             didSet { updateContentIfNeeded() }
         }

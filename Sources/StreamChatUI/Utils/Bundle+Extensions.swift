@@ -20,6 +20,8 @@ extension Bundle {
         return Bundle(for: BundleIdentifyingClass.self)
             .url(forResource: "StreamChatUI", withExtension: "bundle")
             .flatMap(Bundle.init(url:))!
+        #elseif SWIFT_PACKAGE
+        return Bundle.module
         #else
         return Bundle(for: BundleIdentifyingClass.self)
         #endif

@@ -13,6 +13,7 @@ on:
       
 env:
   HOMEBREW_NO_INSTALL_CLEANUP=1: 1 # Disable cleanup for homebrew, we don't need it on CI
+  DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer # Use Xcode 12.4
 
 jobs:
   run-danger:
@@ -20,13 +21,15 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
+      - name: Set build image var
+        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
       - name: Cache RubyGems
         uses: actions/cache@v2
         id: rubygem-cache
         with:
           path: vendor/bundle
-          key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: ${{ runner.os }}-gem-
+          key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+          restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
       - name: Cache Mint
         uses: actions/cache@v2
         id: mint-cache
@@ -46,13 +49,15 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
       uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-gem-
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
     - name: Cache Mint
       uses: actions/cache@v2
       id: mint-cache
@@ -76,18 +81,57 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
 
-  build-and-test-release:
-    name: Run Tests (Release)
+  build-and-test-ui-debug:
+    name: Run UI Tests (Debug)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
       uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-gem-
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
+    - name: Run v3 UI Tests (Debug)
+      run: bundle exec fastlane test_ui device:"iPhone 12"
+    - name: Post Codecov report
+      run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
+
+  build-and-test-release:
+    name: Run Tests (Release)
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
     - name: Cache Mint
       uses: actions/cache@v2
       id: mint-cache
@@ -114,13 +158,15 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
       uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-gem-
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
     - name: Cache Mint
       uses: actions/cache@v2
       id: mint-cache
@@ -154,13 +200,15 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
       uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-gem-
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
     - name: Cache Mint
       uses: actions/cache@v2
       id: mint-cache
@@ -187,13 +235,15 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
     - name: Cache RubyGems
       uses: actions/cache@v2
       id: rubygem-cache
       with:
         path: vendor/bundle
-        key: ${{ runner.os }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-gem-
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
     - name: Cache Mint
       uses: actions/cache@v2
       id: mint-cache
@@ -212,6 +262,102 @@ jobs:
         xcrun simctl list devices 12.4
     - name: Build Sample
       run: bundle exec fastlane build_sample device:"iPhone 7 (12.4)"
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
+
+  build-docs-snippets:
+    name: Build Docs Snippets
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+    - name: Build Docs Snippets
+      run: bundle exec fastlane build_docs_snippets
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
+
+  spm-integration:
+    name: Test Integration (SPM)
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
+    - name: Build Test Project
+      run: bundle exec fastlane spm_integration
+    - uses: 8398a7/action-slack@v3
+      with:
+        status: ${{ job.status }}
+        text: "You shall not pass!"
+        fields: message,commit,author,action,eventName,workflow,job,took
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        MATRIX_CONTEXT: ${{ toJson(matrix) }}
+      if: ${{ github.event_name == 'push' && failure() }}
+
+  cocoapods-integration:
+    name: Test Integration (CocoaPods)
+    runs-on: macos-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - name: Run bootstrap.sh
+      run: ./bootstrap.sh
+    - name: Build Test Project
+      run: bundle exec fastlane cocoapods_integration
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}

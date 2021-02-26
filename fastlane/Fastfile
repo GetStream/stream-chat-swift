@@ -12,6 +12,90 @@ before_all do
   end
 end
 
+desc "Release a new version"
+lane :release do |options|
+  ensure_git_branch(branch: 'main') # We can only release on default branch
+  ensure_git_status_clean unless options[:no_ensure_clean]
+
+  if (!options[:version].nil?) # User passed a version, use it
+    version_number = options.fetch(:version)
+    increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
+  else
+    UI.user_error!("Please use type parameter with one of the options: type:patch, type:minor, type:major") unless ["patch", "minor", "major"].include?(options[:type])
+    version_number = increment_version_number_in_plist(bump_type: options[:type], xcodeproj: "StreamChat.xcodeproj", target: "StreamChat")
+  end
+
+  set_SDK_version(version: version_number)
+
+  increment_version_number_in_plist(version_number: version_number, xcodeproj: "StreamChat.xcodeproj", target: "StreamChatUI")
+
+  if git_tag_exists(tag: version_number)
+    UI.user_error!("Tag for version #{version_number} already exists!")
+  end
+  
+  changes = touch_changelog(release_version: version_number)
+
+  version_bump_podspec(path: "StreamChat.podspec", version_number: version_number)
+  version_bump_podspec(path: "StreamChatUI.podspec", version_number: version_number)
+
+  sh("git add -A")
+  
+  prompt(text: "Will commit changes. All looking good?", boolean: true)
+
+  sh("git commit -m 'Bump #{version_number}'")
+  sh("git tag #{version_number}")
+
+  prompt(text: "Will push changes. All looking good?", boolean: true)
+                   
+  push_to_git_remote(tags: true)
+  
+  github_release = set_github_release(
+                     repository_name: "GetStream/stream-chat-swift",
+                     api_token: ENV["GITHUB_TOKEN"],
+                     name: version_number,
+                     tag_name: version_number,
+                     description: changes
+                   )
+  
+  # First pod release will not have any problems
+  pod_push(path: "StreamChat.podspec", allow_warnings: true)
+  
+  def release_ui
+    begin
+      pod_push(path: "StreamChatUI.podspec", allow_warnings: true)
+    rescue
+      puts "pod_push failed. Waiting a minute until retry for trunk to get updated..."
+      sleep(60) # sleep for a minute, wait until trunk gets updates
+      release_ui
+    end
+  end
+  
+  puts "Sleeping for 2 minutes for trunk to get updated..."
+  sleep(60 * 2)
+  release_ui
+  
+  UI.success("Successfully released #{version_number}")
+  UI.success("Github release was created, please visit #{github_release["url"]} to see it")
+end
+
+lane :set_SDK_version do |options|
+  pathToVersionFile = "../Sources/StreamChat/Utils/SystemEnvironment+Version.swift"
+  versionGeneratedFile = "
+//
+// Copyright © 2021 Stream.io Inc. All rights reserved.
+//
+// ⚠️  Generated file, please use `fastlane :bump_SDK_version or fastlane release major|minor|patch` lanes 
+
+import Foundation
+
+extension SystemEnvironment {
+  /// A Stream Chat version.
+  public static let version: String = \"#{options[:version]}\"
+}
+"
+  File.write(pathToVersionFile, versionGeneratedFile)
+end 
+
 desc "If `readonly: true` (by default), installs all Certs and Profiles necessary for development and ad-hoc.\nIf `readonly: false`, recreates all Profiles necessary for development and ad-hoc, updates them locally and remotely."
 lane :match_me do |options|
   # Get `:readonly` value, fallback to `true` if it's missing.
@@ -121,6 +205,22 @@ lane :test do |options|
     )
 end
 
+desc "Runs ui tests in Debug config"
+lane :test_ui do |options|
+
+  setCIEnvironmentVariable("../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan")
+
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "StreamChatUI",
+    testplan: "StreamChatUITestPlan",
+    configuration: "Debug",
+    clean: true,
+    devices: options[:device],
+    code_coverage: false
+    )
+end
+
 desc "Runs tests in Release config"
 lane :test_release do
 
@@ -135,7 +235,7 @@ lane :test_release do
   )
 end
 
-desc "Runs stress tests for"
+desc "Runs stress tests for v3 in Debug config"
 lane :stress_test do
   scan(
     project: "StreamChat.xcodeproj",
@@ -151,7 +251,8 @@ lane :stress_test do
       project: "StreamChat.xcodeproj",
       scheme: "StreamChat",
       test_without_building: true,
-      testplan: "StreamChatStressTestPlan"
+      testplan: "StreamChatStressTestPlan",
+      xcpretty_args: "--test" # simplify logs
     )
   }
 end
@@ -174,7 +275,8 @@ lane :stress_test_release do
       scheme: "StreamChat",
       configuration: "ReleaseTests",
       test_without_building: true,
-      testplan: "StreamChatStressTestPlan"
+      testplan: "StreamChatStressTestPlan",
+      xcpretty_args: "--test" # simplify logs
     )
   }
 end
@@ -187,5 +289,44 @@ lane :build_sample do |options|
     clean: true,
     build_for_testing: true,
     devices: options[:device],
+  )
+end
+
+desc "Build Docs Snippets target"
+lane :build_docs_snippets do |options|
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "DocsSnippets",
+    clean: true,
+    build_for_testing: true,
+  )
+end
+
+desc "Test SPM Integration"
+lane :spm_integration do |options|
+  build_app(
+    project: "Integration/SPM/SwiftPackageManager.xcodeproj",
+    scheme: "SwiftPackageManager",
+    skip_package_ipa: true,
+    skip_archive: true,
+    destination: "generic/platform=iOS Simulator"
+  )
+end
+
+desc "Test CocoaPods Integration"
+lane :cocoapods_integration do
+
+  cocoapods(
+    clean_install: true,
+    podfile: "Integration/CocoaPods/"
+  )
+
+  build_app(
+    workspace: "Integration/CocoaPods/CocoaPods.xcworkspace",
+    scheme: "CocoaPods",
+    skip_package_ipa: true,
+    skip_archive: true,
+    clean: true,
+    destination: "generic/platform=iOS Simulator"
   )
 end

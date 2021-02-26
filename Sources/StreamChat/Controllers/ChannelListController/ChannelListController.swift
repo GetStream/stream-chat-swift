@@ -50,7 +50,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     /// To observe changes of the channels, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var channels: [_ChatChannel<ExtraData>] { channelListObserver.items }
+    public var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> { channelListObserver.items }
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var worker: ChannelListUpdater<ExtraData> = self.environment
@@ -189,7 +189,7 @@ extension _ChatChannelListController {
         var createChannelListDabaseObserver: (
             _ context: NSManagedObjectContext,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
-            _ itemCreator: @escaping (ChannelDTO) -> _ChatChannel<ExtraData>?
+            _ itemCreator: @escaping (ChannelDTO) -> _ChatChannel<ExtraData>
         )
             -> ListDatabaseObserver<_ChatChannel<ExtraData>, ChannelDTO> = {
                 ListDatabaseObserver(context: $0, fetchRequest: $1, itemCreator: $2)

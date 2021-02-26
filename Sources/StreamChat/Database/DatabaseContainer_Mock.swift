@@ -153,7 +153,7 @@ extension DatabaseContainer {
         authorId: UserId = .unique,
         cid: ChannelId = .unique,
         text: String = .unique,
-        attachments: [AttachmentPayload<NoExtraData>] = [],
+        attachments: [AttachmentPayload] = [],
         localState: LocalMessageState? = nil,
         type: MessageType? = nil
     ) throws {

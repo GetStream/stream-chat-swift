@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageComposerInputContainerView = _ChatMessageComposerInputContainerView<NoExtraData>
 
-open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
+open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     // MARK: - Properties
     
     open var rightAccessoryButtonHeight: CGFloat = 30

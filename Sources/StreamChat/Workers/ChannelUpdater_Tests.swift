@@ -131,7 +131,8 @@ class ChannelUpdater_Tests: StressTestCase {
         let text: String = .unique
         let command: String = .unique
         let arguments: String = .unique
-        let attachments: [ChatMessageAttachment.Seed] = [.dummy(), .dummy(), .dummy()]
+        let attachments: [TestAttachmentEnvelope] = [.init(), .init(), .init()]
+        let attachmentSeeds: [ChatMessageAttachmentSeed] = [.dummy(), .dummy(), .dummy()]
         let extraData: NoExtraData = .defaultValue
         
         // Create new message
@@ -141,7 +142,7 @@ class ChannelUpdater_Tests: StressTestCase {
                 text: text,
                 command: command,
                 arguments: arguments,
-                attachments: attachments,
+                attachments: attachments + attachmentSeeds,
                 quotedMessageId: nil,
                 extraData: extraData
             ) { result in
@@ -161,9 +162,16 @@ class ChannelUpdater_Tests: StressTestCase {
             Assert.willBeEqual(message?.text, text)
             Assert.willBeEqual(message?.command, command)
             Assert.willBeEqual(message?.arguments, arguments)
-            Assert.willBeEqual(message?.attachments, attachments.enumerated().map { index, seed in
-                .init(cid: cid, messageId: newMessageId, index: index, seed: seed, localState: .pendingUpload)
-            })
+            Assert.willBeEqual(
+                isAttachmentModelSeparationChangesApplied ?
+                    message?.attachments.compactMap { ($0 as? ChatMessageImageAttachment)?.title } :
+                    message?.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
+                attachmentSeeds.map(\.fileName)
+            )
+            Assert.willBeEqual(
+                message?.attachments.compactMap { ($0 as? ChatMessageRawAttachment)?.data },
+                attachments.map { try? JSONEncoder.stream.encode($0) }
+            )
             Assert.willBeEqual(message?.extraData, extraData)
             Assert.willBeEqual(message?.localState, .pendingSend)
         }

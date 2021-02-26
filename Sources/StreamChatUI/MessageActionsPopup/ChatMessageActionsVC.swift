@@ -16,7 +16,7 @@ public protocol _ChatMessageActionsVCDelegate: AnyObject {
 
 public typealias ChatMessageActionsVC = _ChatMessageActionsVC<NoExtraData>
 
-open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: ViewController, UIConfigProvider {
+open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
     public var messageController: _ChatMessageController<ExtraData>!
     public var delegate: Delegate? // swiftlint:disable:this weak_delegate
     public lazy var router = uiConfig.navigation.messageActionsRouter.init(rootViewController: self)

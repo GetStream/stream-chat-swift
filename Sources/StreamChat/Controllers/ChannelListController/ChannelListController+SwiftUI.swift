@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -16,7 +16,7 @@ extension _ChatChannelListController {
         public let controller: _ChatChannelListController
         
         /// The channels matching the query.
-        @Published public private(set) var channels: [_ChatChannel<ExtraData>] = []
+        @Published public private(set) var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> = []
         
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State

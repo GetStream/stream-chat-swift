@@ -142,7 +142,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
         ]
         testFRC.test_fetchedObjects = reference1
         
-        XCTAssertEqual(observer.items, reference1.map(\.uniqueValue))
+        XCTAssertEqual(Array(observer.items), reference1.map(\.uniqueValue))
         
         // Update the simulated fetch objects
         let reference2 = [TestManagedObject()]
@@ -150,11 +150,11 @@ class ListDatabaseObserver_Tests: XCTestCase {
         
         // Access items again, the objects should not be updated because the result should be cached until
         // the callback from the change aggregator happens
-        XCTAssertEqual(observer.items, reference1.map(\.uniqueValue))
+        XCTAssertEqual(Array(observer.items), reference1.map(\.uniqueValue))
         
         // Simulate the change aggregator callback and check the items get updated
         observer.changeAggregator.onChange?([])
-        XCTAssertEqual(observer.items, reference2.map(\.uniqueValue))
+        XCTAssertEqual(Array(observer.items), reference2.map(\.uniqueValue))
     }
     
     func test_startObserving_startsFRC() throws {
@@ -163,7 +163,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
         XCTAssertTrue(testFRC.test_performFetchCalled)
     }
     
-    func test_updateNotReported_whenSamePropertyAssignedViaAssignIfDifferent() throws {
+    func test_updateNotReported_whenSamePropertyAssigned() throws {
         // For this test, we need an actual NSFetchedResultsController, not the test one
         let observer = ListDatabaseObserver<TestManagedObject, TestManagedObject>(
             context: database.viewContext,
@@ -193,9 +193,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
         
         // Assign the same testValue to the same entity
         try database.writeSynchronously { _ in
-            // We use similar logic in DTO `save` methods
-            // to avoid unnecessary updates to properties
-            assignIfDifferent(item, \.testValue, testValue)
+            item.testValue = testValue
         }
         
         // Assert no new change is reported
@@ -212,7 +210,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
             TestManagedObject()
         ]
         testFRC.test_fetchedObjects = objects
-        XCTAssertEqual(observer.items, objects.map(\.uniqueValue))
+        XCTAssertEqual(Array(observer.items), objects.map(\.uniqueValue))
         
         // Listen to callbacks
         var receivedChanges: [ListChange<String>]?

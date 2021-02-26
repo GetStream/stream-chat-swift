@@ -174,7 +174,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     /// To observe changes of the messages, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var messages: [_ChatMessage<ExtraData>] {
+    public var messages: LazyCachedMapCollection<_ChatMessage<ExtraData>> {
         if state == .initialized {
             setLocalStateBasedOnError(startDatabaseObservers())
         }
@@ -672,6 +672,8 @@ public extension _ChatChannelController {
     ///   - text: Text of the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - attachments: An array of the attachments for the message.
+    ///     `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol
+    ///     and `ChatMessageAttachmentSeed`s.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
@@ -679,7 +681,7 @@ public extension _ChatChannelController {
         text: String,
 //        command: String? = nil,
 //        arguments: String? = nil,
-        attachments: [_ChatMessageAttachment<ExtraData>.Seed] = [],
+        attachments: [AttachmentEnvelope] = [],
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil

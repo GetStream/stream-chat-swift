@@ -5,53 +5,50 @@
 import StreamChat
 import UIKit
 
+/// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
 public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
+/// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
 open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
-    // MARK: - Properties
-
-    open var normalBackgroundColor: UIColor?
-    open var highlightedBackgroundColor: UIColor?
-
-    public var channelAndUserId: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
-        didSet {
-            updateContent()
-        }
+    /// The data this view component shows.
+    public var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
+        didSet { updateContentIfNeeded() }
     }
+        
+    private lazy var uiConfigSubviews: _UIConfig.ChannelListItemSubviews = uiConfig.channelList.channelListItemSubviews
     
-    // MARK: - Subviews
+    /// The `ContainerStackView` instance used to arrange view,
+    open private(set) lazy var container: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
     
-    private lazy var uiConfigSubviews = uiConfig.channelList.channelListItemSubviews
+    /// The `UILabel` instance showing the channel name.
+    open private(set) lazy var titleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var container = ContainerStackView().withoutAutoresizingMaskConstraints
+    /// The `UILabel` instance showing the last message or typing members if any.
+    open private(set) lazy var subtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var avatarView = uiConfigSubviews
+    /// The `UILabel` instance showing the time of the last sent message.
+    open private(set) lazy var timestampLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    
+    /// The view used to show channels avatar.
+    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfigSubviews
         .avatarView
         .init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var titleLabel = UILabel().withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var subtitleLabel = UILabel().withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = {
-        uiConfigSubviews.unreadCountView.init().withoutAutoresizingMaskConstraints
-    }()
-    
-    public private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = {
-        uiConfigSubviews.readStatusView.init().withoutAutoresizingMaskConstraints
-    }()
-    
-    public private(set) lazy var timestampLabel = UILabel().withoutAutoresizingMaskConstraints
+    /// The view showing number of unread messages in channel if any.
+    open private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfigSubviews
+        .unreadCountView.init()
+        .withoutAutoresizingMaskConstraints
 
-    // MARK: - Public
+    /// The view showing indicator for read status of the last message in channel.
+    open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
+        .readStatusView.init()
+        .withoutAutoresizingMaskConstraints
 
     override public func defaultAppearance() {
         super.defaultAppearance()
 
         backgroundColor = uiConfig.colorPalette.background
-        normalBackgroundColor = uiConfig.colorPalette.background
-        highlightedBackgroundColor = uiConfig.colorPalette.highlightedBackground
 
         titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.font = uiConfig.font.bodyBold
@@ -68,10 +65,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     override open func setUpLayout() {
         super.setUpLayout()
 
-        cellContentView.embed(container)
-
-        container.preservesSuperviewLayoutMargins = true
-        container.isLayoutMarginsRelativeArrangement = true
+        cellContentView.embed(container, insets: directionalLayoutMargins)
                 
         container.leftStackView.isHidden = false
         container.leftStackView.alignment = .center
@@ -84,6 +78,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         )
         
         avatarView.heightAnchor.pin(equalToConstant: 48).isActive = true
+        avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor).isActive = true
         container.leftStackView.addArrangedSubview(avatarView)
         
         // UIStackView embedded in UIView with flexible top and bottom constraints to make
@@ -95,17 +90,17 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         containerCenterView.addSubview(stackView)
         stackView.topAnchor.pin(greaterThanOrEqualTo: containerCenterView.layoutMarginsGuide.topAnchor).isActive = true
         stackView.bottomAnchor.pin(lessThanOrEqualTo: containerCenterView.layoutMarginsGuide.bottomAnchor).isActive = true
-        stackView.pin(anchors: [.leading, .trailing, .centerY], to: containerCenterView)
-        stackView.spacing = subtitleLabel.font.pointSize / 10
+        stackView.pin(anchors: [.leading, .centerY], to: containerCenterView)
+        stackView.trailingAnchor.pin(equalTo: containerCenterView.trailingAnchor).with(priority: .streamAlmostRequire)
+            .isActive = true
+        stackView.spacing = 2
         
-        // Top part of centerStackView.
         let topCenterStackView = UIStackView()
         topCenterStackView.alignment = .top
         topCenterStackView.spacing = UIStackView.spacingUseSystem
         topCenterStackView.addArrangedSubview(titleLabel)
         topCenterStackView.addArrangedSubview(unreadCountView)
         
-        // Bottom part of centerStackView.
         let bottomCenterStackView = UIStackView()
         bottomCenterStackView.spacing = UIStackView.spacingUseSystem
         
@@ -126,56 +121,37 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     }
     
     override open func updateContent() {
-        // Title
-        if let channel = channelAndUserId.channel {
+        if let channel = content.channel {
             let namer = uiConfig.channelList.channelNamer.init()
-            titleLabel.text = namer.name(for: channel, as: channelAndUserId.currentUserId)
+            titleLabel.text = namer.name(for: channel, as: content.currentUserId)
         } else {
             titleLabel.text = L10n.Channel.Name.missing
         }
-        
-        // Subtitle
-        
+                
         subtitleLabel.text = typingMemberOrLastMessageString
-        
-        // Avatar
-        
-        avatarView.channelAndUserId = channelAndUserId
-        
-        // UnreadCount
-        
-        // Mock test code
-        unreadCountView.unreadCount = channelAndUserId.channel?.unreadCount ?? .noUnread
+
+        avatarView.content = .channelAndUserId(channel: content.channel, currentUserId: content.currentUserId)
+
+        unreadCountView.content = content.channel?.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
-        
-        // Timestamp
-        
-        timestampLabel.text = channelAndUserId.channel?.lastMessageAt?.getFormattedDate(format: "hh:mm a")
+                
+        timestampLabel.text = content.channel?.lastMessageAt?.getFormattedDate(format: "hh:mm a")
         
         // TODO: ReadStatusView
         // Missing LLC API
         readStatusView.isHidden = true
     }
-    
-    open func resetContent() {
-        titleLabel.text = ""
-        subtitleLabel.text = ""
-        avatarView.channelAndUserId = (nil, nil)
-        unreadCountView.unreadCount = .noUnread
-        timestampLabel.text = ""
-        readStatusView.status = .empty
-    }
 }
 
 extension _ChatChannelListItemView {
     var typingMemberString: String? {
-        guard let members = channelAndUserId.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
+        guard let members = content.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
         let names = members.compactMap(\.name).sorted()
         return names.joined(separator: ", ") + " \(names.count == 1 ? "is" : "are") typing..."
     }
     
     var typingMemberOrLastMessageString: String? {
-        guard let channel = channelAndUserId.channel else { return nil }
+        guard let channel = content.channel else { return nil }
         if let typingMembersInfo = typingMemberString {
             return typingMembersInfo
         } else if let latestMessage = channel.latestMessages.first {

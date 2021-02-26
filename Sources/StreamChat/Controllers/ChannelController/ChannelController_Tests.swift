@@ -1241,10 +1241,10 @@ class ChannelController_Tests: StressTestCase {
             in: channelId,
             text: "Message",
             quotedMessageId: nil,
-            attachments: [
-                ChatMessageAttachment.Seed.dummy(),
-                ChatMessageAttachment.Seed.dummy(),
-                ChatMessageAttachment.Seed.dummy()
+            attachmentSeeds: [
+                ChatMessageAttachmentSeed.dummy(),
+                ChatMessageAttachmentSeed.dummy(),
+                ChatMessageAttachmentSeed.dummy()
             ],
             extraData: NoExtraData.defaultValue
         )
@@ -1530,7 +1530,8 @@ class ChannelController_Tests: StressTestCase {
 //        let command: String = .unique
 //        let arguments: String = .unique
         let extraData: NoExtraData = .defaultValue
-        let attachments: [ChatMessageAttachment.Seed] = [
+        let attachments: [TestAttachmentEnvelope] = [.init(), .init(), .init()]
+        let attachmentSeeds: [ChatMessageAttachmentSeed] = [
             .dummy(),
             .dummy(),
             .dummy()
@@ -1543,7 +1544,7 @@ class ChannelController_Tests: StressTestCase {
             text: text,
 //            command: command,
 //            arguments: arguments,
-            attachments: attachments,
+            attachments: attachments + attachmentSeeds,
             quotedMessageId: quotedMessageId,
             extraData: extraData
         ) { [callbackQueueID] result in
@@ -1566,7 +1567,14 @@ class ChannelController_Tests: StressTestCase {
         //        XCTAssertEqual(env.channelUpdater?.createNewMessage_command, command)
         //        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
-        XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, attachments)
+        XCTAssertEqual(
+            env.channelUpdater?.createNewMessage_attachments?.compactMap { $0 as? TestAttachmentEnvelope },
+            attachments
+        )
+        XCTAssertEqual(
+            env.channelUpdater?.createNewMessage_attachments?.compactMap { $0 as? ChatMessageAttachmentSeed },
+            attachmentSeeds
+        )
         XCTAssertEqual(env.channelUpdater?.createNewMessage_quotedMessageId, quotedMessageId)
         
         // Simulate successful update

@@ -19,7 +19,7 @@ import Foundation
 /// - Upload attachments in order declared by `locallyCreatedAt`
 /// - Start uploading attachments when connection status changes (offline -> online)
 ///
-class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
+class AttachmentUploader: Worker {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
 
     private let observer: ListDatabaseObserver<AttachmentDTO, AttachmentDTO>
@@ -71,7 +71,7 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
             else { return }
 
             guard
-                let attachment: _ChatMessageAttachment<ExtraData> = session.attachment(id: attachmentID)?.asModel(),
+                let attachment = session.attachment(id: attachmentID)?.asAttachmentSeed(),
                 attachment.localState == .pendingUpload
             else {
                 self?.removeAttachmentIDAndContinue(attachmentID)
@@ -79,11 +79,10 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
             }
 
             guard
-                let localFileURL = attachment.localURL,
-                let fileData = try? Data(contentsOf: localFileURL)
+                let fileData = try? Data(contentsOf: attachment.localURL)
             else {
                 self?.updateAttachmentIfNeeded(
-                    attachment.id,
+                    attachmentID,
                     newState: .uploadingFailed,
                     completion: {
                         self?.removeAttachmentIDAndContinue(attachmentID)
@@ -92,34 +91,69 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
                 return
             }
 
-            let fileType = AttachmentFileType(ext: localFileURL.pathExtension)
+            let fileType = AttachmentFileType(ext: attachment.localURL.pathExtension)
 
             let multipartFormData = MultipartFormData(
                 fileData,
-                fileName: attachment.title,
+                fileName: attachment.fileName,
                 mimeType: fileType.mimeType
             )
 
             self?.apiClient.uploadFile(
-                endpoint: .uploadAttachment(with: attachment.id, type: attachment.type),
+                endpoint: .uploadAttachment(with: attachmentID, type: attachment.type),
                 multipartFormData: multipartFormData,
                 progress: {
                     self?.updateAttachmentIfNeeded(
-                        attachment.id,
+                        attachmentID,
                         newState: .uploading(progress: $0)
                     )
                 },
                 completion: { result in
                     self?.updateAttachmentIfNeeded(
-                        attachment.id,
+                        attachmentID,
                         newState: result.error == nil ? .uploaded : .uploadingFailed,
                         attachmentUpdates: { attachmentDTO in
                             guard case let .success(payload) = result else { return }
-
-                            if attachmentDTO.type == AttachmentType.image.rawValue {
-                                attachmentDTO.imageURL = payload.file
+                            guard
+                                let data = attachmentDTO.data
+                            else {
+                                log.error(
+                                    "Error modifying existing attachment with id: \(attachmentDTO.attachmentID)" +
+                                        "after successful upload."
+                                )
+                                return
+                            }
+                            if isAttachmentModelSeparationChangesApplied {
+                                switch attachmentDTO.type {
+                                case AttachmentType.image.rawValue:
+                                    var imageAttachment = try? JSONDecoder.default.decode(
+                                        ChatMessageImageAttachment.self,
+                                        from: data
+                                    )
+                                    imageAttachment?.imageURL = payload.file
+                                    attachmentDTO.data = try? JSONEncoder.stream.encode(imageAttachment)
+                                default:
+                                    var fileAttachment = try? JSONDecoder.default.decode(ChatMessageFileAttachment.self, from: data)
+                                    fileAttachment?.assetURL = payload.file
+                                    attachmentDTO.data = try? JSONEncoder.stream.encode(fileAttachment)
+                                }
                             } else {
-                                attachmentDTO.url = payload.file
+                                switch attachmentDTO.type {
+                                case AttachmentType.image.rawValue:
+                                    var imageAttachment = try? JSONDecoder.default.decode(
+                                        ChatMessageDefaultAttachment.self,
+                                        from: data
+                                    )
+                                    imageAttachment?.imageURL = payload.file
+                                    attachmentDTO.data = try? JSONEncoder.stream.encode(imageAttachment)
+                                default:
+                                    var fileAttachment = try? JSONDecoder.default.decode(
+                                        ChatMessageDefaultAttachment.self,
+                                        from: data
+                                    )
+                                    fileAttachment?.url = payload.file
+                                    attachmentDTO.data = try? JSONEncoder.stream.encode(fileAttachment)
+                                }
                             }
                         },
                         completion: {
@@ -143,10 +177,7 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
         completion: @escaping () -> Void = {}
     ) {
         database.write({ [minSignificantUploadingProgressChange] session in
-            guard
-                let attachmentDTO = session.attachment(id: id),
-                let messageDTO = session.message(id: id.messageId)
-            else { return }
+            guard let attachmentDTO = session.attachment(id: id) else { return }
 
             var stateHasChanged: Bool {
                 guard
@@ -166,9 +197,6 @@ class AttachmentUploader<ExtraData: ExtraDataTypes>: Worker {
 
             // Apply further attachment updates.
             try attachmentUpdates(attachmentDTO)
-
-            // Re-assign message id to trigger entity update.
-            messageDTO.id = id.messageId
         }, completion: {
             if let error = $0 {
                 log.error("Error changing localState for attachment with id \(id) to `\(newState)`: \(error)")

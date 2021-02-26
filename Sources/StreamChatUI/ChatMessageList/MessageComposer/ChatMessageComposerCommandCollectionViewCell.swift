@@ -5,35 +5,44 @@
 import StreamChat
 import UIKit
 
+/// A view that displays the command name, image and arguments.
 public typealias ChatMessageComposerCommandCellView = _ChatMessageComposerCommandCellView<NoExtraData>
 
-open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View, UIConfigProvider {
-    // MARK: Properties
-
-    open var commandImageHeight: CGFloat = 24
-
-    open var command: Command? {
+/// A view that displays the command name, image and arguments.
+open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    /// The command that the view will display.
+    open var content: Command? {
         didSet {
             updateContentIfNeeded()
         }
     }
-
-    open private(set) lazy var commandImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
-    open private(set) lazy var commandNameLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    private lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
-
-    // MARK: - Appearance
+    
+    /// A view that displays the command image icon.
+    open private(set) lazy var commandImageView: UIImageView = UIImageView()
+        .withoutAutoresizingMaskConstraints
+    
+    /// A view that displays the name of the command.
+    open private(set) lazy var commandNameLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+    
+    /// A view that display the command name and the possible arguments.
+    open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+    
+    /// A view container that holds the name and subtitle labels.
+    open private(set) lazy var textStackView: UIStackView = UIStackView()
+        .withoutAutoresizingMaskConstraints
 
     override public func defaultAppearance() {
         backgroundColor = .clear
 
         commandNameLabel.font = uiConfig.font.bodyBold
+        commandNameLabel.textColor = uiConfig.colorPalette.text
 
         commandNameSubtitleLabel.font = uiConfig.font.body
         commandNameSubtitleLabel.textColor = uiConfig.colorPalette.subtitleText
-
-        commandNameLabel.textColor = uiConfig.colorPalette.text
     }
 
     override open func setUpLayout() {
@@ -45,7 +54,7 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
     }
 
     override open func updateContent() {
-        guard let command = command else { return }
+        guard let command = content else { return }
         commandNameSubtitleLabel.text = "/\(command.name) \(command.args)"
         commandNameLabel.text = command.name.firstUppercased
 
@@ -53,13 +62,12 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
             ?? uiConfig.images.messageComposerCommandFallback
     }
 
-    // MARK: Private
-
     private func setupLeftImageViewConstraints() {
         commandImageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
         commandImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).isActive = true
         commandImageView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor).isActive = true
         commandImageView.widthAnchor.pin(equalTo: commandImageView.heightAnchor).isActive = true
+        commandImageView.centerYAnchor.pin(equalTo: layoutMarginsGuide.centerYAnchor).isActive = true
         commandImageView.heightAnchor.pin(equalToConstant: 24).isActive = true
     }
 
@@ -75,15 +83,16 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: View,
             equalToSystemSpacingAfter: commandImageView.trailingAnchor,
             multiplier: 1
         ).isActive = true
+        textStackView.trailingAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.trailingAnchor).isActive = true
         textStackView.centerYAnchor.pin(equalTo: commandImageView.centerYAnchor).isActive = true
     }
 }
 
+/// A view cell that displays a command.
 public typealias ChatMessageComposerCommandCollectionViewCell = _ChatMessageComposerCommandCollectionViewCell<NoExtraData>
 
-open class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: CollectionViewCell, UIConfigProvider {
-    // MARK: Properties
-
+/// A view cell that displays a command.
+open class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
     open class var reuseId: String { String(describing: self) }
 
     public private(set) lazy var commandView = uiConfig

@@ -5,8 +5,10 @@
 import StreamChat
 import UIKit
 
+/// The collection view of the suggestions view controller.
 public typealias ChatMessageComposerSuggestionsCollectionView = _ChatMessageComposerSuggestionsCollectionView<NoExtraData>
 
+/// The collection view of the suggestions view controller.
 open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollectionView,
     UIConfigProvider,
     AppearanceSetting,
@@ -16,9 +18,9 @@ open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTyp
         guard superview != nil else { return }
 
         setUp()
+        setUpLayout()
         (self as! Self).applyDefaultAppearance()
         setUpAppearance()
-        setUpLayout()
         updateContent()
     }
 

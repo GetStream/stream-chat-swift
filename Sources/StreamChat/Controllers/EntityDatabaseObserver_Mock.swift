@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -15,5 +15,10 @@ class EntityDatabaseObserverMock<Item, DTO: NSManagedObject>: EntityDatabaseObse
         } else {
             try super.startObserving()
         }
+    }
+    
+    var item_mock: Item?
+    override var item: Item? {
+        item_mock ?? super.item
     }
 }

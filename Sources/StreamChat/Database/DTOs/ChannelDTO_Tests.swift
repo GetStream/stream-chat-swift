@@ -124,27 +124,20 @@ class ChannelDTO_Tests: XCTestCase {
         }
     }
     
-    func test_DTO_hash_sameAsPayloadHash() throws {
+    func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
+        // Arrange: Store random channel payload to db
         let channelId: ChannelId = .unique
-        
         let payload = ChannelDetailPayload.dummy(cid: channelId)
-        
-        // Save the payload to the db
+
         try database.writeSynchronously { session in
             try session.saveChannel(payload: payload, query: nil)
         }
-        
-        // Load the channel from the db and check the fields are correct
-        var loadedChannel: ChannelDTO? {
-            database.viewContext.channel(cid: channelId)
-        }
-        
-        // Assert that hash is not changed
-        guard let dtoHash = loadedChannel?.changeHash else {
-            XCTFail("DTO is missing hash!")
-            return
-        }
-        XCTAssertEqual(Int(dtoHash), payload.changeHash)
+
+        // Act: Save payload again
+        let channel = try database.viewContext.saveChannel(payload: payload, query: nil)
+
+        // Assert: DTO should not contain any changes
+        XCTAssertFalse(channel.hasPersistentChangedValues)
     }
     
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
@@ -582,6 +575,4 @@ extension XCTestCase {
         
         return payload
     }
-    
-    var dummyNoExtraDataAttachment: _ChatMessageAttachment<NoExtraDataTypes> { .dummy() }
 }
