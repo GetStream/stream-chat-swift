@@ -24,7 +24,6 @@ open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigP
 
     override open func layoutSubviews() {
         super.layoutSubviews()
-        layer.frame = layer.frame.inset(by: .init(top: -1, left: -1, bottom: -1, right: -1))
         layer.cornerRadius = bounds.width / 2
         layer.borderWidth = (bounds.width / 5)
         layer.masksToBounds = true
