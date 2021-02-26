@@ -57,15 +57,12 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
 
         backgroundColor = uiConfig.colorPalette.background
 
-        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.font = uiConfig.font.bodyBold
 
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
-        subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.font = uiConfig.font.footnote
         
         timestampLabel.textColor = uiConfig.colorPalette.subtitleText
-        timestampLabel.adjustsFontForContentSizeCategory = true
         timestampLabel.font = uiConfig.font.footnote
     }
 
@@ -146,6 +143,10 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
             unreadCountView.leadingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: titleLabel.trailingAnchor)
         ]
 
+        // Set titleLabel compression resistance smaller than the unread count view
+        titleLabel.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
+        unreadCountView.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
+
         // Timestamp label
         constraintsToActivate += [
             // Pin the label to the trailing anchor
@@ -157,7 +158,11 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
             // Subtitle label shouldn't overlap
             timestampLabel.leadingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: subtitleLabel.trailingAnchor)
         ]
-        
+
+        // Set subtitleLabel compression resistance smaller than the timestamp label
+        subtitleLabel.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
+        timestampLabel.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
+
         NSLayoutConstraint.activate(constraintsToActivate)
     }
     
