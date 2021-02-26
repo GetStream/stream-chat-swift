@@ -8,6 +8,7 @@ public extension _UIConfig {
     struct Font {
         public var caption1 = UIFont.preferredFont(forTextStyle: .caption1)
         public var footnoteBold = UIFont.preferredFont(forTextStyle: .footnote).bold
+        public var footnote = UIFont.preferredFont(forTextStyle: .footnote)
         public var subheadline = UIFont.preferredFont(forTextStyle: .subheadline)
         public var subheadlineBold = UIFont.preferredFont(forTextStyle: .subheadline).bold
         public var body = UIFont.preferredFont(forTextStyle: .body)
