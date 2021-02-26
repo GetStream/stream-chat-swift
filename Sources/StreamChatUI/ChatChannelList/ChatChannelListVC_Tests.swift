@@ -60,7 +60,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         )
         let channelWithLongTextAndUnreadCount = ChatChannel.mock(
             cid: .init(type: .messaging, id: "test_channel3"),
-            name: "Channel 3",
+            name: "This is a channel with a big name. Really big.",
             imageURL: TestImages.yoda.url,
             lastMessageAt: .init(timeIntervalSince1970: 1_611_951_528_000),
             unreadCount: .mock(messages: 4),

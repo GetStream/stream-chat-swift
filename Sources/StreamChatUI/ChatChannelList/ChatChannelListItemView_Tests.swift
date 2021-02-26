@@ -69,7 +69,9 @@ class ChatChannelListItemView_Tests: XCTestCase {
     
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatChannelListItemView {
-            lazy var footnoteLabel = UILabel().withoutAutoresizingMaskConstraints
+            lazy var footnoteLabel = UILabel()
+                .withoutAutoresizingMaskConstraints
+                .withAdjustingFontForContentSizeCategory
             
             override func setUpAppearance() {
                 titleLabel.textColor = .cyan
@@ -82,8 +84,15 @@ class ChatChannelListItemView_Tests: XCTestCase {
             override func setUpLayout() {
                 super.setUpLayout()
                 timestampLabel.isHidden = true
-                container.bottomStackView.isHidden = false
-                container.bottomStackView.addArrangedSubview(footnoteLabel)
+                
+                addSubview(footnoteLabel)
+                footnoteLabel.leadingAnchor.constraint(equalTo: avatarView.leadingAnchor).isActive = true
+                footnoteLabel.topAnchor.constraint(equalTo: avatarView.bottomAnchor, constant: 8).isActive = true
+                
+                avatarView
+                    .bottomAnchor
+                    .constraint(equalTo: cellContentView.layoutMarginsGuide.bottomAnchor, constant: -20)
+                    .isActive = true
             }
             
             override func updateContent() {
