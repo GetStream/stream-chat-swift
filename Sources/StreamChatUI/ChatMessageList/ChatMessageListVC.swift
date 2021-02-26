@@ -71,8 +71,25 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// - Parameter cellType: The cell type to be registered.
     ///
     open func registerMessageCell(_ cellType: _СhatMessageCollectionViewCell<ExtraData>.Type) {
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessageReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessageReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage2ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage3ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage6ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage7ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage1ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage4ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage9ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage5ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage13ReuseId)
+        
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage2ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage3ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage6ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage7ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage1ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage4ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage9ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage5ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage13ReuseId)
     }
 
     public private(set) lazy var collectionView: UICollectionView = {
@@ -104,7 +121,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         collectionView.addGestureRecognizer(longPress)
 
         registerMessageCell(uiConfig.messageList.defaultMessageCell)
-        registerMessageCell(uiConfig.messageList.textOnlyMessageCell)
+        // registerMessageCell(uiConfig.messageList.textOnlyMessageCell)
     }
 
     override open func setUpLayout() {
@@ -166,17 +183,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     open func cellReuseIdentifierForMessage(_ message: _ChatMessageGroupPart<ExtraData>) -> String {
-        if message.isSentByCurrentUser {
-            return message.layoutOptions == [.text]
-                ? uiConfig.messageList.textOnlyMessageCell.outgoingMessageReuseId
-                : uiConfig.messageList.defaultMessageCell.outgoingMessageReuseId
-
-        } else {
-            return message.layoutOptions == [.text]
-                ? uiConfig.messageList.textOnlyMessageCell.incomingMessageReuseId
-                : uiConfig.messageList.defaultMessageCell.incomingMessageReuseId
-
-        }
+        "\(message.isSentByCurrentUser ? "outgoing" : "incoming")_\(message.layoutOptions.rawValue)_\(uiConfig.messageList.defaultMessageCell.reuseId)"
     }
 
     // MARK: - Actions

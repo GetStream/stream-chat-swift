@@ -108,7 +108,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
                     equalTo: contentView.leadingAnchor,
                     constant: messageViewFrame.minX
                 ),
-                actionsView.leadingAnchor.pin(equalTo: messageContentView.messageBubbleView.leadingAnchor),
+                actionsView.leadingAnchor.pin(equalTo: messageContentView.messageBubbleView!.leadingAnchor),
                 reactionsView?.centerXAnchor.pin(equalTo: messageContentView.trailingAnchor)
                     .with(priority: .defaultHigh),
                 reactionsController?.reactionsBubble.tailLeadingAnchor.pin(equalTo: messageContentView.trailingAnchor)
@@ -138,7 +138,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
 
     override open func updateContent() {
         messageContentView.message = message
-        messageContentView.reactionsBubble.isHidden = true
+        messageContentView.reactionsBubble!.isHidden = true
     }
 
     override open func viewWillAppear(_ animated: Bool) {
