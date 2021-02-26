@@ -28,6 +28,9 @@ class ChatChannelListItemView_Tests: XCTestCase {
     
     func test_emptyState() {
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
+        // Make sure the view is empty if there was content before.
+        view.content = self.content
+        view.content = (nil, nil)
         view.addSizeConstraints()
         AssertSnapshot(view)
     }
