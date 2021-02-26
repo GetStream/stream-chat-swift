@@ -292,7 +292,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     // MARK: - Access Layout Item
 
     open func idForItem(at idx: Int) -> UUID? {
-        guard currentItems.isEmpty else { return nil }
+        guard previousItems.indices.contains(idx) else { return nil }
         return currentItems[idx].id
     }
 
@@ -301,7 +301,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     }
 
     open func oldIdForItem(at idx: Int) -> UUID? {
-        guard previousItems.isEmpty else { return nil }
+        guard previousItems.indices.contains(idx) else { return nil }
         return previousItems[idx].id
     }
 
