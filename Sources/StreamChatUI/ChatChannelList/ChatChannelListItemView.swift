@@ -171,7 +171,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
             let namer = uiConfig.channelList.channelNamer.init()
             titleLabel.text = namer.name(for: channel, as: content.currentUserId)
         } else {
-            titleLabel.text = L10n.Channel.Name.missing
+            titleLabel.text = nil
         }
                 
         subtitleLabel.text = typingMemberOrLastMessageString
