@@ -57,12 +57,15 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
 
         backgroundColor = uiConfig.colorPalette.background
 
+        titleLabel.adjustsFontForContentSizeCategory = true
         titleLabel.font = uiConfig.font.bodyBold
 
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
+        subtitleLabel.adjustsFontForContentSizeCategory = true
         subtitleLabel.font = uiConfig.font.footnote
         
         timestampLabel.textColor = uiConfig.colorPalette.subtitleText
+        timestampLabel.adjustsFontForContentSizeCategory = true
         timestampLabel.font = uiConfig.font.footnote
     }
 
