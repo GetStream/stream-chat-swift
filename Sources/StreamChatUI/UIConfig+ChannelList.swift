@@ -6,18 +6,33 @@ import UIKit.UICollectionViewLayout
 
 public extension _UIConfig {
     struct ChannelListUI {
+        /// The collection view of the Channel List.
         public var channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self
-        public var channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self
+
+        /// The collection view layout of the Channel List.
+        public var channelCollectionLayout: UICollectionViewLayout.Type = ListCollectionViewLayout.self
+
+        /// The Cell Separator View.
+        public var channelCellSeparatorReusableView: UICollectionReusableView.Type = _CellSeparatorReusableView<ExtraData>.self
+
+        /// The base view of the channel list item to support swipeable gestures.
         public var channelListSwipeableItemView: _ChatChannelSwipeableListItemView<ExtraData>.Type =
             _ChatChannelSwipeableListItemView<ExtraData>.self
-        /// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
+
+        /// A `ChatChannelSwipeableListItemView` subclass view that shows channel information.
         public var channelListItemView: _ChatChannelListItemView<ExtraData>.Type = _ChatChannelListItemView<ExtraData>.self
+
         /// A `UICollectionViewCell` subclass that shows channel information.
         public var channelViewCell: _ChatChannelListCollectionViewCell<ExtraData>.Type =
             _ChatChannelListCollectionViewCell<ExtraData>.self
+
         /// A button used for creating new channels.
         public var newChannelButton: UIButton.Type = _ChatChannelCreateNewButton<ExtraData>.self
+
+        /// The logic to generate a name for the given channel.
         public var channelNamer: ChatChannelNamer.Type = ChatChannelNamer.self
+
+        /// The subviews that make the list item view.
         public var channelListItemSubviews = ChannelListItemSubviews()
     }
     
