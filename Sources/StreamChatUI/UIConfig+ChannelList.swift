@@ -7,7 +7,7 @@ import UIKit.UICollectionViewLayout
 public extension _UIConfig {
     struct ChannelListUI {
         public var channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self
-        public var channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self
+        public var channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout<ExtraData>.self
         public var channelListSwipeableItemView: _ChatChannelSwipeableListItemView<ExtraData>.Type =
             _ChatChannelSwipeableListItemView<ExtraData>.self
         /// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.

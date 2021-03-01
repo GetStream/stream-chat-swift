@@ -640,6 +640,8 @@
 		AD7D633325AF577E0051219B /* UserUpdateResponse+MissingUser.json in Resources */ = {isa = PBXBuildFile; fileRef = AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */; };
 		AD7DFBEC25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFBEA25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodeld */; };
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
+		AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */; };
+		AD81AF0D25ED141A00F17F8F /* CellSeparatorCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEF525ED13D900F17F8F /* CellSeparatorCollectionViewLayout.swift */; };
 		AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */; };
 		AD90D18D25D5619C001D03BB /* CurrentUserUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */; };
 		ADAA377125E43C3700C31528 /* ChatMessageComposerSuggestionsViewController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD5A9E725DE8AF6006DC88A /* ChatMessageComposerSuggestionsViewController_Tests.swift */; };
@@ -1564,6 +1566,8 @@
 		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
 		AD7DFBEB25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel2.xcdatamodel; sourceTree = "<group>"; };
 		AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater.swift; sourceTree = "<group>"; };
+		AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellSeparatorView.swift; sourceTree = "<group>"; };
+		AD81AEF525ED13D900F17F8F /* CellSeparatorCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellSeparatorCollectionViewLayout.swift; sourceTree = "<group>"; };
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
 		AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotVariant.swift; sourceTree = "<group>"; };
@@ -3111,6 +3115,7 @@
 		888123E5255D51BD00070D5A /* CommonViews */ = {
 			isa = PBXGroup;
 			children = (
+				AD81AEEB25ED132400F17F8F /* CellSeperatorView */,
 				8850B93B255C3168003AED69 /* ContainerStackView.swift */,
 				DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */,
 				885B3D7625642B3D003E6BDF /* CurrentChatUserAvatarView.swift */,
@@ -3380,6 +3385,15 @@
 				79200D4B25025B81002F4EB1 /* Error+InternetNotAvailable.swift */,
 			);
 			path = InternetConnection;
+			sourceTree = "<group>";
+		};
+		AD81AEEB25ED132400F17F8F /* CellSeperatorView */ = {
+			isa = PBXGroup;
+			children = (
+				AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */,
+				AD81AEF525ED13D900F17F8F /* CellSeparatorCollectionViewLayout.swift */,
+			);
+			path = CellSeperatorView;
 			sourceTree = "<group>";
 		};
 		ADCDDCC325AE127C004E15FB /* UserUpdate */ = {
@@ -4205,6 +4219,7 @@
 				79D86E832562BAB900DCD1D2 /* AppearanceSetting.swift in Sources */,
 				22086B40259509450007F8C0 /* ChatMessageComposerDocumentAttachmentView.swift in Sources */,
 				792DD9FB256E67C6001DB91B /* UIConfigProvider.swift in Sources */,
+				AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */,
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
 				88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */,
 				E7166CE225BEE20600B03B07 /* UIConfig+Images.swift in Sources */,
@@ -4229,6 +4244,7 @@
 				E7073A6325DD67B3003896B9 /* UILabel+Extensions.swift in Sources */,
 				88CABC4625933EE70061BB67 /* ChatMessageReactionsBubbleView.swift in Sources */,
 				888123E0255D4D2100070D5A /* UIImageView+Extensions.swift in Sources */,
+				AD81AF0D25ED141A00F17F8F /* CellSeparatorCollectionViewLayout.swift in Sources */,
 				8850B93C255C3168003AED69 /* ContainerStackView.swift in Sources */,
 				79088343254876FE00896F03 /* ChatMessageListCollectionViewLayout.swift in Sources */,
 				88AD1D6D2588D7D300ECED5B /* ChatMessageAttachmentsView.swift in Sources */,

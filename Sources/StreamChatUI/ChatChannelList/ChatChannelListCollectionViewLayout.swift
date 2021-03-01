@@ -3,19 +3,16 @@
 //
 
 import Foundation
+import StreamChat
 import UIKit
 
-open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
-    override public init() {
-        super.init()
-        commonInit()
+open class ChatChannelListCollectionViewLayout<ExtraData: ExtraDataTypes>: CellSeparatorCollectionViewLayout<ExtraData> {
+
+    override open func commonInit() {
+        super.commonInit()
+        subscribeToNotifications()
     }
-    
-    public required init?(coder: NSCoder) {
-        super.init(coder: coder)
-        commonInit()
-    }
-        
+
     override open func prepare() {
         super.prepare()
         
@@ -24,14 +21,7 @@ open class ChatChannelListCollectionViewLayout: UICollectionViewFlowLayout {
             height: 64
         )
     }
-        
-    open func commonInit() {
-        minimumInteritemSpacing = 0
-        minimumLineSpacing = 0
-        
-        subscribeToNotifications()
-    }
-    
+
     open func subscribeToNotifications() {
         let center = NotificationCenter.default
         
