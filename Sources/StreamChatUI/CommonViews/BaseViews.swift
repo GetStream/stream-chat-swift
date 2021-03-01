@@ -139,6 +139,50 @@ open class _CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customi
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
+open class _CollectionReusableView: UICollectionReusableView, AppearanceSetting, Customizable {
+    // Flag for preventing multiple lifecycle methods calls.
+    private var isInitialized: Bool = false
+
+    override open func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        guard !isInitialized, superview != nil else { return }
+
+        isInitialized = true
+
+        setUp()
+        setUpLayout()
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
+    }
+
+    public func defaultAppearance() { /* default empty implementation */ }
+    open func setUp() { /* default empty implementation */ }
+    open func setUpAppearance() { /* default empty implementation */ }
+    open func setUpLayout() { /* default empty implementation */ }
+    open func updateContent() { /* default empty implementation */ }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        guard #available(iOS 12, *) else { return }
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        TraitCollectionReloadStack.push {
+            (self as! Self).applyDefaultAppearance()
+            self.setUpAppearance()
+            self.updateContent()
+        }
+    }
+
+    override open func layoutSubviews() {
+        TraitCollectionReloadStack.executePendingUpdates()
+        super.layoutSubviews()
+    }
+}
+
+/// Base class for overridable views StreamChatUI provides.
+/// All conformers will have StreamChatUI appearance settings by default.
 open class _Control: UIControl, AppearanceSetting, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false

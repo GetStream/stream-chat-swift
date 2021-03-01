@@ -50,6 +50,14 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         controller.synchronize()
         
         collectionView.register(uiConfig.channelList.channelViewCell.self, forCellWithReuseIdentifier: "Cell")
+
+        if let cellSeparatorIdentifier = (collectionViewLayout as? ListCollectionViewLayout)?.separatorIdentifier {
+            collectionViewLayout.register(
+                uiConfig.channelList.channelCellSeparatorReusableView,
+                forDecorationViewOfKind: cellSeparatorIdentifier
+            )
+        }
+
         collectionView.dataSource = self
         collectionView.delegate = self
         
@@ -73,6 +81,14 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
         
         collectionView.backgroundColor = uiConfig.colorPalette.background
+
+        if let flowLayout = collectionViewLayout as? ListCollectionViewLayout {
+            flowLayout.itemSize = UICollectionViewFlowLayout.automaticSize
+            flowLayout.estimatedItemSize = .init(
+                width: collectionView.bounds.width,
+                height: 64
+            )
+        }
     }
         
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -113,6 +129,11 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     @objc open func didTapCreateNewChannel(_ sender: Any) {
         router.openCreateNewChannel()
+    }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        collectionViewLayout.invalidateLayout()
     }
 }
 
