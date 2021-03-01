@@ -117,6 +117,10 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
     override open func setUpLayout() {
         super.setUpLayout()
         
+        // Not a nice solution but as composer changes its intrinsicContentSize several times after getting on screen
+        // it creates ugly jump of message list, this way we can workaround it until this behavior is fixed
+        messageComposerViewController.view.layoutIfNeeded()
+        
         messageList.view.translatesAutoresizingMaskIntoConstraints = false
         messageComposerViewController.view.translatesAutoresizingMaskIntoConstraints = false
         
