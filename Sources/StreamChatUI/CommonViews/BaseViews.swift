@@ -101,15 +101,8 @@ open class _CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customi
     
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
-        guard !isInitialized, superview != nil else { return }
-        
-        isInitialized = true
-        
-        setUp()
-        setUpLayout()
-        (self as! Self).applyDefaultAppearance()
-        setUpAppearance()
-        updateContent()
+        guard superview != nil else { return }
+        streamSetup()
     }
     
     public func defaultAppearance() { /* default empty implementation */ }
@@ -134,6 +127,18 @@ open class _CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customi
     override open func layoutSubviews() {
         TraitCollectionReloadStack.executePendingUpdates()
         super.layoutSubviews()
+    }
+    
+    open func streamSetup() {
+        guard !isInitialized else { return }
+        
+        isInitialized = true
+        
+        setUp()
+        setUpLayout()
+        (self as! Self).applyDefaultAppearance()
+        setUpAppearance()
+        updateContent()
     }
 }
 
