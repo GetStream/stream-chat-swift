@@ -82,7 +82,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         collection.keyboardDismissMode = .onDrag
         collection.dataSource = self
         collection.delegate = self
-        collection.isHidden = true
 
         return collection
     }()
@@ -100,16 +99,6 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     open var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
 
     // MARK: - Life Cycle
-
-    override open func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        if hideInitialLayout {
-            collectionView.reloadData()
-            collectionView.isHidden = false
-            hideInitialLayout = false
-        }
-    }
 
     override open func setUp() {
         super.setUp()
