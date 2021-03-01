@@ -25,9 +25,6 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, 
     /// The `UIStackView` that arranges buttons revealed by swipe gesture.
     open private(set) lazy var actionButtonStack: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
     
-    /// The view used as separator when this view is embedded in `UICollectionViewCell`.
-    open private(set) lazy var bottomSeparatorView: UIView = UIView().withoutAutoresizingMaskConstraints
-    
     override open func setUp() {
         super.setUp()
 
@@ -57,18 +54,10 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, 
         cellContentView.trailingAnchor.pin(equalTo: actionButtonStack.leadingAnchor).isActive = true
         trailingConstraint = trailingAnchor.pin(equalTo: cellContentView.trailingAnchor)
         trailingConstraint?.isActive = true
-        
-        addSubview(bottomSeparatorView)
-        // Some retina devices might not properly render views that have height below < 0.5.
-        // Table views use 1 / contentScaleFactor to calculate the separator cell height.
-        bottomSeparatorView.heightAnchor.pin(equalToConstant: 1 / contentScaleFactor).isActive = true
-        bottomSeparatorView.pin(anchors: [.bottom, .leading, .trailing], to: self)
     }
 
     override public func defaultAppearance() {
         super.defaultAppearance()
-
-        bottomSeparatorView.backgroundColor = uiConfig.colorPalette.border
 
         deleteButton.setImage(uiConfig.images.messageActionDelete, for: .normal)
 
