@@ -11,24 +11,25 @@ public typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionV
 
 /// A `UICollectionViewCell` subclass that shows channel information.
 open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+
     /// The `ChatChannelListItemView` instance used as content view.
-    open private(set) lazy var channelView: _ChatChannelListItemView<ExtraData> = uiConfig.channelList.itemView.init()
+    open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = uiConfig.channelList.itemView.init()
 
     override public func prepareForReuse() {
         super.prepareForReuse()
-        channelView.trailingConstraint?.constant = 0
+        itemView.trailingConstraint?.constant = 0
     }
 
     override open var isHighlighted: Bool {
         didSet {
-            channelView.backgroundColor = isHighlighted ? uiConfig.colorPalette.highlightedBackground :
+            itemView.backgroundColor = isHighlighted ? uiConfig.colorPalette.highlightedBackground :
                 uiConfig.colorPalette.background
         }
     }
 
     override open func setUpLayout() {
         super.setUpLayout()
-        contentView.embed(channelView)
+        contentView.embed(itemView)
     }
     
     override open func preferredLayoutAttributesFitting(

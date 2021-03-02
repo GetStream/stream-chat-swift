@@ -208,12 +208,8 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
 }
 
 extension _ChatChannelListItemView {
-    var typingMemberString: String? {
-        guard let members = content.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
-        let names = members.compactMap(\.name).sorted()
-        return names.joined(separator: ", ") + " \(names.count == 1 ? "is" : "are") typing..."
-    }
-    
+
+    /// The `subtitleLabel` will show the current typing member or the last message in the channel.
     var typingMemberOrLastMessageString: String? {
         guard let channel = content.channel else { return nil }
         if let typingMembersInfo = typingMemberString {
@@ -223,5 +219,12 @@ extension _ChatChannelListItemView {
         } else {
             return "No messages"
         }
+    }
+
+    /// The formatted string containing the typing member.
+    var typingMemberString: String? {
+        guard let members = content.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
+        let names = members.compactMap(\.name).sorted()
+        return names.joined(separator: ", ") + " \(names.count == 1 ? "is" : "are") typing..."
     }
 }

@@ -105,7 +105,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         ) as! _ChatChannelListCollectionViewCell<ExtraData>
     
         cell.uiConfig = uiConfig
-        cell.channelView.content = (controller.channels[indexPath.row], controller.client.currentUserId)
+        cell.itemView.content = (controller.channels[indexPath.row], controller.client.currentUserId)
         
         return cell
     }
