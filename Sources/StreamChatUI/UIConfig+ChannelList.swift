@@ -67,13 +67,3 @@ public extension _UIConfig {
         }
     }
 }
-
-// MARK: - CurrentUser
-
-public extension _UIConfig {
-    struct CurrentUserUI {
-        public var currentUserViewAvatarView: _CurrentChatUserAvatarView<ExtraData>.Type = _CurrentChatUserAvatarView<ExtraData>
-            .self
-        public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
-    }
-}

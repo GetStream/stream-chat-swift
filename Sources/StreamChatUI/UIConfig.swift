@@ -11,7 +11,7 @@ public struct _UIConfig<ExtraData: ExtraDataTypes> {
     public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()
-    public var currentUser = CurrentUserUI()
+    public var currentUser = CurrentUser()
     public var navigation = Navigation()
     public var colorPalette = ColorPalette()
     public var font = Font()
