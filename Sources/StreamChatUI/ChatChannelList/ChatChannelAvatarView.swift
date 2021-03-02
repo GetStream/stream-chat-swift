@@ -18,8 +18,8 @@ open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: ChatAvatarView, UI
     /// A view indicating whether the user this view represents is online.
     open private(set) lazy var onlineIndicatorView: UIView = uiConfig
         .channelList
-        .channelListItemSubviews
-        .onlineIndicator.init()
+        .itemSubviews
+        .avatarOnlineIndicator.init()
         .withoutAutoresizingMaskConstraints
 
     /// The data this view component shows.

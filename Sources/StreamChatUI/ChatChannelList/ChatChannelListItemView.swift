@@ -29,8 +29,6 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         /// Constraints of `unreadCountView`
         public fileprivate(set) var unreadCountViewConstraints: [NSLayoutConstraint] = []
     }
-        
-    private lazy var uiConfigSubviews: _UIConfig.ChannelListItemSubviews = uiConfig.channelList.channelListItemSubviews
     
     /// The `UILabel` instance showing the channel name.
     open private(set) lazy var titleLabel: UILabel = UILabel()
@@ -48,13 +46,17 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         .withAdjustingFontForContentSizeCategory
     
     /// The view used to show channels avatar.
-    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfigSubviews
+    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
+        .channelList
+        .itemSubviews
         .avatarView
         .init()
         .withoutAutoresizingMaskConstraints
     
     /// The view showing number of unread messages in channel if any.
-    open private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfigSubviews
+    open private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfig
+        .channelList
+        .itemSubviews
         .unreadCountView.init()
         .withoutAutoresizingMaskConstraints
     
