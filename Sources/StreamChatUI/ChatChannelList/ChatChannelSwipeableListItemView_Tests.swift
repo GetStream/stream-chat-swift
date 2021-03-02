@@ -8,6 +8,7 @@ import StreamChatTestTools
 import XCTest
 
 class ChatChannelSwipeableListItemView_Tests: XCTestCase {
+
     func test_defaultAppearance() {
         let view = ChatChannelSwipeableListItemView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
@@ -22,8 +23,21 @@ class ChatChannelSwipeableListItemView_Tests: XCTestCase {
     }
     
     func test_appearanceCustomization_usingUIConfig() {
+        class TestView: UIButton {
+            override init(frame: CGRect) {
+                super.init(frame: frame)
+                layer.borderWidth = 2
+                layer.borderColor = UIColor.red.cgColor
+                tintColor = UIColor.orange
+            }
+
+            required init?(coder: NSCoder) {
+                super.init(coder: coder)
+            }
+        }
+
         var config = UIConfig()
-        config.colorPalette.alert = .green
+        config.channelList.swipeableItemSubviews.deleteButton = TestView.self
         
         let view = ChatChannelSwipeableListItemView().withoutAutoresizingMaskConstraints
         
