@@ -57,7 +57,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         }
 
         var config = UIConfig()
-        config.channelList.channelListItemSubviews.onlineIndicator = RectIndicator.self
+        config.channelList.itemSubviews.avatarOnlineIndicator = RectIndicator.self
         config.colorPalette.alternativeActiveTint = .brown
         config.colorPalette.lightBorder = .cyan
 

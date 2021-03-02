@@ -24,12 +24,12 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// The `UICollectionViewLayout` that used by `ChatChannelListCollectionView`.
     open private(set) lazy var collectionViewLayout: UICollectionViewLayout = uiConfig
         .channelList
-        .channelCollectionLayout.init()
+        .collectionLayout.init()
     
     /// The `UICollectionView` instance that displays channel list.
     open private(set) lazy var collectionView: ChatChannelListCollectionView = uiConfig
         .channelList
-        .channelCollectionView.init(layout: collectionViewLayout)
+        .collectionView.init(layout: collectionViewLayout)
     
     /// The `UIButton` instance used for navigating to new channel screen creation,
     open private(set) lazy var createNewChannelButton: UIButton = uiConfig
@@ -49,11 +49,11 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         controller.setDelegate(self)
         controller.synchronize()
         
-        collectionView.register(uiConfig.channelList.channelViewCell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.register(uiConfig.channelList.collectionViewCell.self, forCellWithReuseIdentifier: "Cell")
 
         if let cellSeparatorIdentifier = (collectionViewLayout as? ListCollectionViewLayout)?.separatorIdentifier {
             collectionViewLayout.register(
-                uiConfig.channelList.channelCellSeparatorReusableView,
+                uiConfig.channelList.cellSeparatorReusableView,
                 forDecorationViewOfKind: cellSeparatorIdentifier
             )
         }

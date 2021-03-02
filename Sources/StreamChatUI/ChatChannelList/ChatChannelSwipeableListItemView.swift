@@ -17,13 +17,25 @@ open class _ChatChannelSwipeableListItemView<ExtraData: ExtraDataTypes>: _View, 
     public var deleteButtonAction: (() -> Void)?
 
     /// The main content view which you should always use for embedding your cell content.
-    open private(set) lazy var cellContentView: UIView = UIView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var cellContentView: UIView = uiConfig
+        .channelList
+        .swipeableItemSubviews
+        .cellContentView
+        .init().withoutAutoresizingMaskConstraints
     
     /// The delete button.
-    open private(set) lazy var deleteButton: UIButton = UIButton().withoutAutoresizingMaskConstraints
+    open private(set) lazy var deleteButton: UIButton = uiConfig
+        .channelList
+        .swipeableItemSubviews
+        .deleteButton
+        .init().withoutAutoresizingMaskConstraints
     
     /// The `UIStackView` that arranges buttons revealed by swipe gesture.
-    open private(set) lazy var actionButtonStack: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
+    open private(set) lazy var actionButtonStack: UIStackView = uiConfig
+        .channelList
+        .swipeableItemSubviews
+        .actionButtonStack
+        .init().withoutAutoresizingMaskConstraints
     
     override open func setUp() {
         super.setUp()

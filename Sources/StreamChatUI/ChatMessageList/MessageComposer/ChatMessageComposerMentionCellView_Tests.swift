@@ -77,7 +77,7 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
         }
 
         var config = UIConfig()
-        config.channelList.channelListItemSubviews.onlineIndicator = RectIndicator.self
+        config.channelList.itemSubviews.avatarOnlineIndicator = RectIndicator.self
         config.messageComposer.mentionAvatarView = CustomAvatarView.self
 
         let view = ChatMessageComposerMentionCellView().withoutAutoresizingMaskConstraints

@@ -8,7 +8,7 @@ import UIKit
 public typealias UIConfig = _UIConfig<NoExtraData>
 
 public struct _UIConfig<ExtraData: ExtraDataTypes> {
-    public var channelList = ChannelListUI()
+    public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()
     public var currentUser = CurrentUserUI()
