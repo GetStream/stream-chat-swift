@@ -217,7 +217,7 @@ extension _ChatChannelListItemView {
         } else if let latestMessage = channel.latestMessages.first {
             return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.text)"
         } else {
-            return "No messages"
+            return L10n.Channel.Item.emptyMessages
         }
     }
 

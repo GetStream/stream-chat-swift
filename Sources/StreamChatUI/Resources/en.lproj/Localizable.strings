@@ -5,6 +5,7 @@
 "channel.name.and" = "and";
 "channel.name.andXMore" = "and %@ more";
 "channel.name.missing" = "NoChannel";
+"channel.item.empty-messages" = "No messages";
 
 "message.actions.inline-reply" = "Reply";
 "message.actions.thread-reply" = "Thread Reply";
