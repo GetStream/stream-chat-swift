@@ -189,8 +189,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     
     override open func updateContent() {
         if let channel = content.channel {
-            let namer = uiConfig.channelList.channelNamer.init()
-            titleLabel.text = namer.name(for: channel, as: content.currentUserId)
+            titleLabel.text = uiConfig.channelList.channelNamer(channel, content.currentUserId)
         } else {
             titleLabel.text = nil
         }

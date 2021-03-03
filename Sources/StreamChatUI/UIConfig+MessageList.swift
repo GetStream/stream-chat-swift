@@ -20,7 +20,7 @@ public extension _UIConfig {
 
         public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
-        public var channelNamer: ChatChannelNamer.Type = ChatChannelNamer.self
+        public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()
         public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
         public var messageAttachmentContentView: _ChatMessageAttachmentContentView<ExtraData>
             .Type = _ChatMessageAttachmentContentView<ExtraData>.self
