@@ -7,7 +7,7 @@ func snippets_ux_customizing_views_changing_appearance_2() {
     // > import UIKit
     // > import StreamChatUI
 
-    UIConfig.default.channelList.channelListItemSubviews.unreadCountView.defaultAppearance.addRule {
+    UIConfig.default.channelList.itemSubviews.unreadCountView.defaultAppearance.addRule {
         $0.backgroundColor = .darkGray
     }
 }
