@@ -7,7 +7,7 @@ func snippets_ux_customizing_views_changing_appearance() {
     // > import UIKit
     // > import StreamChatUI
 
-    UIConfig.default.channelList.channelListItemView.defaultAppearance.addRule {
+    UIConfig.default.channelList.itemView.defaultAppearance.addRule {
         $0.backgroundColor = UIColor.yellow.withAlphaComponent(0.2)
         $0.titleLabel.textColor = .darkGray
     }
