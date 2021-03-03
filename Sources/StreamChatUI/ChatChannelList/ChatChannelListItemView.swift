@@ -15,6 +15,9 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     public var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContentIfNeeded() }
     }
+
+    /// The date formatter of the `timestampLabel`
+    public lazy var dateFormatter: DateFormatter = .makeDefault()
     
     /// Properties tied to `ChatChannelListItemView` layout
     public struct Layout {
@@ -202,8 +205,12 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
 
         unreadCountView.content = content.channel?.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
-                
-        timestampLabel.text = content.channel?.lastMessageAt?.getFormattedDate(format: "hh:mm a")
+
+        if let lastMessageAt = content.channel?.lastMessageAt {
+            timestampLabel.text = dateFormatter.string(from: lastMessageAt)
+        } else {
+            timestampLabel.text = nil
+        }
     }
 }
 
