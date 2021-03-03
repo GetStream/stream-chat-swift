@@ -24,10 +24,12 @@ internal enum L10n {
     internal enum Name {
       /// and
       internal static let and = L10n.tr("Localizable", "channel.name.and")
+      /// and %@ more
+      internal static func andXMore(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "channel.name.andXMore", String(describing: p1))
+      }
       /// NoChannel
       internal static let missing = L10n.tr("Localizable", "channel.name.missing")
-      /// more
-      internal static let more = L10n.tr("Localizable", "channel.name.more")
     }
   }
 

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 # Upcoming
 
 ### 🔄 Changed
+- `ChatChannelNamer` is now closure instead of class so it allows better customization of channel naming in `ChatChannelListItemView`.
 
 # [3.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.1)
 _February 26, 2021_

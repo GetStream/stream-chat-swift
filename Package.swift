@@ -299,6 +299,7 @@ var streamChatUIFilesExcluded: [String] { [
     "CommonViews/__Snapshots__/CurrentChatUserAvatarView_Tests/test_customizationUsingSubclassingHook.default-dark.png",
     "CommonViews/__Snapshots__/CurrentChatUserAvatarView_Tests/test_customizationUsingAppearanceHook.default-dark.png",
     "Utils/UIConfigProvider_Tests.swift",
+    "Utils/ChatChannelNamer_Tests.swift",
     "ChatChannelList/ChatChannelListCollectionViewCell_Tests.swift",
     "ChatChannelList/ChatChannelSwipeableListItemView_Tests.swift",
     "ChatChannelList/ChatChannelUnreadCountView_Tests.swift",

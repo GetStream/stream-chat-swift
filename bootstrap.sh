@@ -27,6 +27,7 @@ echo
 echo -e "👉 Create symlink for pre-commit hooks"
 # Symlink needs to be ../../hooks and not ./hooks because git evaluates them in .git/hooks
 ln -sf ../../hooks/pre-commit.sh .git/hooks/pre-commit
+ln -sf ../../hooks/pre-commit.sh .git/hooks/post-rewrite
 chmod +x .git/hooks/pre-commit
 chmod +x ./hooks/git-format-staged
 
