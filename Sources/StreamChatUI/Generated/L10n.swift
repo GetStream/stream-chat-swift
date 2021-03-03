@@ -21,6 +21,10 @@ internal enum L10n {
   }
 
   internal enum Channel {
+    internal enum Item {
+      /// No messages
+      internal static let emptyMessages = L10n.tr("Localizable", "channel.item.empty-messages")
+    }
     internal enum Name {
       /// and
       internal static let and = L10n.tr("Localizable", "channel.name.and")
