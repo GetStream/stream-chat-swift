@@ -24,6 +24,10 @@ internal enum L10n {
     internal enum Item {
       /// No messages
       internal static let emptyMessages = L10n.tr("Localizable", "channel.item.empty-messages")
+      /// are typing ...
+      internal static let typingPlural = L10n.tr("Localizable", "channel.item.typing-plural")
+      /// is typing ...
+      internal static let typingSingular = L10n.tr("Localizable", "channel.item.typing-singular")
     }
     internal enum Name {
       /// and

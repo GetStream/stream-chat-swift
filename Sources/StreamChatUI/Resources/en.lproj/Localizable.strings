@@ -6,6 +6,8 @@
 "channel.name.andXMore" = "and %@ more";
 "channel.name.missing" = "NoChannel";
 "channel.item.empty-messages" = "No messages";
+"channel.item.typing-singular" = "is typing ...";
+"channel.item.typing-plural" = "are typing ...";
 
 "message.actions.inline-reply" = "Reply";
 "message.actions.thread-reply" = "Thread Reply";

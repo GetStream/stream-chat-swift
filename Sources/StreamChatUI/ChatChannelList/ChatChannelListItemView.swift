@@ -224,7 +224,15 @@ extension _ChatChannelListItemView {
     /// The formatted string containing the typing member.
     var typingMemberString: String? {
         guard let members = content.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
-        let names = members.compactMap(\.name).sorted()
-        return names.joined(separator: ", ") + " \(names.count == 1 ? "is" : "are") typing..."
+
+        let names = members
+            .compactMap(\.name)
+            .sorted()
+            .joined(separator: ", ")
+
+        let typingSingularText = L10n.Channel.Item.typingSingular
+        let typingPluralText  = L10n.Channel.Item.typingPlural
+
+        return names + " \(members.count == 1 ? typingSingularText : typingPluralText)"
     }
 }
