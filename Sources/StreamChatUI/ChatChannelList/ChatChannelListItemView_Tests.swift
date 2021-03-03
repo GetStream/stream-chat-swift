@@ -101,7 +101,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
             override func updateContent() {
                 super.updateContent()
                 
-                footnoteLabel.text = content.channel?.lastMessageAt?.getFormattedDate(format: "hh:mm a")
+                footnoteLabel.text = dateFormatter.string(from: content.channel!.lastMessageAt!)
             }
         }
         

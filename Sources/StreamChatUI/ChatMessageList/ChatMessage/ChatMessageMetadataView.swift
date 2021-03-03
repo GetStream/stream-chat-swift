@@ -11,6 +11,9 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
+
+    /// The date formatter of the `timestampLabel`
+    public lazy var dateFormatter: DateFormatter = .makeDefault()
     
     // MARK: - Subviews
 
@@ -49,7 +52,11 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     }
 
     override open func updateContent() {
-        timestampLabel.text = message?.createdAt.getFormattedDate(format: "hh:mm a")
+        if let createdAt = message?.createdAt {
+            timestampLabel.text = dateFormatter.string(from: createdAt)
+        } else {
+            timestampLabel.text = nil
+        }
         currentUserVisabilityIndicator.isVisible = message?.onlyVisibleForCurrentUser ?? false
     }
 }
