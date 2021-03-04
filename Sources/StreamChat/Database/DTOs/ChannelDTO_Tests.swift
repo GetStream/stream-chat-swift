@@ -374,7 +374,7 @@ extension XCTestCase {
             id: .unique,
             type: .regular,
             user: dummyUser,
-            createdAt: Date(timeIntervalSince1970: 2), // See dummyChannelRead.lastReadAt below for reason
+            createdAt: .unique,
             updatedAt: .unique,
             deletedAt: nil,
             text: .unique,
