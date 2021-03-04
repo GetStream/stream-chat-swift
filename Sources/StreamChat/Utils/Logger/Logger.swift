@@ -260,3 +260,16 @@ private extension Logger {
         }
     }
 }
+
+extension Data {
+    /// Converts the data into a pretty-printed JSON string. Use only for debug purposes since this operation can be expensive.
+    var debugPrettyPrintedJSON: String {
+        do {
+            let jsonObject = try JSONSerialization.jsonObject(with: self, options: [.allowFragments])
+            let prettyPrintedData = try JSONSerialization.data(withJSONObject: jsonObject, options: [.prettyPrinted])
+            return String(data: prettyPrintedData, encoding: .utf8) ?? "Error: Data to String decoding failed."
+        } catch {
+            return "JSON decoding failed with error: \(error)"
+        }
+    }
+}
