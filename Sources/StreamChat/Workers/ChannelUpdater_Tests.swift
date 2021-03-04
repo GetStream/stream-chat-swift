@@ -571,4 +571,40 @@ class ChannelUpdater_Tests: StressTestCase {
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+    
+    // MARK: - Enable slow mode (cooldown)
+    
+    func test_enableSlowMode_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        let cooldownDuration = Int.random(in: 0...120)
+        
+        channelUpdater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
+        
+        let referenceEndpoint = Endpoint<EmptyResponse>.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_enableSlowMode_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        channelUpdater.enableSlowMode(cid: .unique, cooldownDuration: .random(in: 0...120)) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_enableSlowMode_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        channelUpdater.enableSlowMode(cid: .unique, cooldownDuration: .random(in: 0...120)) { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
 }

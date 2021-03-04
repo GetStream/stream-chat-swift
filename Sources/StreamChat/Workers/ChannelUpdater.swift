@@ -163,4 +163,20 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
+
+    ///
+    /// When slow mode is enabled, users can only send a message every `cooldownDuration` time interval.
+    /// `cooldownDuration` is specified in seconds, and should be between 0-120.
+    /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
+    ///
+    /// - Parameters:
+    ///   - cid: Channel id of the channel to be marked as read
+    ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
+    ///   Specified in seconds. Should be between 0-120. Pass 0 to disable slow mode.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)) {
+            completion?($0.error)
+        }
+    }
 }
