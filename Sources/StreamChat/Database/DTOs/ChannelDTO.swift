@@ -41,7 +41,23 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
-    
+
+    override func willSave() {
+        super.willSave()
+
+        // Change to the `trunctedAt` value have effect on messages, we need to mark them dirty manually
+        // to triggers related FRC updates
+        if changedValues().keys.contains("truncatedAt") {
+            messages
+                .filter { !$0.hasChanges }
+                .forEach {
+                    // Simulate an update
+                    $0.willChangeValue(for: \.id)
+                    $0.didChangeValue(for: \.id)
+                }
+        }
+    }
+
     /// The fetch request that returns all existed channels from the database
     static var allChannelsFetchRequest: NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
