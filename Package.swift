@@ -61,6 +61,7 @@ var streamChatSourcesExcluded: [String] { [
     "Database/DatabaseContainer_Tests.swift",
     "Config/TokenProvider_Tests.swift",
     "WebSocketClient/WebSocketClient_Mock.swift",
+    "WebSocketClient/EventMiddlewares/ChannelTruncatedUpdaterMiddleware_Tests.swift",
     "WebSocketClient/EventMiddlewares/ChannelReadUpdaterMiddleware_Tests.swift",
     "WebSocketClient/EventMiddlewares/MessageReactionsMiddleware_Tests.swift",
     "WebSocketClient/EventMiddlewares/TypingStartCleanupMiddleware_Tests.swift",
