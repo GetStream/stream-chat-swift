@@ -395,7 +395,7 @@ extension XCTestCase {
         ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), unreadMessagesCount: 10)
     }
     
-    func dummyPayload(with channelId: ChannelId) -> ChannelPayload<NoExtraData> {
+    func dummyPayload(with channelId: ChannelId, numberOfMessages: Int = 1) -> ChannelPayload<NoExtraData> {
         let member: MemberPayload<NoExtraData> =
             .init(
                 user: .init(
@@ -419,7 +419,12 @@ extension XCTestCase {
         
         let channelCreatedDate = Date.unique
         let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
-        
+
+        var messages: [MessagePayload<NoExtraData>] = []
+        for _ in 0..<numberOfMessages {
+            messages += [dummyMessage]
+        }
+
         let payload: ChannelPayload<NoExtraData> =
             .init(
                 channel: .init(
@@ -464,7 +469,7 @@ extension XCTestCase {
                 ),
                 watcherCount: 10,
                 members: [member],
-                messages: [dummyMessage],
+                messages: messages,
                 channelReads: [dummyChannelRead]
             )
         
