@@ -124,7 +124,44 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channelReads[0].user.id, loadedChannel?.reads.first?.user.id)
         }
     }
-    
+
+    func test_channelPayload_latestMessagesArePopulated() throws {
+        // Save a channel payload with 100 messages
+        let channelId: ChannelId = .unique
+        let payload = dummyPayload(with: channelId, numberOfMessages: 100)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        // Assert only 25 messages is serialized in the model
+        let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        XCTAssertEqual(channel?.latestMessages.count, 25)
+    }
+
+    func test_channelPayload_truncatedMessagesAreIgnored() throws {
+        // Save a channel payload with 100 messages
+        let channelId: ChannelId = .unique
+        let payload = dummyPayload(with: channelId, numberOfMessages: 100)
+
+        try database.writeSynchronously { session in
+            let channelDTO = try session.saveChannel(payload: payload)
+
+            // Truncate the channel to leave only 10 newest messages
+            let truncateDate = channelDTO.messages
+                .sorted(by: { $0.createdAt < $1.createdAt })
+                .dropLast(10)
+                .last?
+                .createdAt.addingTimeInterval(0.1)
+
+            channelDTO.truncatedAt = truncateDate
+        }
+
+        // Assert only the 10 newest messages is serialized
+        let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        XCTAssertEqual(channel?.latestMessages.count, 10)
+    }
+
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random channel payload to db
         let channelId: ChannelId = .unique
