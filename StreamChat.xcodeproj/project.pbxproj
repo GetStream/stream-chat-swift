@@ -635,6 +635,7 @@
 		AD45333A25D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD45333925D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift */; };
 		AD45334E25D153E500CD9D47 /* ConnectionController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD45334D25D153E500CD9D47 /* ConnectionController+Combine_Tests.swift */; };
 		AD472EF825C425FB00A96E70 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = AD472EF725C425FB00A96E70 /* SnapshotTesting */; };
+		AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */; };
 		AD71130225F138BA00932AEE /* ChatChannelAvatarView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E791E4D525D3E2DA00B0E076 /* ChatChannelAvatarView_Tests.swift */; };
 		AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD71131125F138D500932AEE /* ChatUserAvatarView_Tests.swift */; };
 		AD77030225EFE24F004E2F10 /* DateFormatter+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7702F225EFE1D2004E2F10 /* DateFormatter+Extensions.swift */; };
@@ -3398,6 +3399,8 @@
 				ADB22F7925F1626200853C92 /* ChatPresenceAvatarView */,
 				2245B2B525602465006A612D /* ChatChannelAvatarView.swift */,
 				E791E4D525D3E2DA00B0E076 /* ChatChannelAvatarView_Tests.swift */,
+				AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */,
+				AD71131125F138D500932AEE /* ChatUserAvatarView_Tests.swift */,
 				E7DF7E2325C2C67E00AE9D21 /* ChatAvatarView.swift */,
 			);
 			path = AvatarView;
@@ -4290,6 +4293,7 @@
 				2210525F256FE16600A5F0DB /* ChatMessageInputSlashCommandView.swift in Sources */,
 				ADB22F7C25F1626200853C92 /* ChatOnlineIndicatorView.swift in Sources */,
 				882AE057257A176A004095B3 /* ChatChannelRouter.swift in Sources */,
+				AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */,
 				882AE124257A7FFE004095B3 /* UIViewController+Extensions.swift in Sources */,
 				224FF6972562F5AE00725DD1 /* Bundle+Extensions.swift in Sources */,
 				88A11B302590CC860000AC24 /* ChatMessageErrorIndicator.swift in Sources */,
@@ -4311,6 +4315,7 @@
 				ADEB2F8025CC0B8A00EAAEB6 /* XCTestCase+TestImages.swift in Sources */,
 				227299AA25DAA505005EAFCF /* ChatChannelReadStatusCheckmarkView_Tests.swift in Sources */,
 				227299B325DBF52D005EAFCF /* ChatChannelUnreadCountView_Tests.swift in Sources */,
+				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,
 				AD154C6D25DC3BA000850925 /* ChatMessageComposerCommandCollectionViewCell_Tests.swift in Sources */,
 				ADFCCD7625C9D4D10024505D /* SnapshotVariant.swift in Sources */,
 				2208246A25DFD0060033544B /* ChatChannelListRouter_Mock.swift in Sources */,
