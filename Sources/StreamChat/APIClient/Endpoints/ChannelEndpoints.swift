@@ -137,4 +137,14 @@ extension Endpoint {
             body: ["event": ["type": eventType]]
         )
     }
+    
+    static func enableSlowMode(cid: ChannelId, cooldownDuration: Int) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/\(cid.type)/\(cid.id)",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["cooldown": cooldownDuration]
+        )
+    }
 }

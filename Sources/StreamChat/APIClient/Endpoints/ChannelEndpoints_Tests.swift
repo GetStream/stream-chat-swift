@@ -289,6 +289,23 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+    
+    func test_enableSlowMode_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let cooldownDuration = Int.random(in: 0...120)
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type)/\(cid.id)",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["cooldown": cooldownDuration]
+        )
+        
+        let endpoint = Endpoint<EmptyResponse>.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
 
 extension ChannelEditDetailPayload where ExtraData == NoExtraData {
