@@ -27,9 +27,9 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         .collectionLayout.init()
     
     /// The `UICollectionView` instance that displays channel list.
-    open private(set) lazy var collectionView: ChatChannelListCollectionView = uiConfig
+    open private(set) lazy var collectionView: UICollectionView = uiConfig
         .channelList
-        .collectionView.init(layout: collectionViewLayout)
+        .collectionView.init(frame: .zero, collectionViewLayout: collectionViewLayout)
     
     /// The `UIButton` instance used for navigating to new channel screen creation,
     open private(set) lazy var createNewChannelButton: UIButton = uiConfig
@@ -69,7 +69,6 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     override open func setUpLayout() {
         super.setUpLayout()
-        
         view.embed(collectionView)
     }
     

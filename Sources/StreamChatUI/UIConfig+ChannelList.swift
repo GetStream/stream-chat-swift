@@ -13,7 +13,7 @@ public extension _UIConfig {
         public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()
 
         /// The collection view of the Channel List.
-        public var collectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self
+        public var collectionView: UICollectionView.Type = UICollectionView.self
 
         /// The collection view layout of the Channel List.
         public var collectionLayout: UICollectionViewLayout.Type = ListCollectionViewLayout.self
@@ -30,7 +30,7 @@ public extension _UIConfig {
             _ChatChannelSwipeableListItemView<ExtraData>.self
 
         /// The subviews that compose the `swipeableItemView`.
-        public var swipeableItemSubviews = SwipeableItemSubviews()
+        public var swipeableItemSubviews: SwipeableItemSubviews = SwipeableItemSubviews()
 
         /// A `ChatChannelSwipeableListItemView` subclass view that shows channel information.
         public var itemView: _ChatChannelListItemView<ExtraData>.Type = _ChatChannelListItemView<ExtraData>.self
@@ -40,6 +40,16 @@ public extension _UIConfig {
 
         /// The subviews of that compose the `itemView`.
         public struct ItemSubviews {
+            /// A label that shows a title of channel. This should be result of `ChatChannelNamer`.
+            public var titleLabel: UILabel.Type = UILabel.self
+
+            /// A label that shows a subtitle of channel, typically shows if users are typing or last message,
+            /// see `typingMemberOrLastMessageString` in `ChatChannelListItemView`.
+            public var subtitleLabel: UILabel.Type = UILabel.self
+
+            /// A label that shows last time of message sent.
+            public var timestampLabel: UILabel.Type = UILabel.self
+
             /// A view that shows a user avatar including an indicator of the user presence (online/offline).
             public var avatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
 

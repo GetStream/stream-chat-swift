@@ -34,17 +34,29 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     }
     
     /// The `UILabel` instance showing the channel name.
-    open private(set) lazy var titleLabel: UILabel = UILabel()
+    open private(set) lazy var titleLabel: UILabel = uiConfig
+        .channelList
+        .itemSubviews
+        .titleLabel
+        .init()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
     
     /// The `UILabel` instance showing the last message or typing members if any.
-    open private(set) lazy var subtitleLabel: UILabel = UILabel()
+    open private(set) lazy var subtitleLabel: UILabel = uiConfig
+        .channelList
+        .itemSubviews
+        .subtitleLabel
+        .init()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
     
     /// The `UILabel` instance showing the time of the last sent message.
-    open private(set) lazy var timestampLabel: UILabel = UILabel()
+    open private(set) lazy var timestampLabel: UILabel = uiConfig
+        .channelList
+        .itemSubviews
+        .timestampLabel
+        .init()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
     
