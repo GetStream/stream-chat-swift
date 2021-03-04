@@ -121,8 +121,12 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
         
     @objc open func didTapOnCurrentUserAvatar(_ sender: Any) {
-        guard let currentUser = userAvatarView.controller?.currentUser else { return }
-        
+        guard let currentUser = userAvatarView.controller?.currentUser else {
+            log.error(
+                "Current user is nil while tapping on CurrentUserAvatar, please check that both controller and currentUser are set"
+            )
+            return
+        }
         router.openCurrentUserProfile(for: currentUser)
     }
     
