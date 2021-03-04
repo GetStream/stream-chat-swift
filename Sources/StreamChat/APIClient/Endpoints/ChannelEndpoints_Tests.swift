@@ -110,7 +110,25 @@ final class ChannelEndpoints_Tests: XCTestCase {
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
-    
+
+    func test_truncateChannel_buildsCorrectly() {
+        let cid = ChannelId.unique
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type)/\(cid.id)/truncate",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .truncateChannel(cid: cid)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+
     func test_hideChannel_buildsCorrectly() {
         let testCases = [true, false]
         
