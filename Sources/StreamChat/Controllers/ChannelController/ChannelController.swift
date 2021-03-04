@@ -781,6 +781,54 @@ public extension _ChatChannelController {
             }
         }
     }
+    
+    /// Enables slow mode for the channel
+    ///
+    /// When slow mode is enabled, users can only send a message every `cooldownDuration` time interval.
+    /// `cooldownDuration` is specified in seconds, and should be between 1-120.
+    /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
+    ///
+    /// - Parameters:
+    ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
+    ///   Specified in seconds. Should be between 1-120.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func enableSlowMode(cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        guard cooldownDuration >= 1 && cooldownDuration <= 120 else {
+            callback {
+                completion?(ClientError.InvalidCooldownDuration())
+            }
+            return
+        }
+        updater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Disables slow mode for the channel
+    ///
+    /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
+    ///
+    /// - Parameters:
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func disableSlowMode(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        updater.enableSlowMode(cid: cid, cooldownDuration: 0) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
 }
 
 extension _ChatChannelController {
@@ -1054,6 +1102,12 @@ extension ClientError {
     class ChannelEmptyMessages: ClientError {
         override public var localizedDescription: String {
             "You can't load new messages when there is no messages in the channel."
+        }
+    }
+    
+    class InvalidCooldownDuration: ClientError {
+        override public var localizedDescription: String {
+            "You can't specify a value outside the range 1-120 for cooldown duration."
         }
     }
 }

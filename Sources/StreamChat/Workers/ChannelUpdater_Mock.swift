@@ -49,6 +49,10 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var markRead_cid: ChannelId?
     @Atomic var markRead_completion: ((Error?) -> Void)?
     
+    @Atomic var enableSlowMode_cid: ChannelId?
+    @Atomic var enableSlowMode_cooldownDuration: Int?
+    @Atomic var enableSlowMode_completion: ((Error?) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         update_channelQuery = nil
@@ -91,6 +95,10 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         
         markRead_cid = nil
         markRead_completion = nil
+        
+        enableSlowMode_cid = nil
+        enableSlowMode_cooldownDuration = nil
+        enableSlowMode_completion = nil
     }
     
     override func update(
@@ -165,5 +173,11 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     override func markRead(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         markRead_cid = cid
         markRead_completion = completion
+    }
+    
+    override func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
+        enableSlowMode_cid = cid
+        enableSlowMode_cooldownDuration = cooldownDuration
+        enableSlowMode_completion = completion
     }
 }

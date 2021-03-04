@@ -69,7 +69,8 @@ extension ChannelDetailPayload where ExtraData == NoExtraData {
             isFrozen: true,
             memberCount: 100,
             team: "",
-            members: [member]
+            members: [member],
+            cooldownDuration: .random(in: 0...120)
         )
     }
 }
