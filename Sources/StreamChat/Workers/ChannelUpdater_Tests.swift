@@ -346,6 +346,50 @@ class ChannelUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
+    // MARK: - Truncate channel
+
+    func test_truncateChannel_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+
+        // Simulate `truncateChannel(cid:, completion:)` call
+        channelUpdater.truncateChannel(cid: channelID)
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .truncateChannel(cid: channelID)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_truncateChannel_successfulResponse_isPropagatedToCompletion() {
+        // Simulate `truncateChannel(cid:, completion:)` call
+        var completionCalled = false
+        channelUpdater.truncateChannel(cid: .unique) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_truncateChannel_errorResponse_isPropagatedToCompletion() {
+        // Simulate `truncateChannel(cid:, completion:)` call
+        var completionCalledError: Error?
+        channelUpdater.truncateChannel(cid: .unique) { completionCalledError = $0 }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
     // MARK: - Hide channel
 
     func test_hideChannel_makesCorrectAPICall() {
