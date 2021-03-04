@@ -494,6 +494,27 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(controller.messages.map(\.id), [outgoingDeletedMessage.id])
     }
 
+    func test_truncatedMessages_areNotVisible() throws {
+        // Prepare channel with 10 messages
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveChannel(payload: self.dummyPayload(with: self.channelId, numberOfMessages: 10))
+        }
+
+        // Simulate `synchronize` call and check all messages are fetched
+        controller.synchronize()
+        XCTAssertEqual(controller.messages.count, 10)
+
+        // Set channel `truncatedAt` date before the 5th message
+        let truncatedAtDate = self.controller.messages[4].createdAt.addingTimeInterval(-0.1)
+        try client.databaseContainer.writeSynchronously {
+            $0.channel(cid: self.channelId)?.truncatedAt = truncatedAtDate
+        }
+
+        // Check only the 5 messages after the truncatedAt date are visible
+        XCTAssertEqual(controller.messages.count, 5)
+        XCTAssert(controller.messages.allSatisfy { $0.createdAt > truncatedAtDate })
+    }
+
     // MARK: - Delegate tests
     
     func test_settingDelegate_leadsToFetchingLocalData() {

@@ -107,10 +107,16 @@ class MessageDTO: NSManagedObject {
             ])
         ])
 
+        let nonTruncatedMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "channel.truncatedAt == nil"),
+            .init(format: "createdAt > channel.truncatedAt")
+        ])
+
         return .init(andPredicateWithSubpredicates: [
             channelMessage,
             messageTypePredicate,
-            deletedMessagePredicate
+            deletedMessagePredicate,
+            nonTruncatedMessagePredicate
         ])
     }
     
