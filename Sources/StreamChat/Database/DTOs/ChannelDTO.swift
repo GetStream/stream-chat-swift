@@ -19,6 +19,12 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var defaultSortingAt: Date
     @NSManaged var updatedAt: Date
     @NSManaged var lastMessageAt: Date?
+
+    // This field lives only locally and is not populated from the payload. The main purpose of having this is to
+    // visually truncate the channel that exists and have messages locally already. It should be safe to have this
+    // only locally because once the DB is flushed and the channels are fetched fresh, the messages before the
+    // `truncatedAt` date are not returned from the backend.
+    @NSManaged var truncatedAt: Date?
     
     @NSManaged var watcherCount: Int64
     @NSManaged var memberCount: Int64
