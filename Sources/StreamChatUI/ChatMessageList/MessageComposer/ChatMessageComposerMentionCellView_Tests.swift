@@ -68,7 +68,7 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
             }
         }
 
-        class CustomAvatarView: _ChatChannelAvatarView<NoExtraData> {
+        class CustomAvatarView: _ChatUserAvatarView<NoExtraData> {
             override func didMoveToSuperview() {
                 super.didMoveToSuperview()
                 backgroundColor = .green
@@ -77,7 +77,7 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
         }
 
         var config = UIConfig()
-        config.channelList.itemSubviews.avatarOnlineIndicator = RectIndicator.self
+        config.onlineIndicatorView = RectIndicator.self
         config.messageComposer.mentionAvatarView = CustomAvatarView.self
 
         let view = ChatMessageComposerMentionCellView().withoutAutoresizingMaskConstraints
