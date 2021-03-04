@@ -24,6 +24,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var memberCount: Int64
     
     @NSManaged var isFrozen: Bool
+    @NSManaged var cooldownDuration: Int
     
     // MARK: - Relationships
     
@@ -95,6 +96,7 @@ extension NSManagedObjectContext {
         dto.memberCount = Int64(clamping: payload.memberCount)
 
         dto.isFrozen = payload.isFrozen
+        dto.cooldownDuration = payload.cooldownDuration
 
         if let createdByPayload = payload.createdBy {
             let creatorDTO = try saveUser(payload: createdByPayload)
