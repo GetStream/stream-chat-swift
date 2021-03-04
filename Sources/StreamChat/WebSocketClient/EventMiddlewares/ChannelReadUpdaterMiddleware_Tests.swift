@@ -100,7 +100,8 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             isFrozen: false,
             memberCount: 0,
             team: "",
-            members: nil
+            members: nil,
+            cooldownDuration: .random(in: 0...120)
         )
         // Create EventPayload for NotificationMarkReadEvent
         let eventPayload = EventPayload<NoExtraData>(
