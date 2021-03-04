@@ -237,4 +237,24 @@ class ChatChannelListVC_Tests: XCTestCase {
         channelListVC.scrollViewDidEndDecelerating(channelListVC.collectionView)
         XCTAssertTrue(mockedChannelListController.loadNextChannelsIsCalled)
     }
+
+    func test_usesCorrectUIConfigTypes_whenCustomTypesDefined() {
+        // Create default ChatChannelListVC which has everything default from `UIConfig`
+        let channelListVC = ChatChannelListVC()
+
+        // Create new config to edit types...
+        var customConfig = channelListVC.uiConfig
+
+        class OtherCollectionLayout: UICollectionViewLayout { }
+        class OtherCollectionView: UICollectionView { }
+
+        customConfig.channelList.collectionLayout = OtherCollectionLayout.self
+        customConfig.channelList.collectionView = OtherCollectionView.self
+
+        channelListVC.uiConfig = customConfig
+
+        XCTAssert(channelListVC.collectionViewLayout is OtherCollectionLayout)
+        XCTAssert(channelListVC.collectionView is OtherCollectionView)
+        XCTAssert(channelListVC.createNewChannelButton is ChatChannelCreateNewButton)
+    }
 }

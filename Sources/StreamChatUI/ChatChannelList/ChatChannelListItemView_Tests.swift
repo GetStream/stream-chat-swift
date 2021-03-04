@@ -112,6 +112,24 @@ class ChatChannelListItemView_Tests: XCTestCase {
         view.content = content
         AssertSnapshot(view)
     }
+
+    func test_ItemView_usesCorrectUIConfigTypes_whenCustomTypesDefined() {
+        // Create default ChatChannelListVC which has everything default from `UIConfig`
+        let itemView = ChatChannelListItemView()
+
+        // Create new config to set custom types...
+        var customConfig = UIConfig()
+
+        customConfig.channelList.itemSubviews.titleLabel = TestLabel.self
+        customConfig.channelList.itemSubviews.subtitleLabel = TestLabel1.self
+        customConfig.channelList.itemSubviews.timestampLabel = TestLabel2.self
+
+        itemView.uiConfig = customConfig
+
+        XCTAssert(itemView.titleLabel is TestLabel)
+        XCTAssert(itemView.subtitleLabel is TestLabel1)
+        XCTAssert(itemView.timestampLabel is TestLabel2)
+    }
 }
 
 private extension ChatChannelListItemView {
