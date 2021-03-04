@@ -43,9 +43,6 @@ public extension _UIConfig {
             /// A view that shows a user avatar including an indicator of the user presence (online/offline).
             public var avatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
 
-            /// A view used as an online activity indicator for avatars.
-            public var avatarOnlineIndicator: UIView.Type = _ChatOnlineIndicatorView<ExtraData>.self
-
             /// A view that shows a number of unread messages in channel.
             public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
 

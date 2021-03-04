@@ -57,7 +57,6 @@ public extension _UIConfig {
         public var suggestionsHeaderView: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData>.Type =
             _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData>.self
         /// A type for the view used as avatar when picking users to mention.
-        public var mentionAvatarView: _ChatChannelAvatarView<ExtraData>
-            .Type = _ChatChannelAvatarView<ExtraData>.self
+        public var mentionAvatarView: _ChatUserAvatarView<ExtraData>.Type = _ChatUserAvatarView<ExtraData>.self
     }
 }
