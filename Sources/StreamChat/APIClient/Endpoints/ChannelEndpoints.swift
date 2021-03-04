@@ -56,7 +56,17 @@ extension Endpoint {
             body: nil
         )
     }
-    
+
+    static func truncateChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/\(cid.type)/\(cid.id)/truncate",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
     static func hideChannel(cid: ChannelId, clearHistory: Bool) -> Endpoint<EmptyResponse> {
         .init(
             path: "channels/\(cid.type)/\(cid.id)/hide",
