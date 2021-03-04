@@ -21,6 +21,9 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var deleteChannel_cid: ChannelId?
     @Atomic var deleteChannel_completion: ((Error?) -> Void)?
 
+    @Atomic var truncateChannel_cid: ChannelId?
+    @Atomic var truncateChannel_completion: ((Error?) -> Void)?
+
     @Atomic var hideChannel_cid: ChannelId?
     @Atomic var hideChannel_clearHistory: Bool?
     @Atomic var hideChannel_completion: ((Error?) -> Void)?
@@ -68,6 +71,9 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         
         deleteChannel_cid = nil
         deleteChannel_completion = nil
+
+        truncateChannel_cid = nil
+        truncateChannel_completion = nil
         
         hideChannel_cid = nil
         hideChannel_clearHistory = nil
@@ -125,6 +131,11 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     override func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         deleteChannel_cid = cid
         deleteChannel_completion = completion
+    }
+
+    override func truncateChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        truncateChannel_cid = cid
+        truncateChannel_completion = completion
     }
 
     override func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {

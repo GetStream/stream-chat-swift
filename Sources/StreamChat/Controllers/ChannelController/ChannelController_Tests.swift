@@ -1094,6 +1094,84 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
+    // MARK: - Truncating channel
+
+    func test_truncateChannel_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = _ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+
+        // Simulate `truncateChannel` call and assert error is returned
+        var error: Error? = try await { [callbackQueueID] completion in
+            controller.truncateChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+
+        // Simulate `truncateChannel` call and assert no error is returned
+        error = try await { [callbackQueueID] completion in
+            controller.truncateChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.truncateChannel_completion?(nil)
+        }
+
+        XCTAssertNil(error)
+    }
+
+    func test_truncateChannel_callsChannelUpdater() {
+        // Simulate `truncateChannel` calls and catch the completion
+        var completionCalled = false
+        controller.truncateChannel { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        XCTAssertEqual(env.channelUpdater?.truncateChannel_cid, channelId)
+
+        // Simulate successful update
+        env.channelUpdater?.truncateChannel_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.truncateChannel_completion = nil
+
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_truncateChannel_callsChannelUpdaterWithError() {
+        // Simulate `truncateChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.truncateChannel { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.truncateChannel_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
     // MARK: - Hiding channel
 
     func test_hideChannel_failsForNewChannels() throws {

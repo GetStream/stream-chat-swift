@@ -509,6 +509,27 @@ public extension _ChatChannelController {
             }
         }
     }
+
+    /// Truncates the channel this controller manages.
+    ///
+    /// Removes all of the messages of the channel but doesn't affect the channel data or members.
+    ///
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// If request fails, the completion will be called with an error.
+    ///
+    func truncateChannel(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        updater.truncateChannel(cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
     
     /// Hide the channel this controller manages from queryChannels for the user until a message is added.
     ///
