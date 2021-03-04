@@ -138,53 +138,53 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     override open func prepare(forCollectionViewUpdates updateItems: [UICollectionViewUpdateItem]) {
         previousItems = currentItems
-        let delete: (UICollectionViewUpdateItem) -> Void = { update in
-            guard let ip = update.indexPathBeforeUpdate else { return }
-            let idx = ip.item
-            self.disappearingItems.insert(ip)
-            var delta = self.currentItems[idx].height
-            if idx > 0 {
-                delta += self.spacing
-            }
-            for i in 0..<idx {
-                self.currentItems[i].offset -= delta
-            }
-            self.currentItems.remove(at: idx)
-        }
-
-        let insert: (UICollectionViewUpdateItem) -> Void = { update in
-            guard let ip = update.indexPathAfterUpdate else { return }
-            self.appearingItems.insert(ip)
-            let idx = ip.item
-            let item: LayoutItem
-            if idx == self.currentItems.count {
-                item = LayoutItem(offset: 0, height: self.estimatedItemHeight)
-            } else {
-                item = LayoutItem(
-                    offset: self.currentItems[idx].maxY + self.spacing,
-                    height: self.currentItems[idx].height
-                )
-            }
-            let delta = item.height + self.spacing
-            for i in 0..<idx {
-                self.currentItems[i].offset += delta
-            }
-            self.currentItems.insert(item, at: idx)
-        }
-
-        for update in updateItems {
-            switch update.updateAction {
-            case .delete:
-                delete(update)
-            case .insert:
-                insert(update)
-            case .move:
-                delete(update)
-                insert(update)
-            case .reload, .none: break
-            @unknown default: break
-            }
-        }
+//        let delete: (UICollectionViewUpdateItem) -> Void = { update in
+//            guard let ip = update.indexPathBeforeUpdate else { return }
+//            let idx = ip.item
+//            self.disappearingItems.insert(ip)
+//            var delta = self.currentItems[idx].height
+//            if idx > 0 {
+//                delta += self.spacing
+//            }
+//            for i in 0..<idx {
+//                self.currentItems[i].offset -= delta
+//            }
+//            self.currentItems.remove(at: idx)
+//        }
+//
+//        let insert: (UICollectionViewUpdateItem) -> Void = { update in
+//            guard let ip = update.indexPathAfterUpdate else { return }
+//            self.appearingItems.insert(ip)
+//            let idx = ip.item
+//            let item: LayoutItem
+//            if idx == self.currentItems.count {
+//                item = LayoutItem(offset: 0, height: self.estimatedItemHeight)
+//            } else {
+//                item = LayoutItem(
+//                    offset: self.currentItems[idx].maxY + self.spacing,
+//                    height: self.currentItems[idx].height
+//                )
+//            }
+//            let delta = item.height + self.spacing
+//            for i in 0..<idx {
+//                self.currentItems[i].offset += delta
+//            }
+//            self.currentItems.insert(item, at: idx)
+//        }
+//
+//        for update in updateItems {
+//            switch update.updateAction {
+//            case .delete:
+//                delete(update)
+//            case .insert:
+//                insert(update)
+//            case .move:
+//                delete(update)
+//                insert(update)
+//            case .reload, .none: break
+//            @unknown default: break
+//            }
+//        }
 
         preBatchUpdatesCall = false
         super.prepare(forCollectionViewUpdates: updateItems)
