@@ -222,6 +222,9 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertTrue(typingStateUpdaterMiddlewareIndex! > typingStartCleanupMiddlewareIndex!)
         // Assert `MessageReactionsMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is MessageReactionsMiddleware<NoExtraData> }))
+        // Assert `ChannelTruncatedEventMiddleware` exists
+        XCTAssert(middlewares.contains(where: { $0 is ChannelTruncatedEventMiddleware<NoExtraData> }))
+
     }
     
     func test_connectionStatus_isExposed() {

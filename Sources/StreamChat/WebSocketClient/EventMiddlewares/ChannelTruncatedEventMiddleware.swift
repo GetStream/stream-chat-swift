@@ -21,7 +21,7 @@ struct ChannelTruncatedEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddlewa
             }
         } completion: { error in
             if let error = error {
-                log.error("Failed to update message reaction in the database, error: \(error)")
+                log.error("Failed to write the `truncatedAt` field update in the database, error: \(error)")
             }
             completion(event)
         }
