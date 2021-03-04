@@ -40,4 +40,15 @@ class ChannelEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.hiddenAt.description, "2020-07-17 12:11:46 +0000")
         XCTAssertTrue(event?.isHistoryCleared ?? false)
     }
+
+    func test_channelTruncatedEvent() throws {
+        let mockData = XCTestCase.mockData(fromFile: "ChannelTruncated")
+
+        let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEvent
+        XCTAssertEqual(event?.userId, "broken-waterfall-5")
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7011"))
+
+        let rawPayload = try JSONDecoder.stream.decode(EventPayload<NoExtraData>.self, from: mockData)
+        XCTAssertEqual((event?.payload as? EventPayload<NoExtraData>)?.createdAt, rawPayload.createdAt)
+    }
 }
