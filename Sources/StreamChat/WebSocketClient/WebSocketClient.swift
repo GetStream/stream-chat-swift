@@ -259,6 +259,8 @@ extension WebSocketClient: WebSocketEngineDelegate {
     func webSocketDidReceiveMessage(_ message: String) {
         do {
             let messageData = Data(message.utf8)
+            log.debug("Event received:\n\(messageData.debugPrettyPrintedJSON)")
+
             let event = try eventDecoder.decode(from: messageData)
             eventNotificationCenter.process(event)
         } catch is ClientError.UnsupportedEventType {
