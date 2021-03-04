@@ -149,7 +149,6 @@ class ChatChannelListVC_Tests: XCTestCase {
 
             if let listLayout = $0.collectionViewLayout as? ListCollectionViewLayout {
                 listLayout.separatorHeight = 4
-                listLayout.register(TestSeparatorView.self, forDecorationViewOfKind: listLayout.separatorIdentifier)
             }
 
             TestSeparatorView.defaultAppearance {
@@ -159,6 +158,10 @@ class ChatChannelListVC_Tests: XCTestCase {
 
         let vc = TestView()
         vc.controller = mockedChannelListController
+        
+        var config = UIConfig()
+        config.channelList.cellSeparatorReusableView = TestSeparatorView.self
+        vc.uiConfig = config
 
         mockedChannelListController.simulateInitial(
             channels: channels,
@@ -181,13 +184,16 @@ class ChatChannelListVC_Tests: XCTestCase {
                 createNewChannelButton.tintColor = UIColor.orange
                 if let listLayout = collectionViewLayout as? ListCollectionViewLayout {
                     listLayout.separatorHeight = 4
-                    listLayout.register(TestSeparatorView.self, forDecorationViewOfKind: listLayout.separatorIdentifier)
                 }
             }
         }
 
         let vc = TestView()
         vc.controller = mockedChannelListController
+        
+        var config = UIConfig()
+        config.channelList.cellSeparatorReusableView = TestSeparatorView.self
+        vc.uiConfig = config
 
         mockedChannelListController.simulate(
             channels: channels,

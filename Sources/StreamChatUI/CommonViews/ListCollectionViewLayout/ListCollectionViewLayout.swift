@@ -16,10 +16,12 @@ public protocol ListCollectionViewLayoutDelegate: class, UICollectionViewDelegat
 }
 
 /// An `UICollectionViewFlowLayout` implementation to make the collection view behave as a `UITableView`.
-open class ListCollectionViewLayout: UICollectionViewFlowLayout{
+open class ListCollectionViewLayout: UICollectionViewFlowLayout {
 
-    /// The reuse identifier of the cell separator view.
-    open var separatorIdentifier: String = "CellSeparatorIdentifier"
+    /// The kind identifier of the cell separator view.
+    open class var separatorKind: String {
+        "CellSeparator"
+    }
 
     /// The height of the cell separator view. This changes the `minimumLineSpacing` to properly display the separator height.
     /// By default it is the hair height, one physical pixel (1 / displayScale). If a value is set, it will change the default.
@@ -37,6 +39,17 @@ open class ListCollectionViewLayout: UICollectionViewFlowLayout{
             width: collectionView?.bounds.width ?? 0,
             height: estimatedItemSize.height
         )
+    }
+    
+    /// Partly taken from: https://github.com/Instagram/IGListKit/issues/571#issuecomment-386960195
+    override open func invalidateLayout(with context: UICollectionViewLayoutInvalidationContext) {
+        if let indexPaths = context.invalidatedItemIndexPaths {
+            context.invalidateSupplementaryElements(
+                ofKind: Self.separatorKind,
+                at: indexPaths
+            )
+        }
+        super.invalidateLayout(with: context)
     }
 
     override open func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
@@ -60,7 +73,7 @@ open class ListCollectionViewLayout: UICollectionViewFlowLayout{
             ) ?? true else { return nil }
 
             let separatorAttribute = UICollectionViewLayoutAttributes(
-                forDecorationViewOfKind: separatorIdentifier,
+                forSupplementaryViewOfKind: Self.separatorKind,
                 with: cellAttribute.indexPath
             )
 
