@@ -84,6 +84,8 @@
 		790B9E3024DC21D7005455AA /* MessagePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B9E2F24DC21D7005455AA /* MessagePayload.swift */; };
 		790B9E3224DC221A005455AA /* UserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B9E3124DC221A005455AA /* UserPayload.swift */; };
 		79158CE225F0E9DF00186102 /* ChannelTruncated.json in Resources */ = {isa = PBXBuildFile; fileRef = 79158CE125F0E9DF00186102 /* ChannelTruncated.json */; };
+		79158CF425F133FB00186102 /* ChannelTruncatedEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79158CF325F133FB00186102 /* ChannelTruncatedEventMiddleware.swift */; };
+		79158CFC25F1341300186102 /* ChannelTruncatedEventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79158CEA25F0EADF00186102 /* ChannelTruncatedEventMiddleware_Tests.swift */; };
 		79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */; };
 		791C0B6324EEBDF40013CA2F /* MessageSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */; };
 		791C0B6524EFBD260013CA2F /* UnwrapAsync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */; };
@@ -997,6 +999,8 @@
 		790B9E2F24DC21D7005455AA /* MessagePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayload.swift; sourceTree = "<group>"; };
 		790B9E3124DC221A005455AA /* UserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPayload.swift; sourceTree = "<group>"; };
 		79158CE125F0E9DF00186102 /* ChannelTruncated.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelTruncated.json; sourceTree = "<group>"; };
+		79158CEA25F0EADF00186102 /* ChannelTruncatedEventMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTruncatedEventMiddleware_Tests.swift; sourceTree = "<group>"; };
+		79158CF325F133FB00186102 /* ChannelTruncatedEventMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTruncatedEventMiddleware.swift; sourceTree = "<group>"; };
 		79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AssertAsync+Events.swift"; sourceTree = "<group>"; };
 		791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSender_Tests.swift; sourceTree = "<group>"; };
 		791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnwrapAsync.swift; sourceTree = "<group>"; };
@@ -2295,6 +2299,8 @@
 				79896D65250A6D1500BA8F1C /* ChannelReadUpdaterMiddleware_Tests.swift */,
 				F6CCA24C251235F7004C1859 /* ChannelMemberTypingStateUpdaterMiddleware.swift */,
 				F6CCA24E2512491B004C1859 /* ChannelMemberTypingStateUpdaterMiddleware_Tests.swift */,
+				79158CF325F133FB00186102 /* ChannelTruncatedEventMiddleware.swift */,
+				79158CEA25F0EADF00186102 /* ChannelTruncatedEventMiddleware_Tests.swift */,
 				8899BC56254337C7003CB98B /* MessageReactionsMiddleware.swift */,
 				889062422548387D00E1898E /* MessageReactionsMiddleware_Tests.swift */,
 			);
@@ -4529,6 +4535,7 @@
 				DABC6ABC2546FD0100A8FC78 /* AttachmentPayload.swift in Sources */,
 				88D85DA7252F3C1D00AE1030 /* MemberListController.swift in Sources */,
 				79280F4B248523C000CDEB89 /* ConnectionEvents.swift in Sources */,
+				79158CF425F133FB00186102 /* ChannelTruncatedEventMiddleware.swift in Sources */,
 				882C574A252C767E00E60C44 /* ChannelMemberListPayload.swift in Sources */,
 				DAFAD6A324DD8E1A0043ED06 /* ChannelEditDetailPayload.swift in Sources */,
 				88BEBCD62536FDBF00D9E8B7 /* MemberListController+SwiftUI.swift in Sources */,
@@ -4712,6 +4719,7 @@
 				DAF8359C24F8059900392699 /* TypingEventObserver_Tests.swift in Sources */,
 				799C9468247D791A001F1104 /* AssertJSONEqual.swift in Sources */,
 				DA84072A2525EB2F005A0F62 /* UserListQuery_Tests.swift in Sources */,
+				79158CFC25F1341300186102 /* ChannelTruncatedEventMiddleware_Tests.swift in Sources */,
 				799C9460247D77D6001F1104 /* DatabaseContainer_Tests.swift in Sources */,
 				8A5D3EF924AF749200E2FE35 /* ChannelId_Tests.swift in Sources */,
 				799C945C247D59D8001F1104 /* ChatClient_Tests.swift in Sources */,
