@@ -100,6 +100,12 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     ///
     public let reads: [_ChatChannelRead<ExtraData>]
     
+    /// Cooldown duration for the channel, if it's in slow mode.
+    /// This value will be 0 if the channel is not in slow mode.
+    /// This value is in seconds.
+    /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
+    public let cooldownDuration: Int
+    
     /// Additional data associated with the channel.
     ///
     /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
@@ -134,6 +140,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         memberCount: Int = 0,
 //        banEnabling: BanEnabling = .disabled,
         reads: [_ChatChannelRead<ExtraData>] = [],
+        cooldownDuration: Int = 0,
         extraData: ExtraData.Channel,
 //        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         latestMessages: [_ChatMessage<ExtraData>] = []
@@ -157,6 +164,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.memberCount = memberCount
 //        self.banEnabling = banEnabling
         self.reads = reads
+        self.cooldownDuration = cooldownDuration
         self.extraData = extraData
 //        self.invitedMembers = invitedMembers
         self.latestMessages = latestMessages

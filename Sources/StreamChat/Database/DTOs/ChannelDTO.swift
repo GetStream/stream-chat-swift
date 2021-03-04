@@ -243,6 +243,7 @@ extension _ChatChannel {
             memberCount: Int(dto.memberCount),
 //            banEnabling: .disabled,
             reads: reads,
+            cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,
 //            invitedMembers: [],
             latestMessages: latestMessages
