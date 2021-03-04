@@ -64,7 +64,17 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
-    
+
+    /// Truncates the specific channel.
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func truncateChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .truncateChannel(cid: cid)) {
+            completion?($0.error)
+        }
+    }
+
     /// Hides the channel from queryChannels for the user until a message is added.
     /// - Parameters:
     ///   - cid: The channel identifier.
