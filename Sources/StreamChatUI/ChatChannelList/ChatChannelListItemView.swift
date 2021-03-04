@@ -201,7 +201,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
                 
         subtitleLabel.text = typingMemberOrLastMessageString
 
-        avatarView.content = .channelAndUserId(channel: content.channel, currentUserId: content.currentUserId)
+        avatarView.content = content
 
         unreadCountView.content = content.channel?.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
