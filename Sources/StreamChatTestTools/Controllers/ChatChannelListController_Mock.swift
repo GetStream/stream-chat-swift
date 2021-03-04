@@ -6,6 +6,8 @@ import Foundation
 @testable import StreamChat
 
 public class ChatChannelListController_Mock<ExtraData: ExtraDataTypes>: _ChatChannelListController<ExtraData> {
+    public var loadNextChannelsIsCalled = false
+
     /// Creates a new mock instance of `ChatChannelListController`.
     public static func mock() -> ChatChannelListController_Mock<ExtraData> {
         .init(query: .init(filter: .equal(.memberCount, to: 0)), client: .mock())
@@ -20,6 +22,10 @@ public class ChatChannelListController_Mock<ExtraData: ExtraDataTypes>: _ChatCha
     override public var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }
+    }
+
+    override public func loadNextChannels(limit: Int, completion: ((Error?) -> Void)?) {
+       loadNextChannelsIsCalled = true
     }
 }
 
