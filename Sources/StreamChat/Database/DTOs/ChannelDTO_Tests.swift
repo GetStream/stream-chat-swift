@@ -33,6 +33,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(channelId, loadedChannel?.cid)
             
             Assert.willBeEqual(payload.watcherCount, loadedChannel?.watcherCount)
+            Assert.willBeEqual(Set(payload.watchers?.map(\.id) ?? []), Set(loadedChannel?.watchers.map(\.id) ?? []))
             Assert.willBeEqual(payload.channel.name, loadedChannel?.name)
             Assert.willBeEqual(payload.channel.imageURL, loadedChannel?.imageURL)
             Assert.willBeEqual(payload.channel.memberCount, loadedChannel?.memberCount)
@@ -364,6 +365,41 @@ class ChannelDTO_Tests: XCTestCase {
         // Assert channel's currentlyTypingMembers are cleared
         AssertAsync.willBeTrue(channel.currentlyTypingMembers.isEmpty)
     }
+    
+    func test_watchers_areCleared_onResetEphemeralValues() throws {
+        let cid: ChannelId = .unique
+        let userId: UserId = .unique
+        
+        // Create channel in the database
+        try database.createChannel(cid: cid)
+        // Create user in the database
+        try database.createUser(id: userId, extraData: .defaultValue)
+        // Set created user as a watcher
+        try database.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: cid))
+            let member = try XCTUnwrap(session.user(id: userId))
+            channel.watchers.insert(member)
+            channel.watcherCount = Int64.random(in: 1...10)
+        }
+        
+        // Load the channel
+        var channel: ChatChannel {
+            database.viewContext.channel(cid: cid)!.asModel()
+        }
+        
+        // Assert channel's watchers are not empty, watcherCount not zero
+        XCTAssertFalse(channel.watchers.isEmpty)
+        XCTAssertNotEqual(channel.watcherCount, 0)
+        
+        // Simulate `resetEphemeralValues`
+        database.resetEphemeralValues()
+        
+        // Assert channel's watchers are cleared, watcherCount zero'ed
+        AssertAsync {
+            Assert.willBeTrue(channel.watchers.isEmpty)
+            Assert.willBeEqual(channel.watcherCount, 0)
+        }
+    }
 }
 
 extension XCTestCase {
@@ -432,7 +468,11 @@ extension XCTestCase {
         ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), unreadMessagesCount: 10)
     }
     
-    func dummyPayload(with channelId: ChannelId, numberOfMessages: Int = 1) -> ChannelPayload<NoExtraData> {
+    func dummyPayload(
+        with channelId: ChannelId,
+        numberOfMessages: Int = 1,
+        numberOfWatchers: Int = 1
+    ) -> ChannelPayload<NoExtraData> {
         let member: MemberPayload<NoExtraData> =
             .init(
                 user: .init(
@@ -505,6 +545,7 @@ extension XCTestCase {
                     cooldownDuration: .random(in: 0...120)
                 ),
                 watcherCount: 10,
+                watchers: (0..<numberOfWatchers).map { _ in dummyUser },
                 members: [member],
                 messages: messages,
                 channelReads: [dummyChannelRead]
@@ -613,6 +654,7 @@ extension XCTestCase {
                     cooldownDuration: .random(in: 0...120)
                 ),
                 watcherCount: 10,
+                watchers: [dummyUser],
                 members: [member],
                 messages: [dummyMessageWithNoExtraData],
                 channelReads: [dummyChannelReadWithNoExtraData]

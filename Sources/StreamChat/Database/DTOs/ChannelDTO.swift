@@ -41,6 +41,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
+    @NSManaged var watchers: Set<UserDTO>
 
     override func willSave() {
         super.willSave()
@@ -93,6 +94,8 @@ class ChannelDTO: NSManagedObject {
 extension ChannelDTO: EphemeralValuesContainer {
     func resetEphemeralValues() {
         currentlyTypingMembers.removeAll()
+        watchers.removeAll()
+        watcherCount = 0
     }
 }
 
@@ -157,6 +160,18 @@ extension NSManagedObjectContext {
         }
         
         dto.watcherCount = Int64(clamping: payload.watcherCount ?? 0)
+        
+        if let watchers = payload.watchers {
+            // We don't call `removeAll` on watchers since user could've requested
+            // a different page
+            try watchers.forEach {
+                let user = try saveUser(payload: $0)
+                dto.watchers.insert(user)
+            }
+        }
+        // We don't reset `watchers` array if it's missing
+        // since that can mean that user didn't request watchers
+        // This is done in `ChannelUpdater.channelWatchers` func
         
         return dto
     }
@@ -258,7 +273,7 @@ extension _ChatChannel {
             isFrozen: dto.isFrozen,
             members: Set(members),
             currentlyTypingMembers: Set(typingMembers),
-            watchers: [],
+            watchers: Set(dto.watchers.map { $0.asModel() }),
 //            team: "",
             unreadCount: unreadCount,
             watcherCount: Int(dto.watcherCount),
