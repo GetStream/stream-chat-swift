@@ -14,6 +14,8 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     let watcherCount: Int?
     
+    let watchers: [UserPayload<ExtraData.User>]?
+    
     let members: [MemberPayload<ExtraData.User>]
     
     let messages: [MessagePayload<ExtraData>]
@@ -25,13 +27,14 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
         case messages
         case channelReads = "read"
         case members
-//    case watchers
+        case watchers
         case watcherCount = "watcher_count"
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
+        watchers = try container.decodeIfPresent([UserPayload<ExtraData.User>].self, forKey: .watchers)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         members = try container.decode([MemberPayload<ExtraData.User>].self, forKey: .members)
         messages = try container.decode([MessagePayload<ExtraData>].self, forKey: .messages)
@@ -43,12 +46,14 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     init(
         channel: ChannelDetailPayload<ExtraData>,
         watcherCount: Int,
+        watchers: [UserPayload<ExtraData.User>]?,
         members: [MemberPayload<ExtraData.User>],
         messages: [MessagePayload<ExtraData>],
         channelReads: [ChannelReadPayload<ExtraData>]
     ) {
         self.channel = channel
         self.watcherCount = watcherCount
+        self.watchers = watchers
         self.members = members
         self.messages = messages
         self.channelReads = channelReads

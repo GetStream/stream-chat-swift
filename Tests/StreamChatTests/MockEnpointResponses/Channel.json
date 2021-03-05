@@ -1316,5 +1316,43 @@
       "online" : true,
       "name" : "broken-waterfall-5"
     }
-  }
+  },
+  "watchers" : [
+      {
+          "banned" : false,
+          "online" : true,
+          "id" : "cilvia",
+          "role" : "user",
+          "created_at" : "2019-10-24T08:34:11.155375Z",
+          "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U01173D1D5J-0dead6eea6ea-512",
+          "value" : "cilvia",
+          "updated_at" : "2021-03-04T15:36:15.179644Z",
+          "last_active" : "2021-03-04T15:21:48.667941Z",
+          "name" : "Neil Hannah"
+      },
+      {
+          "banned" : false,
+          "online" : true,
+          "id" : "josh",
+          "role" : "user",
+          "created_at" : "2020-04-15T06:43:08.776911Z",
+          "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512",
+          "value" : "josh",
+          "updated_at" : "2021-03-04T15:32:29.26725Z",
+          "last_active" : "2021-03-04T15:25:40.183096Z",
+          "name" : "Joshua"
+      },
+      {
+          "banned" : false,
+          "online" : true,
+          "id" : "vishal",
+          "role" : "user",
+          "created_at" : "2019-10-24T08:34:26.298325Z",
+          "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-UHGDQJ8A0-31658896398c-512",
+          "value" : "vishal",
+          "updated_at" : "2021-03-04T15:32:36.509639Z",
+          "last_active" : "2021-03-04T15:32:36.509639Z",
+          "name" : "Vishal"
+      }
+  ]
   }

@@ -27,7 +27,10 @@ class ChannelPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(ChannelPayload<NoExtraData>.self, from: channelJSON)
         
         XCTAssertEqual(payload.watcherCount, 7)
+        XCTAssertEqual(payload.watchers?.count, 3)
         XCTAssertEqual(payload.members.count, 4)
+        
+        XCTAssertEqual(payload.watchers?.first?.id, "cilvia")
         
         XCTAssertEqual(payload.messages.count, 25)
         let firstMessage = payload.messages.first(where: { $0.id == "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9" })!
