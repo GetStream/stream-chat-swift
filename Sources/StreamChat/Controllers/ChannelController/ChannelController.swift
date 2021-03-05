@@ -6,10 +6,9 @@ import CoreData
 import Foundation
 
 public extension _ChatClient {
-    /// Creates a new `ChatChannelController` for the channel with the provided id and options.
+    /// Creates a new `ChatChannelController` for the channel with the provided id.
     ///
-    /// - Parameter channelId: The id of the channel this controller represents.
-    /// - Parameter options: Query options (See `QueryOptions`)
+    /// - Parameter cid: The id of the channel this controller represents.
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
