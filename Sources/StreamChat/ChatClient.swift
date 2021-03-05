@@ -93,7 +93,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         ChannelMemberTypingStateUpdaterMiddleware<ExtraData>(database: databaseContainer),
         MessageReactionsMiddleware<ExtraData>(database: databaseContainer),
         ChannelTruncatedEventMiddleware<ExtraData>(database: databaseContainer),
-        MemberEventMiddleware<ExtraData>(database: databaseContainer)
+        MemberEventMiddleware<ExtraData>(database: databaseContainer),
+        UserWatchingEventMiddleware<ExtraData>(database: databaseContainer)
     ])
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
