@@ -43,20 +43,28 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         .currentUserViewAvatarView.init()
         .withoutAutoresizingMaskConstraints
     
+    /// Reuse identifier of separator
+    open var separatorReuseIdentifier: String { "CellSeparatorIdentifier" }
+    
+    /// Reuse identiifer of `collectionViewCell`
+    open var collectionViewCellReuseIdentifier: String { "Cell" }
+    
     override open func setUp() {
         super.setUp()
         
         controller.setDelegate(self)
         controller.synchronize()
         
-        collectionView.register(uiConfig.channelList.collectionViewCell.self, forCellWithReuseIdentifier: "Cell")
-
-        if let cellSeparatorIdentifier = (collectionViewLayout as? ListCollectionViewLayout)?.separatorIdentifier {
-            collectionViewLayout.register(
-                uiConfig.channelList.cellSeparatorReusableView,
-                forDecorationViewOfKind: cellSeparatorIdentifier
-            )
-        }
+        collectionView.register(
+            uiConfig.channelList.collectionViewCell.self,
+            forCellWithReuseIdentifier: collectionViewCellReuseIdentifier
+        )
+        
+        collectionView.register(
+            uiConfig.channelList.cellSeparatorReusableView,
+            forSupplementaryViewOfKind: ListCollectionViewLayout.separatorKind,
+            withReuseIdentifier: separatorReuseIdentifier
+        )
 
         collectionView.dataSource = self
         collectionView.delegate = self
@@ -99,7 +107,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "Cell",
+            withReuseIdentifier: collectionViewCellReuseIdentifier,
             for: indexPath
         ) as! _ChatChannelListCollectionViewCell<ExtraData>
     
@@ -107,6 +115,18 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         cell.itemView.content = (controller.channels[indexPath.row], controller.client.currentUserId)
         
         return cell
+    }
+    
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        collectionView.dequeueReusableSupplementaryView(
+            ofKind: ListCollectionViewLayout.separatorKind,
+            withReuseIdentifier: separatorReuseIdentifier,
+            for: indexPath
+        )
     }
         
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
