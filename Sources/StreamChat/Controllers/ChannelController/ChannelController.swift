@@ -818,7 +818,7 @@ public extension _ChatChannelController {
             channelModificationFailed(completion)
             return
         }
-        guard cooldownDuration >= 1 && cooldownDuration <= 120 else {
+        guard cooldownDuration >= 1, cooldownDuration <= 120 else {
             callback {
                 completion?(ClientError.InvalidCooldownDuration())
             }
@@ -844,6 +844,61 @@ public extension _ChatChannelController {
             return
         }
         updater.enableSlowMode(cid: cid, cooldownDuration: 0) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Start watching a channel
+    ///
+    /// Watching a channel is defined as observing notifications about this channel.
+    /// Usually you don't need to call this function since `ChannelController` watches channels
+    /// by default.
+    ///
+    /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
+    ///
+    /// We keep these functions internal since we're not sure how we should interface this behavior.
+    /// If you have suggestions, please open a ticket or send us an email at support@getstream.io
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    internal func startWatching(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        updater.startWatching(cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Stop watching a channel
+    ///
+    /// Watching a channel is defined as observing notifications about this channel.
+    /// `ChannelController` watches the channel by default so if you want to create a `ChannelController`
+    ///  without watching the channel, either you can create it and call this function, or you can create it as:
+    /// ```
+    /// var query = _ChannelQuery<ExtraData>(cid: cid)
+    /// query.options = [] // by default, we pass `.watch` option here
+    /// let controller = client.channelController(for: query)
+    /// ```
+    ///
+    /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
+    ///
+    /// We keep these functions internal since we're not sure how we should interface this behavior.
+    /// If you have suggestions, please open a ticket or send us an email at support@getstream.io
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    internal func stopWatching(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        updater.stopWatching(cid: cid) { error in
             self.callback {
                 completion?(error)
             }

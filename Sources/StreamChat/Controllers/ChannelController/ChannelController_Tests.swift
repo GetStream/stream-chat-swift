@@ -2082,7 +2082,7 @@ class ChannelController_Tests: StressTestCase {
         // Simulate successful backend channel creation
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
         
-        // Simulate `markRead` call and assert no error is returned
+        // Simulate `disableSlowMode` call and assert no error is returned
         error = try await { [callbackQueueID] completion in
             controller.disableSlowMode { error in
                 AssertTestQueue(withId: callbackQueueID)
@@ -2138,6 +2138,166 @@ class ChannelController_Tests: StressTestCase {
         // Simulate failed update
         let testError = TestError()
         env.channelUpdater!.enableSlowMode_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    // MARK: - Start watching
+    
+    func test_startWatching_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = _ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+        
+        // Simulate `startWatching` call and assert error is returned
+        var error: Error? = try await { [callbackQueueID] completion in
+            controller.startWatching { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+        
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        
+        // Simulate `startWatching` call and assert no error is returned
+        error = try await { [callbackQueueID] completion in
+            controller.startWatching { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.startWatching_completion?(nil)
+        }
+        
+        XCTAssertNil(error)
+    }
+    
+    func test_startWatching_callsChannelUpdater() {
+        // Simulate `startWatching` call and catch the completion
+        var completionCalled = false
+        controller.startWatching { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert cid is passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.startWatching_cid, channelId)
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.channelUpdater!.startWatching_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.startWatching_completion = nil
+        
+        AssertAsync {
+            // Assert completion is called
+            Assert.willBeTrue(completionCalled)
+            // `weakController` should be deallocated too
+            Assert.canBeReleased(&weakController)
+        }
+    }
+    
+    func test_startWatching_propagatesErrorFromUpdater() {
+        // Simulate `startWatching` call and catch the completion
+        var completionCalledError: Error?
+        controller.startWatching { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.startWatching_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    // MARK: - Stop watching
+    
+    func test_stopWatching_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = _ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+        
+        // Simulate `stopWatching` call and assert error is returned
+        var error: Error? = try await { [callbackQueueID] completion in
+            controller.stopWatching { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+        
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        
+        // Simulate `stopWatching` call and assert no error is returned
+        error = try await { [callbackQueueID] completion in
+            controller.stopWatching { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.stopWatching_completion?(nil)
+        }
+        
+        XCTAssertNil(error)
+    }
+    
+    func test_stopWatching_callsChannelUpdater() {
+        // Simulate `stopWatching` call and catch the completion
+        var completionCalled = false
+        controller.stopWatching { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert cid is passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.stopWatching_cid, channelId)
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate successful update
+        env.channelUpdater!.stopWatching_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.stopWatching_completion = nil
+        
+        AssertAsync {
+            // Assert completion is called
+            Assert.willBeTrue(completionCalled)
+            // `weakController` should be deallocated too
+            Assert.canBeReleased(&weakController)
+        }
+    }
+    
+    func test_stopWatching_propagatesErrorFromUpdater() {
+        // Simulate `stopWatching` call and catch the completion
+        var completionCalledError: Error?
+        controller.stopWatching { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.stopWatching_completion?(testError)
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
