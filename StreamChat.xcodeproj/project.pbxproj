@@ -86,6 +86,9 @@
 		79158CE225F0E9DF00186102 /* ChannelTruncated.json in Resources */ = {isa = PBXBuildFile; fileRef = 79158CE125F0E9DF00186102 /* ChannelTruncated.json */; };
 		79158CF425F133FB00186102 /* ChannelTruncatedEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79158CF325F133FB00186102 /* ChannelTruncatedEventMiddleware.swift */; };
 		79158CFC25F1341300186102 /* ChannelTruncatedEventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79158CEA25F0EADF00186102 /* ChannelTruncatedEventMiddleware_Tests.swift */; };
+		79158D4425F15BE600186102 /* UIConfig+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79158D4325F15BE600186102 /* UIConfig+SwiftUI_Tests.swift */; };
+		79158D5325F15BF900186102 /* iOS13TestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79200D41250118A1002F4EB1 /* iOS13TestCase.swift */; };
+		79158D5B25F15CF900186102 /* AssertAsync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9466247D7919001F1104 /* AssertAsync.swift */; };
 		79177A2D248A6A2600F053A2 /* AssertAsync+Events.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */; };
 		791C0B6324EEBDF40013CA2F /* MessageSender_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */; };
 		791C0B6524EFBD260013CA2F /* UnwrapAsync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */; };
@@ -193,6 +196,7 @@
 		79682C4624BC9DAF0071578E /* ChannelUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79682C4524BC9DAF0071578E /* ChannelUpdater.swift */; };
 		79682C4A24BF37C80071578E /* MessagePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79682C4824BF37650071578E /* MessagePayloads.swift */; };
 		79682C4B24BF37CB0071578E /* ChannelListPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79682C4924BF37970071578E /* ChannelListPayload.swift */; };
+		7969D20225F15E3D00C66F87 /* TestRunnerEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7988F6B024D010890004219B /* TestRunnerEnvironment.swift */; };
 		797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */; };
 		797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756524814EF8003CF16D /* SystemEnvironment.swift */; };
 		797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756724814F0D003CF16D /* Bundle+Extensions.swift */; };
@@ -1007,6 +1011,7 @@
 		79158CE125F0E9DF00186102 /* ChannelTruncated.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelTruncated.json; sourceTree = "<group>"; };
 		79158CEA25F0EADF00186102 /* ChannelTruncatedEventMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTruncatedEventMiddleware_Tests.swift; sourceTree = "<group>"; };
 		79158CF325F133FB00186102 /* ChannelTruncatedEventMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelTruncatedEventMiddleware.swift; sourceTree = "<group>"; };
+		79158D4325F15BE600186102 /* UIConfig+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIConfig+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AssertAsync+Events.swift"; sourceTree = "<group>"; };
 		791C0B6224EEBDF40013CA2F /* MessageSender_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageSender_Tests.swift; sourceTree = "<group>"; };
 		791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnwrapAsync.swift; sourceTree = "<group>"; };
@@ -1878,6 +1883,7 @@
 				E7166CD925BED62D00B03B07 /* UIConfig+Navigation.swift */,
 				AD9A0FA325EE9FD800883C57 /* UIConfig+CurrentUser.swift */,
 				7844B16725EFB44600B87E89 /* UIConfig+SwiftUI.swift */,
+				79158D4325F15BE600186102 /* UIConfig+SwiftUI_Tests.swift */,
 				888123D0255D42F000070D5A /* Utils */,
 				888123E5255D51BD00070D5A /* CommonViews */,
 				7908830C2548707B00896F03 /* ChatMessageList */,
@@ -4331,12 +4337,18 @@
 				227299AA25DAA505005EAFCF /* ChatChannelReadStatusCheckmarkView_Tests.swift in Sources */,
 				227299B325DBF52D005EAFCF /* ChatChannelUnreadCountView_Tests.swift in Sources */,
 				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,
+				7969D20225F15E3D00C66F87 /* TestRunnerEnvironment.swift in Sources */,
+				79158D5325F15BF900186102 /* iOS13TestCase.swift in Sources */,
 				AD154C6D25DC3BA000850925 /* ChatMessageComposerCommandCollectionViewCell_Tests.swift in Sources */,
 				ADFCCD7625C9D4D10024505D /* SnapshotVariant.swift in Sources */,
 				2208246A25DFD0060033544B /* ChatChannelListRouter_Mock.swift in Sources */,
 				ADAA377125E43C3700C31528 /* ChatMessageComposerSuggestionsViewController_Tests.swift in Sources */,
 				E73262E025ED64AB008CB152 /* ChatChannelNamer_Tests.swift in Sources */,
 				E7AD958925D7510900076DC3 /* ChatMessageComposerMentionCellView_Tests.swift in Sources */,
+				79158D4425F15BE600186102 /* UIConfig+SwiftUI_Tests.swift in Sources */,
+				E7AD958925D7510900076DC3 /* ChatMessageComposerMentionCellView_Tests.swift in Sources */,
+				79158D5B25F15CF900186102 /* AssertAsync.swift in Sources */,
+				E791E4D625D3E2DA00B0E076 /* ChatChannelAvatarView_Tests.swift in Sources */,
 				225504C725DEA03700A5A65A /* ChatChannelListItemView_Tests.swift in Sources */,
 				79B4F0E625D305D40063FFB5 /* CurrentChatUserAvatarView_Tests.swift in Sources */,
 				AD016A1425CAFAF2009EBAD2 /* ChatChannelListVC_Tests.swift in Sources */,
