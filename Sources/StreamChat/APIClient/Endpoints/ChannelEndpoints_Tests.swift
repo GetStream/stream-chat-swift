@@ -324,6 +324,22 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+    
+    func test_stopWatching_buildsCorrectly() {
+        let cid = ChannelId.unique
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/stop-watching",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: nil
+        )
+        
+        let endpoint = Endpoint<EmptyResponse>.stopWatching(cid: cid)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
 
 extension ChannelEditDetailPayload where ExtraData == NoExtraData {

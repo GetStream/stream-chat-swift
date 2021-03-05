@@ -157,4 +157,14 @@ extension Endpoint {
             body: ["cooldown": cooldownDuration]
         )
     }
+    
+    static func stopWatching(cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath + "/stop-watching",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: nil
+        )
+    }
 }
