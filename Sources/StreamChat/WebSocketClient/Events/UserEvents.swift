@@ -34,7 +34,7 @@ public struct UserUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload,
 
 // MARK: - User Watching
 
-public struct UserWatchingEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
+public struct UserWatchingEvent: EventWithUserPayload, EventWithChannelId {
     public let cid: ChannelId
     public let userId: UserId
     public let createdAt: Date?
@@ -43,7 +43,7 @@ public struct UserWatchingEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         createdAt = response.createdAt

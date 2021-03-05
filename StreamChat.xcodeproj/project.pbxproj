@@ -185,6 +185,8 @@
 		795297062583B52000435B2E /* UserSearchController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795297052583B52000435B2E /* UserSearchController_Tests.swift */; };
 		7952B3B324D4560E00AC53D4 /* ChannelController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7952B3B224D314B100AC53D4 /* ChannelController_Tests.swift */; };
 		7952B3B524D45DA300AC53D4 /* ChannelUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7952B3B424D45D9400AC53D4 /* ChannelUpdater_Tests.swift */; };
+		79617CB125F236B600D54E61 /* UserWatchingEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79617CB025F236B600D54E61 /* UserWatchingEventMiddleware.swift */; };
+		79617CBA25F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79617CB925F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift */; };
 		7962958C248147430078EB53 /* BaseURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7962958B248147430078EB53 /* BaseURL.swift */; };
 		7964F3A4249A0ACF002A09EC /* ChannelListQueryDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */; };
 		7964F3AA249A19EA002A09EC /* Filter_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7964F3A9249A19EA002A09EC /* Filter_Tests.swift */; };
@@ -1121,6 +1123,8 @@
 		795297052583B52000435B2E /* UserSearchController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchController_Tests.swift; sourceTree = "<group>"; };
 		7952B3B224D314B100AC53D4 /* ChannelController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelController_Tests.swift; sourceTree = "<group>"; };
 		7952B3B424D45D9400AC53D4 /* ChannelUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUpdater_Tests.swift; sourceTree = "<group>"; };
+		79617CB025F236B600D54E61 /* UserWatchingEventMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWatchingEventMiddleware.swift; sourceTree = "<group>"; };
+		79617CB925F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserWatchingEventMiddleware_Tests.swift; sourceTree = "<group>"; };
 		7962958B248147430078EB53 /* BaseURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
 		7964F3A3249A0ACF002A09EC /* ChannelListQueryDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListQueryDTO.swift; sourceTree = "<group>"; };
 		7964F3A9249A19EA002A09EC /* Filter_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Filter_Tests.swift; sourceTree = "<group>"; };
@@ -2333,6 +2337,8 @@
 				889062422548387D00E1898E /* MessageReactionsMiddleware_Tests.swift */,
 				79D6CF1725FA671C00BE2EEC /* MemberEventMiddleware.swift */,
 				79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */,
+				79617CB025F236B600D54E61 /* UserWatchingEventMiddleware.swift */,
+				79617CB925F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift */,
 			);
 			path = EventMiddlewares;
 			sourceTree = "<group>";
@@ -4480,6 +4486,7 @@
 				799BE2EA248A8C9D00DAC8A0 /* WebSocketReconnectionStrategy.swift in Sources */,
 				DA84070C25250581005A0F62 /* UserListPayload.swift in Sources */,
 				79877A272498E50D00015F8B /* MemberModelDTO.swift in Sources */,
+				79617CB125F236B600D54E61 /* UserWatchingEventMiddleware.swift in Sources */,
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				8802F9EF25AF3D4200475159 /* HTTPHeader.swift in Sources */,
 				8A0C3BD424C1DF2100CAFD19 /* MessageEvents.swift in Sources */,
@@ -4666,6 +4673,7 @@
 				79896D622507B16000BA8F1C /* ChannelListUpdater_Mock.swift in Sources */,
 				79877A2A2498E51500015F8B /* MemberModelDTO_Tests.swift in Sources */,
 				F649B2372500F785008F98C8 /* MessageController_Tests.swift in Sources */,
+				79617CBA25F23AA400D54E61 /* UserWatchingEventMiddleware_Tests.swift in Sources */,
 				888E8C3F252B2AD600195E03 /* UserController+Combine_Tests.swift in Sources */,
 				8819DFE925262EBA00FD1A50 /* UserUpdater_Mock.swift in Sources */,
 				799C947D247E6114001F1104 /* TestError.swift in Sources */,

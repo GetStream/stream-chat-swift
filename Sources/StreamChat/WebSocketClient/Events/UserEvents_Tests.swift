@@ -17,14 +17,14 @@ class UserEvents_Tests: XCTestCase {
     
     func test_watchingEvent() throws {
         var json = XCTestCase.mockData(fromFile: "UserStartWatching")
-        var event = try eventDecoder.decode(from: json) as? UserWatchingEvent<NoExtraData>
+        var event = try eventDecoder.decode(from: json) as? UserWatchingEvent
         XCTAssertEqual(event?.userId, "broken-waterfall-5")
         XCTAssertTrue(event?.isStarted ?? false)
         XCTAssertTrue(event?.watcherCount ?? 0 > 0)
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
         
         json = XCTestCase.mockData(fromFile: "UserStopWatching")
-        event = try eventDecoder.decode(from: json) as? UserWatchingEvent<NoExtraData>
+        event = try eventDecoder.decode(from: json) as? UserWatchingEvent
         XCTAssertEqual(event?.userId, "steep-moon-9")
         XCTAssertFalse(event?.isStarted ?? false)
         XCTAssertTrue(event?.watcherCount ?? 0 > 0)
