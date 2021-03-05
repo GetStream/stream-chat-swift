@@ -16,6 +16,7 @@ _March 09, 2021_
 
 ### ✅ Added
 - Add support for slow mode. See more info in the [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift) [#859](https://github.com/GetStream/stream-chat-swift/issues/859)
+- Add support for channel watching events. See more info in the [documentation](https://getstream.io/chat/docs/ios/watch_channel/?language=swift) [#864](https://github.com/GetStream/stream-chat-swift/issues/864)
 - Add support for channel truncating [#864](https://github.com/GetStream/stream-chat-swift/issues/864)
 
 ### 🔄 Changed
