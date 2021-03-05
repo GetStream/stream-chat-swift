@@ -651,4 +651,81 @@ class ChannelUpdater_Tests: StressTestCase {
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+    
+    // MARK: - Start watching
+    
+    func test_startWatching_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        
+        channelUpdater.startWatching(cid: cid)
+        
+        var query = _ChannelQuery<ExtraData>(cid: cid)
+        query.options = .all
+        let referenceEndpoint: Endpoint<ChannelPayload<ExtraData>> = .channel(query: query)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_startWatching_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        let cid = ChannelId.unique
+        channelUpdater.startWatching(cid: cid) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: cid)
+        apiClient.test_simulateResponse(.success(payload))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_startWatching_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        channelUpdater.startWatching(cid: .unique) { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<ChannelPayload<NoExtraData>, Error>.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Stop watching
+    
+    func test_stopWatching_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        
+        channelUpdater.stopWatching(cid: cid)
+
+        let referenceEndpoint: Endpoint<EmptyResponse> = .stopWatching(cid: cid)
+        
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_stopWatching_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        let cid = ChannelId.unique
+        channelUpdater.stopWatching(cid: cid) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_stopWatching_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        channelUpdater.stopWatching(cid: .unique) { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
 }
