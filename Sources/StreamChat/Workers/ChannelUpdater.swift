@@ -189,4 +189,35 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
+    
+    /// Start watching a channel
+    ///
+    /// Watching a channel is defined as observing notifications about this channel.
+    /// Usually you don't need to call this function since `ChannelController` watches channels
+    /// by default.
+    ///
+    /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
+    ///
+    /// - Parameter cid: Channel id of the channel to be watched
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func startWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        var query = _ChannelQuery<ExtraData>(cid: cid)
+        query.options = .all
+        apiClient.request(endpoint: .channel(query: query)) {
+            completion?($0.error)
+        }
+    }
+    
+    /// Stop watching a channel
+    ///
+    /// Watching a channel is defined as observing notifications about this channel.
+    ///
+    /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
+    /// - Parameter cid: Channel id of the channel to stop watching
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func stopWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .stopWatching(cid: cid)) {
+            completion?($0.error)
+        }
+    }
 }

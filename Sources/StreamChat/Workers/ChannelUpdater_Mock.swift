@@ -56,6 +56,12 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var enableSlowMode_cooldownDuration: Int?
     @Atomic var enableSlowMode_completion: ((Error?) -> Void)?
     
+    @Atomic var startWatching_cid: ChannelId?
+    @Atomic var startWatching_completion: ((Error?) -> Void)?
+    
+    @Atomic var stopWatching_cid: ChannelId?
+    @Atomic var stopWatching_completion: ((Error?) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         update_channelQuery = nil
@@ -105,6 +111,12 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         enableSlowMode_cid = nil
         enableSlowMode_cooldownDuration = nil
         enableSlowMode_completion = nil
+        
+        startWatching_cid = nil
+        startWatching_completion = nil
+        
+        stopWatching_cid = nil
+        stopWatching_completion = nil
     }
     
     override func update(
@@ -190,5 +202,15 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         enableSlowMode_cid = cid
         enableSlowMode_cooldownDuration = cooldownDuration
         enableSlowMode_completion = completion
+    }
+    
+    override func startWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        startWatching_cid = cid
+        startWatching_completion = completion
+    }
+    
+    override func stopWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        stopWatching_cid = cid
+        stopWatching_completion = completion
     }
 }
