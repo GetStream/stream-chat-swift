@@ -143,11 +143,9 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
         where Delegate.ExtraData == ExtraData {
         multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(delegate)
     }
-}
 
-// MARK: - Actions
+    // MARK: - Actions
 
-public extension _ChatChannelListController {
     /// Loads next channels from backend.
     ///
     /// - Parameters:
@@ -155,7 +153,7 @@ public extension _ChatChannelListController {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func loadNextChannels(
+    public func loadNextChannels(
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -165,12 +163,12 @@ public extension _ChatChannelListController {
             self.callback { completion?(error) }
         }
     }
-    
+
     /// Marks all channels for a user as read.
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func markAllRead(completion: ((Error?) -> Void)? = nil) {
+    public func markAllRead(completion: ((Error?) -> Void)? = nil) {
         worker.markAllRead { error in
             self.callback {
                 completion?(error)

@@ -228,4 +228,33 @@ class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertEqual(mockedRouter.openChat_channel, vc.controller.channels.first)
     }
 
+    func test_channelList_loadsNextChannels_whenScrolledToBottom() {
+        let channelListVC = ChatChannelListVC()
+        channelListVC.controller = mockedChannelListController
+        // There are just 3 items mocked, so it's okay to add content offset of 1000,
+        // because the scrollView will definitely be scrolled most-down
+        channelListVC.collectionView.contentOffset = .init(x: 0, y: 1000)
+        channelListVC.scrollViewDidEndDecelerating(channelListVC.collectionView)
+        XCTAssertTrue(mockedChannelListController.loadNextChannelsIsCalled)
+    }
+
+    func test_usesCorrectUIConfigTypes_whenCustomTypesDefined() {
+        // Create default ChatChannelListVC which has everything default from `UIConfig`
+        let channelListVC = ChatChannelListVC()
+
+        // Create new config to edit types...
+        var customConfig = channelListVC.uiConfig
+
+        class OtherCollectionLayout: UICollectionViewLayout { }
+        class OtherCollectionView: UICollectionView { }
+
+        customConfig.channelList.collectionLayout = OtherCollectionLayout.self
+        customConfig.channelList.collectionView = OtherCollectionView.self
+
+        channelListVC.uiConfig = customConfig
+
+        XCTAssert(channelListVC.collectionViewLayout is OtherCollectionLayout)
+        XCTAssert(channelListVC.collectionView is OtherCollectionView)
+        XCTAssert(channelListVC.createNewChannelButton is ChatChannelCreateNewButton)
+    }
 }
