@@ -43,7 +43,7 @@ struct DefaultRequestDecoder: RequestDecoder {
             throw ClientError.ResponseBodyEmpty()
         }
         
-        log.info("URL request response: \(httpResponse), data: \(data))")
+        log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))")
         
         guard httpResponse.statusCode < 400 else {
             guard let serverError = try? JSONDecoder.default.decode(ErrorPayload.self, from: data) else {
