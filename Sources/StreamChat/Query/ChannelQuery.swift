@@ -53,8 +53,8 @@ public struct _ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     
     /// Path parameters that are used in endpoints.
     var pathParameters: String {
-        guard let id = id else { return "\(type)" }
-        return "\(type)/\(id)"
+        guard let id = id else { return type.rawValue }
+        return type.rawValue + "/" + id
     }
 
     /// Init a channel query.
