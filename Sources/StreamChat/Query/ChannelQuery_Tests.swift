@@ -57,6 +57,32 @@ class ChannelQuery_Tests: XCTestCase {
         let query2: ChannelQuery = .init(cid: cid)
         
         // Assert type and id are part of path
-        XCTAssertEqual(query2.pathParameters, "\(query2.type)/\(query2.id!)")
+        XCTAssertEqual(query2.pathParameters, "\(query2.type.rawValue)/\(query2.id!)")
+    }
+    
+    func test_pathParameters_customType() {
+        let query: ChannelQuery = .init(channelPayload: .init(
+            type: .custom("custom_type"),
+            name: .unique,
+            imageURL: .unique(),
+            team: nil,
+            members: [.unique],
+            invites: [],
+            extraData: .defaultValue
+        ))
+        XCTAssertEqual(query.pathParameters, "custom_type")
+    }
+    
+    func test_pathParameters_customTypeAndId() {
+        let query: ChannelQuery = .init(channelPayload: .init(
+            cid: .init(type: .custom("custom_type"), id: "id"),
+            name: .unique,
+            imageURL: .unique(),
+            team: nil,
+            members: [.unique],
+            invites: [],
+            extraData: .defaultValue
+        ))
+        XCTAssertEqual(query.pathParameters, "custom_type/id")
     }
 }
