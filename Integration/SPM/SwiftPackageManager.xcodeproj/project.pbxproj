@@ -91,7 +91,6 @@
 				792E3D7725C97F6D0040B0C2 /* Sources */,
 				792E3D7825C97F6D0040B0C2 /* Frameworks */,
 				792E3D7925C97F6D0040B0C2 /* Resources */,
-				79FBE51625CC9FB1006C0459 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -150,27 +149,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		79FBE51625CC9FB1006C0459 /* SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = SwiftLint;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which mint >/dev/null && mint which swiftlint; then\n  xcrun --sdk macosx mint run swiftlint lint ./Integration/SPM --config .swiftlint.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		792E3D7725C97F6D0040B0C2 /* Sources */ = {

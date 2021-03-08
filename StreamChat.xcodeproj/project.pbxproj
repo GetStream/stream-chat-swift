@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 54;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -3714,7 +3714,6 @@
 				790881F925432B7200896F03 /* Sources */,
 				790881FA25432B7200896F03 /* Frameworks */,
 				790881FB25432B7200896F03 /* Resources */,
-				7926DA902563F35900F5D306 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -3760,7 +3759,6 @@
 				792A4F1F247FF01800EAF71D /* Frameworks */,
 				792A4F20247FF01800EAF71D /* Resources */,
 				79200D48250140BB002F4EB1 /* Embed Frameworks */,
-				7990A5DD256BE4CC00389DF7 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -3780,7 +3778,6 @@
 				792DDA53256FB69E001DB91B /* Sources */,
 				792DDA54256FB69E001DB91B /* Frameworks */,
 				792DDA55256FB69E001DB91B /* Resources */,
-				792DDA73256FB723001DB91B /* SwiftLint */,
 				79940B90258398A500791EAE /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -3843,7 +3840,6 @@
 				799C9417247D2F80001F1104 /* Sources */,
 				799C9418247D2F80001F1104 /* Frameworks */,
 				799C9419247D2F80001F1104 /* Resources */,
-				8ABC329924EAC40700CFC920 /* SwiftLint */,
 			);
 			buildRules = (
 			);
@@ -4116,61 +4112,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		7926DA902563F35900F5D306 /* SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = SwiftLint;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which mint >/dev/null && mint which swiftlint; then\n  xcrun --sdk macosx mint run swiftlint lint ./Sources/StreamChatUI ./Tests/StreamChatUI --config .swiftlint.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
-		};
-		792DDA73256FB723001DB91B /* SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = SwiftLint;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which mint >/dev/null && mint which swiftlint; then\n  xcrun --sdk macosx mint run swiftlint lint ./DemoApp --config .swiftlint.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
-		};
-		7990A5DD256BE4CC00389DF7 /* SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = SwiftLint;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which mint >/dev/null && mint which swiftlint; then\n  xcrun --sdk macosx mint run swiftlint lint ./Sample --config .swiftlint.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n\n";
-		};
 		88F0D6EB257E40B300F4B050 /* SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -4188,25 +4129,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if which mint >/dev/null && mint which swiftgen; then\n  xcrun --sdk macosx mint run swiftgen config run --config ./Sources/StreamChatUI/.swiftgen.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
-		};
-		8ABC329924EAC40700CFC920 /* SwiftLint */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = SwiftLint;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "if which mint >/dev/null && mint which swiftlint; then\n  xcrun --sdk macosx mint run swiftlint lint ./Sources/StreamChat ./Tests/StreamChat --config .swiftlint.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
