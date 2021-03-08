@@ -135,6 +135,28 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
         return invalidationContext
     }
+    
+    override open func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        collectionView.map { $0.bounds.size != newBounds.size } ?? true
+    }
+    
+    override open func invalidationContext(forBoundsChange newBounds: CGRect) -> UICollectionViewLayoutInvalidationContext {
+        let context = super.invalidationContext(forBoundsChange: newBounds)
+        
+        guard let collectionView = collectionView else { return context }
+        
+        let delta = newBounds.height - collectionView.bounds.height
+        
+        // If collectionView is shrinking and most recent message is visible, we will make sure it is still fully visible,
+        // but if the conversation is short and not scrollable, this adjustment would be unwanted
+        if delta < 0,
+           collectionView.indexPathsForVisibleItems.contains(IndexPath(item: 0, section: 0)),
+           collectionView.contentOffset.y > -collectionView.contentInset.top {
+            context.contentOffsetAdjustment = CGPoint(x: 0, y: -delta)
+        }
+
+        return context
+    }
 
     // MARK: - Animation updates
 
