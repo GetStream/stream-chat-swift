@@ -27,6 +27,11 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         public func attribute(for index: Int, width: CGFloat) -> UICollectionViewLayoutAttributes {
             let attribute = UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
             attribute.frame = CGRect(x: 0, y: offset, width: width, height: height)
+            // default `zIndex` value is 0, but for some undocumented reason self-sizing
+            // (concretely `contentView.systemLayoutFitting(...)`) doesn't work correctly,
+            // so we need to make sure we do not use it, we need to add 1 so indexPath 0-0 doesn't have
+            // problematic 0 zIndex
+            attribute.zIndex = index + 1
             return attribute
         }
     }
