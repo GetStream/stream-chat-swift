@@ -256,7 +256,7 @@ class MessageDTO_Tests: XCTestCase {
             // Save the message
             let messageDTO = try! session.saveMessage(payload: messagePayload, for: channelId)
             // Make the extra data JSON invalid
-            messageDTO.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+            messageDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
         let loadedMessage: ChatMessage? = database.viewContext.message(id: messageId)?.asModel()

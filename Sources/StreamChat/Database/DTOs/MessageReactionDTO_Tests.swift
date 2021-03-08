@@ -112,7 +112,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
             // Save message reaction to the database.
             let dto = try session.saveReaction(payload: payload)
             // Corrupt extra data.
-            dto.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+            dto.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
         // Load saved message reaction.

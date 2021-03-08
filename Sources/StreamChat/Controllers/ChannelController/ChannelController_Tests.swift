@@ -505,7 +505,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssertEqual(controller.messages.count, 10)
 
         // Set channel `truncatedAt` date before the 5th message
-        let truncatedAtDate = self.controller.messages[4].createdAt.addingTimeInterval(-0.1)
+        let truncatedAtDate = controller.messages[4].createdAt.addingTimeInterval(-0.1)
         try client.databaseContainer.writeSynchronously {
             $0.channel(cid: self.channelId)?.truncatedAt = truncatedAtDate
         }

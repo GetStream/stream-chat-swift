@@ -1,5 +1,5 @@
 //
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -10,7 +10,6 @@ public typealias CellSeparatorReusableView = _CellSeparatorReusableView<NoExtraD
 
 /// The cell separator reusable view that acts as container of the visible part of the separator view.
 open class _CellSeparatorReusableView<ExtraData: ExtraDataTypes>: _CollectionReusableView, UIConfigProvider {
-
     /// The visible part of separator view.
     open lazy var separatorView = UIView().withoutAutoresizingMaskConstraints
 

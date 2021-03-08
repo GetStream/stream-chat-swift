@@ -10,7 +10,6 @@ public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
 /// A `ChatChannelSwipeableListItemView` subclass view that shows channel information.
 open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
-    
     /// The data this view component shows.
     public var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContentIfNeeded() }
@@ -79,12 +78,12 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     public private(set) var layout = Layout()
 
     /*
-        TODO: ReadStatusView, Missing LLC API
-    /// The view showing indicator for read status of the last message in channel.
-    open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
-        .readStatusView.init()
-        .withoutAutoresizingMaskConstraints
-     */
+         TODO: ReadStatusView, Missing LLC API
+     /// The view showing indicator for read status of the last message in channel.
+     open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
+         .readStatusView.init()
+         .withoutAutoresizingMaskConstraints
+      */
 
     override public func defaultAppearance() {
         super.defaultAppearance()
@@ -146,7 +145,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         layout.titleLabelConstraints = [
             // Bottom of the label is aligned with avatar vertical center
             titleLabel.lastBaselineAnchor.pin(equalTo: visualCenterGuide.topAnchor),
-
+            
             // Pin the title label leading anchor to avatar's trailing + spacing
             titleLabel.leadingAnchor.pin(equalToSystemSpacingAfter: avatarView.trailingAnchor),
             
@@ -186,7 +185,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
             
             // Align it vertically with the subtitle
             timestampLabel.centerYAnchor.pin(equalTo: subtitleLabel.centerYAnchor),
-        
+            
             // Subtitle label shouldn't overlap
             timestampLabel.leadingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: subtitleLabel.trailingAnchor)
         ]
@@ -227,7 +226,6 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
 }
 
 extension _ChatChannelListItemView {
-
     /// The `subtitleLabel` will show the current typing member or the last message in the channel.
     var typingMemberOrLastMessageString: String? {
         guard let channel = content.channel else { return nil }
@@ -250,7 +248,7 @@ extension _ChatChannelListItemView {
             .joined(separator: ", ")
 
         let typingSingularText = L10n.Channel.Item.typingSingular
-        let typingPluralText  = L10n.Channel.Item.typingPlural
+        let typingPluralText = L10n.Channel.Item.typingPlural
 
         return names + " \(members.count == 1 ? typingSingularText : typingPluralText)"
     }

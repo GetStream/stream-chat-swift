@@ -228,7 +228,7 @@ extension _ChatChannel {
         
         var unreadCount = ChannelUnreadCount.noUnread
         if let currentUser = context.currentUser(),
-            let currentUserChannelRead = reads.first(where: { $0.user.id == currentUser.user.id }) {
+           let currentUserChannelRead = reads.first(where: { $0.user.id == currentUser.user.id }) {
             // Fetch count of all mentioned messages after last read
             let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
             request.predicate = NSPredicate(

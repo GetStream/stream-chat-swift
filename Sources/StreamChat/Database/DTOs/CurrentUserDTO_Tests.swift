@@ -70,7 +70,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             // Save the user
             let userDTO = try! session.saveCurrentUser(payload: payload)
             // Make the extra data JSON invalid
-            userDTO.user.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+            userDTO.user.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
         let loadedUser: CurrentChatUser? = database.viewContext.currentUser()?.asModel()

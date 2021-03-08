@@ -10,7 +10,6 @@ public typealias ChatChannelReadStatusCheckmarkView = _ChatChannelReadStatusChec
 
 /// A view that shows a read/unread status of the last message in channel.
 open class _ChatChannelReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-
     /// An underlying type for status in the view.
     /// Right now corresponding functionality in LLC is missing and it will likely be replaced with the type from LLC.
     public enum Status {

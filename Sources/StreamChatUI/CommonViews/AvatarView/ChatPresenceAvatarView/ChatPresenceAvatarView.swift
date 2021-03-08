@@ -10,7 +10,6 @@ public typealias ChatPresenceAvatarView = _ChatPresenceAvatarView<NoExtraData>
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).
 open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-
     /// A view that shows the avatar image
     open private(set) lazy var avatarView: ChatAvatarView = uiConfig
         .avatarView.init()
@@ -36,5 +35,4 @@ open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
             .pin(equalTo: widthAnchor, multiplier: 0.3)
             .isActive = true
     }
-
 }

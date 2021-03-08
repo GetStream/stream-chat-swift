@@ -292,7 +292,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
         }
         
         if shouldReconnect,
-            let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) {
+           let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) {
             let clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
             connectionState = .waitingForReconnect(error: clientError)
             
@@ -310,7 +310,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
                 // Check the current state is still "disconnected" with an internet-down error. If not, it means
                 // the state was changed manually and we don't want to reconnect automatically.
                 if case let .disconnected(error) = self?.connectionState,
-                    error?.underlyingError?.isInternetOfflineError == true {
+                   error?.underlyingError?.isInternetOfflineError == true {
                     self?.connect()
                 }
             }

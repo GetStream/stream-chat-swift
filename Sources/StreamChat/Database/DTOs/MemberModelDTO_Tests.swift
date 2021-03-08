@@ -92,7 +92,7 @@ class MemberModelDTO_Tests: XCTestCase {
             // Save the member
             let memberDTO = try! session.saveMember(payload: payload, channelId: channelId)
             // Make the extra data JSON invalid
-            memberDTO.user.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+            memberDTO.user.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
         let loadedMember: ChatChannelMember? = database.viewContext.member(userId: userId, cid: channelId)?.asModel()

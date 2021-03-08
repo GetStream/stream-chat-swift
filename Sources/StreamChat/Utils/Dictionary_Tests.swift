@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -9,7 +9,7 @@ final class Dictionary_Tests: StressTestCase {
     func test_mapKeys() {
         // Declare key transformation closure.
         let keyTransform: (String) -> String = {
-            return [$0, $0].joined(separator: " ")
+            [$0, $0].joined(separator: " ")
         }
         
         // Create array of keys with values.

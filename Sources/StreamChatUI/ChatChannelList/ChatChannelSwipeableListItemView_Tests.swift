@@ -8,7 +8,6 @@ import StreamChatTestTools
 import XCTest
 
 class ChatChannelSwipeableListItemView_Tests: XCTestCase {
-
     func test_defaultAppearance() {
         let view = ChatChannelSwipeableListItemView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
@@ -136,7 +135,6 @@ class ChatChannelSwipeableListItemView_Tests: XCTestCase {
         XCTAssert(itemView.actionButtonStack is TestStackView)
         XCTAssert(itemView.deleteButton is TestButton)
     }
-    
 }
 
 private extension ChatChannelSwipeableListItemView {

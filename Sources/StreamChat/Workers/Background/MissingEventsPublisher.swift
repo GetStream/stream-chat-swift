@@ -66,7 +66,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
     private func fetchAndReplayMissingEvents() {
         database.backgroundReadOnlyContext.perform { [weak self] in
             guard let lastSyncedAt = self?.lastSyncedAt,
-                let allChannels = self?.allChannels else { return }
+                  let allChannels = self?.allChannels else { return }
             
             let watchedChannelIDs = allChannels.map(\.cid).compactMap { try? ChannelId(cid: $0) }
             

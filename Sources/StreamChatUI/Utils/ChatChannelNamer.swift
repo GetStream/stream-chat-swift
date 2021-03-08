@@ -43,7 +43,7 @@ public func DefaultChatChannelNamer<ExtraData: ExtraDataTypes>(
     maxMemberNames: Int = 2,
     separator: String = ","
 ) -> _ChatChannelNamer<ExtraData> {
-    return { channel, currentUserId in
+    { channel, currentUserId in
         if let channelName = channel.name, !channelName.isEmpty {
             // If there's an assigned name and it's not empty, we use it
             return channelName

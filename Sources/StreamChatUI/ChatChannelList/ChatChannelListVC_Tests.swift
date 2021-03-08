@@ -251,8 +251,8 @@ class ChatChannelListVC_Tests: XCTestCase {
         // Create new config to edit types...
         var customConfig = channelListVC.uiConfig
 
-        class OtherCollectionLayout: UICollectionViewLayout { }
-        class OtherCollectionView: UICollectionView { }
+        class OtherCollectionLayout: UICollectionViewLayout {}
+        class OtherCollectionView: UICollectionView {}
 
         customConfig.channelList.collectionLayout = OtherCollectionLayout.self
         customConfig.channelList.collectionView = OtherCollectionView.self

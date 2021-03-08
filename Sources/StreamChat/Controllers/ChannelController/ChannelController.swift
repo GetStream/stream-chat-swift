@@ -819,7 +819,7 @@ public extension _ChatChannelController {
             channelModificationFailed(completion)
             return
         }
-        guard cooldownDuration >= 1, cooldownDuration <= 120 else {
+        guard cooldownDuration >= 1 && cooldownDuration <= 120 else {
             callback {
                 completion?(ClientError.InvalidCooldownDuration())
             }

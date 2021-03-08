@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -11,7 +11,6 @@ import Foundation
 ///
 /// Common examples are: "like", "love", "smile", etc.
 public struct MessageReactionType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
-    
     // MARK: - RawRepresentable
     
     public let rawValue: String

@@ -476,7 +476,7 @@ class ChatClient_Tests: StressTestCase {
                     // 1. Check `currentUserId` is fetched synchronously
                     // 2. `webSocket` has correct connect endpoint
                     if chatClient.currentUserId == currentUserId,
-                        chatClient.webSocketClient?.connectEndpoint.map(AnyEndpoint.init) == expectedWebSocketEndpoint {
+                       chatClient.webSocketClient?.connectEndpoint.map(AnyEndpoint.init) == expectedWebSocketEndpoint {
                         completion(nil)
                     } else {
                         completion(TestError())
