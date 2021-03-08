@@ -1870,6 +1870,7 @@
 				792A4F412480103A00EAF71D /* Query */,
 				79280F3D2484E33C00CDEB89 /* Errors */,
 				792A4F3A247FFB7600EAF71D /* Utils */,
+				AD7292EB25F6C8C500ED2150 /* Generated */,
 				799C941D247D2F80001F1104 /* Sources.h */,
 				799C941E247D2F80001F1104 /* Info.plist */,
 			);
@@ -2139,7 +2140,6 @@
 				DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */,
 				792A4F3B247FFBB400EAF71D /* Timers.swift */,
 				797A756524814EF8003CF16D /* SystemEnvironment.swift */,
-				E7AD954E25D536AA00076DC3 /* SystemEnvironment+Version.swift */,
 				797A756724814F0D003CF16D /* Bundle+Extensions.swift */,
 				792FCB4824A3BF38000290C7 /* OptionSet+Extensions.swift */,
 				792B804F24D95B5D00C2963E /* Cached.swift */,
@@ -3434,6 +3434,14 @@
 				E7DF7E2325C2C67E00AE9D21 /* ChatAvatarView.swift */,
 			);
 			path = AvatarView;
+			sourceTree = "<group>";
+		};
+		AD7292EB25F6C8C500ED2150 /* Generated */ = {
+			isa = PBXGroup;
+			children = (
+				E7AD954E25D536AA00076DC3 /* SystemEnvironment+Version.swift */,
+			);
+			path = Generated;
 			sourceTree = "<group>";
 		};
 		AD81AEEB25ED132400F17F8F /* ListCollectionViewLayout */ = {
