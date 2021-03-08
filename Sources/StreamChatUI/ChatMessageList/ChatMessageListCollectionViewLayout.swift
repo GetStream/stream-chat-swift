@@ -71,6 +71,10 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     /// If we return wrong attributes user will see artifacts and broken layout during batch update animation.
     /// By not returning any attributes during batch updates we are able to prevent such artifacts.
     open var preBatchUpdatesCall = false
+    
+    /// As we very often need to preserve scroll offset after performBatchUpdates, the simplest solution is to save original
+    /// contentOffset and set it when batch updates end
+    open var restoreOffset: CGFloat?
 
     // MARK: - Initialization
 
@@ -183,6 +187,9 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 //            @unknown default: break
 //            }
 //        }
+        
+        // used to determine what contentOffset should be restored after batch updates
+        restoreOffset = collectionView.map { collectionViewContentSize.height - $0.contentOffset.y }
 
         preBatchUpdatesCall = false
         super.prepare(forCollectionViewUpdates: updateItems)
@@ -193,6 +200,15 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         disappearingItems.removeAll()
         animatingAttributes.removeAll()
         super.finalizeCollectionViewUpdates()
+        restoreOffset = nil
+    }
+    
+    override open func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+        // if we have any content offset to restore, restore it
+        if let restore = restoreOffset {
+            return CGPoint(x: 0, y: collectionViewContentSize.height - restore)
+        }
+        return proposedContentOffset
     }
 
     // MARK: - Main layout access
