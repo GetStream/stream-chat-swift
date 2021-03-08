@@ -30,6 +30,9 @@ struct MemberPayload<ExtraData: UserExtraData>: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case role
+        case isBanned = "banned"
+        case isShadowBanned = "shadow_banned"
+        case banExpiresAt = "ban_expires"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case isInvited = "invited"
@@ -41,6 +44,16 @@ struct MemberPayload<ExtraData: UserExtraData>: Decodable {
     let role: MemberRole?
     let createdAt: Date
     let updatedAt: Date
+
+    /// If the member is banned from the channel, this field contains the date when the ban expires.
+    let banExpiresAt: Date?
+
+    /// Is true if the member is banned from the channel
+    let isBanned: Bool?
+
+    /// Is true if the member is shadow banned from the channel
+    let isShadowBanned: Bool?
+
     /// Checks if he was invited.
     let isInvited: Bool?
     /// A date when an invited was accepted.
@@ -53,6 +66,9 @@ struct MemberPayload<ExtraData: UserExtraData>: Decodable {
         role: MemberRole?,
         createdAt: Date,
         updatedAt: Date,
+        banExpiresAt: Date? = nil,
+        isBanned: Bool? = nil,
+        isShadowBanned: Bool? = nil,
         isInvited: Bool? = nil,
         inviteAcceptedAt: Date? = nil,
         inviteRejectedAt: Date? = nil
@@ -61,6 +77,9 @@ struct MemberPayload<ExtraData: UserExtraData>: Decodable {
         self.role = role
         self.createdAt = createdAt
         self.updatedAt = updatedAt
+        self.banExpiresAt = banExpiresAt
+        self.isBanned = isBanned
+        self.isShadowBanned = isShadowBanned
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt

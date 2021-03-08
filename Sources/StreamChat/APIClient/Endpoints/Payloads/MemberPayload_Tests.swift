@@ -14,6 +14,9 @@ class MemberPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.role, .owner)
         XCTAssertEqual(payload.createdAt, "2020-06-05T12:53:09.862721Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-05T12:53:09.862721Z".toDate())
+        XCTAssertEqual(payload.banExpiresAt, "2021-03-08T15:42:31.355923Z".toDate())
+        XCTAssertEqual(payload.isBanned, true)
+        XCTAssertEqual(payload.isShadowBanned, true)
         
         XCTAssertNotNil(payload.user)
         XCTAssertEqual(payload.user.id, "broken-waterfall-5")

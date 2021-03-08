@@ -1,6 +1,10 @@
 {
   "created_at" : "2020-06-05T12:53:09.862721Z",
   "updated_at" : "2020-06-05T12:53:09.862721Z",
+  "banned" : true,
+  "shadow_banned" : true,
+  "ban_expires" : "2021-03-08T15:42:31.355923Z",
+  "user_id" : "broken-waterfall-5",
   "role" : "owner",
   "user" : {
     "id" : "broken-waterfall-5",
