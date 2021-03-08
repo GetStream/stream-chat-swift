@@ -192,7 +192,6 @@ public struct ChannelReadPayload<ExtraData: ExtraDataTypes>: Decodable {
 
 /// A channel config.
 public struct ChannelConfig: Codable {
-    // swiftlint:disable:next nesting
     private enum CodingKeys: String, CodingKey {
         case reactionsEnabled = "reactions"
         case typingEventsEnabled = "typing_events"

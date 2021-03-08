@@ -262,7 +262,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         currentCollectionViewWidth = cv.bounds.width
 
         let count = cv.numberOfItems(inSection: 0)
-        guard count > 0 else { return } // swiftlint:disable:this empty_count
+        guard count > 0 else { return }
 
         let height = estimatedItemHeight * CGFloat(count) + spacing * CGFloat(count - 1)
         var offset: CGFloat = height

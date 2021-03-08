@@ -819,7 +819,7 @@ public extension _ChatChannelController {
             channelModificationFailed(completion)
             return
         }
-        guard cooldownDuration >= 1 && cooldownDuration <= 120 else {
+        guard cooldownDuration >= 1, cooldownDuration <= 120 else {
             callback {
                 completion?(ClientError.InvalidCooldownDuration())
             }
@@ -1109,7 +1109,6 @@ extension AnyChannelControllerDelegate where ExtraData == NoExtraData {
 extension ClientError {
     class ChannelNotCreatedYet: ClientError {
         override public var localizedDescription: String {
-            // swiftlint:disable:next line_length
             "You can't modify the channel because the channel hasn't been created yet. Call `synchronize()` to create the channel and wait for the completion block to finish. Alternatively, you can observe the `state` changes of the controller and wait for the `remoteDataFetched` state."
         }
     }

@@ -414,7 +414,7 @@ private extension _ChatMessageController {
         let observer = environment.messageObserverBuilder(
             client.databaseContainer.viewContext,
             MessageDTO.message(withID: messageId),
-            { $0.asModel() }, // swiftlint:disable:this opening_brace
+            { $0.asModel() },
             NSFetchedResultsController<MessageDTO>.self
         )
         

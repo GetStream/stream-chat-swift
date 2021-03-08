@@ -41,7 +41,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     // MARK: - Properties
 
     public var controller: _ChatChannelController<ExtraData>?
-    public var delegate: Delegate? // swiftlint:disable:this weak_delegate
+    public var delegate: Delegate?
     var shouldShowMentions = false
     
     public var state: State = .initial {
@@ -139,7 +139,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
         
         if let memberCount = controller?.channel?.memberCount,
-            threadParentMessage != nil {
+           threadParentMessage != nil {
             composerView.setCheckmarkView(hidden: false)
             
             if memberCount > 2 {
@@ -188,7 +188,6 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     // There are some issues with new-style KVO so that is something that will need attention later.
-    // swiftlint:disable block_based_kvo
     override open func observeValue(
         forKeyPath keyPath: String?,
         of object: Any?,
@@ -428,7 +427,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 promptMentions(for: nil)
             }
         } else if let commands = controller?.channel?.config.commands,
-            text.trimmingCharacters(in: .whitespacesAndNewlines).first == "/" {
+                  text.trimmingCharacters(in: .whitespacesAndNewlines).first == "/" {
             prompt(commands: commands, for: text)
         } else {
             dismissSuggestionsViewController()

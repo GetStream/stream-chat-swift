@@ -18,7 +18,7 @@ public typealias ChatMessageActionsVC = _ChatMessageActionsVC<NoExtraData>
 
 open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
     public var messageController: _ChatMessageController<ExtraData>!
-    public var delegate: Delegate? // swiftlint:disable:this weak_delegate
+    public var delegate: Delegate?
     public lazy var router = uiConfig.navigation.messageActionsRouter.init(rootViewController: self)
 
     private var message: _ChatMessage<ExtraData>? {
@@ -146,8 +146,8 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
 
 // MARK: - Delegate
 
-extension _ChatMessageActionsVC {
-    public struct Delegate {
+public extension _ChatMessageActionsVC {
+    struct Delegate {
         public var didTapOnInlineReply: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
         public var didTapOnThreadReply: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
         public var didTapOnEdit: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void

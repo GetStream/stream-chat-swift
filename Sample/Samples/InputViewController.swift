@@ -28,7 +28,7 @@ class InputViewController<InputType: LosslessStringConvertible>: UITableViewCont
         self.title = title
     }
     
-    // swiftlint:disable unavailable_function
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -35,97 +35,97 @@ enum Configuration {
             [
                 TestUser(
                     name: "Luke Skywalker",
-                    id: "luke_skywalker", // swiftlint:disable:next line_length
+                    id: "luke_skywalker",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIifQ.kFSLHRB5X62t0Zlc7nwczWUfsQMwfkpylC6jCUZ6Mc0"
                 ),
                 
                 TestUser(
                     name: "Leia Organa",
-                    id: "leia_organa", // swiftlint:disable:next line_length
+                    id: "leia_organa",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGVpYV9vcmdhbmEifQ.IzwBuaYwX5dRvnDDnJN2AyW3wwfYwgQm3w-1RD4BLPU"
                 ),
                 
                 TestUser(
                     name: "Han Solo",
-                    id: "han_solo", // swiftlint:disable:next line_length
+                    id: "han_solo",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiaGFuX3NvbG8ifQ.R6PkQeGPcusALmhvaST50lwroL_JkZnI3Q7hQ1Hvj3k"
                 ),
                 
                 TestUser(
                     name: "Lando Calrissian",
-                    id: "lando_calrissian", // swiftlint:disable:next line_length
+                    id: "lando_calrissian",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibGFuZG9fY2Fscmlzc2lhbiJ9.n_K7d-FroQzBUxETNcEQYqiW_U9CPjRHZHT1hyAjlAQ"
                 ),
                 
                 TestUser(
                     name: "Chewbacca",
-                    id: "chewbacca", // swiftlint:disable:next line_length
+                    id: "chewbacca",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiY2hld2JhY2NhIn0.4nNFfO0dehvdLxDUGaMQPpMliSTGjHqh1C2Zo8wyaeM"
                 ),
                 
                 TestUser(
                     name: "C-3PO",
-                    id: "c-3po", // swiftlint:disable:next line_length
+                    id: "c-3po",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYy0zcG8ifQ.J4Xzu8rKP1XWQvSNV6wzWKW403qKd5N3FalpWXTDauw"
                 ),
                 
                 TestUser(
                     name: "R2-D2",
-                    id: "r2-d2", // swiftlint:disable:next line_length
+                    id: "r2-d2",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicjItZDIifQ.UpSEW8jA2tYsUTPKbdFGMtHHnu9_AnEQqTK6TdT8L1g"
                 ),
                 
                 TestUser(
                     name: "Anakin Skywalker",
-                    id: "anakin_skywalker", // swiftlint:disable:next line_length
+                    id: "anakin_skywalker",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYW5ha2luX3NreXdhbGtlciJ9.oJkwakjdqw6gCA3-kaUaKqSVEcWO5ob5DJuyJCtnT6U"
                 ),
                 
                 TestUser(
                     name: "Obi-Wan Kenobi",
-                    id: "obi-wan_kenobi", // swiftlint:disable:next line_length
+                    id: "obi-wan_kenobi",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoib2JpLXdhbl9rZW5vYmkifQ.AVOtnXtMq9crXFwl68BrBRob335phYpYfPPq5i2agUM"
                 ),
                 
                 TestUser(
                     name: "Padme Amidala",
-                    id: "padme_amidala", // swiftlint:disable:next line_length
+                    id: "padme_amidala",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicGFkbWVfYW1pZGFsYSJ9.X8CwsnrWKvdrS6XchcUMZDLh_W0X4Gpx-oNyjGAdenI"
                 ),
                 
                 TestUser(
                     name: "Qui-Gon Jinn",
-                    id: "qui-gon_jinn", // swiftlint:disable:next line_length
+                    id: "qui-gon_jinn",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoicXVpLWdvbl9qaW5uIn0.EDuyuTkyzG1OA3ROwa3sK8-K_U2MGREsY4Ic7flXvzw"
                 ),
                 
                 TestUser(
                     name: "Mace Windu",
-                    id: "mace_windu", // swiftlint:disable:next line_length
+                    id: "mace_windu",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoibWFjZV93aW5kdSJ9.x8xFcOQFr0XUDeA3BH0ISsR2VSmWSxmMgbnz8lprV58"
                 ),
                 
                 TestUser(
                     name: "Jar Jar Binks",
-                    id: "jar_jar_binks", // swiftlint:disable:next line_length
+                    id: "jar_jar_binks",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiamFyX2phcl9iaW5rcyJ9.5-GhGE8sqlxKNUMyBGovrkoaxgkEQAUMJ3CZfcxyrZg"
                 ),
                 
                 TestUser(
                     name: "Darth Maul",
-                    id: "darth_maul", // swiftlint:disable:next line_length
+                    id: "darth_maul",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZGFydGhfbWF1bCJ9._cbBA2ThWpXcyxwvBV6gvqAwnw0lvzfHAlZ4stGqf2o"
                 ),
                 
                 TestUser(
                     name: "Count Dooku",
-                    id: "count_dooku", // swiftlint:disable:next line_length
+                    id: "count_dooku",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiY291bnRfZG9va3UifQ.0sN_cPTKrXsxC23WUSIBUQK5IUZsdGijmqY50HJERQw"
                 ),
                 
                 TestUser(
                     name: "General Grievous",
-                    id: "general_grievous", // swiftlint:disable:next line_length
+                    id: "general_grievous",
                     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiZ2VuZXJhbF9ncmlldm91cyJ9.FPRvRoeZdALErBA1bDybch4xY-c5CEinuc9qqEPzX4E"
                 )
             ]

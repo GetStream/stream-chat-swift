@@ -64,7 +64,6 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
         }
 
     /// A type-erased delegate.
-    // swiftlint:disable:next weak_delegate
     var multicastDelegate: MulticastDelegate<AnyCurrentUserControllerDelegate<ExtraData>> = .init()
     
     /// The currently logged-in user. `nil` if the connection hasn't been fully established yet, or the connection
@@ -266,7 +265,7 @@ private extension _CurrentChatUserController {
         environment.currentUserObserverBuilder(
             client.databaseContainer.viewContext,
             CurrentUserDTO.defaultFetchRequest,
-            { $0.asModel() }, // swiftlint:disable:this opening_brace
+            { $0.asModel() },
             NSFetchedResultsController<CurrentUserDTO>.self
         )
     }

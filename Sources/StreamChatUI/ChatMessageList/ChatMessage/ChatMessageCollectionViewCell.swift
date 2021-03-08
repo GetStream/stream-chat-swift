@@ -96,7 +96,6 @@ open class _СhatMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>:
     }
 }
 
-// swiftlint:disable:next colon
 class СhatIncomingMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>:
     _СhatMessageAttachmentCollectionViewCell<ExtraData> {
     override func setUpLayout() {
@@ -105,7 +104,6 @@ class СhatIncomingMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes
     }
 }
 
-// swiftlint:disable:next colon
 class СhatOutgoingMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>:
     _СhatMessageAttachmentCollectionViewCell<ExtraData> {
     override func setUpLayout() {
