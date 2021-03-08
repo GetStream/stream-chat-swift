@@ -162,56 +162,65 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     override open func prepare(forCollectionViewUpdates updateItems: [UICollectionViewUpdateItem]) {
         previousItems = currentItems
-//        let delete: (UICollectionViewUpdateItem) -> Void = { update in
-//            guard let ip = update.indexPathBeforeUpdate else { return }
-//            let idx = ip.item
-//            self.disappearingItems.insert(ip)
-//            var delta = self.currentItems[idx].height
-//            if idx > 0 {
-//                delta += self.spacing
-//            }
-//            for i in 0..<idx {
-//                self.currentItems[i].offset -= delta
-//            }
-//            self.currentItems.remove(at: idx)
-//        }
-//
-//        let insert: (UICollectionViewUpdateItem) -> Void = { update in
-//            guard let ip = update.indexPathAfterUpdate else { return }
-//            self.appearingItems.insert(ip)
-//            let idx = ip.item
-//            let item: LayoutItem
-//            if idx == self.currentItems.count {
-//                item = LayoutItem(offset: 0, height: self.estimatedItemHeight)
-//            } else {
-//                item = LayoutItem(
-//                    offset: self.currentItems[idx].maxY + self.spacing,
-//                    height: self.currentItems[idx].height
-//                )
-//            }
-//            let delta = item.height + self.spacing
-//            for i in 0..<idx {
-//                self.currentItems[i].offset += delta
-//            }
-//            self.currentItems.insert(item, at: idx)
-//        }
-//
-//        for update in updateItems {
-//            switch update.updateAction {
-//            case .delete:
-//                delete(update)
-//            case .insert:
-//                insert(update)
-//            case .move:
-//                delete(update)
-//                insert(update)
-//            case .reload, .none: break
-//            @unknown default: break
-//            }
-//        }
         
         // used to determine what contentOffset should be restored after batch updates
         restoreOffset = collectionView.map { collectionViewContentSize.height - $0.contentOffset.y }
+        
+        let delete: (UICollectionViewUpdateItem) -> Void = { update in
+            guard let ip = update.indexPathBeforeUpdate else { return }
+            let idx = ip.item
+            let item = self.previousItems[idx]
+            self.disappearingItems.insert(ip)
+            var delta = item.height
+            if idx > 0 {
+                delta += self.spacing
+            }
+            for i in 0..<idx {
+                guard let oldId = self.oldIdForItem(at: i) else { return }
+                
+                if let idx = self.idxForItem(with: oldId) {
+                    self.currentItems[idx].offset -= delta
+                }
+            }
+            
+            if let idx = self.idxForItem(with: item.id) {
+                self.currentItems.remove(at: idx)
+            }
+        }
+
+        let insert: (UICollectionViewUpdateItem) -> Void = { update in
+            guard let ip = update.indexPathAfterUpdate else { return }
+            self.appearingItems.insert(ip)
+            let idx = ip.item
+            let item: LayoutItem
+            if idx == self.currentItems.count {
+                item = LayoutItem(offset: 0, height: self.estimatedItemHeight)
+            } else {
+                item = LayoutItem(
+                    offset: self.currentItems[idx].maxY + self.spacing,
+                    height: self.currentItems[idx].height
+                )
+            }
+            let delta = item.height + self.spacing
+            for i in 0..<idx {
+                self.currentItems[i].offset += delta
+            }
+            self.currentItems.insert(item, at: idx)
+        }
+
+        for update in updateItems {
+            switch update.updateAction {
+            case .delete:
+                delete(update)
+            case .insert:
+                insert(update)
+            case .move:
+                delete(update)
+                insert(update)
+            case .reload, .none: break
+            @unknown default: break
+            }
+        }
 
         preBatchUpdatesCall = false
         super.prepare(forCollectionViewUpdates: updateItems)
