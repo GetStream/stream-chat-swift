@@ -94,9 +94,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         forPreferredLayoutAttributes preferredAttributes: UICollectionViewLayoutAttributes,
         withOriginalAttributes originalAttributes: UICollectionViewLayoutAttributes
     ) -> Bool {
-        let idx = originalAttributes.indexPath.item
-        return preferredAttributes.frame.minY != currentItems[idx].offset
-            || preferredAttributes.frame.height != currentItems[idx].height
+        preferredAttributes.size.height != originalAttributes.size.height
     }
 
     override open func invalidationContext(
@@ -113,11 +111,6 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         currentItems[idx].height = preferredAttributes.frame.height
         // if item have been inserted recently or deleted, we need to update its attributes to prevent weird flickering
         animatingAttributes[preferredAttributes.indexPath]?.frame.size.height = preferredAttributes.frame.height
-
-        // we are bottom-top layout with 0 being most bottom item. So when item X changes its attributes, it affect all
-        // items before it in [0; X] range.
-        let invalidNow = (0...idx).map { IndexPath(item: $0, section: 0) }
-        invalidationContext.invalidateItems(at: invalidNow)
 
         for i in 0..<idx {
             currentItems[i].offset += delta
@@ -200,9 +193,6 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         disappearingItems.removeAll()
         animatingAttributes.removeAll()
         super.finalizeCollectionViewUpdates()
-        // for some reason when adding / deleting items cv do not reload attributes for rows out of view
-        // this will force reload
-        invalidateLayout()
     }
 
     // MARK: - Main layout access
