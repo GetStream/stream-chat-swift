@@ -25,7 +25,7 @@ public class ChatChannelListController_Mock<ExtraData: ExtraDataTypes>: _ChatCha
     }
 
     override public func loadNextChannels(limit: Int, completion: ((Error?) -> Void)?) {
-       loadNextChannelsIsCalled = true
+        loadNextChannelsIsCalled = true
     }
 }
 

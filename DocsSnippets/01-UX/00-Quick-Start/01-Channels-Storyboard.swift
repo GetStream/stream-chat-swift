@@ -22,8 +22,8 @@ func snippet_ux_quick_start_channels_storyboard() {
              
             // Find a UINavigationController from the window root view controller.
             if let navigationController = window?.rootViewController as? UINavigationController,
-                // Get MyChannelListVC from the navigation controller.
-                let channelListVC = navigationController.viewControllers.first as? MyChannelListVC {
+               // Get MyChannelListVC from the navigation controller.
+               let channelListVC = navigationController.viewControllers.first as? MyChannelListVC {
                 // Filter channels by the current user.
                 if let currentUserId = chatClient.currentUserId {
                     channelListVC.controller = chatClient

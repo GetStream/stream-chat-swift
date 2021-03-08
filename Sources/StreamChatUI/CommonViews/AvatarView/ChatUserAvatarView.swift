@@ -1,5 +1,5 @@
 //
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -10,7 +10,6 @@ public typealias ChatUserAvatarView = _ChatUserAvatarView<NoExtraData>
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).
 open class _ChatUserAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-
     /// A view that shows the avatar image and online presence indicator.
     open private(set) lazy var presenceAvatarView: _ChatPresenceAvatarView<ExtraData> = uiConfig
         .presenceAvatarView.init()

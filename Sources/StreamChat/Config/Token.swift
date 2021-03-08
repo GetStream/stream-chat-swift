@@ -59,7 +59,7 @@ public extension Token {
         log.assert(!userId.isEmpty, "The provided `userId` must not be empty.")
         
         let header = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" //  {"alg": "HS256", "typ": "JWT"}
-        let payload = #"{"user_id":"\#(userId)"}"# .data(using: .utf8)!.base64EncodedString()
+        let payload = #"{"user_id":"\#(userId)"}"#.data(using: .utf8)!.base64EncodedString()
         let devSignature = "devtoken"
 
         let jwt = [header, payload, devSignature].joined(separator: ".")
@@ -77,8 +77,8 @@ private extension String {
         let parts = split(separator: ".")
         
         if parts.count == 3,
-            let payloadData = jwtDecodeBase64(String(parts[1])),
-            let json = (try? JSONSerialization.jsonObject(with: payloadData)) as? [String: Any] {
+           let payloadData = jwtDecodeBase64(String(parts[1])),
+           let json = (try? JSONSerialization.jsonObject(with: payloadData)) as? [String: Any] {
             return json
         }
         

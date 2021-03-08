@@ -8,7 +8,6 @@ import StreamChatTestTools
 import XCTest
 
 class ChatChannelNamer_Tests: XCTestCase {
-
     var defaultMembers: Set<ChatChannelMember>!
 
     override func setUp() {
@@ -147,7 +146,6 @@ class ChatChannelNamer_Tests: XCTestCase {
     }
 
     func test_defaultChannelNamer_withModifiedParameters_customSeparator() {
-
         // Create channel ID, channel and currentUserId
 
         let channel = ChatChannel.mockDMChannel(
@@ -203,5 +201,4 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         XCTAssertEqual(nameForChannel, "Darth Bane | Darth Maul | Darth Vader | Kylo Ren")
     }
-
 }

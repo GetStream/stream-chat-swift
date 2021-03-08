@@ -17,7 +17,7 @@ class CreateChatViewController: UIViewController {
     class DemoComposerVC: _ChatMessageComposerVC<NoExtraData> {
         override func createNewMessage(text: String, quotedMessageId: MessageId? = nil, attachments: [AttachmentEnvelope] = []) {
             guard let navController = parent?.parent as? UINavigationController,
-                let controller = controller else { return }
+                  let controller = controller else { return }
             // Create the Channel on backend
             controller.synchronize { error in
                 // TODO: handle error

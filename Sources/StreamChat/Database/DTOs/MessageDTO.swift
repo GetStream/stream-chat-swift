@@ -261,7 +261,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         channelDTO.defaultSortingAt = createdDate
         
         if let parentMessageId = parentMessageId,
-            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(message)
         }
         
@@ -340,7 +340,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.attachments = attachments
         
         if let parentMessageId = payload.parentId,
-            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(dto)
         }
         

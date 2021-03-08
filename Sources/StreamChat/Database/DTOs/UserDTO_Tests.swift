@@ -66,7 +66,7 @@ class UserDTO_Tests: XCTestCase {
             // Save the user
             let userDTO = try! session.saveUser(payload: payload)
             // Make the extra data JSON invalid
-            userDTO.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+            userDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
         let loadedUser: ChatUser? = database.viewContext.user(id: userId)?.asModel()

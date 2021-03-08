@@ -3,12 +3,11 @@
 //
 
 @testable import StreamChatUI
-import XCTest
 import SwiftUI
+import XCTest
 
 @available(iOS 13, *)
 class UIConfig_SwiftUI_Tests: iOS13TestCase {
-
     func test_correctInstanceIsUsed() {
         class TestView: UIView {}
 

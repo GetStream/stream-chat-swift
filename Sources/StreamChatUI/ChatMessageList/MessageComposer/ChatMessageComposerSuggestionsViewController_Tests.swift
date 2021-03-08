@@ -2,13 +2,12 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import StreamChatTestTools
 @testable import StreamChat
+import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
 class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
-    
     // We need to provide a size to the suggestions view since here we are testing the view in isolation,
     // and so we can't attach it to a bottomAnchorView. The test to verify the height calculation dependent
     // on the rows should be done in the parent view controller tests.
@@ -21,7 +20,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
         .init(name: "vaderfy", description: "", set: "", args: "[@username] [text]")
     ]
     
-    private let mentions: [ _ChatUser<NoExtraData>] = [
+    private let mentions: [_ChatUser<NoExtraData>] = [
         .mock(
             id: "vader",
             name: "Mr Vader",

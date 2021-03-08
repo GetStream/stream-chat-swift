@@ -257,8 +257,8 @@ class DatabaseContainer: NSPersistentContainer {
         
         // If the store was SQLite store, remove the actual DB file
         if storeDescription.type == NSSQLiteStoreType,
-            let storeURL = storeDescription.url,
-            storeURL.absoluteString.hasSuffix("/dev/null") == false {
+           let storeURL = storeDescription.url,
+           storeURL.absoluteString.hasSuffix("/dev/null") == false {
             try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: NSSQLiteStoreType, options: nil)
             try FileManager.default.removeItem(at: storeURL)
         }

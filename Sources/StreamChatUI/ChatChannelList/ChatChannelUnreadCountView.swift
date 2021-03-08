@@ -10,7 +10,6 @@ public typealias ChatChannelUnreadCountView = _ChatChannelUnreadCountView<NoExtr
 
 /// A view that shows a number of unread messages in channel.
 open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-
     /// The `UILabel` instance that holds number of unread messages.
     open private(set) lazy var unreadCountLabel = UILabel()
         .withoutAutoresizingMaskConstraints

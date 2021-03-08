@@ -11,7 +11,6 @@ public typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionV
 
 /// A `UICollectionViewCell` subclass that shows channel information.
 open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
-
     /// The `ChatChannelListItemView` instance used as content view.
     open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = uiConfig.channelList.itemView.init()
 

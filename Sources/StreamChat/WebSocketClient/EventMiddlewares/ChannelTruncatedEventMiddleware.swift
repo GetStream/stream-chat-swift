@@ -1,3 +1,7 @@
+//
+// Copyright © 2021 Stream.io Inc. All rights reserved.
+//
+
 import Foundation
 
 /// The middleware listens for `ChannelTruncatedEventMiddleware` events and updates `ChannelDTO` accordingly.

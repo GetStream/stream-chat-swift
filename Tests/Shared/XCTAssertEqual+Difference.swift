@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -64,7 +64,7 @@ private struct Differ {
             return [generateDifferentCountBlock(expected, expectedMirror, received, receivedMirror, level)]
         case (.dictionary?, .dictionary?):
             if let expectedDict = expected as? [AnyHashable: Any],
-                let receivedDict = received as? [AnyHashable: Any] {
+               let receivedDict = received as? [AnyHashable: Any] {
                 var resultLines: [Line] = []
                 expectedDict.keys.forEach { key in
                     let results = diffLines(expectedDict[key], receivedDict[key], level: level + 1)
@@ -82,7 +82,7 @@ private struct Differ {
             }
         case (.set?, .set?):
             if let expectedSet = expected as? Set<AnyHashable>,
-                let receivedSet = received as? Set<AnyHashable> {
+               let receivedSet = received as? Set<AnyHashable> {
                 return expectedSet.subtracting(receivedSet)
                     .map { unique in
                         Line(contents: "Missing: \(unique.description)", indentationLevel: level, canBeOrdered: true)

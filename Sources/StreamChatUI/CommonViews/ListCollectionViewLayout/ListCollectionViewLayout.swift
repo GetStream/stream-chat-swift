@@ -1,12 +1,12 @@
 //
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
 import UIKit
 
 /// The `ListCollectionViewLayout` delegate to control how to display the list.
-public protocol ListCollectionViewLayoutDelegate: class, UICollectionViewDelegate  {
+public protocol ListCollectionViewLayoutDelegate: class, UICollectionViewDelegate {
     /// Implement this method to have detailed control over the visibility of the cell separators.
     func collectionView(
         _ collectionView: UICollectionView,
@@ -17,7 +17,6 @@ public protocol ListCollectionViewLayoutDelegate: class, UICollectionViewDelegat
 
 /// An `UICollectionViewFlowLayout` implementation to make the collection view behave as a `UITableView`.
 open class ListCollectionViewLayout: UICollectionViewFlowLayout {
-
     /// The kind identifier of the cell separator view.
     open class var separatorKind: String {
         "CellSeparator"

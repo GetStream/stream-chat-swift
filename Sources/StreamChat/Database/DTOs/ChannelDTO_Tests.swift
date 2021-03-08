@@ -187,7 +187,7 @@ class ChannelDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             let channelDTO = try session.saveChannel(payload: payload)
             // Make the extra data JSON invalid
-            channelDTO.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+            channelDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
         // Load the channel from the db and check the fields are correct

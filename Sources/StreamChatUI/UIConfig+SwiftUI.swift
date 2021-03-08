@@ -7,14 +7,12 @@ import SwiftUI
 
 @available(iOS 13.0, *)
 extension _UIConfig {
-
     /// Used to initialize `_UIConfig` as `ObservableObject`.
     public var asObservableObject: ObservableObject { .init(self) }
 
     @dynamicMemberLookup
     /// `_UIConfig` represented as `ObservableObject` class for SwiftUI requirements.
     public class ObservableObject: SwiftUI.ObservableObject {
-
         private let wrappedConfig: _UIConfig<ExtraData>
 
         public subscript<T>(dynamicMember keyPath: KeyPath<_UIConfig<ExtraData>, T>) -> T {
@@ -48,10 +46,10 @@ public extension View {
     func setUpStreamChatUIConfig<ExtraData: ExtraDataTypes>(
         _ config: _UIConfig<ExtraData> = .default
     ) -> some View {
-        self.modifier(SwiftUIEnvironment<ExtraData>(config))
+        modifier(SwiftUIEnvironment<ExtraData>(config))
     }
 
     func setUpStreamChatUIConfig() -> some View {
-        self.modifier(SwiftUIEnvironment<NoExtraData>(.default))
+        modifier(SwiftUIEnvironment<NoExtraData>(.default))
     }
 }
