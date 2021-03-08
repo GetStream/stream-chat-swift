@@ -1,7 +1,7 @@
 # Stream rules
 --swiftversion 5.2
-
 --ifdef no-indent
+--disable fileHeader
 
 # Rules inferred from Swift Standard Library:
 --disable anyObjectProtocol, wrapMultilineStatementBraces
