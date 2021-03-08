@@ -3,6 +3,8 @@
 --swiftversion 5.2
 
 --ifdef no-indent
+--disable redundantType
+--disable extensionAccessControl
 
 # Rules inferred from Swift Standard Library:
 --disable anyObjectProtocol, wrapMultilineStatementBraces
