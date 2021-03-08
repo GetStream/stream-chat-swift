@@ -94,7 +94,10 @@ extension _ChatChannelMember {
             memberUpdatedAt: .unique,
             isInvited: true,
             inviteAcceptedAt: .unique,
-            inviteRejectedAt: nil
+            inviteRejectedAt: nil,
+            isBannedFromChannel: true,
+            banExpiresAt: .unique,
+            isShadowBannedFromChannel: true
         )
     }
 }

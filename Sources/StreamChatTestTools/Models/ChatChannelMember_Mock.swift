@@ -23,7 +23,10 @@ public extension _ChatChannelMember {
         memberUpdatedAt: Date = .distantPast,
         isInvited: Bool = false,
         inviteAcceptedAt: Date? = nil,
-        inviteRejectedAt: Date? = nil
+        inviteRejectedAt: Date? = nil,
+        isBannedFromChannel: Bool = false,
+        banExpiresAt: Date? = nil,
+        isShadowBannedFromChannel: Bool = false
     ) -> _ChatChannelMember {
         .init(
             id: id,
@@ -41,7 +44,10 @@ public extension _ChatChannelMember {
             memberUpdatedAt: memberUpdatedAt,
             isInvited: isInvited,
             inviteAcceptedAt: inviteAcceptedAt,
-            inviteRejectedAt: inviteRejectedAt
+            inviteRejectedAt: inviteRejectedAt,
+            isBannedFromChannel: isBannedFromChannel,
+            banExpiresAt: banExpiresAt,
+            isShadowBannedFromChannel: isShadowBannedFromChannel
         )
     }
 }

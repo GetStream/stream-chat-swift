@@ -22,9 +22,9 @@ class MemberModelDTO_Tests: XCTestCase {
             name: .unique,
             imageURL: .unique(),
             role: .admin,
-            createdAt: .init(timeIntervalSince1970: 1000),
-            updatedAt: .init(timeIntervalSince1970: 2000),
-            lastActiveAt: .init(timeIntervalSince1970: 3000),
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: .unique,
             isOnline: true,
             isInvisible: true,
             isBanned: true,
@@ -34,8 +34,11 @@ class MemberModelDTO_Tests: XCTestCase {
         let payload: MemberPayload<NoExtraData> = .init(
             user: userPayload,
             role: .moderator,
-            createdAt: .init(timeIntervalSince1970: 4000),
-            updatedAt: .init(timeIntervalSince1970: 5000)
+            createdAt: .unique,
+            updatedAt: .unique,
+            banExpiresAt: .unique,
+            isBanned: true,
+            isShadowBanned: true
         )
         
         // Asynchronously save the payload to the db
@@ -49,6 +52,13 @@ class MemberModelDTO_Tests: XCTestCase {
         }
         
         AssertAsync {
+            Assert.willBeEqual(payload.role, loadedMember?.memberRole)
+            Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
+            Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
+            Assert.willBeEqual(payload.isBanned, loadedMember?.isBannedFromChannel)
+            Assert.willBeEqual(payload.banExpiresAt, loadedMember?.banExpiresAt)
+            Assert.willBeEqual(payload.isShadowBanned, loadedMember?.isShadowBannedFromChannel)
+
             Assert.willBeEqual(payload.user.id, loadedMember?.id)
             Assert.willBeEqual(payload.user.isOnline, loadedMember?.isOnline)
             Assert.willBeEqual(payload.user.isBanned, loadedMember?.isBanned)
@@ -57,9 +67,6 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user.updatedAt, loadedMember?.userUpdatedAt)
             Assert.willBeEqual(payload.user.lastActiveAt, loadedMember?.lastActiveAt)
             Assert.willBeEqual(payload.user.extraData, loadedMember?.extraData)
-            Assert.willBeEqual(payload.role, loadedMember?.memberRole)
-            Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
-            Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
         }
     }
     

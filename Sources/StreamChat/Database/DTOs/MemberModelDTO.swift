@@ -14,6 +14,10 @@ class MemberDTO: NSManagedObject {
     @NSManaged var channelRoleRaw: String?
     @NSManaged var memberCreatedAt: Date
     @NSManaged var memberUpdatedAt: Date
+
+    @NSManaged var banExpiresAt: Date?
+    @NSManaged var isBanned: Bool
+    @NSManaged var isShadowBanned: Bool
     
     //  @NSManaged var invitedAcceptedAt: Date?
     //  @NSManaged var invitedRejectedAt: Date?
@@ -92,6 +96,9 @@ extension NSManagedObjectContext {
         
         dto.memberCreatedAt = payload.createdAt
         dto.memberUpdatedAt = payload.updatedAt
+        dto.isBanned = payload.isBanned ?? false
+        dto.isShadowBanned = payload.isShadowBanned ?? false
+        dto.banExpiresAt = payload.banExpiresAt
         
         if let query = query {
             let queryDTO = try saveQuery(query)
@@ -145,7 +152,10 @@ extension _ChatChannelMember {
             memberUpdatedAt: dto.memberUpdatedAt,
             isInvited: false,
             inviteAcceptedAt: nil,
-            inviteRejectedAt: nil
+            inviteRejectedAt: nil,
+            isBannedFromChannel: dto.isBanned,
+            banExpiresAt: dto.banExpiresAt,
+            isShadowBannedFromChannel: dto.isShadowBanned
         )
     }
 }
