@@ -41,8 +41,25 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
     /// If the member rejected a channel invitation, this field contains date of when the invitation was rejected,
     /// otherwise it's `nil`.
     public let inviteRejectedAt: Date?
-    
-    public init(
+
+    /// `true` if the member if banned from the channel.
+    ///
+    /// Learn more about banning in the [documentation](https://getstream.io/chat/docs/ios-swift/moderation/?language=swift#ban).
+    public let isBannedFromChannel: Bool
+
+    /// If the member is banned from the channel, this field contains the date when the ban expires.
+    ///
+    /// Learn more about banning in the [documentation](https://getstream.io/chat/docs/ios-swift/moderation/?language=swift#ban).
+    public let banExpiresAt: Date?
+
+    /// `true` if the member if shadow banned from the channel.
+    ///
+    /// Learn more about shadow banning in the [documentation](https://getstream.io/chat/docs/ios-swift/moderation/?language=swift#shadow-ban).
+    ///
+    // TODO: Make public when working on CIS-720
+    internal let isShadowBannedFromChannel: Bool
+
+    init(
         id: String,
         name: String?,
         imageURL: URL?,
@@ -58,7 +75,10 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
         memberUpdatedAt: Date,
         isInvited: Bool,
         inviteAcceptedAt: Date?,
-        inviteRejectedAt: Date?
+        inviteRejectedAt: Date?,
+        isBannedFromChannel: Bool,
+        banExpiresAt: Date?,
+        isShadowBannedFromChannel: Bool
     ) {
         self.memberRole = memberRole
         self.memberCreatedAt = memberCreatedAt
@@ -66,6 +86,9 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
+        self.isBannedFromChannel = isBannedFromChannel
+        self.isShadowBannedFromChannel = isShadowBannedFromChannel
+        self.banExpiresAt = banExpiresAt
         
         super.init(
             id: id,

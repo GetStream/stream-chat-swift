@@ -142,7 +142,10 @@ class ChannelController_Combine_Tests: iOS13TestCase {
             memberUpdatedAt: .unique,
             isInvited: false,
             inviteAcceptedAt: nil,
-            inviteRejectedAt: nil
+            inviteRejectedAt: nil,
+            isBannedFromChannel: true,
+            banExpiresAt: .unique,
+            isShadowBannedFromChannel: true
         )
         
         controller?.delegateCallback {

@@ -93,7 +93,10 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
             memberUpdatedAt: .unique,
             isInvited: false,
             inviteAcceptedAt: nil,
-            inviteRejectedAt: nil
+            inviteRejectedAt: nil,
+            isBannedFromChannel: true,
+            banExpiresAt: .unique,
+            isShadowBannedFromChannel: true
         )
         
         // Simulate typing members change
