@@ -54,7 +54,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     public var dataSource: DataSource = .empty()
-    public var delegate: Delegate? // swiftlint:disable:this weak_delegate
+    public var delegate: Delegate?
 
     public lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
 

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -39,7 +39,6 @@ public class DataController: Controller {
     /// the `error` variable contains more details about the problem.
     ///
     public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        // swiftlint:disable:previous unavailable_function
         fatalError("`synchronize` method must be overriden by the subclass.")
     }
 
@@ -47,7 +46,6 @@ public class DataController: Controller {
     public var callbackQueue: DispatchQueue = .main
     
     /// The delegate use for controller state update callbacks.
-    // swiftlint:disable:next weak_delegate
     internal var stateMulticastDelegate: MulticastDelegate<DataControllerStateDelegate> = .init()
 }
 

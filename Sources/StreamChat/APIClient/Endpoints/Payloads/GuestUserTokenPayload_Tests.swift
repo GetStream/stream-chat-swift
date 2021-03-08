@@ -18,7 +18,6 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
 
         XCTAssertEqual(
             payload.token,
-            // swiftlint:disable:next line_length
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg"
         )
         XCTAssertNotNil(payload.user)
@@ -45,7 +44,6 @@ final class GuestUserTokenPayload_Tests: XCTestCase {
 
         XCTAssertEqual(
             payload.token,
-            // swiftlint:disable:next line_length
             "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiYnJva2VuLXdhdGVyZmFsbC01In0.QPeAmdig1KbLwYInW8hwi0XML3kO1M6HH76k4IU0sDg"
         )
         XCTAssertNotNil(payload.user)

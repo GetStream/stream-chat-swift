@@ -171,22 +171,18 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     // MARK: - ChatMessageListVCDataSource
 
-    // swiftlint:disable:next unavailable_function
     public func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
         fatalError("Abstract class violation")
     }
 
-    // swiftlint:disable:next unavailable_function
     public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
         fatalError("Abstract class violation")
     }
 
-    // swiftlint:disable:next unavailable_function
     public func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
         fatalError("Abstract class violation")
     }
 
-    // swiftlint:disable:next unavailable_function
     public func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         replyMessageFor message: _ChatMessage<ExtraData>,
@@ -195,7 +191,6 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         fatalError("Abstract class violation")
     }
 
-    // swiftlint:disable:next unavailable_function
     public func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         controllerFor message: _ChatMessage<ExtraData>

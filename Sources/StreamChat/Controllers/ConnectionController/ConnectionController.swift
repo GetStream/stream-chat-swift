@@ -65,7 +65,6 @@ public class _ChatConnectionController<ExtraData: ExtraDataTypes>: Controller, D
     private var connectionEventObserver: ConnectionEventObserver?
 
     /// A type-erased delegate.
-    // swiftlint:disable:next weak_delegate
     var multicastDelegate: MulticastDelegate<AnyChatConnectionControllerDelegate<ExtraData>> = .init()
 
     private lazy var chatClientUpdater = environment.chatClientUpdaterBuilder(client)
