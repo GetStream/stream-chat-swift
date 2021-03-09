@@ -164,6 +164,13 @@ extension UserDTO {
         request.predicate = NSPredicate(format: "queries.@count == 0")
         return request
     }
+    
+    static func watcherFetchRequest(for cid: ChannelId) -> NSFetchRequest<UserDTO> {
+        let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
+        request.sortDescriptors = [UserListSortingKey.defaultSortDescriptor]
+        request.predicate = NSPredicate(format: "ANY watchedChannels.cid == %@", cid.rawValue)
+        return request
+    }
 }
 
 extension _ChatUser {
