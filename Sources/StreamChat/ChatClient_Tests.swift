@@ -224,7 +224,6 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(middlewares.contains(where: { $0 is MessageReactionsMiddleware<NoExtraData> }))
         // Assert `ChannelTruncatedEventMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is ChannelTruncatedEventMiddleware<NoExtraData> }))
-
     }
     
     func test_connectionStatus_isExposed() {
@@ -679,7 +678,7 @@ extension ChatClient_Tests {
         let headers = config.httpAdditionalHeaders as? [String: String] ?? [:]
         XCTAssertEqual(
             headers["X-Stream-Client"],
-            "stream-chat-swift-client-\(SystemEnvironment.version)"
+            "stream-chat-swift-client-v\(SystemEnvironment.version)"
         )
     }
 }
