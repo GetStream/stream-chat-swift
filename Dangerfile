@@ -46,6 +46,3 @@ end
 # Check all commits have correct format. Disable the length rule, since it's hardcoded
 # to 50 and GitHub has the limit 80.
 commit_lint.check disable: [:subject_length]
-
-swiftlint.lint_files inline_mode: true
-
