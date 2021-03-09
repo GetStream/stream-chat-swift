@@ -226,6 +226,8 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(middlewares.contains(where: { $0 is ChannelTruncatedEventMiddleware<NoExtraData> }))
         // Assert `MemberEventMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is MemberEventMiddleware<NoExtraData> }))
+        // Assert `UserChannelBanEventsMiddleware` exists
+        XCTAssert(middlewares.contains(where: { $0 is UserChannelBanEventsMiddleware<NoExtraData> }))
         // Assert `UserWatchingEventMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is UserWatchingEventMiddleware<NoExtraData> }))
     }
