@@ -187,7 +187,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     
     /// Stream-specific request headers.
     private let sessionHeaders: [String: String] = [
-        "X-Stream-Client": "stream-chat-swift-client-\(SystemEnvironment.version)"
+        "X-Stream-Client": "stream-chat-swift-client-v\(SystemEnvironment.version)"
     ]
     
     /// The current connection id
