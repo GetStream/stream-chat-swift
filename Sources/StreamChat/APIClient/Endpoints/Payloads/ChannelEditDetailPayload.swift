@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -73,11 +73,13 @@ struct ChannelEditDetailPayload<ExtraData: ExtraDataTypes>: Encodable {
 
         try extraData.encode(to: encoder)
     }
-    
-    var pathParameters: String {
+}
+
+extension ChannelEditDetailPayload: APIPathConvertible {
+    var apiPath: String {
         guard let id = id else {
-            return "\(type)"
+            return type.rawValue
         }
-        return "\(type)/\(id)"
+        return type.rawValue + "/" + id
     }
 }
