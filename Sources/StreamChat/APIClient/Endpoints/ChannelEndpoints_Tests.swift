@@ -340,6 +340,24 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+    
+    func test_channelWatchers_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let pagination = Pagination(pageSize: .random(in: 10...100), offset: .random(in: 10...100))
+        let query = ChannelWatcherListQuery(cid: cid, pagination: pagination)
+        
+        let expectedEndpoint = Endpoint<ChannelPayload<NoExtraData>>(
+            path: "channels/\(query.cid.type.rawValue)/\(query.cid.id)/query",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: query
+        )
+        
+        let endpoint: Endpoint<ChannelPayload<NoExtraData>> = .channelWatchers(query: query)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
 
 extension ChannelEditDetailPayload where ExtraData == NoExtraData {

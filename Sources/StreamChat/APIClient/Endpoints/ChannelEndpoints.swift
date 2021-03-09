@@ -167,4 +167,14 @@ extension Endpoint {
             body: nil
         )
     }
+    
+    static func channelWatchers<ExtraData: ExtraDataTypes>(query: ChannelWatcherListQuery) -> Endpoint<ChannelPayload<ExtraData>> {
+        .init(
+            path: "channels/" + query.cid.apiPath + "/query",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: query
+        )
+    }
 }
