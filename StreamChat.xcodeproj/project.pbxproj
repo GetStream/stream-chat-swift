@@ -203,6 +203,8 @@
 		79682C4A24BF37C80071578E /* MessagePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79682C4824BF37650071578E /* MessagePayloads.swift */; };
 		79682C4B24BF37CB0071578E /* ChannelListPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79682C4924BF37970071578E /* ChannelListPayload.swift */; };
 		7969D20225F15E3D00C66F87 /* TestRunnerEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7988F6B024D010890004219B /* TestRunnerEnvironment.swift */; };
+		796CBC1C25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBC1B25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift */; };
+		796CBC2B25F7CDAC003299B0 /* UserChannelBanEventsMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBC1225F7CD48003299B0 /* UserChannelBanEventsMiddleware.swift */; };
 		797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */; };
 		797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756524814EF8003CF16D /* SystemEnvironment.swift */; };
 		797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756724814F0D003CF16D /* Bundle+Extensions.swift */; };
@@ -1149,6 +1151,8 @@
 		79682C4524BC9DAF0071578E /* ChannelUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelUpdater.swift; sourceTree = "<group>"; };
 		79682C4824BF37650071578E /* MessagePayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagePayloads.swift; sourceTree = "<group>"; };
 		79682C4924BF37970071578E /* ChannelListPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListPayload.swift; sourceTree = "<group>"; };
+		796CBC1225F7CD48003299B0 /* UserChannelBanEventsMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChannelBanEventsMiddleware.swift; sourceTree = "<group>"; };
+		796CBC1B25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChannelBanEventsMiddleware_Tests.swift; sourceTree = "<group>"; };
 		796FD215250654940076C99B /* ChannelReadDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadDTO.swift; sourceTree = "<group>"; };
 		797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload.swift; sourceTree = "<group>"; };
 		797A756524814EF8003CF16D /* SystemEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment.swift; sourceTree = "<group>"; };
@@ -2355,6 +2359,8 @@
 				79158CEA25F0EADF00186102 /* ChannelTruncatedEventMiddleware_Tests.swift */,
 				8899BC56254337C7003CB98B /* MessageReactionsMiddleware.swift */,
 				889062422548387D00E1898E /* MessageReactionsMiddleware_Tests.swift */,
+				796CBC1225F7CD48003299B0 /* UserChannelBanEventsMiddleware.swift */,
+				796CBC1B25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift */,
 				79D6CF1725FA671C00BE2EEC /* MemberEventMiddleware.swift */,
 				79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */,
 				79617CB025F236B600D54E61 /* UserWatchingEventMiddleware.swift */,
@@ -4448,6 +4454,7 @@
 				79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */,
 				88381E65258258C20047A6A3 /* FileUploadPayload.swift in Sources */,
 				DAF1BED1250660F8003CEDC0 /* MessageController+SwiftUI.swift in Sources */,
+				796CBC2B25F7CDAC003299B0 /* UserChannelBanEventsMiddleware.swift in Sources */,
 				8AC9CBD624C73689006E236C /* NotificationEvents.swift in Sources */,
 				F6FF1DA824FD232C00151735 /* MessageUpdater.swift in Sources */,
 				7931818C24FD2660002F8C84 /* ChannelListController+Combine.swift in Sources */,
@@ -4833,6 +4840,7 @@
 				79A0E9BC2498C31A00E9BD50 /* TypingStartCleanupMiddleware_Tests.swift in Sources */,
 				796610BB248E687000761629 /* EventMiddleware_Tests.swift in Sources */,
 				AD7DFBEC25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodeld in Sources */,
+				796CBC1C25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift in Sources */,
 				DA15A20424DF257500BE2423 /* ChannelQuery_Tests.swift in Sources */,
 				DA6AC7F62538725B009C1B39 /* Pagination_Tests.swift in Sources */,
 				79CD959624F9414700E87377 /* ChannelListController+SwiftUI_Tests.swift in Sources */,
