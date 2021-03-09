@@ -43,6 +43,11 @@ class ChannelId_Tests: XCTestCase {
         XCTAssertEqual(decode(value: "asd:123"), ChannelId(type: .custom("asd"), id: "123"))
     }
     
+    func test_apiPath() {
+        let channelId = ChannelId.unique
+        XCTAssertEqual(channelId.apiPath, channelId.type.rawValue + "/" + channelId.id)
+    }
+    
     @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")
     private func decode(value: String) -> ChannelId? {
         // We must decode it as a part of JSON because older iOS version don't support JSON fragments

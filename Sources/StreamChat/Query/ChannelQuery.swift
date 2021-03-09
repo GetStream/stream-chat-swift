@@ -50,12 +50,6 @@ public struct _ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
     public var cid: ChannelId? {
         id.map { ChannelId(type: type, id: $0) }
     }
-    
-    /// Path parameters that are used in endpoints.
-    var pathParameters: String {
-        guard let id = id else { return type.rawValue }
-        return type.rawValue + "/" + id
-    }
 
     /// Init a channel query.
     /// - Parameters:
@@ -118,6 +112,10 @@ public struct _ChannelQuery<ExtraData: ExtraDataTypes>: Encodable {
         try membersLimit.map { try container.encode(Pagination(pageSize: $0), forKey: .members) }
         try watchersLimit.map { try container.encode(Pagination(pageSize: $0), forKey: .watchers) }
     }
+}
+
+extension _ChannelQuery: APIPathConvertible {
+    var apiPath: String { cid?.apiPath ?? type.rawValue }
 }
 
 ///// An answer for an invite to a channel.

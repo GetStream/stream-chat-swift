@@ -60,7 +60,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         for (query, requiresConnectionId) in testCases {
             let expectedEndpoint =
                 Endpoint<ChannelPayload<NoExtraData>>(
-                    path: "channels/\(query.pathParameters)/query",
+                    path: "channels/\(query.apiPath)/query",
                     method: .post,
                     queryItems: nil,
                     requiresConnectionId: requiresConnectionId,
@@ -79,7 +79,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let channelPayload: ChannelEditDetailPayload<NoExtraData> = .unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(channelPayload.pathParameters)",
+            path: "channels/\(channelPayload.apiPath)",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -97,7 +97,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)",
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
@@ -115,7 +115,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)/truncate",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/truncate",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -136,7 +136,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
             let cid = ChannelId.unique
 
             let expectedEndpoint = Endpoint<EmptyResponse>(
-                path: "channels/\(cid.type)/\(cid.id)/hide",
+                path: "channels/\(cid.type.rawValue)/\(cid.id)/hide",
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: false,
@@ -180,7 +180,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)/show",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/show",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -209,7 +209,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         )
         
         let expectedEndpoint = Endpoint<MessagePayload<NoExtraData>.Boxed>(
-            path: "channels/\(cid.type)/\(cid.id)/message",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/message",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -228,7 +228,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -247,7 +247,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -265,7 +265,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)/read",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/read",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -296,7 +296,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let eventType = EventType.userStartTyping
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)/event",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/event",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -313,7 +313,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cooldownDuration = Int.random(in: 0...120)
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
