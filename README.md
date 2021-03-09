@@ -9,9 +9,9 @@
   <a href="https://codecov.io/gh/GetStream/stream-chat-swift"><img src="https://codecov.io/gh/GetStream/stream-chat-swift/branch/main/graph/badge.svg" /></a>
 </p>
 
-# The official iOS SDK for [StreamChat](https://getstream.io/chat/)
+# The official iOS SDK for [StreamChat](https://getstream.io/chat/sdk/ios/)
 
-The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications.
+The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications.
 
 --- 
 
