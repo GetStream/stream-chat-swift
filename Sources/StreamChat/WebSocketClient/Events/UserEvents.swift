@@ -55,7 +55,7 @@ public struct UserWatchingEvent: EventWithUserPayload, EventWithChannelId {
 
 // MARK: - User Ban
 
-public struct UserBannedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithOwnerPayload, EventWithChannelId {
+public struct UserBannedEvent: EventWithUserPayload, EventWithOwnerPayload, EventWithChannelId {
     public let cid: ChannelId
     public let userId: UserId
     public let ownerId: UserId
@@ -65,7 +65,7 @@ public struct UserBannedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, 
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         ownerId = try response.value(at: \.createdBy?.id)
@@ -76,14 +76,14 @@ public struct UserBannedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, 
     }
 }
 
-public struct UserUnbannedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
+public struct UserUnbannedEvent: EventWithUserPayload, EventWithChannelId {
     public let cid: ChannelId
     public let userId: UserId
     public let createdAt: Date?
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         createdAt = response.createdAt
