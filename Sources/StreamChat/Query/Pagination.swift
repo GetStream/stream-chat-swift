@@ -13,22 +13,24 @@ public extension Int {
     static let usersPageSize = 30
     /// A default channel members page size.
     static let channelMembersPageSize = 30
+    /// A default channel watchers page size.
+    static let channelWatchersPageSize = 30
 }
 
 /// Basic pagination with `pageSize` and `offset`.
 /// Used everywhere except `ChannelQuery`. (See `MessagesPagination`)
 public struct Pagination: Encodable, Equatable {
     /// A page size.
-    let pageSize: Int
+    public let pageSize: Int
     /// An offset.
-    let offset: Int?
+    public let offset: Int
     
     private enum CodingKeys: String, CodingKey {
         case pageSize = "limit"
         case offset
     }
     
-    init(pageSize: Int, offset: Int? = nil) {
+    public init(pageSize: Int, offset: Int = 0) {
         self.pageSize = pageSize
         self.offset = offset
     }
@@ -36,7 +38,9 @@ public struct Pagination: Encodable, Equatable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(pageSize, forKey: .pageSize)
-        try offset.map { try container.encode($0, forKey: .offset) }
+        if offset != 0 {
+            try container.encode(offset, forKey: .offset)
+        }
     }
 }
 
