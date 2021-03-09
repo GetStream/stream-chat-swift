@@ -728,4 +728,77 @@ class ChannelUpdater_Tests: StressTestCase {
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
+    
+    // MARK: - Channel watchers
+    
+    func test_channelWatchers_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        let query = ChannelWatcherListQuery(cid: cid)
+        
+        channelUpdater.channelWatchers(query: query)
+        
+        let referenceEndpoint: Endpoint<ChannelPayload<NoExtraData>> = .channelWatchers(query: query)
+        
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_channelWatchers_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        let cid = ChannelId.unique
+        let query = ChannelWatcherListQuery(cid: cid)
+        channelUpdater.channelWatchers(query: query) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        apiClient.test_simulateResponse(
+            Result<ChannelPayload<NoExtraData>, Error>.success(dummyPayload(with: cid))
+        )
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_channelWatchers_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        let query = ChannelWatcherListQuery(cid: .unique)
+        channelUpdater.channelWatchers(query: query) { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<ChannelPayload<NoExtraData>, Error>.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    func test_channelWatchers_clearsWatchers_whenFirstPageIsRequestedAndEmpty() throws {
+        // Create a dummy channel
+        let cid = ChannelId.unique
+        try database.createChannel(cid: cid, withMessages: false)
+        
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        
+        // Assert that the dummy channel has a watcher
+        assert(!(channel?.watchers.isEmpty ?? true))
+        
+        // Save first watcher's id so we can compare later
+        let firstWatcherId = channel?.watchers.first?.id
+        
+        // Call `channelWatchers` for this channel
+        // This query doesn't provide any `offset` so it's requesting the first page of watchers
+        let query = ChannelWatcherListQuery(cid: cid)
+        channelUpdater.channelWatchers(query: query)
+        
+        // Simulate successful response
+        apiClient.test_simulateResponse(
+            Result<ChannelPayload<NoExtraData>, Error>.success(dummyPayload(with: cid, numberOfWatchers: 0))
+        )
+        
+        // Assert that the old watcher is replaced
+        AssertAsync {
+            Assert.willBeFalse(channel?.watchers.contains(where: { $0.id == firstWatcherId }) ?? true)
+        }
+    }
 }
