@@ -220,4 +220,35 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
+    
+    /// Queries the watchers of a channel.
+    ///
+    /// For more information about channel watchers, please check [documentation](https://getstream.io/chat/docs/ios/watch_channel/?language=swift)
+    ///
+    /// - Parameters:
+    ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload<ExtraData>, Error>) in
+            do {
+                let payload = try result.get()
+                self.database.write { (session) in
+                    if let channel = session.channel(cid: query.cid) {
+                        if query.pagination.offset == 0, (payload.watchers?.isEmpty ?? false) {
+                            // This is the first page of the watchers, and backend reported empty array
+                            // We can clear the existing watchers safely
+                            channel.watchers.removeAll()
+                        }
+                    }
+                    // In any case (backend reported another page of watchers or no watchers)
+                    // we should save the payload as it's the latest state of the channel
+                    try session.saveChannel(payload: payload)
+                } completion: { error in
+                    completion?(error)
+                }
+            } catch {
+                completion?(error)
+            }
+        }
+    }
 }

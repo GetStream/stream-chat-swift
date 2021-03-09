@@ -62,6 +62,9 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var stopWatching_cid: ChannelId?
     @Atomic var stopWatching_completion: ((Error?) -> Void)?
     
+    @Atomic var channelWatchers_query: ChannelWatcherListQuery?
+    @Atomic var channelWatchers_completion: ((Error?) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         update_channelQuery = nil
@@ -117,6 +120,9 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         
         stopWatching_cid = nil
         stopWatching_completion = nil
+        
+        channelWatchers_query = nil
+        channelWatchers_completion = nil
     }
     
     override func update(
@@ -212,5 +218,10 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     override func stopWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         stopWatching_cid = cid
         stopWatching_completion = completion
+    }
+    
+    override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
+        channelWatchers_query = query
+        channelWatchers_completion = completion
     }
 }
