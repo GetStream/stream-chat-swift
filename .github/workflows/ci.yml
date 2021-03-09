@@ -17,7 +17,7 @@ env:
 
 jobs:
   run-danger:
-    name: Run Danger
+    name: Run Automated Code Review
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
@@ -43,7 +43,9 @@ jobs:
         run: bundle exec danger
         env:
           GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
-      
+      - name: Run Linting
+        run: ./Scripts/run-linter.sh
+
   build-and-test-debug:
     name: Run Tests (Debug)
     runs-on: macos-latest

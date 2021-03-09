@@ -31,12 +31,7 @@ ln -sf ../../hooks/pre-commit.sh .git/hooks/post-rewrite
 chmod +x .git/hooks/pre-commit
 chmod +x ./hooks/git-format-staged
 
-# Get SwiftLint version from Mintfile to be used by danger-swiftlint too
-SWIFTLINT_VERSION=$(cat Mintfile | grep SwiftLint | awk -F@ '{print $2}')
-
 # Install gems
 echo
 echo -e "👉 Install bundle dependencies"
-echo "SwiftLint version: " $SWIFTLINT_VERSION
-bundle config SWIFTLINT_VERSION "$SWIFTLINT_VERSION"
 bundle install
