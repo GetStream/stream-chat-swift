@@ -33,7 +33,7 @@ class UserEvents_Tests: XCTestCase {
     
     func test_userBannedEvent() throws {
         let json = XCTestCase.mockData(fromFile: "UserBanned")
-        let event = try eventDecoder.decode(from: json) as? UserBannedEvent<NoExtraData>
+        let event = try eventDecoder.decode(from: json) as? UserBannedEvent
         XCTAssertEqual(event?.userId, "broken-waterfall-5")
         XCTAssertEqual(event?.ownerId, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
@@ -42,7 +42,7 @@ class UserEvents_Tests: XCTestCase {
     
     func test_userUnbannedEvent() throws {
         let json = XCTestCase.mockData(fromFile: "UserUnbanned")
-        let event = try eventDecoder.decode(from: json) as? UserUnbannedEvent<NoExtraData>
+        let event = try eventDecoder.decode(from: json) as? UserUnbannedEvent
         XCTAssertEqual(event?.userId, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
     }
