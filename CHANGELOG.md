@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🐞 Fixed
 - Fix encoding of channels with custom type [#872](https://github.com/GetStream/stream-chat-swift/pull/872)
+- Fix `CurreUserController.currentUser` returning nil before `synchronize()` is called [#875](https://github.com/GetStream/stream-chat-swift/pull/875)
 
 # [3.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.1)
 _February 26, 2021_
