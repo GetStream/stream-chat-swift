@@ -8,11 +8,13 @@ import XCTest
 
 class EntityDatabaseObserverMock<Item, DTO: NSManagedObject>: EntityDatabaseObserver<Item, DTO> {
     var synchronizeError: Error?
+    var startObservingCalled: Bool = false
     
     override func startObserving() throws {
         if let error = synchronizeError {
             throw error
         } else {
+            startObservingCalled = true
             try super.startObserving()
         }
     }
