@@ -70,7 +70,8 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
     /// The currently logged-in user. `nil` if the connection hasn't been fully established yet, or the connection
     /// wasn't successful.
     public var currentUser: _CurrentChatUser<ExtraData.User>? {
-        currentUserObserver.item
+        startObservingIfNeeded()
+        return currentUserObserver.item
     }
 
     /// The unread messages and channels count for the current user.

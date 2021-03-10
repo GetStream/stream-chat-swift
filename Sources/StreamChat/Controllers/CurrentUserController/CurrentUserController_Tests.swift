@@ -41,6 +41,18 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     // MARK: Controller
+
+    // MARK: - currentUser tests
+
+    func test_currentUser_startsObserving_returnsCurrentUserObserverItem() {
+        let expectedId = UserId.unique
+        let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique)
+
+        env.currentUserObserverItem = .init(id: expectedId, unreadCount: expectedUnreadCount)
+
+        XCTAssertEqual(controller.currentUser?.id, expectedId)
+        XCTAssertTrue(env.currentUserObserver.startObservingCalled)
+    }
     
     // MARK: - Synchronize tests
     
