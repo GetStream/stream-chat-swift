@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -13,6 +13,16 @@ struct MemberContainerPayload<ExtraData: UserExtraData>: Decodable {
         member = try? .init(from: decoder)
         invite = try? .init(from: decoder)
         memberRole = try? .init(from: decoder)
+    }
+    
+    init(
+        member: MemberPayload<ExtraData>?,
+        invite: MemberInivePayload?,
+        memberRole: MemberRolePayload?
+    ) {
+        self.member = member
+        self.invite = invite
+        self.memberRole = memberRole
     }
 }
 

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -96,6 +96,10 @@ extension NSManagedObjectContext {
         if let query = query {
             let queryDTO = try saveQuery(query)
             queryDTO.members.insert(dto)
+        }
+        
+        if let channelDTO = channel(cid: channelId) {
+            channelDTO.members.insert(dto)
         }
         
         return dto

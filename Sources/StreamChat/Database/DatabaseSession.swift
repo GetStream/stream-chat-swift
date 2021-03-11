@@ -244,10 +244,7 @@ extension DatabaseSession {
             try saveUser(payload: userPayload)
         }
         
-        // Save a member data.
-        if let cid = payload.cid, let memberPayload = payload.memberContainer?.member {
-            try saveMember(payload: memberPayload, channelId: cid)
-        }
+        // Member events are handled in `MemberEventMiddleware`
         
         // Save a channel detail data.
         if let channelDetailPayload = payload.channel {
