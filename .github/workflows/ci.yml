@@ -71,8 +71,12 @@ jobs:
       run: ./bootstrap.sh
     - name: Run v3 Tests (Debug)
       run: bundle exec fastlane test
-    - name: Post Codecov report
-      run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        flags: unittests-ios14
+        fail_ci_if_error: true # if codecov upload fails, should fail ci
+        verbose: true
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -108,8 +112,6 @@ jobs:
       run: ./bootstrap.sh
     - name: Run v3 UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"iPhone 12"
-    - name: Post Codecov report
-      run: bash <(curl -s https://codecov.io/bash) -t ${{ secrets.CODECOV_TOKEN }}
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -145,6 +147,12 @@ jobs:
       run: ./bootstrap.sh
     - name: Run Tests (Release)
       run: bundle exec fastlane test_release
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        flags: unittests-release
+        fail_ci_if_error: true # if codecov upload fails, should fail ci
+        verbose: true
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -187,6 +195,12 @@ jobs:
         xcrun simctl list devices 12.4
     - name: Run Tests (Debug - iOS 12.4)
       run: bundle exec fastlane test device:"iPhone 7 (12.4)"
+    - uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        flags: unittests-ios12
+        fail_ci_if_error: true # if codecov upload fails, should fail ci
+        verbose: true
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
