@@ -98,6 +98,10 @@ extension NSManagedObjectContext {
             queryDTO.members.insert(dto)
         }
         
+        if let channelDTO = channel(cid: channelId) {
+            channelDTO.members.insert(dto)
+        }
+        
         return dto
     }
     

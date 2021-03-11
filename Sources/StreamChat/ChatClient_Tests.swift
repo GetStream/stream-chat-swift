@@ -224,6 +224,8 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(middlewares.contains(where: { $0 is MessageReactionsMiddleware<NoExtraData> }))
         // Assert `ChannelTruncatedEventMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is ChannelTruncatedEventMiddleware<NoExtraData> }))
+        // Assert `MemberEventMiddleware` exists
+        XCTAssert(middlewares.contains(where: { $0 is MemberEventMiddleware<NoExtraData> }))
     }
     
     func test_connectionStatus_isExposed() {

@@ -14,6 +14,16 @@ struct MemberContainerPayload<ExtraData: UserExtraData>: Decodable {
         invite = try? .init(from: decoder)
         memberRole = try? .init(from: decoder)
     }
+    
+    init(
+        member: MemberPayload<ExtraData>?,
+        invite: MemberInivePayload?,
+        memberRole: MemberRolePayload?
+    ) {
+        self.member = member
+        self.invite = invite
+        self.memberRole = memberRole
+    }
 }
 
 struct MemberPayload<ExtraData: UserExtraData>: Decodable {

@@ -21,3 +21,9 @@ extension MemberPayload where ExtraData == NoExtraData {
         )
     }
 }
+
+extension MemberContainerPayload where ExtraData == NoExtraData {
+    static func dummy(userId: UserId = .unique) -> MemberContainerPayload {
+        .init(member: .dummy(userId: userId), invite: nil, memberRole: nil)
+    }
+}
