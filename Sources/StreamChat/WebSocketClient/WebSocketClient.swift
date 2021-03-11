@@ -187,6 +187,8 @@ class WebSocketClient {
         
         let backgroundTask = backgroundTaskScheduler?.beginBackgroundTask { [weak self] in
             self?.disconnect(source: .systemInitiated)
+            // We need to call `endBackgroundTask` else our app will be killed
+            self?.cancelBackgroundTaskIfNeeded()
         }
         
         if backgroundTask != .invalid {
