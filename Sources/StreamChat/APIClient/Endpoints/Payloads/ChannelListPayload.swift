@@ -17,17 +17,20 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     let watchers: [UserPayload<ExtraData.User>]?
     
     let members: [MemberPayload<ExtraData.User>]
-    
+
+    let membership: MemberPayload<ExtraData.User>?
+
     let messages: [MessagePayload<ExtraData>]
     
     let channelReads: [ChannelReadPayload<ExtraData>]
-    
+
     private enum CodingKeys: String, CodingKey {
         case channel
         case messages
         case channelReads = "read"
         case members
         case watchers
+        case membership
         case watcherCount = "watcher_count"
     }
     
@@ -37,6 +40,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
         watchers = try container.decodeIfPresent([UserPayload<ExtraData.User>].self, forKey: .watchers)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         members = try container.decode([MemberPayload<ExtraData.User>].self, forKey: .members)
+        membership = try container.decodeIfPresent(MemberPayload<ExtraData.User>.self, forKey: .membership)
         messages = try container.decode([MessagePayload<ExtraData>].self, forKey: .messages)
         channelReads = try container.decodeIfPresent([ChannelReadPayload<ExtraData>].self, forKey: .channelReads) ?? []
     }
@@ -48,6 +52,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
         watcherCount: Int,
         watchers: [UserPayload<ExtraData.User>]?,
         members: [MemberPayload<ExtraData.User>],
+        membership: MemberPayload<ExtraData.User>?,
         messages: [MessagePayload<ExtraData>],
         channelReads: [ChannelReadPayload<ExtraData>]
     ) {
@@ -55,6 +60,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.watcherCount = watcherCount
         self.watchers = watchers
         self.members = members
+        self.membership = membership
         self.messages = messages
         self.channelReads = channelReads
     }

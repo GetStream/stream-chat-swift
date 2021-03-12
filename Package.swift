@@ -130,6 +130,7 @@ var streamChatSourcesExcluded: [String] { [
     "Utils/LazyCachedMapCollection_Tests.swift",
     "Utils/Dictionary_Tests.swift",
     "Utils/Cached_Tests.swift",
+    "Models/Member_Tests.swift",
     "Models/MessageReactionType_Tests.swift",
     "Models/ChannelId_Tests.swift",
     "Models/Attachments/AttachmentTypes_Tests.swift",
