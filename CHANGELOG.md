@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [3.1.3](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.3)
+_March 12, 2021_
+
 ### 🐞 Fixed
 - Fix app getting terminated in background during an unfinished background task [#877](https://github.com/GetStream/stream-chat-swift/issues/877)
 
