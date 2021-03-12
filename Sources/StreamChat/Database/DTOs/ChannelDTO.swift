@@ -37,6 +37,9 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var createdBy: UserDTO
     @NSManaged var team: TeamDTO?
     @NSManaged var members: Set<MemberDTO>
+
+    /// If the current user is a member of the channel, this is their MemberDTO
+    @NSManaged var membership: MemberDTO?
     @NSManaged var currentlyTypingMembers: Set<MemberDTO>
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
@@ -134,7 +137,7 @@ extension NSManagedObjectContext {
             let member = try saveMember(payload: memberPayload, channelId: payload.cid)
             dto.members.insert(member)
         }
-        
+
         if let query = query {
             let queryDTO = saveQuery(query: query)
             queryDTO.channels.insert(dto)
@@ -157,6 +160,13 @@ extension NSManagedObjectContext {
         try payload.members.forEach {
             let member = try saveMember(payload: $0, channelId: payload.channel.cid)
             dto.members.insert(member)
+        }
+
+        if let membership = payload.membership {
+            let membership = try saveMember(payload: membership, channelId: payload.channel.cid)
+            dto.membership = membership
+        } else {
+            dto.membership = nil
         }
         
         dto.watcherCount = Int64(clamping: payload.watcherCount ?? 0)
@@ -272,6 +282,7 @@ extension _ChatChannel {
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
             isFrozen: dto.isFrozen,
             members: Set(members),
+            membership: dto.membership.map { $0.asModel() },
             currentlyTypingMembers: Set(typingMembers),
             watchers: Set(dto.watchers.map { $0.asModel() }),
 //            team: "",
