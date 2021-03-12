@@ -205,6 +205,7 @@
 		7969D20225F15E3D00C66F87 /* TestRunnerEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7988F6B024D010890004219B /* TestRunnerEnvironment.swift */; };
 		796CBC1C25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBC1B25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift */; };
 		796CBC2B25F7CDAC003299B0 /* UserChannelBanEventsMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBC1225F7CD48003299B0 /* UserChannelBanEventsMiddleware.swift */; };
+		796CBC6525FBAD12003299B0 /* Member_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBC6425FBAD12003299B0 /* Member_Tests.swift */; };
 		797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */; };
 		797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756524814EF8003CF16D /* SystemEnvironment.swift */; };
 		797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756724814F0D003CF16D /* Bundle+Extensions.swift */; };
@@ -1153,6 +1154,7 @@
 		79682C4924BF37970071578E /* ChannelListPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListPayload.swift; sourceTree = "<group>"; };
 		796CBC1225F7CD48003299B0 /* UserChannelBanEventsMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChannelBanEventsMiddleware.swift; sourceTree = "<group>"; };
 		796CBC1B25F7CD58003299B0 /* UserChannelBanEventsMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserChannelBanEventsMiddleware_Tests.swift; sourceTree = "<group>"; };
+		796CBC6425FBAD12003299B0 /* Member_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Member_Tests.swift; sourceTree = "<group>"; };
 		796FD215250654940076C99B /* ChannelReadDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadDTO.swift; sourceTree = "<group>"; };
 		797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload.swift; sourceTree = "<group>"; };
 		797A756524814EF8003CF16D /* SystemEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment.swift; sourceTree = "<group>"; };
@@ -2571,6 +2573,7 @@
 				79877A052498E4BC00015F8B /* CurrentUser.swift */,
 				79877A022498E4BB00015F8B /* Device.swift */,
 				79877A032498E4BB00015F8B /* Member.swift */,
+				796CBC6425FBAD12003299B0 /* Member_Tests.swift */,
 				79877A012498E4BB00015F8B /* User.swift */,
 				799C9431247D2FB9001F1104 /* Message.swift */,
 				794927EC249E0BE2009D7EB7 /* ExtraData.swift */,
@@ -4790,6 +4793,7 @@
 				79896D66250A6D1800BA8F1C /* ChannelReadUpdaterMiddleware_Tests.swift in Sources */,
 				790B9E3224DC221A005455AA /* UserPayload.swift in Sources */,
 				792921CD24C07A9000116BBB /* QueueAwareDelegate.swift in Sources */,
+				796CBC6525FBAD12003299B0 /* Member_Tests.swift in Sources */,
 				79DDF812249CD5AC002F4412 /* APIClient_Tests.swift in Sources */,
 				DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */,
 				799C9462247D78E2001F1104 /* Await.swift in Sources */,
