@@ -134,3 +134,4 @@ extension L10n {
 private final class BundleToken {
   static let bundle: Bundle = .streamChatUI
 }
+
