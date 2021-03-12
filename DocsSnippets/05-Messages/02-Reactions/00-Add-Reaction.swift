@@ -1,10 +1,10 @@
-// LINK: https://getstream.io/chat/docs/ios-swift/send_message/?preview=1&language=swift#get-a-message
+// LINK: https://getstream.io/chat/docs/ios-swift/send_reaction/?language=swift&preview=1
 
 import StreamChat
 
 private var chatClient: ChatClient!
 
-func snippet_messages_overview_get_message() {
+func snippet_messages_reactions_add_reaction() {
     // > import StreamChat
 
     /// 1: Create a `ChannelId` that represents the channel you want to get a message from.
@@ -15,10 +15,9 @@ func snippet_messages_overview_get_message() {
 
     /// 3: Use the `ChatClient` to create a `ChatMessageController` with the `ChannelId` and message id.
     let messageController = chatClient.messageController(cid: channelId, messageId: messageId)
-    
-    /// 4: Call `ChatMessageController.synchronize` to get the message.
-    messageController.synchronize { error in
-        // handle possible errors / access message
-        print(error ?? messageController.message!)
+
+    /// 4: Call `ChatMessageController.addReaction` to add the reaction.
+    messageController.addReaction("like") { error in
+        print(error ?? "message liked")
     }
 }

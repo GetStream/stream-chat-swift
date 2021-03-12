@@ -301,8 +301,6 @@
 		79CD959424F9381700E87377 /* MulticastDelegate_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CD959324F9381700E87377 /* MulticastDelegate_Tests.swift */; };
 		79CD959624F9414700E87377 /* ChannelListController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CD959524F9414700E87377 /* ChannelListController+SwiftUI_Tests.swift */; };
 		79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */; };
-		79D6CF1825FA671C00BE2EEC /* MemberEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CF1725FA671C00BE2EEC /* MemberEventMiddleware.swift */; };
-		79D6CF2125FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */; };
 		79D6CE1725F7C02400BE2EEC /* ChannelWatcherListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CE1625F7C02400BE2EEC /* ChannelWatcherListQuery_Tests.swift */; };
 		79D6CE2725F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CE2625F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift */; };
 		79D6CE3725F7C84600BE2EEC /* ChatChannelWatcherListController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CE3625F7C84500BE2EEC /* ChatChannelWatcherListController+SwiftUI.swift */; };
@@ -310,6 +308,8 @@
 		79D6CE9525F7D72E00BE2EEC /* ChatChannelWatcherListController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CE5825F7D6B300BE2EEC /* ChatChannelWatcherListController_Tests.swift */; };
 		79D6CE9D25F7D73300BE2EEC /* ChatChannelWatcherListController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CE4F25F7D6B100BE2EEC /* ChatChannelWatcherListController+SwiftUI_Tests.swift */; };
 		79D6CEA525F7D73700BE2EEC /* ChatChannelWatcherListController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CE4625F7D6AE00BE2EEC /* ChatChannelWatcherListController+Combine_Tests.swift */; };
+		79D6CF1825FA671C00BE2EEC /* MemberEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CF1725FA671C00BE2EEC /* MemberEventMiddleware.swift */; };
+		79D6CF2125FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */; };
 		79D7A1CE2593A40900D3C2BF /* ChannelPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7A1CD2593A40900D3C2BF /* ChannelPayload.swift */; };
 		79D86E832562BAB900DCD1D2 /* AppearanceSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D86E822562BAB900DCD1D2 /* AppearanceSetting.swift */; };
 		79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF80D249CB920002F4412 /* RequestDecoder.swift */; };
@@ -331,6 +331,17 @@
 		8008C19C24F7EF1F00F5BCCE /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008C19A24F7EF1A00F5BCCE /* ChatView.swift */; };
 		8008C19D24F7EF2400F5BCCE /* ChannelListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008C19824F7EE5B00F5BCCE /* ChannelListView.swift */; };
 		8008C1A024F8517000F5BCCE /* UITableViewController+KeyboardAvoidance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8008C19E24F84DB600F5BCCE /* UITableViewController+KeyboardAvoidance.swift */; };
+		8026AE4E25FBD94400533EA7 /* 00-Add-Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AE4D25FBD94400533EA7 /* 00-Add-Reaction.swift */; };
+		8026AE5725FBDED800533EA7 /* 01-Remove-Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AE5625FBDED800533EA7 /* 01-Remove-Reaction.swift */; };
+		8026AE6025FBE02B00533EA7 /* 02-Cumulative-Reactions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AE5F25FBE02B00533EA7 /* 02-Cumulative-Reactions.swift */; };
+		8026AE6A25FBF94700533EA7 /* 00-Create-Thread.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AE6925FBF94700533EA7 /* 00-Create-Thread.swift */; };
+		8026AE7325FBFAC500533EA7 /* 01-Thread-Pagination.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AE7225FBFAC500533EA7 /* 01-Thread-Pagination.swift */; };
+		8026AE7C25FBFB9200533EA7 /* 02-Quote-Message.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AE7B25FBFB9200533EA7 /* 02-Quote-Message.swift */; };
+		8026AE8D25FC07C400533EA7 /* 00-Silent-Messages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AE8C25FC07C400533EA7 /* 00-Silent-Messages.swift */; };
+		8026AE9725FC08A400533EA7 /* 00-Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AE9625FC08A400533EA7 /* 00-Search.swift */; };
+		8026AEC025FC0BA900533EA7 /* 00-Flag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AEBF25FC0BA900533EA7 /* 00-Flag.swift */; };
+		8026AEC925FC0D7300533EA7 /* 01-Mutes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AEC825FC0D7300533EA7 /* 01-Mutes.swift */; };
+		8026AED225FC0DFF00533EA7 /* 02-Ban.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8026AED125FC0DFF00533EA7 /* 02-Ban.swift */; };
 		8040BC5E24FDAB1E00DE369F /* UIColor+ForUsername.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8040BC5C24FDA9B200DE369F /* UIColor+ForUsername.swift */; };
 		8040BC6124FDD5EA00DE369F /* SplitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8040BC5F24FDD58700DE369F /* SplitViewController.swift */; };
 		80437AA3252E519E000920A3 /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80437A9F252E4E87000920A3 /* Configuration.swift */; };
@@ -1243,8 +1254,6 @@
 		79CD959324F9381700E87377 /* MulticastDelegate_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MulticastDelegate_Tests.swift; sourceTree = "<group>"; };
 		79CD959524F9414700E87377 /* ChannelListController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelListController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		79CDE1DC24B321FE0003BD1D /* CurrentUserDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentUserDTO.swift; sourceTree = "<group>"; };
-		79D6CF1725FA671C00BE2EEC /* MemberEventMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventMiddleware.swift; sourceTree = "<group>"; };
-		79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventMiddleware_Tests.swift; sourceTree = "<group>"; };
 		79D6CE1625F7C02400BE2EEC /* ChannelWatcherListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWatcherListQuery_Tests.swift; sourceTree = "<group>"; };
 		79D6CE2625F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelWatcherListController+Combine.swift"; sourceTree = "<group>"; };
 		79D6CE3625F7C84500BE2EEC /* ChatChannelWatcherListController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelWatcherListController+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -1252,6 +1261,8 @@
 		79D6CE4F25F7D6B100BE2EEC /* ChatChannelWatcherListController+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelWatcherListController+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		79D6CE5825F7D6B300BE2EEC /* ChatChannelWatcherListController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelWatcherListController_Tests.swift; sourceTree = "<group>"; };
 		79D6CE6125F7D6C700BE2EEC /* ChatChannelWatcherListController_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelWatcherListController_Mock.swift; sourceTree = "<group>"; };
+		79D6CF1725FA671C00BE2EEC /* MemberEventMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventMiddleware.swift; sourceTree = "<group>"; };
+		79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventMiddleware_Tests.swift; sourceTree = "<group>"; };
 		79D7A1CD2593A40900D3C2BF /* ChannelPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelPayload.swift; sourceTree = "<group>"; };
 		79D86E822562BAB900DCD1D2 /* AppearanceSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSetting.swift; sourceTree = "<group>"; };
 		79DDF80D249CB920002F4412 /* RequestDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoder.swift; sourceTree = "<group>"; };
@@ -1273,6 +1284,17 @@
 		8008C19824F7EE5B00F5BCCE /* ChannelListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListView.swift; sourceTree = "<group>"; };
 		8008C19A24F7EF1A00F5BCCE /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		8008C19E24F84DB600F5BCCE /* UITableViewController+KeyboardAvoidance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewController+KeyboardAvoidance.swift"; sourceTree = "<group>"; };
+		8026AE4D25FBD94400533EA7 /* 00-Add-Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Add-Reaction.swift"; sourceTree = "<group>"; };
+		8026AE5625FBDED800533EA7 /* 01-Remove-Reaction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Remove-Reaction.swift"; sourceTree = "<group>"; };
+		8026AE5F25FBE02B00533EA7 /* 02-Cumulative-Reactions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Cumulative-Reactions.swift"; sourceTree = "<group>"; };
+		8026AE6925FBF94700533EA7 /* 00-Create-Thread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Create-Thread.swift"; sourceTree = "<group>"; };
+		8026AE7225FBFAC500533EA7 /* 01-Thread-Pagination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Thread-Pagination.swift"; sourceTree = "<group>"; };
+		8026AE7B25FBFB9200533EA7 /* 02-Quote-Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Quote-Message.swift"; sourceTree = "<group>"; };
+		8026AE8C25FC07C400533EA7 /* 00-Silent-Messages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Silent-Messages.swift"; sourceTree = "<group>"; };
+		8026AE9625FC08A400533EA7 /* 00-Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Search.swift"; sourceTree = "<group>"; };
+		8026AEBF25FC0BA900533EA7 /* 00-Flag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Flag.swift"; sourceTree = "<group>"; };
+		8026AEC825FC0D7300533EA7 /* 01-Mutes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Mutes.swift"; sourceTree = "<group>"; };
+		8026AED125FC0DFF00533EA7 /* 02-Ban.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Ban.swift"; sourceTree = "<group>"; };
 		8040BC5C24FDA9B200DE369F /* UIColor+ForUsername.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+ForUsername.swift"; sourceTree = "<group>"; };
 		8040BC5F24FDD58700DE369F /* SplitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitViewController.swift; sourceTree = "<group>"; };
 		80437A9C252E0792000920A3 /* ConfigurationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigurationViewController.swift; sourceTree = "<group>"; };
@@ -2729,6 +2751,52 @@
 			path = SwiftUISimpleChat;
 			sourceTree = "<group>";
 		};
+		8026AE4C25FBD8F800533EA7 /* 02-Reactions */ = {
+			isa = PBXGroup;
+			children = (
+				8026AE4D25FBD94400533EA7 /* 00-Add-Reaction.swift */,
+				8026AE5625FBDED800533EA7 /* 01-Remove-Reaction.swift */,
+				8026AE5F25FBE02B00533EA7 /* 02-Cumulative-Reactions.swift */,
+			);
+			path = "02-Reactions";
+			sourceTree = "<group>";
+		};
+		8026AE6825FBF90700533EA7 /* 03-Threads-Replies */ = {
+			isa = PBXGroup;
+			children = (
+				8026AE6925FBF94700533EA7 /* 00-Create-Thread.swift */,
+				8026AE7225FBFAC500533EA7 /* 01-Thread-Pagination.swift */,
+				8026AE7B25FBFB9200533EA7 /* 02-Quote-Message.swift */,
+			);
+			path = "03-Threads-Replies";
+			sourceTree = "<group>";
+		};
+		8026AE8425FBFD6200533EA7 /* 04-Silent-Messages */ = {
+			isa = PBXGroup;
+			children = (
+				8026AE8C25FC07C400533EA7 /* 00-Silent-Messages.swift */,
+			);
+			path = "04-Silent-Messages";
+			sourceTree = "<group>";
+		};
+		8026AE9525FC087F00533EA7 /* 05-Search */ = {
+			isa = PBXGroup;
+			children = (
+				8026AE9625FC08A400533EA7 /* 00-Search.swift */,
+			);
+			path = "05-Search";
+			sourceTree = "<group>";
+		};
+		8026AEB725FC0B0D00533EA7 /* 06-Moderation */ = {
+			isa = PBXGroup;
+			children = (
+				8026AEBF25FC0BA900533EA7 /* 00-Flag.swift */,
+				8026AEC825FC0D7300533EA7 /* 01-Mutes.swift */,
+				8026AED125FC0DFF00533EA7 /* 02-Ban.swift */,
+			);
+			path = "06-Moderation";
+			sourceTree = "<group>";
+		};
 		804B126D24E712CC002B00EA /* Samples */ = {
 			isa = PBXGroup;
 			children = (
@@ -3056,6 +3124,10 @@
 			children = (
 				8051F78825D9DD4A00D4F938 /* 00-Overview */,
 				8051F78925D9DDE000D4F938 /* 01-File-Uploads */,
+				8026AE4C25FBD8F800533EA7 /* 02-Reactions */,
+				8026AE6825FBF90700533EA7 /* 03-Threads-Replies */,
+				8026AE8425FBFD6200533EA7 /* 04-Silent-Messages */,
+				8026AE9525FC087F00533EA7 /* 05-Search */,
 			);
 			path = "05-Messages";
 			sourceTree = "<group>";
@@ -3083,14 +3155,15 @@
 		8082785225D1BAD1008039DD /* DocsSnippets */ = {
 			isa = PBXGroup;
 			children = (
-				8082785325D1BAD1008039DD /* DocsSnippets.h */,
-				8082785425D1BAD1008039DD /* Info.plist */,
 				8082787425D1BC46008039DD /* 00-Introduction */,
 				808278C725D1C8B2008039DD /* 01-UX */,
 				804CA89B25D4723000731116 /* 02-Client-Users */,
 				804CA9AD25D5758900731116 /* 03-Channels */,
 				8051F73925D99EF900D4F938 /* 04-Channel-Types */,
 				8051F75325D9A0D400D4F938 /* 05-Messages */,
+				8026AEB725FC0B0D00533EA7 /* 06-Moderation */,
+				8082785325D1BAD1008039DD /* DocsSnippets.h */,
+				8082785425D1BAD1008039DD /* Info.plist */,
 			);
 			path = DocsSnippets;
 			sourceTree = "<group>";
@@ -4891,6 +4964,7 @@
 				8051F6D025D6EABE00D4F938 /* 04-Query-Rejected-Invites.swift in Sources */,
 				804CA89D25D4726500731116 /* 00-Initialization-Users.swift in Sources */,
 				804CA8C825D475A000731116 /* 00-Tokens.swift in Sources */,
+				8026AE7C25FBFB9200533EA7 /* 02-Quote-Message.swift in Sources */,
 				804CA92525D5668900731116 /* 00-Server-User-Updates.swift in Sources */,
 				804CA84925D45D0F00731116 /* 04-Subclassing-Components.swift in Sources */,
 				804CA7EE25D43C5800731116 /* 01-Custom-ExtraDataTypes.swift in Sources */,
@@ -4899,6 +4973,7 @@
 				8051F76525D9D6F000D4F938 /* 01-Complex-Send-Message.swift in Sources */,
 				804CA88C25D4647D00731116 /* 00-Customization.swift in Sources */,
 				8051F71725D6F55300D4F938 /* 00-Querying-Members.swift in Sources */,
+				8026AE6025FBE02B00533EA7 /* 02-Cumulative-Reactions.swift in Sources */,
 				804CA86B25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift in Sources */,
 				804CA9AF25D5768600731116 /* 00-Creating-Channel-Id.swift in Sources */,
 				804CA7E525D43B5900731116 /* 00-Channel-Extra-Data.swift in Sources */,
@@ -4906,10 +4981,12 @@
 				80750A4625D1D51C0027F951 /* 01-Channels-Storyboard.swift in Sources */,
 				804CA99325D573E100731116 /* 02-Querying-Users-3.swift in Sources */,
 				80750A6325D1D8E00027F951 /* 03-Messages-Storyboard.swift in Sources */,
+				8026AE9725FC08A400533EA7 /* 00-Search.swift in Sources */,
 				808278BE25D1C2A8008039DD /* 03-Events.swift in Sources */,
 				8051F69E25D6E8C000D4F938 /* 00-Inviting-Users.swift in Sources */,
 				804CA99C25D5745D00731116 /* 03-Autocomplete-Username.swift in Sources */,
 				804CA8BE25D474A500731116 /* 02-WebSocket-Connections.swift in Sources */,
+				8026AEC025FC0BA900533EA7 /* 00-Flag.swift in Sources */,
 				804CAA3E25D5B1AB00731116 /* 05-Changing-Channel-Members.swift in Sources */,
 				804CA7BB25D4045000731116 /* 05-Custom-DispatchQueue.swift in Sources */,
 				804CA9FC25D5A91400731116 /* 02-Filters-Support.swift in Sources */,
@@ -4925,25 +5002,31 @@
 				804CAA0C25D5A9BE00731116 /* 03-Pagination.swift in Sources */,
 				8051F75525D9A13200D4F938 /* 00-Send-Message.swift in Sources */,
 				804CA7C125D4045000731116 /* 04-Custom-BaseURL.swift in Sources */,
+				8026AE6A25FBF94700533EA7 /* 00-Create-Thread.swift in Sources */,
 				804CA91225D479EF00731116 /* 05-Anonymous-Users.swift in Sources */,
 				8051F72125D99DE100D4F938 /* 00-Channel-Slow-Mode.swift in Sources */,
 				804CA83925D45C5A00731116 /* 03-Changing-Appearance-2.swift in Sources */,
 				804CA7BD25D4045000731116 /* 02-Disconnecting.swift in Sources */,
 				804CA90225D4798700731116 /* 04-Guest-Users.swift in Sources */,
 				804CA7BC25D4045000731116 /* 03-Enable-Logs.swift in Sources */,
+				8026AED225FC0DFF00533EA7 /* 02-Ban.swift in Sources */,
 				8051F6BE25D6EA1700D4F938 /* 02-Rejecting-Invite.swift in Sources */,
 				804CA81725D4595F00731116 /* 00-View-Lifecycle-Methods.swift in Sources */,
 				808278CA25D1CBCC008039DD /* 00-Client-Setup.swift in Sources */,
 				804CA95025D56B4300731116 /* 00-Anonymous-Users.swift in Sources */,
 				804CA83025D45BEE00731116 /* 02-Changing-Appearance.swift in Sources */,
+				8026AE5725FBDED800533EA7 /* 01-Remove-Reaction.swift in Sources */,
+				8026AE8D25FC07C400533EA7 /* 00-Silent-Messages.swift in Sources */,
 				804CA82725D45A1800731116 /* 01-Changing-Main-Color.swift in Sources */,
 				804CA9D125D596D500731116 /* 00-Watching-Channel.swift in Sources */,
 				804CA85B25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift in Sources */,
 				80750A5925D1D5B90027F951 /* 02-Channels-Code.swift in Sources */,
 				804CA7C925D4045000731116 /* 00-Local-Notifications-Template.swift in Sources */,
+				8026AEC925FC0D7300533EA7 /* 01-Mutes.swift in Sources */,
 				804CA7C325D4045000731116 /* 03-Guest-Users.swift in Sources */,
 				8051F6AE25D6E95300D4F938 /* 01-Accepting-Invite.swift in Sources */,
 				8051F6DA25D6EF9400D4F938 /* 00-Deleting-Channel.swift in Sources */,
+				8026AE4E25FBD94400533EA7 /* 00-Add-Reaction.swift in Sources */,
 				804CA7C425D4045000731116 /* 00-Basic-Setup-2.swift in Sources */,
 				8051F73125D99E5600D4F938 /* 01-Channel-Slow-Mode-2.swift in Sources */,
 				804CA96825D56DFF00731116 /* 00-Logging-Out.swift in Sources */,
@@ -4964,6 +5047,7 @@
 				8051F76E25D9DA5C00D4F938 /* 02-Get-Message.swift in Sources */,
 				8082787D25D1BC65008039DD /* 01-Channels.swift in Sources */,
 				804CA7BE25D4045000731116 /* 06-Background-Behavior.swift in Sources */,
+				8026AE7325FBFAC500533EA7 /* 01-Thread-Pagination.swift in Sources */,
 				804CA7CD25D4045000731116 /* 03-Add-User-Device.swift in Sources */,
 				804CA7BA25D4045000731116 /* 00-Logging.swift in Sources */,
 				804CAA1D25D5AD4C00731116 /* 00-Channel-Pagination.swift in Sources */,
