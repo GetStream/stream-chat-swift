@@ -118,4 +118,24 @@ public enum MemberRole: String, Codable, Hashable {
 
     /// This rele allows the member to perform destructive actions on the channel.
     case owner
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        switch value {
+        case "member", "channel_member":
+            self = .member
+        case "moderator", "channel_moderator":
+            self = .moderator
+        case "admin":
+            self = .admin
+        case "owner":
+            self = .owner
+        default:
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "MemberRole string value `\(value)` doesn't match any of the known roles"
+            )
+        }
+    }
 }
