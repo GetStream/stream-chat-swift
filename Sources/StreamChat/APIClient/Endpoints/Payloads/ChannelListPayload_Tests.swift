@@ -90,5 +90,7 @@ class ChannelPayload_Tests: XCTestCase {
         )
         XCTAssertEqual(config.createdAt, "2019-03-21T15:49:15.40182Z".toDate())
         XCTAssertEqual(config.updatedAt, "2020-03-17T18:54:09.460881Z".toDate())
+
+        XCTAssertEqual(payload.membership?.user.id, "broken-waterfall-5")
     }
 }
