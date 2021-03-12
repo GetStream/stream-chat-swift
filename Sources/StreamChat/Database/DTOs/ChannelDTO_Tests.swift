@@ -91,7 +91,10 @@ class ChannelDTO_Tests: XCTestCase {
             // Assert.willBeEqual(payload.members[0].user.mutedUsers, loadedChannel?.members.first?.mutedUsers)
             // Assert.willBeEqual(payload.members[0].user.unreadChannelsCount, loadedChannel?.members.first?.unreadChannelsCount)
             // Assert.willBeEqual(payload.members[0].user.unreadMessagesCount, loadedChannel?.members.first?.unreadMessagesCount)
-            
+
+            // Membership
+            Assert.willBeEqual(payload.membership!.user.id, loadedChannel?.membership?.id)
+
             // Messages
             Assert.willBeEqual(payload.messages[0].id, loadedChannel?.latestMessages.first?.id)
             Assert.willBeEqual(payload.messages[0].type.rawValue, loadedChannel?.latestMessages.first?.type.rawValue)
@@ -124,6 +127,29 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channelReads[0].unreadMessagesCount, loadedChannel?.reads.first?.unreadMessagesCount)
             Assert.willBeEqual(payload.channelReads[0].user.id, loadedChannel?.reads.first?.user.id)
         }
+    }
+
+    func test_channelPayload_nilMembershipRemovesExistingMembership() throws {
+        // Save a channel payload with 100 messages
+        let channelId: ChannelId = .unique
+        let payload = dummyPayload(with: channelId, numberOfMessages: 100)
+
+        // Save a channel with membership to the DB
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        var channel: ChatChannel? { database.viewContext.channel(cid: channelId)?.asModel() }
+        XCTAssertNotNil(channel?.membership)
+
+        // Simulate the channel was updated and it no longer has membership
+        let payloadWithoutMembership = dummyPayload(with: channelId, includeMembership: false)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payloadWithoutMembership)
+        }
+
+        XCTAssertNil(channel?.membership)
     }
 
     func test_channelPayload_latestMessagesArePopulated() throws {
@@ -471,7 +497,8 @@ extension XCTestCase {
     func dummyPayload(
         with channelId: ChannelId,
         numberOfMessages: Int = 1,
-        numberOfWatchers: Int = 1
+        numberOfWatchers: Int = 1,
+        includeMembership: Bool = true
     ) -> ChannelPayload<NoExtraData> {
         let member: MemberPayload<NoExtraData> =
             .init(
@@ -547,6 +574,7 @@ extension XCTestCase {
                 watcherCount: 10,
                 watchers: (0..<numberOfWatchers).map { _ in dummyUser },
                 members: [member],
+                membership: includeMembership ? member : nil,
                 messages: messages,
                 channelReads: [dummyChannelRead]
             )
@@ -656,6 +684,7 @@ extension XCTestCase {
                 watcherCount: 10,
                 watchers: [dummyUser],
                 members: [member],
+                membership: member,
                 messages: [dummyMessageWithNoExtraData],
                 channelReads: [dummyChannelReadWithNoExtraData]
             )

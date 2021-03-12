@@ -67,7 +67,10 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     
     /// A list of currently typing channel members.
     public let currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
-    
+
+    /// If the current user is a member of the channel, this variable contains the details about the membership.
+    public let membership: _ChatChannelMember<ExtraData.User>?
+
     /// A list of channel members currently online actively watching the channel.
     public let watchers: Set<_ChatUser<ExtraData.User>>
 
@@ -132,6 +135,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         config: ChannelConfig = .init(),
         isFrozen: Bool = false,
         members: Set<_ChatChannelMember<ExtraData.User>> = [],
+        membership: _ChatChannelMember<ExtraData.User>? = nil,
         currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         watchers: Set<_ChatUser<ExtraData.User>> = [],
 //        team: String = "",
@@ -156,6 +160,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.config = config
         self.isFrozen = isFrozen
         cachedMembers = members
+        self.membership = membership
         self.currentlyTypingMembers = currentlyTypingMembers
         self.watchers = watchers
 //        self.team = team
