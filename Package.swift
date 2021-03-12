@@ -217,9 +217,13 @@ var streamChatSourcesExcluded: [String] { [
 
 var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/ChatMessageListCollectionViewLayout_Tests.swift",
+    "ChatMessageList/MessageComposer/ChatMessageComposerView+SwiftUI_Tests.swift",
     "ChatMessageList/MessageComposer/ChatMessageComposerSuggestionsViewController_Tests.swift",
     "ChatMessageList/MessageComposer/ChatMessageComposerCommandCollectionViewCell_Tests.swift",
     "ChatMessageList/MessageComposer/ChatMessageComposerMentionCellView_Tests.swift",
+    "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerView+SwiftUI_Tests/test_injectedSwiftUIView.extraExtraExtraLarge-light.png",
+    "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerView+SwiftUI_Tests/test_injectedSwiftUIView.default-light.png",
+    "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerView+SwiftUI_Tests/test_injectedSwiftUIView.small-dark.png",
     "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerMentionCellView_Tests/test_appearanceCustomization_usingSubclassing.small-dark.png",
     "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerMentionCellView_Tests/test_appearanceCustomization_usingUIConfig.small-dark.png",
     "ChatMessageList/MessageComposer/__Snapshots__/ChatMessageComposerMentionCellView_Tests/test_appearanceCustomization_usingSubclassing.small-dark-with-online-indicator.png",
