@@ -217,6 +217,10 @@ var streamChatSourcesExcluded: [String] { [
 
 var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/ChatMessageListCollectionViewLayout_Tests.swift",
+    "ChatMessageList/ChatMessage/ChatMessageBubbleView+SwiftUI_Tests.swift",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageBubbleView+SwiftUI_Tests/test_bubble.small-dark.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageBubbleView+SwiftUI_Tests/test_bubble.default-light.png",
+    "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageBubbleView+SwiftUI_Tests/test_bubble.extraExtraExtraLarge-light.png",
     "ChatMessageList/MessageComposer/ChatMessageComposerSuggestionsViewController_Tests.swift",
     "ChatMessageList/MessageComposer/ChatMessageComposerCommandCollectionViewCell_Tests.swift",
     "ChatMessageList/MessageComposer/ChatMessageComposerMentionCellView_Tests.swift",

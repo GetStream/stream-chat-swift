@@ -63,6 +63,8 @@
 		7844B16825EFB44600B87E89 /* UIConfig+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844B16725EFB44600B87E89 /* UIConfig+SwiftUI.swift */; };
 		7849AF6725F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7849AF6625F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift */; };
 		78AA012E25FA5791009314D7 /* ChatMessageBubbleView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AA012D25FA5790009314D7 /* ChatMessageBubbleView+SwiftUI.swift */; };
+		78AA014C25FA59CF009314D7 /* ChatMessageBubbleView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AA014B25FA59CF009314D7 /* ChatMessageBubbleView+SwiftUI_Tests.swift */; };
+		78AA015C25FA5A33009314D7 /* ChatMessageGroupPart_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78AA015B25FA5A33009314D7 /* ChatMessageGroupPart_Mock.swift */; };
 		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
 		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		7908821225432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -1006,6 +1008,8 @@
 		7844B16725EFB44600B87E89 /* UIConfig+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIConfig+SwiftUI.swift"; sourceTree = "<group>"; };
 		7849AF6625F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelListItemView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		78AA012D25FA5790009314D7 /* ChatMessageBubbleView+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageBubbleView+SwiftUI.swift"; sourceTree = "<group>"; };
+		78AA014B25FA59CF009314D7 /* ChatMessageBubbleView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageBubbleView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
+		78AA015B25FA5A33009314D7 /* ChatMessageGroupPart_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageGroupPart_Mock.swift; sourceTree = "<group>"; };
 		7900452525374CA20096ECA1 /* User+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+SwiftUI.swift"; sourceTree = "<group>"; };
 		790881FD25432B7200896F03 /* StreamChatUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7908820525432B7200896F03 /* StreamChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -2301,6 +2305,7 @@
 				793061562577A336005CF846 /* ChatChannelMember_Mock.swift */,
 				7930615F2577A39D005CF846 /* ChatMessage_Mock.swift */,
 				ADFCCD0725C9B8D70024505D /* ChannelUnreadCount_Mock.swift */,
+				78AA015B25FA5A33009314D7 /* ChatMessageGroupPart_Mock.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -3683,6 +3688,7 @@
 				DBC8A4C5257E696900B20A82 /* ChatMessageThreadInfoView.swift */,
 				88A8CF1F256E7C06004EA4C7 /* ChatMessageBubbleView.swift */,
 				78AA012D25FA5790009314D7 /* ChatMessageBubbleView+SwiftUI.swift */,
+				78AA014B25FA59CF009314D7 /* ChatMessageBubbleView+SwiftUI_Tests.swift */,
 				88A8CF25256E7C31004EA4C7 /* ChatMessageMetadataView.swift */,
 				88A8CF0A256E7AC8004EA4C7 /* ChatMessageGroupPart.swift */,
 				88A11B2F2590CC860000AC24 /* ChatMessageErrorIndicator.swift */,
@@ -4334,6 +4340,7 @@
 				2208241625DEE8070033544B /* ChatChannelListCollectionViewCell_Tests.swift in Sources */,
 				79B4F14325D3F0F70063FFB5 /* ChannelId.swift in Sources */,
 				69DE605A25F39E6000DC187F /* ChatMessageListCollectionViewLayout_Tests.swift in Sources */,
+				78AA014C25FA59CF009314D7 /* ChatMessageBubbleView+SwiftUI_Tests.swift in Sources */,
 				AD71130225F138BA00932AEE /* ChatChannelAvatarView_Tests.swift in Sources */,
 				7849AF6725F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift in Sources */,
 				ADEB2F8025CC0B8A00EAAEB6 /* XCTestCase+TestImages.swift in Sources */,
@@ -4436,6 +4443,7 @@
 				793061692577B511005CF846 /* ChatChannelController_Mock.swift in Sources */,
 				793061722577BB48005CF846 /* ChatMessageController_Mock.swift in Sources */,
 				7930614E2577A1AF005CF846 /* ChatUser_Mock.swift in Sources */,
+				78AA015C25FA5A33009314D7 /* ChatMessageGroupPart_Mock.swift in Sources */,
 				AD0169E625CAF235009EBAD2 /* CurrentChatUserController_Mock.swift in Sources */,
 				ADFCCD0825C9B8D70024505D /* ChannelUnreadCount_Mock.swift in Sources */,
 				79306136257798FC005CF846 /* ChatChannel_Mock.swift in Sources */,
