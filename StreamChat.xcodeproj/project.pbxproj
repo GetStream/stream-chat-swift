@@ -66,6 +66,7 @@
 		780DFCFC25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780DFCFB25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift */; };
 		7849AE7C25F22FA8007817D4 /* ChatChannelListVC+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780DFD0B25EF80AB00A39A6E /* ChatChannelListVC+SwiftUI_Tests.swift */; };
 		7849AE8B25F2306C007817D4 /* iOS13TestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79200D41250118A1002F4EB1 /* iOS13TestCase.swift */; };
+		7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */; };
 		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
 		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		7908821225432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -1022,6 +1023,7 @@
 		780057F625F634FC00D21095 /* ChatChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannel.swift; sourceTree = "<group>"; };
 		780DFCFB25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelListVC+SwiftUI.swift"; sourceTree = "<group>"; };
 		780DFD0B25EF80AB00A39A6E /* ChatChannelListVC+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelListVC+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
+		7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions_Tests.swift"; sourceTree = "<group>"; };
 		7900452525374CA20096ECA1 /* User+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+SwiftUI.swift"; sourceTree = "<group>"; };
 		790881FD25432B7200896F03 /* StreamChatUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7908820525432B7200896F03 /* StreamChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -3275,6 +3277,7 @@
 				792DD9FA256E67C6001DB91B /* UIConfigProvider.swift */,
 				88EF29FE2571288600B06EF1 /* Array+Extensions.swift */,
 				882AE123257A7FFE004095B3 /* UIViewController+Extensions.swift */,
+				7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */,
 				88D88F85257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift */,
 				795296C02582494000435B2E /* UIConfigProvider_Tests.swift */,
 				228C7EE42583AF4800AAE9E3 /* UITextView+Extensions.swift */,
@@ -4444,6 +4447,7 @@
 				E76B2F0425F23EE200E57112 /* CustomUIViewSubclasses.swift in Sources */,
 				795296C12582494000435B2E /* UIConfigProvider_Tests.swift in Sources */,
 				225503B825DC59FD00A5A65A /* Helpers.swift in Sources */,
+				7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
