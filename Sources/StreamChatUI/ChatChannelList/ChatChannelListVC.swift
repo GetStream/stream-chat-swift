@@ -97,7 +97,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
             )
         }
     }
-        
+
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         controller.channels.count
     }
@@ -157,6 +157,17 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         collectionViewLayout.invalidateLayout()
+
+        // Required to correctly setup navigation when view is wrapped
+        // using UIHostingController and used in SwiftUI
+        guard
+            let parent = parent,
+            parent.isUIHostingController
+        else { return }
+
+        if #available(iOS 13.0, *) {
+            setupParentNavigation(parent: parent)
+        }
     }
 }
 
