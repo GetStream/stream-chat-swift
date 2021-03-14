@@ -22,8 +22,6 @@ class ChatChannelListItemView_Tests: XCTestCase {
             ),
             currentUserId: .unique
         )
-        
-        NSTimeZone.default = TimeZone(secondsFromGMT: 0)!
     }
     
     func test_emptyState() {

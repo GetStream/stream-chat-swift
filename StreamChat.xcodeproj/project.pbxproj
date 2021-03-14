@@ -66,6 +66,8 @@
 		780DFCFC25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780DFCFB25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift */; };
 		7849AE7C25F22FA8007817D4 /* ChatChannelListVC+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780DFD0B25EF80AB00A39A6E /* ChatChannelListVC+SwiftUI_Tests.swift */; };
 		7849AE8B25F2306C007817D4 /* iOS13TestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79200D41250118A1002F4EB1 /* iOS13TestCase.swift */; };
+		7849AFA225F24835007817D4 /* UITestsEnvironmentSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7849AF9225F2479A007817D4 /* UITestsEnvironmentSetup.swift */; };
+		7849AFEA25F258B9007817D4 /* TestsEnvironmentSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7849AFE925F258B9007817D4 /* TestsEnvironmentSetup.swift */; };
 		7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */; };
 		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
 		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -1023,6 +1025,8 @@
 		780057F625F634FC00D21095 /* ChatChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannel.swift; sourceTree = "<group>"; };
 		780DFCFB25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelListVC+SwiftUI.swift"; sourceTree = "<group>"; };
 		780DFD0B25EF80AB00A39A6E /* ChatChannelListVC+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelListVC+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
+		7849AF9225F2479A007817D4 /* UITestsEnvironmentSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITestsEnvironmentSetup.swift; sourceTree = "<group>"; };
+		7849AFE925F258B9007817D4 /* TestsEnvironmentSetup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestsEnvironmentSetup.swift; sourceTree = "<group>"; };
 		7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions_Tests.swift"; sourceTree = "<group>"; };
 		7900452525374CA20096ECA1 /* User+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+SwiftUI.swift"; sourceTree = "<group>"; };
 		790881FD25432B7200896F03 /* StreamChatUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1977,6 +1981,7 @@
 				AD9F7B8525C821C300DF8CD2 /* AssertSnapshot.swift */,
 				AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */,
 				225503B725DC59FD00A5A65A /* Helpers.swift */,
+				7849AF9225F2479A007817D4 /* UITestsEnvironmentSetup.swift */,
 			);
 			path = StreamChatUITests;
 			sourceTree = "<group>";
@@ -1992,6 +1997,7 @@
 				7908824825432CC600896F03 /* StreamChatTestPlan.xctestplan */,
 				F69C4BC524F66CC200A3D740 /* EventLogger.swift */,
 				79177A2C248A6A2600F053A2 /* AssertAsync+Events.swift */,
+				7849AFE925F258B9007817D4 /* TestsEnvironmentSetup.swift */,
 			);
 			path = StreamChatTests;
 			sourceTree = "<group>";
@@ -4436,6 +4442,7 @@
 				79158D4425F15BE600186102 /* UIConfig+SwiftUI_Tests.swift in Sources */,
 				E7AD958925D7510900076DC3 /* ChatMessageComposerMentionCellView_Tests.swift in Sources */,
 				79158D5B25F15CF900186102 /* AssertAsync.swift in Sources */,
+				7849AFA225F24835007817D4 /* UITestsEnvironmentSetup.swift in Sources */,
 				225504C725DEA03700A5A65A /* ChatChannelListItemView_Tests.swift in Sources */,
 				79B4F0E625D305D40063FFB5 /* CurrentChatUserAvatarView_Tests.swift in Sources */,
 				AD016A1425CAFAF2009EBAD2 /* ChatChannelListVC_Tests.swift in Sources */,
@@ -4925,6 +4932,7 @@
 				8A08C6A624D437DF00DEF995 /* WebSocketPingController_Tests.swift in Sources */,
 				8A62706C24BF3DBC0040BFD6 /* ChannelEvents_Tests.swift in Sources */,
 				79280F8424891C6A00CDEB89 /* VirtualTime.swift in Sources */,
+				7849AFEA25F258B9007817D4 /* TestsEnvironmentSetup.swift in Sources */,
 				790882A22546D95F00896F03 /* FlagMessagePayload_Tests.swift in Sources */,
 				799C9476247D7E94001F1104 /* TemporaryData.swift in Sources */,
 				F649B2392500FD56008F98C8 /* EntityDatabaseObserver_Mock.swift in Sources */,
@@ -5306,6 +5314,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				PRINCIPAL_CLASS = "$(PRODUCT_NAME).UITestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
@@ -5328,6 +5337,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				PRINCIPAL_CLASS = "$(PRODUCT_NAME).UITestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -5349,6 +5359,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				PRINCIPAL_CLASS = "$(PRODUCT_NAME).UITestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -5687,6 +5698,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.getstream.StreamChatClientTests-v3";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -5706,6 +5718,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.getstream.StreamChatClientTests-v3";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -6065,6 +6078,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
 				PRODUCT_BUNDLE_IDENTIFIER = "io.getstream.StreamChatClientTests-v3";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
