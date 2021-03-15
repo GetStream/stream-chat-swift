@@ -1,4 +1,4 @@
-name: CI
+name: Smoke Checks
 
 on:
   push:
@@ -16,8 +16,8 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_12.4.app/Contents/Developer # Use Xcode 12.4
 
 jobs:
-  run-danger:
-    name: Run Automated Code Review
+  automated-code-review:
+    name: Automated Code Review
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
@@ -37,8 +37,7 @@ jobs:
           path: /usr/local/lib/mint
           key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
           restore-keys: ${{ runner.os }}-mint-
-      - name: Run bootstrap.sh
-        run: ./bootstrap.sh
+      - uses: ./.github/actions/bootstrap
       - name: Run Danger
         run: bundle exec danger
         env:
@@ -47,7 +46,7 @@ jobs:
         run: ./Scripts/run-linter.sh
 
   build-and-test-debug:
-    name: Run Tests (Debug)
+    name: Test LLC + UI (Debug)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -67,50 +66,28 @@ jobs:
         path: /usr/local/lib/mint
         key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
         restore-keys: ${{ runner.os }}-mint-
-    - name: Run bootstrap.sh
-      run: ./bootstrap.sh
-    - name: Run v3 Tests (Debug)
+    - uses: ./.github/actions/bootstrap
+    - name: Run LLC Tests (Debug)
       run: bundle exec fastlane test
     - uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        flags: unittests-ios14
+        flags: llc-tests
         fail_ci_if_error: true # if codecov upload fails, should fail ci
         verbose: true
-    - uses: 8398a7/action-slack@v3
+    - uses: ./.github/actions/prepare-ios-simulator
       with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        fields: message,commit,author,action,eventName,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
-
-  build-and-test-ui-debug:
-    name: Run UI Tests (Debug)
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
+        device: "iPhone 7"
+        ios: "12.4"
+    - name: Run LLC Tests (Debug - iOS < 13)
+      run: bundle exec fastlane test device:"iPhone 7 (12.4)"
+    - uses: codecov/codecov-action@v1
       with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
-    - name: Run bootstrap.sh
-      run: ./bootstrap.sh
-    - name: Run v3 UI Tests (Debug)
+        token: ${{ secrets.CODECOV_TOKEN }}
+        flags: llc-tests-ios12
+        fail_ci_if_error: true # if codecov upload fails, should fail ci
+        verbose: true
+    - name: Run UI Tests (Debug)
       run: bundle exec fastlane test_ui device:"iPhone 12"
     - uses: 8398a7/action-slack@v3
       with:
@@ -122,8 +99,8 @@ jobs:
         MATRIX_CONTEXT: ${{ toJson(matrix) }}
       if: ${{ github.event_name == 'push' && failure() }}
 
-  build-and-test-release:
-    name: Run Tests (Release)
+  build-apps:
+    name: Build Sample + Demo Apps
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -143,141 +120,11 @@ jobs:
         path: /usr/local/lib/mint
         key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
         restore-keys: ${{ runner.os }}-mint-
-    - name: Run bootstrap.sh
-      run: ./bootstrap.sh
-    - name: Run Tests (Release)
-      run: bundle exec fastlane test_release
-    - uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        flags: unittests-release
-        fail_ci_if_error: true # if codecov upload fails, should fail ci
-        verbose: true
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        fields: message,commit,author,action,eventName,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
-
-  build-and-test-ios12:
-    name: Run Tests (iOS12.4)
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
-    - name: Run bootstrap.sh
-      run: ./bootstrap.sh
-    - name: Prepare iOS 12 simulator
-      run: |
-        sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
-        sudo ln -s /Applications/Xcode_10.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 12.4.simruntime
-        xcrun simctl list runtimes
-        xcrun simctl create custom-test-device "iPhone 7" "com.apple.CoreSimulator.SimRuntime.iOS-12-4"
-        xcrun simctl list devices 12.4
-    - name: Run Tests (Debug - iOS 12.4)
-      run: bundle exec fastlane test device:"iPhone 7 (12.4)"
-    - uses: codecov/codecov-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        flags: unittests-ios12
-        fail_ci_if_error: true # if codecov upload fails, should fail ci
-        verbose: true
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        fields: message,commit,author,action,eventName,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
-
-  build-sample:
-    name: Build Sample
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
-    - name: Run bootstrap.sh
-      run: ./bootstrap.sh
-    - name: Build Sample
+    - uses: ./.github/actions/bootstrap
+    - name: Build Sample App
       run: bundle exec fastlane build_sample
-    - uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        text: "You shall not pass!"
-        fields: message,commit,author,action,eventName,workflow,job,took
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        MATRIX_CONTEXT: ${{ toJson(matrix) }}
-      if: ${{ github.event_name == 'push' && failure() }}
-
-  build-sample-ios12:
-    name: Build Sample (iOS12.4)
-    runs-on: macos-latest
-    steps:
-    - uses: actions/checkout@v1
-    - name: Set build image var
-      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
-    - name: Cache RubyGems
-      uses: actions/cache@v2
-      id: rubygem-cache
-      with:
-        path: vendor/bundle
-        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
-        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
-    - name: Cache Mint
-      uses: actions/cache@v2
-      id: mint-cache
-      with:
-        path: /usr/local/lib/mint
-        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
-        restore-keys: ${{ runner.os }}-mint-
-    - name: Run bootstrap.sh
-      run: ./bootstrap.sh
-    - name: Prepare iOS 12 simulator
-      run: |
-        sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
-        sudo ln -s /Applications/Xcode_10.3.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 12.4.simruntime
-        xcrun simctl list runtimes
-        xcrun simctl create custom-test-device "iPhone 7" "com.apple.CoreSimulator.SimRuntime.iOS-12-4"
-        xcrun simctl list devices 12.4
-    - name: Build Sample
-      run: bundle exec fastlane build_sample device:"iPhone 7 (12.4)"
+    - name: Build Demo App
+      run: bundle exec fastlane build_demo
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -335,8 +182,7 @@ jobs:
         path: /usr/local/lib/mint
         key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
         restore-keys: ${{ runner.os }}-mint-
-    - name: Run bootstrap.sh
-      run: ./bootstrap.sh
+    - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane spm_integration
     - uses: 8398a7/action-slack@v3
@@ -370,8 +216,7 @@ jobs:
         path: /usr/local/lib/mint
         key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
         restore-keys: ${{ runner.os }}-mint-
-    - name: Run bootstrap.sh
-      run: ./bootstrap.sh
+    - uses: ./.github/actions/bootstrap
     - name: Build Test Project
       run: bundle exec fastlane cocoapods_integration
     - uses: 8398a7/action-slack@v3
