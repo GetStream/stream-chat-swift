@@ -76,7 +76,37 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .itemSubviews
         .unreadCountView.init()
         .withoutAutoresizingMaskConstraints
-    
+
+    /// Text of `titleLabel` which contains the channel name.
+    open var titleText: String? {
+        if let channel = content.channel {
+            return uiConfig.channelList.channelNamer(channel, content.currentUserId)
+        } else {
+            return nil
+        }
+    }
+
+    /// Text of `subtitleLabel` which contains current typing member or the last message in the channel.
+    open var subtitleText: String? {
+        guard let channel = content.channel else { return nil }
+        if let typingMembersInfo = typingMemberString {
+            return typingMembersInfo
+        } else if let latestMessage = channel.latestMessages.first {
+            return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.text)"
+        } else {
+            return L10n.Channel.Item.emptyMessages
+        }
+    }
+
+    /// Text of `timestampLabel` which contains the time of the last sent message.
+    open var timestampText: String? {
+        if let lastMessageAt = content.channel?.lastMessageAt {
+            return dateFormatter.string(from: lastMessageAt)
+        } else {
+            return nil
+        }
+    }
+
     /// Layout properties of this view
     public private(set) var layout = Layout()
 
@@ -207,40 +237,18 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     }
     
     override open func updateContent() {
-        if let channel = content.channel {
-            titleLabel.text = uiConfig.channelList.channelNamer(channel, content.currentUserId)
-        } else {
-            titleLabel.text = nil
-        }
-                
-        subtitleLabel.text = typingMemberOrLastMessageString
+        titleLabel.text = titleText
+        subtitleLabel.text = subtitleText
+        timestampLabel.text = timestampText
 
         avatarView.content = content
 
         unreadCountView.content = content.channel?.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
-
-        if let lastMessageAt = content.channel?.lastMessageAt {
-            timestampLabel.text = dateFormatter.string(from: lastMessageAt)
-        } else {
-            timestampLabel.text = nil
-        }
     }
 }
 
 extension _ChatChannelListItemView {
-    /// The `subtitleLabel` will show the current typing member or the last message in the channel.
-    var typingMemberOrLastMessageString: String? {
-        guard let channel = content.channel else { return nil }
-        if let typingMembersInfo = typingMemberString {
-            return typingMembersInfo
-        } else if let latestMessage = channel.latestMessages.first {
-            return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.text)"
-        } else {
-            return L10n.Channel.Item.emptyMessages
-        }
-    }
-
     /// The formatted string containing the typing member.
     var typingMemberString: String? {
         guard let members = content.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
