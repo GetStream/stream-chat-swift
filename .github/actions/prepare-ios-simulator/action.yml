@@ -1,0 +1,21 @@
+name: 'Prepare iOS Simulator'
+inputs:
+  device:
+    description: 'The device name'
+    required: true
+  ios:
+    description: 'The iOS version'
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - run: 
+        sudo mkdir -p /Library/Developer/CoreSimulator/Profiles/Runtimes
+        sudo ln -s /Applications/Xcode_12.4.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ ${{ inputs.ios }}.simruntime
+        xcrun simctl list runtimes
+        ios=${{ inputs.ios }}
+        ios_runtime=${ios//./-}
+        xcrun simctl create custom-test-device "${{ inputs.device }}" "com.apple.CoreSimulator.SimRuntime.iOS-$ios_runtime"
+        xcrun simctl list devices ${{ inputs.ios }}
+      shell: bash
+  
