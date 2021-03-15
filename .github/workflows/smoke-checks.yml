@@ -21,8 +21,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v1
-      - name: Set build image var
-        run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+      - uses: ./.github/actions/set-build-image-var
       - name: Cache RubyGems
         uses: actions/cache@v2
         id: rubygem-cache
