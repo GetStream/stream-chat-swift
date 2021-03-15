@@ -68,15 +68,19 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         addSubview(messageBubbleView)
         
         constraintsToActivate += [
-            messageBubbleView.trailingAnchor.pin(equalTo: trailingAnchor).almostRequired,
             messageBubbleView.topAnchor.pin(equalTo: topAnchor).with(priority: .defaultHigh),
             messageBubbleView.bottomAnchor.pin(equalTo: bottomAnchor).with(priority: .defaultHigh)
         ]
         
         setNeedsUpdateConstraints()
         
+        incomingMessageConstraints += [
+            messageBubbleView.trailingAnchor.pin(lessThanOrEqualTo: trailingAnchor)
+        ]
+        
         outgoingMessageConstraints += [
-            messageBubbleView.leadingAnchor.pin(equalTo: leadingAnchor)
+            messageBubbleView.leadingAnchor.pin(greaterThanOrEqualTo: leadingAnchor),
+            messageBubbleView.trailingAnchor.pin(equalTo: trailingAnchor)
         ]
     }
     
