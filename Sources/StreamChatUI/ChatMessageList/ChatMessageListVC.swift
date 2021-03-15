@@ -126,6 +126,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     override open func setUpLayout() {
         super.setUpLayout()
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(collectionView)
         collectionView.pin(to: view.safeAreaLayoutGuide)

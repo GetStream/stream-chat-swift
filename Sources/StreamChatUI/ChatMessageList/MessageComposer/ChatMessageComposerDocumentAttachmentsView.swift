@@ -65,6 +65,7 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
     }
     
     override open func setUpLayout() {
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         embed(collectionView)
         
         flowLayout.itemHeight = documentPreviewItemHeight

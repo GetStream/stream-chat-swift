@@ -859,9 +859,27 @@
 		F81641BD25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641BC25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift */; };
 		F86C887725FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C887625FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift */; };
 		F86D799325E659BB00379BC3 /* iMessageChatChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86D799225E659BA00379BC3 /* iMessageChatChannelViewController.swift */; };
+		F87A472026089DFE001653A8 /* JumpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A471F26089DFE001653A8 /* JumpView.swift */; };
+		F8933B9525FF55E30054BBFF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933B9425FF55E30054BBFF /* AppDelegate.swift */; };
+		F8933B9E25FF55E50054BBFF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8933B9D25FF55E50054BBFF /* Assets.xcassets */; };
+		F8933BA125FF55E50054BBFF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F8933B9F25FF55E50054BBFF /* LaunchScreen.storyboard */; };
+		F8933BBD25FF56400054BBFF /* SlackChatChannelUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BB725FF563E0054BBFF /* SlackChatChannelUnreadCountView.swift */; };
+		F8933BBE25FF56400054BBFF /* SlackChatChannelListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BB825FF563F0054BBFF /* SlackChatChannelListRouter.swift */; };
+		F8933BBF25FF56400054BBFF /* SlackChatChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BB925FF563F0054BBFF /* SlackChatChannelViewController.swift */; };
+		F8933BC025FF56400054BBFF /* SlackChatChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BBA25FF563F0054BBFF /* SlackChatChannelListViewController.swift */; };
+		F8933BC125FF56400054BBFF /* SlackChatChannelListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BBB25FF563F0054BBFF /* SlackChatChannelListItemView.swift */; };
+		F8933BC225FF56400054BBFF /* SlackChatAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BBC25FF56400054BBFF /* SlackChatAvatarView.swift */; };
+		F8933BC425FF56460054BBFF /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BC325FF56460054BBFF /* Colors.swift */; };
+		F8933BD125FF56790054BBFF /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F8933BD225FF56790054BBFF /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F8933BDB25FF569E0054BBFF /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
+		F8933BDC25FF569E0054BBFF /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		F8933D2125FFAB400054BBFF /* APIPathConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933D2025FFAB400054BBFF /* APIPathConvertible.swift */; };
 		F8933D4225FFAF250054BBFF /* iMessageChatChannelListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933D4125FFAF250054BBFF /* iMessageChatChannelListRouter.swift */; };
+		F8933D8025FFB9710054BBFF /* SlackChatMessageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933D7F25FFB9710054BBFF /* SlackChatMessageCollectionViewCell.swift */; };
 		F8933D9125FFC0060054BBFF /* ChatMessageListCollectionViewLayout_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933D9025FFC0050054BBFF /* ChatMessageListCollectionViewLayout_Tests.swift */; };
+		F8933DF4260209100054BBFF /* SlackChatMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933DF3260209100054BBFF /* SlackChatMessageContentView.swift */; };
+		F8933DFD26020A650054BBFF /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933DFC26020A650054BBFF /* ChatClient.swift */; };
 		F89C23A925E508DE0082CA5B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89C23A825E508DE0082CA5B /* AppDelegate.swift */; };
 		F89C23AD25E508DE0082CA5B /* iMessageChatChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F89C23AC25E508DE0082CA5B /* iMessageChatChannelListViewController.swift */; };
 		F89C23B225E508E20082CA5B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F89C23B125E508E20082CA5B /* Assets.xcassets */; };
@@ -872,6 +890,8 @@
 		F8BA4F9225E694F90078BA9D /* iMessageChatMessageComposerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BA4F9125E694F90078BA9D /* iMessageChatMessageComposerView.swift */; };
 		F8BA4FA425E69D8F0078BA9D /* iMessageChatComposerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8BA4FA325E69D8F0078BA9D /* iMessageChatComposerViewController.swift */; };
 		F8CF04AF25EF7D9F00077209 /* iMessageCellSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CF04AE25EF7D9F00077209 /* iMessageCellSeparatorView.swift */; };
+		F8FC488E260354A700A27DC5 /* SlackChatMessageMetadataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC488D260354A700A27DC5 /* SlackChatMessageMetadataView.swift */; };
+		F8FC489826038BDA00A27DC5 /* SlackChatMessageImageGallery.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FC489726038BDA00A27DC5 /* SlackChatMessageImageGallery.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -973,6 +993,20 @@
 			remoteGlobalIDString = 790881FC25432B7200896F03;
 			remoteInfo = StreamChatUI;
 		};
+		F8933BCD25FF56710054BBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
+		};
+		F8933BCF25FF56710054BBFF /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 790881FC25432B7200896F03;
+			remoteInfo = StreamChatUI;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -996,6 +1030,18 @@
 			files = (
 				79940B8D258398A500791EAE /* StreamChatUI.framework in Embed Frameworks */,
 				79940B89258398A500791EAE /* StreamChat.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8933BD325FF56840054BBFF /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F8933BD125FF56790054BBFF /* StreamChat.framework in Embed Frameworks */,
+				F8933BD225FF56790054BBFF /* StreamChatUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1866,9 +1912,26 @@
 		F81641BC25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "iMessageСhatMessageCollectionViewCell.swift"; sourceTree = "<group>"; };
 		F86C887625FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelAvatarView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		F86D799225E659BA00379BC3 /* iMessageChatChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelViewController.swift; sourceTree = "<group>"; };
+		F87A471F26089DFE001653A8 /* JumpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JumpView.swift; sourceTree = "<group>"; };
+		F8933B9225FF55E30054BBFF /* SlackClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlackClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8933B9425FF55E30054BBFF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F8933B9B25FF55E30054BBFF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		F8933B9D25FF55E50054BBFF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		F8933BA025FF55E50054BBFF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F8933BA225FF55E50054BBFF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F8933BB725FF563E0054BBFF /* SlackChatChannelUnreadCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatChannelUnreadCountView.swift; sourceTree = "<group>"; };
+		F8933BB825FF563F0054BBFF /* SlackChatChannelListRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatChannelListRouter.swift; sourceTree = "<group>"; };
+		F8933BB925FF563F0054BBFF /* SlackChatChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatChannelViewController.swift; sourceTree = "<group>"; };
+		F8933BBA25FF563F0054BBFF /* SlackChatChannelListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatChannelListViewController.swift; sourceTree = "<group>"; };
+		F8933BBB25FF563F0054BBFF /* SlackChatChannelListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatChannelListItemView.swift; sourceTree = "<group>"; };
+		F8933BBC25FF56400054BBFF /* SlackChatAvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatAvatarView.swift; sourceTree = "<group>"; };
+		F8933BC325FF56460054BBFF /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		F8933D2025FFAB400054BBFF /* APIPathConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIPathConvertible.swift; sourceTree = "<group>"; };
 		F8933D4125FFAF250054BBFF /* iMessageChatChannelListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelListRouter.swift; sourceTree = "<group>"; };
+		F8933D7F25FFB9710054BBFF /* SlackChatMessageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatMessageCollectionViewCell.swift; sourceTree = "<group>"; };
 		F8933D9025FFC0050054BBFF /* ChatMessageListCollectionViewLayout_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageListCollectionViewLayout_Tests.swift; sourceTree = "<group>"; };
+		F8933DF3260209100054BBFF /* SlackChatMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatMessageContentView.swift; sourceTree = "<group>"; };
+		F8933DFC26020A650054BBFF /* ChatClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClient.swift; sourceTree = "<group>"; };
 		F89C23A625E508DE0082CA5B /* iMessageClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iMessageClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F89C23A825E508DE0082CA5B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F89C23AC25E508DE0082CA5B /* iMessageChatChannelListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelListViewController.swift; sourceTree = "<group>"; };
@@ -1879,6 +1942,8 @@
 		F8BA4F9125E694F90078BA9D /* iMessageChatMessageComposerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatMessageComposerView.swift; sourceTree = "<group>"; };
 		F8BA4FA325E69D8F0078BA9D /* iMessageChatComposerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatComposerViewController.swift; sourceTree = "<group>"; };
 		F8CF04AE25EF7D9F00077209 /* iMessageCellSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageCellSeparatorView.swift; sourceTree = "<group>"; };
+		F8FC488D260354A700A27DC5 /* SlackChatMessageMetadataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatMessageMetadataView.swift; sourceTree = "<group>"; };
+		F8FC489726038BDA00A27DC5 /* SlackChatMessageImageGallery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatMessageImageGallery.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1957,6 +2022,15 @@
 			files = (
 				80750A5025D1D5810027F951 /* StreamChatUI.framework in Frameworks */,
 				8082786C25D1BB56008039DD /* StreamChat.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8933B8F25FF55E30054BBFF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8933BDB25FF569E0054BBFF /* StreamChat.framework in Frameworks */,
+				F8933BDC25FF569E0054BBFF /* StreamChatUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3588,6 +3662,7 @@
 				792A4F23247FF01800EAF71D /* Sample */,
 				792DDA58256FB69E001DB91B /* DemoApp */,
 				8082785225D1BAD1008039DD /* DocsSnippets */,
+				F8933B9325FF55E30054BBFF /* SlackClone */,
 				F89C23A725E508DE0082CA5B /* iMessageClone */,
 				8AD5EC9022E9A3E8005CFAC9 /* Products */,
 				8AD5ECA722E9B3C4005CFAC9 /* Frameworks */,
@@ -3609,6 +3684,7 @@
 				793060E625778896005CF846 /* StreamChatTestTools.framework */,
 				793060EE25778897005CF846 /* StreamChatTestToolsTests.xctest */,
 				8082785125D1BAD1008039DD /* DocsSnippets.framework */,
+				F8933B9225FF55E30054BBFF /* SlackClone.app */,
 				F89C23A625E508DE0082CA5B /* iMessageClone.app */,
 			);
 			name = Products;
@@ -3902,6 +3978,31 @@
 			path = Database;
 			sourceTree = "<group>";
 		};
+		F8933B9325FF55E30054BBFF /* SlackClone */ = {
+			isa = PBXGroup;
+			children = (
+				F8933B9425FF55E30054BBFF /* AppDelegate.swift */,
+				F8933DFC26020A650054BBFF /* ChatClient.swift */,
+				F8933BC325FF56460054BBFF /* Colors.swift */,
+				F8933BBC25FF56400054BBFF /* SlackChatAvatarView.swift */,
+				F8FC488D260354A700A27DC5 /* SlackChatMessageMetadataView.swift */,
+				F8933BBB25FF563F0054BBFF /* SlackChatChannelListItemView.swift */,
+				F8933BB825FF563F0054BBFF /* SlackChatChannelListRouter.swift */,
+				F8933BBA25FF563F0054BBFF /* SlackChatChannelListViewController.swift */,
+				F87A471F26089DFE001653A8 /* JumpView.swift */,
+				F8933BB725FF563E0054BBFF /* SlackChatChannelUnreadCountView.swift */,
+				F8933BB925FF563F0054BBFF /* SlackChatChannelViewController.swift */,
+				F8933D7F25FFB9710054BBFF /* SlackChatMessageCollectionViewCell.swift */,
+				F8933DF3260209100054BBFF /* SlackChatMessageContentView.swift */,
+				F8FC489726038BDA00A27DC5 /* SlackChatMessageImageGallery.swift */,
+				F8933B9A25FF55E30054BBFF /* Main.storyboard */,
+				F8933B9D25FF55E50054BBFF /* Assets.xcassets */,
+				F8933B9F25FF55E50054BBFF /* LaunchScreen.storyboard */,
+				F8933BA225FF55E50054BBFF /* Info.plist */,
+			);
+			path = SlackClone;
+			sourceTree = "<group>";
+		};
 		F8933CBB25FFA22F0054BBFF /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -4156,6 +4257,26 @@
 			productReference = 8082785125D1BAD1008039DD /* DocsSnippets.framework */;
 			productType = "com.apple.product-type.framework";
 		};
+		F8933B9125FF55E30054BBFF /* SlackClone */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8933BA625FF55E50054BBFF /* Build configuration list for PBXNativeTarget "SlackClone" */;
+			buildPhases = (
+				F8933B8E25FF55E30054BBFF /* Sources */,
+				F8933B8F25FF55E30054BBFF /* Frameworks */,
+				F8933B9025FF55E30054BBFF /* Resources */,
+				F8933BD325FF56840054BBFF /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F8933BCE25FF56710054BBFF /* PBXTargetDependency */,
+				F8933BD025FF56710054BBFF /* PBXTargetDependency */,
+			);
+			name = SlackClone;
+			productName = SlackClone;
+			productReference = F8933B9225FF55E30054BBFF /* SlackClone.app */;
+			productType = "com.apple.product-type.application";
+		};
 		F89C23A525E508DE0082CA5B /* iMessageClone */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F89C23BA25E508E20082CA5B /* Build configuration list for PBXNativeTarget "iMessageClone" */;
@@ -4216,6 +4337,9 @@
 						CreatedOnToolsVersion = 12.4;
 						LastSwiftMigration = 1240;
 					};
+					F8933B9125FF55E30054BBFF = {
+						CreatedOnToolsVersion = 12.3;
+					};
 					F89C23A525E508DE0082CA5B = {
 						CreatedOnToolsVersion = 12.3;
 					};
@@ -4249,6 +4373,7 @@
 				7908820425432B7200896F03 /* StreamChatUITests */,
 				792DDA56256FB69E001DB91B /* DemoApp */,
 				8082785025D1BAD1008039DD /* DocsSnippets */,
+				F8933B9125FF55E30054BBFF /* SlackClone */,
 				F89C23A525E508DE0082CA5B /* iMessageClone */,
 			);
 		};
@@ -4394,6 +4519,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8933B9025FF55E30054BBFF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8933BA125FF55E50054BBFF /* LaunchScreen.storyboard in Resources */,
+				F8933B9E25FF55E50054BBFF /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5242,6 +5376,27 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F8933B8E25FF55E30054BBFF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8933DFD26020A650054BBFF /* ChatClient.swift in Sources */,
+				F8933BBE25FF56400054BBFF /* SlackChatChannelListRouter.swift in Sources */,
+				F8933BC425FF56460054BBFF /* Colors.swift in Sources */,
+				F8933BBF25FF56400054BBFF /* SlackChatChannelViewController.swift in Sources */,
+				F8FC488E260354A700A27DC5 /* SlackChatMessageMetadataView.swift in Sources */,
+				F8FC489826038BDA00A27DC5 /* SlackChatMessageImageGallery.swift in Sources */,
+				F8933BC225FF56400054BBFF /* SlackChatAvatarView.swift in Sources */,
+				F8933BBD25FF56400054BBFF /* SlackChatChannelUnreadCountView.swift in Sources */,
+				F8933DF4260209100054BBFF /* SlackChatMessageContentView.swift in Sources */,
+				F8933BC025FF56400054BBFF /* SlackChatChannelListViewController.swift in Sources */,
+				F8933BC125FF56400054BBFF /* SlackChatChannelListItemView.swift in Sources */,
+				F8933B9525FF55E30054BBFF /* AppDelegate.swift in Sources */,
+				F87A472026089DFE001653A8 /* JumpView.swift in Sources */,
+				F8933D8025FFB9710054BBFF /* SlackChatMessageCollectionViewCell.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F89C23A225E508DE0082CA5B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -5333,6 +5488,16 @@
 			target = 790881FC25432B7200896F03 /* StreamChatUI */;
 			targetProxy = F81582E325F66ADF00E11150 /* PBXContainerItemProxy */;
 		};
+		F8933BCE25FF56710054BBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = F8933BCD25FF56710054BBFF /* PBXContainerItemProxy */;
+		};
+		F8933BD025FF56710054BBFF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 790881FC25432B7200896F03 /* StreamChatUI */;
+			targetProxy = F8933BCF25FF56710054BBFF /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -5382,6 +5547,22 @@
 				DBC8A4BC257E5BFB00B20A82 /* en */,
 			);
 			name = Localizable.stringsdict;
+			sourceTree = "<group>";
+		};
+		F8933B9A25FF55E30054BBFF /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F8933B9B25FF55E30054BBFF /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		F8933B9F25FF55E50054BBFF /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F8933BA025FF55E50054BBFF /* Base */,
+			);
+			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
 		F89C23B325E508E20082CA5B /* LaunchScreen.storyboard */ = {
@@ -6295,6 +6476,71 @@
 			};
 			name = ReleaseTests;
 		};
+		F8933BA325FF55E50054BBFF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				INFOPLIST_FILE = SlackClone/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.SlackClone;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.SlackClone";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		F8933BA425FF55E50054BBFF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_IDENTITY = "iPhone Distribution";
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				INFOPLIST_FILE = SlackClone/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.SlackClone;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match AdHoc io.getstream.iOS.SlackClone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		F8933BA525FF55E50054BBFF /* ReleaseTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				INFOPLIST_FILE = SlackClone/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.SlackClone;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "match Development io.getstream.iOS.SlackClone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = ReleaseTests;
+		};
 		F89C23B725E508E20082CA5B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -6459,6 +6705,16 @@
 				8AD5EC9522E9A3E8005CFAC9 /* Debug */,
 				8AD5EC9622E9A3E8005CFAC9 /* Release */,
 				A57E5C6D24C6FA3900187DC2 /* ReleaseTests */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8933BA625FF55E50054BBFF /* Build configuration list for PBXNativeTarget "SlackClone" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8933BA325FF55E50054BBFF /* Debug */,
+				F8933BA425FF55E50054BBFF /* Release */,
+				F8933BA525FF55E50054BBFF /* ReleaseTests */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

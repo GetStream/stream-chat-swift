@@ -91,6 +91,11 @@ Builds Demo app
 fastlane build_imessage_clone
 ```
 Builds iMessageClone app
+### build_slack_clone
+```
+fastlane build_slack_clone
+```
+Builds SlackClone app
 ### build_docs_snippets
 ```
 fastlane build_docs_snippets
