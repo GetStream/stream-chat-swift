@@ -306,6 +306,17 @@ lane :build_sample do |options|
   )
 end
 
+desc "Builds Demo app"
+lane :build_demo do |options|
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "DemoApp",
+    clean: true,
+    build_for_testing: true,
+    devices: options[:device],
+  )
+end
+
 desc "Build Docs Snippets target"
 lane :build_docs_snippets do |options|
   scan(
