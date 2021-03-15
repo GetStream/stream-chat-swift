@@ -129,6 +129,187 @@ class ChatChannelListItemView_Tests: XCTestCase {
         XCTAssert(itemView.subtitleLabel is TestLabel1)
         XCTAssert(itemView.timestampLabel is TestLabel2)
     }
+
+    func test_textProperties_arePropagated() {
+        let itemView = ChatChannelListItemView()
+        itemView.content = content
+        itemView.updateContent()
+
+        XCTAssertEqual(itemView.titleText, itemView.titleLabel.text)
+        XCTAssertEqual(itemView.subtitleText, itemView.subtitleLabel.text)
+        XCTAssertEqual(itemView.timestampText, itemView.timestampLabel.text)
+    }
+    
+    func test_titleText_isNil_whenChannelIsNil() {
+        let itemView = ChatChannelListItemView()
+        itemView.content = (nil, nil)
+        itemView.updateContent()
+        
+        XCTAssertNil(itemView.titleText)
+    }
+    
+    func test_titleText_whenChannelNameIsSet() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            name: "Channel Name"
+        )
+        let userId: UserId = .unique
+        
+        let itemView = ChatChannelListItemView()
+
+        var customConfig = UIConfig()
+        customConfig.channelList.channelNamer = { namerChannel, namerUserId in
+            XCTAssertEqual(namerChannel, channel)
+            XCTAssertEqual(namerUserId, userId)
+            return namerChannel.name
+        }
+        itemView.uiConfig = customConfig
+        
+        itemView.content = (channel, userId)
+        
+        XCTAssertEqual(itemView.titleText, channel.name)
+    }
+    
+    func test_subtitleText_isNil_whenChannelIsNil() {
+        let itemView = ChatChannelListItemView()
+        itemView.content = (nil, nil)
+        
+        XCTAssertNil(itemView.subtitleText)
+    }
+    
+    func test_subtitleText_whenOneMemberIsTyping() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            currentlyTypingMembers: [
+                .mock(
+                    id: .unique,
+                    name: "Member"
+                )
+            ]
+        )
+        
+        let itemView = ChatChannelListItemView()
+        itemView.content = (channel, .unique)
+        
+        XCTAssertEqual(
+            itemView.subtitleText,
+            "Member " + L10n.Channel.Item.typingSingular
+        )
+    }
+    
+    func test_subtitleText_whenTwoMembersAreTyping() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            currentlyTypingMembers: [
+                .mock(
+                    id: .unique,
+                    name: "MemberOne"
+                ),
+                .mock(
+                    id: .unique,
+                    name: "MemberTwo"
+                )
+            ]
+        )
+        
+        let itemView = ChatChannelListItemView()
+        itemView.content = (channel, .unique)
+        
+        XCTAssertEqual(
+            itemView.subtitleText,
+            "MemberOne, MemberTwo " + L10n.Channel.Item.typingPlural
+        )
+    }
+    
+    func test_subtitleText_whenLatestMessageExists() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            latestMessages: [
+                .mock(
+                    id: .unique,
+                    text: "Message text",
+                    author: .mock(
+                        id: .unique,
+                        name: "Author name"
+                    )
+                )
+            ]
+        )
+        
+        let itemView = ChatChannelListItemView()
+        itemView.content = (channel, .unique)
+        
+        XCTAssertEqual(
+            itemView.subtitleText,
+            "Author name: Message text"
+        )
+    }
+    
+    func test_subtitleText_whenLatestMessageExistsAndAuthorNameDoesNotExist() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            latestMessages: [
+                .mock(
+                    id: .unique,
+                    text: "Message text",
+                    author: .mock(
+                        id: "author-id",
+                        name: nil
+                    )
+                )
+            ]
+        )
+        
+        let itemView = ChatChannelListItemView()
+        itemView.content = (channel, .unique)
+        
+        XCTAssertEqual(
+            itemView.subtitleText,
+            "author-id: Message text"
+        )
+    }
+    
+    func test_subtitleText_whenNoLatestMessages() {
+        let channel: ChatChannel = .mock(cid: .unique)
+        
+        let itemView = ChatChannelListItemView()
+        itemView.content = (channel, .unique)
+        
+        XCTAssertEqual(
+            itemView.subtitleText,
+            L10n.Channel.Item.emptyMessages
+        )
+    }
+    
+    func test_timestampText_isNil_whenLastMessageAtIsNil() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            lastMessageAt: nil
+        )
+        let itemView = ChatChannelListItemView()
+        itemView.content = (channel, .unique)
+        
+        XCTAssertNil(itemView.timestampText)
+    }
+    
+    func test_timestampText_whenLastMessageAtExists() {
+        let channel: ChatChannel = .mock(
+            cid: .unique,
+            lastMessageAt: Date(timeIntervalSince1970: 1)
+        )
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        let itemView = ChatChannelListItemView()
+        itemView.dateFormatter = dateFormatter
+        itemView.content = (channel, .unique)
+        
+        XCTAssertEqual(
+            itemView.timestampText,
+            "1970-01-01 00:00:01"
+        )
+    }
 }
 
 private extension ChatChannelListItemView {
