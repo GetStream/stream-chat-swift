@@ -5,6 +5,12 @@
 import XCTest
 
 class StressTestCase: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        
+        continueAfterFailure = false
+    }
+    
     override func invokeTest() {
         if TestRunnerEnvironment.isStressTest {
             // Invoke the test 100 times

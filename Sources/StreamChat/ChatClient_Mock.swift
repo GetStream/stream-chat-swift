@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import XCTest
 
 extension _ChatClient {
     static var mock: _ChatClient {
@@ -131,7 +132,12 @@ extension _ChatClient.Environment {
                 )
             },
             databaseContainerBuilder: {
-                try! DatabaseContainerMock(kind: $0, shouldFlushOnStart: $1, shouldResetEphemeralValuesOnStart: $2)
+                do {
+                    return try DatabaseContainerMock(kind: $0, shouldFlushOnStart: $1, shouldResetEphemeralValuesOnStart: $2)
+                } catch {
+                    XCTFail("Unable to initialize DatabaseContainerMock \(error)")
+                    fatalError("Unable to initialize DatabaseContainerMock \(error)")
+                }
             },
             requestEncoderBuilder: DefaultRequestEncoder.init,
             requestDecoderBuilder: DefaultRequestDecoder.init,
