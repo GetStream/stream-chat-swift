@@ -249,7 +249,7 @@ lane :test_release do
   )
 end
 
-desc "Runs stress tests for v3 in Debug config"
+desc "Runs stress tests for in Debug config"
 lane :stress_test do
   scan(
     project: "StreamChat.xcodeproj",
@@ -271,7 +271,7 @@ lane :stress_test do
   }
 end
 
-desc "Runs stress tests for v3 in Release config"
+desc "Runs stress tests in Release config"
 lane :stress_test_release do
   scan(
     project: "StreamChat.xcodeproj",
@@ -295,7 +295,7 @@ lane :stress_test_release do
   }
 end
 
-desc "Builds v3 Sample app"
+desc "Builds Sample app"
 lane :build_sample do |options|
   scan(
     project: "StreamChat.xcodeproj",
