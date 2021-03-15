@@ -108,6 +108,7 @@ lane :match_me do |options|
         "io.getstream.StreamChat",
         "io.getstream.iOS.ChatDemoApp",
         "io.getstream.iOS.iMessageClone",
+        "io.getstream.iOS.SlackClone",
       ],
       readonly: readonly,
       force_for_new_devices: !is_ci
@@ -309,6 +310,11 @@ end
 desc "Builds iMessageClone app"
 lane :build_imessage_clone do |options|
   build_example_app("iMessageClone", options)
+end
+
+desc "Builds SlackClone app"
+lane :build_slack_clone do |options|
+  build_example_app("SlackClone", options)
 end
 
 def build_example_app(scheme, options)
