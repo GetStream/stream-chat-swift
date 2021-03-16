@@ -16,8 +16,22 @@ struct UserWatchingEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
         
         database.write { session in
             guard let channelDTO = session.channel(cid: userWatchingEvent.cid) else {
-                throw ClientError.ChannelDoesNotExist(cid: userWatchingEvent.cid)
+                let currentUserId = session.currentUser()?.user.id
+                if userWatchingEvent.userId == currentUserId {
+                    log.info(
+                        "Ignoring watcher event for channel \(userWatchingEvent.cid) and current user"
+                            + "since Channel doesn't exist locally."
+                    )
+                } else {
+                    log.error(
+                        "Failed to save watcher event for channel \(userWatchingEvent.cid)"
+                            + "and user \(userWatchingEvent.userId) since Channel doesn't exist locally."
+                    )
+                }
+                return
             }
+            
+            channelDTO.watcherCount = Int64(userWatchingEvent.watcherCount)
             
             guard let userDTO = session.user(id: userWatchingEvent.userId) else {
                 throw ClientError.UserDoesNotExist(userId: userWatchingEvent.userId)
@@ -28,7 +42,6 @@ struct UserWatchingEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
             } else {
                 channelDTO.watchers.remove(userDTO)
             }
-            channelDTO.watcherCount = Int64(userWatchingEvent.watcherCount)
         } completion: { error in
             if let error = error {
                 log.error("Failed to update channel watchers in the database, error: \(error)")
