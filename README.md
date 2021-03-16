@@ -43,6 +43,10 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 
 * Information about the 2.x version can be found at [v2.x README](https://github.com/GetStream/stream-chat-swift/tree/main_v2/).
 
+## Free for Makers
+
+Stream is free for most side and hobby projects. To qualify your project/company needs to have < 5 team members and < $10k in monthly revenue.
+For complete pricing details visit our [Chat Pricing Page](https://getstream.io/chat/pricing/)
 
 ## Main Principles
 
