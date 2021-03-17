@@ -79,7 +79,7 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
         label.adjustsFontForContentSizeCategory = true
         label.text = L10n.Message.Threads.reply
         label.textColor = tintColor
-        return label
+        return label.withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var stack: UIStackView = {

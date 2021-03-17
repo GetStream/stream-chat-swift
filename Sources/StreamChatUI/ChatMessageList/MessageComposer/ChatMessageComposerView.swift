@@ -73,6 +73,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     
     public private(set) lazy var titleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
+        .withBidirectionalLanguagesSupport
     
     public private(set) lazy var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData> = uiConfig
         .messageComposer

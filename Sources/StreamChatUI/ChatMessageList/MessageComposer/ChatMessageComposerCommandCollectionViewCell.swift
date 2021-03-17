@@ -25,11 +25,13 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View
     open private(set) lazy var commandNameLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
     
     /// A view that display the command name and the possible arguments.
     open private(set) lazy var commandNameSubtitleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
     
     /// A view container that holds the name and subtitle labels.
     open private(set) lazy var textStackView: UIStackView = UIStackView()
