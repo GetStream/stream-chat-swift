@@ -107,6 +107,7 @@ lane :match_me do |options|
       app_identifier: [
         "io.getstream.StreamChat",
         "io.getstream.iOS.ChatDemoApp",
+        "io.getstream.iOS.iMessageClone",
       ],
       readonly: readonly,
       force_for_new_devices: !is_ci
@@ -297,20 +298,23 @@ end
 
 desc "Builds Sample app"
 lane :build_sample do |options|
-  scan(
-    project: "StreamChat.xcodeproj",
-    scheme: "Sample",
-    clean: true,
-    build_for_testing: true,
-    devices: options[:device],
-  )
+  build_example_app("Sample", options)
 end
 
 desc "Builds Demo app"
 lane :build_demo do |options|
+  build_example_app("DemoApp", options)
+end
+
+desc "Builds iMessageClone app"
+lane :build_imessage_clone do |options|
+  build_example_app("iMessageClone", options)
+end
+
+def build_example_app(scheme, options)
   scan(
     project: "StreamChat.xcodeproj",
-    scheme: "DemoApp",
+    scheme: scheme,
     clean: true,
     build_for_testing: true,
     devices: options[:device],

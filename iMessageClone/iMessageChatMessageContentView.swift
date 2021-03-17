@@ -1,0 +1,38 @@
+//
+// Copyright © 2021 Stream.io Inc. All rights reserved.
+//
+
+import StreamChat
+import StreamChatUI
+import UIKit
+
+final class iMessageChatMessageContentView: ChatMessageContentView {
+    override func setupMetadataView() {
+        super.setupMetadataView()
+        
+        NSLayoutConstraint.activate([
+            messageMetadataView!.centerXAnchor.constraint(equalTo: centerXAnchor)
+        ])
+    }
+    
+    override func setUpAppearance() {
+        super.setUpAppearance()
+        
+        messageMetadataView!.timestampLabel.textAlignment = .center
+    }
+    
+    override func updateContent() {
+        super.updateContent()
+
+        if message?.type == .ephemeral {
+            messageBubbleView!.backgroundColor = .systemBlue
+        } else {
+            messageBubbleView!.backgroundColor = message?.isSentByCurrentUser == true ? .systemBlue : .systemGray5
+        }
+
+        textView!.attributedText = .init(string: textView!.attributedText.string, attributes: [
+            .foregroundColor: message?.isSentByCurrentUser == true ? UIColor.white : UIColor.black,
+            .font: uiConfig.font.body
+        ])
+    }
+}

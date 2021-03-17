@@ -86,6 +86,11 @@ Builds Sample app
 fastlane build_demo
 ```
 Builds Demo app
+### build_imessage_clone
+```
+fastlane build_imessage_clone
+```
+Builds iMessageClone app
 ### build_docs_snippets
 ```
 fastlane build_docs_snippets
