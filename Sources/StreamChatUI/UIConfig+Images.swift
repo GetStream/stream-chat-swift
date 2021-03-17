@@ -14,6 +14,7 @@ public extension _UIConfig {
         public var close1: UIImage = UIImage(named: "dismissInCircle", in: .streamChatUI)!
         public var back: UIImage = UIImage(named: "icn_back", in: .streamChatUI)!
         public var onlyVisibleToCurrentUser = UIImage(named: "eye", in: .streamChatUI)!
+        public var more = UIImage(named: "icn_more", in: .streamChatUI)!
 
         // MARK: - ChannelList
 

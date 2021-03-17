@@ -25,14 +25,14 @@ public extension _UIConfig {
         /// The Cell Separator View.
         public var cellSeparatorReusableView: UICollectionReusableView.Type = _CellSeparatorReusableView<ExtraData>.self
 
-        /// The base view of the channel list item to support swipeable gestures.
-        public var swipeableItemView: _ChatChannelSwipeableListItemView<ExtraData>.Type =
-            _ChatChannelSwipeableListItemView<ExtraData>.self
+        /// `SwibeableView` instance wrapped in the cell to support action views on swipe in the cell.
+        public var swipeableView: _SwipeableView<ExtraData>.Type =
+            _SwipeableView<ExtraData>.self
 
-        /// The subviews that compose the `swipeableItemView`.
-        public var swipeableItemSubviews: SwipeableItemSubviews = SwipeableItemSubviews()
+        /// The `UIStackView` that arranges buttons revealed by swipe gesture.
+        public var swipeableViewStackView: UIStackView.Type = UIStackView.self
 
-        /// A `ChatChannelSwipeableListItemView` subclass view that shows channel information.
+        /// A `ChatChannelListItemView` subclass view that shows channel information.
         public var itemView: _ChatChannelListItemView<ExtraData>.Type = _ChatChannelListItemView<ExtraData>.self
 
         /// The subviews that compose the `itemView`.
@@ -59,18 +59,6 @@ public extension _UIConfig {
             /// A view that shows a read/unread status of the last message in channel.
             public var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData>.Type =
                 _ChatChannelReadStatusCheckmarkView<ExtraData>.self
-        }
-
-        /// The subviews that compose the `swipeableItemView`.
-        public struct SwipeableItemSubviews {
-            /// The main content view which you should always use for embedding your cell content.
-            public var cellContentView: UIView.Type = UIView.self
-
-            /// The delete button.
-            public var deleteButton: UIButton.Type = UIButton.self
-
-            /// The `UIStackView` that arranges buttons revealed by swipe gesture.
-            public var actionButtonStack: UIStackView.Type = UIStackView.self
         }
     }
 }
