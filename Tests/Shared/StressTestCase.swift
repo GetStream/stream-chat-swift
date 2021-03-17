@@ -40,15 +40,10 @@ class StressTestCase: XCTestCase {
     }
     
     override func invokeTest() {
-        if TestRunnerEnvironment.isStressTest {
-            // Invoke the test 100 times
-            for _ in 0...100 {
-                autoreleasepool {
-                    super.invokeTest()
-                }
+        for _ in 0..<TestRunnerEnvironment.testInvocations {
+            autoreleasepool {
+                super.invokeTest()
             }
-        } else {
-            super.invokeTest()
         }
     }
 }
