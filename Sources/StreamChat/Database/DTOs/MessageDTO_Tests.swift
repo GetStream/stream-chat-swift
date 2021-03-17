@@ -14,6 +14,11 @@ class MessageDTO_Tests: XCTestCase {
         database = try! DatabaseContainer(kind: .inMemory)
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+    
     func test_messagePayload_isStoredAndLoadedFromDB() {
         let userId: UserId = .unique
         let messageId: MessageId = .unique

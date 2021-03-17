@@ -12,6 +12,11 @@ class AttachmentDTO_Tests: XCTestCase {
         super.setUp()
         database = try! DatabaseContainer(kind: .inMemory)
     }
+    
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
 
     func test_attachmentSeed_isStoredAndLoadedFromDB() throws {
         let cid: ChannelId = .unique

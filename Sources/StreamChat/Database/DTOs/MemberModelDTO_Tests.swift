@@ -13,6 +13,11 @@ class MemberModelDTO_Tests: XCTestCase {
         database = try! DatabaseContainer(kind: .inMemory)
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+    
     func test_memberPayload_isStoredAndLoadedFromDB() throws {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)

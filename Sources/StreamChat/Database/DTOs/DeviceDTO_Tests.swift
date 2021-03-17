@@ -13,6 +13,11 @@ class DeviceDTO_Tests: XCTestCase {
         database = try! DatabaseContainer(kind: .inMemory)
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+    
     func test_deviceListPayload_isStoredAndLoadedFromDB() throws {
         let dummyDevices = DeviceListPayload.dummy
         

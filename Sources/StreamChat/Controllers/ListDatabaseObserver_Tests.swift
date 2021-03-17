@@ -107,7 +107,10 @@ class ListDatabaseObserver_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        AssertAsync.canBeReleased(&observer)
+        AssertAsync {
+            Assert.canBeReleased(&observer)
+            Assert.canBeReleased(&database)
+        }
         super.tearDown()
     }
     
