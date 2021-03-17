@@ -12,7 +12,8 @@ public typealias ChatChannelListVC = _ChatChannelListVC<NoExtraData>
 open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
-    UIConfigProvider {
+    UIConfigProvider,
+    SwipeableViewDelegate {
     /// The `ChatChannelListController` instance that provides channels data.
     public var controller: _ChatChannelListController<ExtraData>!
     
@@ -46,9 +47,9 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// Reuse identifier of separator
     open var separatorReuseIdentifier: String { "CellSeparatorIdentifier" }
     
-    /// Reuse identiifer of `collectionViewCell`
+    /// Reuse identifier of `collectionViewCell`
     open var collectionViewCellReuseIdentifier: String { "Cell" }
-    
+
     override open func setUp() {
         super.setUp()
         
@@ -113,6 +114,9 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
         cell.uiConfig = uiConfig
         cell.itemView.content = (controller.channels[indexPath.row], controller.client.currentUserId)
+
+        cell.swipeableView.delegate = self
+        cell.swipeableView.indexPath = indexPath
         
         return cell
     }
@@ -169,6 +173,44 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
             setupParentNavigation(parent: parent)
         }
     }
+
+    public func swipeableViewWillShowActionViews(for indexPath: IndexPath) {
+        // Close other open cells
+        collectionView.visibleCells.forEach {
+            let cell = ($0 as? _ChatChannelListCollectionViewCell<ExtraData>)
+            cell?.swipeableView.close()
+        }
+
+        Animate { self.collectionView.layoutIfNeeded() }
+    }
+
+    public func swipeableViewActionViews(for indexPath: IndexPath) -> [UIView] {
+        let deleteView = CellActionView().withoutAutoresizingMaskConstraints
+        deleteView.actionButton.setImage(uiConfig.images.messageActionDelete, for: .normal)
+
+        deleteView.actionButton.backgroundColor = uiConfig.colorPalette.alert
+        deleteView.actionButton.tintColor = .white
+
+        deleteView.action = { self.deleteButtonPressedForCell(at: indexPath) }
+
+        let moreView = CellActionView().withoutAutoresizingMaskConstraints
+        moreView.actionButton.setImage(uiConfig.images.more, for: .normal)
+
+        moreView.actionButton.backgroundColor = uiConfig.colorPalette.background1
+        moreView.actionButton.tintColor = uiConfig.colorPalette.text
+
+        moreView.action = { self.moreButtonPressedForCell(at: indexPath) }
+
+        return [moreView, deleteView]
+    }
+
+    /// This function is called when delete button is pressed from action items of a cell.
+    /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
+    open func deleteButtonPressedForCell(at indexPath: IndexPath) {}
+
+    /// This function is called when delete more button is pressed from action items of a cell.
+    /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
+    open func moreButtonPressedForCell(at indexPath: IndexPath) {}
 }
 
 extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
