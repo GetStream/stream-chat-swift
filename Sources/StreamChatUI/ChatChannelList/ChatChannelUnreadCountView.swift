@@ -14,6 +14,7 @@ open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, UIConf
     open private(set) lazy var unreadCountLabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
 
     /// The data this view component shows.
     open var content: ChannelUnreadCount = .noUnread {

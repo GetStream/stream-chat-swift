@@ -5,11 +5,11 @@
 import StreamChat
 import UIKit
 
-/// A `ChatChannelSwipeableListItemView` subclass view that shows channel information.
+/// An `UIView` subclass that shows summary and preview information about a given channel.
 public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
-/// A `ChatChannelSwipeableListItemView` subclass view that shows channel information.
-open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
+/// An `UIView` subclass that shows summary and preview information about a given channel.
+open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// The data this view component shows.
     public var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContentIfNeeded() }
@@ -40,6 +40,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         .init()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
     
     /// The `UILabel` instance showing the last message or typing members if any.
     open private(set) lazy var subtitleLabel: UILabel = uiConfig
@@ -49,6 +50,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         .init()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
     
     /// The `UILabel` instance showing the time of the last sent message.
     open private(set) lazy var timestampLabel: UILabel = uiConfig
@@ -58,6 +60,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         .init()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
     
     /// The view used to show channels avatar.
     open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
@@ -102,21 +105,21 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
     override open func setUpLayout() {
         super.setUpLayout()
         
-        cellContentView.addSubview(titleLabel)
-        cellContentView.addSubview(subtitleLabel)
-        cellContentView.addSubview(timestampLabel)
-        cellContentView.addSubview(avatarView)
-        cellContentView.addSubview(unreadCountView)
+        addSubview(titleLabel)
+        addSubview(subtitleLabel)
+        addSubview(timestampLabel)
+        addSubview(avatarView)
+        addSubview(unreadCountView)
         
         // A helper layout guide that helps to visually center views around the vertical center of the cell
         // with defined vertical spacing
         let visualCenterGuide = UILayoutGuide()
-        cellContentView.addLayoutGuide(visualCenterGuide)
+        addLayoutGuide(visualCenterGuide)
         
         // Helper vertical center layout guide
         NSLayoutConstraint.activate([
             // Pin the center guide to the vertical center
-            visualCenterGuide.centerYAnchor.pin(equalTo: cellContentView.centerYAnchor),
+            visualCenterGuide.centerYAnchor.pin(equalTo: centerYAnchor),
             
             // Set its height to the current vertical margin to match the current spacing
             visualCenterGuide.heightAnchor.pin(equalToConstant: layoutMargins.top)
@@ -131,14 +134,14 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
             avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor),
             
             // Align avatar to the left
-            avatarView.leadingAnchor.pin(equalTo: cellContentView.layoutMarginsGuide.leadingAnchor),
+            avatarView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
             
             // Always center the avatar vertically
             avatarView.centerYAnchor.pin(equalTo: visualCenterGuide.centerYAnchor),
             
             // Avatar top and bottom should always be inside the cell
-            avatarView.topAnchor.pin(greaterThanOrEqualTo: cellContentView.layoutMarginsGuide.topAnchor),
-            avatarView.bottomAnchor.pin(lessThanOrEqualTo: cellContentView.layoutMarginsGuide.bottomAnchor)
+            avatarView.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
+            avatarView.bottomAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor)
         ]
         
         // Title label
@@ -150,7 +153,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
             titleLabel.leadingAnchor.pin(equalToSystemSpacingAfter: avatarView.trailingAnchor),
             
             // Title label top should always be inside the cell
-            titleLabel.topAnchor.pin(greaterThanOrEqualTo: cellContentView.layoutMarginsGuide.topAnchor)
+            titleLabel.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor)
         ]
 
         // Subtitle label
@@ -165,7 +168,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         // Unread count view
         layout.unreadCountViewConstraints = [
             // Pin the label to the trailing anchor
-            unreadCountView.trailingAnchor.pin(equalTo: cellContentView.layoutMarginsGuide.trailingAnchor),
+            unreadCountView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
             
             // Align it vertically with the title
             unreadCountView.centerYAnchor.pin(equalTo: titleLabel.centerYAnchor),
@@ -181,7 +184,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwip
         // Timestamp label
         layout.timestampLabelConstraints = [
             // Pin the label to the trailing anchor
-            timestampLabel.trailingAnchor.pin(equalTo: cellContentView.layoutMarginsGuide.trailingAnchor),
+            timestampLabel.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
             
             // Align it vertically with the subtitle
             timestampLabel.centerYAnchor.pin(equalTo: subtitleLabel.centerYAnchor),

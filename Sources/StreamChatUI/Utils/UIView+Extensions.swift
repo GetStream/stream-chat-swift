@@ -145,3 +145,11 @@ enum LayoutAnchorName {
         }
     }
 }
+
+extension UIView {
+    /// According to this property, you can differ whether the current language is `rightToLeft`
+    /// and setup actions according to it.
+    var currentLanguageIsRightToLeftDirection: Bool {
+        traitCollection.layoutDirection == .rightToLeft
+    }
+}

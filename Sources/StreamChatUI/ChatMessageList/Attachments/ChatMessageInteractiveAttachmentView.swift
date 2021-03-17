@@ -27,7 +27,9 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
         label.font = uiConfig.font.bodyItalic
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center
-        return label.withoutAutoresizingMaskConstraints
+        return label
+            .withoutAutoresizingMaskConstraints
+            .withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var separator = UIView()

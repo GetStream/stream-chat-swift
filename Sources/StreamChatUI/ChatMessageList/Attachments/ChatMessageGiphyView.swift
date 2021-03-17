@@ -97,7 +97,7 @@ extension _ChatMessageGiphyView {
             label.text = "GIPHY"
             label.textColor = uiConfig.colorPalette.staticColorText
             label.font = uiConfig.font.bodyBold
-            return label
+            return label.withBidirectionalLanguagesSupport
         }()
 
         public private(set) lazy var lightning = UIImageView(

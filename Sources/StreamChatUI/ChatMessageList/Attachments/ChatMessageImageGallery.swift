@@ -28,7 +28,9 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigP
         label.font = uiConfig.font.title
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center
-        return label.withoutAutoresizingMaskConstraints
+        return label
+            .withoutAutoresizingMaskConstraints
+            .withBidirectionalLanguagesSupport
     }()
 
     private var layouts: [[NSLayoutConstraint]] = []

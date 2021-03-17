@@ -29,14 +29,14 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
         let label = UILabel().withoutAutoresizingMaskConstraints
         label.font = uiConfig.font.bodyBold
         label.adjustsFontForContentSizeCategory = true
-        return label
+        return label.withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var headlineLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
         label.font = uiConfig.font.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
-        return label
+        return label.withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var bodyTextView: UITextView = {

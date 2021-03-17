@@ -18,8 +18,10 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     
     // MARK: - Subviews
     
-    public lazy var placeholderLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    
+    public lazy var placeholderLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withBidirectionalLanguagesSupport
+
     // MARK: - Overrides
     
     override public var text: String! {

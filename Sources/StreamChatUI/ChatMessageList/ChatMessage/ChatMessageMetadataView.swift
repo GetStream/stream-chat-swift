@@ -31,7 +31,7 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var timestampLabel: UILabel = UILabel()
+    public private(set) lazy var timestampLabel: UILabel = UILabel().withBidirectionalLanguagesSupport
     
     // MARK: - Overrides
 

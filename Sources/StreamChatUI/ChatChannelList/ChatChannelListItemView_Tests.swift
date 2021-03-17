@@ -73,6 +73,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
             lazy var footnoteLabel = UILabel()
                 .withoutAutoresizingMaskConstraints
                 .withAdjustingFontForContentSizeCategory
+                .withBidirectionalLanguagesSupport
             
             override func setUpAppearance() {
                 titleLabel.textColor = .cyan
@@ -92,7 +93,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
                 
                 avatarView
                     .bottomAnchor
-                    .constraint(equalTo: cellContentView.layoutMarginsGuide.bottomAnchor, constant: -20)
+                    .constraint(equalTo: layoutMarginsGuide.bottomAnchor, constant: -20)
                     .isActive = true
             }
             
