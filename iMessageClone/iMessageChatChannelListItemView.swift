@@ -26,10 +26,10 @@ final class iMessageChatChannelListItemView: ChatChannelListItemView {
         super.setUpLayout()
         
         unreadView.translatesAutoresizingMaskIntoConstraints = false
-        cellContentView.addSubview(unreadView)
+        addSubview(unreadView)
         NSLayoutConstraint.activate([
-            unreadView.centerYAnchor.constraint(equalTo: cellContentView.centerYAnchor),
-            unreadView.leadingAnchor.constraint(equalTo: cellContentView.leadingAnchor, constant: 5),
+            unreadView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            unreadView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
             unreadView.heightAnchor.constraint(equalToConstant: 10),
             unreadView.widthAnchor.constraint(equalTo: unreadView.heightAnchor)
         ])
@@ -38,11 +38,11 @@ final class iMessageChatChannelListItemView: ChatChannelListItemView {
         timestampStackView.spacing = 14
         timestampStackView.alignment = .center
         timestampStackView.translatesAutoresizingMaskIntoConstraints = false
-        cellContentView.addSubview(timestampStackView)
+        addSubview(timestampStackView)
         NSLayoutConstraint.activate([
-            timestampStackView.topAnchor.constraint(equalTo: cellContentView.topAnchor, constant: 9),
+            timestampStackView.topAnchor.constraint(equalTo: topAnchor, constant: 9),
             timestampStackView.leadingAnchor.constraint(equalTo: avatarView.trailingAnchor, constant: 12),
-            timestampStackView.trailingAnchor.constraint(equalTo: cellContentView.trailingAnchor, constant: -20)
+            timestampStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
         ])
 
         timestampStackView.addArrangedSubview(titleLabel)
@@ -77,7 +77,7 @@ final class iMessageChatChannelListItemView: ChatChannelListItemView {
             subtitleLabel.trailingAnchor.constraint(equalTo: timestampAccessoryView.trailingAnchor),
             subtitleLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
             avatarView.topAnchor.constraint(equalTo: timestampStackView.topAnchor, constant: 6),
-            avatarView.leadingAnchor.constraint(equalTo: cellContentView.leadingAnchor, constant: 26),
+            avatarView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 26),
             avatarView.heightAnchor.constraint(equalToConstant: 48),
             avatarView.widthAnchor.constraint(equalTo: avatarView.heightAnchor)
         ])
