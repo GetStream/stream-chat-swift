@@ -22,7 +22,7 @@ func snippets_ux_customizing_views_injecting_custom_subclass_2() {
         override func setUpLayout() {
             super.setUpLayout()
             addSubview(duckView)
-            duckView.centerYAnchor.constraint(equalTo: messageBubbleView.bottomAnchor).isActive = true
+            duckView.centerYAnchor.constraint(equalTo: messageBubbleView!.bottomAnchor).isActive = true
 
             incomingMessageConstraint = duckView.centerXAnchor.constraint(equalTo: trailingAnchor)
             outgoingMessageConstraint = duckView.centerXAnchor.constraint(equalTo: leadingAnchor)
