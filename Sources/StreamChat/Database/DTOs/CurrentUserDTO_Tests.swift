@@ -13,6 +13,11 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         database = try! DatabaseContainer(kind: .inMemory)
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+    
     func test_currentUserPayload_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         let extraData = NoExtraData.defaultValue

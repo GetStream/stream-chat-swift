@@ -15,6 +15,12 @@ class EventDataProcessorMiddleware_Tests: XCTestCase {
         middleware = EventDataProcessorMiddleware(database: database)
     }
     
+    override func tearDown() {
+        middleware = nil
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+    
     func test_eventWithPayload_isSavedToDB() throws {
         // Prepare an Event with a payload with channel data
         struct TestEvent: Event, EventWithPayload {

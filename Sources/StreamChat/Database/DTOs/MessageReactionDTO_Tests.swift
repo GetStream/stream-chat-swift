@@ -17,7 +17,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        database = nil
+        AssertAsync.canBeReleased(&database)
         super.tearDown()
     }
     

@@ -13,6 +13,11 @@ class DatabaseSession_Tests: StressTestCase {
         database = try! DatabaseContainerMock(kind: .inMemory)
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+    
     func test_eventPayloadChannelData_isSavedToDatabase() {
         // Prepare an Event payload with a channel data
         let channelId: ChannelId = .unique

@@ -26,6 +26,7 @@ class ChannelUpdater_Tests: StressTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
+        AssertAsync.canBeReleased(&database)
         
         super.tearDown()
     }

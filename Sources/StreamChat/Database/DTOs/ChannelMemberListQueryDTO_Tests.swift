@@ -17,7 +17,7 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        database = nil
+        AssertAsync.canBeReleased(&database)
         super.tearDown()
     }
     

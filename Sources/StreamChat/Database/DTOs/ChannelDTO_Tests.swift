@@ -13,6 +13,11 @@ class ChannelDTO_Tests: XCTestCase {
         database = try! DatabaseContainer(kind: .inMemory)
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+    
     func test_channelPayload_isStoredAndLoadedFromDB() {
         let channelId: ChannelId = .unique
         

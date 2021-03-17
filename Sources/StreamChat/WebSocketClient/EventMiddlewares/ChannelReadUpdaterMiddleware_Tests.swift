@@ -15,6 +15,12 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         middleware = ChannelReadUpdaterMiddleware(database: database)
     }
     
+    override func tearDown() {
+        middleware = nil
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+
     func test_messageReadEvent_handledCorrectly() throws {
         // Save a channel with a channel read
         let channelId = ChannelId.unique

@@ -25,7 +25,10 @@ class UserListUpdater_Tests: StressTestCase {
     override func tearDown() {
         apiClient.cleanUp()
         
-        AssertAsync.canBeReleased(&listUpdater)
+        AssertAsync {
+            Assert.canBeReleased(&listUpdater)
+            Assert.canBeReleased(&database)
+        }
         
         super.tearDown()
     }

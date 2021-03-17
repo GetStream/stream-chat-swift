@@ -13,6 +13,11 @@ class UserDTO_Tests: XCTestCase {
         database = try! DatabaseContainerMock(kind: .inMemory)
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+    
     func test_userPayload_isStoredAndLoadedFromDB() {
         let userId = UUID().uuidString
         
