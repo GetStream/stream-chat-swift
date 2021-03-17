@@ -9,4 +9,9 @@ extension UILabel {
         adjustsFontForContentSizeCategory = true
         return self
     }
+
+    var withBidirectionalLanguagesSupport: Self {
+        textAlignment = .natural
+        return self
+    }
 }
