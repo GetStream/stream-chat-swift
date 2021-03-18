@@ -17,7 +17,6 @@ extension ChatClient {
         uiConfig.navigation.channelListRouter = iMessageChatChannelListRouter.self
         uiConfig.images.newChat = UIImage(systemName: "square.and.pencil")!
         uiConfig.messageComposer.messageComposerView = iMessageChatMessageComposerView.self
-        uiConfig.messageList.messageContentView = iMessageChatMessageContentView.self
         uiConfig.messageList.defaultMessageCell = iMessageСhatMessageCollectionViewCell.self
         uiConfig.messageComposer.messageComposerViewController = iMessageChatComposerViewController.self
 
