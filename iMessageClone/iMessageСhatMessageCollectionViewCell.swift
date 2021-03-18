@@ -7,6 +7,8 @@ import StreamChatUI
 import UIKit
 
 final class iMessageСhatMessageCollectionViewCell: СhatMessageCollectionViewCell {
+    override class var messageContentViewClass: _ChatMessageContentView<NoExtraData>.Type { iMessageChatMessageContentView.self }
+    
     override func setUpLayout() {
         super.setUpLayout()
         
