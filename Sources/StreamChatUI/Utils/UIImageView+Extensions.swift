@@ -6,7 +6,7 @@ import Nuke
 import UIKit
 
 extension UIImageView {
-    func loadImage(from url: URL?, placeholder: UIImage? = nil) {
+    func loadImage(from url: URL?, placeholder: UIImage? = nil, resizeAutomatically: Bool = true) {
         guard !SystemEnvironment.isTests else {
             // When running tests, we load the images synchronously
             image = url.flatMap { UIImage(data: try! Data(contentsOf: $0)) }
@@ -17,6 +17,12 @@ extension UIImageView {
         currentImageLoadingTask?.cancel()
 
         guard let url = url else { image = nil; return }
+
+        let preprocessors: [ImageProcessing] = resizeAutomatically && bounds.size != .zero
+            ? [ImageProcessors.Resize(size: bounds.size, contentMode: .aspectFill, crop: true)]
+            : []
+ 
+        let request = ImageRequest(url: url, processors: preprocessors)
         let options = ImageLoadingOptions(placeholder: placeholder)
 
         currentImageLoadingTask = Nuke.loadImage(with: request, options: options, into: self)
