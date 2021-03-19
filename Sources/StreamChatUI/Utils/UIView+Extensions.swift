@@ -6,10 +6,10 @@ import UIKit
 
 extension UIView {
     // MARK: - `embed` family of helpers
-    
+
     func embed(_ subview: UIView, insets: NSDirectionalEdgeInsets = .zero) {
         addSubview(subview)
-        subview.translatesAutoresizingMaskIntoConstraints = false
+
         NSLayoutConstraint.activate([
             subview.leadingAnchor.pin(equalTo: leadingAnchor, constant: insets.leading),
             subview.trailingAnchor.pin(equalTo: trailingAnchor, constant: -insets.trailing),
@@ -18,25 +18,19 @@ extension UIView {
         ])
     }
     
-    // MARK: - `pin` family of helpers
-    
     func pin(anchors: [LayoutAnchorName] = [.top, .left, .bottom, .right], to view: UIView) {
-        translatesAutoresizingMaskIntoConstraints = false
-        view.translatesAutoresizingMaskIntoConstraints = false
         anchors
             .map { $0.makeConstraint(fromView: self, toView: view) }
             .forEach { $0.isActive = true }
     }
     
     func pin(anchors: [LayoutAnchorName] = [.top, .left, .bottom, .right], to layoutGuide: UILayoutGuide) {
-        translatesAutoresizingMaskIntoConstraints = false
         anchors
             .compactMap { $0.makeConstraint(fromView: self, toLayoutGuide: layoutGuide) }
             .forEach { $0.isActive = true }
     }
     
     func pin(anchors: [LayoutAnchorName] = [.width, .height], to constant: CGFloat) {
-        translatesAutoresizingMaskIntoConstraints = false
         anchors
             .compactMap { $0.makeConstraint(fromView: self, constant: constant) }
             .forEach { $0.isActive = true }
