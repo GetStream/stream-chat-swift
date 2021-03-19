@@ -12,8 +12,22 @@ extension UIImageView {
             image = url.flatMap { UIImage(data: try! Data(contentsOf: $0)) }
             return
         }
+
+        // Cancel any previous loading task
+        currentImageLoadingTask?.cancel()
+
         guard let url = url else { image = nil; return }
         let options = ImageLoadingOptions(placeholder: placeholder)
-        Nuke.loadImage(with: url, options: options, into: self)
+
+        currentImageLoadingTask = Nuke.loadImage(with: request, options: options, into: self)
+    }
+}
+
+private extension UIImageView {
+    static var nukeLoadingTaskKey: UInt8 = 0
+
+    var currentImageLoadingTask: ImageTask? {
+        get { objc_getAssociatedObject(self, &Self.nukeLoadingTaskKey) as? ImageTask }
+        set { objc_setAssociatedObject(self, &Self.nukeLoadingTaskKey, newValue, .OBJC_ASSOCIATION_RETAIN) }
     }
 }
