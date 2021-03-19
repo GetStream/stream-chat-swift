@@ -4,7 +4,7 @@
 
 import UIKit
 
-public enum SystemEnvironment {
+enum SystemEnvironment {
     static let systemName = UIDevice.current.systemName + UIDevice.current.systemVersion
     
     static var deviceModelName: String {
