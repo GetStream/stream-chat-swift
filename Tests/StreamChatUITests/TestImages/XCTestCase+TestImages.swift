@@ -20,11 +20,6 @@ extension XCTestCase {
             let bundle = Bundle(for: ThisBundle.self)
             let imageURL = bundle.url(forResource: name, withExtension: fileExtension)!
             let image = UIImage(contentsOfFile: imageURL.path)!
-
-            // Preload image with Nuke, this makes sure the image is set synchronously
-            let request = ImageRequest(url: imageURL)
-            ImageCache.shared[request] = ImageContainer(image: image)
-
             return (imageURL, image)
         }
     }
