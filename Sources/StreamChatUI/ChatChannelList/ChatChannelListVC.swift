@@ -31,6 +31,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     open private(set) lazy var collectionView: UICollectionView = uiConfig
         .channelList
         .collectionView.init(frame: .zero, collectionViewLayout: collectionViewLayout)
+        .withoutAutoresizingMaskConstraints
     
     /// The `UIButton` instance used for navigating to new channel screen creation,
     open private(set) lazy var createNewChannelButton: UIButton = uiConfig
