@@ -244,11 +244,6 @@ extension _ChatChannel {
         
         let context = dto.managedObjectContext!
         
-        // TODO: make messagesLimit a param
-        let latestMessages: [_ChatMessage<ExtraData>] = MessageDTO
-            .load(for: dto.cid, limit: 25, context: context)
-            .map { $0.asModel() }
-        
         let reads: [_ChatChannelRead<ExtraData>] = dto.reads.map { $0.asModel() }
         
         var unreadCount = ChannelUnreadCount.noUnread
@@ -268,6 +263,12 @@ extension _ChatChannel {
                 messages: currentUserChannelRead.unreadMessagesCount,
                 mentionedMessages: mentionedMessagesCount
             )
+        }
+        
+        let fetchMessages: (Int) -> [_ChatMessage<ExtraData>] = {
+            MessageDTO
+                .load(for: dto.cid, limit: $0, context: context)
+                .map { $0.asModel() }
         }
         
         return _ChatChannel(
@@ -294,7 +295,8 @@ extension _ChatChannel {
             cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,
 //            invitedMembers: [],
-            latestMessages: latestMessages
+            latestMessages: { fetchMessages(25) }, // TODO: make messagesLimit a param
+            lastMessage: fetchMessages(1).first
         )
     }
 }
