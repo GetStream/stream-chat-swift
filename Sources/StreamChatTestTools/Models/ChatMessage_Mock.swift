@@ -52,15 +52,15 @@ public extension _ChatMessage {
             quotedMessageId: quotedMessageId,
             isSilent: isSilent,
             reactionScores: reactionScores,
-            author: author,
-            mentionedUsers: mentionedUsers,
+            author: { author },
+            mentionedUsers: { mentionedUsers },
             threadParticipants: threadParticipants,
-            attachments: attachments,
-            latestReplies: latestReplies,
+            attachments: { attachments },
+            latestReplies: { latestReplies },
             localState: localState,
             isFlaggedByCurrentUser: isFlaggedByCurrentUser,
-            latestReactions: latestReactions,
-            currentUserReactions: currentUserReactions,
+            latestReactions: { latestReactions },
+            currentUserReactions: { currentUserReactions },
             isSentByCurrentUser: isSentByCurrentUser
         )
     }
