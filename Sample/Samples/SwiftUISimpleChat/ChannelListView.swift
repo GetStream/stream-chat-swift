@@ -192,7 +192,7 @@ struct ChannelListView: View {
         
         if let typingMembersInfo = createTypingMemberString(for: channel) {
             return Text(typingMembersInfo)
-        } else if let latestMessage = channel.latestMessages.first {
+        } else if let latestMessage = channel.lastMessage {
             let author = latestMessage.author.name ?? latestMessage.author.id.description
             return Text("\(author): \(latestMessage.text)")
         } else {
