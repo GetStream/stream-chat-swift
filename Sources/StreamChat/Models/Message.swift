@@ -84,19 +84,35 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     public let reactionScores: [MessageReactionType: Int]
     
     /// The user which is the author of the message.
-    public let author: _ChatUser<ExtraData.User>
+    ///
+    /// - Important: The `author` property is loaded and evaluated lazily to maintain high performance.
+    public var author: _ChatUser<ExtraData.User> { _author }
+    
+    @Cached internal var _author: _ChatUser<ExtraData.User>
     
     /// A list of users that are mentioned in this message.
-    public let mentionedUsers: Set<_ChatUser<ExtraData.User>>
+    ///
+    /// - Important: The `mentionedUsers` property is loaded and evaluated lazily to maintain high performance.
+    public var mentionedUsers: Set<_ChatUser<ExtraData.User>> { _mentionedUsers }
+    
+    @Cached internal var _mentionedUsers: Set<_ChatUser<ExtraData.User>>
 
     /// A list of users that participated in this message thread
     public let threadParticipants: Set<UserId>
     
     /// A list of attachments in this message.
-    public let attachments: [ChatMessageAttachment]
+    ///
+    /// - Important: The `attachments` property is loaded and evaluated lazily to maintain high performance.
+    public var attachments: [ChatMessageAttachment] { _attachments }
+    
+    @Cached internal var _attachments: [ChatMessageAttachment]
         
     /// A list of latest 25 replies to this message.
-    public let latestReplies: [_ChatMessage<ExtraData>]
+    ///
+    /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
+    public var latestReplies: [_ChatMessage<ExtraData>] { _latestReplies }
+    
+    @Cached internal var _latestReplies: [_ChatMessage<ExtraData>]
     
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     ///
@@ -114,12 +130,77 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// The latest reactions to the message created by any user.
     ///
     /// - Note: There can be `10` reactions at max.
-    public let latestReactions: Set<_ChatMessageReaction<ExtraData>>
+    /// - Important: The `latestReactions` property is loaded and evaluated lazily to maintain high performance.
+    public var latestReactions: Set<_ChatMessageReaction<ExtraData>> { _latestReactions }
+    
+    @Cached internal var _latestReactions: Set<_ChatMessageReaction<ExtraData>>
     
     /// The entire list of reactions to the message left by the current user.
-    public let currentUserReactions: Set<_ChatMessageReaction<ExtraData>>
+    ///
+    /// - Important: The `currentUserReactions` property is loaded and evaluated lazily to maintain high performance.
+    public var currentUserReactions: Set<_ChatMessageReaction<ExtraData>> { _currentUserReactions }
     
+    @Cached internal var _currentUserReactions: Set<_ChatMessageReaction<ExtraData>>
+    
+    /// `true` if the author of the message is the currently logged-in user.
     public let isSentByCurrentUser: Bool
+    
+    internal init(
+        id: MessageId,
+        text: String,
+        type: MessageType,
+        command: String?,
+        createdAt: Date,
+        locallyCreatedAt: Date?,
+        updatedAt: Date,
+        deletedAt: Date?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        showReplyInChannel: Bool,
+        replyCount: Int,
+        extraData: ExtraData.Message,
+        quotedMessageId: MessageId?,
+        isSilent: Bool,
+        reactionScores: [MessageReactionType: Int],
+        author: @escaping () -> _ChatUser<ExtraData.User>,
+        mentionedUsers: @escaping () -> Set<_ChatUser<ExtraData.User>>,
+        threadParticipants: Set<UserId>,
+        attachments: @escaping () -> [ChatMessageAttachment],
+        latestReplies: @escaping () -> [_ChatMessage<ExtraData>],
+        localState: LocalMessageState?,
+        isFlaggedByCurrentUser: Bool,
+        latestReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
+        currentUserReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
+        isSentByCurrentUser: Bool
+    ) {
+        self.id = id
+        self.text = text
+        self.type = type
+        self.command = command
+        self.createdAt = createdAt
+        self.locallyCreatedAt = locallyCreatedAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
+        self.arguments = arguments
+        self.parentMessageId = parentMessageId
+        self.showReplyInChannel = showReplyInChannel
+        self.replyCount = replyCount
+        self.extraData = extraData
+        self.quotedMessageId = quotedMessageId
+        self.isSilent = isSilent
+        self.reactionScores = reactionScores
+        self.threadParticipants = threadParticipants
+        self.localState = localState
+        self.isFlaggedByCurrentUser = isFlaggedByCurrentUser
+        self.isSentByCurrentUser = isSentByCurrentUser
+        
+        self.$_author = author
+        self.$_mentionedUsers = mentionedUsers
+        self.$_attachments = attachments
+        self.$_latestReplies = latestReplies
+        self.$_latestReactions = latestReactions
+        self.$_currentUserReactions = currentUserReactions
+    }
 }
 
 extension _ChatMessage: Hashable {

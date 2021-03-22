@@ -158,15 +158,15 @@ extension _ChatMessage {
             quotedMessageId: nil,
             isSilent: false,
             reactionScores: ["": 1],
-            author: .init(id: .unique),
-            mentionedUsers: [],
+            author: { .init(id: .unique) },
+            mentionedUsers: { [] },
             threadParticipants: [],
-            attachments: [],
-            latestReplies: [],
+            attachments: { [] },
+            latestReplies: { [] },
             localState: nil,
             isFlaggedByCurrentUser: false,
-            latestReactions: [],
-            currentUserReactions: [],
+            latestReactions: { [] },
+            currentUserReactions: { [] },
             isSentByCurrentUser: false
         )
     }
