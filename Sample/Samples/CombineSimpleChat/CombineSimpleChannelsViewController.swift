@@ -137,7 +137,7 @@ class CombineSimpleChannelsViewController: UITableViewController {
         let subtitle: String
         if let typingMembersInfo = createTypingMemberString(for: channel) {
             subtitle = typingMembersInfo
-        } else if let latestMessage = channel.latestMessages.first {
+        } else if let latestMessage = channel.lastMessage {
             let author = latestMessage.author.name ?? latestMessage.author.id.description
             subtitle = "\(author): \(latestMessage.text)"
         } else {

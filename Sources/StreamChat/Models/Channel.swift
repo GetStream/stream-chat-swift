@@ -97,6 +97,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     ///
     public let latestMessages: [_ChatMessage<ExtraData>]
     
+    public let lastMessage: _ChatMessage<ExtraData>?
+    
     /// Read states of the users for this channel.
     ///
     /// You can use this information to show to your users information about what messages were read by certain users.
@@ -148,6 +150,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         extraData: ExtraData.Channel,
 //        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         latestMessages: [_ChatMessage<ExtraData>] = []
+        lastMessage: _ChatMessage<ExtraData>? = nil
     ) {
         self.cid = cid
         self.name = name
@@ -173,6 +176,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.extraData = extraData
 //        self.invitedMembers = invitedMembers
         self.latestMessages = latestMessages
+        self.lastMessage = lastMessage
     }
 }
 

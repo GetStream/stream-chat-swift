@@ -91,7 +91,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         guard let channel = content.channel else { return nil }
         if let typingMembersInfo = typingMemberString {
             return typingMembersInfo
-        } else if let latestMessage = channel.latestMessages.first {
+        } else if let latestMessage = channel.lastMessage {
             return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.text)"
         } else {
             return L10n.Channel.Item.emptyMessages
