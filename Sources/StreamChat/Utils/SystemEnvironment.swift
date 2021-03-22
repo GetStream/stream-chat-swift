@@ -58,7 +58,7 @@ enum SystemEnvironment {
     }
     
     static var isTests: Bool {
-        #if DEBUG
+        #if TESTS
         return NSClassFromString("XCTest") != nil
         #else
         return false
