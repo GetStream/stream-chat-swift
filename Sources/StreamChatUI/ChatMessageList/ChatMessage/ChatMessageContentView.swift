@@ -20,27 +20,27 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     // MARK: - Subviews
 
-    public private(set) var messageBubbleView: _ChatMessageBubbleView<ExtraData>?
+    public var messageBubbleView: _ChatMessageBubbleView<ExtraData>?
     
-    public private(set) var textView: UITextView?
+    public var textView: UITextView?
     
-    public private(set) var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
+    public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
     
-    public private(set) var quotedMessageView: _ChatMessageQuoteBubbleView<ExtraData>?
+    public var quotedMessageView: _ChatMessageQuoteBubbleView<ExtraData>?
     
-    public private(set) var attachmentsView: _ChatMessageAttachmentsView<ExtraData>?
+    public var attachmentsView: _ChatMessageAttachmentsView<ExtraData>?
 
-    public private(set) var messageMetadataView: _ChatMessageMetadataView<ExtraData>?
+    public var messageMetadataView: _ChatMessageMetadataView<ExtraData>?
     
-    public private(set) var authorAvatarView: ChatAvatarView?
+    public var authorAvatarView: ChatAvatarView?
 
-    public private(set) var reactionsBubble: _ChatMessageReactionsBubbleView<ExtraData>?
+    public var reactionsBubble: _ChatMessageReactionsBubbleView<ExtraData>?
 
-    public private(set) var threadArrowView: _ChatMessageThreadArrowView<ExtraData>?
+    public var threadArrowView: _ChatMessageThreadArrowView<ExtraData>?
 
-    public private(set) var threadView: _ChatMessageThreadInfoView<ExtraData>?
+    public var threadView: _ChatMessageThreadInfoView<ExtraData>?
 
-    public private(set) var errorIndicator: _ChatMessageErrorIndicator<ExtraData>?
+    public var errorIndicator: _ChatMessageErrorIndicator<ExtraData>?
 
     var incomingMessageConstraints: [NSLayoutConstraint] = []
     var outgoingMessageConstraints: [NSLayoutConstraint] = []
