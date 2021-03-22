@@ -65,6 +65,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
         addChildViewController(actionsController, targetView: contentView)
 
         contentView.addSubview(messageContentView)
+        messageContentView.setupMessageBubbleView()
         scrollContentView.addSubview(contentView)
         scrollView.embed(scrollContentView)
         view.embed(blurView)
