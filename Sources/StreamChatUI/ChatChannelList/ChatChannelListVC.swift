@@ -243,3 +243,17 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
         )
     }
 }
+
+// MARK: - _ChatClient+channelListVC
+
+public extension _ChatClient {
+    /// This function instantiates a `ChatChannelList` with the given filter for channels.
+    /// - Parameter filter: The filter applied to this channel list.
+    func channelListVC(filter: Filter<_ChannelListFilterScope<ExtraData.Channel>>) -> _ChatChannelListVC<ExtraData> {
+        let query = _ChannelListQuery<ExtraData.Channel>(filter: filter)
+        let channelListVC = _ChatChannelListVC<ExtraData>()
+        let controller = channelListController(query: query)
+        channelListVC.controller = controller
+        return channelListVC
+    }
+}

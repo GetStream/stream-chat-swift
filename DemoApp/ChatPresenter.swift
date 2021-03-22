@@ -22,7 +22,7 @@ extension UIViewController {
         UIConfig.default.navigation.channelListRouter = DemoChatChannelListRouter.self
 
         // Channels with the current user
-        let chatList = client.channelListVC()
+        let chatList = client.channelListVC(filter: .containMembers(userIds: [token.userId]))
         
         let chatNavigationController = UINavigationController(rootViewController: chatList)
         

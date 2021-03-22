@@ -100,3 +100,16 @@ extension _ChatChannelVC: _ChatChannelControllerDelegate {
         messageList.updateMessages(with: changes)
     }
 }
+
+// MARK: - _ChatClient+channelVC
+
+public extension _ChatClient {
+    /// This function instantiates a `ChatChannelVC` with the given `ChannelId`.
+    /// - Parameter cid: The `ChannelId` for the channel to be displayed.
+    func channelVC(cid: ChannelId) -> _ChatChannelVC<ExtraData> {
+        let channelVC = _ChatChannelVC<ExtraData>()
+        let controller = channelController(for: cid)
+        channelVC.channelController = controller
+        return channelVC
+    }
+}

@@ -224,4 +224,14 @@ class ChatChannelListVC_Tests: XCTestCase {
         XCTAssert(channelListVC.collectionView is OtherCollectionView)
         XCTAssert(channelListVC.createNewChannelButton is ChatChannelCreateNewButton)
     }
+    
+    func testChatClientChannelListVC() {
+        let client = ChatClient(
+            config: .init(apiKeyString: "test"),
+            tokenProvider: .anonymous
+        )
+        
+        let channelListVC = client.channelListVC(filter: .containMembers(userIds: ["hello", "world"]))
+        XCTAssertEqual(channelListVC.controller.query.filter.description, "members IN [\"hello\", \"world\"]")
+    }
 }
