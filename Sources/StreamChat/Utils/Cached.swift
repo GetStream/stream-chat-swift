@@ -32,6 +32,14 @@ class Cached<T> {
         return returnValue
     }
     
+    var projectedValue: (() -> T) {
+        get {
+            log.assert(computeValue != nil, "You must set the `computeValue` closure before accessing it.")
+            return computeValue
+        }
+        set { computeValue = newValue }
+    }
+    
     @Atomic private var _cached: T?
     
     /// Resets the current cached value. When someone access the `wrappedValue`, the `computeValue` closure is used

@@ -95,8 +95,11 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// This field contains only the latest messages of the channel. You can get all existing messages in the channel by creating
     /// and using a `ChatChannelController` for this channel id.
     ///
-    public let latestMessages: [_ChatMessage<ExtraData>]
+    /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
+    public var latestMessages: [_ChatMessage<ExtraData>] { _latestMessages }
+    @Cached private var _latestMessages: [_ChatMessage<ExtraData>]
     
+    /// The newest message of the channel. `nil` if there are no messages in the channel.
     public let lastMessage: _ChatMessage<ExtraData>?
     
     /// Read states of the users for this channel.
@@ -149,7 +152,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         cooldownDuration: Int = 0,
         extraData: ExtraData.Channel,
 //        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
-        latestMessages: [_ChatMessage<ExtraData>] = []
+        latestMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
         lastMessage: _ChatMessage<ExtraData>? = nil
     ) {
         self.cid = cid
@@ -175,8 +178,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
 //        self.invitedMembers = invitedMembers
-        self.latestMessages = latestMessages
         self.lastMessage = lastMessage
+        self.$_latestMessages = latestMessages
     }
 }
 
