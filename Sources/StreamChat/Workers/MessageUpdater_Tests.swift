@@ -399,6 +399,7 @@ final class MessageUpdater_Tests: StressTestCase {
             messageUpdater.createNewReply(
                 in: cid,
                 text: text,
+                pinning: MessagePinning(expirationDate: .unique),
                 command: command,
                 arguments: arguments,
                 parentMessageId: parentMessageId,
@@ -437,6 +438,7 @@ final class MessageUpdater_Tests: StressTestCase {
             )
             Assert.willBeEqual(message?.extraData, extraData)
             Assert.willBeEqual(message?.localState, .pendingSend)
+            Assert.willBeTrue(message!.isPinned)
         }
     }
     
@@ -456,6 +458,7 @@ final class MessageUpdater_Tests: StressTestCase {
             messageUpdater.createNewReply(
                 in: .unique,
                 text: .unique,
+                pinning: nil,
                 command: .unique,
                 arguments: .unique,
                 parentMessageId: .unique,

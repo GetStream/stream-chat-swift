@@ -57,6 +57,7 @@ protocol MessageDatabaseSession {
     func createNewMessage<ExtraData: MessageExtraData>(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
@@ -103,6 +104,7 @@ extension MessageDatabaseSession {
     func createNewMessage<ExtraData: MessageExtraData>(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         quotedMessageId: MessageId?,
         attachments: [AttachmentEnvelope] = [],
         attachmentSeeds: [ChatMessageAttachmentSeed] = [],
@@ -111,6 +113,7 @@ extension MessageDatabaseSession {
         try createNewMessage(
             in: cid,
             text: text,
+            pinning: pinning,
             command: nil,
             arguments: nil,
             parentMessageId: nil,

@@ -690,15 +690,17 @@ public extension _ChatChannelController {
     ///
     /// - Parameters:
     ///   - text: Text of the message.
-    ///   - extraData: Additional extra data of the message object.
+    ///   - pinning: Pins the new message. `nil` if should not be pinned.
     ///   - attachments: An array of the attachments for the message.
     ///     `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol
     ///     and `ChatMessageAttachmentSeed`s.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
+    ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
     func createNewMessage(
         text: String,
+        pinning: MessagePinning? = nil,
 //        command: String? = nil,
 //        arguments: String? = nil,
         attachments: [AttachmentEnvelope] = [],
@@ -720,6 +722,7 @@ public extension _ChatChannelController {
         updater.createNewMessage(
             in: cid,
             text: text,
+            pinning: pinning,
             command: nil,
             arguments: nil,
             attachments: attachments,
@@ -849,7 +852,7 @@ public extension _ChatChannelController {
             }
         }
     }
-    
+
     /// Start watching a channel
     ///
     /// Watching a channel is defined as observing notifications about this channel.

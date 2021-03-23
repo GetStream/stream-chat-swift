@@ -236,6 +236,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             
             messageController?.createNewReply(
                 text: text,
+                pinning: nil,
                 attachments: attachments + attachmentSeeds,
                 showReplyInChannel: composerView.checkmarkControl.isSelected,
                 quotedMessageId: quotedMessageId
@@ -243,6 +244,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         } else {
             controller?.createNewMessage(
                 text: text,
+                pinning: nil,
                 attachments: attachments + attachmentSeeds,
                 quotedMessageId: quotedMessageId
             )
