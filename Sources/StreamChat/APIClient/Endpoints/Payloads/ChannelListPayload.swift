@@ -21,12 +21,15 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     let membership: MemberPayload<ExtraData.User>?
 
     let messages: [MessagePayload<ExtraData>]
+
+    let pinnedMessages: [MessagePayload<ExtraData>]
     
     let channelReads: [ChannelReadPayload<ExtraData>]
 
     private enum CodingKeys: String, CodingKey {
         case channel
         case messages
+        case pinnedMessages = "pinned_messages"
         case channelReads = "read"
         case members
         case watchers
@@ -42,6 +45,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
         members = try container.decode([MemberPayload<ExtraData.User>].self, forKey: .members)
         membership = try container.decodeIfPresent(MemberPayload<ExtraData.User>.self, forKey: .membership)
         messages = try container.decode([MessagePayload<ExtraData>].self, forKey: .messages)
+        pinnedMessages = try container.decode([MessagePayload<ExtraData>].self, forKey: .pinnedMessages)
         channelReads = try container.decodeIfPresent([ChannelReadPayload<ExtraData>].self, forKey: .channelReads) ?? []
     }
     
@@ -54,6 +58,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
         members: [MemberPayload<ExtraData.User>],
         membership: MemberPayload<ExtraData.User>?,
         messages: [MessagePayload<ExtraData>],
+        pinnedMessages: [MessagePayload<ExtraData>],
         channelReads: [ChannelReadPayload<ExtraData>]
     ) {
         self.channel = channel
@@ -62,6 +67,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.members = members
         self.membership = membership
         self.messages = messages
+        self.pinnedMessages = pinnedMessages
         self.channelReads = channelReads
     }
 }

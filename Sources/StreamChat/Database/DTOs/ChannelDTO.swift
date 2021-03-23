@@ -42,6 +42,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var membership: MemberDTO?
     @NSManaged var currentlyTypingMembers: Set<MemberDTO>
     @NSManaged var messages: Set<MessageDTO>
+    @NSManaged var pinnedMessages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var watchers: Set<UserDTO>
@@ -153,6 +154,9 @@ extension NSManagedObjectContext {
         let dto = try saveChannel(payload: payload.channel, query: query)
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, for: payload.channel.cid) }
+        try payload.pinnedMessages.forEach {
+            _ = try saveMessage(payload: $0, for: payload.channel.cid)
+        }
         
         try payload.channelReads.forEach { _ = try saveChannelRead(payload: $0, for: payload.channel.cid) }
         
@@ -296,7 +300,8 @@ extension _ChatChannel {
             extraData: extraData,
 //            invitedMembers: [],
             latestMessages: { fetchMessages(25) }, // TODO: make messagesLimit a param
-            lastMessage: fetchMessages(1).first
+            lastMessage: fetchMessages(1).first,
+            pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } }
         )
     }
 }

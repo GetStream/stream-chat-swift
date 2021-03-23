@@ -49,6 +49,8 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssert(firstMessage.reactionScores.isEmpty)
         XCTAssertEqual(firstMessage.replyCount, 0)
         XCTAssertFalse(firstMessage.isSilent)
+
+        XCTAssertEqual(payload.pinnedMessages.map(\.id), ["broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9"])
         
         let channel = payload.channel
         XCTAssertEqual(channel.cid, try! ChannelId(cid: "messaging:general"))

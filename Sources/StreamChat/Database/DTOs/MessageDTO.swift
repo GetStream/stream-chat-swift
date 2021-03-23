@@ -326,14 +326,25 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             payload.threadParticipants.map { try saveUser(payload: $0) }
         )
 
+        var channelDTO: ChannelDTO?
+
         if let channelPayload = payload.channel {
-            let channelDTO = try saveChannel(payload: channelPayload, query: nil)
-            dto.channel = channelDTO
+            channelDTO = try saveChannel(payload: channelPayload, query: nil)
         } else if let cid = cid {
-            let channelDTO = ChannelDTO.loadOrCreate(cid: cid, context: self)
-            dto.channel = channelDTO
+            channelDTO = ChannelDTO.load(cid: cid, context: self)
         } else {
             log.assertationFailure("Should never happen because either `cid` or `payload.channel` should be present.")
+        }
+
+        if let channelDTO = channelDTO {
+            if dto.pinned {
+                channelDTO.pinnedMessages.insert(dto)
+            } else {
+                channelDTO.pinnedMessages.remove(dto)
+            }
+            dto.channel = channelDTO
+        } else {
+            log.assertationFailure("Should never happen, a channel should have been fetched.")
         }
         
         let reactions = payload.latestReactions + payload.ownReactions

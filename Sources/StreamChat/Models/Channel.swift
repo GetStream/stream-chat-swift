@@ -101,6 +101,15 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     
     /// The newest message of the channel. `nil` if there are no messages in the channel.
     public let lastMessage: _ChatMessage<ExtraData>?
+
+    /// Pinned messages present on the channel.
+    ///
+    /// This field contains only the pinned messages of the channel. You can get all existing messages in the channel by creating
+    /// and using a `ChatChannelController` for this channel id.
+    ///
+    /// - Important: The `pinnedMessages` property is loaded and evaluated lazily to maintain high performance.
+    public var pinnedMessages: [_ChatMessage<ExtraData>] { _pinnedMessages }
+    @Cached private var _pinnedMessages: [_ChatMessage<ExtraData>]
     
     /// Read states of the users for this channel.
     ///
@@ -153,7 +162,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         extraData: ExtraData.Channel,
 //        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         latestMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
-        lastMessage: _ChatMessage<ExtraData>? = nil
+        lastMessage: _ChatMessage<ExtraData>? = nil,
+        pinnedMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] }
     ) {
         self.cid = cid
         self.name = name
@@ -180,6 +190,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
 //        self.invitedMembers = invitedMembers
         self.lastMessage = lastMessage
         self.$_latestMessages = latestMessages
+        self.$_pinnedMessages = pinnedMessages
     }
 }
 
