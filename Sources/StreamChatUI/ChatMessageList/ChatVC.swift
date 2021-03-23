@@ -16,9 +16,7 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
     // MARK: - Properties
 
     public var channelController: _ChatChannelController<ExtraData>!
-    public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> = {
-        channelController.client.userSearchController()
-    }()
+    public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> = channelController.client.userSearchController()
 
     public private(set) lazy var messageComposerViewController = uiConfig
         .messageComposer
@@ -72,7 +70,7 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
             let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
             let oldFrame = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
             let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
-            let curve = notification.userInfo![UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
+            let curve = notification.userInfo?[UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
         else { return }
 
         let localFrame = view.convert(frame, from: nil)
@@ -135,19 +133,19 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         
         addChildViewController(messageList, targetView: view)
         addChildViewController(messageComposerViewController, targetView: view)
-
-        messageList.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
-        messageList.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
-        messageList.view.topAnchor.pin(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        messageList.view.bottomAnchor.pin(equalTo: messageComposerViewController.view.topAnchor).isActive = true
-
-        messageComposerViewController.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
-            .isActive = true
-        messageComposerViewController.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-            .isActive = true
-        messageComposerBottomConstraint =
-            messageComposerViewController.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
-        messageComposerBottomConstraint?.isActive = true
+        
+        messageComposerBottomConstraint = messageComposerViewController.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
+        
+        NSLayoutConstraint.activate([
+            messageList.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            messageList.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            messageList.view.topAnchor.pin(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            messageList.view.bottomAnchor.pin(equalTo: messageComposerViewController.view.topAnchor),
+            
+            messageComposerViewController.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            messageComposerViewController.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            messageComposerBottomConstraint!
+        ])
     }
 
     override public func defaultAppearance() {

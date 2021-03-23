@@ -328,7 +328,8 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         let quotedMessageView = uiConfig
             .messageList
             .messageContentSubviews
-            .quotedMessageBubbleView.init()
+            .quotedMessageBubbleView
+            .init()
             .withoutAutoresizingMaskConstraints
         
         self.quotedMessageView = quotedMessageView
