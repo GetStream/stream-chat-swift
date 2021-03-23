@@ -386,6 +386,24 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     func delete(message: MessageDTO) {
         delete(message)
     }
+
+    func pin(message: MessageDTO, pinning: MessagePinning) throws {
+        guard let currentUserDTO = currentUser() else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+        let pinnedDate = Date()
+        message.pinned = true
+        message.pinnedAt = pinnedDate
+        message.pinnedBy = currentUserDTO.user
+        message.pinExpires = pinning.expirationDate
+    }
+
+    func unpin(message: MessageDTO) {
+        message.pinned = false
+        message.pinnedAt = nil
+        message.pinnedBy = nil
+        message.pinExpires = nil
+    }
 }
 
 extension MessageDTO {

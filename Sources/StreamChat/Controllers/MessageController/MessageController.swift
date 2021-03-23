@@ -350,6 +350,29 @@ public extension _ChatMessageController {
             }
         }
     }
+
+    /// Pin the message this controller manages.
+    ///  - Parameters:
+    ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
+    ///   - completion: A completion block with an error if the request was failed.
+    func pin(_ pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.pinMessage(messageId: messageId, pinning: pinning) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Unpins the message this controller manages.
+    ///  - Parameters:
+    ///   - completion: A completion block with an error if the request was failed.
+    func unpin(completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.unpinMessage(messageId: messageId) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
     
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.
     /// - Parameters:

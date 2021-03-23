@@ -246,7 +246,57 @@ class MessageDTO_Tests: XCTestCase {
             )
         }
     }
-    
+
+    func test_messagePayload_isPinned_addedToPinnedMessages() throws {
+        let channelId: ChannelId = .unique
+        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
+        let payload: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
+            pinned: true
+        )
+
+        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try await { completion in
+            // Asynchronously save the payload to the db
+            database.write { session in
+                // Create the channel first
+                let channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
+
+                // Save the message
+                let messageDTO = try! session.saveMessage(payload: payload, for: channelId)
+                completion((channelDTO, messageDTO))
+            }
+        }
+
+        XCTAssertTrue(channelDTO.pinnedMessages.contains(messageDTO))
+    }
+
+    func test_messagePayload_isNotPinned_removedFromPinnedMessages() throws {
+        let channelId: ChannelId = .unique
+        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
+        let payload: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
+            pinned: false
+        )
+
+        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try await { completion in
+            // Asynchronously save the payload to the db
+            database.write { session in
+                // Create the channel first
+                let channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
+
+                // Save the message
+                let messageDTO = try! session.saveMessage(payload: payload, for: channelId)
+                completion((channelDTO, messageDTO))
+            }
+        }
+
+        XCTAssertFalse(channelDTO.pinnedMessages.contains(messageDTO))
+    }
+
     func test_messagePayloadNotStored_withoutChannelInfo() throws {
         let payload: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
         assert(payload.channel == nil, "Channel must be `nil`")

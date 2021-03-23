@@ -898,6 +898,192 @@ final class MessageUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
+    // MARK: - Pinning message
+
+    func test_pinMessage_propogates_MessageDoesNotExist_Error() throws {
+        try database.createCurrentUser()
+
+        let completionError = try await {
+            messageUpdater.pinMessage(messageId: .unique, pinning: .expirationDate(.unique), completion: $0)
+        }
+
+        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+    }
+
+    func test_pinMessage_updatesLocalMessageCorrectly() throws {
+        let pairs: [(LocalMessageState?, LocalMessageState?)] = [
+            (nil, .pendingSync),
+            (.pendingSync, .pendingSync),
+            (.pendingSend, .pendingSend)
+        ]
+
+        for (initialState, expectedState) in pairs {
+            let currentUserId: UserId = .unique
+            let messageId: MessageId = .unique
+            let pin = MessagePinning(expirationDate: .unique)
+
+            // Flush the database
+            try database.removeAllData()
+
+            // Create current user is the database
+            try database.createCurrentUser(id: currentUserId)
+
+            // Create a new message in the database
+            try database.createMessage(id: messageId, authorId: currentUserId, localState: initialState)
+
+            let completionError = try await {
+                messageUpdater.pinMessage(messageId: messageId, pinning: pin, completion: $0)
+            }
+
+            // Load the message
+            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+            XCTAssertNil(completionError)
+            XCTAssertEqual(message.localMessageState, expectedState)
+            XCTAssertEqual(message.pinned, true)
+            XCTAssertEqual(message.pinExpires, pin.expirationDate)
+            XCTAssertEqual(message.pinnedBy?.id, currentUserId)
+            XCTAssertNotNil(message.pinnedAt)
+        }
+    }
+
+    func test_pinMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForPinning() throws {
+        let invalidStates: [LocalMessageState] = [
+            .deleting,
+            .sending,
+            .syncing
+        ]
+
+        for state in invalidStates {
+            let currentUserId: UserId = .unique
+            let messageId: MessageId = .unique
+            let initialText: String = .unique
+
+            // Flush the database
+            try database.removeAllData()
+
+            // Create current user is the database
+            try database.createCurrentUser(id: currentUserId)
+
+            // Create a new message in the database
+            try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
+
+            let completionError = try await {
+                messageUpdater.pinMessage(messageId: messageId, pinning: MessagePinning(expirationDate: .unique), completion: $0)
+            }
+
+            // Load the message
+            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+            XCTAssertTrue(completionError is ClientError.MessageEditing)
+            XCTAssertEqual(message.localMessageState, state)
+            XCTAssertEqual(message.text, initialText)
+            XCTAssertEqual(message.pinned, false)
+            XCTAssertNil(message.pinExpires)
+            XCTAssertNil(message.pinnedAt)
+            XCTAssertNil(message.pinnedBy)
+        }
+    }
+
+    func test_unpinMessage_propogates_MessageDoesNotExist_Error() throws {
+        try database.createCurrentUser()
+
+        let completionError = try await {
+            messageUpdater.unpinMessage(messageId: .unique, completion: $0)
+        }
+
+        XCTAssertTrue(completionError is ClientError.MessageDoesNotExist)
+    }
+
+    func test_unpinMessage_updatesLocalMessageCorrectly() throws {
+        let pairs: [(LocalMessageState?, LocalMessageState?)] = [
+            (nil, .pendingSync),
+            (.pendingSync, .pendingSync),
+            (.pendingSend, .pendingSend)
+        ]
+
+        for (initialState, expectedState) in pairs {
+            let currentUserId: UserId = .unique
+            let messageId: MessageId = .unique
+
+            // Flush the database
+            try database.removeAllData()
+
+            // Create current user is the database
+            try database.createCurrentUser(id: currentUserId)
+
+            // Create a new message in the database
+            try database.createMessage(
+                id: messageId,
+                authorId: currentUserId,
+                pinned: true,
+                pinnedByUserId: .unique,
+                pinnedAt: .unique,
+                pinExpires: .unique,
+                localState: initialState
+            )
+
+            let completionError = try await {
+                messageUpdater.unpinMessage(messageId: messageId, completion: $0)
+            }
+
+            // Load the message
+            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+            XCTAssertNil(completionError)
+            XCTAssertEqual(message.localMessageState, expectedState)
+            XCTAssertEqual(message.pinned, false)
+            XCTAssertNil(message.pinExpires)
+            XCTAssertNil(message.pinnedAt)
+            XCTAssertNil(message.pinnedBy)
+        }
+    }
+
+    func test_unpinMessage_propogatesMessageEditingError_ifLocalStateIsInvalidForUnpinning() throws {
+        let invalidStates: [LocalMessageState] = [
+            .deleting,
+            .sending,
+            .syncing
+        ]
+
+        for state in invalidStates {
+            let currentUserId: UserId = .unique
+            let messageId: MessageId = .unique
+
+            // Flush the database
+            try database.removeAllData()
+
+            // Create current user is the database
+            try database.createCurrentUser(id: currentUserId)
+
+            // Create a new message in the database
+            try database.createMessage(
+                id: messageId,
+                authorId: currentUserId,
+                pinned: true,
+                pinnedByUserId: .unique,
+                pinnedAt: .unique,
+                pinExpires: .unique,
+                localState: state
+            )
+
+            // Edit created message with new text
+            let completionError = try await {
+                messageUpdater.unpinMessage(messageId: messageId, completion: $0)
+            }
+
+            // Load the message
+            let message = try XCTUnwrap(database.viewContext.message(id: messageId))
+
+            XCTAssertTrue(completionError is ClientError.MessageEditing)
+            XCTAssertEqual(message.localMessageState, state)
+            XCTAssertEqual(message.pinned, true)
+            XCTAssertNotNil(message.pinExpires)
+            XCTAssertNotNil(message.pinnedAt)
+            XCTAssertNotNil(message.pinnedBy)
+        }
+    }
+
     // MARK: - Restart failed attachment uploading
     
     func test_restartFailedAttachmentUploading_propagatesAttachmentDoesNotExistError() throws {
