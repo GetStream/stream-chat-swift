@@ -45,7 +45,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>sadfadf<\/p>\n"
+      "html" : "<p>sadfadf<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
@@ -84,7 +88,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n"
+      "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
@@ -123,7 +131,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>hi<\/p>\n"
+      "html" : "<p>hi<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "jolly-base-0-9543fe87-8bb9-4145-8781-029661669844",
@@ -162,7 +174,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>hello<\/p>\n"
+      "html" : "<p>hello<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "jolly-base-0-c6321eed-2d81-46c8-9c65-72f49ef0e9f2",
@@ -211,7 +227,11 @@
         "name" : "Jolly base"
       },
       "updated_at" : "2020-06-09T08:16:06.295414Z",
-      "html" : ""
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "example-user-699e467b-580e-4c97-a8ad-117080ffdf14",
@@ -250,7 +270,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>golf<\/p>\n"
+      "html" : "<p>golf<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "hidden-lake-6-abf534d4-08f3-4d47-886b-a7d8739f60c6",
@@ -293,7 +317,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : ""
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "a7e192f1-0c4f-4c0d-91ad-5451403487ec",
@@ -337,7 +365,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>Kk<\/p>\n"
+      "html" : "<p>Kk<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "ff3dc0c3-217b-45c3-b318-ec9631737810",
@@ -381,7 +413,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>Rr<\/p>\n"
+      "html" : "<p>Rr<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "711b1eac-24ec-4482-ba2a-38f8eb91d041",
@@ -429,7 +465,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>This message was deleted.<\/p>\n"
+      "html" : "<p>This message was deleted.<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "25580938-597f-42db-b5fa-a3551fce93df",
@@ -480,7 +520,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : ""
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "79eb1a37-4367-4729-bf2e-72becb16abf5",
@@ -531,7 +575,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : ""
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "2adae507-1051-435f-a4c7-232b75d5b242",
@@ -587,7 +635,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : ""
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "bitter-cloud-0-184d7818-6282-4047-977c-43102352866c",
@@ -626,7 +678,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>fdfdfd<\/p>\n"
+      "html" : "<p>fdfdfd<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "bitter-cloud-0-6f6edd0e-06dd-406f-ac58-a4cfc63a357e",
@@ -669,7 +725,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : ""
+      "html" : "",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "139c8acf-e405-44a8-a8a6-7e3922a7ea7f",
@@ -717,7 +777,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>This message was deleted.<\/p>\n"
+      "html" : "<p>This message was deleted.<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "0e5083af-e7d1-4278-a10c-8e9990976234",
@@ -768,7 +832,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p><a href=\"http:\/\/getstream.io\" rel=\"nofollow\">http:\/\/getstream.io<\/a><\/p>\n"
+      "html" : "<p><a href=\"http:\/\/getstream.io\" rel=\"nofollow\">http:\/\/getstream.io<\/a><\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "wispy-bird-9-59ad6b82-a45e-4f83-849b-01d79f3248a0",
@@ -807,7 +875,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>o<\/p>\n"
+      "html" : "<p>o<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "wispy-bird-9-5252269d-4d51-4c32-acb0-985be29cf17a",
@@ -846,7 +918,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>whos<\/p>\n"
+      "html" : "<p>whos<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "wispy-bird-9-cbb34e46-6f22-4c1d-8105-f4df78d5914a",
@@ -885,7 +961,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>🤔🤔<\/p>\n"
+      "html" : "<p>🤔🤔<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "throbbing-salad-6-8187e80d-88ff-468a-8670-7c60a4f11e20",
@@ -924,7 +1004,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>hey<\/p>\n"
+      "html" : "<p>hey<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "throbbing-salad-6-9ea5ca14-fe37-4144-87ef-345de2c72cf1",
@@ -967,7 +1051,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>🤐🤐🤐<\/p>\n"
+      "html" : "<p>🤐🤐🤐<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "aged-moon-3-423c9b17-78a3-41ff-8aa7-47e6afb9157e",
@@ -1006,7 +1094,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>ytf<\/p>\n"
+      "html" : "<p>ytf<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "bitter-cloud-4-988809fa-b534-4f6a-8e22-0f547fe46129",
@@ -1049,7 +1141,11 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p>it’s a great day in the neighborhood!<\/p>\n"
+      "html" : "<p>it’s a great day in the neighborhood!<\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     },
     {
       "id" : "white-boat-1-c9d54585-f046-4785-9d81-72fd930bf2a3",
@@ -1088,8 +1184,62 @@
       "mentioned_users" : [
         
       ],
-      "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA<\/a><\/p>\n"
+      "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA<\/a><\/p>\n",
+      "pinned": false,
+      "pinned_at": null,
+      "pin_expires": null,
+      "pinned_by": null
     }
+  ],
+  "pinned_messages": [
+      {
+        "id" : "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9",
+        "reaction_counts" : {
+
+        },
+        "silent" : false,
+        "created_at" : "2020-06-09T08:10:40.800912Z",
+        "reaction_scores" : {
+
+        },
+        "type" : "regular",
+        "latest_reactions" : [
+
+        ],
+        "text" : "sadfadf",
+        "attachments" : [
+
+        ],
+        "own_reactions" : [
+
+        ],
+        "updated_at" : "2020-06-09T08:10:40.800912Z",
+        "reply_count" : 0,
+        "user" : {
+          "id" : "broken-waterfall-5",
+          "banned" : false,
+          "unread_channels" : 0,
+          "totalUnreadCount" : 0,
+          "last_active" : "2020-06-10T13:24:00.501797Z",
+          "created_at" : "2019-12-12T15:33:46.488935Z",
+          "unreadChannels" : 0,
+          "unread_count" : 0,
+          "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
+          "updated_at" : "2020-06-10T14:11:29.946106Z",
+          "role" : "user",
+          "total_unread_count" : 0,
+          "online" : true,
+          "name" : "broken-waterfall-5"
+        },
+        "mentioned_users" : [
+
+        ],
+        "html" : "<p>sadfadf<\/p>\n",
+        "pinned": false,
+        "pinned_at": null,
+        "pin_expires": null,
+        "pinned_by": null
+      },
   ],
   "watcher_count" : 7,
   "channel" : {

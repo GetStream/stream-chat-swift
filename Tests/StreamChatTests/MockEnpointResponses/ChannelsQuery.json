@@ -47,7 +47,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>sadfadf<\/p>\n"
+          "html" : "<p>sadfadf<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
@@ -86,7 +90,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n"
+          "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "jolly-base-0-2827d319-5383-4292-84bf-91288eb977a6",
@@ -125,7 +133,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>hi<\/p>\n"
+          "html" : "<p>hi<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "jolly-base-0-9543fe87-8bb9-4145-8781-029661669844",
@@ -164,7 +176,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>hello<\/p>\n"
+          "html" : "<p>hello<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "jolly-base-0-c6321eed-2d81-46c8-9c65-72f49ef0e9f2",
@@ -213,7 +229,11 @@
             "name" : "Jolly base"
           },
           "updated_at" : "2020-06-09T08:16:06.295414Z",
-          "html" : ""
+          "html" : "",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "example-user-699e467b-580e-4c97-a8ad-117080ffdf14",
@@ -252,7 +272,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>golf<\/p>\n"
+          "html" : "<p>golf<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "hidden-lake-6-abf534d4-08f3-4d47-886b-a7d8739f60c6",
@@ -295,7 +319,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : ""
+          "html" : "",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "a7e192f1-0c4f-4c0d-91ad-5451403487ec",
@@ -339,7 +367,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>Kk<\/p>\n"
+          "html" : "<p>Kk<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "ff3dc0c3-217b-45c3-b318-ec9631737810",
@@ -383,7 +415,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>Rr<\/p>\n"
+          "html" : "<p>Rr<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "711b1eac-24ec-4482-ba2a-38f8eb91d041",
@@ -431,7 +467,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>This message was deleted.<\/p>\n"
+          "html" : "<p>This message was deleted.<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "25580938-597f-42db-b5fa-a3551fce93df",
@@ -482,7 +522,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : ""
+          "html" : "",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "79eb1a37-4367-4729-bf2e-72becb16abf5",
@@ -533,7 +577,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : ""
+          "html" : "",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "2adae507-1051-435f-a4c7-232b75d5b242",
@@ -589,7 +637,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : ""
+          "html" : "",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "bitter-cloud-0-184d7818-6282-4047-977c-43102352866c",
@@ -628,7 +680,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>fdfdfd<\/p>\n"
+          "html" : "<p>fdfdfd<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "bitter-cloud-0-6f6edd0e-06dd-406f-ac58-a4cfc63a357e",
@@ -671,7 +727,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : ""
+          "html" : "",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "139c8acf-e405-44a8-a8a6-7e3922a7ea7f",
@@ -719,7 +779,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>This message was deleted.<\/p>\n"
+          "html" : "<p>This message was deleted.<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "0e5083af-e7d1-4278-a10c-8e9990976234",
@@ -770,7 +834,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p><a href=\"http:\/\/getstream.io\" rel=\"nofollow\">http:\/\/getstream.io<\/a><\/p>\n"
+          "html" : "<p><a href=\"http:\/\/getstream.io\" rel=\"nofollow\">http:\/\/getstream.io<\/a><\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "wispy-bird-9-59ad6b82-a45e-4f83-849b-01d79f3248a0",
@@ -809,7 +877,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>o<\/p>\n"
+          "html" : "<p>o<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "wispy-bird-9-5252269d-4d51-4c32-acb0-985be29cf17a",
@@ -848,7 +920,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>whos<\/p>\n"
+          "html" : "<p>whos<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "wispy-bird-9-cbb34e46-6f22-4c1d-8105-f4df78d5914a",
@@ -887,7 +963,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>🤔🤔<\/p>\n"
+          "html" : "<p>🤔🤔<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "throbbing-salad-6-8187e80d-88ff-468a-8670-7c60a4f11e20",
@@ -926,7 +1006,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>hey<\/p>\n"
+          "html" : "<p>hey<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "throbbing-salad-6-9ea5ca14-fe37-4144-87ef-345de2c72cf1",
@@ -969,7 +1053,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>🤐🤐🤐<\/p>\n"
+          "html" : "<p>🤐🤐🤐<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "aged-moon-3-423c9b17-78a3-41ff-8aa7-47e6afb9157e",
@@ -1008,7 +1096,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>ytf<\/p>\n"
+          "html" : "<p>ytf<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "bitter-cloud-4-988809fa-b534-4f6a-8e22-0f547fe46129",
@@ -1051,7 +1143,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>it’s a great day in the neighborhood!<\/p>\n"
+          "html" : "<p>it’s a great day in the neighborhood!<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "white-boat-1-c9d54585-f046-4785-9d81-72fd930bf2a3",
@@ -1090,8 +1186,57 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA<\/a><\/p>\n"
+          "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=B0CuLzsivzA<\/a><\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         }
+      ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
       ],
       "watcher_count" : 7,
       "channel" : {
@@ -1302,9 +1447,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -1471,7 +1613,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>Prova<\/p>\n"
+          "html" : "<p>Prova<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "bender-55243541-7acd-4f26-b4e9-023e6c95b5df",
@@ -1623,7 +1769,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>Ciao hello<\/p>\n"
+          "html" : "<p>Ciao hello<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "Steveusenameinsteadplz-7e6ab8dc-18d6-4532-b314-df48af2ef55f",
@@ -1744,7 +1894,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>Hey Dani<\/p>\n"
+          "html" : "<p>Hey Dani<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "usenameinsteadplz-80d0474a-fa66-4534-b84b-10ec256952dd",
@@ -1832,7 +1986,11 @@
             "name" : ""
           },
           "updated_at" : "2020-05-12T15:51:28.077023Z",
-          "html" : ""
+          "html" : "",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "usenameinsteadplz-92552bd4-4c47-4a3b-99fd-00566e37594b",
@@ -1930,7 +2088,11 @@
             "name" : "beta"
           },
           "updated_at" : "2020-05-22T17:57:00.704268Z",
-          "html" : ""
+          "html" : "",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "foousenameinsteadplz-1e720a5e-fa0d-4f1e-adb3-516eae83e906",
@@ -1968,7 +2130,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>hello<\/p>\n"
+          "html" : "<p>hello<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "betausenameinsteadplz-1d7dd472-9bbe-4036-a4f8-27398ea0b8fc",
@@ -2007,7 +2173,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>hey<\/p>\n"
+          "html" : "<p>hey<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "betausenameinsteadplz-bf7a90fe-98dd-46da-95f6-da73dc4222ac",
@@ -2056,7 +2226,11 @@
             "name" : "beta"
           },
           "updated_at" : "2020-05-22T17:58:23.106496Z",
-          "html" : ""
+          "html" : "",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "e3f77b77-32f6-4357-b502-92c2b3537b1b",
@@ -2103,8 +2277,57 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>Hey<\/p>\n"
+          "html" : "<p>Hey<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         }
+      ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
       ],
       "watcher_count" : 1,
       "channel" : {
@@ -2114,9 +2337,6 @@
           "banned" : false,
           "unread_channels" : 0,
           "totalUnreadCount" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unreadChannels" : 0,
@@ -2221,9 +2441,6 @@
         "user" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "unread_channels" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -2283,7 +2500,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>Hi<\/p>\n"
+          "html" : "<p>Hi<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "831eb92b-271e-4da2-80ed-96c8ea1d7910",
@@ -2327,7 +2548,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>Ok<\/p>\n"
+          "html" : "<p>Ok<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "a08ca6ed-2b95-4baa-b654-9f694e06451a",
@@ -2371,7 +2596,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>2<\/p>\n"
+          "html" : "<p>2<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "c2e41fda-9fdb-448c-8afb-856e9f7d0769",
@@ -2415,7 +2644,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>3<\/p>\n"
+          "html" : "<p>3<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "14f533cd-1a70-4680-9f62-082fbe45e8a2",
@@ -2459,7 +2692,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>4<\/p>\n"
+          "html" : "<p>4<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "6c40df9c-1591-467a-b07f-ccb20431b199",
@@ -2503,7 +2740,11 @@
           "mentioned_users" : [
             
           ],
-          "html" : "<p>5<\/p>\n"
+          "html" : "<p>5<\/p>\n",
+          "pinned": false,
+          "pinned_at": null,
+          "pin_expires": null,
+          "pinned_by": null
         },
         {
           "id" : "f5e328a9-30b4-4c00-b5f4-0cc74626f427",
@@ -2946,15 +3187,57 @@
           "html" : "<p>Rr<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 2,
       "channel" : {
         "last_message_at" : "2020-06-09T15:45:16.569846Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "unread_channels" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -3104,9 +3387,6 @@
           "banned" : false,
           "unread_channels" : 0,
           "totalUnreadCount" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unreadChannels" : 0,
@@ -3915,6 +4195,51 @@
           "html" : "<p>Hello<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 2,
       "channel" : {
         "last_message_at" : "2020-06-09T15:44:22.45894Z",
@@ -3922,9 +4247,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -4071,9 +4393,6 @@
         "user" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "unread_channels" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -4620,6 +4939,51 @@
           "html" : "<p>Hi there I’m sorry to<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 2,
       "channel" : {
         "last_message_at" : "2020-06-08T11:54:33.028082Z",
@@ -4627,9 +4991,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -4777,9 +5138,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -4929,15 +5287,57 @@
           "html" : "<p>Hey<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "channel" : {
         "last_message_at" : "2020-06-08T11:52:36.594465Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -5085,9 +5485,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -5199,6 +5596,51 @@
           "html" : "<p>How are you?<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-06-08T11:51:00.102246Z",
@@ -5207,9 +5649,6 @@
           "banned" : false,
           "unread_channels" : 0,
           "totalUnreadCount" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unreadChannels" : 0,
@@ -5315,9 +5754,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -5476,6 +5912,51 @@
           "html" : "<p>Good?<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-06-08T11:50:42.902008Z",
@@ -5484,9 +5965,6 @@
           "banned" : false,
           "unread_channels" : 0,
           "totalUnreadCount" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unreadChannels" : 0,
@@ -5591,9 +6069,6 @@
         "user" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "unread_channels" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -5753,15 +6228,57 @@
           "html" : "<p>Message3 @noisy-mountain-3 06F27F58-7BB5-4A84-BEC6-A4755330530A<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-06-06T02:32:07.270298Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "unread_channels" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -5896,9 +6413,6 @@
         "user" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "unread_channels" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -7032,6 +7546,51 @@
           "html" : "<p>The only reason I’m a fan I can be free<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 2,
       "channel" : {
         "last_message_at" : "2020-06-05T13:01:29.915281Z",
@@ -7039,9 +7598,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -7189,9 +7745,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -7406,15 +7959,57 @@
           "html" : "<p>Fjfjjf<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-06-05T10:05:25.317128Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "unread_channels" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -7550,9 +8145,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -8702,15 +9294,57 @@
           "html" : "<p><a href=\"http:\/\/hosted.x-art.com\/galleries\/good_morning_melissa\/x-art_melissa_moore_good_morning_melissa-12-ltn.jpg?rand=1590170333\" rel=\"nofollow\">http:\/\/hosted.x-art.com\/galleries\/good_morning_melissa\/x-art_melissa_moore_good_morning_melissa-12-ltn.jpg?rand=1590170333<\/a><\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-05-22T17:59:19.387787Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "unread_channels" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -8818,9 +9452,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -10327,6 +10958,51 @@
           "html" : "<p>hey hey hey<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "id" : "test-channel-3011",
@@ -10679,9 +11355,6 @@
           "banned" : false,
           "unread_channels" : 0,
           "totalUnreadCount" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unreadChannels" : 0,
@@ -10848,6 +11521,51 @@
           "html" : "<p>Message3 @Noisy mountain B7895EDB-307D-4569-885A-3152FF8BC819<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-05-18T02:33:46.04912Z",
@@ -10856,9 +11574,6 @@
           "banned" : false,
           "unread_channels" : 0,
           "totalUnreadCount" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unreadChannels" : 0,
@@ -10913,9 +11628,6 @@
           "banned" : false,
           "unread_channels" : 0,
           "totalUnreadCount" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unreadChannels" : 0,
@@ -11123,15 +11835,57 @@
           "html" : "<p>Message3 @Noisy mountain C4BA9B5E-7B5D-4520-80A3-908126574515<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-05-17T02:33:45.965608Z",
         "created_by" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "unread_channels" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -11187,9 +11941,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -11295,6 +12046,51 @@
           "html" : "<p>Message1 E06C4953-16DA-49FD-93CC-5056F9DB0BF4<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-05-17T02:33:12.420197Z",
@@ -11302,9 +12098,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -11359,9 +12152,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -11467,6 +12257,51 @@
           "html" : "<p>Message1 4BE7B6D3-E89D-4F34-92B5-D77229C8FE92<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-05-17T02:32:07.009891Z",
@@ -11475,9 +12310,6 @@
           "banned" : false,
           "unread_channels" : 0,
           "totalUnreadCount" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unreadChannels" : 0,
@@ -11531,9 +12363,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -11742,6 +12571,51 @@
           "html" : "<p>Message3 @Noisy mountain 8F49CF86-7C06-42E7-BB1F-F66C9447E750<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-05-17T02:30:58.516328Z",
@@ -11749,9 +12623,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -11805,9 +12676,6 @@
         "user" : {
           "id" : "broken-waterfall-5",
           "banned" : false,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "unread_channels" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -12036,6 +12904,51 @@
           "html" : "<p>Message3 @Noisy mountain 9886C94C-8BD5-4559-9FA5-05242182B3AE<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-05-15T12:15:29.746289Z",
@@ -12044,9 +12957,6 @@
           "banned" : false,
           "unread_channels" : 0,
           "totalUnreadCount" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unreadChannels" : 0,
@@ -12166,9 +13076,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -12355,6 +13262,51 @@
           "html" : "<p>Message3 @Noisy mountain 2BB6B9BF-A104-40BD-BB6D-3BB2B2F75D91<\/p>\n"
         }
       ],
+      "pinned_messages": [
+          {
+            "id" : "jolly-base-0-8b51b803-e44c-4e2f-8178-dce0c1cb5611",
+            "reaction_counts" : {
+
+            },
+            "silent" : false,
+            "created_at" : "2020-06-09T08:12:25.453305Z",
+            "reaction_scores" : {
+
+            },
+            "type" : "regular",
+            "latest_reactions" : [
+
+            ],
+            "text" : "https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk",
+            "attachments" : [
+
+            ],
+            "own_reactions" : [
+
+            ],
+            "updated_at" : "2020-06-09T08:12:25.453306Z",
+            "reply_count" : 0,
+            "user" : {
+              "banned" : false,
+              "online" : false,
+              "id" : "jolly-base-0",
+              "role" : "user",
+              "created_at" : "2020-06-09T08:11:50.449578Z",
+              "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
+              "updated_at" : "2020-06-09T08:11:50.464738Z",
+              "last_active" : "2020-06-09T08:11:50.456971Z",
+              "name" : "Jolly base"
+            },
+            "mentioned_users" : [
+
+            ],
+            "html" : "<p><a href=\"https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk\" rel=\"nofollow\">https:\/\/www.youtube.com\/watch?v=ele2DMU49Jk<\/a><\/p>\n",
+            "pinned": false,
+            "pinned_at": null,
+            "pin_expires": null,
+            "pinned_by": null
+          }
+      ],
       "watcher_count" : 1,
       "channel" : {
         "last_message_at" : "2020-05-15T02:42:18.687952Z",
@@ -12362,9 +13314,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "totalUnreadCount" : 0,
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -12420,9 +13369,6 @@
           "banned" : false,
           "unread_channels" : 0,
           "totalUnreadCount" : 0,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unreadChannels" : 0,
