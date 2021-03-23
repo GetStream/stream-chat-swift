@@ -28,6 +28,10 @@ enum MessagePayloadsCodingKeys: String, CodingKey {
     case reactionScores = "reaction_scores"
     case isSilent = "silent"
     case channel
+    case pinned
+    case pinnedBy = "pinned_by"
+    case pinnedAt = "pinned_at"
+    case pinExpires = "pin_expires"
     //        case i18n
 }
 
@@ -64,6 +68,11 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let attachments: [AttachmentPayload]
     let isSilent: Bool
 
+    var pinned: Bool
+    var pinnedBy: UserPayload<ExtraData.User>?
+    var pinnedAt: Date?
+    var pinExpires: Date?
+
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
     let channel: ChannelDetailPayload<ExtraData>?
@@ -99,6 +108,11 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         
         // Some endpoints return also channel payload data for convenience
         channel = try container.decodeIfPresent(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
+
+        pinned = try container.decodeIfPresent(Bool.self, forKey: .pinned) ?? false
+        pinnedBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .pinnedBy)
+        pinnedAt = try container.decodeIfPresent(Date.self, forKey: .pinnedAt)
+        pinExpires = try container.decodeIfPresent(Date.self, forKey: .pinExpires)
     }
     
     init(
@@ -124,7 +138,11 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         reactionScores: [MessageReactionType: Int],
         isSilent: Bool,
         attachments: [AttachmentPayload],
-        channel: ChannelDetailPayload<ExtraData>? = nil
+        channel: ChannelDetailPayload<ExtraData>? = nil,
+        pinned: Bool = false,
+        pinnedBy: UserPayload<ExtraData.User>? = nil,
+        pinnedAt: Date? = nil,
+        pinExpires: Date? = nil
     ) {
         self.id = id
         self.type = type
@@ -148,6 +166,10 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         self.isSilent = isSilent
         self.attachments = attachments
         self.channel = channel
+        self.pinned = pinned
+        self.pinnedBy = pinnedBy
+        self.pinnedAt = pinnedAt
+        self.pinExpires = pinExpires
     }
 }
 
@@ -162,6 +184,8 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let showReplyInChannel: Bool
     let quotedMessageId: String?
     let attachments: [Encodable]
+    var pinned: Bool
+    var pinExpires: Date?
     let extraData: ExtraData.Message
     
     init(
@@ -174,6 +198,8 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         showReplyInChannel: Bool = false,
         quotedMessageId: String? = nil,
         attachments: [Encodable] = [],
+        pinned: Bool = false,
+        pinExpires: Date? = nil,
         extraData: ExtraData.Message
     ) {
         self.id = id
@@ -185,6 +211,8 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         self.showReplyInChannel = showReplyInChannel
         self.quotedMessageId = quotedMessageId
         self.attachments = attachments
+        self.pinned = pinned
+        self.pinExpires = pinExpires
         self.extraData = extraData
     }
     
@@ -197,7 +225,9 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         try container.encodeIfPresent(parentId, forKey: .parentId)
         try container.encodeIfPresent(showReplyInChannel, forKey: .showReplyInChannel)
         try container.encodeIfPresent(quotedMessageId, forKey: .quotedMessageId)
-        
+        try container.encode(pinned, forKey: .pinned)
+        try container.encodeIfPresent(pinExpires, forKey: .pinExpires)
+
         if !attachments.isEmpty {
             try container.encode(attachments.map(AnyEncodable.init), forKey: .attachments)
         }

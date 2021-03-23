@@ -33,7 +33,12 @@ class MessageDTO: NSManagedObject {
     @NSManaged var reactions: Set<MessageReactionDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var quotedMessage: MessageDTO?
-    
+
+    @NSManaged var pinned: Bool
+    @NSManaged var pinnedBy: UserDTO?
+    @NSManaged var pinnedAt: Date?
+    @NSManaged var pinExpires: Date?
+
     // The timestamp the message was created locally. Applies only for the messages of the current user.
     @NSManaged var locallyCreatedAt: Date?
     
@@ -295,6 +300,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.replyCount = Int32(payload.replyCount)
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.isSilent = payload.isSilent
+        dto.pinned = payload.pinned
+        dto.pinExpires = payload.pinExpires
+        dto.pinnedAt = payload.pinnedAt
+        if let pinnedByUser = payload.pinnedBy {
+            dto.pinnedBy = try saveUser(payload: pinnedByUser)
+        }
 
         dto.quotedMessage = try payload.quotedMessage.flatMap { try saveMessage(payload: $0, for: cid) }
 
@@ -343,6 +354,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(dto)
         }
+
+        dto.pinned = payload.pinned
+        dto.pinnedAt = payload.pinnedAt
+        dto.pinExpires = payload.pinExpires
+        if let pinnedBy = payload.pinnedBy {
+            dto.pinnedBy = try saveUser(payload: pinnedBy)
+        }
         
         return dto
     }
@@ -382,6 +400,8 @@ extension MessageDTO {
             attachments: attachments
                 .sorted { $0.attachmentID.index < $1.attachmentID.index }
                 .map { $0.asRequestPayload() },
+            pinned: pinned,
+            pinExpires: pinExpires,
             extraData: extraData ?? .defaultValue
         )
     }
@@ -419,6 +439,19 @@ private extension _ChatMessage {
         localState = dto.localMessageState
         isFlaggedByCurrentUser = dto.flaggedBy != nil
         quotedMessageId = dto.quotedMessage.map(\.id)
+
+        if dto.pinned,
+           let pinnedAt = dto.pinnedAt,
+           let pinnedBy = dto.pinnedBy,
+           let pinExpires = dto.pinExpires {
+            pinDetails = .init(
+                pinnedAt: pinnedAt,
+                pinnedBy: pinnedBy.asModel(),
+                expiresAt: pinExpires
+            )
+        } else {
+            pinDetails = nil
+        }
         
         if let currentUser = context.currentUser() {
             isSentByCurrentUser = currentUser.user.id == dto.user.id

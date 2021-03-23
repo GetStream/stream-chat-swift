@@ -155,6 +155,9 @@
         <attribute name="locallyCreatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="localMessageStateRaw" optional="YES" attributeType="String"/>
         <attribute name="parentMessageId" optional="YES" attributeType="String"/>
+        <attribute name="pinExpires" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="pinned" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="pinnedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="quotedMessageId" optional="YES" attributeType="String"/>
         <attribute name="reactionScores" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData"/>
         <attribute name="replyCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
@@ -167,6 +170,8 @@
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="messages" inverseEntity="ChannelDTO"/>
         <relationship name="mentionedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mentionedMessages" inverseEntity="UserDTO"/>
         <relationship name="parentMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="replies" inverseEntity="MessageDTO"/>
+        <relationship name="pinnedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="pinnedMessages" inverseEntity="UserDTO"/>
+        <relationship name="pinnedChannel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="pinnedMessages" inverseEntity="ChannelDTO"/>
         <relationship name="quotedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="quotedMessage" inverseEntity="MessageDTO"/>
         <relationship name="quotedMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="quotedBy" inverseEntity="MessageDTO"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReactionDTO" inverseName="message" inverseEntity="MessageReactionDTO"/>
@@ -259,17 +264,17 @@
     </entity>
     <elements>
         <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="164"/>
-        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="448"/>
+        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="464"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="ChannelReadDTO" positionX="9" positionY="153" width="128" height="103"/>
         <element name="CurrentUserDTO" positionX="0" positionY="0" width="128" height="148"/>
         <element name="DeviceDTO" positionX="9" positionY="153" width="128" height="88"/>
-        <element name="MemberDTO" positionX="0" positionY="0" width="128" height="268"/>
-        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="464"/>
+        <element name="MemberDTO" positionX="0" positionY="0" width="128" height="254"/>
+        <element name="MessageDTO" positionX="0" positionY="0" width="128" height="539"/>
         <element name="MessageReactionDTO" positionX="9" positionY="153" width="128" height="163"/>
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
-        <element name="UserDTO" positionX="0" positionY="0" width="128" height="374"/>
+        <element name="UserDTO" positionX="0" positionY="0" width="128" height="389"/>
         <element name="UserListQueryDTO" positionX="9" positionY="153" width="128" height="103"/>
     </elements>
 </model>

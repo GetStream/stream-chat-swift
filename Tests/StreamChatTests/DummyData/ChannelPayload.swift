@@ -63,7 +63,7 @@ extension ChannelDetailPayload where ExtraData == NoExtraData {
                         args: "test"
                     )
                 ],
-                createdAt: .unique,
+                createdAt: ChannelDTO_Tests.channelCreatedDate,
                 updatedAt: .unique
             ),
             isFrozen: true,

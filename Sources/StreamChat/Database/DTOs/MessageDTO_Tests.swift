@@ -43,7 +43,11 @@ class MessageDTO_Tests: XCTestCase {
             ownReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
             ],
-            channel: channelPayload
+            channel: channelPayload,
+            pinned: true,
+            pinnedByUserId: .unique,
+            pinnedAt: .unique,
+            pinExpires: .unique
         )
         
         // Asynchronously save the payload to the db
@@ -125,6 +129,10 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
             Assert.willBeEqual(messagePayload.quotedMessage?.id, loadedMessage?.quotedMessage?.id)
             Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
+            Assert.willBeEqual(messagePayload.pinned, loadedMessage?.pinned)
+            Assert.willBeEqual(messagePayload.pinExpires, loadedMessage?.pinExpires!)
+            Assert.willBeEqual(messagePayload.pinnedAt, loadedMessage?.pinnedAt!)
+            Assert.willBeEqual(messagePayload.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
             Assert.willBeEqual(
                 messagePayload.mentionedUsers.map(\.id),
                 loadedMessage?.mentionedUsers.map(\.id)
@@ -173,7 +181,11 @@ class MessageDTO_Tests: XCTestCase {
             ],
             ownReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
-            ]
+            ],
+            pinned: true,
+            pinnedByUserId: .unique,
+            pinnedAt: .unique,
+            pinExpires: .unique
         )
         
         // Asynchronously save the payload to the db
@@ -209,6 +221,10 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
             Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
+            Assert.willBeEqual(messagePayload.pinned, loadedMessage?.pinned)
+            Assert.willBeEqual(messagePayload.pinExpires, loadedMessage?.pinExpires!)
+            Assert.willBeEqual(messagePayload.pinnedAt, loadedMessage?.pinnedAt!)
+            Assert.willBeEqual(messagePayload.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
             Assert.willBeEqual(
                 messagePayload.mentionedUsers.map(\.id),
                 loadedMessage?.mentionedUsers.map(\.id)
@@ -331,6 +347,11 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
         XCTAssertEqual(loadedMessage.latestReactions, latestReactions)
         XCTAssertEqual(loadedMessage.currentUserReactions, currentUserReactions)
+        XCTAssertEqual(loadedMessage.isPinned, true)
+        let pin = try XCTUnwrap(loadedMessage.pinDetails)
+        XCTAssertEqual(pin.expiresAt, messagePayload.pinExpires)
+        XCTAssertEqual(pin.pinnedAt, messagePayload.pinnedAt)
+        XCTAssertEqual(pin.pinnedBy.id, messagePayload.pinnedBy?.id)
         XCTAssertEqual(
             isAttachmentModelSeparationChangesApplied ?
                 loadedMessage.attachments.map { ($0 as? ChatMessageImageAttachment)?.id } :
@@ -391,6 +412,8 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.parentId, parentMessageId)
         XCTAssertEqual(requestBody.showReplyInChannel, messageShowReplyInChannel)
         XCTAssertEqual(requestBody.extraData, messageExtraData)
+        XCTAssertEqual(requestBody.pinned, true)
+        XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
 
         // Assert attachments are in correct order.
         let attachmentsTitles: [String] = requestBody.attachments.compactMap { rawJSON -> String? in
@@ -600,6 +623,9 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.arguments, newMessageArguments)
         XCTAssertEqual(loadedMessage.parentMessageId, newMessageParentMessageId)
         XCTAssertEqual(loadedMessage.author.id, currentUserId)
+        XCTAssertEqual(loadedMessage.pinDetails?.expiresAt, newMessagePinning!.expirationDate)
+        XCTAssertEqual(loadedMessage.pinDetails?.pinnedBy.id, currentUserId)
+        XCTAssertNotNil(loadedMessage.pinDetails?.pinnedAt)
         // Assert the created date of the message is roughly "now"
         XCTAssertLessThan(loadedMessage.createdAt.timeIntervalSince(Date()), 0.1)
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.locallyCreatedAt)

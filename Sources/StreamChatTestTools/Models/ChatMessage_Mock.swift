@@ -33,7 +33,8 @@ public extension _ChatMessage {
         isFlaggedByCurrentUser: Bool = false,
         latestReactions: Set<_ChatMessageReaction<ExtraData>> = [],
         currentUserReactions: Set<_ChatMessageReaction<ExtraData>> = [],
-        isSentByCurrentUser: Bool = false
+        isSentByCurrentUser: Bool = false,
+        pinDetails: _MessagePinDetails<ExtraData>? = nil
     ) -> Self {
         .init(
             id: id,
@@ -61,7 +62,8 @@ public extension _ChatMessage {
             isFlaggedByCurrentUser: isFlaggedByCurrentUser,
             latestReactions: { latestReactions },
             currentUserReactions: { currentUserReactions },
-            isSentByCurrentUser: isSentByCurrentUser
+            isSentByCurrentUser: isSentByCurrentUser,
+            pinDetails: pinDetails
         )
     }
 }
