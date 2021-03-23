@@ -46,7 +46,11 @@
             "name" : "broken-waterfall-5"
         },
         "mentioned_users" : [],
-        "html" : "<p>Hi<\/p>\n"
+        "html" : "<p>Hi<\/p>\n",
+        "pinned": false,
+        "pinned_at": null,
+        "pin_expires": null,
+        "pinned_by": null
     },
     "type" : "message.new",
     "cid" : "messaging:general"
