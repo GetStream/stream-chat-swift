@@ -51,6 +51,13 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var deleteReaction_messageId: MessageId?
     @Atomic var deleteReaction_completion: ((Error?) -> Void)?
 
+    @Atomic var pinMessage_messageId: MessageId?
+    @Atomic var pinMessage_pinning: MessagePinning?
+    @Atomic var pinMessage_completion: ((Error?) -> Void)?
+
+    @Atomic var unpinMessage_messageId: MessageId?
+    @Atomic var unpinMessage_completion: ((Error?) -> Void)?
+
     @Atomic var restartFailedAttachmentUploading_id: AttachmentId?
     @Atomic var restartFailedAttachmentUploading_completion: ((Error?) -> Void)?
 
@@ -104,6 +111,13 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         deleteReaction_type = nil
         deleteReaction_messageId = nil
         deleteReaction_completion = nil
+
+        pinMessage_pinning = nil
+        pinMessage_completion = nil
+        pinMessage_messageId = nil
+
+        unpinMessage_messageId = nil
+        unpinMessage_completion = nil
 
         restartFailedAttachmentUploading_id = nil
         restartFailedAttachmentUploading_completion = nil
@@ -208,6 +222,17 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         deleteReaction_type = type
         deleteReaction_messageId = messageId
         deleteReaction_completion = completion
+    }
+
+    override func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
+        pinMessage_messageId = messageId
+        pinMessage_pinning = pinning
+        pinMessage_completion = completion
+    }
+
+    override func unpinMessage(messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+        unpinMessage_messageId = messageId
+        unpinMessage_completion = completion
     }
 
     override func restartFailedAttachmentUploading(

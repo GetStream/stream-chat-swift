@@ -76,6 +76,16 @@ protocol MessageDatabaseSession {
         payload: MessagePayload<ExtraData>,
         for cid: ChannelId?
     ) throws -> MessageDTO
+
+    /// Pins the provided message
+    /// - Parameters:
+    ///   - message: The DTO to be pinned
+    ///   - pinning: The pinning information, including the expiration.
+    func pin(message: MessageDTO, pinning: MessagePinning) throws
+
+    /// Unpins the provided message
+    /// - Parameter message: The DTO to be unpinned
+    func unpin(message: MessageDTO)
     
     /// Fetches `MessageDTO` with the given `id` from the DB. Returns `nil` if no `MessageDTO` matching the `id` exists.
     func message(id: MessageId) -> MessageDTO?
