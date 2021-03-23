@@ -24,14 +24,20 @@ extension MessagePayload {
         extraData: T.Message = .defaultValue,
         latestReactions: [MessageReactionPayload<T>] = [],
         ownReactions: [MessageReactionPayload<T>] = [],
+        createdAt: Date? = nil,
         deletedAt: Date? = nil,
-        channel: ChannelDetailPayload<T>? = nil
+        channel: ChannelDetailPayload<T>? = nil,
+        pinned: Bool = false,
+        pinnedByUserId: UserId? = nil,
+        pinnedAt: Date? = nil,
+        pinExpires: Date? = nil
     ) -> MessagePayload<T> where T.User == NoExtraData {
         .init(
             id: messageId,
             type: type ?? (parentId == nil ? .regular : .reply),
             user: UserPayload.dummy(userId: authorUserId) as UserPayload<T.User>,
-            createdAt: .unique,
+            createdAt: createdAt != nil ? createdAt! : ChannelDTO_Tests.channelCreatedDate
+                .addingTimeInterval(TimeInterval.random(in: 100...900)),
             updatedAt: .unique,
             deletedAt: deletedAt,
             text: text,
@@ -49,7 +55,11 @@ extension MessagePayload {
             reactionScores: ["like": 1],
             isSilent: true,
             attachments: attachments,
-            channel: channel
+            channel: channel,
+            pinned: pinned,
+            pinnedBy: pinnedByUserId != nil ? UserPayload.dummy(userId: pinnedByUserId!) as UserPayload<T.User> : nil,
+            pinnedAt: pinnedAt,
+            pinExpires: pinExpires
         )
     }
 }

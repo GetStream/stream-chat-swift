@@ -167,7 +167,8 @@ extension _ChatMessage {
             isFlaggedByCurrentUser: false,
             latestReactions: { [] },
             currentUserReactions: { [] },
-            isSentByCurrentUser: false
+            isSentByCurrentUser: false,
+            pinDetails: nil
         )
     }
 }
