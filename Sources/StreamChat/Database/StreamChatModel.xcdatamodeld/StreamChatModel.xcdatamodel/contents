@@ -55,6 +55,7 @@
         <attribute name="lastMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="memberCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="oldestMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="truncatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="typeRawValue" optional="YES" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -266,7 +267,7 @@
     </entity>
     <elements>
         <element name="AttachmentDTO" positionX="9" positionY="153" width="128" height="164"/>
-        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="464"/>
+        <element name="ChannelDTO" positionX="0" positionY="0" width="128" height="14"/>
         <element name="ChannelListQueryDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="ChannelMemberListQueryDTO" positionX="9" positionY="153" width="128" height="88"/>
         <element name="ChannelReadDTO" positionX="9" positionY="153" width="128" height="103"/>

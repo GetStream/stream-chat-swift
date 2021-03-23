@@ -116,12 +116,20 @@ class MessageDTO: NSManagedObject {
             .init(format: "channel.truncatedAt == nil"),
             .init(format: "createdAt > channel.truncatedAt")
         ])
+        
+        // Some pinned messages might be in the local database, but should not be fetched
+        // if they do not belong to the regular channel query.
+        let ignoreOlderMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "channel.oldestMessageAt == nil"),
+            .init(format: "createdAt >= channel.oldestMessageAt")
+        ])
 
         return .init(andPredicateWithSubpredicates: [
             channelMessage,
             messageTypePredicate,
             deletedMessagePredicate,
-            nonTruncatedMessagePredicate
+            nonTruncatedMessagePredicate,
+            ignoreOlderMessagesPredicate
         ])
     }
     
