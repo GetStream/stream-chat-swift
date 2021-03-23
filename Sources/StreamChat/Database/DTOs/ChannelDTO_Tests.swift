@@ -25,7 +25,7 @@ class ChannelDTO_Tests: XCTestCase {
     func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
         
-        let payload = dummyPayload(with: channelId)
+        let payload = dummyPayload(with: channelId, pinnedMessages: [dummyPinnedMessage])
         
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -115,7 +115,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].replyCount, loadedChannel.latestMessages.first?.replyCount)
 
             // Pinned Messages
-            Assert.willBeEqual(payload.pinnedMessages[0].id, loadedChannel.latestMessages[0].id)
+            Assert.willBeEqual(payload.pinnedMessages[0].id, loadedChannel.pinnedMessages[0].id)
             Assert.willBeEqual(payload.pinnedMessages[0].pinned, loadedChannel.pinnedMessages[0].isPinned)
             Assert.willBeEqual(payload.pinnedMessages[0].pinnedAt, loadedChannel.pinnedMessages[0].pinDetails?.pinnedAt)
             Assert.willBeEqual(payload.pinnedMessages[0].pinExpires, loadedChannel.pinnedMessages[0].pinDetails?.expiresAt)
@@ -178,8 +178,8 @@ class ChannelDTO_Tests: XCTestCase {
     func test_channelPayload_pinnedMessagesArePopulated() throws {
         let channelId: ChannelId = .unique
         let pinnedMessages: [MessagePayload<NoExtraData>] = [
-            .dummy(messageId: .unique, authorUserId: .unique),
-            .dummy(messageId: .unique, authorUserId: .unique)
+            .dummy(messageId: .unique, authorUserId: .unique, pinned: true),
+            .dummy(messageId: .unique, authorUserId: .unique, pinned: true)
         ]
         let payload = dummyPayload(
             with: channelId,
@@ -193,6 +193,42 @@ class ChannelDTO_Tests: XCTestCase {
 
         let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
         XCTAssertEqual(channel?.pinnedMessages.count, payload.pinnedMessages.count)
+    }
+
+    func test_channelPayload_oldestMessageAtIsUpdated() throws {
+        let channelId: ChannelId = .unique
+        let payload = dummyPayload(with: channelId, numberOfMessages: 20)
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
+        XCTAssertEqual(channel?.oldestMessageAt, payload.messages.map(\.createdAt).min())
+    }
+
+    func test_channelPayload_whenMessagesNewerThanCurrentOldestMessage_oldestMessageAtIsNotUpdated() throws {
+        let channelId: ChannelId = .unique
+        let oldMessageCreatedAt = Date.unique
+        let payload = dummyPayload(with: channelId, messages: [
+            .dummy(messageId: .unique, authorUserId: .unique, createdAt: oldMessageCreatedAt)
+        ])
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        let newerMessageCreatedAt = oldMessageCreatedAt.addingTimeInterval(300)
+        let newerPayload = dummyPayload(with: channelId, messages: [
+            .dummy(messageId: .unique, authorUserId: .unique, createdAt: newerMessageCreatedAt)
+        ])
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: newerPayload)
+        }
+
+        let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
+        XCTAssertEqual(channel?.oldestMessageAt, oldMessageCreatedAt)
     }
 
     func test_channelPayload_truncatedMessagesAreIgnored() throws {
@@ -216,6 +252,70 @@ class ChannelDTO_Tests: XCTestCase {
         // Assert only the 10 newest messages is serialized
         let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
         XCTAssertEqual(channel?.latestMessages.count, 10)
+    }
+
+    func test_channelPayload_pinnedMessagesOlderThanOldestMessageAtAreIgnored() throws {
+        let channelId: ChannelId = .unique
+        let oldPinnedMessage: MessagePayload<NoExtraData> = MessagePayload(
+            id: .unique,
+            type: .regular,
+            user: dummyUser,
+            createdAt: Date.distantPast,
+            updatedAt: .unique,
+            deletedAt: nil,
+            text: .unique,
+            command: nil,
+            args: nil,
+            parentId: nil,
+            showReplyInChannel: false,
+            mentionedUsers: [dummyCurrentUser],
+            replyCount: 0,
+            extraData: .defaultValue,
+            reactionScores: ["like": 1],
+            isSilent: false,
+            attachments: [],
+            pinned: true
+        )
+        let payload = dummyPayload(with: channelId, numberOfMessages: 1, pinnedMessages: [oldPinnedMessage])
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        XCTAssertEqual(channel?.latestMessages.count, 1)
+    }
+
+    func test_channelPayload_pinnedMessagesNewerThanOldestMessageAreFetched() throws {
+        let channelId: ChannelId = .unique
+        let pinnedMessage: MessagePayload<NoExtraData> = MessagePayload(
+            id: .unique,
+            type: .regular,
+            user: dummyUser,
+            createdAt: Date(),
+            updatedAt: .unique,
+            deletedAt: nil,
+            text: .unique,
+            command: nil,
+            args: nil,
+            parentId: nil,
+            showReplyInChannel: false,
+            mentionedUsers: [dummyCurrentUser],
+            replyCount: 0,
+            extraData: .defaultValue,
+            reactionScores: ["like": 1],
+            isSilent: false,
+            attachments: [],
+            pinned: true
+        )
+        let payload = dummyPayload(with: channelId, numberOfMessages: 1, pinnedMessages: [pinnedMessage])
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
+        XCTAssertEqual(channel?.latestMessages.count, 2)
     }
 
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
@@ -518,7 +618,34 @@ extension XCTestCase {
             attachments: []
         )
     }
-    
+
+    var dummyPinnedMessage: MessagePayload<NoExtraData> {
+        MessagePayload(
+            id: .unique,
+            type: .regular,
+            user: dummyUser,
+            // createAt should be lower than dummyMessage, so it does not come first in `latestMessages`
+            createdAt: ChannelDTO_Tests.channelCreatedDate.addingTimeInterval(.random(in: 50...99)),
+            updatedAt: .unique,
+            deletedAt: nil,
+            text: .unique,
+            command: nil,
+            args: nil,
+            parentId: nil,
+            showReplyInChannel: false,
+            mentionedUsers: [dummyCurrentUser],
+            replyCount: 0,
+            extraData: .defaultValue,
+            reactionScores: ["like": 1],
+            isSilent: false,
+            attachments: [],
+            pinned: true,
+            pinnedBy: dummyUser,
+            pinnedAt: .unique,
+            pinExpires: .unique
+        )
+    }
+
     var dummyChannelRead: ChannelReadPayload<NoExtraData> {
         ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), unreadMessagesCount: 10)
     }
@@ -528,7 +655,8 @@ extension XCTestCase {
         numberOfMessages: Int = 1,
         numberOfWatchers: Int = 1,
         includeMembership: Bool = true,
-        pinnedMessages: [MessagePayload<NoExtraData>]? = nil
+        messages: [MessagePayload<NoExtraData>]? = nil,
+        pinnedMessages: [MessagePayload<NoExtraData>] = []
     ) -> ChannelPayload<NoExtraData> {
         let member: MemberPayload<NoExtraData> =
             .init(
@@ -554,9 +682,13 @@ extension XCTestCase {
         let channelCreatedDate = Date.unique
         let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
 
-        var messages: [MessagePayload<NoExtraData>] = []
-        for _ in 0..<numberOfMessages {
-            messages += [dummyMessage]
+        var payloadMessages: [MessagePayload<NoExtraData>] = []
+        if let messages = messages {
+            payloadMessages = messages
+        } else {
+            for _ in 0..<numberOfMessages {
+                payloadMessages += [dummyMessage]
+            }
         }
 
         let payload: ChannelPayload<NoExtraData> =
@@ -605,8 +737,8 @@ extension XCTestCase {
                 watchers: (0..<numberOfWatchers).map { _ in dummyUser },
                 members: [member],
                 membership: includeMembership ? member : nil,
-                messages: messages,
-                pinnedMessages: pinnedMessages != nil ? pinnedMessages! : [messages.first!],
+                messages: payloadMessages,
+                pinnedMessages: pinnedMessages,
                 channelReads: [dummyChannelRead]
             )
         

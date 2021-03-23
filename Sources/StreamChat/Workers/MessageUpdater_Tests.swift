@@ -322,8 +322,12 @@ final class MessageUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
     
-    func test_getMessage_propogatesDatabaseError() {
+    func test_getMessage_propogatesDatabaseError() throws {
         let messagePayload: MessagePayload<ExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
+        let channelId = ChannelId.unique
+
+        // Create channel in the database
+        try database.createChannel(cid: channelId)
         
         // Update database container to throw the error on write
         let testError = TestError()
@@ -331,7 +335,7 @@ final class MessageUpdater_Tests: StressTestCase {
         
         // Simulate `getMessage(cid:, messageId:)` call
         var completionCalledError: Error?
-        messageUpdater.getMessage(cid: .unique, messageId: messagePayload.id) {
+        messageUpdater.getMessage(cid: channelId, messageId: messagePayload.id) {
             completionCalledError = $0
         }
         
@@ -504,16 +508,20 @@ final class MessageUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
     
-    func test_loadReplies_propagatesDatabaseError() {
+    func test_loadReplies_propagatesDatabaseError() throws {
         let repliesPayload: MessageRepliesPayload<ExtraData> = .init(messages: [.dummy(messageId: .unique, authorUserId: .unique)])
-        
+        let cid = ChannelId.unique
+
+        // Create channel in the database
+        try database.createChannel(cid: cid)
+
         // Update database container to throw the error on write
         let testError = TestError()
         database.write_errorResponse = testError
         
         // Simulate `loadReplies` call
         var completionCalledError: Error?
-        messageUpdater.loadReplies(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25)) {
+        messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) {
             completionCalledError = $0
         }
         
@@ -656,10 +664,13 @@ final class MessageUpdater_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
     }
     
-    func test_flagMessage_propagatesMessageDatabaseError() {
+    func test_flagMessage_propagatesMessageDatabaseError() throws {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
         let cid: ChannelId = .unique
+
+        // Create channel in the database
+        try database.createChannel(cid: cid)
         
         // Update database to throw the error on write.
         let databaseError = TestError()

@@ -20,6 +20,11 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var updatedAt: Date
     @NSManaged var lastMessageAt: Date?
 
+    // The oldest message of the channel we have locally coming from a regular channel query.
+    // This property only lives locally, and it is useful to filter out older pinned messages
+    // that do not belong to the regular channel query.
+    @NSManaged var oldestMessageAt: Date?
+
     // This field lives only locally and is not populated from the payload. The main purpose of having this is to
     // visually truncate the channel that exists and have messages locally already. It should be safe to have this
     // only locally because once the DB is flushed and the channels are fetched fresh, the messages before the
@@ -154,6 +159,9 @@ extension NSManagedObjectContext {
         let dto = try saveChannel(payload: payload.channel, query: query)
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, for: payload.channel.cid) }
+
+        dto.updateOldestMessageAt(payload: payload)
+
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, for: payload.channel.cid)
         }
@@ -303,5 +311,20 @@ extension _ChatChannel {
             lastMessage: fetchMessages(1).first,
             pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } }
         )
+    }
+}
+
+// Helpers
+private extension ChannelDTO {
+    /// Updates the `oldestMessageAt` of the channel. It should only updates if the current `messages: [Message]`
+    /// is older than the current `ChannelDTO.oldestMessageAt`, unless the current `ChannelDTO.oldestMessageAt`
+    /// is the default one, which is by default a very old date, so are sure the first messages are always fetched.
+    func updateOldestMessageAt<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>) {
+        if let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() {
+            let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt ?? Date.distantFuture)
+            if isOlderThanCurrentOldestMessage {
+                oldestMessageAt = payloadOldestMessageAt
+            }
+        }
     }
 }
