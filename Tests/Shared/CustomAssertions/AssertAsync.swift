@@ -93,6 +93,32 @@ extension Assert {
             line: line
         )
     }
+
+    /// Periodically checks if the expression does not evaluate to `nil`. Fails if the expression result is `nil` within
+    /// the `timeout` period.
+    ///
+    /// - Parameters:
+    ///   - expression: The expression to evaluate.
+    ///   - timeout: The maximum time the function waits for the expression results to equal.
+    ///   - message: The message to print when the assertion fails.
+    ///
+    /// - Warning: ⚠️ The expression is evaluated repeatedly during the function execution. It should not have
+    ///   any side effects which can affect its result.
+    static func willNotBeNil<T>(
+        _ expression1: @autoclosure @escaping () -> T?,
+        timeout: TimeInterval = defaultTimeout,
+        message: @autoclosure () -> String = "Failed to not be `nil`",
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> Assertion {
+        willBeTrue(
+            expression1() != nil,
+            timeout: timeout,
+            message: "Failed to not be `nil`",
+            file: file,
+            line: line
+        )
+    }
     
     /// Periodically checks if the expression evaluates to `TRUE`. Fails if the expression result is not `TRUE` within
     /// the `timeout` period.
