@@ -8,9 +8,6 @@
           "id" : "broken-waterfall-5",
           "banned" : false,
           "unread_channels" : 1,
-          "extraData" : {
-            "name" : "Tester"
-          },
           "last_active" : "2020-06-10T13:24:00.501797Z",
           "created_at" : "2019-12-12T15:33:46.488935Z",
           "unread_count" : 2,
