@@ -123,7 +123,11 @@
         "mentioned_users" : [
             
         ],
-        "html" : "<p>One<\/p>\n"
+        "html" : "<p>One<\/p>\n",
+        "pinned": false,
+        "pinned_at": null,
+        "pin_expires": null,
+        "pinned_by": null
     },
     "type" : "reaction.new",
     "cid" : "messaging:general"
