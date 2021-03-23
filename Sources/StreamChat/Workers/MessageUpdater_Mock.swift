@@ -26,6 +26,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var createNewReply_attachments: [AttachmentEnvelope]?
     @Atomic var createNewReply_showReplyInChannel: Bool?
     @Atomic var createNewReply_quotedMessageId: MessageId?
+    @Atomic var createNewReply_pinning: MessagePinning?
     @Atomic var createNewReply_extraData: ExtraData.Message?
     @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
     
@@ -141,6 +142,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     override func createNewReply(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
@@ -158,6 +160,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         createNewReply_attachments = attachments
         createNewReply_showReplyInChannel = showReplyInChannel
         createNewReply_quotedMessageId = quotedMessageId
+        createNewReply_pinning = pinning
         createNewReply_extraData = extraData
         createNewReply_completion = completion
     }

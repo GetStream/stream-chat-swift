@@ -193,6 +193,7 @@ public extension _ChatMessageController {
     ///
     /// - Parameters:
     ///   - text: Text of the message.
+    ///   - pinning: Pins the new message. `nil` if should not be pinned.
     ///   - attachments: An array of the attachments for the message.
     ///    `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol
     ///     and `ChatMessageAttachmentSeed`s.
@@ -204,6 +205,7 @@ public extension _ChatMessageController {
     ///
     func createNewReply(
         text: String,
+        pinning: MessagePinning? = nil,
 //        command: String? = nil,
 //        arguments: String? = nil,
         attachments: [AttachmentEnvelope] = [],
@@ -215,6 +217,7 @@ public extension _ChatMessageController {
         messageUpdater.createNewReply(
             in: cid,
             text: text,
+            pinning: pinning,
             command: nil,
             arguments: nil,
             parentMessageId: messageId,

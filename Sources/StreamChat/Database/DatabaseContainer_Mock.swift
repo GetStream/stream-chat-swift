@@ -153,6 +153,10 @@ extension DatabaseContainer {
         authorId: UserId = .unique,
         cid: ChannelId = .unique,
         text: String = .unique,
+        pinned: Bool = false,
+        pinnedByUserId: UserId? = nil,
+        pinnedAt: Date? = nil,
+        pinExpires: Date? = nil,
         attachments: [AttachmentPayload] = [],
         localState: LocalMessageState? = nil,
         type: MessageType? = nil
@@ -165,7 +169,11 @@ extension DatabaseContainer {
                 messageId: id,
                 attachments: attachments,
                 authorUserId: authorId,
-                text: text
+                text: text,
+                pinned: pinned,
+                pinnedByUserId: pinnedByUserId,
+                pinnedAt: pinnedAt,
+                pinExpires: pinExpires
             )
             
             let messageDTO = try session.saveMessage(payload: message, for: cid)

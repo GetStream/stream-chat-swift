@@ -626,11 +626,13 @@ final class MessageController_Tests: StressTestCase {
             .dummy(),
             .dummy()
         ]
+        let pin = MessagePinning(expirationDate: .unique)
 
         // Simulate `createNewReply` calls and catch the completion
         var completionCalled = false
         controller.createNewReply(
             text: text,
+            pinning: pin,
 //            command: command,
 //            arguments: arguments,
             attachments: attachments + attachmentSeeds,
@@ -673,6 +675,9 @@ final class MessageController_Tests: StressTestCase {
         env.messageUpdater.createNewReply_completion?(.success(newMessageId))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.createNewReply_completion = nil
+
+        // Pin
+        XCTAssertEqual(env.messageUpdater.createNewReply_pinning, pin)
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)

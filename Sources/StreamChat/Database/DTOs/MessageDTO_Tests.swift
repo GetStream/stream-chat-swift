@@ -300,7 +300,11 @@ class MessageDTO_Tests: XCTestCase {
             },
             ownReactions: (0..<2).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: messageAuthorId))
-            }
+            },
+            pinned: true,
+            pinnedByUserId: .unique,
+            pinnedAt: .unique,
+            pinExpires: .unique
         )
         
         // Asynchronously save the payload to the db
@@ -376,6 +380,7 @@ class MessageDTO_Tests: XCTestCase {
 
         var messageId: MessageId!
         let messageText: String = .unique
+        let messagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
         let messageCommand: String = .unique
         let messageArguments: String = .unique
         let messageAttachments: [TestAttachmentEnvelope] = [.init(), .init()]
@@ -388,6 +393,7 @@ class MessageDTO_Tests: XCTestCase {
             messageId = try session.createNewMessage(
                 in: cid,
                 text: messageText,
+                pinning: messagePinning,
                 command: messageCommand,
                 arguments: messageArguments,
                 parentMessageId: parentMessageId,
@@ -494,6 +500,7 @@ class MessageDTO_Tests: XCTestCase {
                 let message1DTO = try session.createNewMessage(
                     in: cid,
                     text: .unique,
+                    pinning: nil,
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
@@ -509,6 +516,7 @@ class MessageDTO_Tests: XCTestCase {
                 let message2DTO = try session.createNewMessage(
                     in: cid,
                     text: .unique,
+                    pinning: nil,
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
@@ -595,12 +603,14 @@ class MessageDTO_Tests: XCTestCase {
             .dummy(),
             .dummy()
         ]
+        let newMessagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
                 
         _ = try await { completion in
             database.write({
                 let messageDTO = try $0.createNewMessage(
                     in: cid,
                     text: newMessageText,
+                    pinning: newMessagePinning,
                     command: newMessageCommand,
                     arguments: newMessageArguments,
                     parentMessageId: newMessageParentMessageId,
@@ -648,6 +658,7 @@ class MessageDTO_Tests: XCTestCase {
                 try session.createNewMessage(
                     in: .unique,
                     text: .unique,
+                    pinning: MessagePinning(expirationDate: .unique),
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
@@ -680,6 +691,7 @@ class MessageDTO_Tests: XCTestCase {
                 try session.createNewMessage(
                     in: .unique,
                     text: .unique,
+                    pinning: MessagePinning(expirationDate: .unique),
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
@@ -718,6 +730,7 @@ class MessageDTO_Tests: XCTestCase {
             let messageDTO = try session.createNewMessage(
                 in: cid,
                 text: newMessageText,
+                pinning: MessagePinning(expirationDate: .unique),
                 quotedMessageId: nil,
                 attachmentSeeds: newMessageAttachmentSeeds,
                 extraData: NoExtraData.defaultValue
@@ -751,6 +764,7 @@ class MessageDTO_Tests: XCTestCase {
             let replyDTO = try session.createNewMessage(
                 in: cid,
                 text: "Reply",
+                pinning: nil,
                 command: nil,
                 arguments: nil,
                 parentMessageId: messageId,

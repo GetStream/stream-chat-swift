@@ -384,7 +384,11 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate an incoming message
         let newMessageId: MessageId = .unique
-        let newMessagePayload: MessagePayload<NoExtraData> = .dummy(messageId: newMessageId, authorUserId: .unique)
+        let newMessagePayload: MessagePayload<NoExtraData> = .dummy(
+            messageId: newMessageId,
+            authorUserId: .unique,
+            createdAt: Date()
+        )
         _ = try await {
             client.databaseContainer.write({ session in
                 try session.saveMessage(payload: newMessagePayload, for: self.channelId)
@@ -414,7 +418,7 @@ class ChannelController_Tests: StressTestCase {
         // Check the order of messages is correct
         let topToBottomIds = [message1, message2].sorted { $0.createdAt > $1.createdAt }.map(\.id)
         XCTAssertEqual(controller.messages.map(\.id), topToBottomIds)
-        
+
         // Set bottom-to-top ordering
         controller.listOrdering = .bottomToTop
         
@@ -594,8 +598,8 @@ class ChannelController_Tests: StressTestCase {
         }
         XCTAssertNil(error)
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
-        assert(channel.latestMessages.count == 1)
-        let message: ChatMessage = channel.latestMessages.first!
+        XCTAssertEqual(channel.latestMessages.count, 1)
+        let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
 
         // Assert DB observers call delegate updates
         AssertAsync {
@@ -737,8 +741,8 @@ class ChannelController_Tests: StressTestCase {
         }
         XCTAssertNil(error)
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
-        assert(channel.latestMessages.count == 1)
-        let message: ChatMessage = channel.latestMessages.first!
+        XCTAssertEqual(channel.latestMessages.count, 1)
+        let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
         
         AssertAsync {
             Assert.willBeEqual(delegate.didUpdateChannel_channel, .create(channel))
@@ -760,8 +764,8 @@ class ChannelController_Tests: StressTestCase {
             }, completion: $0)
         }
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: channelId)!.asModel()
-        assert(channel.latestMessages.count == 1)
-        let message: ChatMessage = channel.latestMessages.first!
+        XCTAssertEqual(channel.latestMessages.count, 1)
+        let message: ChatMessage = try XCTUnwrap(channel.latestMessages.first)
         
         AssertAsync {
             Assert.willBeEqual(delegate.didUpdateChannel_channel, .create(channel))
@@ -1339,6 +1343,7 @@ class ChannelController_Tests: StressTestCase {
         let message = try session.createNewMessage(
             in: channelId,
             text: "Message",
+            pinning: nil,
             quotedMessageId: nil,
             attachmentSeeds: [
                 ChatMessageAttachmentSeed.dummy(),
@@ -1636,11 +1641,13 @@ class ChannelController_Tests: StressTestCase {
             .dummy()
         ]
         let quotedMessageId: MessageId = .unique
+        let pin = MessagePinning(expirationDate: .unique)
         
         // Simulate `createNewMessage` calls and catch the completion
         var completionCalled = false
         controller.createNewMessage(
             text: text,
+            pinning: pin,
 //            command: command,
 //            arguments: arguments,
             attachments: attachments + attachmentSeeds,
@@ -1675,6 +1682,7 @@ class ChannelController_Tests: StressTestCase {
             attachmentSeeds
         )
         XCTAssertEqual(env.channelUpdater?.createNewMessage_quotedMessageId, quotedMessageId)
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_pinning?.expirationDate, pin.expirationDate!)
         
         // Simulate successful update
         env.channelUpdater?.createNewMessage_completion?(.success(newMessageId))
@@ -1711,7 +1719,7 @@ class ChannelController_Tests: StressTestCase {
             XCTFail("Expected .failure but received \(result)")
         }
     }
-    
+
     // MARK: - Adding members
     
     func test_addMembers_failsForNewChannels() throws {

@@ -46,6 +46,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var createNewMessage_attachments: [AttachmentEnvelope]?
     @Atomic var createNewMessage_attachmentSeeds: [ChatMessageAttachmentSeed]?
     @Atomic var createNewMessage_quotedMessageId: MessageId?
+    @Atomic var createNewMessage_pinning: MessagePinning?
     @Atomic var createNewMessage_extraData: ExtraData.Message?
     @Atomic var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
     
@@ -170,6 +171,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     override func createNewMessage(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         command: String?,
         arguments: String?,
         attachments: [AttachmentEnvelope],
@@ -183,6 +185,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         createNewMessage_arguments = arguments
         createNewMessage_attachments = attachments
         createNewMessage_quotedMessageId = quotedMessageId
+        createNewMessage_pinning = pinning
         createNewMessage_extraData = extraData
         createNewMessage_completion = completion
     }

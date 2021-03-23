@@ -101,6 +101,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
+    ///   - pinning: Pins the new message. Nil if should not be pinned.
     ///   - attachments: An array of the attachments for the message.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - extraData: Additional extra data of the message object.
@@ -109,6 +110,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     func createNewMessage(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning? = nil,
         command: String?,
         arguments: String?,
         attachments: [AttachmentEnvelope] = [],
@@ -121,6 +123,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             let newMessageDTO = try session.createNewMessage(
                 in: cid,
                 text: text,
+                pinning: pinning,
                 command: command,
                 arguments: arguments,
                 parentMessageId: nil,

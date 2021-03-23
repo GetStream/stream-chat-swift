@@ -202,6 +202,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     func createNewMessage<ExtraData: MessageExtraData>(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
@@ -224,6 +225,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.createdAt = createdDate
         message.locallyCreatedAt = createdDate
         message.updatedAt = createdDate
+
+        if let pinning = pinning {
+            try pin(message: message, pinning: pinning)
+        }
         
         message.type = parentMessageId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
         message.text = text

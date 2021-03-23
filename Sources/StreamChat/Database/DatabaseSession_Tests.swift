@@ -86,7 +86,7 @@ class DatabaseSession_Tests: StressTestCase {
             id: messageId,
             type: .regular,
             user: userPayload,
-            createdAt: .unique,
+            createdAt: channelPayload.createdAt.addingTimeInterval(300),
             updatedAt: .unique,
             text: "No, I am your father 🤯",
             showReplyInChannel: false,

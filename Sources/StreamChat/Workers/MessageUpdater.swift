@@ -113,6 +113,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
+    ///   - pinning: Pins the new message. Nil if should not be pinned.
     ///   - parentMessageId: The `MessageId` of the message this message replies to.
     ///   - attachments: An array of the attachments for the message.
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
@@ -124,6 +125,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     func createNewReply(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         command: String?,
         arguments: String?,
         parentMessageId: MessageId,
@@ -138,6 +140,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             let newMessageDTO = try session.createNewMessage(
                 in: cid,
                 text: text,
+                pinning: pinning,
                 command: command,
                 arguments: arguments,
                 parentMessageId: parentMessageId,
