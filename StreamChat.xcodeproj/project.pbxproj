@@ -62,7 +62,6 @@
 		7844B14E25EF9F5700B87E89 /* ChatChannelAvatarView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844B14D25EF9F5700B87E89 /* ChatChannelAvatarView+SwiftUI.swift */; };
 		7844B16825EFB44600B87E89 /* UIConfig+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844B16725EFB44600B87E89 /* UIConfig+SwiftUI.swift */; };
 		7849AE7C25F22FA8007817D4 /* ChatChannelListVC+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780DFD0B25EF80AB00A39A6E /* ChatChannelListVC+SwiftUI_Tests.swift */; };
-		7849AE8B25F2306C007817D4 /* iOS13TestCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79200D41250118A1002F4EB1 /* iOS13TestCase.swift */; };
 		7849AF6725F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7849AF6625F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift */; };
 		7849AFA225F24835007817D4 /* UITestsEnvironmentSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7849AF9225F2479A007817D4 /* UITestsEnvironmentSetup.swift */; };
 		7849AFEA25F258B9007817D4 /* TestsEnvironmentSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7849AFE925F258B9007817D4 /* TestsEnvironmentSetup.swift */; };
@@ -860,8 +859,8 @@
 		F81641BD25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641BC25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift */; };
 		F86C887725FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C887625FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift */; };
 		F86D799325E659BB00379BC3 /* iMessageChatChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86D799225E659BA00379BC3 /* iMessageChatChannelViewController.swift */; };
-		F87A4866260B3516001653A8 /* SwiftUIViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */; };
 		F87A472026089DFE001653A8 /* JumpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A471F26089DFE001653A8 /* JumpView.swift */; };
+		F87A4866260B3516001653A8 /* SwiftUIViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */; };
 		F8933B9525FF55E30054BBFF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933B9425FF55E30054BBFF /* AppDelegate.swift */; };
 		F8933B9E25FF55E50054BBFF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8933B9D25FF55E50054BBFF /* Assets.xcassets */; };
 		F8933BA125FF55E50054BBFF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F8933B9F25FF55E50054BBFF /* LaunchScreen.storyboard */; };
@@ -1922,8 +1921,8 @@
 		F81641BC25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "iMessageСhatMessageCollectionViewCell.swift"; sourceTree = "<group>"; };
 		F86C887625FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelAvatarView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		F86D799225E659BA00379BC3 /* iMessageChatChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelViewController.swift; sourceTree = "<group>"; };
-		F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewRepresentable.swift; sourceTree = "<group>"; };
 		F87A471F26089DFE001653A8 /* JumpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JumpView.swift; sourceTree = "<group>"; };
+		F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewRepresentable.swift; sourceTree = "<group>"; };
 		F8933B9225FF55E30054BBFF /* SlackClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlackClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8933B9425FF55E30054BBFF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F8933B9B25FF55E30054BBFF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -4317,7 +4316,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1230;
-				LastUpgradeCheck = 1220;
+				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = "Stream.io Inc";
 				TargetAttributes = {
 					790881FC25432B7200896F03 = {
@@ -4729,7 +4728,6 @@
 				7969D20225F15E3D00C66F87 /* TestRunnerEnvironment.swift in Sources */,
 				79158D5325F15BF900186102 /* iOS13TestCase.swift in Sources */,
 				780057FF25F6353600D21095 /* ChatChannel.swift in Sources */,
-				7849AE8B25F2306C007817D4 /* iOS13TestCase.swift in Sources */,
 				AD154C6D25DC3BA000850925 /* ChatMessageComposerCommandCollectionViewCell_Tests.swift in Sources */,
 				ADFCCD7625C9D4D10024505D /* SnapshotVariant.swift in Sources */,
 				2208246A25DFD0060033544B /* ChatChannelListRouter_Mock.swift in Sources */,
@@ -4738,7 +4736,6 @@
 				E73262E025ED64AB008CB152 /* ChatChannelNamer_Tests.swift in Sources */,
 				E7AD958925D7510900076DC3 /* ChatMessageComposerMentionCellView_Tests.swift in Sources */,
 				79158D4425F15BE600186102 /* UIConfig+SwiftUI_Tests.swift in Sources */,
-				E7AD958925D7510900076DC3 /* ChatMessageComposerMentionCellView_Tests.swift in Sources */,
 				79158D5B25F15CF900186102 /* AssertAsync.swift in Sources */,
 				7849AFA225F24835007817D4 /* UITestsEnvironmentSetup.swift in Sources */,
 				225504C725DEA03700A5A65A /* ChatChannelListItemView_Tests.swift in Sources */,
