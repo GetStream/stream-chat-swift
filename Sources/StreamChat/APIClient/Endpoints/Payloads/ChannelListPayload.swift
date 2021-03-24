@@ -103,7 +103,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     /// The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
-    public let team: String
+    public let team: TeamId?
     
     /// Cooldown duration for the channel, if it's in slow mode.
     /// This value will be 0 if the channel is not in slow mode.
@@ -125,7 +125,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         createdBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .createdBy)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         isFrozen = try container.decode(Bool.self, forKey: .frozen)
-        team = try container.decodeIfPresent(String.self, forKey: .team) ?? ""
+        team = try container.decodeIfPresent(String.self, forKey: .team)
         memberCount = try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? 0
         
         members = try container.decodeIfPresent([MemberPayload<ExtraData.User>].self, forKey: .members)
@@ -151,7 +151,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         config: ChannelConfig,
         isFrozen: Bool,
         memberCount: Int,
-        team: String,
+        team: String?,
         members: [MemberPayload<ExtraData.User>]?,
         cooldownDuration: Int
     ) {

@@ -59,6 +59,7 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(channel.memberCount, 4)
         XCTAssertEqual(channel.updatedAt, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertEqual(channel.cooldownDuration, 10)
+        XCTAssertEqual(channel.team, "GREEN")
         
         XCTAssertEqual(channel.name, "The water cooler")
         XCTAssertEqual(
