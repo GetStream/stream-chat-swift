@@ -785,7 +785,7 @@
 		DB82310F259C272E00E7D7FE /* SwiftyGif in Frameworks */ = {isa = PBXBuildFile; productRef = DB82310E259C272E00E7D7FE /* SwiftyGif */; };
 		DB842E4525C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */; };
 		DB9A3D562582689A00555D36 /* ChatMessageListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */; };
-		DB9A3D662582783F00555D36 /* ChatVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9A3D652582783F00555D36 /* ChatVC.swift */; };
+		DB9A3D662582783F00555D36 /* KeyboardFrameObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB9A3D652582783F00555D36 /* KeyboardFrameObserver.swift */; };
 		DBC8A4BB257E5BFB00B20A82 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = DBC8A4BD257E5BFB00B20A82 /* Localizable.stringsdict */; };
 		DBC8A4C6257E696900B20A82 /* ChatMessageThreadInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC8A4C5257E696900B20A82 /* ChatMessageThreadInfoView.swift */; };
 		DBC8A564258113F700B20A82 /* ChatThreadVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = DBC8A563258113F700B20A82 /* ChatThreadVC.swift */; };
@@ -1894,7 +1894,7 @@
 		DB8230F1259B8DBF00E7D7FE /* ChatMessageGiphyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageGiphyView.swift; sourceTree = "<group>"; };
 		DB842E4425C9F94C000AAC46 /* LazyCachedMapCollection_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyCachedMapCollection_Tests.swift; sourceTree = "<group>"; };
 		DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListRouter.swift; sourceTree = "<group>"; };
-		DB9A3D652582783F00555D36 /* ChatVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatVC.swift; sourceTree = "<group>"; };
+		DB9A3D652582783F00555D36 /* KeyboardFrameObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardFrameObserver.swift; sourceTree = "<group>"; };
 		DBC8A4BC257E5BFB00B20A82 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = en; path = en.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		DBC8A4C5257E696900B20A82 /* ChatMessageThreadInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageThreadInfoView.swift; sourceTree = "<group>"; };
 		DBC8A563258113F700B20A82 /* ChatThreadVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadVC.swift; sourceTree = "<group>"; };
@@ -2274,7 +2274,7 @@
 				79088331254876C100896F03 /* ChatMessageListCollectionView.swift */,
 				79088330254876C100896F03 /* ChatMessageListCollectionViewLayout.swift */,
 				F8933D9025FFC0050054BBFF /* ChatMessageListCollectionViewLayout_Tests.swift */,
-				DB9A3D652582783F00555D36 /* ChatVC.swift */,
+				DB9A3D652582783F00555D36 /* KeyboardFrameObserver.swift */,
 				7908832D254876C100896F03 /* ChatChannelVC.swift */,
 				882AE056257A176A004095B3 /* ChatChannelRouter.swift */,
 				DB70CFF325701FE500DDF436 /* ChatChannelNavigationBarListener.swift */,
@@ -4771,7 +4771,7 @@
 				888ABA072594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift in Sources */,
 				88BD82B02549D18F00369074 /* ChatChannelListItemView.swift in Sources */,
 				8825334C258CE82500B77352 /* ChatMessageActionsRouter.swift in Sources */,
-				DB9A3D662582783F00555D36 /* ChatVC.swift in Sources */,
+				DB9A3D662582783F00555D36 /* KeyboardFrameObserver.swift in Sources */,
 				88BA7F87258B97C9006CE0C5 /* ChatMessageImageGallery+UploadingOverlay.swift in Sources */,
 				88A8CF26256E7C31004EA4C7 /* ChatMessageMetadataView.swift in Sources */,
 				8806570D259A51C200E31D23 /* ChatMessageInteractiveAttachmentView+ActionButton.swift in Sources */,
