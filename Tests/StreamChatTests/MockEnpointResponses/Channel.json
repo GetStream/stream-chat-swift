@@ -1141,7 +1141,8 @@
     "image" : "https:\/\/images.unsplash.com\/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80",
     "example" : 1,
     "name" : "The water cooler",
-    "last_message_at" : "2020-06-10T05:59:48.054692Z"
+    "last_message_at" : "2020-06-10T05:59:48.054692Z",
+    "team" : "GREEN"
   },
   "read" : [
     {
