@@ -25,10 +25,18 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
         .init()
     
     public private(set) lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
+    
+    public private(set) lazy var titleView = ChatMessageListTitleView<ExtraData>()
 
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
     
     private var messageComposerBottomConstraint: NSLayoutConstraint?
+    
+    private lazy var keyboardObserver = KeyboardFrameObserver(
+        containerView: view,
+        scrollView: messageList.collectionView,
+        composerBottomConstraint: messageComposerBottomConstraint
+    )
     
     // MARK: - Life Cycle
     
@@ -36,6 +44,8 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
         super.viewDidLoad()
 
         navigationItem.largeTitleDisplayMode = .never
+        
+        keyboardObserver.register()
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
@@ -65,21 +75,15 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
         
         messageList.view.translatesAutoresizingMaskIntoConstraints = false
         messageComposerViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        
+
         addChildViewController(messageList, targetView: view)
         addChildViewController(messageComposerViewController, targetView: view)
-
-        messageList.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
-        messageList.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
-        messageList.view.topAnchor.pin(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        
+        messageList.view.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
         messageList.view.bottomAnchor.pin(equalTo: messageComposerViewController.view.topAnchor).isActive = true
 
-        messageComposerViewController.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor)
-            .isActive = true
-        messageComposerViewController.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
-            .isActive = true
-        messageComposerBottomConstraint =
-            messageComposerViewController.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
+        messageComposerViewController.view.pin(anchors: [.leading, .trailing], to: view.safeAreaLayoutGuide)
+        messageComposerBottomConstraint = messageComposerViewController.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
     }
 
@@ -87,17 +91,6 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
         super.defaultAppearance()
         
         view.backgroundColor = uiConfig.colorPalette.background
-        let title = UILabel()
-        title.textAlignment = .center
-        title.font = uiConfig.font.headlineBold
-
-        let subtitle = UILabel()
-        subtitle.textAlignment = .center
-        subtitle.font = uiConfig.font.caption1
-        subtitle.textColor = uiConfig.colorPalette.subtitleText
-
-        let titleView = UIStackView(arrangedSubviews: [title, subtitle])
-        titleView.axis = .vertical
 
         navigationItem.titleView = titleView
 
@@ -108,9 +101,9 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
             in: channelController.client,
             using: uiConfig.channelList.channelNamer
         )
-        navbarListener.onDataChange = { data in
-            title.text = data.title
-            subtitle.text = data.subtitle
+        navbarListener.onDataChange = { [weak self] data in
+            self?.titleView.title = data.title
+            self?.titleView.subtitle = data.subtitle
         }
         self.navbarListener = navbarListener
 
@@ -137,7 +130,11 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
         channelController.loadNextMessages()
     }
 
-    public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, replyMessageFor message: _ChatMessage<ExtraData>, at index: Int) -> _ChatMessage<ExtraData>? {
+    public func chatMessageListVC(
+        _ vc: _ChatMessageListVC<ExtraData>,
+        replyMessageFor message: _ChatMessage<ExtraData>,
+        at index: Int
+    ) -> _ChatMessage<ExtraData>? {
         message.quotedMessageId.flatMap { channelController.dataStore.message(id: $0) }
     }
 
