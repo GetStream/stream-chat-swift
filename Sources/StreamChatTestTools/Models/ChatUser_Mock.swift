@@ -18,7 +18,7 @@ public extension _ChatUser {
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         lastActiveAt: Date? = nil,
-        teams: [String] = [],
+        teams: Set<TeamId> = [],
         extraData: ExtraData = .defaultValue
     ) -> _ChatUser {
         .init(
