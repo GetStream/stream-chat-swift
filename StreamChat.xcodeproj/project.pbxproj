@@ -859,6 +859,7 @@
 		F81641BD25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641BC25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift */; };
 		F86C887725FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C887625FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift */; };
 		F86D799325E659BB00379BC3 /* iMessageChatChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86D799225E659BA00379BC3 /* iMessageChatChannelViewController.swift */; };
+		F87A4866260B3516001653A8 /* SwiftUIViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */; };
 		F87A472026089DFE001653A8 /* JumpView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A471F26089DFE001653A8 /* JumpView.swift */; };
 		F8933B9525FF55E30054BBFF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933B9425FF55E30054BBFF /* AppDelegate.swift */; };
 		F8933B9E25FF55E50054BBFF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8933B9D25FF55E50054BBFF /* Assets.xcassets */; };
@@ -992,6 +993,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 790881FC25432B7200896F03;
 			remoteInfo = StreamChatUI;
+		};
+		F87A48A1260B4269001653A8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 799C941A247D2F80001F1104;
+			remoteInfo = StreamChat;
 		};
 		F8933BCD25FF56710054BBFF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -1912,6 +1920,7 @@
 		F81641BC25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "iMessageСhatMessageCollectionViewCell.swift"; sourceTree = "<group>"; };
 		F86C887625FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelAvatarView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		F86D799225E659BA00379BC3 /* iMessageChatChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelViewController.swift; sourceTree = "<group>"; };
+		F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewRepresentable.swift; sourceTree = "<group>"; };
 		F87A471F26089DFE001653A8 /* JumpView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JumpView.swift; sourceTree = "<group>"; };
 		F8933B9225FF55E30054BBFF /* SlackClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlackClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8933B9425FF55E30054BBFF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -3457,6 +3466,7 @@
 				AD16173825D6A7D7007E9FA8 /* ChatChannelCreateNewButton_Tests.swift */,
 				22A0921625682880001FE9F0 /* ChatNavigationBar.swift */,
 				792DD9D8256BC542001DB91B /* BaseViews.swift */,
+				F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */,
 				225DDDFB25799270009C280A /* ChatSquareButton.swift */,
 				88BA7F5C258B6953006CE0C5 /* ChatLoadingIndicator.swift */,
 			);
@@ -4174,6 +4184,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				F87A48A2260B4269001653A8 /* PBXTargetDependency */,
 			);
 			name = StreamChatTestTools;
 			productName = StreamChatTestTools;
@@ -4627,6 +4638,7 @@
 				88AD1D5E2588B87C00ECED5B /* ChatFileAttachmentListView+ItemView.swift in Sources */,
 				88F836612578D1A80039AEC8 /* ChatMessageActionItem.swift in Sources */,
 				228DC80E25704B410080A49F /* ChatMessageComposerImageAttachmentCollectionViewCell.swift in Sources */,
+				F87A4866260B3516001653A8 /* SwiftUIViewRepresentable.swift in Sources */,
 				E7166CC225BED44A00B03B07 /* UIConfig+MessageList.swift in Sources */,
 				790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */,
 				DBC8A564258113F700B20A82 /* ChatThreadVC.swift in Sources */,
@@ -5487,6 +5499,11 @@
 			isa = PBXTargetDependency;
 			target = 790881FC25432B7200896F03 /* StreamChatUI */;
 			targetProxy = F81582E325F66ADF00E11150 /* PBXContainerItemProxy */;
+		};
+		F87A48A2260B4269001653A8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 799C941A247D2F80001F1104 /* StreamChat */;
+			targetProxy = F87A48A1260B4269001653A8 /* PBXContainerItemProxy */;
 		};
 		F8933BCE25FF56710054BBFF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
