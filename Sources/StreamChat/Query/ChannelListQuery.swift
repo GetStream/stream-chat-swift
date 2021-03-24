@@ -75,7 +75,8 @@ public extension FilterKey where Scope: AnyChannelListFilterScope {
     /// A filter key for matching the `memberCount` value.
     static var memberCount: FilterKey<Scope, Int> { "member_count" }
     
-    //    static var team: FilterKey<Scope, > { "team" }
+    /// A filter key for matching the `team` value.
+    static var team: FilterKey<Scope, TeamId> { "team" }
 }
 
 /// A query is used for querying specific channels from backend.
