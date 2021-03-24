@@ -49,6 +49,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.updatedAt, loadedChannel.updatedAt)
             Assert.willBeEqual(payload.channel.deletedAt, loadedChannel.deletedAt)
             Assert.willBeEqual(payload.channel.cooldownDuration, loadedChannel.cooldownDuration)
+            Assert.willBeEqual(payload.channel.team!, loadedChannel.team)
             
             // Config
             Assert.willBeEqual(payload.channel.config.reactionsEnabled, loadedChannel.config.reactionsEnabled)

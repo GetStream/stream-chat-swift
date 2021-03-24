@@ -82,7 +82,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
     ///
-//    public let team: String
+    public let team: TeamId?
     
     /// The unread counts for the channel.
     public let unreadCount: ChannelUnreadCount
@@ -143,7 +143,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         membership: _ChatChannelMember<ExtraData.User>? = nil,
         currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         watchers: Set<_ChatUser<ExtraData.User>> = [],
-//        team: String = "",
+        team: TeamId? = nil,
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
         memberCount: Int = 0,
@@ -169,7 +169,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.membership = membership
         self.currentlyTypingMembers = currentlyTypingMembers
         self.watchers = watchers
-//        self.team = team
+        self.team = team
         self.unreadCount = unreadCount
         self.watcherCount = watcherCount
         self.memberCount = memberCount
