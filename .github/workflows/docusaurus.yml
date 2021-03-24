@@ -1,0 +1,38 @@
+name: Deploy Docusaurus
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+    - 'stream-chat-swift-docs/**' # Run when any doc file is changed
+    - 'DocsSnippets/**' # Also re-run when we update doc snippets
+
+jobs:
+  deploy-docusaurus:
+    name: 'Deploy Docusaurus'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: Install Bot SSH Key
+        uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
+      - name: Install yarn # Somehow it isn't pre-installed? If it is, remove this action
+        run: npm install -g yarn
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        id: node-cache
+        with:
+          path: stream-chat-swift-docs/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('stream-chat-swift-docs/yarn.lock') }}
+          restore-keys: ${{ runner.os }}-node- 
+      - name: Install yarn dependencies
+        run: cd stream-chat-swift-docs && yarn install --frozen-lockfile
+      - name: Run markdown-magic
+        run: cd stream-chat-swift-docs && yarn run md-magic --path './docs/*.md'
+      - name: Deploy docusaurus website
+        env:
+           USE_SSH: true
+           GIT_USER: Stream-iOS-Bot
+        run: cd stream-chat-swift-docs && yarn deploy
