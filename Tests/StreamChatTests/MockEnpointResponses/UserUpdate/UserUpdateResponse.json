@@ -10,7 +10,8 @@
       "online": false,
       "name": "Luke",
       "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-      "secret_note" : "Anaking is Vader!"
+      "secret_note" : "Anaking is Vader!",
+      "teams" : ["RED", "GREEN", "BLUE"]
     }
   },
   "duration": "16.74ms"

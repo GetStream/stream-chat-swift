@@ -23,6 +23,7 @@ class UserPayload_Tests: XCTestCase {
         )
         XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.teams.count, 3)
     }
     
     func test_currentUserJSON_isSerialized_withCustomExtraData() throws {
@@ -43,6 +44,7 @@ class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.teams.count, 3)
         
         XCTAssertEqual(payload.extraData.secretNote, "Anaking is Vader!")
     }
@@ -60,6 +62,7 @@ class UserPayload_Tests: XCTestCase {
             payload.imageURL,
             URL(string: "https://getstream.io/random_png/?name=Bitter+cloud")!
         )
+        XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.role, .guest)
         XCTAssertEqual(payload.isOnline, true)
     }
@@ -124,6 +127,7 @@ class UserUpdateResponse_Tests: XCTestCase {
         let expectedImage = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
         XCTAssertEqual(user.imageURL?.absoluteString, expectedImage)
         XCTAssertEqual(user.extraData.secretNote, "Anaking is Vader!")
+        XCTAssertEqual(user.teams.count, 3)
     }
     
     func test_currentUserUpdateResponseJSON_whenMissingUser_failsSerialization() {
