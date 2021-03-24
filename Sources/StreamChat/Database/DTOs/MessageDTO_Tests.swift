@@ -109,7 +109,6 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(channelPayload.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
             Assert.willBeEqual(channelPayload.createdBy!.role, loadedChannel?.createdBy?.userRole)
             Assert.willBeEqual(channelPayload.createdBy!.extraData, loadedChannel?.createdBy?.extraData)
-            Assert.willBeEqual(channelPayload.createdBy!.teams, loadedChannel?.createdBy?.teams)
         }
         
         // Assert the message was saved correctly
