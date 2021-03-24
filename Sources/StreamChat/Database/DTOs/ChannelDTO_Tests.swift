@@ -18,119 +18,111 @@ class ChannelDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
-    func test_channelPayload_isStoredAndLoadedFromDB() {
+    func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
         
         let payload = dummyPayload(with: channelId)
         
         // Asynchronously save the payload to the db
-        database.write { session in
-            try! session.saveChannel(payload: payload)
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
         }
         
         // Load the channel from the db and check the fields are correct
-        var loadedChannel: _ChatChannel<NoExtraData>? {
+        let loadedChannel: ChatChannel = try XCTUnwrap(
             database.viewContext.channel(cid: channelId)?.asModel()
-        }
+        )
         
         AssertAsync {
             // Channel details
-            Assert.willBeEqual(channelId, loadedChannel?.cid)
+            Assert.willBeEqual(channelId, loadedChannel.cid)
             
-            Assert.willBeEqual(payload.watcherCount, loadedChannel?.watcherCount)
-            Assert.willBeEqual(Set(payload.watchers?.map(\.id) ?? []), Set(loadedChannel?.watchers.map(\.id) ?? []))
-            Assert.willBeEqual(payload.channel.name, loadedChannel?.name)
-            Assert.willBeEqual(payload.channel.imageURL, loadedChannel?.imageURL)
-            Assert.willBeEqual(payload.channel.memberCount, loadedChannel?.memberCount)
-            Assert.willBeEqual(payload.channel.extraData, loadedChannel?.extraData)
-            Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel?.type.rawValue)
-            Assert.willBeEqual(payload.channel.lastMessageAt, loadedChannel?.lastMessageAt)
-            Assert.willBeEqual(payload.channel.createdAt, loadedChannel?.createdAt)
-            Assert.willBeEqual(payload.channel.updatedAt, loadedChannel?.updatedAt)
-            Assert.willBeEqual(payload.channel.deletedAt, loadedChannel?.deletedAt)
-            Assert.willBeEqual(payload.channel.cooldownDuration, loadedChannel?.cooldownDuration)
+            Assert.willBeEqual(payload.watcherCount, loadedChannel.watcherCount)
+            Assert.willBeEqual(Set(payload.watchers?.map(\.id) ?? []), Set(loadedChannel.watchers.map(\.id)))
+            Assert.willBeEqual(payload.channel.name, loadedChannel.name)
+            Assert.willBeEqual(payload.channel.imageURL, loadedChannel.imageURL)
+            Assert.willBeEqual(payload.channel.memberCount, loadedChannel.memberCount)
+            Assert.willBeEqual(payload.channel.extraData, loadedChannel.extraData)
+            Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel.type.rawValue)
+            Assert.willBeEqual(payload.channel.lastMessageAt, loadedChannel.lastMessageAt)
+            Assert.willBeEqual(payload.channel.createdAt, loadedChannel.createdAt)
+            Assert.willBeEqual(payload.channel.updatedAt, loadedChannel.updatedAt)
+            Assert.willBeEqual(payload.channel.deletedAt, loadedChannel.deletedAt)
+            Assert.willBeEqual(payload.channel.cooldownDuration, loadedChannel.cooldownDuration)
             
             // Config
-            Assert.willBeEqual(payload.channel.config.reactionsEnabled, loadedChannel?.config.reactionsEnabled)
-            Assert.willBeEqual(payload.channel.config.typingEventsEnabled, loadedChannel?.config.typingEventsEnabled)
-            Assert.willBeEqual(payload.channel.config.readEventsEnabled, loadedChannel?.config.readEventsEnabled)
-            Assert.willBeEqual(payload.channel.config.connectEventsEnabled, loadedChannel?.config.connectEventsEnabled)
-            Assert.willBeEqual(payload.channel.config.uploadsEnabled, loadedChannel?.config.uploadsEnabled)
-            Assert.willBeEqual(payload.channel.config.repliesEnabled, loadedChannel?.config.repliesEnabled)
-            Assert.willBeEqual(payload.channel.config.searchEnabled, loadedChannel?.config.searchEnabled)
-            Assert.willBeEqual(payload.channel.config.mutesEnabled, loadedChannel?.config.mutesEnabled)
-            Assert.willBeEqual(payload.channel.config.urlEnrichmentEnabled, loadedChannel?.config.urlEnrichmentEnabled)
-            Assert.willBeEqual(payload.channel.config.messageRetention, loadedChannel?.config.messageRetention)
-            Assert.willBeEqual(payload.channel.config.maxMessageLength, loadedChannel?.config.maxMessageLength)
-            Assert.willBeEqual(payload.channel.config.commands, loadedChannel?.config.commands)
-            Assert.willBeEqual(payload.channel.config.createdAt, loadedChannel?.config.createdAt)
-            Assert.willBeEqual(payload.channel.config.updatedAt, loadedChannel?.config.updatedAt)
+            Assert.willBeEqual(payload.channel.config.reactionsEnabled, loadedChannel.config.reactionsEnabled)
+            Assert.willBeEqual(payload.channel.config.typingEventsEnabled, loadedChannel.config.typingEventsEnabled)
+            Assert.willBeEqual(payload.channel.config.readEventsEnabled, loadedChannel.config.readEventsEnabled)
+            Assert.willBeEqual(payload.channel.config.connectEventsEnabled, loadedChannel.config.connectEventsEnabled)
+            Assert.willBeEqual(payload.channel.config.uploadsEnabled, loadedChannel.config.uploadsEnabled)
+            Assert.willBeEqual(payload.channel.config.repliesEnabled, loadedChannel.config.repliesEnabled)
+            Assert.willBeEqual(payload.channel.config.searchEnabled, loadedChannel.config.searchEnabled)
+            Assert.willBeEqual(payload.channel.config.mutesEnabled, loadedChannel.config.mutesEnabled)
+            Assert.willBeEqual(payload.channel.config.urlEnrichmentEnabled, loadedChannel.config.urlEnrichmentEnabled)
+            Assert.willBeEqual(payload.channel.config.messageRetention, loadedChannel.config.messageRetention)
+            Assert.willBeEqual(payload.channel.config.maxMessageLength, loadedChannel.config.maxMessageLength)
+            Assert.willBeEqual(payload.channel.config.commands, loadedChannel.config.commands)
+            Assert.willBeEqual(payload.channel.config.createdAt, loadedChannel.config.createdAt)
+            Assert.willBeEqual(payload.channel.config.updatedAt, loadedChannel.config.updatedAt)
             
             // Creator
-            Assert.willBeEqual(payload.channel.createdBy!.id, loadedChannel?.createdBy?.id)
-            Assert.willBeEqual(payload.channel.createdBy!.createdAt, loadedChannel?.createdBy?.userCreatedAt)
-            Assert.willBeEqual(payload.channel.createdBy!.updatedAt, loadedChannel?.createdBy?.userUpdatedAt)
-            Assert.willBeEqual(payload.channel.createdBy!.lastActiveAt, loadedChannel?.createdBy?.lastActiveAt)
-            Assert.willBeEqual(payload.channel.createdBy!.isOnline, loadedChannel?.createdBy?.isOnline)
-            Assert.willBeEqual(payload.channel.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
-            Assert.willBeEqual(payload.channel.createdBy!.role, loadedChannel?.createdBy?.userRole)
-            Assert.willBeEqual(payload.channel.createdBy!.extraData, loadedChannel?.createdBy?.extraData)
-            Assert.willBeEqual(payload.channel.createdBy!.teams, loadedChannel?.createdBy?.teams)
+            Assert.willBeEqual(payload.channel.createdBy!.id, loadedChannel.createdBy?.id)
+            Assert.willBeEqual(payload.channel.createdBy!.createdAt, loadedChannel.createdBy?.userCreatedAt)
+            Assert.willBeEqual(payload.channel.createdBy!.updatedAt, loadedChannel.createdBy?.userUpdatedAt)
+            Assert.willBeEqual(payload.channel.createdBy!.lastActiveAt, loadedChannel.createdBy?.lastActiveAt)
+            Assert.willBeEqual(payload.channel.createdBy!.isOnline, loadedChannel.createdBy?.isOnline)
+            Assert.willBeEqual(payload.channel.createdBy!.isBanned, loadedChannel.createdBy?.isBanned)
+            Assert.willBeEqual(payload.channel.createdBy!.role, loadedChannel.createdBy?.userRole)
+            Assert.willBeEqual(payload.channel.createdBy!.extraData, loadedChannel.createdBy?.extraData)
             
             // Members
-            Assert.willBeEqual(payload.members[0].role, loadedChannel?.cachedMembers.first?.memberRole)
-            Assert.willBeEqual(payload.members[0].createdAt, loadedChannel?.cachedMembers.first?.memberCreatedAt)
-            Assert.willBeEqual(payload.members[0].updatedAt, loadedChannel?.cachedMembers.first?.memberUpdatedAt)
+            Assert.willBeEqual(payload.members[0].role, loadedChannel.cachedMembers.first?.memberRole)
+            Assert.willBeEqual(payload.members[0].createdAt, loadedChannel.cachedMembers.first?.memberCreatedAt)
+            Assert.willBeEqual(payload.members[0].updatedAt, loadedChannel.cachedMembers.first?.memberUpdatedAt)
             
-            Assert.willBeEqual(payload.members[0].user.id, loadedChannel?.cachedMembers.first?.id)
-            Assert.willBeEqual(payload.members[0].user.createdAt, loadedChannel?.cachedMembers.first?.userCreatedAt)
-            Assert.willBeEqual(payload.members[0].user.updatedAt, loadedChannel?.cachedMembers.first?.userUpdatedAt)
-            Assert.willBeEqual(payload.members[0].user.lastActiveAt, loadedChannel?.cachedMembers.first?.lastActiveAt)
-            Assert.willBeEqual(payload.members[0].user.isOnline, loadedChannel?.cachedMembers.first?.isOnline)
-            Assert.willBeEqual(payload.members[0].user.isBanned, loadedChannel?.cachedMembers.first?.isBanned)
-            Assert.willBeEqual(payload.members[0].user.role, loadedChannel?.cachedMembers.first?.userRole)
-            Assert.willBeEqual(payload.members[0].user.extraData, loadedChannel?.cachedMembers.first?.extraData)
-            Assert.willBeEqual(payload.members[0].user.teams, loadedChannel?.cachedMembers.first?.teams)
-            // Assert.willBeEqual(payload.members[0].user.isInvisible, loadedChannel?.members.first?.isInvisible)
-            // Assert.willBeEqual(payload.members[0].user.devices, loadedChannel?.members.first?.devices)
-            // Assert.willBeEqual(payload.members[0].user.mutedUsers, loadedChannel?.members.first?.mutedUsers)
-            // Assert.willBeEqual(payload.members[0].user.unreadChannelsCount, loadedChannel?.members.first?.unreadChannelsCount)
-            // Assert.willBeEqual(payload.members[0].user.unreadMessagesCount, loadedChannel?.members.first?.unreadMessagesCount)
+            Assert.willBeEqual(payload.members[0].user.id, loadedChannel.cachedMembers.first?.id)
+            Assert.willBeEqual(payload.members[0].user.createdAt, loadedChannel.cachedMembers.first?.userCreatedAt)
+            Assert.willBeEqual(payload.members[0].user.updatedAt, loadedChannel.cachedMembers.first?.userUpdatedAt)
+            Assert.willBeEqual(payload.members[0].user.lastActiveAt, loadedChannel.cachedMembers.first?.lastActiveAt)
+            Assert.willBeEqual(payload.members[0].user.isOnline, loadedChannel.cachedMembers.first?.isOnline)
+            Assert.willBeEqual(payload.members[0].user.isBanned, loadedChannel.cachedMembers.first?.isBanned)
+            Assert.willBeEqual(payload.members[0].user.role, loadedChannel.cachedMembers.first?.userRole)
+            Assert.willBeEqual(payload.members[0].user.extraData, loadedChannel.cachedMembers.first?.extraData)
 
             // Membership
-            Assert.willBeEqual(payload.membership!.user.id, loadedChannel?.membership?.id)
+            Assert.willBeEqual(payload.membership!.user.id, loadedChannel.membership?.id)
 
             // Messages
-            Assert.willBeEqual(payload.messages[0].id, loadedChannel?.latestMessages.first?.id)
-            Assert.willBeEqual(payload.messages[0].type.rawValue, loadedChannel?.latestMessages.first?.type.rawValue)
-            Assert.willBeEqual(payload.messages[0].text, loadedChannel?.latestMessages.first?.text)
-            Assert.willBeEqual(payload.messages[0].updatedAt, loadedChannel?.latestMessages.first?.updatedAt)
-            Assert.willBeEqual(payload.messages[0].createdAt, loadedChannel?.latestMessages.first?.createdAt)
-            Assert.willBeEqual(payload.messages[0].deletedAt, loadedChannel?.latestMessages.first?.deletedAt)
-            Assert.willBeEqual(payload.messages[0].args, loadedChannel?.latestMessages.first?.arguments)
-            Assert.willBeEqual(payload.messages[0].command, loadedChannel?.latestMessages.first?.command)
-            Assert.willBeEqual(payload.messages[0].extraData, loadedChannel?.latestMessages.first?.extraData)
-            Assert.willBeEqual(payload.messages[0].isSilent, loadedChannel?.latestMessages.first?.isSilent)
-            Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel?.latestMessages.first?.mentionedUsers.count)
-            Assert.willBeEqual(payload.messages[0].parentId, loadedChannel?.latestMessages.first?.parentMessageId)
-            Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel?.latestMessages.first?.reactionScores)
-            Assert.willBeEqual(payload.messages[0].replyCount, loadedChannel?.latestMessages.first?.replyCount)
+            Assert.willBeEqual(payload.messages[0].id, loadedChannel.latestMessages.first?.id)
+            Assert.willBeEqual(payload.messages[0].type.rawValue, loadedChannel.latestMessages.first?.type.rawValue)
+            Assert.willBeEqual(payload.messages[0].text, loadedChannel.latestMessages.first?.text)
+            Assert.willBeEqual(payload.messages[0].updatedAt, loadedChannel.latestMessages.first?.updatedAt)
+            Assert.willBeEqual(payload.messages[0].createdAt, loadedChannel.latestMessages.first?.createdAt)
+            Assert.willBeEqual(payload.messages[0].deletedAt, loadedChannel.latestMessages.first?.deletedAt)
+            Assert.willBeEqual(payload.messages[0].args, loadedChannel.latestMessages.first?.arguments)
+            Assert.willBeEqual(payload.messages[0].command, loadedChannel.latestMessages.first?.command)
+            Assert.willBeEqual(payload.messages[0].extraData, loadedChannel.latestMessages.first?.extraData)
+            Assert.willBeEqual(payload.messages[0].isSilent, loadedChannel.latestMessages.first?.isSilent)
+            Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel.latestMessages.first?.mentionedUsers.count)
+            Assert.willBeEqual(payload.messages[0].parentId, loadedChannel.latestMessages.first?.parentMessageId)
+            Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel.latestMessages.first?.reactionScores)
+            Assert.willBeEqual(payload.messages[0].replyCount, loadedChannel.latestMessages.first?.replyCount)
             
             // Message user
-            Assert.willBeEqual(payload.messages[0].user.id, loadedChannel?.latestMessages.first?.author.id)
-            Assert.willBeEqual(payload.messages[0].user.createdAt, loadedChannel?.latestMessages.first?.author.userCreatedAt)
-            Assert.willBeEqual(payload.messages[0].user.updatedAt, loadedChannel?.latestMessages.first?.author.userUpdatedAt)
-            Assert.willBeEqual(payload.messages[0].user.lastActiveAt, loadedChannel?.latestMessages.first?.author.lastActiveAt)
-            Assert.willBeEqual(payload.messages[0].user.isOnline, loadedChannel?.latestMessages.first?.author.isOnline)
-            Assert.willBeEqual(payload.messages[0].user.isBanned, loadedChannel?.latestMessages.first?.author.isBanned)
-            Assert.willBeEqual(payload.messages[0].user.role, loadedChannel?.latestMessages.first?.author.userRole)
-            Assert.willBeEqual(payload.messages[0].user.extraData, loadedChannel?.latestMessages.first?.author.extraData)
-            Assert.willBeEqual(payload.messages[0].user.teams, loadedChannel?.latestMessages.first?.author.teams)
+            Assert.willBeEqual(payload.messages[0].user.id, loadedChannel.latestMessages.first?.author.id)
+            Assert.willBeEqual(payload.messages[0].user.createdAt, loadedChannel.latestMessages.first?.author.userCreatedAt)
+            Assert.willBeEqual(payload.messages[0].user.updatedAt, loadedChannel.latestMessages.first?.author.userUpdatedAt)
+            Assert.willBeEqual(payload.messages[0].user.lastActiveAt, loadedChannel.latestMessages.first?.author.lastActiveAt)
+            Assert.willBeEqual(payload.messages[0].user.isOnline, loadedChannel.latestMessages.first?.author.isOnline)
+            Assert.willBeEqual(payload.messages[0].user.isBanned, loadedChannel.latestMessages.first?.author.isBanned)
+            Assert.willBeEqual(payload.messages[0].user.role, loadedChannel.latestMessages.first?.author.userRole)
+            Assert.willBeEqual(payload.messages[0].user.extraData, loadedChannel.latestMessages.first?.author.extraData)
             
             // Read
-            Assert.willBeEqual(payload.channelReads[0].lastReadAt, loadedChannel?.reads.first?.lastReadAt)
-            Assert.willBeEqual(payload.channelReads[0].unreadMessagesCount, loadedChannel?.reads.first?.unreadMessagesCount)
-            Assert.willBeEqual(payload.channelReads[0].user.id, loadedChannel?.reads.first?.user.id)
+            Assert.willBeEqual(payload.channelReads[0].lastReadAt, loadedChannel.reads.first?.lastReadAt)
+            Assert.willBeEqual(payload.channelReads[0].unreadMessagesCount, loadedChannel.reads.first?.unreadMessagesCount)
+            Assert.willBeEqual(payload.channelReads[0].user.id, loadedChannel.reads.first?.user.id)
         }
     }
 
@@ -197,7 +189,7 @@ class ChannelDTO_Tests: XCTestCase {
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random channel payload to db
         let channelId: ChannelId = .unique
-        let payload = ChannelDetailPayload.dummy(cid: channelId)
+        let payload = ChannelDetailPayload<NoExtraData>.dummy(cid: channelId)
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: payload, query: nil)
@@ -572,7 +564,7 @@ extension XCTestCase {
                     ),
                     isFrozen: true,
                     memberCount: 100,
-                    team: "",
+                    team: .unique,
                     members: [member],
                     cooldownDuration: .random(in: 0...120)
                 ),
@@ -682,7 +674,7 @@ extension XCTestCase {
                     ),
                     isFrozen: true,
                     memberCount: 100,
-                    team: "",
+                    team: .unique,
                     members: nil,
                     cooldownDuration: .random(in: 0...120)
                 ),
