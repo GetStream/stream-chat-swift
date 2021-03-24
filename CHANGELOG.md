@@ -11,6 +11,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✅ Added
 - Introduce support for [multitenancy](https://getstream.io/chat/docs/react/multi_tenant_chat/?language=swift) - `teams` for `User` and `team` for `Channel` are now exposed. [#905](https://github.com/GetStream/stream-chat-swift/pull/905)
+- Introduce support for [pinned messages](https://getstream.io/chat/docs/react/pinned_messages/?language=swift). [#896](https://github.com/GetStream/stream-chat-swift/pull/896)
+- Exposes `pinnedMessages` on `ChatChannel` which contains the last 10 pinned messages. [#896](https://github.com/GetStream/stream-chat-swift/pull/896)
+- Exposes `pinDetails` on `ChatMessage` which contains the pinning information, like the expiration date. [#896](https://github.com/GetStream/stream-chat-swift/pull/896) 
+- Adds support for pinning and unpinning messages through `pin()` and `unpin()` methods in `MessageController`. [#896](https://github.com/GetStream/stream-chat-swift/pull/896)
+- Adds new optional `pinning: Pinning` parameter when creating a new message in `ChannelController` to create a new message and pin it instantly. [#896](https://github.com/GetStream/stream-chat-swift/pull/896)
 
 # [3.1.3](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.3)
 _March 12, 2021_
@@ -23,7 +28,6 @@ _March 12, 2021_
 - Expose `membership` value on `ChatChannel` which contains information about the current user membership [#885](https://github.com/GetStream/stream-chat-swift/issues/885)
 - `ChatChannelMember` now contains channel-specific ban information: `isBannedFromChannel` and `banExpiresAt` [#885](https://github.com/GetStream/stream-chat-swift/issues/885)
 - Channel-specific ban events are handled and the models are properly updated [#885](https://github.com/GetStream/stream-chat-swift/pull/885)
-- Introduce support for [multitenancy](https://getstream.io/chat/docs/react/multi_tenant_chat/?language=swift) - `teams` for `User` and `team` for `Channel` are now exposed. [#905](https://github.com/GetStream/stream-chat-swift/pull/905)
 
 # [3.1.2](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.2)
 _March 09, 2021_
