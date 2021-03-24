@@ -18,37 +18,34 @@ class UserDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
-    func test_userPayload_isStoredAndLoadedFromDB() {
+    func test_userPayload_isStoredAndLoadedFromDB() throws {
         let userId = UUID().uuidString
         
         let payload: UserPayload<NoExtraData> = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
-        database.write { session in
-            try! session.saveUser(payload: payload)
+        try database.writeSynchronously { session in
+            try session.saveUser(payload: payload)
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedUserDTO: UserDTO? {
-            database.viewContext.user(id: userId)
-        }
+        let loadedUserDTO = try XCTUnwrap(database.viewContext.user(id: userId))
         
         AssertAsync {
-            Assert.willBeEqual(payload.id, loadedUserDTO?.id)
-            Assert.willBeEqual(payload.name, loadedUserDTO?.name)
-            Assert.willBeEqual(payload.imageURL, loadedUserDTO?.imageURL)
-            Assert.willBeEqual(payload.isOnline, loadedUserDTO?.isOnline)
-            Assert.willBeEqual(payload.isBanned, loadedUserDTO?.isBanned)
-            Assert.willBeEqual(payload.role.rawValue, loadedUserDTO?.userRoleRaw)
-            Assert.willBeEqual(payload.createdAt, loadedUserDTO?.userCreatedAt)
-            Assert.willBeEqual(payload.updatedAt, loadedUserDTO?.userUpdatedAt)
-            Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO?.lastActivityAt)
-            Assert.willBeEqual(payload.extraData, loadedUserDTO.map {
-                try? JSONDecoder.default.decode(NoExtraData.self, from: $0.extraData)
-            })
+            Assert.willBeEqual(payload.id, loadedUserDTO.id)
+            Assert.willBeEqual(payload.name, loadedUserDTO.name)
+            Assert.willBeEqual(payload.imageURL, loadedUserDTO.imageURL)
+            Assert.willBeEqual(payload.isOnline, loadedUserDTO.isOnline)
+            Assert.willBeEqual(payload.isBanned, loadedUserDTO.isBanned)
+            Assert.willBeEqual(payload.role.rawValue, loadedUserDTO.userRoleRaw)
+            Assert.willBeEqual(payload.createdAt, loadedUserDTO.userCreatedAt)
+            Assert.willBeEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt)
+            Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO.lastActivityAt)
+            Assert.willBeEqual(payload.teams.sorted(), loadedUserDTO.teams?.map(\.id).sorted())
+            Assert.willBeEqual(payload.extraData, try? JSONDecoder.default.decode(NoExtraData.self, from: loadedUserDTO.extraData))
         }
     }
-    
+
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
         
@@ -78,33 +75,31 @@ class UserDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedUser?.extraData, .defaultValue)
     }
     
-    func test_DTO_asModel() {
+    func test_DTO_asModel() throws {
         let userId = UUID().uuidString
         
         let payload: UserPayload<NoExtraData> = .dummy(userId: userId)
         
         // Asynchronously save the payload to the db
-        database.write { session in
-            try! session.saveUser(payload: payload)
+        try database.writeSynchronously { session in
+            try session.saveUser(payload: payload)
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedUserModel: _ChatUser<NoExtraData>? {
-            database.viewContext.user(id: userId)?.asModel()
-        }
+        let loadedUserModel: ChatUser = try XCTUnwrap(database.viewContext.user(id: userId)?.asModel())
         
         AssertAsync {
-            Assert.willBeEqual(payload.id, loadedUserModel?.id)
-            Assert.willBeEqual(payload.name, loadedUserModel?.name)
-            Assert.willBeEqual(payload.imageURL, loadedUserModel?.imageURL)
-            Assert.willBeEqual(payload.isOnline, loadedUserModel?.isOnline)
-            Assert.willBeEqual(payload.isBanned, loadedUserModel?.isBanned)
-            Assert.willBeEqual(payload.role, loadedUserModel?.userRole)
-            Assert.willBeEqual(payload.createdAt, loadedUserModel?.userCreatedAt)
-            Assert.willBeEqual(payload.updatedAt, loadedUserModel?.userUpdatedAt)
-            Assert.willBeEqual(payload.lastActiveAt, loadedUserModel?.lastActiveAt)
-            Assert.willBeEqual(payload.teams, loadedUserModel?.teams)
-            Assert.willBeEqual(payload.extraData, loadedUserModel?.extraData)
+            Assert.willBeEqual(payload.id, loadedUserModel.id)
+            Assert.willBeEqual(payload.name, loadedUserModel.name)
+            Assert.willBeEqual(payload.imageURL, loadedUserModel.imageURL)
+            Assert.willBeEqual(payload.isOnline, loadedUserModel.isOnline)
+            Assert.willBeEqual(payload.isBanned, loadedUserModel.isBanned)
+            Assert.willBeEqual(payload.role, loadedUserModel.userRole)
+            Assert.willBeEqual(payload.createdAt, loadedUserModel.userCreatedAt)
+            Assert.willBeEqual(payload.updatedAt, loadedUserModel.userUpdatedAt)
+            Assert.willBeEqual(payload.lastActiveAt, loadedUserModel.lastActiveAt)
+            Assert.willBeEqual(payload.teams.sorted(), loadedUserModel.teams.sorted())
+            Assert.willBeEqual(payload.extraData, loadedUserModel.extraData)
         }
     }
     
