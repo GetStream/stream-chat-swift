@@ -17,6 +17,8 @@ class CurrentUserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.name, "Broken Waterfall")
+        XCTAssertEqual(payload.teams.count, 3)
+
         XCTAssertEqual(
             payload.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
@@ -48,10 +50,13 @@ class CurrentUserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.role, .user)
         XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.teams.count, 3)
+        
         XCTAssertEqual(payload.devices.map(\.id), [
             "cjqZTUHaQIykfH-706Xefw:APA91bF0Ig0gi4ro6w3iPfmE8",
             "e25wfsxcnyA:APA91bFgZR_hfd6GvR42OqCUgIhvpBajjxw7"
         ])
+
         XCTAssertEqual(payload.mutedUsers.map(\.mutedUser.id), ["dawn-grass-7"])
         
         XCTAssertEqual(payload.extraData.secretNote, "Anaking is Vader!")

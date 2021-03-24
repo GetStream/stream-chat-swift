@@ -24,7 +24,7 @@ class CurrentUserPayload<ExtraData: UserExtraData>: UserPayload<ExtraData> {
         isOnline: Bool,
         isInvisible: Bool,
         isBanned: Bool,
-        teams: [String] = [],
+        teams: [TeamId] = [],
         extraData: ExtraData,
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload<ExtraData>] = [],

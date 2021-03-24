@@ -24,7 +24,7 @@ extension UserPayload where ExtraData == NoExtraData {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
-            teams: [],
+            teams: [.unique, .unique, .unique],
             extraData: extraData
         )
     }
