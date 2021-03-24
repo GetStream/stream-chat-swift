@@ -68,7 +68,8 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
     /// A filter key for matching the `isAnonymous` value.
     static var isAnonymous: FilterKey<Scope, Bool> { "anon" }
     
-    //    static var team: FilterKey<Scope, > { "team" }
+    /// A filter key for matching the `teams` value.
+    static var teams: FilterKey<Scope, TeamId> { "teams" }
 }
 
 /// A query is used for querying specific users from backend.
