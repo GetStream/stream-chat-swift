@@ -35,6 +35,15 @@ open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, UI
     // MARK: - Life Cycle
 
     override open func updateContent() {
+        // TODO: Fix this when refactoring reactions.
+        // We check if we have available images for the given type of reaction, if not, we hide the reaction.
+        guard !(content?.reactions.compactMap { uiConfig.images.availableReactions[$0.type] }.isEmpty ?? false)
+        else {
+            isHidden = true
+            return
+        }
+
+        isHidden = false
         contentView.content = content.flatMap {
             .init(
                 useBigIcons: $0.style.isBig,
