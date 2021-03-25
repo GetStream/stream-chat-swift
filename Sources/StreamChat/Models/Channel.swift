@@ -58,21 +58,35 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// The total number of members in the channel.
     public let memberCount: Int
     
-    /// A list of locally cached members objects.
+    /// A list of members of this channel.
+    ///
+    /// Array is sorted and the most recently active members will be first.
     ///
     /// - Important: This list doesn't have to contain all members of the channel. To access the full list of members, create
-    /// a `ChatChannelController` for this channel and use it to query all channel members.
+    /// a `ChatChannelMemberListController` for this channel and use it to query all channel members.
     ///
-    public let cachedMembers: Set<_ChatChannelMember<ExtraData.User>>
+    /// - Note: This property will contain no more than `ChatClientConfig.channel.lastActiveMembersLimit` members.
+    ///
+    public var lastActiveMembers: [_ChatChannelMember<ExtraData.User>] { _lastActiveMembers }
+    @Cached private var _lastActiveMembers: [_ChatChannelMember<ExtraData.User>]
     
     /// A list of currently typing channel members.
     public let currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
 
     /// If the current user is a member of the channel, this variable contains the details about the membership.
     public let membership: _ChatChannelMember<ExtraData.User>?
-
-    /// A list of channel members currently online actively watching the channel.
-    public let watchers: Set<_ChatUser<ExtraData.User>>
+    
+    /// A list of users and/or channel members currently actively watching the channel.
+    ///
+    /// Array is sorted and the most recently active watchers will be first.
+    ///
+    /// - Important: This list doesn't have to contain all watchers of the channel. To access the full list of watchers, create
+    /// a `ChatChannelWatcherListController` for this channel and use it to query all channel watchers.
+    ///
+    /// - Note: This property will contain no more than `ChatClientConfig.channel.lastActiveWatchersLimit` members.
+    ///
+    public var lastActiveWatchers: [_ChatUser<ExtraData.User>] { _lastActiveWatchers }
+    @Cached private var _lastActiveWatchers: [_ChatUser<ExtraData.User>]
 
     /// The total number of online members watching this channel.
     public let watcherCount: Int
@@ -148,10 +162,10 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         createdBy: _ChatUser<ExtraData.User>? = nil,
         config: ChannelConfig = .init(),
         isFrozen: Bool = false,
-        members: Set<_ChatChannelMember<ExtraData.User>> = [],
+        lastActiveMembers: @escaping (() -> [_ChatChannelMember<ExtraData.User>]) = { [] },
         membership: _ChatChannelMember<ExtraData.User>? = nil,
         currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
-        watchers: Set<_ChatUser<ExtraData.User>> = [],
+        lastActiveWatchers: @escaping (() -> [_ChatUser<ExtraData.User>]) = { [] },
         team: TeamId? = nil,
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
@@ -175,10 +189,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.createdBy = createdBy
         self.config = config
         self.isFrozen = isFrozen
-        cachedMembers = members
         self.membership = membership
         self.currentlyTypingMembers = currentlyTypingMembers
-        self.watchers = watchers
         self.team = team
         self.unreadCount = unreadCount
         self.watcherCount = watcherCount
@@ -189,8 +201,11 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.extraData = extraData
 //        self.invitedMembers = invitedMembers
         self.lastMessage = lastMessage
-        self.$_latestMessages = latestMessages
-        self.$_pinnedMessages = pinnedMessages
+        
+        $_latestMessages = latestMessages
+        $_lastActiveMembers = lastActiveMembers
+        $_lastActiveWatchers = lastActiveWatchers
+        $_pinnedMessages = pinnedMessages
     }
 }
 
