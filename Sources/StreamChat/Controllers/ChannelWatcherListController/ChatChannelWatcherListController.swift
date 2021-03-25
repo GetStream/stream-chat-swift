@@ -121,7 +121,7 @@ public class _ChatChannelWatcherListController<ExtraData: ExtraDataTypes>: DataC
     private func createWatchersObserver() -> ListDatabaseObserver<_ChatUser<ExtraData.User>, UserDTO> {
         let observer = environment.watcherListObserverBuilder(
             client.databaseContainer.viewContext,
-            UserDTO.watcherFetchRequest(for: query.cid),
+            UserDTO.watcherFetchRequest(cid: query.cid),
             { $0.asModel() as _ChatUser<ExtraData.User> },
             NSFetchedResultsController<UserDTO>.self
         )
