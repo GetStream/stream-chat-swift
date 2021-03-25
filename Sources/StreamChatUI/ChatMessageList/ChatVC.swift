@@ -91,13 +91,26 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         if oldKeyboardTop == view.bounds.height {
             oldKeyboardTop -= view.safeAreaInsets.bottom
         }
-
+        
         let keyboardDelta = oldKeyboardTop - keyboardTop
+        let collectionView = messageList.collectionView
+        // need to calculate delta in content when `contentSize` is smaller than `frame.size`
+        let contentDelta = max(
+            // 8 is just some padding constant to make it look better
+            collectionView.frame.height - collectionView.contentSize.height + collectionView.contentOffset.y - 8,
+            // 0 is for the case when `contentSize` if larger than `frame.size`
+            0
+        )
+        
         let newContentOffset = CGPoint(
             x: 0,
-            y: messageList.collectionView.contentOffset.y + keyboardDelta
+            y: max(
+                collectionView.contentOffset.y + keyboardDelta - contentDelta,
+                // case when keyboard is activated but not shown, probably only on simulator
+                -collectionView.contentInset.top
+            )
         )
-
+        
         // changing contentOffset will cancel any scrolling in collectionView, bad UX
         let needUpdateContentOffset = !messageList.collectionView.isDecelerating && !messageList.collectionView.isDragging
         
