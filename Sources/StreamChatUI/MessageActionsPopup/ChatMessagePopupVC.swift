@@ -30,6 +30,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
 
     public var message: _ChatMessageGroupPart<ExtraData>!
     public var messageViewFrame: CGRect!
+    public var originalMessageView: UIView!
     public var actionsController: _ChatMessageActionsVC<ExtraData>!
     public var reactionsController: _ChatMessageReactionsVC<ExtraData>?
 
@@ -53,6 +54,13 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
 
     override public func defaultAppearance() {
         view.backgroundColor = .clear
+        blurView.alpha = 0
+
+        reactionsView?.alpha = 0
+        reactionsView?.transform = .init(scaleX: 0.5, y: 0.5)
+        
+        actionsView.alpha = 0
+        actionsView.transform = .init(scaleX: 0.5, y: 0.5)
     }
 
     override open func setUpLayout() {
@@ -144,7 +152,6 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
 
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
         // Initially, the `applyInitialContentOffset` invocation was in `viewDidLayoutSubviews`
         // since the content offset can be applied when all the views are laid out
         // and `scrollView` content size is calculated.
@@ -157,15 +164,22 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
         //  2. postpones it to the next run-loop iteration which guarantees it happens after `viewDidLayoutSubviews`
         DispatchQueue.main.async {
             self.applyInitialContentOffset()
+            
+            Animate {
+                self.scrollToMakeMessageVisible() // Makes the animation look a bit weird, but it's much faster...
+                self.blurView.alpha = 1
+
+                self.actionsView.alpha = 1
+                self.actionsView.transform = .identity
+            }
+            
+            Animate(delay: 0.1) {
+                self.reactionsView?.alpha = 1
+                self.reactionsView?.transform = .identity
+            }
         }
     }
     
-    override open func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        scrollToMakeMessageVisible()
-    }
-
     open func applyInitialContentOffset() {
         let contentOffset = CGPoint(x: 0, y: max(0, -messageViewFrame.minY + spacing + reactionsViewHeight))
         scrollView.setContentOffset(contentOffset, animated: false)
@@ -173,7 +187,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
 
     open func scrollToMakeMessageVisible() {
         let contentRect = scrollContentView.convert(contentView.frame, to: scrollView)
-        scrollView.scrollRectToVisible(contentRect, animated: true)
+        scrollView.scrollRectToVisible(contentRect, animated: false)
     }
 
     // MARK: - Actions

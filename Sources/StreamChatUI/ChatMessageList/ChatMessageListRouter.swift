@@ -22,7 +22,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMe
         popup.modalPresentationStyle = .overFullScreen
         popup.modalTransitionStyle = .crossDissolve
 
-        rootViewController.present(popup, animated: true)
+        rootViewController.present(popup, animated: false)
     }
     
     open func showPreview(for attachment: ChatMessageDefaultAttachment) {
