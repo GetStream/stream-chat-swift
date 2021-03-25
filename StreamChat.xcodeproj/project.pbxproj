@@ -2865,8 +2865,8 @@
 		79C5CBF925F671AE00D98001 /* ChannelWatcherListController */ = {
 			isa = PBXGroup;
 			children = (
-				79D6CE6125F7D6C700BE2EEC /* ChatChannelWatcherListController_Mock.swift */,
 				79C5CBE725F66DBD00D98001 /* ChatChannelWatcherListController.swift */,
+				79D6CE6125F7D6C700BE2EEC /* ChatChannelWatcherListController_Mock.swift */,
 				79D6CE2625F7C83C00BE2EEC /* ChatChannelWatcherListController+Combine.swift */,
 				79D6CE5825F7D6B300BE2EEC /* ChatChannelWatcherListController_Tests.swift */,
 				79D6CE3625F7C84500BE2EEC /* ChatChannelWatcherListController+SwiftUI.swift */,
