@@ -50,12 +50,12 @@ public func DefaultChatChannelNamer<ExtraData: ExtraDataTypes>(
         } else if channel.isDirectMessageChannel {
             // If this is a channel generated as DM
             // we generate the name from users
-            let memberNames = channel.cachedMembers.filter { $0.id != currentUserId }.compactMap(\.name).sorted()
+            let memberNames = channel.lastActiveMembers.filter { $0.id != currentUserId }.compactMap(\.name).sorted()
             let prefixedMemberNames = memberNames.prefix(maxMemberNames)
             let channelName: String
             if prefixedMemberNames.isEmpty {
                 // This channel only has current user as member
-                if let currentUser = channel.cachedMembers.first(where: { $0.id == currentUserId }) {
+                if let currentUser = channel.lastActiveMembers.first(where: { $0.id == currentUserId }) {
                     channelName = nameOrId(currentUser.name, currentUser.id)
                 } else {
                     return nil

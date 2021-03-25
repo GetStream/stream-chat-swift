@@ -41,7 +41,7 @@ class ChatChannelNamer_Tests: XCTestCase {
             cid: .unique,
             name: "Darth Channel",
             imageURL: TestImages.vader.url,
-            members: defaultMembers
+            lastActiveMembers: defaultMembers
         )
 
         let currentUserId: String = .unique
@@ -71,7 +71,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         let channel = ChatChannel.mockDMChannel(
             name: nil,
-            members: defaultMembers
+            lastActiveMembers: defaultMembers
         )
 
         let currentUserId: String = .unique
@@ -102,7 +102,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         let channel = ChatChannel.mockDMChannel(
             name: nil,
-            members: [currentUser]
+            lastActiveMembers: [currentUser]
         )
 
         let currentUserId: String = currentUser.id
@@ -117,7 +117,7 @@ class ChatChannelNamer_Tests: XCTestCase {
         // Create channel and currentUserId
         let channel = ChatChannel.mockDMChannel(
             name: nil,
-            members: defaultMembers
+            lastActiveMembers: defaultMembers
         )
 
         let currentUserId: String = .unique
@@ -150,7 +150,7 @@ class ChatChannelNamer_Tests: XCTestCase {
 
         let channel = ChatChannel.mockDMChannel(
             name: nil,
-            members: defaultMembers
+            lastActiveMembers: defaultMembers
         )
 
         let currentUserId: String = .unique
@@ -191,7 +191,7 @@ class ChatChannelNamer_Tests: XCTestCase {
         // Create channel ID, channel and currentUserId
         let channel = ChatChannel.mockDMChannel(
             name: nil,
-            members: defaultMembers
+            lastActiveMembers: defaultMembers
         )
 
         let currentUserId: String = .unique

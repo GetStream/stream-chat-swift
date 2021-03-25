@@ -784,10 +784,10 @@ class ChannelUpdater_Tests: StressTestCase {
         }
         
         // Assert that the dummy channel has a watcher
-        assert(!(channel?.watchers.isEmpty ?? true))
+        assert(!(channel?.lastActiveWatchers.isEmpty ?? true))
         
         // Save first watcher's id so we can compare later
-        let firstWatcherId = channel?.watchers.first?.id
+        let firstWatcherId = channel?.lastActiveWatchers.first?.id
         
         // Call `channelWatchers` for this channel
         // This query doesn't provide any `offset` so it's requesting the first page of watchers
@@ -796,12 +796,12 @@ class ChannelUpdater_Tests: StressTestCase {
         
         // Simulate successful response
         apiClient.test_simulateResponse(
-            Result<ChannelPayload<NoExtraData>, Error>.success(dummyPayload(with: cid, numberOfWatchers: 0))
+            Result<ChannelPayload<NoExtraData>, Error>.success(dummyPayload(with: cid, watchers: []))
         )
         
         // Assert that the old watcher is replaced
         AssertAsync {
-            Assert.willBeFalse(channel?.watchers.contains(where: { $0.id == firstWatcherId }) ?? true)
+            Assert.willBeFalse(channel?.lastActiveWatchers.contains(where: { $0.id == firstWatcherId }) ?? true)
         }
     }
 }

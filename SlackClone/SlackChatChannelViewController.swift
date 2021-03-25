@@ -58,7 +58,7 @@ final class SlackChatChannelViewController: ChatChannelVC {
         
         titleLabel.text = DefaultChatChannelNamer()(channel, channelController.client.currentUserId)
 
-        let firstOtherMember = channel.cachedMembers
+        let firstOtherMember = channel.lastActiveMembers
             .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
             .first(where: { $0.id != channelController.client.currentUserId })
         

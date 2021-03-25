@@ -77,7 +77,7 @@ private class DirectChatChannelNavigationBarListener<ExtraData: ExtraDataTypes>:
     private var timer: Timer!
 
     override init(client: _ChatClient<ExtraData>, channel: ChannelId, namer: @escaping ChatChannelNamer<ExtraData>) {
-        memberController = client.channelController(for: channel).channel?.cachedMembers
+        memberController = client.channelController(for: channel).channel?.lastActiveMembers
             .first { $0.id != client.currentUserId }
             .map { client.memberController(userId: $0.id, in: channel) }
         super.init(client: client, channel: channel, namer: namer)

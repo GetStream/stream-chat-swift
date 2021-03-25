@@ -40,7 +40,7 @@ open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigPro
             // TODO: https://stream-io.atlassian.net/browse/CIS-652
             // this is just placeholder implementation:
 
-            let firstOtherMember = channel.cachedMembers
+            let firstOtherMember = channel.lastActiveMembers
                 .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
                 .first(where: { $0.id != content.currentUserId })
 

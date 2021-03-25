@@ -16,7 +16,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         super.setUp()
         currentUserId = .unique
 
-        channel = ChatChannel.mockDMChannel(members: [
+        channel = ChatChannel.mockDMChannel(lastActiveMembers: [
             .mock(id: currentUserId, imageURL: TestImages.vader.url),
             .mock(id: .unique, imageURL: TestImages.yoda.url, isOnline: true)
         ])
@@ -35,7 +35,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles, suffix: "with online indicator")
 
         // Reset the channel such that both members are offline
-        channel = ChatChannel.mockDMChannel(members: [
+        channel = ChatChannel.mockDMChannel(lastActiveMembers: [
             .mock(id: currentUserId, imageURL: TestImages.vader.url),
             .mock(id: .unique, imageURL: TestImages.yoda.url)
         ])
