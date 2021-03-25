@@ -58,17 +58,22 @@ class ChatClient_Tests: StressTestCase {
         config.shouldFlushLocalStorageOnStart = true
         config.localStorageFolderURL = storeFolderURL
         
+        config.channel.lastActiveMembersLimit = .unique
+        config.channel.lastActiveWatchersLimit = .unique
+        
         var usedDatabaseKind: DatabaseContainer.Kind?
         var shouldFlushDBOnStart: Bool?
         var shouldResetEphemeralValues: Bool?
+        var channelConfig: ChatClientConfig.Channel?
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart in
+        env.databaseContainerBuilder = { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, receivedChannelConfig in
             usedDatabaseKind = kind
             shouldFlushDBOnStart = shouldFlushOnStart
             shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
+            channelConfig = receivedChannelConfig
             return DatabaseContainerMock()
         }
         
@@ -87,6 +92,7 @@ class ChatClient_Tests: StressTestCase {
         )
         XCTAssertEqual(shouldFlushDBOnStart, config.shouldFlushLocalStorageOnStart)
         XCTAssertEqual(shouldResetEphemeralValues, config.isClientInActiveMode)
+        XCTAssertEqual(channelConfig, config.channel)
     }
     
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
@@ -99,7 +105,7 @@ class ChatClient_Tests: StressTestCase {
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, _, _ in
+        env.databaseContainerBuilder = { kind, _, _, _ in
             usedDatabaseKind = kind
             return DatabaseContainerMock()
         }
@@ -135,7 +141,7 @@ class ChatClient_Tests: StressTestCase {
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, _, _ in
+        env.databaseContainerBuilder = { kind, _, _, _ in
             usedDatabaseKinds.append(kind)
             // Return error for the first time
             if let error = errorsToReturn.pop() {
@@ -638,7 +644,8 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                 self.databaseContainer = try! DatabaseContainerMock(
                     kind: $0,
                     shouldFlushOnStart: $1,
-                    shouldResetEphemeralValuesOnStart: $2
+                    shouldResetEphemeralValuesOnStart: $2,
+                    channelConfig: $3
                 )
                 return self.databaseContainer!
             },

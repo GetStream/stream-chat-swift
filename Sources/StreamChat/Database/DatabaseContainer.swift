@@ -41,6 +41,7 @@ class DatabaseContainer: NSPersistentContainer {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        context.channelConfig = channelConfig
         return context
     }()
     
@@ -56,10 +57,12 @@ class DatabaseContainer: NSPersistentContainer {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        context.channelConfig = channelConfig
         return context
     }()
     
     private var loggerNotificationObserver: NSObjectProtocol?
+    private let channelConfig: ChatClientConfig.Channel?
     
     /// All `NSManagedObjectContext`s this container owns.
     private lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
@@ -82,12 +85,15 @@ class DatabaseContainer: NSPersistentContainer {
         shouldFlushOnStart: Bool = false,
         shouldResetEphemeralValuesOnStart: Bool = true,
         modelName: String = "StreamChatModel",
-        bundle: Bundle? = .streamChat
+        bundle: Bundle? = .streamChat,
+        channelConfig: ChatClientConfig.Channel? = nil
     ) throws {
         // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
         let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
         let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
         let model = NSManagedObjectModel(contentsOf: modelURL)!
+        
+        self.channelConfig = channelConfig
         
         super.init(name: modelName, managedObjectModel: model)
         
@@ -118,6 +124,7 @@ class DatabaseContainer: NSPersistentContainer {
         
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
+        viewContext.channelConfig = channelConfig
         
         setupLoggerForDatabaseChanges()
         

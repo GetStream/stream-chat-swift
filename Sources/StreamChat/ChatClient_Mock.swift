@@ -133,7 +133,12 @@ extension _ChatClient.Environment {
             },
             databaseContainerBuilder: {
                 do {
-                    return try DatabaseContainerMock(kind: $0, shouldFlushOnStart: $1, shouldResetEphemeralValuesOnStart: $2)
+                    return try DatabaseContainerMock(
+                        kind: $0,
+                        shouldFlushOnStart: $1,
+                        shouldResetEphemeralValuesOnStart: $2,
+                        channelConfig: $3
+                    )
                 } catch {
                     XCTFail("Unable to initialize DatabaseContainerMock \(error)")
                     fatalError("Unable to initialize DatabaseContainerMock \(error)")

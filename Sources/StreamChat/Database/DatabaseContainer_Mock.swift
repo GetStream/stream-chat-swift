@@ -26,7 +26,8 @@ class DatabaseContainerMock: DatabaseContainer {
         shouldFlushOnStart: Bool = false,
         shouldResetEphemeralValuesOnStart: Bool = true,
         modelName: String = "StreamChatModel",
-        bundle: Bundle? = nil
+        bundle: Bundle? = nil,
+        channelConfig: ChatClientConfig.Channel? = nil
     ) throws {
         init_kind = kind
         try super.init(
@@ -34,7 +35,8 @@ class DatabaseContainerMock: DatabaseContainer {
             shouldFlushOnStart: shouldFlushOnStart,
             shouldResetEphemeralValuesOnStart: shouldResetEphemeralValuesOnStart,
             modelName: modelName,
-            bundle: bundle
+            bundle: bundle,
+            channelConfig: channelConfig
         )
     }
     

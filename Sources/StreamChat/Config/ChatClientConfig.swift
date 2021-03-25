@@ -85,7 +85,7 @@ extension ChatClientConfig {
 
 extension ChatClientConfig {
     /// `ChatChannel` specific settings.
-    public struct Channel {
+    public struct Channel: Equatable {
         /// Limit how many watchers are returned in `_ChatChannel.lastActiveWatchers`
         public var lastActiveWatchersLimit = 25
         /// Limit how many members are returned in `_ChatChannel.lastActiveMembers`
