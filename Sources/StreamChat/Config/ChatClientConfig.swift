@@ -43,7 +43,7 @@ public struct ChatClientConfig {
     public var shouldFlushLocalStorageOnStart: Bool = false
     
     /// `ChatChannel` specific settings.
-//    public var channel = Channel()
+    public var channel = Channel()
     
     /// Flag for setting a ChatClient instance in connection-less mode.
     /// A connection-less client is not able to connect to websocket and will not
@@ -83,20 +83,19 @@ extension ChatClientConfig {
     }
 }
 
-// extension ChatClientConfig {
-//    /// `ChatChannel` specific settings.
-//    public struct Channel {
-//        // example ...
-//        public var isReplyInChannelAllowed = true
-//
-//        /// When `KeystrokeEvent` is sent, the time interval before the `TypingStop` event is automatically sent.
-//        public var keystrokeEventTimeout: TimeInterval = 5
-//    }
-//
+extension ChatClientConfig {
+    /// `ChatChannel` specific settings.
+    public struct Channel {
+        /// Limit how many watchers are returned in `_ChatChannel.lastActiveWatchers`
+        public var lastActiveWatchersLimit = 25
+        /// Limit how many members are returned in `_ChatChannel.lastActiveMembers`
+        public var lastActiveMembersLimit = 25
+    }
+
 //    public struct Message {
 //        // something
 //    }
-// }
+}
 
 /// A struct representing an API key of the chat app.
 ///
