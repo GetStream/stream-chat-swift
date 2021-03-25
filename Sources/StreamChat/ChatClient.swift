@@ -151,7 +151,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
                 return try environment.databaseContainerBuilder(
                     .onDisk(databaseFileURL: dbFileURL),
                     config.shouldFlushLocalStorageOnStart,
-                    config.isClientInActiveMode // Only reset Ephemeral values in active mode
+                    config.isClientInActiveMode, // Only reset Ephemeral values in active mode
+                    config.channel
                 )
             }
             
@@ -166,9 +167,9 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             return try environment.databaseContainerBuilder(
                 .inMemory,
                 config.shouldFlushLocalStorageOnStart,
-                config
-                    .isClientInActiveMode
-            ) // Only reset Ephemeral values in active mode
+                config.isClientInActiveMode, // Only reset Ephemeral values in active mode
+                config.channel
+            )
         } catch {
             fatalError("Failed to initialize the in-memory storage with error: \(error). This is a non-recoverable error.")
         }
@@ -352,9 +353,10 @@ extension _ChatClient {
         var databaseContainerBuilder: (
             _ kind: DatabaseContainer.Kind,
             _ shouldFlushOnStart: Bool,
-            _ shouldResetEphemeralValuesOnStart: Bool
+            _ shouldResetEphemeralValuesOnStart: Bool,
+            _ channelConfig: ChatClientConfig.Channel?
         ) throws -> DatabaseContainer = {
-            try DatabaseContainer(kind: $0, shouldFlushOnStart: $1, shouldResetEphemeralValuesOnStart: $2)
+            try DatabaseContainer(kind: $0, shouldFlushOnStart: $1, shouldResetEphemeralValuesOnStart: $2, channelConfig: $3)
         }
         
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init

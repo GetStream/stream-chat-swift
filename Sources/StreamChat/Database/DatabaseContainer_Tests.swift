@@ -206,6 +206,18 @@ class DatabaseContainer_Tests: StressTestCase {
             )
         )
     }
+    
+    func test_channelConfig_isStoredInAllContexts() throws {
+        var channelConfig = ChatClientConfig.Channel()
+        channelConfig.lastActiveMembersLimit = .unique
+        channelConfig.lastActiveWatchersLimit = .unique
+        
+        let database = try DatabaseContainerMock(kind: .inMemory, channelConfig: channelConfig)
+        
+        XCTAssertEqual(database.viewContext.channelConfig, channelConfig)
+        XCTAssertEqual(database.writableContext.channelConfig, channelConfig)
+        XCTAssertEqual(database.backgroundReadOnlyContext.channelConfig, channelConfig)
+    }
 }
 
 extension TestManagedObject: EphemeralValuesContainer {
