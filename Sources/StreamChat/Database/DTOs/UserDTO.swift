@@ -88,6 +88,14 @@ extension UserDTO {
         new.id = id
         return new
     }
+    
+    static func loadLastActiveWatchers(cid: ChannelId, context: NSManagedObjectContext) -> [UserDTO] {
+        let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
+        request.sortDescriptors = [UserListSortingKey.lastActiveSortDescriptor]
+        request.predicate = NSPredicate(format: "ANY watchedChannels.cid == %@", cid.rawValue)
+        request.fetchLimit = context.channelConfig?.lastActiveWatchersLimit ?? 25
+        return try! context.fetch(request)
+    }
 }
 
 extension NSManagedObjectContext: UserDatabaseSession {
@@ -166,7 +174,7 @@ extension UserDTO {
         return request
     }
     
-    static func watcherFetchRequest(for cid: ChannelId) -> NSFetchRequest<UserDTO> {
+    static func watcherFetchRequest(cid: ChannelId) -> NSFetchRequest<UserDTO> {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         request.sortDescriptors = [UserListSortingKey.defaultSortDescriptor]
         request.predicate = NSPredicate(format: "ANY watchedChannels.cid == %@", cid.rawValue)

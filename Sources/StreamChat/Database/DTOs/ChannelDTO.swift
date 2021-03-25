@@ -238,7 +238,6 @@ extension ChannelDTO {
 extension _ChatChannel {
     /// Create a ChannelModel struct from its DTO
     fileprivate static func create(fromDTO dto: ChannelDTO) -> _ChatChannel {
-        let members: [_ChatChannelMember<ExtraData.User>] = dto.members.map { $0.asModel() }
         let typingMembers: [_ChatChannelMember<ExtraData.User>] = dto.currentlyTypingMembers.map { $0.asModel() }
 
         let extraData: ExtraData.Channel
@@ -283,6 +282,18 @@ extension _ChatChannel {
                 .map { $0.asModel() }
         }
         
+        let fetchWatchers: () -> [_ChatUser<ExtraData.User>] = {
+            UserDTO
+                .loadLastActiveWatchers(cid: cid, context: context)
+                .map { $0.asModel() }
+        }
+        
+        let fetchMembers: () -> [_ChatChannelMember<ExtraData.User>] = {
+            MemberDTO
+                .loadLastActiveMembers(cid: cid, context: context)
+                .map { $0.asModel() }
+        }
+        
         return _ChatChannel(
             cid: cid,
             name: dto.name,
@@ -294,10 +305,10 @@ extension _ChatChannel {
             createdBy: dto.createdBy.asModel(),
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
             isFrozen: dto.isFrozen,
-            members: Set(members),
+            lastActiveMembers: { fetchMembers() },
             membership: dto.membership.map { $0.asModel() },
             currentlyTypingMembers: Set(typingMembers),
-            watchers: Set(dto.watchers.map { $0.asModel() }),
+            lastActiveWatchers: { fetchWatchers() },
             team: dto.team?.id,
             unreadCount: unreadCount,
             watcherCount: Int(dto.watcherCount),

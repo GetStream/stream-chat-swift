@@ -42,7 +42,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(channelId, loadedChannel.cid)
             
             Assert.willBeEqual(payload.watcherCount, loadedChannel.watcherCount)
-            Assert.willBeEqual(Set(payload.watchers?.map(\.id) ?? []), Set(loadedChannel.watchers.map(\.id)))
+            Assert.willBeEqual(Set(payload.watchers?.map(\.id) ?? []), Set(loadedChannel.lastActiveWatchers.map(\.id)))
             Assert.willBeEqual(payload.channel.name, loadedChannel.name)
             Assert.willBeEqual(payload.channel.imageURL, loadedChannel.imageURL)
             Assert.willBeEqual(payload.channel.memberCount, loadedChannel.memberCount)
@@ -82,18 +82,18 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.createdBy!.extraData, loadedChannel.createdBy?.extraData)
             
             // Members
-            Assert.willBeEqual(payload.members[0].role, loadedChannel.cachedMembers.first?.memberRole)
-            Assert.willBeEqual(payload.members[0].createdAt, loadedChannel.cachedMembers.first?.memberCreatedAt)
-            Assert.willBeEqual(payload.members[0].updatedAt, loadedChannel.cachedMembers.first?.memberUpdatedAt)
+            Assert.willBeEqual(payload.members[0].role, loadedChannel.lastActiveMembers.first?.memberRole)
+            Assert.willBeEqual(payload.members[0].createdAt, loadedChannel.lastActiveMembers.first?.memberCreatedAt)
+            Assert.willBeEqual(payload.members[0].updatedAt, loadedChannel.lastActiveMembers.first?.memberUpdatedAt)
             
-            Assert.willBeEqual(payload.members[0].user.id, loadedChannel.cachedMembers.first?.id)
-            Assert.willBeEqual(payload.members[0].user.createdAt, loadedChannel.cachedMembers.first?.userCreatedAt)
-            Assert.willBeEqual(payload.members[0].user.updatedAt, loadedChannel.cachedMembers.first?.userUpdatedAt)
-            Assert.willBeEqual(payload.members[0].user.lastActiveAt, loadedChannel.cachedMembers.first?.lastActiveAt)
-            Assert.willBeEqual(payload.members[0].user.isOnline, loadedChannel.cachedMembers.first?.isOnline)
-            Assert.willBeEqual(payload.members[0].user.isBanned, loadedChannel.cachedMembers.first?.isBanned)
-            Assert.willBeEqual(payload.members[0].user.role, loadedChannel.cachedMembers.first?.userRole)
-            Assert.willBeEqual(payload.members[0].user.extraData, loadedChannel.cachedMembers.first?.extraData)
+            Assert.willBeEqual(payload.members[0].user.id, loadedChannel.lastActiveMembers.first?.id)
+            Assert.willBeEqual(payload.members[0].user.createdAt, loadedChannel.lastActiveMembers.first?.userCreatedAt)
+            Assert.willBeEqual(payload.members[0].user.updatedAt, loadedChannel.lastActiveMembers.first?.userUpdatedAt)
+            Assert.willBeEqual(payload.members[0].user.lastActiveAt, loadedChannel.lastActiveMembers.first?.lastActiveAt)
+            Assert.willBeEqual(payload.members[0].user.isOnline, loadedChannel.lastActiveMembers.first?.isOnline)
+            Assert.willBeEqual(payload.members[0].user.isBanned, loadedChannel.lastActiveMembers.first?.isBanned)
+            Assert.willBeEqual(payload.members[0].user.role, loadedChannel.lastActiveMembers.first?.userRole)
+            Assert.willBeEqual(payload.members[0].user.extraData, loadedChannel.lastActiveMembers.first?.extraData)
 
             // Membership
             Assert.willBeEqual(payload.membership!.user.id, loadedChannel.membership?.id)
@@ -316,6 +316,56 @@ class ChannelDTO_Tests: XCTestCase {
 
         let channel: ChatChannel? = database.viewContext.channel(cid: channelId)?.asModel()
         XCTAssertEqual(channel?.latestMessages.count, 2)
+    }
+    
+    func test_channelPayload_hasCorrectLastActiveMembers() throws {
+        let config = ChatClientConfig.Channel(lastActiveWatchersLimit: 0, lastActiveMembersLimit: .random(in: 10..<50))
+        let cid: ChannelId = .unique
+        let allMembers = (0..<config.lastActiveMembersLimit * 2)
+            .map { MemberPayload<NoExtraData>.withLastActivity(at: Date() - TimeInterval($0)) }.shuffled()
+        let payload = dummyPayload(with: cid, members: allMembers)
+        
+        var database: DatabaseContainerMock! = try DatabaseContainerMock(kind: .inMemory, channelConfig: config)
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        
+        let channel: ChatChannel = try XCTUnwrap(ChannelDTO.load(cid: cid, context: database.viewContext)?.asModel())
+        
+        XCTAssertEqual(
+            channel.lastActiveMembers.map(\.id),
+            allMembers.sorted { $0.user.lastActiveAt! > $1.user.lastActiveAt! }
+                .prefix(config.lastActiveMembersLimit)
+                .map(\.user.id)
+        )
+        
+        AssertAsync.canBeReleased(&database)
+    }
+    
+    func test_channelPayload_hasCorrectLastActiveWatchers() throws {
+        let config = ChatClientConfig.Channel(lastActiveWatchersLimit: .random(in: 10..<50), lastActiveMembersLimit: 0)
+        let cid: ChannelId = .unique
+        let allWatchers = (0..<config.lastActiveWatchersLimit * 2)
+            .map { UserPayload<NoExtraData>.withLastActivity(at: Date() - TimeInterval($0)) }.shuffled()
+        let payload = dummyPayload(with: cid, watchers: allWatchers)
+        
+        var database: DatabaseContainerMock! = try DatabaseContainerMock(kind: .inMemory, channelConfig: config)
+        
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+        
+        let channel: ChatChannel = try XCTUnwrap(ChannelDTO.load(cid: cid, context: database.viewContext)?.asModel())
+        
+        XCTAssertEqual(
+            channel.lastActiveWatchers.map(\.id),
+            allWatchers.sorted { $0.lastActiveAt! > $1.lastActiveAt! }
+                .prefix(config.lastActiveWatchersLimit)
+                .map(\.id)
+        )
+        
+        AssertAsync.canBeReleased(&database)
     }
 
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
@@ -543,7 +593,7 @@ class ChannelDTO_Tests: XCTestCase {
         }
         
         // Assert channel's watchers are not empty, watcherCount not zero
-        XCTAssertFalse(channel.watchers.isEmpty)
+        XCTAssertFalse(channel.lastActiveWatchers.isEmpty)
         XCTAssertNotEqual(channel.watcherCount, 0)
         
         // Simulate `resetEphemeralValues`
@@ -551,7 +601,7 @@ class ChannelDTO_Tests: XCTestCase {
         
         // Assert channel's watchers are cleared, watcherCount zero'ed
         AssertAsync {
-            Assert.willBeTrue(channel.watchers.isEmpty)
+            Assert.willBeTrue(channel.lastActiveWatchers.isEmpty)
             Assert.willBeEqual(channel.watcherCount, 0)
         }
     }
@@ -653,32 +703,12 @@ extension XCTestCase {
     func dummyPayload(
         with channelId: ChannelId,
         numberOfMessages: Int = 1,
-        numberOfWatchers: Int = 1,
+        members: [MemberPayload<NoExtraData>] = [.unique],
+        watchers: [UserPayload<NoExtraData>]? = nil,
         includeMembership: Bool = true,
         messages: [MessagePayload<NoExtraData>]? = nil,
         pinnedMessages: [MessagePayload<NoExtraData>] = []
     ) -> ChannelPayload<NoExtraData> {
-        let member: MemberPayload<NoExtraData> =
-            .init(
-                user: .init(
-                    id: .unique,
-                    name: .unique,
-                    imageURL: nil,
-                    role: .admin,
-                    createdAt: .unique,
-                    updatedAt: .unique,
-                    lastActiveAt: .unique,
-                    isOnline: true,
-                    isInvisible: true,
-                    isBanned: true,
-                    teams: [],
-                    extraData: .defaultValue
-                ),
-                role: .moderator,
-                createdAt: .unique,
-                updatedAt: .unique
-            )
-        
         let channelCreatedDate = Date.unique
         let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
 
@@ -730,13 +760,13 @@ extension XCTestCase {
                     isFrozen: true,
                     memberCount: 100,
                     team: .unique,
-                    members: [member],
+                    members: members,
                     cooldownDuration: .random(in: 0...120)
                 ),
-                watcherCount: 10,
-                watchers: (0..<numberOfWatchers).map { _ in dummyUser },
-                members: [member],
-                membership: includeMembership ? member : nil,
+                watcherCount: watchers?.count ?? 1,
+                watchers: watchers ?? [dummyUser],
+                members: members,
+                membership: includeMembership ? members.first : nil,
                 messages: payloadMessages,
                 pinnedMessages: pinnedMessages,
                 channelReads: [dummyChannelRead]
@@ -854,5 +884,52 @@ extension XCTestCase {
             )
         
         return payload
+    }
+}
+
+private extension MemberPayload where ExtraData == NoExtraData {
+    static var unique: MemberPayload<NoExtraData> {
+        withLastActivity(at: .unique)
+    }
+    
+    static func withLastActivity(at date: Date) -> MemberPayload<NoExtraData> {
+        .init(
+            user: .init(
+                id: .unique,
+                name: .unique,
+                imageURL: nil,
+                role: .admin,
+                createdAt: .unique,
+                updatedAt: .unique,
+                lastActiveAt: date,
+                isOnline: true,
+                isInvisible: true,
+                isBanned: true,
+                teams: [],
+                extraData: .defaultValue
+            ),
+            role: .moderator,
+            createdAt: .unique,
+            updatedAt: .unique
+        )
+    }
+}
+
+private extension UserPayload where ExtraData == NoExtraData {
+    static func withLastActivity(at date: Date) -> UserPayload<NoExtraData> {
+        .init(
+            id: .unique,
+            name: .unique,
+            imageURL: nil,
+            role: .admin,
+            createdAt: .unique,
+            updatedAt: .unique,
+            lastActiveAt: date,
+            isOnline: true,
+            isInvisible: true,
+            isBanned: true,
+            teams: [],
+            extraData: .defaultValue
+        )
     }
 }
