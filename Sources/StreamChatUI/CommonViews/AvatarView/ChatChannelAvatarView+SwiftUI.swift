@@ -24,7 +24,7 @@ extension _ChatChannelAvatarView {
     public class SwiftUIWrapper<Content: SwiftUIView>: _ChatChannelAvatarView<ExtraData>, ObservableObject
         where Content.ExtraData == ExtraData
     {
-        var hostingController: UIHostingController<Content>?
+        var hostingController: UIViewController?
         
         override public var intrinsicContentSize: CGSize {
             hostingController?.view.intrinsicContentSize ?? super.intrinsicContentSize
@@ -34,11 +34,13 @@ extension _ChatChannelAvatarView {
             super.setUp()
     
             let view = Content(dataSource: self)
+                .environmentObject(uiConfig.asObservableObject)
             hostingController = UIHostingController(rootView: view)
             hostingController?.view.backgroundColor = .clear
         }
 
         override public func setUpLayout() {
+            hostingController!.view.translatesAutoresizingMaskIntoConstraints = false
             embed(hostingController!.view)
         }
 
