@@ -8,7 +8,7 @@ import StreamChatTestTools
 import XCTest
 
 class ChatChannelNamer_Tests: XCTestCase {
-    var defaultMembers: Set<ChatChannelMember>!
+    var defaultMembers: [ChatChannelMember]!
 
     override func setUp() {
         super.setUp()
