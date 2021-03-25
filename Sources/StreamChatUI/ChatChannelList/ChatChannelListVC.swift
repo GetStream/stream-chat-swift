@@ -16,6 +16,14 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     SwipeableViewDelegate {
     /// The `ChatChannelListController` instance that provides channels data.
     public var controller: _ChatChannelListController<ExtraData>!
+
+    open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
+        if #available(iOS 13.0, *) {
+            return UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
+        } else {
+            return UIActivityIndicatorView(style: .whiteLarge).withoutAutoresizingMaskConstraints
+        }
+    }()
     
     /// The `_ChatChannelListRouter` instance responsible for navigation.
     open private(set) lazy var router: _ChatChannelListRouter<ExtraData> = uiConfig
@@ -53,7 +61,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     override open func setUp() {
         super.setUp()
-        
+
         controller.setDelegate(self)
         controller.synchronize()
         
@@ -80,6 +88,8 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     override open func setUpLayout() {
         super.setUpLayout()
         view.embed(collectionView)
+        collectionView.addSubview(loadingIndicator)
+        loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
     }
     
     override public func defaultAppearance() {
@@ -242,5 +252,20 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
                 self.collectionView.reloadItems(at: movedItems)
             }
         )
+    }
+}
+
+extension _ChatChannelListVC: DataControllerStateDelegate {
+    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        switch state {
+        case .initialized, .localDataFetched:
+            if self.controller.channels.isEmpty {
+                loadingIndicator.startAnimating()
+            } else {
+                loadingIndicator.stopAnimating()
+            }
+        default:
+            loadingIndicator.stopAnimating()
+        }
     }
 }
