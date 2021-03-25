@@ -244,7 +244,7 @@ class ChannelDTO_Tests: XCTestCase {
                 .sorted(by: { $0.createdAt < $1.createdAt })
                 .dropLast(10)
                 .last?
-                .createdAt.addingTimeInterval(0.1)
+                .createdAt
 
             channelDTO.truncatedAt = truncateDate
         }
@@ -602,7 +602,7 @@ extension XCTestCase {
             id: .unique,
             type: .regular,
             user: dummyUser,
-            createdAt: ChannelDTO_Tests.channelCreatedDate.addingTimeInterval(.random(in: 100...400)),
+            createdAt: ChannelDTO_Tests.channelCreatedDate.addingTimeInterval(.random(in: 60...900_000)),
             updatedAt: .unique,
             deletedAt: nil,
             text: .unique,
