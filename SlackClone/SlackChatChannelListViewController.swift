@@ -32,6 +32,12 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
         createNewChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
     }
     
+    override func setUpAppearance() {
+        super.setUpAppearance()
+        
+        navigationItem.rightBarButtonItem = nil
+    }
+    
     override func setUpLayout() {
         let titleView = UIView()
         titleView.backgroundColor = Colors.primary
