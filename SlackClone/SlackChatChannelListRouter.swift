@@ -1,10 +1,10 @@
 //
-//  Copyright © 2021 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import StreamChat
 import StreamChatUI
+import UIKit
 
 final class SlackChatChannelListRouter: ChatChannelListRouter {
     override func openChat(for channel: _ChatChannel<NoExtraData>) {
@@ -19,7 +19,5 @@ final class SlackChatChannelListRouter: ChatChannelListRouter {
         navController.show(vc, sender: self)
     }
     
-    override func openCreateNewChannel() {
-    }
+    override func openCreateNewChannel() {}
 }
-

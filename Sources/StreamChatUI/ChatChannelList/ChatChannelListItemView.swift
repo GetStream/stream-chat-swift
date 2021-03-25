@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
 /// An `UIView` subclass that shows summary and preview information about a given channel.
-open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
     /// The data this view component shows.
     public var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
         didSet { updateContentIfNeeded() }
