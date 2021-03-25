@@ -26,7 +26,10 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
     
     public private(set) lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
     
-    public private(set) lazy var titleView = uiConfig.titleView.init()
+    public private(set) lazy var titleView = uiConfig
+        .messageList
+        .titleView
+        .init()
 
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
     

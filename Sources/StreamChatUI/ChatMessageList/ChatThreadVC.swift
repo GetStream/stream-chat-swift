@@ -23,6 +23,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigPr
         .init()
     
     public private(set) lazy var titleView = uiConfig
+        .messageList
         .titleView
         .init()
     

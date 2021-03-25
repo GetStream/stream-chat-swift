@@ -8,6 +8,7 @@ import UIKit.UIImage
 public extension _UIConfig {
     struct MessageListUI {
         public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
+        public var titleView: _ChatMessageListTitleView<ExtraData>.Type = _ChatMessageListTitleView<ExtraData>.self
 
         public var defaultMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
             _СhatMessageCollectionViewCell<ExtraData>.self
