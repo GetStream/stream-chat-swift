@@ -63,7 +63,10 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     /// To observe changes of the users, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> { userListObserver.items }
+    public var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> {
+        startUserListObserverIfNeeded()
+        return userListObserver.items
+    }
     
     lazy var userQueryUpdater = self.environment
         .userQueryUpdaterBuilder(
@@ -87,14 +90,6 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
             }
         }
         
-        do {
-            try observer.startObserving()
-            state = .localDataFetched
-        } catch {
-            state = .localDataFetchFailed(ClientError(with: error))
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
-        }
-        
         return observer
     }()
     
@@ -105,7 +100,7 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
             
             // After setting delegate local changes will be fetched and observed.
-            startUserListObserver()
+            startUserListObserverIfNeeded()
         }
     }
     
@@ -123,11 +118,21 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
         }
     }
     
-    /// Initializing of `userListObserver` will start local data observing.
-    /// In most cases it will be done by accessing `users` but it's possible that only
-    /// changes will be observed.
-    private func startUserListObserver() {
-        _ = userListObserver
+    /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
+    /// `userListObserver` to fetch the local data and start observing the changes. It also changes
+    /// `state` based on the result.
+    ///
+    /// It's safe to call this method repeatedly.
+    ///
+    private func startUserListObserverIfNeeded() {
+        guard state == .initialized else { return }
+        do {
+            try userListObserver.startObserving()
+            state = .localDataFetched
+        } catch {
+            state = .localDataFetchFailed(ClientError(with: error))
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+        }
     }
     
     /// Sets the provided object as a delegate of this controller.
