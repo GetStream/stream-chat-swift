@@ -5,11 +5,6 @@
 import UIKit
 
 class MainButton: UIButton {
-    override func tintColorDidChange() {
-        backgroundColor = tintColor
-        setTitleColor(.white, for: .normal)
-    }
-    
     override func updateConstraints() {
         super.updateConstraints()
         translatesAutoresizingMaskIntoConstraints = false
@@ -28,16 +23,5 @@ class AdvancedOptionsViewController: UIViewController {
             mainStackView.preservesSuperviewLayoutMargins = true
             mainStackView.isLayoutMarginsRelativeArrangement = true
         }
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        title = "Advanced Options"
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = false
     }
 }

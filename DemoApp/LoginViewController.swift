@@ -46,9 +46,7 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        
-        tableView.bounces = false
-        
+                
         // An old trick to force the table view to hide empty lines
         tableView.tableFooterView = UIView()
     }

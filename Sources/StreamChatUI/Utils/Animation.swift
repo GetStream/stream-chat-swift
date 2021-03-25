@@ -4,7 +4,7 @@
 
 import UIKit
 
-func Animate(_ actions: @escaping () -> Void, completion: ((Bool) -> Void)? = nil) {
+func Animate(delay: TimeInterval = 0, _ actions: @escaping () -> Void, completion: ((Bool) -> Void)? = nil) {
     guard !UIAccessibility.isReduceMotionEnabled else {
         actions()
         completion?(true)
@@ -13,7 +13,7 @@ func Animate(_ actions: @escaping () -> Void, completion: ((Bool) -> Void)? = ni
     
     UIView.animate(
         withDuration: 0.25,
-        delay: 0,
+        delay: delay,
         usingSpringWithDamping: 0.8,
         initialSpringVelocity: 4,
         options: .curveEaseInOut,

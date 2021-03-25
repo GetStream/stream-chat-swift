@@ -56,6 +56,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     public var dataSource: DataSource = .empty()
     public var delegate: Delegate?
 
+    public lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+
     public lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
 
     public private(set) lazy var collectionViewLayout = uiConfig
@@ -118,6 +120,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         super.setUp()
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
+        longPress.minimumPressDuration = 0.33
         collectionView.addGestureRecognizer(longPress)
 
         registerMessageCell(uiConfig.messageList.defaultMessageCell)
@@ -313,6 +316,53 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         )
     }
 
+    private func presentReactionsControllerAnimated(
+        for cell: _СhatMessageCollectionViewCell<ExtraData>,
+        with messageData: _ChatMessageGroupPart<ExtraData>,
+        actionsController: _ChatMessageActionsVC<ExtraData>,
+        reactionsController: _ChatMessageReactionsVC<ExtraData>?
+    ) {
+        // TODO: for PR: This should be doable via:
+        // 1. options: [.autoreverse, .repeat] and
+        // 2. `UIView.setAnimationRepeatCount(0)` inside the animation block...
+        //
+        // and then just set completion to the animation to transform this back. aka `cell.messageView.transform = .identity`
+        // however, this doesn't work as after the animation is done, it clips back to the value set in animation block
+        // and then on completion goes back to `.identity`... This is really strange, but I was fighting it for some time
+        // and couldn't find proper solution...
+        // Also there are some limitations to the current solution ->
+        // According to my debug view hiearchy, the content inside `messageView.messageBubbleView` is not constrainted to the
+        // bubble view itself, meaning right now if we want to scale the view of incoming message, we scale the avatarView
+        // of the sender as well...
+        UIView.animate(
+            withDuration: 0.2,
+            delay: 0,
+            options: [.curveEaseIn],
+            animations: {
+                cell.messageView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            },
+            completion: { _ in
+                self.impactFeedbackGenerator.impactOccurred()
+
+                UIView.animate(
+                    withDuration: 0.1,
+                    delay: 0,
+                    options: [.curveEaseOut],
+                    animations: {
+                        cell.messageView.transform = .identity
+                    }
+                )
+                
+                self.router.showMessageActionsPopUp(
+                    messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
+                    messageData: messageData,
+                    messageActionsController: actionsController,
+                    messageReactionsController: reactionsController
+                )
+            }
+        )
+    }
+
     private func didSelectMessageCell(_ cell: _СhatMessageCollectionViewCell<ExtraData>) {
         guard let messageData = cell.message, messageData.isInteractionEnabled else { return }
 
@@ -328,11 +378,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
             return controller
         }
 
-        router.showMessageActionsPopUp(
-            messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
-            messageData: messageData,
-            messageActionsController: actionsController,
-            messageReactionsController: reactionsController
+        presentReactionsControllerAnimated(
+            for: cell,
+            with: messageData,
+            actionsController: actionsController,
+            reactionsController: reactionsController
         )
     }
 
