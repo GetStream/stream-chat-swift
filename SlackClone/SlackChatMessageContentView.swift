@@ -8,6 +8,8 @@ import UIKit
 
 final class SlackChatMessageContentView: ChatMessageContentView {
     private var didSetUpConstraints = false
+    private var firstMessageInGroupConstraints: [NSLayoutConstraint] = []
+    private var messageInGroupConstraints: [NSLayoutConstraint] = []
     
     override func setupAvatarView() {
         guard authorAvatarView == nil else { return }
@@ -70,9 +72,16 @@ final class SlackChatMessageContentView: ChatMessageContentView {
         NSLayoutConstraint.activate([
             messageBubbleView.leadingAnchor.constraint(equalTo: messageMetadataView.leadingAnchor),
             messageBubbleView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            messageBubbleView.topAnchor.constraint(equalTo: messageMetadataView.bottomAnchor, constant: 5),
             messageBubbleView.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
+        firstMessageInGroupConstraints += [
+            messageBubbleView.topAnchor.constraint(equalTo: messageMetadataView.bottomAnchor, constant: 5)
+        ]
+        
+        messageInGroupConstraints += [
+            messageBubbleView.topAnchor.constraint(equalTo: topAnchor)
+        ]
         
         messageBubbleView.borderLayer.removeFromSuperlayer()
         
@@ -93,7 +102,17 @@ final class SlackChatMessageContentView: ChatMessageContentView {
     override func updateMetadataViewIfNeeded() {
         super.updateMetadataViewIfNeeded()
         
-        messageMetadataView!.isHidden = false
+        let messageMetadataView = self.messageMetadataView!
+
+        messageMetadataView.isHidden = message?.isFirstInGroup != true
+    }
+    
+    override func updateAvatarViewIfNeeded() {
+        super.updateAvatarViewIfNeeded()
+        
+        let authorAvatarView = self.authorAvatarView!
+
+        authorAvatarView.isHidden = message?.isFirstInGroup != true
     }
     
     override func updateBubbleViewIfNeeded() {
@@ -133,10 +152,17 @@ final class SlackChatMessageContentView: ChatMessageContentView {
             setupConstraints(for: message.layoutOptions)
             didSetUpConstraints = true
         }
+        
+        if message.isFirstInGroup {
+            NSLayoutConstraint.deactivate(messageInGroupConstraints)
+            NSLayoutConstraint.activate(firstMessageInGroupConstraints)
+        } else {
+            NSLayoutConstraint.deactivate(firstMessageInGroupConstraints)
+            NSLayoutConstraint.activate(messageInGroupConstraints)
+        }
 
         setNeedsUpdateConstraints()
-        
-        authorAvatarView?.isHidden = false
+
         threadView?.isHidden = true
         reactionsBubble?.isHidden = true
         linkPreviewView?.isHidden = true
@@ -146,6 +172,13 @@ final class SlackChatMessageContentView: ChatMessageContentView {
     
     private func setupConstraints(for layoutOptions: ChatMessageContentViewLayoutOptions) {
         switch layoutOptions {
+        case [.attachments]:
+            NSLayoutConstraint.activate([
+                attachmentsView!.leadingAnchor.constraint(equalTo: messageBubbleView!.leadingAnchor),
+                attachmentsView!.trailingAnchor.constraint(equalTo: messageBubbleView!.trailingAnchor),
+                attachmentsView!.topAnchor.constraint(equalTo: messageBubbleView!.topAnchor),
+                attachmentsView!.bottomAnchor.constraint(equalTo: messageBubbleView!.bottomAnchor)
+            ])
         case [.text, .attachments]:
             NSLayoutConstraint.activate([
                 textView!.leadingAnchor.constraint(equalTo: messageBubbleView!.leadingAnchor),
