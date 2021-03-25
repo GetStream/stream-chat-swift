@@ -128,6 +128,8 @@ jobs:
       run: bundle exec fastlane build_imessage_clone
     - name: Build SlackClone App
       run: bundle exec fastlane build_slack_clone
+    - name: Build MessengerClone App
+      run: bundle exec fastlane build_messenger_clone
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
