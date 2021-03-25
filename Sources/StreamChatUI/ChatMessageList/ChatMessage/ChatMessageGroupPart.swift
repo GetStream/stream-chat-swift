@@ -10,6 +10,9 @@ public typealias ChatMessageGroupPart = _ChatMessageGroupPart<NoExtraData>
 public struct _ChatMessageGroupPart<ExtraData: ExtraDataTypes> {
     public let message: _ChatMessage<ExtraData>
     public let quotedMessage: _ChatMessage<ExtraData>?
+    /// `true` if `message` is the first one in a group
+    public let isFirstInGroup: Bool
+    /// `true` if `message` is the last one in a group
     public let isLastInGroup: Bool
     public let didTapOnAttachment: ((ChatMessageDefaultAttachment) -> Void)?
     public let didTapOnAttachmentAction: ((ChatMessageDefaultAttachment, AttachmentAction) -> Void)?
