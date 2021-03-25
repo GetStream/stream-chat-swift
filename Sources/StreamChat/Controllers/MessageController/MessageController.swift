@@ -51,7 +51,10 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     /// To observe changes of the message, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var message: _ChatMessage<ExtraData>? { messageObserver.item }
+    public var message: _ChatMessage<ExtraData>? {
+        startObserversIfNeeded()
+        return messageObserver.item
+    }
     
     /// The replies to the message the controller represents.
     ///
@@ -59,11 +62,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     /// `Combine` publishers.
     ///
     public var replies: LazyCachedMapCollection<_ChatMessage<ExtraData>> {
-        if state == .initialized {
-            startRepliesObserver { [weak self] error in
-                self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
-            }
-        }
+        startObserversIfNeeded()
         return repliesObserver?.items ?? []
     }
     
@@ -76,10 +75,15 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     public var listOrdering: ListOrdering = .topToBottom {
         didSet {
             if state != .initialized {
-                // Reset replies observer to apply new ordering
-                startRepliesObserver { [weak self] error in
-                    self?.state = error == nil ? .localDataFetched : .localDataFetchFailed(ClientError(with: error))
+                _repliesObserver.reset()
+                
+                do {
+                    try repliesObserver?.startObserving()
+                } catch {
+                    log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+                    state = .localDataFetchFailed(ClientError(with: error))
                 }
+                
                 log.warning(
                     "Changing `listOrdering` will update data inside controller, but you have to update your UI manually "
                         + "to see changes."
@@ -101,7 +105,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
         didSet {
             stateMulticastDelegate.mainDelegate = multicastDelegate.mainDelegate
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
-            startMessageObserver()
+            startObserversIfNeeded()
         }
     }
     
@@ -140,8 +144,7 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
     }
 
     override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
-        startMessageObserver()
-        startRepliesObserver()
+        startObserversIfNeeded()
         
         messageUpdater.getMessage(cid: cid, messageId: messageId) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
@@ -149,11 +152,23 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
         }
     }
     
-    /// Initializing of `messageObserver` will start local data observing.
-    /// In most cases it will be done by accusing `messages` but it's possible that only
-    /// changes will be observed.
-    private func startMessageObserver() {
-        _ = messageObserver
+    /// If the `state` of the controller is `initialized`, this method calls `startObserving` on
+    /// `messageObserver` and `repliesObserver` to fetch the local data and start observing the changes.
+    /// It also changes `state` based on the result.
+    ///
+    /// It's safe to call this method repeatedly.
+    ///
+    private func startObserversIfNeeded() {
+        guard state == .initialized else { return }
+        do {
+            try messageObserver.startObserving()
+            try repliesObserver?.startObserving()
+            
+            state = .localDataFetched
+        } catch {
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+            state = .localDataFetchFailed(ClientError(with: error))
+        }
     }
 }
 
@@ -444,17 +459,9 @@ private extension _ChatMessageController {
             NSFetchedResultsController<MessageDTO>.self
         )
         
-        do {
-            try observer.startObserving()
-            state = .localDataFetched
-        } catch {
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
-            state = .localDataFetchFailed(ClientError(with: error))
-        }
-        
         return observer
     }
-
+    
     func setRepliesObserver() {
         _repliesObserver.computeValue = { [unowned self] in
             let sortAscending = self.listOrdering == .topToBottom ? false : true
@@ -470,18 +477,6 @@ private extension _ChatMessageController {
             }
 
             return observer
-        }
-    }
-    
-    func startRepliesObserver(completion: ((Error?) -> Void)? = nil) {
-        _repliesObserver.reset()
-        
-        do {
-            try repliesObserver?.startObserving()
-            completion?(nil)
-        } catch {
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
-            completion?(ClientError.FetchFailed())
         }
     }
 }
