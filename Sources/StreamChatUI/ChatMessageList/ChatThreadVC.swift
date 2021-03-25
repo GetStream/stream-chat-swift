@@ -22,7 +22,9 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigPr
         .messageListVC
         .init()
     
-    public private(set) lazy var titleView = ChatMessageListTitleView<ExtraData>()
+    public private(set) lazy var titleView = uiConfig
+        .titleView
+        .init()
     
     private lazy var keyboardObserver = KeyboardFrameObserver(
         containerView: view,
@@ -94,9 +96,9 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigPr
 
         view.backgroundColor = uiConfig.colorPalette.background
         
-        titleView.title = "Thread Reply"
         let channelName = channelController.channel?.name ?? "love"
-        titleView.subtitle = "with \(channelName)"
+        let subtitle = "with \(channelName)"
+        titleView.content = ("Thread Reply", subtitle)
         
         navigationItem.titleView = titleView
     }

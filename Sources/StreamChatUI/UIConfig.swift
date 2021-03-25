@@ -16,6 +16,8 @@ public struct _UIConfig<ExtraData: ExtraDataTypes> {
 
     /// An avatar view with an online indicator.
     public var presenceAvatarView: _ChatPresenceAvatarView<ExtraData>.Type = _ChatPresenceAvatarView<ExtraData>.self
+    
+    public var titleView: _ChatMessageListTitleView<ExtraData>.Type = _ChatMessageListTitleView<ExtraData>.self
 
     public var channelList = ChannelList()
     public var messageList = MessageListUI()

@@ -5,34 +5,30 @@
 import UIKit
 import StreamChat
 
-public class ChatMessageListTitleView<ExtraData: ExtraDataTypes>: UIView, UIConfigProvider {
-    public var title: String? {
-        get { titleLabel.text }
-        set { titleLabel.text = newValue }
+open class _ChatMessageListTitleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    open var content: (title: String?, subtitle: String?) = (nil, nil) {
+        didSet {
+            updateContent()
+        }
     }
     
-    public var subtitle: String? {
-        get { subtitleLabel.text }
-        set { subtitleLabel.text = newValue }
-    }
+    open private(set) var titleLabel: UILabel = UILabel()
+    open private(set) var subtitleLabel: UILabel = UILabel()
     
-    private weak var titleLabel: UILabel!
-    private weak var subtitleLabel: UILabel!
-    
-    public init() {
-        super.init(frame: .zero)
+    public override func defaultAppearance() {
+        super.defaultAppearance()
         
-        let titleLabel = UILabel()
         titleLabel.textAlignment = .center
         titleLabel.font = uiConfig.font.headlineBold
-        self.titleLabel = titleLabel
-
-        let subtitleLabel = UILabel()
+        
         subtitleLabel.textAlignment = .center
         subtitleLabel.font = uiConfig.font.caption1
         subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
-        self.subtitleLabel = subtitleLabel
-
+    }
+    
+    open override func setUpLayout() {
+        super.setUpLayout()
+        
         let titleView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
         titleView.axis = .vertical
         addSubview(titleView)
@@ -40,8 +36,10 @@ public class ChatMessageListTitleView<ExtraData: ExtraDataTypes>: UIView, UIConf
         titleView.pin(to: self)
     }
     
-    @available(*, unavailable)
-    required public init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    open override func updateContent() {
+        super.updateContent()
+        
+        titleLabel.text = content.title
+        subtitleLabel.text = content.subtitle
     }
 }

@@ -26,7 +26,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
     
     public private(set) lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
     
-    public private(set) lazy var titleView = ChatMessageListTitleView<ExtraData>()
+    public private(set) lazy var titleView = uiConfig.titleView.init()
 
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
     
@@ -102,8 +102,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
             using: uiConfig.channelList.channelNamer
         )
         navbarListener.onDataChange = { [weak self] data in
-            self?.titleView.title = data.title
-            self?.titleView.subtitle = data.subtitle
+            self?.titleView.content = (data.title, data.subtitle)
         }
         self.navbarListener = navbarListener
 
