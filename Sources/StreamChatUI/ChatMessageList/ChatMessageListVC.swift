@@ -299,10 +299,19 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
             let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
             return delay > minTimeInvteralBetweenMessagesInGroup
         }
+        
+        var isFirstInGroup: Bool {
+            guard indexPath.row < dataSource.numberOfMessages(self) - 1 else { return true }
+            let previousMessage = dataSource.messageAtIndex(self, indexPath.row + 1)
+            guard previousMessage.author == message.author else { return true }
+            let delay = previousMessage.createdAt.timeIntervalSince(message.createdAt)
+            return delay > minTimeInvteralBetweenMessagesInGroup
+        }
 
         return .init(
             message: message,
             quotedMessage: dataSource.replyMessageForMessageAtIndex(self, message, indexPath.row),
+            isFirstInGroup: isFirstInGroup,
             isLastInGroup: isLastInGroup,
             didTapOnAttachment: { [weak self] attachment in
                 self?.didTapOnAttachment(attachment, in: message)
