@@ -93,7 +93,7 @@ extension UserDTO {
         let request = NSFetchRequest<UserDTO>(entityName: UserDTO.entityName)
         request.sortDescriptors = [UserListSortingKey.lastActiveSortDescriptor]
         request.predicate = NSPredicate(format: "ANY watchedChannels.cid == %@", cid.rawValue)
-        request.fetchLimit = context.channelConfig?.lastActiveWatchersLimit ?? 25
+        request.fetchLimit = context.localCachingSettings?.chatChannel.lastActiveWatchersLimit ?? 5
         return try! context.fetch(request)
     }
 }

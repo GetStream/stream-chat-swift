@@ -137,7 +137,7 @@ extension _ChatClient.Environment {
                         kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
                         shouldFlushOnStart: $1,
                         shouldResetEphemeralValuesOnStart: $2,
-                        channelConfig: $3
+                        localCachingSettings: $3
                     )
                 } catch {
                     XCTFail("Unable to initialize DatabaseContainerMock \(error)")
