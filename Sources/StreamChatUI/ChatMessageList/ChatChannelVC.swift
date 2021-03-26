@@ -99,15 +99,13 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
 
         guard let channel = channelController.channel else { return }
         
-        let navbarListener = ChatChannelNavigationBarListener.make(
-            for: channel.cid,
-            in: channelController.client,
-            using: uiConfig.channelList.channelNamer
-        )
-        navbarListener.onDataChange = { [weak self] data in
+        navbarListener = ChatChannelNavigationBarListener<ExtraData>(
+            client: channelController.client,
+            channel: channel.cid,
+            namer: uiConfig.channelList.channelNamer
+        ) { [weak self] data in
             self?.titleView.content = (data.title, data.subtitle)
         }
-        self.navbarListener = navbarListener
 
         let avatar = _ChatChannelAvatarView<ExtraData>()
         avatar.translatesAutoresizingMaskIntoConstraints = false
@@ -116,6 +114,19 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
         avatar.content = (channel: channel, currentUserId: channelController.client.currentUserId)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: avatar)
         navigationItem.largeTitleDisplayMode = .never
+    }
+    
+    // MARK: - NavigationBar
+    
+    private func updateNavigationTitle() {
+        setupGroupChatNavigationBar()
+    }
+    
+    private func setupGroupChatNavigationBar() {
+        guard let channel = channelController.channel else { titleView.content = (nil, nil); return }
+        let title = uiConfig.channelList.channelNamer(channel, channelController.client.currentUserId)
+        let subtitle = "\(channel.memberCount) members, \(channel.watcherCount) online"
+        titleView.content = (title, subtitle)
     }
 
     // MARK: - ChatMessageListVCDataSource
@@ -182,5 +193,9 @@ extension _ChatChannelVC: _ChatChannelControllerDelegate {
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         messageList.updateMessages(with: changes)
+    }
+    
+    public func channelController(_ channelController: _ChatChannelController<ExtraData>, didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>) {
+        updateNavigationTitle()
     }
 }
