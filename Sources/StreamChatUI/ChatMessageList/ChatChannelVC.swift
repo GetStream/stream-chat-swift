@@ -12,6 +12,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
     // MARK: - Properties
     
     public var channelController: _ChatChannelController<ExtraData>!
+    public var memberController: _ChatChannelMemberController<ExtraData>?
     public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> = channelController.client.userSearchController()
 
     public private(set) lazy var messageComposerViewController = uiConfig
@@ -31,7 +32,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
         .titleView
         .init()
 
-    private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
+    private var timer: Timer?
     
     private var messageComposerBottomConstraint: NSLayoutConstraint?
     
@@ -71,6 +72,18 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
 
         channelController.setDelegate(self)
         channelController.synchronize()
+        
+        if let channel = channelController.channel, channelController.isChannelDirect {
+            memberController = channelController
+                .channel?
+                .cachedMembers
+                .first { $0.id != channelController.client.currentUserId }
+                .map { channelController.client.memberController(userId: $0.id, in: channel.cid) }
+            
+            timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+                self?.updateNavigationTitle()
+            }
+        }
     }
     
     open override func setUpLayout() {
@@ -98,14 +111,6 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
         navigationItem.titleView = titleView
 
         guard let channel = channelController.channel else { return }
-        
-        navbarListener = ChatChannelNavigationBarListener<ExtraData>(
-            client: channelController.client,
-            channel: channel.cid,
-            namer: uiConfig.channelList.channelNamer
-        ) { [weak self] data in
-            self?.titleView.content = (data.title, data.subtitle)
-        }
 
         let avatar = _ChatChannelAvatarView<ExtraData>()
         avatar.translatesAutoresizingMaskIntoConstraints = false
@@ -147,6 +152,30 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigP
             messageId: message.id
         )
     }
+    
+    private func updateNavigationTitle() {
+        let title = channelController.channel.flatMap { uiConfig.channelList.channelNamer($0, channelController.client.currentUserId) }
+        
+        let subtitle: String? = {
+            if channelController.isChannelDirect {
+                guard let member = memberController?.member else { return nil }
+                
+                if member.isOnline {
+                    // ReallyNotATODO: Missing API GroupA.m1
+                    // need to specify how long user have been online
+                    return "Online"
+                } else if let minutes = member.lastActiveAt.flatMap({ DateComponentsFormatter.minutes.string(from: $0, to: Date()) }) {
+                    return "Seen \(minutes) ago"
+                } else {
+                    return "Offline"
+                }
+            } else {
+                return channelController.channel.map { "\($0.memberCount) members, \($0.watcherCount) online" }
+            }
+        }()
+        
+        titleView.content = (title, subtitle)
+    }
 
     // MARK: - ChatMessageListVCDelegate
     
@@ -180,5 +209,21 @@ extension _ChatChannelVC: _ChatChannelControllerDelegate {
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         messageList.updateMessages(with: changes)
+    }
+
+    public func channelController(
+        _ channelController: _ChatChannelController<ExtraData>,
+        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+    ) {
+        updateNavigationTitle()
+    }
+}
+
+extension _ChatChannelVC: _ChatChannelMemberControllerDelegate {
+    public func memberController(
+        _ controller: _ChatChannelMemberController<ExtraData>,
+        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+    ) {
+        updateNavigationTitle()
     }
 }
