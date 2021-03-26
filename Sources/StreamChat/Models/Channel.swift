@@ -113,9 +113,6 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     public var latestMessages: [_ChatMessage<ExtraData>] { _latestMessages }
     @Cached private var _latestMessages: [_ChatMessage<ExtraData>]
     
-    /// The newest message of the channel. `nil` if there are no messages in the channel.
-    public let lastMessage: _ChatMessage<ExtraData>?
-
     /// Pinned messages present on the channel.
     ///
     /// This field contains only the pinned messages of the channel. You can get all existing messages in the channel by creating
@@ -176,7 +173,6 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         extraData: ExtraData.Channel,
 //        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         latestMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
-        lastMessage: _ChatMessage<ExtraData>? = nil,
         pinnedMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] }
     ) {
         self.cid = cid
@@ -200,7 +196,6 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
 //        self.invitedMembers = invitedMembers
-        self.lastMessage = lastMessage
         
         $_latestMessages = latestMessages
         $_lastActiveMembers = lastActiveMembers

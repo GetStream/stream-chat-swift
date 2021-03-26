@@ -109,7 +109,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
         let subtitle: String
         if let typingMembersInfo = createTypingMemberString(for: channel) {
             subtitle = typingMembersInfo
-        } else if let latestMessage = channel.lastMessage {
+        } else if let latestMessage = channel.latestMessages.first {
             let author = latestMessage.author.name ?? latestMessage.author.id.description
             subtitle = "\(author): \(latestMessage.text)"
         } else {
