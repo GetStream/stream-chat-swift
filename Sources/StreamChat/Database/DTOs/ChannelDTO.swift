@@ -276,9 +276,13 @@ extension _ChatChannel {
             )
         }
         
-        let fetchMessages: (Int) -> [_ChatMessage<ExtraData>] = {
+        let fetchMessages: () -> [_ChatMessage<ExtraData>] = {
             MessageDTO
-                .load(for: dto.cid, limit: $0, context: context)
+                .load(
+                    for: dto.cid,
+                    limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
+                    context: context
+                )
                 .map { $0.asModel() }
         }
         
@@ -318,8 +322,7 @@ extension _ChatChannel {
             cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,
 //            invitedMembers: [],
-            latestMessages: { fetchMessages(25) }, // TODO: make messagesLimit a param
-            lastMessage: fetchMessages(1).first,
+            latestMessages: { fetchMessages() },
             pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } }
         )
     }

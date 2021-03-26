@@ -96,6 +96,8 @@ extension ChatClientConfig {
         public var lastActiveWatchersLimit = 5
         /// Limit the max number of members included in `ChatChannel.lastActiveMembers`.
         public var lastActiveMembersLimit = 5
+        /// Limit the max number of messages included in `ChatChannel.latestMessages`.
+        public var latestMessagesLimit = 5
     }
 }
 
