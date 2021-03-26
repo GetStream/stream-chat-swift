@@ -318,51 +318,46 @@ class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(channel?.latestMessages.count, 2)
     }
     
-    func test_channelPayload_hasCorrectLastActiveMembers() throws {
-        let config = ChatClientConfig.Channel(lastActiveWatchersLimit: 0, lastActiveMembersLimit: .random(in: 10..<50))
+    func test_channelPayload_localCachingDefaults() throws {
+        let memberLimit = Int.random(in: 1..<50)
+        let watcherLimit = Int.random(in: 1..<50)
+        let messagesLimit = Int.random(in: 1..<50)
+        
+        // Set `lastActiveMembersLimit` to the limit
+        var caching = ChatClientConfig.LocalCaching()
+        caching.chatChannel.lastActiveWatchersLimit = watcherLimit
+        caching.chatChannel.lastActiveMembersLimit = memberLimit
+        caching.chatChannel.latestMessagesLimit = messagesLimit
+
         let cid: ChannelId = .unique
-        let allMembers = (0..<config.lastActiveMembersLimit * 2)
-            .map { MemberPayload<NoExtraData>.withLastActivity(at: Date() - TimeInterval($0)) }.shuffled()
-        let payload = dummyPayload(with: cid, members: allMembers)
         
-        var database: DatabaseContainerMock! = DatabaseContainerMock(channelConfig: config)
+        var database: DatabaseContainerMock! = DatabaseContainerMock(localCachingSettings: caching)
         
+        // Create more entities than the limits
+        let allMembers: [MemberPayload<NoExtraData>] = (0..<memberLimit * 2).map { _ in .dummy() }
+        let allWatchers: [UserPayload<NoExtraData>] = (0..<watcherLimit * 2).map { _ in .dummy(userId: .unique) }
+        let allMessages: [MessagePayload<NoExtraData>] = (0..<messagesLimit * 2)
+            .map { _ in .dummy(messageId: .unique, authorUserId: .unique) }
+        let payload = dummyPayload(with: cid, members: allMembers, watchers: allWatchers, messages: allMessages)
+                
         try database.writeSynchronously { session in
             try session.saveChannel(payload: payload)
         }
-        
-        let channel: ChatChannel = try XCTUnwrap(ChannelDTO.load(cid: cid, context: database.viewContext)?.asModel())
-        
-        XCTAssertEqual(
-            channel.lastActiveMembers.map(\.id),
-            allMembers.sorted { $0.user.lastActiveAt! > $1.user.lastActiveAt! }
-                .prefix(config.lastActiveMembersLimit)
-                .map(\.user.id)
-        )
-        
-        AssertAsync.canBeReleased(&database)
-    }
-    
-    func test_channelPayload_hasCorrectLastActiveWatchers() throws {
-        let config = ChatClientConfig.Channel(lastActiveWatchersLimit: .random(in: 10..<50), lastActiveMembersLimit: 0)
-        let cid: ChannelId = .unique
-        let allWatchers = (0..<config.lastActiveWatchersLimit * 2)
-            .map { UserPayload<NoExtraData>.withLastActivity(at: Date() - TimeInterval($0)) }.shuffled()
-        let payload = dummyPayload(with: cid, watchers: allWatchers)
-        
-        var database: DatabaseContainerMock! = DatabaseContainerMock(channelConfig: config)
-        
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: payload)
-        }
-        
-        let channel: ChatChannel = try XCTUnwrap(ChannelDTO.load(cid: cid, context: database.viewContext)?.asModel())
+
+        let channel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
         
         XCTAssertEqual(
             channel.lastActiveWatchers.map(\.id),
             allWatchers.sorted { $0.lastActiveAt! > $1.lastActiveAt! }
-                .prefix(config.lastActiveWatchersLimit)
+                .prefix(watcherLimit)
                 .map(\.id)
+        )
+
+        XCTAssertEqual(
+            channel.lastActiveMembers.map(\.id),
+            allMembers.sorted { $0.user.lastActiveAt! > $1.user.lastActiveAt! }
+                .prefix(memberLimit)
+                .map(\.user.id)
         )
         
         AssertAsync.canBeReleased(&database)

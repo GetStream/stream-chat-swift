@@ -20,8 +20,8 @@ class DatabaseContainerMock: DatabaseContainer {
     /// If set to `true` and the mock will remove its database files once deinited.
     private var shouldCleanUpTempDBFiles = false
     
-    convenience init(channelConfig: ChatClientConfig.Channel? = nil) {
-        try! self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), channelConfig: channelConfig)
+    convenience init(localCachingSettings: ChatClientConfig.LocalCaching? = nil) {
+        try! self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), localCachingSettings: localCachingSettings)
         shouldCleanUpTempDBFiles = true
     }
     
