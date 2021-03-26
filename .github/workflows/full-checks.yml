@@ -92,9 +92,10 @@ jobs:
     - uses: ./.github/actions/prepare-ios-simulator
       with:
         device: "iPhone 11"
-        ios: "13.4"
+        ios: "13.5"
+        xcode: "11.5"
     - name: Run Stress Tests - iOS 13.4 (Release)
-      run: bundle exec fastlane stress_test_release device:"iPhone 11 (13.4)"
+      run: bundle exec fastlane stress_test_release device:"iPhone 11 (13.5)"
 
   stress-tests-ios12:
     name: Stress Test LLC - iOS 12.4 (Release)
@@ -121,6 +122,7 @@ jobs:
       with:
         device: "iPhone 11"
         ios: "12.4"
+        xcode: "10.3"
     - name: Run Stress Tests
       run: bundle exec fastlane stress_test_release device:"iPhone 11 (12.4)"
 
@@ -147,12 +149,13 @@ jobs:
     - uses: ./.github/actions/bootstrap
     - uses: ./.github/actions/prepare-ios-simulator
       with:
-        device: "iPhone 7"
-        ios: "13.4"
+        device: "iPhone 11"
+        ios: "13.5"
+        xcode: "11.5"
     - name: Build Sample App - iOS 13.4
-      run: bundle exec fastlane build_sample device:"iPhone 7 (13.4)"
+      run: bundle exec fastlane build_sample device:"iPhone 11 (13.5)"
     - name: Build Demo App - iOS 13.4
-      run: bundle exec fastlane build_demo device:"iPhone 7 (13.4)"
+      run: bundle exec fastlane build_demo device:"iPhone 11 (13.5)"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -188,6 +191,7 @@ jobs:
       with:
         device: "iPhone 7"
         ios: "12.4"
+        xcode: "10.3"
     - name: Build Sample App - iOS 12.4
       run: bundle exec fastlane build_sample device:"iPhone 7 (12.4)"
     - name: Build Demo App - iOS 12.4
