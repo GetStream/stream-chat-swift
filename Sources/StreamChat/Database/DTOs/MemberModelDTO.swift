@@ -81,7 +81,7 @@ extension MemberDTO {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
         request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
         request.sortDescriptors = [ChannelMemberListSortingKey.lastActiveSortDescriptor]
-        request.fetchLimit = context.channelConfig?.lastActiveMembersLimit ?? 25
+        request.fetchLimit = context.localCachingSettings?.chatChannel.lastActiveMembersLimit ?? 5
         return try! context.fetch(request)
     }
 }

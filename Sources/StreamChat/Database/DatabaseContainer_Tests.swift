@@ -208,15 +208,15 @@ class DatabaseContainer_Tests: StressTestCase {
     }
     
     func test_channelConfig_isStoredInAllContexts() throws {
-        var channelConfig = ChatClientConfig.Channel()
-        channelConfig.lastActiveMembersLimit = .unique
-        channelConfig.lastActiveWatchersLimit = .unique
+        var cachingSettings = ChatClientConfig.LocalCaching()
+        cachingSettings.chatChannel.lastActiveMembersLimit = .unique
+        cachingSettings.chatChannel.lastActiveWatchersLimit = .unique
         
-        let database = try DatabaseContainerMock(kind: .inMemory, channelConfig: channelConfig)
+        let database = try DatabaseContainerMock(kind: .inMemory, localCachingSettings: cachingSettings)
         
-        XCTAssertEqual(database.viewContext.channelConfig, channelConfig)
-        XCTAssertEqual(database.writableContext.channelConfig, channelConfig)
-        XCTAssertEqual(database.backgroundReadOnlyContext.channelConfig, channelConfig)
+        XCTAssertEqual(database.viewContext.localCachingSettings, cachingSettings)
+        XCTAssertEqual(database.writableContext.localCachingSettings, cachingSettings)
+        XCTAssertEqual(database.backgroundReadOnlyContext.localCachingSettings, cachingSettings)
     }
 }
 

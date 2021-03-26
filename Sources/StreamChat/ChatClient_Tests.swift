@@ -58,22 +58,22 @@ class ChatClient_Tests: StressTestCase {
         config.shouldFlushLocalStorageOnStart = true
         config.localStorageFolderURL = storeFolderURL
         
-        config.channel.lastActiveMembersLimit = .unique
-        config.channel.lastActiveWatchersLimit = .unique
+        config.localCaching.chatChannel.lastActiveMembersLimit = .unique
+        config.localCaching.chatChannel.lastActiveWatchersLimit = .unique
         
         var usedDatabaseKind: DatabaseContainer.Kind?
         var shouldFlushDBOnStart: Bool?
         var shouldResetEphemeralValues: Bool?
-        var channelConfig: ChatClientConfig.Channel?
+        var localCachingSettings: ChatClientConfig.LocalCaching?
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, receivedChannelConfig in
+        env.databaseContainerBuilder = { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, cachingSettings in
             usedDatabaseKind = kind
             shouldFlushDBOnStart = shouldFlushOnStart
             shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
-            channelConfig = receivedChannelConfig
+            localCachingSettings = cachingSettings
             return DatabaseContainerMock()
         }
         
@@ -92,7 +92,7 @@ class ChatClient_Tests: StressTestCase {
         )
         XCTAssertEqual(shouldFlushDBOnStart, config.shouldFlushLocalStorageOnStart)
         XCTAssertEqual(shouldResetEphemeralValues, config.isClientInActiveMode)
-        XCTAssertEqual(channelConfig, config.channel)
+        XCTAssertEqual(localCachingSettings, config.localCaching)
     }
     
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
@@ -645,7 +645,7 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                     kind: $0,
                     shouldFlushOnStart: $1,
                     shouldResetEphemeralValuesOnStart: $2,
-                    channelConfig: $3
+                    localCachingSettings: $3
                 )
                 return self.databaseContainer!
             },

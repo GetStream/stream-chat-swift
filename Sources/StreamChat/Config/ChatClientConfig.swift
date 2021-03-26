@@ -42,8 +42,8 @@ public struct ChatClientConfig {
     ///
     public var shouldFlushLocalStorageOnStart: Bool = false
     
-    /// `ChatChannel` specific settings.
-    public var channel = Channel()
+    /// Advanced settings for the local caching and model serialization.
+    public var localCaching = LocalCaching()
     
     /// Flag for setting a ChatClient instance in connection-less mode.
     /// A connection-less client is not able to connect to websocket and will not
@@ -84,17 +84,19 @@ extension ChatClientConfig {
 }
 
 extension ChatClientConfig {
-    /// `ChatChannel` specific settings.
-    public struct Channel: Equatable {
-        /// Limit how many watchers are returned in `_ChatChannel.lastActiveWatchers`
-        public var lastActiveWatchersLimit = 25
-        /// Limit how many members are returned in `_ChatChannel.lastActiveMembers`
-        public var lastActiveMembersLimit = 25
+    /// Advanced settings for the local caching and model serialization.
+    public struct LocalCaching: Equatable {
+        /// `ChatChannel` specific local caching and model serialization settings.
+        public var chatChannel = ChatChannel()
     }
-
-//    public struct Message {
-//        // something
-//    }
+    
+    /// `ChatChannel` specific local caching and model serialization settings.
+    public struct ChatChannel: Equatable {
+        /// Limit the max number of watchers included in `ChatChannel.lastActiveWatchers`.
+        public var lastActiveWatchersLimit = 5
+        /// Limit the max number of members included in `ChatChannel.lastActiveMembers`.
+        public var lastActiveMembersLimit = 5
+    }
 }
 
 /// A struct representing an API key of the chat app.
