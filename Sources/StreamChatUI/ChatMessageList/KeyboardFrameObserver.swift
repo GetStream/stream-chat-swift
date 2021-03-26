@@ -52,11 +52,23 @@ final class KeyboardFrameObserver {
         }
 
         let keyboardDelta = oldKeyboardTop - keyboardTop
+        // need to calculate delta in content when `contentSize` is smaller than `frame.size`
+        let contentDelta = max(
+            // 8 is just some padding constant to make it look better
+            scrollView.frame.height - scrollView.contentSize.height + scrollView.contentOffset.y - 8,
+            // 0 is for the case when `contentSize` if larger than `frame.size`
+            0
+        )
+        
         let newContentOffset = CGPoint(
             x: 0,
-            y: scrollView.contentOffset.y + keyboardDelta
+            y: max(
+                scrollView.contentOffset.y + keyboardDelta - contentDelta,
+                // case when keyboard is activated but not shown, probably only on simulator
+                -scrollView.contentInset.top
+            )
         )
-
+        
         // changing contentOffset will cancel any scrolling in collectionView, bad UX
         let needUpdateContentOffset = !scrollView.isDecelerating && !scrollView.isDragging
         
