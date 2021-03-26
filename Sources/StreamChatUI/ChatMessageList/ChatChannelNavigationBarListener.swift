@@ -13,10 +13,7 @@ final class ChatChannelNavigationBarListener<ExtraData: ExtraDataTypes> {
     let channelController: _ChatChannelController<ExtraData>
     let memberController: _ChatChannelMemberController<ExtraData>?
     let namer: ChatChannelNamer<ExtraData>
-    let client: _ChatClient<ExtraData>
-    let channel: ChannelId
     let onDataChange: (NavbarData) -> Void
-    let isDirect: Bool
     
     var timer: Timer?
     let df: DateComponentsFormatter = {
@@ -31,7 +28,7 @@ final class ChatChannelNavigationBarListener<ExtraData: ExtraDataTypes> {
     }
     
     var subtitle: String? {
-        if isDirect {
+        if channelController.isChannelDirect {
             guard let member = memberController?.member else { return nil }
             
             if member.isOnline {
@@ -50,16 +47,16 @@ final class ChatChannelNavigationBarListener<ExtraData: ExtraDataTypes> {
 
     init(client: _ChatClient<ExtraData>, channel: ChannelId, namer: @escaping ChatChannelNamer<ExtraData>, onDataChange: @escaping (NavbarData) -> Void) {
         self.namer = namer
-        self.client = client
-        self.channel = channel
         self.onDataChange = onDataChange
         self.channelController = client.channelController(for: channel)
-        self.isDirect = channelController.channel?.isDirectMessageChannel ?? false
         
-        if isDirect {
-            memberController = client.channelController(for: channel).channel?.cachedMembers
+        if channelController.isChannelDirect {
+            memberController = channelController
+                .channel?
+                .cachedMembers
                 .first { $0.id != client.currentUserId }
                 .map { client.memberController(userId: $0.id, in: channel) }
+
             timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
                 self?.fireNewNavbarData()
             }
