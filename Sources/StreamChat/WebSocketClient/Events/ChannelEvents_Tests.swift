@@ -10,9 +10,16 @@ class ChannelEvents_Tests: XCTestCase {
     
     func test_updated() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelUpdated")
-        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEvent<NoExtraData>
+        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEvent
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
         XCTAssertEqual(event?.userId, "broken-waterfall-5")
+    }
+    
+    func test_updated_usingServerSideAuth() throws {
+        let json = XCTestCase.mockData(fromFile: "ChannelUpdated_ServerSide")
+        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEvent
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
+        XCTAssertNil(event?.userId)
     }
     
     func test_deleted() throws {
