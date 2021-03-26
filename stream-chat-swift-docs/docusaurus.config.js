@@ -17,12 +17,12 @@ module.exports = {
         src: 'img/logo.svg',
       },
       items: [
-        {
-          to: 'docs/',
-          activeBasePath: 'docs',
-          label: 'Docs',
-          position: 'left',
-        },
+        // {
+        //   to: 'docs/',
+        //   activeBasePath: 'docs',
+        //   label: 'Docs',
+        //   position: 'left',
+        // },
         //{to: 'blog', label: 'Blog', position: 'left'},
         {
           href: 'https://github.com/GetStream/stream-chat-swift',
@@ -34,15 +34,15 @@ module.exports = {
     footer: {
       style: 'dark',
       links: [
-        {
-          title: 'Docs',
-          items: [
-            {
-              label: 'Getting Started',
-              to: 'docs/',
-            },
-          ],
-        },
+        // {
+        //   title: 'Docs',
+        //   items: [
+        //     {
+        //       label: 'Getting Started',
+        //       to: 'docs/',
+        //     },
+        //   ],
+        // },
         {
           title: 'Community',
           items: [
@@ -71,6 +71,10 @@ module.exports = {
         },
       ],
       copyright: `Copyright © ${new Date().getFullYear()} Stream.io, Inc. Built with Docusaurus.`,
+    },
+    prism: {
+      additionalLanguages: ['swift'],
+      theme: require('prism-react-renderer/themes/dracula'),
     },
   },
   presets: [

@@ -3,26 +3,36 @@ title: Getting Started
 slug: /
 ---
 
-## Step 1: Generate a new Docusaurus site
+### 💡 [TL;DR Documentation](/tldr-documentation)
 
-If you haven't already, generate a new Docusaurus site using the classic template:
+When you don't have time and you want to start ASAP, check out our TL;DR documentation. It contains all you need to know about StreamChat Swift SDKs in 10 short bullet points.
 
-```shell
-npx @docusaurus/init@latest init my-website classic
-```
+<p>&nbsp;</p>
 
-## Step 2: Start your Docusaurus site
+---
 
-Run the development server in the newly created `my-website` folder:
+### **StreamChat** Documentation
 
-```shell
-cd my-website
+**⚠️ Important:** `StreamChat` is a low-level client for the Stream chat service and is meant to be used when you want to build a fully custom UI. For the majority of common use cases, using `StreamChatUI` is preferable.
 
-npx docusaurus start
-```
+#### Quick links:
 
-Open `docs/getting-started.md` and edit some lines. The site reloads automatically and display your changes.
+- [**Cheat Sheet**](/cheat-sheet) Real-world code examples showcasing the usage of the SDK.
+- [**Controller Overview**](/controllers-overview) This page contains a list of all available controllers within StreamChat, including their short description and typical use-cases.
+- [**Glossary**](/glossary) A list of names and terms used in the framework and documentation.
 
-## That's it!
+<p>&nbsp;</p>
 
-Congratulations! You've successfully run and modified your Docusaurus project.
+### **StreamChatUI** Documentation
+
+#### Quick links:
+
+- [UI Cheat Sheet](/ui-cheat-sheet) Real-world code examples showcasing the usage of the SDK.
+- [UI Components Overview] This page contains a list of all available UI components within StreamChatUI, including their short description and typical use-cases.
+- [UI Glossary] A list of names and terms used in the framework and documentation.
+
+---
+
+⚠️ This Wiki contains documentation for the version 3 of Stream chat SDK. For the documentation of the 2.x version, visit our [website](https://getstream.io/chat/docs/ios_installation/?language=swift). ⚠️
+
+---

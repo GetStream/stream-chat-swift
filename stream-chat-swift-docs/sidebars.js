@@ -1,16 +1,23 @@
 module.exports = {
   docs: [
+    'getting-started',
+    'tldr-documentation',
     {
       type: 'category',
-      label: 'Docusaurus Tutorial',
+      label: 'StreamChat',
       items: [
-        'getting-started',
-        'create-a-page',
-        'create-a-document',
-        'create-a-blog-post',
-        'markdown-features',
-        'thank-you',
+        'controllers-overview',
+        'cheat-sheet'
       ],
     },
+    {
+      type: 'category',
+      label: 'StreamChatUI',
+      items: [
+        'ui-cheat-sheet'
+      ],
+    },
+    'migrating-from-1.x-and-2.x',
+    'glossary'
   ],
 };
