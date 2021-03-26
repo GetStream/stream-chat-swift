@@ -79,7 +79,7 @@ extension MemberDTO {
     
     static func loadLastActiveMembers(cid: ChannelId, context: NSManagedObjectContext) -> [MemberDTO] {
         let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
-        request.predicate = NSPredicate(format: "ANY channel.cid == %@", cid.rawValue)
+        request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
         request.sortDescriptors = [ChannelMemberListSortingKey.lastActiveSortDescriptor]
         request.fetchLimit = context.channelConfig?.lastActiveMembersLimit ?? 25
         return try! context.fetch(request)
