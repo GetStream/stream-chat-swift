@@ -249,6 +249,7 @@ lane :test_release do
     testplan: "StreamChatTestPlan",
     configuration: "ReleaseTests",
     clean: true,
+    devices: options[:device]
   )
 end
 
@@ -258,7 +259,8 @@ lane :stress_test do
     project: "StreamChat.xcodeproj",
     scheme: "StreamChat",
     clean: true,
-    build_for_testing: true
+    build_for_testing: true,
+    devices: options[:device]
   )
 
   setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan")
@@ -269,6 +271,7 @@ lane :stress_test do
       scheme: "StreamChat",
       test_without_building: true,
       testplan: "StreamChatStressTestPlan",
+      devices: options[:device],
       xcpretty_args: "--test" # simplify logs
     )
   }
@@ -281,7 +284,8 @@ lane :stress_test_release do
     scheme: "StreamChat",
     configuration: "ReleaseTests",
     clean: true,
-    build_for_testing: true
+    build_for_testing: true,
+    devices: options[:device]
   )
 
   setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan")
@@ -293,6 +297,7 @@ lane :stress_test_release do
       configuration: "ReleaseTests",
       test_without_building: true,
       testplan: "StreamChatStressTestPlan",
+      devices: options[:device],
       xcpretty_args: "--test" # simplify logs
     )
   }
@@ -340,6 +345,7 @@ lane :build_docs_snippets do |options|
     scheme: "DocsSnippets",
     clean: true,
     build_for_testing: true,
+    devices: options[:device]
   )
 end
 
