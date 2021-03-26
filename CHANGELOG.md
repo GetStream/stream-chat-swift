@@ -19,7 +19,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Expose `pinDetails` on `ChatMessage` which contains the pinning information, like the expiration date [#896](https://github.com/GetStream/stream-chat-swift/pull/896) 
 - Add support for pinning and unpinning messages through `pin()` and `unpin()` methods in `MessageController` [#896](https://github.com/GetStream/stream-chat-swift/pull/896)
 - Add new optional `pinning: Pinning` parameter when creating a new message in `ChannelController` to create a new message and pin it instantly [#896](https://github.com/GetStream/stream-chat-swift/pull/896)
-- Add `lastActiveMembers` and `lastActiveWatchers` to `Channel`. The max number of entities these fields expose if configurable via `ChatConfig` [#911](https://github.com/GetStream/stream-chat-swift/pull/911)
+- Add `lastActiveMembers` and `lastActiveWatchers` to `ChatChannel`. The max number of entities these fields expose is configurable via `ChatClientConfig.localCaching.chatChannel` [#911](https://github.com/GetStream/stream-chat-swift/pull/911)
+
+### 🔄 Changed
+- `ChatChannel.latestMessages` now by default contains max 5 messages. You can change this setting in `ChatClientConfig.localCaching.chatChannel.latestMessagesLimit` [#923](https://github.com/GetStream/stream-chat-swift/pull/923)
 
 ### ⛔️ Deprecated
 - `ChatChannel`'s properties `cachedMembers` and `watchers` were deprecated. Use `lastActiveMembers` and `lastActiveWatchers` instead [#911](https://github.com/GetStream/stream-chat-swift/pull/911)
