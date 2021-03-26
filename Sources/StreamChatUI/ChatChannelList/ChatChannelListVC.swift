@@ -16,6 +16,9 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     SwipeableViewDelegate {
     /// The `ChatChannelListController` instance that provides channels data.
     public var controller: _ChatChannelListController<ExtraData>!
+    
+    /// To prevent inconsistencies during `collectionView.performBatchUpdates` we need to update are dataSource count in updates block
+    private var channelsCount = 0
 
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
         if #available(iOS 13.0, *) {
@@ -62,6 +65,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     override open func setUp() {
         super.setUp()
 
+        channelsCount = controller.channels.count
         controller.setDelegate(self)
         controller.synchronize()
         
@@ -111,7 +115,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        controller.channels.count
+        channelsCount
     }
     
     open func collectionView(
@@ -236,11 +240,13 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
                     switch change {
                     case let .insert(_, index):
                         collectionView.insertItems(at: [index])
+                        channelsCount += 1
                     case let .move(_, fromIndex, toIndex):
                         collectionView.moveItem(at: fromIndex, to: toIndex)
                         movedItems.append(toIndex)
                     case let .remove(_, index):
                         collectionView.deleteItems(at: [index])
+                        channelsCount -= 1
                     case let .update(_, index):
                         collectionView.reloadItems(at: [index])
                     }
