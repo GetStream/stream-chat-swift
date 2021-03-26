@@ -99,8 +99,7 @@ public extension _ChatChannel {
             memberCount: memberCount,
             reads: reads,
             extraData: extraData,
-            latestMessages: { latestMessages },
-            lastMessage: latestMessages.first
+            latestMessages: { latestMessages }
         )
     }
     
@@ -144,8 +143,7 @@ public extension _ChatChannel {
             memberCount: memberCount,
             reads: reads,
             extraData: extraData,
-            latestMessages: { latestMessages },
-            lastMessage: latestMessages.first
+            latestMessages: { latestMessages }
         )
     }
 }
