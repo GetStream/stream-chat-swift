@@ -239,7 +239,7 @@ lane :test_ui_release do |options|
 end
 
 desc "Runs tests in Release config"
-lane :test_release do
+lane :test_release do |options|
 
   setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
 
@@ -254,7 +254,7 @@ lane :test_release do
 end
 
 desc "Runs stress tests for in Debug config"
-lane :stress_test do
+lane :stress_test do |options|
   scan(
     project: "StreamChat.xcodeproj",
     scheme: "StreamChat",
@@ -278,7 +278,7 @@ lane :stress_test do
 end
 
 desc "Runs stress tests in Release config"
-lane :stress_test_release do
+lane :stress_test_release do |options|
   scan(
     project: "StreamChat.xcodeproj",
     scheme: "StreamChat",
