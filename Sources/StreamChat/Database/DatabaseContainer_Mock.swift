@@ -18,7 +18,7 @@ class DatabaseContainerMock: DatabaseContainer {
     @Atomic var resetEphemeralValues_called = false
     
     convenience init() {
-        try! self.init(kind: .inMemory)
+        try! self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()))
     }
     
     override init(
