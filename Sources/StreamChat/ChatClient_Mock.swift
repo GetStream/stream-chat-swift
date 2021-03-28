@@ -134,7 +134,7 @@ extension _ChatClient.Environment {
             databaseContainerBuilder: {
                 do {
                     return try DatabaseContainerMock(
-                        kind: $0,
+                        kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
                         shouldFlushOnStart: $1,
                         shouldResetEphemeralValuesOnStart: $2,
                         channelConfig: $3
