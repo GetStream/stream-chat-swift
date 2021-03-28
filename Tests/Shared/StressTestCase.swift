@@ -17,23 +17,22 @@ class StressTestCase: XCTestCase {
     }
     
     override class func tearDown() {
-        // After running test suite cleanup `NSTemporaryDirectory()` and `Documents` directory
-        let fileManager = FileManager.default
-        let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
-        let documentsURL = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
-        let tempFileURLs = (try? fileManager.contentsOfDirectory(
-            at: tempDirectoryURL,
-            includingPropertiesForKeys: nil,
-            options: .skipsHiddenFiles
-        )) ?? []
-        let documentsFileURLs = documentsURL.flatMap { try? FileManager.default.contentsOfDirectory(
-            at: $0,
-            includingPropertiesForKeys: nil,
-            options: .skipsHiddenFiles
-        ) } ?? []
-        
-        for fileURL in tempFileURLs + documentsFileURLs {
-            try? fileManager.removeItem(at: fileURL)
+        do {
+            // After running test suite cleanup `NSTemporaryDirectory()` and `Documents` directory
+            let fileManager = FileManager.default
+            let tempDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+            
+            let tempFileURLs = try fileManager.contentsOfDirectory(
+                at: tempDirectoryURL,
+                includingPropertiesForKeys: nil,
+                options: .skipsHiddenFiles
+            )
+            
+            try tempFileURLs.forEach {
+                try fileManager.removeItem(at: $0)
+            }
+        } catch {
+            XCTFail("Failed to clean up after tests: \(error)")
         }
         
         super.tearDown()
