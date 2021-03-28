@@ -17,8 +17,12 @@ class DatabaseContainerMock: DatabaseContainer {
     @Atomic var recreatePersistentStore_errorResponse: Error?
     @Atomic var resetEphemeralValues_called = false
     
+    /// If set to `true` and the mock will remove its database files once deinited.
+    private var shouldCleanUpTempDBFiles = false
+    
     convenience init(channelConfig: ChatClientConfig.Channel? = nil) {
         try! self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), channelConfig: channelConfig)
+        shouldCleanUpTempDBFiles = true
     }
     
     override init(
@@ -38,6 +42,17 @@ class DatabaseContainerMock: DatabaseContainer {
             bundle: bundle,
             channelConfig: channelConfig
         )
+    }
+    
+    deinit {
+        // Remove the database file if the container requests that
+        if shouldCleanUpTempDBFiles, case let .onDisk(databaseFileURL: url) = init_kind {
+            do {
+                try FileManager.default.removeItem(at: url)
+            } catch {
+                fatalError("Failed to remove temp database file: \(error)")
+            }
+        }
     }
     
     override func removeAllData(force: Bool = true) throws {
