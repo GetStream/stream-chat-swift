@@ -10,7 +10,7 @@ class DatabaseSession_Tests: StressTestCase {
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
     }
     
     override func tearDown() {

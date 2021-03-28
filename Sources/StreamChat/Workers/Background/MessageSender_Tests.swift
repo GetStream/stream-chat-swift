@@ -21,7 +21,7 @@ class MessageSender_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         
         sender = MessageSender(database: database, apiClient: apiClient)
         

@@ -19,7 +19,7 @@ class EventSender_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         
         time = VirtualTime()
         VirtualTimeTimer.time = time

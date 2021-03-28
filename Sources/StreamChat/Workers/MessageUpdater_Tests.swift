@@ -21,7 +21,7 @@ final class MessageUpdater_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         messageUpdater = MessageUpdater(database: database, apiClient: apiClient)
     }
     

@@ -20,7 +20,7 @@ final class MessageEditor_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         editor = MessageEditor(database: database, apiClient: apiClient)
     }
     

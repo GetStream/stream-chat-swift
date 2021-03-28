@@ -17,7 +17,7 @@ class UserListUpdater_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
         
         listUpdater = UserListUpdater(database: database, apiClient: apiClient)
     }

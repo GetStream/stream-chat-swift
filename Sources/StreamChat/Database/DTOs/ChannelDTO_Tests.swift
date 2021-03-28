@@ -14,7 +14,7 @@ class ChannelDTO_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
     }
     
     override func tearDown() {
@@ -325,7 +325,7 @@ class ChannelDTO_Tests: XCTestCase {
             .map { MemberPayload<NoExtraData>.withLastActivity(at: Date() - TimeInterval($0)) }.shuffled()
         let payload = dummyPayload(with: cid, members: allMembers)
         
-        var database: DatabaseContainerMock! = try DatabaseContainerMock(kind: .inMemory, channelConfig: config)
+        var database: DatabaseContainerMock! = DatabaseContainerMock(channelConfig: config)
         
         try database.writeSynchronously { session in
             try session.saveChannel(payload: payload)
@@ -350,7 +350,7 @@ class ChannelDTO_Tests: XCTestCase {
             .map { UserPayload<NoExtraData>.withLastActivity(at: Date() - TimeInterval($0)) }.shuffled()
         let payload = dummyPayload(with: cid, watchers: allWatchers)
         
-        var database: DatabaseContainerMock! = try DatabaseContainerMock(kind: .inMemory, channelConfig: config)
+        var database: DatabaseContainerMock! = DatabaseContainerMock(channelConfig: config)
         
         try database.writeSynchronously { session in
             try session.saveChannel(payload: payload)

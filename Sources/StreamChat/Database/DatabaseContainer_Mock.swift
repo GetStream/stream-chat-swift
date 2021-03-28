@@ -17,8 +17,8 @@ class DatabaseContainerMock: DatabaseContainer {
     @Atomic var recreatePersistentStore_errorResponse: Error?
     @Atomic var resetEphemeralValues_called = false
     
-    convenience init() {
-        try! self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()))
+    convenience init(channelConfig: ChatClientConfig.Channel? = nil) {
+        try! self.init(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()), channelConfig: channelConfig)
     }
     
     override init(
