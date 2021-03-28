@@ -20,7 +20,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         super.setUp()
         env = TestEnvironment()
         
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         

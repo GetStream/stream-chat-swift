@@ -14,7 +14,7 @@ final class ChannelMemberTypingStateUpdaterMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         middleware = ChannelMemberTypingStateUpdaterMiddleware(database: database)
     }
     

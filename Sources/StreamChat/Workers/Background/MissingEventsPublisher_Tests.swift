@@ -18,7 +18,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
     override func setUp() {
         super.setUp()
         
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         

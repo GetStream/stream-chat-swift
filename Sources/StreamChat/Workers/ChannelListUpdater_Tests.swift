@@ -17,7 +17,7 @@ class ChannelListUpdater_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
         
         listUpdater = ChannelListUpdater(database: database, apiClient: apiClient)
     }

@@ -11,7 +11,7 @@ class MessageDTO_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
     }
     
     override func tearDown() {

@@ -57,7 +57,7 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         fetchRequest = NSFetchRequest(entityName: "TestManagedObject")
         fetchRequest.sortDescriptors = [.init(keyPath: \TestManagedObject.testId, ascending: true)]
         database = try! DatabaseContainerMock(
-            kind: .inMemory,
+            kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
             modelName: "TestDataModel",
             bundle: Bundle(for: EntityDatabaseObserver_Tests.self)
         )
