@@ -7,23 +7,17 @@ import UIKit
 
 public typealias ChatMessageComposerSendButton = _ChatMessageComposerSendButton<NoExtraData>
 
-open class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: _ChatSquareButton<ExtraData> {
-    // MARK: Underlying types
-    
+open class _ChatMessageComposerSendButton<ExtraData: ExtraDataTypes>: _ComposerButton<ExtraData> {
     public enum Mode {
         case new, edit
     }
-    
-    // MARK: - Properties
-    
+
     public var mode: Mode = .new {
         didSet {
             updateContentIfNeeded()
         }
     }
-    
-    // MARK: - Overrides
-    
+
     override open var isEnabled: Bool {
         didSet {
             var transformToApply: CGAffineTransform

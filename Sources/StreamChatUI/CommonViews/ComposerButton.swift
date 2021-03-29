@@ -5,15 +5,11 @@
 import StreamChat
 import UIKit
 
-public typealias ChatSquareButton = _ChatSquareButton<NoExtraData>
+public typealias ComposerButton = _ComposerButton<NoExtraData>
 
-open class _ChatSquareButton<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
-    // MARK: - Properties
-    
+open class _ComposerButton<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
     public var defaultIntrinsicContentSize: CGSize?
-    
-    // MARK: - Overrides
-    
+
     override open var intrinsicContentSize: CGSize {
         defaultIntrinsicContentSize ?? super.intrinsicContentSize
     }
