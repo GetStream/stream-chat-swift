@@ -414,7 +414,7 @@ class ChatClient_Tests: StressTestCase {
         config.shouldConnectAutomatically = false
 
         // Create a new chat client
-        let client = ChatClient(
+        var client: ChatClient! = ChatClient(
             config: config,
             tokenProvider: .anonymous
         )
@@ -427,6 +427,8 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor<NoExtraData> })
         XCTAssert(client.backgroundWorkers.contains { $0 is MissingEventsPublisher<NoExtraData> })
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader })
+        
+        AssertAsync.canBeReleased(&client)
     }
     
     func test_backgroundWorkersConfiguration() {
@@ -465,13 +467,15 @@ class ChatClient_Tests: StressTestCase {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.shouldConnectAutomatically = false
         // Create an active client to save the current user to the database.
-        let chatClient = ChatClient(
+        var chatClient: ChatClient! = ChatClient(
             config: config,
             tokenProvider: .static(.unique(userId: currentUserId))
         )
         // Create current user in the database.
         try chatClient.databaseContainer.createCurrentUser(id: currentUserId)
 
+        AssertAsync.canBeReleased(&chatClient)
+        
         // Take main then background queue.
         for queue in [DispatchQueue.main, DispatchQueue.global()] {
             let error: Error? = try await { completion in

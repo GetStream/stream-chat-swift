@@ -14,6 +14,11 @@ class ChannelListController_SwiftUI_Tests: iOS13TestCase {
         channelListController = ChannelListControllerMock()
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&channelListController)
+        super.tearDown()
+    }
+    
     func test_controllerInitialValuesAreLoaded() {
         channelListController.state_simulated = .localDataFetched
         channelListController

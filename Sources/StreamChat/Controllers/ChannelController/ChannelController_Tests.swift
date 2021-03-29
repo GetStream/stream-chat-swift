@@ -33,7 +33,7 @@ class ChannelController_Tests: StressTestCase {
         channelId = nil
         controllerCallbackQueueID = nil
         
-        env.channelUpdater?.cleanUp()
+        env?.channelUpdater?.cleanUp()
         
         AssertAsync {
             Assert.canBeReleased(&controller)
@@ -185,6 +185,12 @@ class ChannelController_Tests: StressTestCase {
     }
 
     func test_channelControllerForNewChannel_throwsError_ifCurrentUserDoesNotExist() throws {
+        AssertAsync {
+            Assert.canBeReleased(&controller)
+            Assert.canBeReleased(&client)
+            Assert.canBeReleased(&env)
+        }
+        
         let clientWithoutCurrentUser = ChatClient(
             config: .init(apiKeyString: .unique),
             tokenProvider: .invalid()
@@ -283,6 +289,12 @@ class ChannelController_Tests: StressTestCase {
     }
 
     func test_channelControllerForNewDirectMessagesChannel_throwsError_ifCurrentUserDoesNotExist() {
+        AssertAsync {
+            Assert.canBeReleased(&controller)
+            Assert.canBeReleased(&self.client)
+            Assert.canBeReleased(&env)
+        }
+        
         let client = ChatClient(
             config: .init(apiKeyString: .unique),
             tokenProvider: .invalid()

@@ -14,6 +14,11 @@ class DataStore_Tests: StressTestCase {
         _client = _ChatClient.mock
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&_client)
+        super.tearDown()
+    }
+    
     func test_userIsLoaded() throws {
         let userId: UserId = .unique
         XCTAssertNil(dataStore.user(id: userId))
