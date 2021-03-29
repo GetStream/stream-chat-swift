@@ -1,12 +1,10 @@
 name: Deploy Docusaurus
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-    - 'stream-chat-swift-docs/**' # Run when any doc file is changed
-    - 'DocsSnippets/**' # Also re-run when we update doc snippets
+  release:
+    types:
+      - created # We only want documentation for released versions
+  workflow_dispatch: # We want to be able to manually deploy too
 
 jobs:
   deploy-docusaurus:
