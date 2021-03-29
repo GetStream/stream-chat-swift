@@ -27,7 +27,7 @@ extension SnapshotVariant {
     // MARK: - Combinations
     
     static let all: [SnapshotVariant] = {
-        [smallDark, defaultLight, extraExtraExtraLargeLight]
+        [smallDark, defaultLight, extraExtraExtraLargeLight, rightToLeftLayout]
     }()
     
     static let onlyUserInterfaceStyles: [SnapshotVariant] = {
@@ -68,6 +68,8 @@ extension SnapshotVariant {
         return SnapshotVariant(snapshotTraits: traits)
     }()
     
+    static let rightToLeftLayout = SnapshotVariant(snapshotTraits: [rightToLeftLayoutTrait])
+    
     // MARK: - Traits
     
     private static let extraExtraExtraLargeTrait = SnapshotTrait(
@@ -88,6 +90,8 @@ extension SnapshotVariant {
     
     @available(iOS 12.0, *)
     private static let darkTrait = SnapshotTrait(name: "dark", trait: UITraitCollection(userInterfaceStyle: .dark))
+    
+    static let rightToLeftLayoutTrait = SnapshotTrait(name: "rightToLeftLayout", trait: .init(layoutDirection: .rightToLeft))
 }
 
 extension Array where Element == SnapshotVariant {
