@@ -69,18 +69,18 @@ Please check [our wiki page for migration](https://github.com/GetStream/stream-c
 
 ## Roadmap
 
-* Open UI components for subclassing and customization (3/2021, available in 🅱️ `3.2.0-beta`)
-* Pinned messages (In progress)
-* Multi-tenancy, teams (In progress)
-* Local notification support (3/2021)
-* SwiftUI wrappers for UI components (4/2021)
-* Better photo gallery experience (4/2021)
-* Silent messages (4/2021)
-* Expired tokens (4/2021)
-* Channel invites (4/2021)
-* Paginating reactions (4/2021)
-* Message search (5/2021)
-* RxSwift wrappers (tbd)
+- [ ] Open UI components for subclassing and customization (3/2021, available in 🅱️ `3.2.0-beta`)
+- [x] Pinned messages (released in `3.1.4`)
+- [x] Multi-tenancy, teams (released in `3.1.4`)
+- [ ] Local notification support (4/2021)
+- [ ] SwiftUI wrappers for UI components (4/2021)
+- [ ] Better photo gallery experience (4/2021)
+- [ ] Silent messages (4/2021)
+- [ ] Expired tokens (4/2021)
+- [ ] Channel invites (4/2021)
+- [ ] Paginating reactions (4/2021)
+- [ ] Message search (5/2021)
+- [ ] RxSwift wrappers (tbd)
 
 ---
 ## Quick Overview
