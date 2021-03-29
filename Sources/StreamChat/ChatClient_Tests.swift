@@ -13,7 +13,8 @@ class ChatClient_Tests: StressTestCase {
     // A helper providing ChatClientConfig with in-memory DB option
     var inMemoryStorageConfig: ChatClientConfig {
         var config = ChatClientConfig()
-        config.isLocalStorageEnabled = false
+        config.isLocalStorageEnabled = true
+        config.localStorageFolderURL = .newTemporaryFileURL()
         config.baseURL = BaseURL(urlString: .unique)!
         return config
     }
