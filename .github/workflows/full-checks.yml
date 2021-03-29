@@ -69,7 +69,7 @@ jobs:
       run: bundle exec fastlane stress_test_release device:"iPhone 12"
 
   stress-tests-ios13:
-    name: Stress Test LLC - iOS 13.4 (Release)
+    name: Stress Test LLC - iOS 13.5 (Release)
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -94,7 +94,7 @@ jobs:
         device: "iPhone 11"
         ios: "13.5"
         xcode: "11.5"
-    - name: Run Stress Tests - iOS 13.4 (Release)
+    - name: Run Stress Tests - iOS 13.5 (Release)
       run: bundle exec fastlane stress_test_release device:"iPhone 11 (13.5)"
 
   stress-tests-ios12:
@@ -127,7 +127,7 @@ jobs:
       run: bundle exec fastlane stress_test_release device:"iPhone 11 (12.4)"
 
   build-apps-ios13:
-    name: Build Sample + Demo Apps - iOS 13.4
+    name: Build Sample App - iOS 13.5
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -152,10 +152,8 @@ jobs:
         device: "iPhone 11"
         ios: "13.5"
         xcode: "11.5"
-    - name: Build Sample App - iOS 13.4
+    - name: Build Sample App - iOS 13.5
       run: bundle exec fastlane build_sample device:"iPhone 11 (13.5)"
-    - name: Build Demo App - iOS 13.4
-      run: bundle exec fastlane build_demo device:"iPhone 11 (13.5)"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
@@ -167,7 +165,7 @@ jobs:
       if: ${{ github.event_name == 'push' && failure() }}
 
   build-apps-ios12:
-    name: Build Sample + Demo Apps - iOS 12.4
+    name: Build Sample App - iOS 12.4
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v1
@@ -194,8 +192,6 @@ jobs:
         xcode: "10.3"
     - name: Build Sample App - iOS 12.4
       run: bundle exec fastlane build_sample device:"iPhone 7 (12.4)"
-    - name: Build Demo App - iOS 12.4
-      run: bundle exec fastlane build_demo device:"iPhone 7 (12.4)"
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
