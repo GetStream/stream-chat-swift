@@ -98,7 +98,7 @@ class ChatChannelListVC_Tests: XCTestCase {
             channels: channels,
             state: .remoteDataFetched
         )
-        AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
+        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
 
     func test_appearanceCustomization_usingAppearanceHook() {
@@ -128,7 +128,7 @@ class ChatChannelListVC_Tests: XCTestCase {
             channels: channels,
             state: .remoteDataFetched
         )
-        AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
+        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
 
     func test_appearanceCustomization_usingSubclassing() {
@@ -160,7 +160,7 @@ class ChatChannelListVC_Tests: XCTestCase {
             channels: channels,
             changes: []
         )
-        AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
+        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
     
     func test_router_openCreateNewChannel() {

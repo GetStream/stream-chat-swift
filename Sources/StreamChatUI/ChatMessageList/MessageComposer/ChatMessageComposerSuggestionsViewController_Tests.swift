@@ -59,7 +59,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             collectionView: vc.collectionView
         )
         
-        AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
+        AssertSnapshot(vc, screenSize: defaultSuggestionsSize)
     }
 
     func test_commands_defaultAppearance() {
@@ -100,7 +100,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             collectionView: vc.collectionView
         )
         
-        AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
+        AssertSnapshot(vc, screenSize: defaultSuggestionsSize)
     }
 
     func test_commands_appearanceCustomization_usingAppearanceHook() {
@@ -202,7 +202,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             searchController: searchController
         )
         
-        AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
+        AssertSnapshot(vc, screenSize: defaultSuggestionsSize)
     }
 
     func test_mentions_appearanceCustomization_usingAppearanceHook() {
