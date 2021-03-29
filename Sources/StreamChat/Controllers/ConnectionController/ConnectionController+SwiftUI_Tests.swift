@@ -14,6 +14,11 @@ class ChatConnectionController_SwiftUI_Tests: iOS13TestCase {
         connectionController = ChatConnectionControllerMock()
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&connectionController)
+        super.tearDown()
+    }
+    
     func test_controllerInitialValuesAreLoaded() {
         connectionController.connectionStatus_simulated = .initialized
         

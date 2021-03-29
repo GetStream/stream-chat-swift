@@ -14,6 +14,11 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         channelController = ChannelControllerMock()
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&channelController)
+        super.tearDown()
+    }
+    
     func test_controllerInitialValuesAreLoaded() {
         channelController.state_simulated = .localDataFetched
         channelController.channel_simulated = .init(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)

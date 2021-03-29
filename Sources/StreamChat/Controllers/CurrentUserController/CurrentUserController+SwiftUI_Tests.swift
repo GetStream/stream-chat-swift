@@ -14,6 +14,11 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
         currentUserController = CurrentUserControllerMock()
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&currentUserController)
+        super.tearDown()
+    }
+    
     func test_controllerInitialValuesAreLoaded() {
         currentUserController.currentUser_simulated = .init(id: .unique)
         

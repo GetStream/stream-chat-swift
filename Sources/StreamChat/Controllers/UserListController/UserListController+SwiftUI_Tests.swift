@@ -14,6 +14,11 @@ class UserListController_SwiftUI_Tests: iOS13TestCase {
         userListController = UserListControllerMock()
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&userListController)
+        super.tearDown()
+    }
+    
     func test_controllerInitialValuesAreLoaded() {
         userListController.state_simulated = .localDataFetched
         userListController.users_simulated = [.unique]
