@@ -319,6 +319,9 @@ class ChannelDTO_Tests: XCTestCase {
     }
     
     func test_channelPayload_localCachingDefaults() throws {
+        // This is just a temp fix. The CI fail if there are multiple Database instance alive at the same time,=
+        AssertAsync.canBeReleased(&self.database)
+        
         let memberLimit = Int.random(in: 1..<50)
         let watcherLimit = Int.random(in: 1..<50)
         let messagesLimit = Int.random(in: 1..<50)
