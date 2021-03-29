@@ -319,8 +319,9 @@ class ChannelDTO_Tests: XCTestCase {
     }
     
     func test_channelPayload_localCachingDefaults() throws {
-        // This is just a temp fix. The CI fail if there are multiple Database instance alive at the same time,=
-        AssertAsync.canBeReleased(&self.database)
+        // This is just a temp fix. The CI tends to fail if there are multiple Database instance alive at the same time.
+        // -> CIS-756
+        AssertAsync.canBeReleased(&database)
         
         let memberLimit = Int.random(in: 1..<50)
         let watcherLimit = Int.random(in: 1..<50)
@@ -334,7 +335,7 @@ class ChannelDTO_Tests: XCTestCase {
 
         let cid: ChannelId = .unique
         
-        var database: DatabaseContainerMock! = DatabaseContainerMock(localCachingSettings: caching)
+        database = DatabaseContainerMock(localCachingSettings: caching)
         
         // Create more entities than the limits
         let allMembers: [MemberPayload<NoExtraData>] = (0..<memberLimit * 2).map { _ in .dummy() }
@@ -362,8 +363,6 @@ class ChannelDTO_Tests: XCTestCase {
                 .prefix(memberLimit)
                 .map(\.user.id)
         )
-        
-        AssertAsync.canBeReleased(&database)
     }
 
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
