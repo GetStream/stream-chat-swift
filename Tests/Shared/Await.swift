@@ -35,16 +35,20 @@ func await<T>(
     line: UInt = #line,
     _ action: (_ done: @escaping (T) -> Void) -> Void
 ) throws -> T {
-    let expecation = XCTestExpectation(description: "Action completed")
+    let expectation = XCTestExpectation(description: "Action completed")
     var result: T?
     action { resultValue in
-        DispatchQueue.main.async {
-            result = resultValue
-            expecation.fulfill()
+        result = resultValue
+        if Thread.isMainThread {
+            expectation.fulfill()
+        } else {
+            DispatchQueue.main.async {
+                expectation.fulfill()
+            }
         }
     }
     
-    let waiterResult = XCTWaiter.wait(for: [expecation], timeout: timeout)
+    let waiterResult = XCTWaiter.wait(for: [expectation], timeout: timeout)
     switch waiterResult {
     case .completed where result != nil:
         return result!
