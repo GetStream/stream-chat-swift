@@ -52,6 +52,7 @@ class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
 
 private extension UIView {
     func addWidthConstraint() {
+        translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: 350)
         ])

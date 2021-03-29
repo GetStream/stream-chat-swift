@@ -22,7 +22,6 @@ class ChatChannelUnreadCountView_SwiftUI_Tests: XCTestCase {
             public var body: some View {
                 Text(String(dataSource.content.messages))
                     .fontWeight(.bold)
-                    .padding()
                     .background(
                         Circle()
                             .fill(Color.red)
@@ -32,6 +31,18 @@ class ChatChannelUnreadCountView_SwiftUI_Tests: XCTestCase {
 
         let view = ChatChannelUnreadCountView.SwiftUIWrapper<CustomUnreadCountView>()
         view.content = .mock(messages: 20)
+        view.addLayoutConstraints()
+        
         AssertSnapshot(view)
+    }
+}
+
+private extension UIView {
+    func addLayoutConstraints() {
+        translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            heightAnchor.constraint(equalTo: widthAnchor),
+            widthAnchor.constraint(equalToConstant: 50)
+        ])
     }
 }
