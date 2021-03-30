@@ -1,5 +1,5 @@
 ---
-title: TL;DR Documentation
+title: Introduction
 ---
 
 #### You don't have time and you want to start using StreamChat Swift SDKs ASAP? 

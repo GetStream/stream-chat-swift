@@ -1,23 +1,43 @@
 module.exports = {
   docs: [
-    'getting-started',
-    'tldr-documentation',
+    'home',
+    'introduction',
     {
       type: 'category',
-      label: 'StreamChat',
+      label: 'Guides',
       items: [
-        'controllers-overview',
-        'cheat-sheet'
+        'integration',
+        'getting-started',
+        'working-with-channels',
+        'working-with-a-channel',
+        'working-with-messages',
+        'pinned-messages',
+        'working-with-attachments',
+        'working-with-reactions',
+        'working-with-members',
+        'working-with-watchers',
+        'push-notifications',
+        'ui-customization',
+        'moderation',
+        'filter-query-guide',
       ],
     },
     {
       type: 'category',
-      label: 'StreamChatUI',
+      label: 'StreamChat Controllers',
       items: [
-        'ui-cheat-sheet'
+        'controllers-overview',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'UI Components',
+      items: [
+        'ui-components-overview',
       ],
     },
     'migrating-from-1.x-and-2.x',
+    'faq',
     'glossary'
   ],
 };
