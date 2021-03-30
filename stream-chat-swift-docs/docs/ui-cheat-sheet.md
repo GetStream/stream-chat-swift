@@ -67,7 +67,7 @@ UIView.transition(with: view.window!,
                     self.view.window?.rootViewController = navigation
                   })
 ```
-> **- 🅱️ Beta only -** Using a `UINavigationController` is not required but strongly recommended. If you don't want to use a Navigation Controller, you'd need to subclass `ChatChannelListRouter`, override `func openChat` and implement your logic for showing the chat. This is explained [here](link-to-UIConfig-part).
+> **- 🅱️ Beta only -** Using a `UINavigationController` is not required but strongly recommended. If you don't want to use a Navigation Controller, you'd need to subclass `ChatChannelListRouter`, override `func openChat` and implement your logic for showing the chat. This is explained [here](#injecting-custom-subclass).
 
 `ChatChannelListController` will take care of opening individual channels from this point.
 

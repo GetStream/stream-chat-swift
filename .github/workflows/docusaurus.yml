@@ -16,8 +16,10 @@ jobs:
         uses: webfactory/ssh-agent@v0.4.1
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
-      - name: Install yarn # Somehow it isn't pre-installed? If it is, remove this action
-        run: npm install -g yarn
+      - name: Configure git for bot # so that it can push to gh-pages branch
+        run: |
+          git config --global user.email "bahadir+iosbot@getstream.io"
+          git config --global user.name "Stream iOS Bot"
       - name: Cache node_modules
         uses: actions/cache@v2
         id: node-cache
