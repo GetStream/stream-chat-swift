@@ -22,6 +22,10 @@ echo
 echo -e "👉 Bootstrap Mint dependencies"
 mint bootstrap
 
+echo
+echo -e "👉 Create git/hooks folder if needed"
+mkdir -p .git/hooks
+
 # Symlink hooks folder to .git/hooks folder
 echo
 echo -e "👉 Create symlink for pre-commit hooks"
