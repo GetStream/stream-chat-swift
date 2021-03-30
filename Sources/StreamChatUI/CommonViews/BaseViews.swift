@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamChat
 import UIKit
 
 // Just a protocol to formalize the methods required
@@ -49,11 +50,23 @@ public extension Customizable where Self: UIViewController {
     }
 }
 
+extension UIConfigProvider where Self: _View {
+    public func uiConfigDidRegister() {
+        if isInitialized {
+            log.assertionFailure(
+                "`UIConfig` was assigned after the view has been already initialized. This is most likely caused by assigning " +
+                    "the custom `UIConfig` instance after the view has been added to the view hierarchy, or after the view's subviews " +
+                    "have been initialized already. This is undefined behavior and should be avoided."
+            )
+        }
+    }
+}
+
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
 open class _View: UIView, AppearanceSetting, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
-    private var isInitialized: Bool = false
+    fileprivate var isInitialized: Bool = false
     
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
