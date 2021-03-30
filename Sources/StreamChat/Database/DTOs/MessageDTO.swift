@@ -346,7 +346,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         } else if let cid = cid {
             channelDTO = ChannelDTO.load(cid: cid, context: self)
         } else {
-            log.assertationFailure("Should never happen because either `cid` or `payload.channel` should be present.")
+            log.assertionFailure("Should never happen because either `cid` or `payload.channel` should be present.")
         }
 
         if let channelDTO = channelDTO {
@@ -357,7 +357,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
             dto.channel = channelDTO
         } else {
-            log.assertationFailure("Should never happen, a channel should have been fetched.")
+            log.assertionFailure("Should never happen, a channel should have been fetched.")
         }
         
         let reactions = payload.latestReactions + payload.ownReactions
@@ -424,7 +424,7 @@ extension MessageDTO {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.Message.self, from: self.extraData)
         } catch {
-            log.assertationFailure(
+            log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
                     + "the extra data must be a valid JSON to be saved."
             )

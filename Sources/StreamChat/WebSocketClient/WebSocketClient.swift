@@ -132,7 +132,7 @@ class WebSocketClient {
     /// Calling this method has no effect is the web socket is already connected, or is in the connecting phase.
     func connect() {
         guard let endpoint = connectEndpoint else {
-            log.assertationFailure("Attempt to connect `web-socket` while endpoint is missing")
+            log.assertionFailure("Attempt to connect `web-socket` while endpoint is missing")
             return
         }
 

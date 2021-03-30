@@ -141,7 +141,7 @@ extension UserDTO {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.self, from: self.extraData)
         } catch {
-            log.assertationFailure(
+            log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
                     + "the extra data must be a valid JSON to be saved."
             )
