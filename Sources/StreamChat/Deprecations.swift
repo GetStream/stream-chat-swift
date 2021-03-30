@@ -22,3 +22,20 @@ public extension _ChatChannel {
     @available(*, renamed: "lastActiveWatchers")
     var watchers: Set<_ChatUser<ExtraData.User>> { Set(lastActiveWatchers) }
 }
+
+public extension Logger {
+    /// Stops program execution with `Swift.assertionFailure`. In RELEASE builds only
+    /// logs the failure.
+    ///
+    /// - Parameters:
+    ///   - message: A custom message to log if `condition` is evaluated to false.
+    @available(*, deprecated, renamed: "assertionFailure")
+    func assertationFailure(
+        _ message: @autoclosure () -> Any,
+        functionName: StaticString = #function,
+        fileName: StaticString = #file,
+        lineNumber: UInt = #line
+    ) {
+        assertionFailure(message(), functionName: functionName, fileName: fileName, lineNumber: lineNumber)
+    }
+}
