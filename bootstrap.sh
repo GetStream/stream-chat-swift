@@ -10,6 +10,10 @@ if [[ $(command -v brew) == "" ]]; then
     exit 1
 fi
 
+set -Eeuo pipefail
+
+trap "echo ; echo ❌ The Bootstrap script failed to finish without error. See the log above to debug. ; echo" ERR
+
 echo
 echo -e "👉 Install Mint if needed"
 # List installed Mint versions, if fails, install Mint
