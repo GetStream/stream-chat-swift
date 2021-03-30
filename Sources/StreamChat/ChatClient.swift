@@ -157,7 +157,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             }
             
         } catch is ClientError.MissingLocalStorageURL {
-            log.assertationFailure("The URL provided in ChatClientConfig can't be `nil`. Falling back to the in-memory option.")
+            log.assertionFailure("The URL provided in ChatClientConfig can't be `nil`. Falling back to the in-memory option.")
             
         } catch {
             log.error("Failed to initalized the local storage with error: \(error). Falling back to the in-memory option.")
