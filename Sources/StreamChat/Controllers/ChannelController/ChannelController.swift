@@ -331,10 +331,11 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
             self.callback { completion?(error) }
         }
         
-        /// Setup event observers if channel is already created on backend side and have a valid `cid`.
-        /// Otherwise they will be set up after channel creation.
-        if let cid = cid, isChannelAlreadyCreated {
+        /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
+        /// Otherwise they will be set up after channel creation, in `set(cid:)`.
+        if let cid = cid {
             setupEventObservers(for: cid)
+            setLocalStateBasedOnError(startDatabaseObservers())
         }
     }
 
@@ -345,16 +346,34 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     /// If the newly created channel has a different cid than initially thought
     /// (such is the case for direct messages - backend generates custom cid),
     /// this function will set the new cid and reset observers.
-    /// If the cid is still the same, this function will only reset the observers
-    /// - since we don't need to set a new query in that case.
+    /// If the cid is not changed, this function will not do anything.
     /// - Parameter cid: New cid for the channel
     /// - Returns: Error if it occurs while setting up database observers.
     private func set(cid: ChannelId) -> Error? {
-        if channelQuery.cid != cid {
-            channelQuery = _ChannelQuery(cid: cid, channelQuery: channelQuery)
-        }
+        guard self.cid != cid else { return nil }
+        
+        channelQuery = _ChannelQuery(cid: cid, channelQuery: channelQuery)
         setupEventObservers(for: cid)
-        return startDatabaseObservers()
+        
+        let error = startDatabaseObservers()
+        guard error == nil else { return error }
+        
+        // If there's a channel already in the database, we must
+        // simulate the existing data callbacks.
+        // Otherwise, the changes will be reported when DB write is completed.
+        
+        // The reason is, when we don't have the cid, the initial fetches return empty/nil entities
+        // and only following updates are reported, hence initial values are ignored.
+        guard let channel = channel else { return nil }
+        delegateCallback {
+            $0.channelController(self, didUpdateChannel: .create(channel))
+            $0.channelController(
+                self,
+                didUpdateMessages: self.messages.enumerated()
+                    .map { ListChange.insert($1, index: IndexPath(item: $0, section: 0)) }
+            )
+        }
+        return nil
     }
 
     private func startDatabaseObservers() -> Error? {
