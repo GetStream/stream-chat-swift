@@ -33,6 +33,11 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
     
     private var messageComposerBottomConstraint: NSLayoutConstraint?
+    private lazy var keyboardObserver = ChatMessageListKeyboardObserver(
+        containerView: view,
+        scrollView: messageList.collectionView,
+        composerBottomConstraint: messageComposerBottomConstraint
+    )
     
     // MARK: - Life Cycle
 
@@ -41,10 +46,18 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         navigationItem.largeTitleDisplayMode = .never
     }
+    
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        keyboardObserver.register()
+    }
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         resignFirstResponder()
+        
+        keyboardObserver.unregister()
     }
 
     override open func setUp() {
@@ -58,73 +71,6 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         messageList.dataSource = .wrap(self)
 
         userSuggestionSearchController.search(term: nil) // Initially, load all users
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillChangeFrame),
-            name: UIResponder.keyboardWillChangeFrameNotification,
-            object: nil
-        )
-    }
-    
-    @objc func keyboardWillChangeFrame(notification: NSNotification) {
-        guard
-            let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-            let oldFrame = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
-            let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
-            let curve = notification.userInfo![UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
-        else { return }
-
-        let localFrame = view.convert(frame, from: nil)
-        let localOldFrame = view.convert(oldFrame, from: nil)
-
-        // message composer follows keyboard
-        messageComposerBottomConstraint?.constant = -(view.bounds.height - localFrame.minY)
-
-        // calculate new contentOffset for message list, so bottom message still visible when keyboard appears
-        var keyboardTop = localFrame.minY
-        if keyboardTop == view.bounds.height {
-            keyboardTop -= view.safeAreaInsets.bottom
-        }
-
-        var oldKeyboardTop = localOldFrame.minY
-        if oldKeyboardTop == view.bounds.height {
-            oldKeyboardTop -= view.safeAreaInsets.bottom
-        }
-        
-        let keyboardDelta = oldKeyboardTop - keyboardTop
-        let collectionView = messageList.collectionView
-        // need to calculate delta in content when `contentSize` is smaller than `frame.size`
-        let contentDelta = max(
-            // 8 is just some padding constant to make it look better
-            collectionView.frame.height - collectionView.contentSize.height + collectionView.contentOffset.y - 8,
-            // 0 is for the case when `contentSize` if larger than `frame.size`
-            0
-        )
-        
-        let newContentOffset = CGPoint(
-            x: 0,
-            y: max(
-                collectionView.contentOffset.y + keyboardDelta - contentDelta,
-                // case when keyboard is activated but not shown, probably only on simulator
-                -collectionView.contentInset.top
-            )
-        )
-        
-        // changing contentOffset will cancel any scrolling in collectionView, bad UX
-        let needUpdateContentOffset = !messageList.collectionView.isDecelerating && !messageList.collectionView.isDragging
-        
-        UIView.animate(
-            withDuration: duration,
-            delay: 0.0,
-            options: UIView.AnimationOptions(rawValue: curve),
-            animations: { [weak self] in
-                self?.view.layoutIfNeeded()
-                if needUpdateContentOffset {
-                    self?.messageList.collectionView.contentOffset = newContentOffset
-                }
-            }
-        )
     }
 
     override open func setUpLayout() {
@@ -154,23 +100,14 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         super.defaultAppearance()
 
         view.backgroundColor = uiConfig.colorPalette.background
-        let title = UILabel()
-        title.textAlignment = .center
-        title.font = uiConfig.font.headlineBold
-
-        let subtitle = UILabel()
-        subtitle.textAlignment = .center
-        subtitle.font = uiConfig.font.caption1
-        subtitle.textColor = uiConfig.colorPalette.subtitleText
-
-        let titleView = UIStackView(arrangedSubviews: [title, subtitle])
-        titleView.axis = .vertical
+        
+        let titleView = ChatMessageListTitleView<ExtraData>()
 
         navigationItem.titleView = titleView
 
         navbarListener = makeNavbarListener { data in
-            title.text = data.title
-            subtitle.text = data.subtitle
+            titleView.title = data.title
+            titleView.subtitle = data.subtitle
         }
     }
 
