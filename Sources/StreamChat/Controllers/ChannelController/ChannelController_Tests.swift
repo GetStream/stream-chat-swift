@@ -44,6 +44,81 @@ class ChannelController_Tests: StressTestCase {
         super.tearDown()
     }
     
+    // MARK: - Helpers
+    
+    func setupControllerForNewDirectMessageChannel(currentUserId: UserId, otherUserId: UserId) {
+        let payload = ChannelEditDetailPayload<NoExtraData>(
+            type: .messaging,
+            name: nil,
+            imageURL: nil,
+            team: nil,
+            members: [currentUserId, otherUserId],
+            invites: [],
+            extraData: .defaultValue
+        )
+        
+        controller = ChatChannelController(
+            channelQuery: .init(channelPayload: payload),
+            client: client,
+            environment: env.environment,
+            isChannelAlreadyCreated: false
+        )
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+    }
+    
+    func setupControllerForNewChannel(query: ChannelQuery) {
+        controller = ChatChannelController(
+            channelQuery: query,
+            client: client,
+            environment: env.environment,
+            isChannelAlreadyCreated: false
+        )
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+        controller.synchronize()
+    }
+    
+    func setupControllerForNewMessageChannel(cid: ChannelId) {
+        let payload = ChannelEditDetailPayload<NoExtraData>(
+            cid: cid,
+            name: nil,
+            imageURL: nil,
+            team: nil,
+            members: [],
+            invites: [],
+            extraData: .defaultValue
+        )
+        
+        controller = ChatChannelController(
+            channelQuery: .init(channelPayload: payload),
+            client: client,
+            environment: env.environment,
+            isChannelAlreadyCreated: false
+        )
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+    }
+    
+    // Helper function that creates channel with message
+    func setupChannelWithMessage(_ session: DatabaseSession) throws -> MessageId {
+        let dummyUserPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
+        try session.saveCurrentUser(payload: dummyUserPayload)
+        try session.saveChannel(payload: dummyPayload(with: channelId))
+        let message = try session.createNewMessage(
+            in: channelId,
+            text: "Message",
+            pinning: nil,
+            quotedMessageId: nil,
+            attachmentSeeds: [
+                ChatMessageAttachmentSeed.dummy(),
+                ChatMessageAttachmentSeed.dummy(),
+                ChatMessageAttachmentSeed.dummy()
+            ],
+            extraData: NoExtraData.defaultValue
+        )
+        return message.id
+    }
+    
+    // MARK: - Init tests
+    
     func test_clientAndIdAreCorrect() {
         XCTAssert(controller.client === client)
         XCTAssertEqual(controller.channelQuery.cid, channelId)
@@ -788,17 +863,145 @@ class ChannelController_Tests: StressTestCase {
         }
     }
     
-    // MARK: - Channel actions propagation tests
-
-    func setupControllerForNewChannel(query: ChannelQuery) {
-        controller = ChatChannelController(
-            channelQuery: query,
-            client: client,
-            environment: env.environment,
-            isChannelAlreadyCreated: false
-        )
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+    // MARK: - New direct message channel creation tests
+    
+    func test_controller_reportsInitialValues_forDMChannel_ifChannelDoesntExistLocally() throws {
+        // Create mock users
+        let currentUserId = UserId.unique
+        let otherUserId = UserId.unique
+        
+        // Create controller for the non-existent new DM channel
+        setupControllerForNewDirectMessageChannel(currentUserId: currentUserId, otherUserId: otherUserId)
+        
+        // Create and set delegate
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        controller.delegate = delegate
+        
+        // Simulate synchronize
         controller.synchronize()
+        
+        // Create dummy channel with messages
+        let dummyChannel = dummyPayload(
+            with: .unique,
+            numberOfMessages: 10,
+            members: [.dummy(userId: currentUserId), .dummy(userId: otherUserId)]
+        )
+        
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(dummyChannel.channel.cid)
+        
+        // Simulate new channel creation in DB
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: dummyChannel)
+        }
+        
+        // Simulate successful network call
+        env.channelUpdater!.update_completion?(nil)
+        
+        // Assert that initial reported values are correct
+        XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
+        
+        // Assert the delegate is called for initial values
+        XCTAssertEqual(delegate.didUpdateChannel_channel?.item.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(delegate.didUpdateMessages_messages?.count, dummyChannel.messages.count)
+    }
+    
+    func test_controller_reportsInitialValues_forDMChannel_ifChannelExistsLocally() throws {
+        // Create mock users
+        let currentUserId = UserId.unique
+        let otherUserId = UserId.unique
+        
+        // Create dummy channel with messages
+        let dummyChannel = dummyPayload(
+            with: .unique,
+            numberOfMessages: 10,
+            members: [.dummy(userId: currentUserId), .dummy(userId: otherUserId)]
+        )
+        
+        // Simulate new channel creation in DB
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: dummyChannel)
+        }
+        
+        // Create controller for the existing new DM channel
+        setupControllerForNewDirectMessageChannel(currentUserId: currentUserId, otherUserId: otherUserId)
+        
+        // Create and set delegate
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        controller.delegate = delegate
+        
+        // Simulate synchronize
+        controller.synchronize()
+        
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(dummyChannel.channel.cid)
+        
+        // Simulate successful network call.
+        env.channelUpdater!.update_completion?(nil)
+        
+        // Since initially the controller doesn't know it's final `cid`, it can't report correct initial values.
+        // That's why we simulate delegate callbacks for initial values.
+        // Assert that delegate gets initial values as callback
+        AssertAsync {
+            Assert.willBeEqual(delegate.didUpdateChannel_channel?.item.cid, dummyChannel.channel.cid)
+            Assert.willBeEqual(delegate.didUpdateMessages_messages?.count, dummyChannel.messages.count)
+        }
+    }
+    
+    // MARK: - New channel creation tests
+    
+    func test_controller_reportsInitialValues_forNewChannel_ifChannelDoesntExistLocally() throws {
+        // Create controller for the non-existent new DM channel
+        setupControllerForNewMessageChannel(cid: channelId)
+        
+        // Simulate synchronize
+        controller.synchronize()
+        
+        // Create dummy channel with messages
+        let dummyChannel = dummyPayload(
+            with: channelId,
+            numberOfMessages: 10,
+            members: [.dummy()]
+        )
+        
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(dummyChannel.channel.cid)
+        
+        // Simulate new channel creation in DB
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: dummyChannel)
+        }
+        
+        // Simulate successful network call
+        env.channelUpdater!.update_completion?(nil)
+        
+        // Assert that initial reported values are correct
+        XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
+    }
+    
+    func test_controller_reportsInitialValues_forNewChannel_ifChannelExistsLocally() throws {
+        // Create dummy channel with messages
+        let dummyChannel = dummyPayload(
+            with: channelId,
+            numberOfMessages: 10,
+            members: [.dummy()]
+        )
+        
+        // Simulate new channel creation in DB
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: dummyChannel)
+        }
+        
+        // Create controller for the existing new DM channel
+        setupControllerForNewMessageChannel(cid: channelId)
+        
+        // Unlike new DM ChannelController, this ChannelController knows it's final `cid` so it should be able to fetch initial values
+        // from DB, without the `synchronize` call
+        // Assert that initial reported values are correct
+        XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
     
     // MARK: - Updating channel
@@ -1346,28 +1549,6 @@ class ChannelController_Tests: StressTestCase {
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
-    }
-    
-    // MARK: - Message loading
-    
-    // Helper function that creates channel with message
-    func setupChannelWithMessage(_ session: DatabaseSession) throws -> MessageId {
-        let dummyUserPayload: CurrentUserPayload<NoExtraData> = .dummy(userId: .unique, role: .user)
-        try session.saveCurrentUser(payload: dummyUserPayload)
-        try session.saveChannel(payload: dummyPayload(with: channelId))
-        let message = try session.createNewMessage(
-            in: channelId,
-            text: "Message",
-            pinning: nil,
-            quotedMessageId: nil,
-            attachmentSeeds: [
-                ChatMessageAttachmentSeed.dummy(),
-                ChatMessageAttachmentSeed.dummy(),
-                ChatMessageAttachmentSeed.dummy()
-            ],
-            extraData: NoExtraData.defaultValue
-        )
-        return message.id
     }
     
     // MARK: - `loadPreviousMessages`
