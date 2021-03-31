@@ -26,7 +26,10 @@ public extension _ChatClient {
         .init(channelQuery: channelQuery, client: self)
     }
     
-    /// Creates a new `ChatChannelController` that will create a new channel.
+    /// Creates a `ChatChannelController` that will create a new channel, if the channel doesn't exist already.
+    ///
+    /// It's safe to call this method for already existing channels. However, if you queried the channel before and you're sure it exists locally,
+    /// it can be faster and more convenient to use `channelController(for cid: ChannelId)` to create a controller for it.
     ///
     /// - Parameters:
     ///   - cid: The `ChannelId` for the new channel.
@@ -41,13 +44,13 @@ public extension _ChatClient {
     /// - Returns: A new instance of `ChatChannelController`.
     func channelController(
         createChannelWithId cid: ChannelId,
-        name: String?,
-        imageURL: URL?,
+        name: String? = nil,
+        imageURL: URL? = nil,
         team: String? = nil,
         members: Set<UserId> = [],
         isCurrentUserMember: Bool = true,
         invites: Set<UserId> = [],
-        extraData: ExtraData.Channel
+        extraData: ExtraData.Channel = .defaultValue
     ) throws -> _ChatChannelController<ExtraData> {
         guard let currentUserId = currentUserId else {
             throw ClientError.CurrentUserDoesNotExist()
@@ -66,10 +69,12 @@ public extension _ChatClient {
         return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
     }
 
-    /// Creates a new `ChatChannelController` that will create new a channel with provided members without having to specify
-    /// the channel id explicitly.
+    /// Creates a `ChatChannelController` that will create a new channel with the provided members without having to specify
+    /// the channel id explicitly. This is great for direct message channels because the channel should be uniquely identified by
+    /// its members. If the channel for these members already exist, it will be reused.
     ///
-    /// This is great for direct message channels because the channel should be uniquely identified by its members.
+    /// It's safe to call this method for already existing channels. However, if you queried the channel before and you're sure it exists locally,
+    /// it can be faster and more convenient to use `channelController(for cid: ChannelId)` to create a controller for it.
     ///
     /// - Parameters:
     ///   - members: Members for the new channel. Must not be empty.
@@ -85,10 +90,10 @@ public extension _ChatClient {
     func channelController(
         createDirectMessageChannelWith members: Set<UserId>,
         isCurrentUserMember: Bool = true,
-        name: String?,
-        imageURL: URL?,
+        name: String? = nil,
+        imageURL: URL? = nil,
         team: String? = nil,
-        extraData: ExtraData.Channel
+        extraData: ExtraData.Channel = .defaultValue
     ) throws -> _ChatChannelController<ExtraData> {
         guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
