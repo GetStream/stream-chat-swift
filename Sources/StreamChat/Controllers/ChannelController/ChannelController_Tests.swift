@@ -246,10 +246,12 @@ class ChannelController_Tests: StressTestCase {
             let team: String = .unique
             let members: Set<UserId> = [.unique]
             let extraData: NoExtraData = .defaultValue
+            let channelType: ChannelType = .custom(.unique)
 
             // Create a new `ChannelController`
             let controller = try client.channelController(
                 createDirectMessageChannelWith: members,
+                type: channelType,
                 isCurrentUserMember: isCurrentUserMember,
                 name: .unique,
                 imageURL: .unique(),
@@ -259,6 +261,7 @@ class ChannelController_Tests: StressTestCase {
 
             // Assert `ChannelQuery` created correctly
             XCTAssertEqual(team, controller.channelQuery.channelPayload?.team)
+            XCTAssertEqual(controller.channelQuery.type, channelType)
             XCTAssertEqual(
                 members.union(isCurrentUserMember ? [currentUserId] : []),
                 controller.channelQuery.channelPayload?.members
