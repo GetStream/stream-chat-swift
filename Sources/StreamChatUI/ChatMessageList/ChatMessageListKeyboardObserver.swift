@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-final class KeyboardFrameObserver {
+final class ChatMessageListKeyboardObserver {
     weak var containerView: UIView!
     weak var scrollView: UIScrollView!
     weak var composerBottomConstraint: NSLayoutConstraint?
@@ -23,6 +23,10 @@ final class KeyboardFrameObserver {
             name: UIResponder.keyboardWillChangeFrameNotification,
             object: nil
         )
+    }
+    
+    public func unregister() {
+        NotificationCenter.default.removeObserver(self)
     }
     
     @objc
