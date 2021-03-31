@@ -260,13 +260,13 @@ class ChannelController_Tests: StressTestCase {
             )
 
             // Assert `ChannelQuery` created correctly
-            XCTAssertEqual(team, controller.channelQuery.channelPayload?.team)
+            XCTAssertEqual(controller.channelQuery.channelPayload?.team, team)
             XCTAssertEqual(controller.channelQuery.type, channelType)
             XCTAssertEqual(
                 members.union(isCurrentUserMember ? [currentUserId] : []),
                 controller.channelQuery.channelPayload?.members
             )
-            XCTAssertEqual(extraData, controller.channelQuery.channelPayload?.extraData)
+            XCTAssertEqual(controller.channelQuery.channelPayload?.extraData, extraData)
         }
     }
 
