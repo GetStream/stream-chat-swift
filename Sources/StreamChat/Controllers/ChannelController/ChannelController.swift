@@ -78,6 +78,7 @@ public extension _ChatClient {
     ///
     /// - Parameters:
     ///   - members: Members for the new channel. Must not be empty.
+    ///   - type: The type of the channel.
     ///   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
     ///   - name: The new channel name.
     ///   - imageURL: The new channel avatar URL.
@@ -89,6 +90,7 @@ public extension _ChatClient {
     /// - Returns: A new instance of `ChatChannelController`.
     func channelController(
         createDirectMessageChannelWith members: Set<UserId>,
+        type: ChannelType = .messaging,
         isCurrentUserMember: Bool = true,
         name: String? = nil,
         imageURL: URL? = nil,
@@ -99,7 +101,7 @@ public extension _ChatClient {
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
 
         let payload = ChannelEditDetailPayload<ExtraData>(
-            type: .messaging,
+            type: type,
             name: name,
             imageURL: imageURL,
             team: team,
