@@ -189,6 +189,7 @@
 		794927ED249E0BE2009D7EB7 /* ExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794927EC249E0BE2009D7EB7 /* ExtraData.swift */; };
 		794927F3249E3F77009D7EB7 /* NotificationAddedToChannel.json in Resources */ = {isa = PBXBuildFile; fileRef = 794927EE249E3D37009D7EB7 /* NotificationAddedToChannel.json */; };
 		794E20F52577DF4D00790DAB /* NameGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794E20F42577DF4D00790DAB /* NameGroupViewController.swift */; };
+		794F105C2615BC4D00C0D52F /* DatabaseSession_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794F105B2615BC4D00C0D52F /* DatabaseSession_Mock.swift */; };
 		795296C12582494000435B2E /* UIConfigProvider_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795296C02582494000435B2E /* UIConfigProvider_Tests.swift */; };
 		795296FC258264A100435B2E /* UserSearchController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795296FB258264A100435B2E /* UserSearchController.swift */; };
 		795297062583B52000435B2E /* UserSearchController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 795297052583B52000435B2E /* UserSearchController_Tests.swift */; };
@@ -1307,6 +1308,7 @@
 		794927EE249E3D37009D7EB7 /* NotificationAddedToChannel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = NotificationAddedToChannel.json; sourceTree = "<group>"; };
 		794927F0249E3DE6009D7EB7 /* EventPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPayload_Tests.swift; sourceTree = "<group>"; };
 		794E20F42577DF4D00790DAB /* NameGroupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NameGroupViewController.swift; sourceTree = "<group>"; };
+		794F105B2615BC4D00C0D52F /* DatabaseSession_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseSession_Mock.swift; sourceTree = "<group>"; };
 		795296C02582494000435B2E /* UIConfigProvider_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIConfigProvider_Tests.swift; sourceTree = "<group>"; };
 		795296FB258264A100435B2E /* UserSearchController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchController.swift; sourceTree = "<group>"; };
 		795297052583B52000435B2E /* UserSearchController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchController_Tests.swift; sourceTree = "<group>"; };
@@ -2843,6 +2845,7 @@
 				F61ED5A024F3F58400874777 /* DatabaseContainer_Mock.swift */,
 				792FCB4A24A3D52A000290C7 /* DatabaseSession.swift */,
 				792FCB4C24A3D56D000290C7 /* DatabaseSession_Tests.swift */,
+				794F105B2615BC4D00C0D52F /* DatabaseSession_Mock.swift */,
 				797EEA4524FFAF4F00C81203 /* DataStore.swift */,
 				797EEA4724FFB4C200C81203 /* DataStore_Tests.swift */,
 				792A4F18247EA97000EAF71D /* DTOs */,
@@ -5393,6 +5396,7 @@
 				792B805224D95D4300C2963E /* Cached_Tests.swift in Sources */,
 				F62D143E24DD70190081D241 /* ChannelUpdater_Mock.swift in Sources */,
 				8ACFBF652507AA440093C6FD /* EventSender_Mock.swift in Sources */,
+				794F105C2615BC4D00C0D52F /* DatabaseSession_Mock.swift in Sources */,
 				79D6CE8625F7D72800BE2EEC /* ChatChannelWatcherListController_Mock.swift in Sources */,
 				8A62705C24BE2BC00040BFD6 /* TypingEvent_Tests.swift in Sources */,
 				799BE2EC248A8CB300DAC8A0 /* WebSocketReconnectionStrategy_Tests.swift in Sources */,

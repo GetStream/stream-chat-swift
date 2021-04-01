@@ -47,6 +47,7 @@ let package = Package(
 
 var streamChatSourcesExcluded: [String] { [
     "Database/DataStore_Tests.swift",
+    "Database/DatabaseSession_Mock.swift",
     "Database/DatabaseSession_Tests.swift",
     "Database/DTOs/UserDTO_Tests.swift",
     "Database/DTOs/ChannelDTO_Tests.swift",
