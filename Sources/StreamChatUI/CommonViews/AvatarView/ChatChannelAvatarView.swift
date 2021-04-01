@@ -48,6 +48,6 @@ open class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigPro
         }()
 
         presenceAvatarView.avatarView.imageView.loadImage(from: avatarURL)
-        presenceAvatarView.onlineIndicatorView.isVisible = isOnlineIndicatorVisible
+        presenceAvatarView.isOnlineIndicatorVisible = isOnlineIndicatorVisible
     }
 }
