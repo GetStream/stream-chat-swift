@@ -188,6 +188,7 @@ class ChatClient_Tests: StressTestCase {
         let webSocket = testEnv.webSocketClient
         assertMandatoryHeaderFields(webSocket?.init_sessionConfiguration)
         XCTAssert(webSocket?.init_requestEncoder is TestRequestEncoder)
+        XCTAssert(webSocket?.init_eventNotificationCenter.database === client.databaseContainer)
         XCTAssertNotNil(webSocket?.init_eventDecoder)
         
         // EventDataProcessorMiddleware must be always first
@@ -670,7 +671,7 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                 return self.eventDecoder!
             },
             notificationCenterBuilder: {
-                self.notificationCenter = EventNotificationCenterMock(middlewares: $0)
+                self.notificationCenter = EventNotificationCenterMock(middlewares: $0, database: $1)
                 return self.notificationCenter!
             },
             clientUpdaterBuilder: {

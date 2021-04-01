@@ -8,7 +8,11 @@ import Foundation
 class EventNotificationCenter: NotificationCenter {
     private(set) var middlewares: [EventMiddleware] = []
     
-    init(middlewares: [EventMiddleware] = []) {
+    /// The database used when evaluating middlewares.
+    let database: DatabaseContainer
+    
+    init(middlewares: [EventMiddleware] = [], database: DatabaseContainer) {
+        self.database = database
         super.init()
         middlewares.forEach(add)
     }

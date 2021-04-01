@@ -6,6 +6,18 @@
 import XCTest
 
 final class EventNotificationCenter_Tests: XCTestCase {
+    var database: DatabaseContainer!
+    
+    override func setUp() {
+        super.setUp()
+        database = DatabaseContainerMock()
+    }
+    
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
+    }
+    
     func test_init_worksCorrectly() {
         // Create middlewares
         let middlewares: [EventMiddlewareMock] = [
@@ -15,7 +27,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         ]
         
         // Create notication center with middlewares
-        let center = EventNotificationCenter(middlewares: middlewares)
+        let center = EventNotificationCenter(middlewares: middlewares, database: database)
 
         // Assert middlewares are assigned correctly
         let centerMiddlewares = center.middlewares as! [EventMiddlewareMock]
@@ -34,7 +46,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         ]
         
         // Create notication center without any middlewares
-        let center = EventNotificationCenter()
+        let center = EventNotificationCenter(database: database)
         
         // Add middlewares via `add` method
         middlewares.forEach(center.add)
@@ -50,8 +62,8 @@ final class EventNotificationCenter_Tests: XCTestCase {
     func test_eventIsNotPublished_ifSomeMiddlewareDoesNotForwardEvent() {
         // Create notication center with blocking middleware
         let center = EventNotificationCenter(middlewares: [
-            EventMiddlewareMock { $1(nil) }
-        ])
+            EventMiddlewareMock { $2(nil) }
+        ], database: database)
 
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
@@ -65,7 +77,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
     
     func test_eventIsPublishedAsItIs_ifThereAreNoMiddlewares() {
         // Create notication center without any middlewares
-        let center = EventNotificationCenter()
+        let center = EventNotificationCenter(database: database)
         
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
