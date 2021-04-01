@@ -96,7 +96,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         MemberEventMiddleware<ExtraData>(database: databaseContainer),
         UserChannelBanEventsMiddleware<ExtraData>(database: databaseContainer),
         UserWatchingEventMiddleware<ExtraData>(database: databaseContainer)
-    ])
+    ], databaseContainer)
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
@@ -364,7 +364,8 @@ extension _ChatClient {
         
         var eventDecoderBuilder: () -> EventDecoder<ExtraData> = EventDecoder<ExtraData>.init
         
-        var notificationCenterBuilder: ([EventMiddleware]) -> EventNotificationCenter = EventNotificationCenter.init
+        var notificationCenterBuilder: ([EventMiddleware], DatabaseContainer) -> EventNotificationCenter = EventNotificationCenter
+            .init
         
         var internetConnection: () -> InternetConnection = { InternetConnection() }
 
