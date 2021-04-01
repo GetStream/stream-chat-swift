@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 import XCTest
 
@@ -30,6 +31,8 @@ class WebSocketClient_Tests: StressTestCase {
     var eventNotificationCenter: EventNotificationCenter!
     private var eventNotificationCenterMiddleware: EventMiddlewareMock!
     
+    var database: DatabaseContainer!
+    
     override func setUp() {
         super.setUp()
         
@@ -46,7 +49,9 @@ class WebSocketClient_Tests: StressTestCase {
         reconnectionStrategy = MockReconnectionStrategy()
         
         requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
-        eventNotificationCenter = EventNotificationCenter()
+        
+        database = DatabaseContainerMock()
+        eventNotificationCenter = EventNotificationCenter(database: database)
         eventNotificationCenterMiddleware = EventMiddlewareMock()
         eventNotificationCenter.add(middleware: eventNotificationCenterMiddleware)
         
@@ -76,6 +81,7 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.canBeReleased(&webSocketClient)
         AssertAsync.canBeReleased(&eventNotificationCenter)
         AssertAsync.canBeReleased(&eventNotificationCenterMiddleware)
+        AssertAsync.canBeReleased(&database)
         
         super.tearDown()
     }
@@ -404,7 +410,8 @@ class WebSocketClient_Tests: StressTestCase {
         let testEvent = TestEvent()
         decoder.decodedEvent = testEvent
         
-        // Start logging events
+        // Clean up pending events and start logging the new ones
+        eventNotificationCenter.pendingEvents = []
         let eventLogger = EventLogger(eventNotificationCenter)
         
         // Simulate incoming data
@@ -422,13 +429,17 @@ class WebSocketClient_Tests: StressTestCase {
         // Simulate connection
         test_connectionFlow()
         
+        // Clean up pending events
+        eventNotificationCenter.pendingEvents = []
+
         // Make the decoder return an event
         let incomingEvent = TestEvent()
         decoder.decodedEvent = incomingEvent
         
         let processedEvent = TestEvent()
-        eventNotificationCenterMiddleware.closure = { middlewareIncomingEvent, completion in
+        eventNotificationCenterMiddleware.closure = { middlewareIncomingEvent, session, completion in
             XCTAssertEqual(incomingEvent.asEquatable, middlewareIncomingEvent.asEquatable)
+            XCTAssertEqual(session as? NSManagedObjectContext, self.database.writableContext)
             completion(processedEvent)
         }
         
@@ -458,7 +469,7 @@ class WebSocketClient_Tests: StressTestCase {
         connectionStates.forEach { webSocketClient.simulateConnectionStatus($0) }
         
         let expectedEvents = connectionStates.map { ConnectionStatusUpdated(webSocketConnectionState: $0).asEquatable }
-        XCTAssertEqual(eventLogger.equatableEvents, expectedEvents)
+        AssertAsync.willBeEqual(eventLogger.equatableEvents, expectedEvents)
     }
     
     // MARK: - Background task tests
