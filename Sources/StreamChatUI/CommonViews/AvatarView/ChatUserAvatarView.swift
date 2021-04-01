@@ -31,6 +31,6 @@ open class _ChatUserAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
         } else {
             presenceAvatarView.avatarView.imageView.image = uiConfig.images.userAvatarPlaceholder1
         }
-        presenceAvatarView.onlineIndicatorView.isVisible = content?.isOnline ?? false
+        presenceAvatarView.isOnlineIndicatorVisible = content?.isOnline ?? false
     }
 }
