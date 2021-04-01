@@ -49,18 +49,21 @@ class ChatChannelAvatarView_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingUIConfig() {
-        class RectIndicator: UIView {
+        class RectIndicator: UIView, MaskProviding {
             override func didMoveToSuperview() {
                 super.didMoveToSuperview()
                 backgroundColor = .systemPink
                 widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+            }
+            
+            var maskingPath: CGPath? {
+                UIBezierPath(rect: frame.insetBy(dx: -frame.width / 4, dy: -frame.height / 4)).cgPath
             }
         }
 
         var config = UIConfig()
         config.onlineIndicatorView = RectIndicator.self
         config.colorPalette.alternativeActiveTint = .brown
-        config.colorPalette.lightBorder = .cyan
 
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()

@@ -60,11 +60,15 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingUIConfig() {
-        class RectIndicator: UIView {
+        class RectIndicator: UIView & MaskProviding {
             override func didMoveToSuperview() {
                 super.didMoveToSuperview()
                 backgroundColor = .green
                 widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
+            }
+            
+            var maskingPath: CGPath? {
+                UIBezierPath(rect: frame.insetBy(dx: -frame.width / 4, dy: -frame.height / 4)).cgPath
             }
         }
 

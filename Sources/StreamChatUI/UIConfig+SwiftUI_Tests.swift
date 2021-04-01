@@ -9,7 +9,9 @@ import XCTest
 @available(iOS 13, *)
 class UIConfig_SwiftUI_Tests: iOS13TestCase {
     func test_correctInstanceIsUsed() {
-        class TestView: UIView {}
+        class TestView: UIView, MaskProviding {
+            var maskingPath: CGPath? { nil }
+        }
 
         var referenceConfig = UIConfig()
         referenceConfig.onlineIndicatorView = TestView.self

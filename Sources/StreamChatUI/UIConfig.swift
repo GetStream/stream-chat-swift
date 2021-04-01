@@ -9,7 +9,7 @@ public typealias UIConfig = _UIConfig<NoExtraData>
 
 public struct _UIConfig<ExtraData: ExtraDataTypes> {
     /// A view used as an online activity indicator (online/offline).
-    public var onlineIndicatorView: UIView.Type = _ChatOnlineIndicatorView<ExtraData>.self
+    public var onlineIndicatorView: (UIView & MaskProviding).Type = _ChatOnlineIndicatorView<ExtraData>.self
 
     /// A view that displays the avatar image. By default a circular image.
     public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
