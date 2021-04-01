@@ -162,7 +162,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         
         composerView.messageInputView.textView.delegate = self
         
-        composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
+        composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker(_:)), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         composerView.editButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
@@ -254,7 +254,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
     
-    @objc func showAttachmentsPicker() {
+    @objc func showAttachmentsPicker(_ sender: Any? = nil) {
         var actionSheet: UIAlertController {
             let actionSheet = UIAlertController(title: nil, message: L10n.Composer.Picker.title, preferredStyle: .actionSheet)
             
@@ -274,14 +274,25 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
                 
         // Right now it's not possible to mix image and file attachments so we are limiting this option.
+        var viewControllerToPresent: UIViewController? = nil
         switch selectedAttachments {
         case .none:
-            present(actionSheet, animated: true, completion: nil)
+            viewControllerToPresent = actionSheet
         case .media:
-            present(imagePicker, animated: true, completion: nil)
+            viewControllerToPresent = imagePicker
         case .documents:
-            present(documentPicker, animated: true, completion: nil)
+            viewControllerToPresent = documentPicker
         }
+        guard let vc = viewControllerToPresent else { return }
+        if let ppc = vc.popoverPresentationController {
+            if let barButtonItem = sender as? UIBarButtonItem {
+                ppc.barButtonItem = barButtonItem
+            } else if let sourceView = sender as? UIView {
+                ppc.sourceView = sourceView
+                ppc.sourceRect = sourceView.bounds
+            }
+        }
+        present(vc, animated: true, completion: nil)
     }
     
     @objc func shrinkInput() {
