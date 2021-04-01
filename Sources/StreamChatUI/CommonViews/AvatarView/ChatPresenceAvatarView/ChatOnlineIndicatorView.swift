@@ -5,6 +5,9 @@
 import StreamChat
 import UIKit
 
+/// Protocol used to get path to make a cutout in a parent view.
+///
+/// This protocol is used to make a transparent "border" around online idicator in avatar view.
 public protocol MaskProviding {
     /// Path used to mask space in super view.
     ///
