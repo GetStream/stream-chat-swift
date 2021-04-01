@@ -127,8 +127,9 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         // Simulate `.connected` connection state of a web-socket
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
-        // Create event logger to check published events
-        let eventLogger = EventLogger(webSocketClient.init_eventNotificationCenter)
+        // Get access to EventNotificationCenter to check for events and remove already logged events
+        let eventCenter = webSocketClient.init_eventNotificationCenter as! EventNotificationCenterMock
+        eventCenter.process_loggedEvents = []
         
         // Assert a network request is created
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
@@ -137,7 +138,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         apiClient.test_simulateResponse(Result<MissingEventsPayload<ExtraData>, Error>.failure(TestError()))
         
         // Assert no events are published
-        AssertAsync.willBeTrue(eventLogger.equatableEvents.isEmpty)
+        AssertAsync.staysTrue(eventCenter.process_loggedEvents.isEmpty)
     }
     
     func test_eventsFromPayloadArePublished_ifSuccessfulResponseComes() throws {
@@ -159,9 +160,10 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         webSocketClient.simulateConnectionStatus(.connecting)
         webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
         
-        // Create event logger to check published events
-        let eventLogger = EventLogger(webSocketClient.init_eventNotificationCenter)
-        
+        // Get access to EventNotificationCenter to check for events and remove already logged events
+        let eventCenter = webSocketClient.init_eventNotificationCenter as! EventNotificationCenterMock
+        eventCenter.process_loggedEvents = []
+
         // Assert a network request is created
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
         
@@ -169,7 +171,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         apiClient.test_simulateResponse(Result<MissingEventsPayload<ExtraData>, Error>.success(payload))
         
         // Assert events from payload are published
-        AssertAsync.willBeEqual(eventLogger.equatableEvents, events.map(\.asEquatable))
+        AssertAsync.willBeEqual(eventCenter.process_loggedEvents.map(\.asEquatable), events.map(\.asEquatable))
     }
     
     func test_eventPublisher_doesNotRetainItself() throws {
