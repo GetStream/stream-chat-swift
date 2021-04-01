@@ -41,9 +41,15 @@ open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         embed(avatarView)
         // Add online indicator view
         addSubview(onlineIndicatorView)
-        onlineIndicatorView.pin(anchors: [.top, .right], to: self)
+        
+        onlineIndicatorView.topAnchor
+            .pin(equalTo: topAnchor, constant: 1)
+            .isActive = true
+        onlineIndicatorView.rightAnchor
+            .pin(equalTo: rightAnchor, constant: -1)
+            .isActive = true
         onlineIndicatorView.widthAnchor
-            .pin(equalTo: widthAnchor, multiplier: 0.3)
+            .pin(equalTo: widthAnchor, multiplier: 0.2)
             .isActive = true
     }
     
