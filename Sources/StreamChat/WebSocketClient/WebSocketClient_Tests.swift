@@ -69,7 +69,7 @@ class WebSocketClient_Tests: StressTestCase {
         )
         
         connectionId = UUID().uuidString
-        user = ChatUser(id: "test_user_\(UUID().uuidString)")
+        user = .mock(id: "test_user_\(UUID().uuidString)")
     }
     
     override func tearDown() {
