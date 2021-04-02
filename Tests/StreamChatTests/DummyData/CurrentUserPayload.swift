@@ -26,7 +26,7 @@ extension CurrentUserPayload {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
-            teams: [],
+            teams: ["GREEN", "RED"],
             extraData: extraData,
             devices: devices,
             mutedUsers: mutedUsers,

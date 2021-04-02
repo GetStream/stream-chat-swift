@@ -71,6 +71,7 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
         createdAt: Date = .init(),
         updatedAt: Date = .init(),
         lastActiveAt: Date? = nil,
+        teams: Set<TeamId> = [],
         extraData: ExtraData = .defaultValue,
         devices: [Device] = [],
         currentDevice: Device? = nil,
@@ -92,10 +93,12 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
             imageURL: imageURL,
             isOnline: isOnline,
             isBanned: isBanned,
+            isFlaggedByCurrentUser: false,
             userRole: userRole,
             createdAt: createdAt,
             updatedAt: updatedAt,
             lastActiveAt: lastActiveAt,
+            teams: teams,
             extraData: extraData
         )
     }
