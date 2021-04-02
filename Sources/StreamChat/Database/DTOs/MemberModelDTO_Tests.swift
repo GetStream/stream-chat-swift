@@ -33,6 +33,7 @@ class MemberModelDTO_Tests: XCTestCase {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
+            teams: ["RED", "GREEN"],
             extraData: .defaultValue
         )
         
@@ -55,7 +56,7 @@ class MemberModelDTO_Tests: XCTestCase {
         var loadedMember: _ChatChannelMember<NoExtraData>? {
             database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
-        
+
         AssertAsync {
             Assert.willBeEqual(payload.role, loadedMember?.memberRole)
             Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
@@ -72,6 +73,7 @@ class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.user.updatedAt, loadedMember?.userUpdatedAt)
             Assert.willBeEqual(payload.user.lastActiveAt, loadedMember?.lastActiveAt)
             Assert.willBeEqual(payload.user.extraData, loadedMember?.extraData)
+            Assert.willBeEqual(Set(payload.user.teams), loadedMember?.teams)
         }
     }
     

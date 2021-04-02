@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
@@ -88,10 +89,12 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
             imageURL: .unique(),
             isOnline: true,
             isBanned: false,
+            isFlaggedByCurrentUser: false,
             userRole: .user,
             userCreatedAt: .unique,
             userUpdatedAt: .unique,
             lastActiveAt: .unique,
+            teams: [],
             extraData: .defaultValue,
             memberRole: .member,
             memberCreatedAt: .unique,
@@ -163,7 +166,7 @@ extension _ChatMessage {
             quotedMessageId: nil,
             isSilent: false,
             reactionScores: ["": 1],
-            author: { .init(id: .unique) },
+            author: { .mock(id: .unique) },
             mentionedUsers: { [] },
             threadParticipants: [],
             attachments: { [] },

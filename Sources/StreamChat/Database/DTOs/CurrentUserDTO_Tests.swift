@@ -31,7 +31,8 @@ class CurrentUserModelDTO_Tests: XCTestCase {
                 .dummy(userId: .unique),
                 .dummy(userId: .unique),
                 .dummy(userId: .unique)
-            ]
+            ],
+            teams: ["GREEN", "RED"]
         )
         
         let mutedUserIDs = Set(payload.mutedUsers.map(\.mutedUser.id))
