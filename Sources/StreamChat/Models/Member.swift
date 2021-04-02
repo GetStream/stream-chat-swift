@@ -65,10 +65,12 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
         imageURL: URL?,
         isOnline: Bool,
         isBanned: Bool,
+        isFlaggedByCurrentUser: Bool,
         userRole: UserRole,
         userCreatedAt: Date,
         userUpdatedAt: Date,
         lastActiveAt: Date?,
+        teams: Set<TeamId>,
         extraData: ExtraData,
         memberRole: MemberRole,
         memberCreatedAt: Date,
@@ -96,10 +98,12 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
             imageURL: imageURL,
             isOnline: isOnline,
             isBanned: isBanned,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
             userRole: userRole,
             createdAt: userCreatedAt,
             updatedAt: userUpdatedAt,
             lastActiveAt: lastActiveAt,
+            teams: teams,
             extraData: extraData
         )
     }

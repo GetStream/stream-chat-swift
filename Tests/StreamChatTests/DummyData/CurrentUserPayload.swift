@@ -13,7 +13,8 @@ extension CurrentUserPayload {
         unreadCount: UnreadCount? = .dummy,
         extraData: T = .defaultValue,
         devices: [DevicePayload] = [],
-        mutedUsers: [MutedUserPayload<T>] = []
+        mutedUsers: [MutedUserPayload<T>] = [],
+        teams: [TeamId] = []
     ) -> CurrentUserPayload<T> {
         .init(
             id: userId,
@@ -26,7 +27,7 @@ extension CurrentUserPayload {
             isOnline: true,
             isInvisible: true,
             isBanned: true,
-            teams: ["GREEN", "RED"],
+            teams: teams,
             extraData: extraData,
             devices: devices,
             mutedUsers: mutedUsers,
