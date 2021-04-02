@@ -62,7 +62,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(mutedUserIDs, Set(loadedCurrentUser?.mutedUsers.map(\.id) ?? []))
             Assert.willBeEqual(payload.devices.count, loadedCurrentUser?.devices.count)
             Assert.willBeEqual(payload.devices.first?.id, loadedCurrentUser?.devices.first?.id)
-            // TODO: Teams
+            Assert.willBeEqual(payload.teams, loadedCurrentUser?.user.teams?.map(\.id))
         }
     }
     
