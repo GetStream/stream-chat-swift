@@ -75,17 +75,17 @@ public class _ChatUser<ExtraData: UserExtraData> {
     
     init(
         id: UserId,
-        name: String? = nil,
-        imageURL: URL? = nil,
-        isOnline: Bool = false,
-        isBanned: Bool = false,
-        isFlaggedByCurrentUser: Bool = false,
-        userRole: UserRole = .user,
-        createdAt: Date = .init(),
-        updatedAt: Date = .init(),
-        lastActiveAt: Date? = nil,
-        teams: Set<TeamId> = [],
-        extraData: ExtraData = .defaultValue
+        name: String?,
+        imageURL: URL?,
+        isOnline: Bool,
+        isBanned: Bool,
+        isFlaggedByCurrentUser: Bool,
+        userRole: UserRole,
+        createdAt: Date,
+        updatedAt: Date,
+        lastActiveAt: Date?,
+        teams: Set<TeamId>,
+        extraData: ExtraData
     ) {
         self.id = id
         self.name = name

@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamChatTestTools
 import XCTest
 
 class TypingStartCleanupMiddleware_Tests: XCTestCase {
@@ -13,8 +14,8 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
-        currentUser = ChatUser(id: "Luke")
+
+        currentUser = .mock(id: "Luke")
         middleware = TypingStartCleanupMiddleware(excludedUserIds: { [self.currentUser.id] })
         
         time = VirtualTime()
@@ -38,7 +39,7 @@ class TypingStartCleanupMiddleware_Tests: XCTestCase {
     
     func test_stopTypingEvent_sentAfterTimeout() {
         // Simulate some user started typing
-        let otherUser = ChatUser(id: UUID().uuidString)
+        let otherUser = ChatUser.mock(id: .unique)
         let cid = ChannelId.unique
         
         var result: [EquatableEvent?] = []
