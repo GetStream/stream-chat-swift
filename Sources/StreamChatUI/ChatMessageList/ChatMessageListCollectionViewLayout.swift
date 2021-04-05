@@ -86,6 +86,10 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     /// contentOffset and set it when batch updates end
     open var restoreOffset: CGFloat?
 
+    /// Flag to make sure the `prepare()` function is only executed when the collection view had been loaded.
+    /// The rest of the updates should come from `prepare(forCollectionViewUpdates:)`.
+    private var didPerformInitialLayout = false
+
     // MARK: - Initialization
 
     override public required init() {
@@ -256,6 +260,9 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     override open func prepare() {
         super.prepare()
+
+        guard !didPerformInitialLayout else { return }
+        didPerformInitialLayout = true
 
         guard currentItems.isEmpty else { return }
         guard let cv = collectionView else { return }
