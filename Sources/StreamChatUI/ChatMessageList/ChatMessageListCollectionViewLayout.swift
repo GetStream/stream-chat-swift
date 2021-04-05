@@ -249,8 +249,9 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     }
     
     override open func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
-        // if we have any content offset to restore, restore it
-        if let restore = restoreOffset {
+        guard let collectionView = self.collectionView else { return proposedContentOffset }
+        // if we have any content offset to restore and if the collection view has enough items to scroll, restore it
+        if let restore = restoreOffset, collectionView.contentSize.height > collectionView.bounds.height {
             return CGPoint(x: 0, y: collectionViewContentSize.height - restore)
         }
         return proposedContentOffset
