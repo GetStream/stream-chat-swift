@@ -17,8 +17,18 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// The `ChatChannelListController` instance that provides channels data.
     public var controller: _ChatChannelListController<ExtraData>!
     
-    /// To prevent inconsistencies during `collectionView.performBatchUpdates` we need to update are dataSource count in updates block
-    private var channelsCount = 0
+    /// A helper flag to find out if the VC's view is currently layouting its subviews.
+    var isLayoutingSubviews = false
+    
+    override open func viewWillLayoutSubviews() {
+        isLayoutingSubviews = true
+        super.viewWillLayoutSubviews()
+    }
+
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        isLayoutingSubviews = false
+    }
 
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
         if #available(iOS 13.0, *) {
@@ -64,8 +74,6 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     override open func setUp() {
         super.setUp()
-
-        channelsCount = controller.channels.count
         controller.setDelegate(self)
         controller.synchronize()
         
@@ -115,7 +123,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        channelsCount
+        controller.channels.count
     }
     
     open func collectionView(
@@ -233,20 +241,25 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
+        // We can't call `performBatchUpdates` unless all views are properly laid out.
+        guard isLayoutingSubviews == false else {
+            collectionView.reloadData()
+            return
+        }
+        
         var movedItems: [IndexPath] = []
+        
         collectionView.performBatchUpdates(
             {
                 for change in changes {
                     switch change {
                     case let .insert(_, index):
                         collectionView.insertItems(at: [index])
-                        channelsCount += 1
                     case let .move(_, fromIndex, toIndex):
                         collectionView.moveItem(at: fromIndex, to: toIndex)
                         movedItems.append(toIndex)
                     case let .remove(_, index):
                         collectionView.deleteItems(at: [index])
-                        channelsCount -= 1
                     case let .update(_, index):
                         collectionView.reloadItems(at: [index])
                     }
