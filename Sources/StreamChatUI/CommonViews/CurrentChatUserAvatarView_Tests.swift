@@ -13,7 +13,7 @@ class CurrentChatUserAvatarView_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         currentUserController = .mock()
-        currentUserController.currentUser_mock = .init(id: "Yoda", imageURL: TestImages.yoda.url)
+        currentUserController.currentUser_mock = .mock(id: "Yoda", imageURL: TestImages.yoda.url)
     }
     
     override func tearDown() {

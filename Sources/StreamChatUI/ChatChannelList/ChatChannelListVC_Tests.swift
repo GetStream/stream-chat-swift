@@ -32,7 +32,7 @@ class ChatChannelListVC_Tests: XCTestCase {
 
         mockedChannelListController = ChatChannelListController_Mock.mock()
         mockedCurrentUserController = CurrentChatUserController_Mock.mock()
-        mockedCurrentUserController.currentUser_mock = .init(
+        mockedCurrentUserController.currentUser_mock = .mock(
             id: "Yoda",
             imageURL: TestImages.yoda.url
         )
