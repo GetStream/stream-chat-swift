@@ -90,7 +90,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         let middlewares: [EventMiddleware] = [
             EventDataProcessorMiddleware<ExtraData>(),
             TypingStartCleanupMiddleware<ExtraData>(
-                excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) }
+                excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) },
+                emitEvent: { [weak center] in center?.process($0) }
             ),
             ChannelReadUpdaterMiddleware<ExtraData>(),
             ChannelMemberTypingStateUpdaterMiddleware<ExtraData>(),
