@@ -15,7 +15,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         super.setUp()
 
         database = DatabaseContainerMock()
-        middleware = .init(database: database)
+        middleware = .init()
     }
 
     override func tearDown() {
@@ -31,9 +31,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         let event = TestEvent()
 
         // Handle non-reaction event
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert event is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
@@ -52,15 +50,13 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
 
         // Simulate and handle channel truncated event.
         let event = try ChannelTruncatedEvent(from: eventPayload)
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `ChannelTruncatedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is ChannelTruncatedEvent)
     }
 
-    func tests_middleware_handlesCuannelTruncatedEventCorrectly() throws {
+    func tests_middleware_handlesChannelTruncatedEventCorrectly() throws {
         let cid: ChannelId = .unique
         // Create channel truncate event
         let eventPayload: EventPayload<NoExtraData> = .init(
@@ -77,9 +73,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
         assert(database.viewContext.channel(cid: cid)?.truncatedAt == nil)
 
         // Simulate incoming event
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert the `truncatedAt` value is updated
         XCTAssertEqual(database.viewContext.channel(cid: cid)?.truncatedAt, eventPayload.createdAt)
