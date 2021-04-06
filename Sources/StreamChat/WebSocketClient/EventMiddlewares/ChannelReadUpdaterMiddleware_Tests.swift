@@ -12,7 +12,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     override func setUp() {
         super.setUp()
         database = DatabaseContainerMock()
-        middleware = ChannelReadUpdaterMiddleware(database: database)
+        middleware = ChannelReadUpdaterMiddleware()
     }
     
     override func tearDown() {
@@ -56,8 +56,8 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         
         // Let the middleware handle the event
         // Middleware should mutate the loadedChannel's read
-        let handledEvent = try await { middleware.handle(event: messageReadEvent, completion: $0) }
-        
+        let handledEvent = middleware.handle(event: messageReadEvent, session: database.viewContext)
+
         XCTAssertEqual(handledEvent?.asEquatable, messageReadEvent.asEquatable)
         
         // Assert that the read event entity is updated
@@ -120,7 +120,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let notificationMarkReadEvent = try NotificationMarkReadEvent<NoExtraData>(from: eventPayload)
         
         // Let the middleware handle the event
-        let handledEvent = try await { middleware.handle(event: notificationMarkReadEvent, completion: $0) }
+        let handledEvent = middleware.handle(event: notificationMarkReadEvent, session: database.viewContext)
         
         XCTAssertEqual(handledEvent?.asEquatable, notificationMarkReadEvent.asEquatable)
         
@@ -164,7 +164,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let notificationMarkAllReadEvent = try NotificationMarkAllReadEvent(from: eventPayload)
         
         // Let the middleware handle the event
-        let handledEvent = try await { middleware.handle(event: notificationMarkAllReadEvent, completion: $0) }
+        let handledEvent = middleware.handle(event: notificationMarkAllReadEvent, session: database.viewContext)
         
         XCTAssertEqual(handledEvent?.asEquatable, notificationMarkAllReadEvent.asEquatable)
         
@@ -200,7 +200,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let startTypingEvent = TypingEvent(isTyping: true, cid: channelId, userId: payload.members.first!.user.id)
         
         // Let the middleware handle the event
-        let handledEvent = try await { middleware.handle(event: startTypingEvent, completion: $0) }
+        let handledEvent = middleware.handle(event: startTypingEvent, session: database.viewContext)
         
         XCTAssertEqual(handledEvent?.asEquatable, startTypingEvent.asEquatable)
         
