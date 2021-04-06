@@ -26,8 +26,9 @@ final class EventNotificationCenter_Tests: XCTestCase {
             .init()
         ]
         
-        // Create notication center with middlewares
-        let center = EventNotificationCenter(middlewares: middlewares, database: database)
+        // Create notification center with middlewares
+        let center = EventNotificationCenter(database: database)
+        middlewares.forEach(center.add)
 
         // Assert middlewares are assigned correctly
         let centerMiddlewares = center.middlewares as! [EventMiddlewareMock]
@@ -60,10 +61,11 @@ final class EventNotificationCenter_Tests: XCTestCase {
     }
     
     func test_eventIsNotPublished_ifSomeMiddlewareDoesNotForwardEvent() {
-        // Create notication center with blocking middleware
-        let center = EventNotificationCenter(middlewares: [
-            EventMiddlewareMock { event, _ in event }
-        ], database: database)
+        let consumingMiddleware = EventMiddlewareMock { _, _ in nil }
+
+        // Create a notification center with blocking middleware
+        let center = EventNotificationCenter(database: database)
+        center.add(middleware: consumingMiddleware)
 
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
