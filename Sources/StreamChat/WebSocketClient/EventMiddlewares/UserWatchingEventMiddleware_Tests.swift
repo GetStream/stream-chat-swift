@@ -15,7 +15,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         super.setUp()
         
         database = DatabaseContainerMock()
-        middleware = .init(database: database)
+        middleware = .init()
     }
     
     override func tearDown() {
@@ -31,9 +31,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         let event = TestEvent()
         
         // Handle non-reaction event
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert event is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
@@ -48,14 +46,13 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         )
         
         // Set error to be thrown on write.
+        let session = DatabaseSessionMock(underlyingSession: database.viewContext)
         let error = TestError()
-        database.write_errorResponse = error
+        session.errorToReturn = error
         
         // Simulate and handle user watching event.
         let event = try UserWatchingEvent(from: eventPayload)
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `UserWatchingEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is UserWatchingEvent)
@@ -80,9 +77,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         try database.createUser(id: userId, extraData: .defaultValue)
         
         // Simulate incoming event
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         let loadedChannel = database.viewContext.channel(cid: cid)
         
@@ -116,9 +111,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         let event = try UserWatchingEvent(from: eventPayload)
         
         // Simulate incoming event
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         let loadedChannel = database.viewContext.channel(cid: cid)
         
