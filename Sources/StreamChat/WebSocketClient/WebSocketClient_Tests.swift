@@ -628,6 +628,10 @@ final class HealthCheckMiddleware_Tests: XCTestCase {
     var middleware: HealthCheckMiddleware!
     var webSocketClient: WebSocketClientMock!
     
+    // The database is not needed for the middleware but it's a requirement by the protocol that we provide a valid
+    // db session, so we need to have it.
+    var database: DatabaseContainer!
+    
     // MARK: - Setup
     
     override func setUp() {
@@ -635,10 +639,13 @@ final class HealthCheckMiddleware_Tests: XCTestCase {
         
         webSocketClient = WebSocketClientMock()
         middleware = HealthCheckMiddleware(webSocketClient: webSocketClient)
+        
+        database = DatabaseContainerMock()
     }
     
     override func tearDown() {
         AssertAsync.canBeReleased(&webSocketClient)
+        AssertAsync.canBeReleased(&database)
         
         super.tearDown()
     }
@@ -649,9 +656,7 @@ final class HealthCheckMiddleware_Tests: XCTestCase {
         let event = TestEvent()
         
         // Simulate incoming public event
-        let forwardedEvent = try await {
-            middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert event is forwared as it is
         XCTAssertEqual(forwardedEvent as? TestEvent, event)
@@ -664,30 +669,22 @@ final class HealthCheckMiddleware_Tests: XCTestCase {
         AssertAsync.canBeReleased(&webSocketClient)
         
         // Simulate `HealthCheckEvent`
-        var forwardedEvent: Event?
-        middleware.handle(event: event) {
-            forwardedEvent = $0
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
-        // Assert event is not forwared
-        AssertAsync.staysTrue(forwardedEvent == nil)
+        // Assert event is not forwarded
+        XCTAssertNil(forwardedEvent)
     }
     
     func test_middleware_handlesHealthCheckEvents() throws {
         let event = HealthCheckEvent(connectionId: .unique)
         
         // Simulate `HealthCheckEvent`
-        var forwardedEvent: Event?
-        middleware.handle(event: event) {
-            forwardedEvent = $0
-        }
-        
-        AssertAsync {
-            // Assert event is not forwared
-            Assert.staysTrue(forwardedEvent == nil)
-            // Connection state is updated
-            Assert.willBeEqual(self.middleware.webSocketClient?.connectionState, .connected(connectionId: event.connectionId))
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Assert event is not forwared
+        XCTAssertNil(forwardedEvent)
+        // Connection state is updated
+        XCTAssertEqual(middleware.webSocketClient?.connectionState, .connected(connectionId: event.connectionId))
     }
 }
 
