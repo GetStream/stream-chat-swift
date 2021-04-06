@@ -6,53 +6,42 @@ import Foundation
 
 /// The middleware listens for `UserChannelBanEventMiddleware` events and updates `MemberDTO` accordingly.
 struct UserChannelBanEventsMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
-    let database: DatabaseContainer
-
-    func handle(event: Event, completion: @escaping (Event?) -> Void) {
+    func handle(event: Event, session: DatabaseSession) -> Event? {
         // Check if we have `cid` first. If `cid` is not presented the ban events are global bans and
         // they are already handled by `EventDataProcessorMiddleware`
         guard
             let eventPayload = (event as? EventWithPayload)?.payload as? EventPayload<ExtraData>,
             let cid = eventPayload.cid
         else {
-            completion(event)
-            return
+            return event
         }
-
-        switch event {
-        case let userBannedEvent as UserBannedEvent:
-            database.write { session in
+        
+        do {
+            switch event {
+            case let userBannedEvent as UserBannedEvent:
                 guard let memberDTO = session.member(userId: userBannedEvent.userId, cid: cid) else {
                     throw ClientError.MemberDoesNotExist(userId: userBannedEvent.userId, cid: cid)
                 }
-
+                
                 memberDTO.isBanned = true
                 memberDTO.banExpiresAt = userBannedEvent.expiredAt
-            } completion: { error in
-                if let error = error {
-                    log.error("Failed to write `UserBannedEvent` updates to the DB: \(error)")
-                }
-                completion(event)
-            }
-
-        case let userUnbannedEvent as UserUnbannedEvent:
-            database.write { session in
+                
+            case let userUnbannedEvent as UserUnbannedEvent:
                 guard let memberDTO = session.member(userId: userUnbannedEvent.userId, cid: cid) else {
                     throw ClientError.MemberDoesNotExist(userId: userUnbannedEvent.userId, cid: cid)
                 }
-
+                
                 memberDTO.isBanned = false
                 memberDTO.banExpiresAt = nil
-            } completion: { error in
-                if let error = error {
-                    log.error("Failed to write `UserUnbannedEvent` updates to the DB: \(error)")
-                }
-                completion(event)
+                
+            default:
+                break
             }
-
-        default:
-            completion(event)
+        } catch {
+            log.error("Error handling `\(type(of: event))` event: \(error)")
         }
+        
+        return event
     }
 }
 

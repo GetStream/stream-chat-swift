@@ -94,7 +94,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         MessageReactionsMiddleware<ExtraData>(),
         ChannelTruncatedEventMiddleware<ExtraData>(),
         MemberEventMiddleware<ExtraData>(),
-        UserChannelBanEventsMiddleware<ExtraData>(database: databaseContainer),
+        UserChannelBanEventsMiddleware<ExtraData>(),
         UserWatchingEventMiddleware<ExtraData>(database: databaseContainer)
     ], databaseContainer)
     
