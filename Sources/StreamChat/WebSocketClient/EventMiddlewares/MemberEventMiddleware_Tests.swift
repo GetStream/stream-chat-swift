@@ -15,7 +15,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         super.setUp()
         
         database = DatabaseContainerMock()
-        middleware = .init(database: database)
+        middleware = .init()
     }
     
     override func tearDown() {
@@ -31,9 +31,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = TestEvent()
         
         // Handle non-member event
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert event is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
@@ -55,9 +53,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Simulate and handle reaction event.
         let event = try MemberAddedEvent(from: eventPayload)
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `MemberAddedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is MemberAddedEvent)
@@ -81,9 +77,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         try database.createChannel(cid: cid, withMessages: false)
         
         // Simulate `MemberAddedEvent` event.
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Load the channel.
         let channel = try XCTUnwrap(
@@ -107,14 +101,13 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         )
         
         // Set error to be thrown on write.
+        let session = DatabaseSessionMock(underlyingSession: database.viewContext)
         let error = TestError()
-        database.write_errorResponse = error
+        session.errorToReturn = error
         
         // Simulate and handle reaction event.
         let event = try MemberRemovedEvent(from: eventPayload)
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `MemberRemovedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is MemberRemovedEvent)
@@ -145,9 +138,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = try MemberRemovedEvent(from: eventPayload)
         
         // Simulate `MemberRemovedEvent` event.
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Load the channel again
         channel = try XCTUnwrap(
@@ -176,9 +167,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         
         // Simulate and handle reaction event.
         let event = try MemberUpdatedEvent(from: eventPayload)
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `MemberUpdatedEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is MemberUpdatedEvent)
@@ -210,9 +199,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let event = try MemberUpdatedEvent(from: eventPayload)
         
         // Simulate `MemberUpdatedEvent` event.
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Load the channel again
         channel = try XCTUnwrap(
