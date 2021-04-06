@@ -62,7 +62,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
     func test_eventIsNotPublished_ifSomeMiddlewareDoesNotForwardEvent() {
         // Create notication center with blocking middleware
         let center = EventNotificationCenter(middlewares: [
-            EventMiddlewareMock { $2(nil) }
+            EventMiddlewareMock { event, _ in event }
         ], database: database)
 
         // Create event logger to check published events

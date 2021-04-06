@@ -437,10 +437,10 @@ class WebSocketClient_Tests: StressTestCase {
         decoder.decodedEvent = incomingEvent
         
         let processedEvent = TestEvent()
-        eventNotificationCenterMiddleware.closure = { middlewareIncomingEvent, session, completion in
+        eventNotificationCenterMiddleware.closure = { middlewareIncomingEvent, session in
             XCTAssertEqual(incomingEvent.asEquatable, middlewareIncomingEvent.asEquatable)
             XCTAssertEqual(session as? NSManagedObjectContext, self.database.writableContext)
-            completion(processedEvent)
+            return processedEvent
         }
         
         // Start logging events
