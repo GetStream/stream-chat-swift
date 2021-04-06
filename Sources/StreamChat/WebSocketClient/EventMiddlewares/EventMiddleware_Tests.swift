@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 import XCTest
 
@@ -12,30 +13,35 @@ class EventMiddleware_Tests: XCTestCase {
     }
     
     func test_middlewareEvaluation() throws {
+        var database: DatabaseContainer! = DatabaseContainerMock()
+        let usedSession = database.viewContext
+        
         let chain: [EventMiddleware] = [
             // Adds `1` to the event synchronously
-            EventMiddlewareMock { event, completion in
+            EventMiddlewareMock { event, session in
+                // Assert the correct session is used
+                XCTAssertEqual(session as! NSManagedObjectContext, usedSession)
+                
                 let event = event as! IntBasedEvent
-                completion(IntBasedEvent(value: event.value + 1))
+                return IntBasedEvent(value: event.value + 1)
             },
             
-            // Adds `1` to the event synchronously and resets it to `0` asynchronously
-            EventMiddlewareMock { event, completion in
+            // Adds `2` to the event synchronously
+            EventMiddlewareMock { event, session in
+                // Assert the correct session is used
+                XCTAssertEqual(session as! NSManagedObjectContext, usedSession)
+                
                 let event = event as! IntBasedEvent
-                DispatchQueue.main.async {
-                    completion(IntBasedEvent(value: 0))
-                }
-                completion(IntBasedEvent(value: event.value + 1))
+                return IntBasedEvent(value: event.value + 2)
             }
         ]
         
-        // Evaluate the middlewares and record the events
-        var result: [IntBasedEvent?] = []
-        chain.process(event: IntBasedEvent(value: 0)) {
-            result.append($0 as? IntBasedEvent)
-        }
+        // Evaluate the middlewares and record the event
+        let result = chain.process(event: IntBasedEvent(value: 0), session: usedSession)
         
-        // Check we have two callbacks with correct results
-        AssertAsync.willBeEqual(result, [IntBasedEvent(value: 2), IntBasedEvent(value: 0)])
+        // Check the evaluation result is correct
+        XCTAssertEqual(result as! IntBasedEvent, IntBasedEvent(value: 3))
+        
+        AssertAsync.canBeReleased(&database)
     }
 }

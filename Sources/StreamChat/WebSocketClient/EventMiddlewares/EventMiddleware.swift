@@ -6,14 +6,13 @@ import Foundation
 
 /// An object used to pre-process incoming `Event`.
 protocol EventMiddleware {
-    /// Process the incoming event and call completion when done. `completion` can be called multiple times if
-    /// the functionality requires it.
+    /// Processes the incoming event and returns `nil` if it was consumed (no further processing is needed).
     ///
     /// - Parameters:
     ///   - event: The incoming `Event`.
-    ///   - completion: Called when the event processing is done. If called with `nil`, no middlewares down the
-    ///   chain are called.
-    func handle(event: Event, completion: @escaping (Event?) -> Void)
+    ///   - session: The database session the middleware works with.
+    /// - Returns: The original `event` passed via params OR `nil` if the incoming event was consumed by the middleware.
+    func handle(event: Event, session: DatabaseSession) -> Event?
 }
 
 extension Array where Element == EventMiddleware {
@@ -22,26 +21,16 @@ extension Array where Element == EventMiddleware {
     ///
     /// - Parameters:
     ///   - event: The event to be pre-processed.
-    ///   - completion: Called when the event pre-processing is finished. Be aware that `completion` can be called
-    ///   multiple times for a single event.
-    func process(event: Event, completion: @escaping (Event?) -> Void) {
-        guard isEmpty == false else { completion(event); return }
-        evaluate(idx: startIndex, event: event, completion: completion)
-    }
-    
-    private func evaluate(idx: Int, event: Event, completion: @escaping (Event?) -> Void) {
-        let middleware = self[idx]
-        middleware.handle(event: event) { event in
-            let nextIdx = idx + 1
-            if nextIdx == self.endIndex {
-                completion(event)
-                
-            } else if let event = event {
-                self.evaluate(idx: nextIdx, event: event, completion: completion)
-                
-            } else {
-                completion(nil)
-            }
+    ///   - session: The database session used when evaluating the middlewares.
+    /// - Returns: The processed event. It will return `nil` if the event was consumed by some middleware.
+    func process(event: Event, session: DatabaseSession) -> Event? {
+        var output: Event? = event
+
+        for middleware in self {
+            guard let input = output else { break }
+            output = middleware.handle(event: input, session: session)
         }
+
+        return output
     }
 }
