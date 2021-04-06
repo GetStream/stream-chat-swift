@@ -89,7 +89,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         TypingStartCleanupMiddleware<ExtraData>(
             excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) }
         ),
-        ChannelReadUpdaterMiddleware<ExtraData>(database: databaseContainer),
+        ChannelReadUpdaterMiddleware<ExtraData>(),
         ChannelMemberTypingStateUpdaterMiddleware<ExtraData>(database: databaseContainer),
         MessageReactionsMiddleware<ExtraData>(database: databaseContainer),
         ChannelTruncatedEventMiddleware<ExtraData>(database: databaseContainer),
