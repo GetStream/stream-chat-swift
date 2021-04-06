@@ -11,16 +11,19 @@ class EventNotificationCenter: NotificationCenter {
     /// The database used when evaluating middlewares.
     let database: DatabaseContainer
     
-    init(middlewares: [EventMiddleware] = [], database: DatabaseContainer) {
+    init(database: DatabaseContainer) {
         self.database = database
         super.init()
-        middlewares.forEach(add)
+    }
+
+    func add(middlewares: [EventMiddleware]) {
+        self.middlewares.append(contentsOf: middlewares)
     }
 
     func add(middleware: EventMiddleware) {
         middlewares.append(middleware)
     }
-    
+
     func process(_ event: Event) {
         middlewares.process(event: event) { [weak self] in
             guard let self = self, let eventToPublish = $0 else { return }

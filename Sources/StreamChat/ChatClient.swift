@@ -84,19 +84,27 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     private let eventWorkerBuilders: [EventWorkerBuilder]
 
     /// The notification center used to send and receive notifications about incoming events.
-    private(set) lazy var eventNotificationCenter = environment.notificationCenterBuilder([
-        EventDataProcessorMiddleware<ExtraData>(),
-        TypingStartCleanupMiddleware<ExtraData>(
-            excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) }
-        ),
-        ChannelReadUpdaterMiddleware<ExtraData>(),
-        ChannelMemberTypingStateUpdaterMiddleware<ExtraData>(),
-        MessageReactionsMiddleware<ExtraData>(),
-        ChannelTruncatedEventMiddleware<ExtraData>(),
-        MemberEventMiddleware<ExtraData>(),
-        UserChannelBanEventsMiddleware<ExtraData>(),
-        UserWatchingEventMiddleware<ExtraData>()
-    ], databaseContainer)
+    private(set) lazy var eventNotificationCenter: EventNotificationCenter = {
+        let center = environment.notificationCenterBuilder(databaseContainer)
+
+        let middlewares: [EventMiddleware] = [
+            EventDataProcessorMiddleware<ExtraData>(),
+            TypingStartCleanupMiddleware<ExtraData>(
+                excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) }
+            ),
+            ChannelReadUpdaterMiddleware<ExtraData>(),
+            ChannelMemberTypingStateUpdaterMiddleware<ExtraData>(),
+            MessageReactionsMiddleware<ExtraData>(),
+            ChannelTruncatedEventMiddleware<ExtraData>(),
+            MemberEventMiddleware<ExtraData>(),
+            UserChannelBanEventsMiddleware<ExtraData>(),
+            UserWatchingEventMiddleware<ExtraData>()
+        ]
+
+        center.add(middlewares: middlewares)
+
+        return center
+    }()
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
@@ -364,8 +372,7 @@ extension _ChatClient {
         
         var eventDecoderBuilder: () -> EventDecoder<ExtraData> = EventDecoder<ExtraData>.init
         
-        var notificationCenterBuilder: ([EventMiddleware], DatabaseContainer) -> EventNotificationCenter = EventNotificationCenter
-            .init
+        var notificationCenterBuilder = EventNotificationCenter.init
         
         var internetConnection: () -> InternetConnection = { InternetConnection() }
 
