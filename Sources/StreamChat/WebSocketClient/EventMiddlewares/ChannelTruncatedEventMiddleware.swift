@@ -6,28 +6,24 @@ import Foundation
 
 /// The middleware listens for `ChannelTruncatedEventMiddleware` events and updates `ChannelDTO` accordingly.
 struct ChannelTruncatedEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
-    let database: DatabaseContainer
-
-    func handle(event: Event, completion: @escaping (Event?) -> Void) {
+    func handle(event: Event, session: DatabaseSession) -> Event? {
         guard
             let truncatedEvent = event as? ChannelTruncatedEvent,
             let payload = truncatedEvent.payload as? EventPayload<ExtraData>
         else {
-            completion(event)
-            return
+            return event
         }
 
-        database.write { session in
+        do {
             if let channelDTO = session.channel(cid: truncatedEvent.cid) {
                 channelDTO.truncatedAt = payload.createdAt
             } else {
                 throw ClientError.ChannelDoesNotExist(cid: truncatedEvent.cid)
             }
-        } completion: { error in
-            if let error = error {
-                log.error("Failed to write the `truncatedAt` field update in the database, error: \(error)")
-            }
-            completion(event)
+        } catch {
+            log.error("Failed to write the `truncatedAt` field update in the database, error: \(error)")
         }
+        
+        return event
     }
 }

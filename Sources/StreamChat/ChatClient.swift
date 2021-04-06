@@ -92,7 +92,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         ChannelReadUpdaterMiddleware<ExtraData>(),
         ChannelMemberTypingStateUpdaterMiddleware<ExtraData>(),
         MessageReactionsMiddleware<ExtraData>(),
-        ChannelTruncatedEventMiddleware<ExtraData>(database: databaseContainer),
+        ChannelTruncatedEventMiddleware<ExtraData>(),
         MemberEventMiddleware<ExtraData>(database: databaseContainer),
         UserChannelBanEventsMiddleware<ExtraData>(database: databaseContainer),
         UserWatchingEventMiddleware<ExtraData>(database: databaseContainer)
