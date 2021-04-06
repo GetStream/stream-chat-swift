@@ -10,7 +10,7 @@ enum WaiterError: Error {
 
 /// The maximum time `await` waits for the wrapped function to complete. When running stress tests, this value
 /// is much higher because the system might be under very heavy load.
-private let awaitTimeout: TimeInterval = TestRunnerEnvironment.isStressTest || TestRunnerEnvironment.isCI ? 5 : 1
+private let awaitTimeout: TimeInterval = TestRunnerEnvironment.isStressTest || TestRunnerEnvironment.isCI ? 10 : 1
 
 /// Allows calling an asynchronous function in the synchronous way in tests.
 ///
