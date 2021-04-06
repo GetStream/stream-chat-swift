@@ -85,7 +85,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
 
     /// The notification center used to send and receive notifications about incoming events.
     private(set) lazy var eventNotificationCenter = environment.notificationCenterBuilder([
-        EventDataProcessorMiddleware<ExtraData>(database: databaseContainer),
+        EventDataProcessorMiddleware<ExtraData>(),
         TypingStartCleanupMiddleware<ExtraData>(
             excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) }
         ),
