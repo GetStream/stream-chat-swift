@@ -6,15 +6,6 @@
 import XCTest
 
 class EventMiddleware_Tests: XCTestCase {
-    /// A test middleware that can be initiated with a closure/
-    struct ClosureBasedMiddleware: EventMiddleware {
-        let closure: (_ event: Event, _ completion: @escaping (Event?) -> Void) -> Void
-        
-        func handle(event: Event, completion: @escaping (Event?) -> Void) {
-            closure(event, completion)
-        }
-    }
-    
     /// A test event holding an `Int` value.
     struct IntBasedEvent: Event, Equatable {
         let value: Int
@@ -23,13 +14,13 @@ class EventMiddleware_Tests: XCTestCase {
     func test_middlewareEvaluation() throws {
         let chain: [EventMiddleware] = [
             // Adds `1` to the event synchronously
-            ClosureBasedMiddleware { event, completion in
+            EventMiddlewareMock { event, completion in
                 let event = event as! IntBasedEvent
                 completion(IntBasedEvent(value: event.value + 1))
             },
             
             // Adds `1` to the event synchronously and resets it to `0` asynchronously
-            ClosureBasedMiddleware { event, completion in
+            EventMiddlewareMock { event, completion in
                 let event = event as! IntBasedEvent
                 DispatchQueue.main.async {
                     completion(IntBasedEvent(value: 0))
