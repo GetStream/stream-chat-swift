@@ -7,17 +7,25 @@ import StreamChat
 import UIKit
 
 class MessageCollectionView: UICollectionView {
-    func dequeueReusableCell(
+    private var identifiers: Set<String> = .init()
+    
+    func dequeueReusableCell<ExtraData: ExtraDataTypes>(
         withReuseIdentifier identifier: String,
         layoutOptions: ChatMessageLayoutOptions,
         for indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        // TODO: implement
-        let cell = dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath) as! MessageCell<NoExtraData>
+    ) -> MessageCell<ExtraData> {
+        let reuseIdentifier = "\(identifier)_\(layoutOptions.rawValue)"
         
-        if cell.content == nil { // this is wrong :)
-            cell.setUpLayout(options: layoutOptions)
+        // There is no public API to find out
+        // if the given `identifier` is registered.
+        if !identifiers.contains(reuseIdentifier) {
+            identifiers.insert(reuseIdentifier)
+            
+            register(MessageCell<ExtraData>.self, forCellWithReuseIdentifier: reuseIdentifier)
         }
+            
+        let cell = dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! MessageCell<ExtraData>
+        cell.setUpLayoutIfNeeded(options: layoutOptions)
         
         return cell
     }
