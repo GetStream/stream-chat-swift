@@ -4,8 +4,13 @@
 
 import UIKit
 
-func Animate(delay: TimeInterval = 0, _ actions: @escaping () -> Void, completion: ((Bool) -> Void)? = nil) {
-    guard !UIAccessibility.isReduceMotionEnabled else {
+func Animate(
+    delay: TimeInterval = 0,
+    isAnimated: Bool = true,
+    _ actions: @escaping () -> Void,
+    completion: ((Bool) -> Void)? = nil
+) {
+    guard isAnimated, !UIAccessibility.isReduceMotionEnabled else {
         actions()
         completion?(true)
         return
