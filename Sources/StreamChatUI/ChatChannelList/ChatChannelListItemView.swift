@@ -11,7 +11,7 @@ public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 /// An `UIView` subclass that shows summary and preview information about a given channel.
 open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
     /// The data this view component shows.
-    public var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
+    public var content: _ChatChannel<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -79,8 +79,8 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
 
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
-        if let channel = content.channel {
-            return uiConfig.channelList.channelNamer(channel, content.currentUserId)
+        if let channel = content {
+            return uiConfig.channelList.channelNamer(channel, channel.membership?.id)
         } else {
             return nil
         }
@@ -88,7 +88,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
 
     /// Text of `subtitleLabel` which contains current typing member or the last message in the channel.
     open var subtitleText: String? {
-        guard let channel = content.channel else { return nil }
+        guard let channel = content else { return nil }
         if let typingMembersInfo = typingMemberString {
             return typingMembersInfo
         } else if let latestMessage = channel.latestMessages.first {
@@ -100,7 +100,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
 
     /// Text of `timestampLabel` which contains the time of the last sent message.
     open var timestampText: String? {
-        if let lastMessageAt = content.channel?.lastMessageAt {
+        if let lastMessageAt = content?.lastMessageAt {
             return dateFormatter.string(from: lastMessageAt)
         } else {
             return nil
@@ -241,9 +241,9 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         subtitleLabel.text = subtitleText
         timestampLabel.text = timestampText
 
-        avatarView.content = content
+        avatarView.content = (content, content?.membership?.id)
 
-        unreadCountView.content = content.channel?.unreadCount ?? .noUnread
+        unreadCountView.content = content?.unreadCount ?? .noUnread
         unreadCountView.invalidateIntrinsicContentSize()
     }
 }
@@ -251,7 +251,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
 extension _ChatChannelListItemView {
     /// The formatted string containing the typing member.
     var typingMemberString: String? {
-        guard let members = content.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
+        guard let members = content?.currentlyTypingMembers, !members.isEmpty else { return nil }
 
         let names = members
             .compactMap(\.name)

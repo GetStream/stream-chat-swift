@@ -8,19 +8,16 @@ import StreamChatTestTools
 import XCTest
 
 class ChatChannelListItemView_Tests: XCTestCase {
-    var content: (channel: ChatChannel?, currentUserId: UserId?)!
+    var content: ChatChannel!
     
     override func setUp() {
         super.setUp()
         
-        content = (
-            channel: ChatChannel.mock(
-                cid: .unique,
-                name: "Channel 1",
-                imageURL: TestImages.yoda.url,
-                lastMessageAt: .init(timeIntervalSince1970: 1_611_951_526_000)
-            ),
-            currentUserId: .unique
+        content = ChatChannel.mock(
+            cid: .unique,
+            name: "Channel 1",
+            imageURL: TestImages.yoda.url,
+            lastMessageAt: .init(timeIntervalSince1970: 1_611_951_526_000)
         )
     }
     
@@ -28,7 +25,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
         // Make sure the view is empty if there was content before.
         view.content = content
-        view.content = (nil, nil)
+        view.content = nil
         view.addSizeConstraints()
         AssertSnapshot(view)
     }
@@ -100,7 +97,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
             override func updateContent() {
                 super.updateContent()
                 
-                footnoteLabel.text = dateFormatter.string(from: content.channel!.lastMessageAt!)
+                footnoteLabel.text = dateFormatter.string(from: content!.lastMessageAt!)
             }
         }
         
@@ -142,18 +139,20 @@ class ChatChannelListItemView_Tests: XCTestCase {
     
     func test_titleText_isNil_whenChannelIsNil() {
         let itemView = ChatChannelListItemView()
-        itemView.content = (nil, nil)
+        itemView.content = nil
         itemView.updateContent()
         
         XCTAssertNil(itemView.titleText)
     }
     
     func test_titleText_whenChannelNameIsSet() {
+        let userId: UserId = .unique
+
         let channel: ChatChannel = .mock(
             cid: .unique,
-            name: "Channel Name"
+            name: "Channel Name",
+            membership: .mock(id: userId)
         )
-        let userId: UserId = .unique
         
         let itemView = ChatChannelListItemView()
 
@@ -165,14 +164,14 @@ class ChatChannelListItemView_Tests: XCTestCase {
         }
         itemView.uiConfig = customConfig
         
-        itemView.content = (channel, userId)
+        itemView.content = channel
         
         XCTAssertEqual(itemView.titleText, channel.name)
     }
     
     func test_subtitleText_isNil_whenChannelIsNil() {
         let itemView = ChatChannelListItemView()
-        itemView.content = (nil, nil)
+        itemView.content = nil
         
         XCTAssertNil(itemView.subtitleText)
     }
@@ -189,7 +188,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         )
         
         let itemView = ChatChannelListItemView()
-        itemView.content = (channel, .unique)
+        itemView.content = channel
         
         XCTAssertEqual(
             itemView.subtitleText,
@@ -213,7 +212,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         )
         
         let itemView = ChatChannelListItemView()
-        itemView.content = (channel, .unique)
+        itemView.content = channel
         
         XCTAssertEqual(
             itemView.subtitleText,
@@ -237,7 +236,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         )
         
         let itemView = ChatChannelListItemView()
-        itemView.content = (channel, .unique)
+        itemView.content = channel
         
         XCTAssertEqual(
             itemView.subtitleText,
@@ -261,7 +260,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         )
         
         let itemView = ChatChannelListItemView()
-        itemView.content = (channel, .unique)
+        itemView.content = channel
         
         XCTAssertEqual(
             itemView.subtitleText,
@@ -273,7 +272,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         let channel: ChatChannel = .mock(cid: .unique)
         
         let itemView = ChatChannelListItemView()
-        itemView.content = (channel, .unique)
+        itemView.content = channel
         
         XCTAssertEqual(
             itemView.subtitleText,
@@ -287,7 +286,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
             lastMessageAt: nil
         )
         let itemView = ChatChannelListItemView()
-        itemView.content = (channel, .unique)
+        itemView.content = channel
         
         XCTAssertNil(itemView.timestampText)
     }
@@ -303,7 +302,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         
         let itemView = ChatChannelListItemView()
         itemView.dateFormatter = dateFormatter
-        itemView.content = (channel, .unique)
+        itemView.content = channel
         
         XCTAssertEqual(
             itemView.timestampText,
