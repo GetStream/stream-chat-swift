@@ -273,8 +273,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.user = currentUserDTO.user
         message.channel = channelDTO
         
-        // We should update the channel dates so the list of channels ordering is updated.
-        // Updating it locally, makes it work also in offline.
         channelDTO.lastMessageAt = createdDate
         channelDTO.defaultSortingAt = createdDate
         
@@ -350,11 +348,14 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         if let channelDTO = channelDTO {
+            channelDTO.lastMessageAt = max(channelDTO.lastMessageAt ?? payload.createdAt, payload.createdAt)
+            
             if dto.pinned {
                 channelDTO.pinnedMessages.insert(dto)
             } else {
                 channelDTO.pinnedMessages.remove(dto)
             }
+            
             dto.channel = channelDTO
         } else {
             log.assertionFailure("Should never happen, a channel should have been fetched.")
