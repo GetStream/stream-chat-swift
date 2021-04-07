@@ -161,6 +161,8 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         container.centerStackView.addArrangedSubview(quotedMessageView)
         container.centerStackView.addArrangedSubview(imageAttachmentsView)
         container.centerStackView.addArrangedSubview(documentAttachmentsView)
+
+        imageAttachmentsView.heightAnchor.pin(equalToConstant: 120).isActive = true
         
         container.centerStackView.addArrangedSubview(messageInputView)
         messageInputView.setContentHuggingPriority(.defaultLow, for: .horizontal)
