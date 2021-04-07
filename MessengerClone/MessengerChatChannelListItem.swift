@@ -17,7 +17,11 @@ struct MessengerChatChannelListItem: ChatChannelListItemView.SwiftUIView {
     
     var body: some View {
         HStack {
-            uiConfig.channelList.itemSubviews.avatarView.asView(dataSource.content)
+            uiConfig
+                .channelList
+                .itemSubviews
+                .avatarView
+                .asView((dataSource.content, dataSource.content?.membership?.id))
                 .frame(width: 50, height: 50)
             VStack(
                 alignment: .leading,
@@ -40,14 +44,14 @@ struct MessengerChatChannelListItem: ChatChannelListItemView.SwiftUIView {
     }
 
     private func imageURL() -> URL? {
-        guard let channel = dataSource.content.channel else { return nil }
+        guard let channel = dataSource.content else { return nil }
         if let avatarURL = channel.imageURL {
             return avatarURL
         }
 
         let firstOtherMember = channel.cachedMembers
             .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
-            .first(where: { $0.id != dataSource.content.currentUserId })
+            .first(where: { $0.id != dataSource.content?.membership?.id })
 
         return firstOtherMember?.imageURL
     }

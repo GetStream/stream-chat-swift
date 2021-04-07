@@ -89,7 +89,7 @@ final class iMessageChatChannelListItemView: ChatChannelListItemView {
         unreadView.isHidden = unreadCountView.isHidden
         unreadCountView.isHidden = true
 
-        timestampLabel.text = content.channel?.lastMessageAt?.formatRelativeString() ?? ""
+        timestampLabel.text = content?.lastMessageAt?.formatRelativeString() ?? ""
     }
 }
 
