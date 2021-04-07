@@ -24,8 +24,14 @@ class ChannelDTO_Tests: XCTestCase {
     
     func test_channelPayload_isStoredAndLoadedFromDB() throws {
         let channelId: ChannelId = .unique
+    
+        let messageCreatedAt: Date = .unique
+        let message = dummyMessagePayload(createdAt: messageCreatedAt)
         
-        let payload = dummyPayload(with: channelId, pinnedMessages: [dummyPinnedMessage])
+        // Pinned message should be older than `message` to ensure it's not returned first in `latestMessages`
+        let pinnedMessage = dummyPinnedMessagePayload(createdAt: .unique(before: messageCreatedAt))
+        
+        let payload = dummyPayload(with: channelId, messages: [message], pinnedMessages: [pinnedMessage])
         
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -644,12 +650,14 @@ extension XCTestCase {
         )
     }
     
-    var dummyMessage: MessagePayload<NoExtraData> {
+    func dummyMessagePayload(
+        createdAt: Date = ChannelDTO_Tests.channelCreatedDate.addingTimeInterval(.random(in: 60...900_000))
+    ) -> MessagePayload<NoExtraData> {
         MessagePayload(
             id: .unique,
             type: .regular,
             user: dummyUser,
-            createdAt: ChannelDTO_Tests.channelCreatedDate.addingTimeInterval(.random(in: 60...900_000)),
+            createdAt: createdAt,
             updatedAt: .unique,
             deletedAt: nil,
             text: .unique,
@@ -666,13 +674,15 @@ extension XCTestCase {
         )
     }
 
-    var dummyPinnedMessage: MessagePayload<NoExtraData> {
+    func dummyPinnedMessagePayload(
+        createdAt: Date = ChannelDTO_Tests.channelCreatedDate.addingTimeInterval(.random(in: 50...99))
+    ) -> MessagePayload<NoExtraData> {
         MessagePayload(
             id: .unique,
             type: .regular,
             user: dummyUser,
             // createAt should be lower than dummyMessage, so it does not come first in `latestMessages`
-            createdAt: ChannelDTO_Tests.channelCreatedDate.addingTimeInterval(.random(in: 50...99)),
+            createdAt: createdAt,
             updatedAt: .unique,
             deletedAt: nil,
             text: .unique,
@@ -706,18 +716,17 @@ extension XCTestCase {
         messages: [MessagePayload<NoExtraData>]? = nil,
         pinnedMessages: [MessagePayload<NoExtraData>] = []
     ) -> ChannelPayload<NoExtraData> {
-        let channelCreatedDate = Date.unique
-        let lastMessageAt: Date? = Bool.random() ? channelCreatedDate.addingTimeInterval(.random(in: 100_000...900_000)) : nil
-
         var payloadMessages: [MessagePayload<NoExtraData>] = []
         if let messages = messages {
             payloadMessages = messages
         } else {
             for _ in 0..<numberOfMessages {
-                payloadMessages += [dummyMessage]
+                payloadMessages += [dummyMessagePayload()]
             }
         }
 
+        let lastMessageAt: Date? = payloadMessages.map(\.createdAt).max()
+        
         let payload: ChannelPayload<NoExtraData> =
             .init(
                 channel: .init(
