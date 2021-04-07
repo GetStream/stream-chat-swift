@@ -5,44 +5,39 @@
 import StreamChat
 import UIKit
 
+/// A view that displays a collection of image attachments
 public typealias ChatMessageComposerImageAttachmentsView = _ChatMessageComposerImageAttachmentsView<NoExtraData>
 
+/// A view that displays a collection of image attachments
 open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: _View,
     UIConfigProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
-    // MARK: - Properties
-    
-    open var imagePreviewItemSize: CGSize = .init(width: 100, height: 100)
-    
-    public var images: [UIImage] = [] {
+    /// The image attachment item size. Can be overridden in `setUpLayout()`.
+    private var imagePreviewItemSize: CGSize = .init(width: 100, height: 100)
+
+    /// The images data source.
+    public var content: [UIImage] = [] {
         didSet {
             updateContentIfNeeded()
         }
     }
-    
+
+    /// The closure handler when an image attachment has been removed.
     public var didTapRemoveItemButton: ((Int) -> Void)?
-    
-    override open var intrinsicContentSize: CGSize {
-        let height = imagePreviewItemSize.height + layoutMargins.top + layoutMargins.bottom
-        return .init(
-            width: UIView.noIntrinsicMetric,
-            height: height
-        )
-    }
-    
-    public private(set) lazy var flowLayout: UICollectionViewFlowLayout = {
-        let flowLayout = UICollectionViewFlowLayout()
-        flowLayout.scrollDirection = .horizontal
-        return flowLayout
-    }()
-    
-    // MARK: - Subviews
-    
-    public private(set) lazy var collectionView: UICollectionView = .init(frame: .zero, collectionViewLayout: flowLayout)
-    
-    // MARK: - Public
-    
+
+    /// The collection view layout of the image attachments collection view.
+    public private(set) lazy var flowLayout: UICollectionViewFlowLayout = uiConfig
+        .messageComposer
+        .imageAttachmentsCollectionViewLayout.init()
+
+    /// The collection view of image attachments.
+    public private(set) lazy var collectionView: UICollectionView = uiConfig
+        .messageComposer
+        .imageAttachmentsCollectionView
+        .init(frame: .zero, collectionViewLayout: self.flowLayout)
+        .withoutAutoresizingMaskConstraints
+
     override public func defaultAppearance() {
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
@@ -55,39 +50,43 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(
-            _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.self,
-            forCellWithReuseIdentifier: _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.reuseId
+            uiConfig.messageComposer.imageAttachmentCollectionViewCell.self,
+            forCellWithReuseIdentifier: uiConfig.messageComposer.imageAttachmentCollectionViewCell.reuseId
         )
     }
     
     override open func setUpLayout() {
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        embed(collectionView)
-        
+        flowLayout.scrollDirection = .horizontal
         flowLayout.itemSize = imagePreviewItemSize
         flowLayout.sectionInset = layoutMargins
+
+        embed(collectionView, insets: .init(top: layoutMargins.top, leading: 0, bottom: layoutMargins.bottom, trailing: 0))
+        collectionView.heightAnchor.pin(equalToConstant: imagePreviewItemSize.height).isActive = true
     }
     
     override open func updateContent() {
         collectionView.reloadData()
     }
-
-    // MARK: - UICollectionView
     
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        images.count
+        content.count
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView
             .dequeueReusableCell(
-                withReuseIdentifier: _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.reuseId,
+                withReuseIdentifier: uiConfig.messageComposer.imageAttachmentCollectionViewCell.reuseId,
                 for: indexPath
             ) as? _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>
-        else { return UICollectionViewCell() }
-        
-        cell.imageView.image = images[indexPath.row]
-        cell.discardButtonHandler = { [weak self] in self?.didTapRemoveItemButton?(indexPath.row) }
+        else {
+            return UICollectionViewCell()
+        }
+
+        cell.uiConfig = uiConfig
+        cell.imageAttachmentView.imageView.image = content[indexPath.row]
+        cell.imageAttachmentView.discardButtonHandler = { [weak self] in
+            self?.didTapRemoveItemButton?(indexPath.row)
+        }
         
         return cell
     }

@@ -401,7 +401,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     func didUpdateImageAttachments() {
-        composerView.imageAttachmentsView.images = imageAttachments.map(\.preview)
+        composerView.imageAttachmentsView.content = imageAttachments.map(\.preview)
         composerView.imageAttachmentsView.setAnimatedly(hidden: imageAttachments.isEmpty)
         composerView.imageAttachmentsView.invalidateIntrinsicContentSize()
         composerView.invalidateIntrinsicContentSize()
