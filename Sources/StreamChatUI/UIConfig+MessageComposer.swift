@@ -12,14 +12,29 @@ public extension _UIConfig {
             _ChatMessageComposerView<ExtraData>.self
         public var messageInputView: _ChatMessageComposerInputContainerView<ExtraData>
             .Type = _ChatMessageComposerInputContainerView<ExtraData>.self
+
         public var documentAttachmentView: _ChatMessageComposerDocumentAttachmentView<ExtraData>.Type =
             _ChatMessageComposerDocumentAttachmentView<ExtraData>.self
         public var documentAttachmentsFlowLayout: ChatMessageComposerDocumentAttachmentsCollectionViewLayout.Type =
             ChatMessageComposerDocumentAttachmentsCollectionViewLayout.self
-        public var imageAttachmentsView: _ChatMessageComposerImageAttachmentsView<ExtraData>.Type =
-            _ChatMessageComposerImageAttachmentsView<ExtraData>.self
         public var documentAttachmentsView: _ChatMessageComposerDocumentAttachmentsView<ExtraData>.Type =
             _ChatMessageComposerDocumentAttachmentsView<ExtraData>.self
+
+        /// A view that displays a collection of image attachments
+        public var imageAttachmentsView: _ChatMessageComposerImageAttachmentsView<ExtraData>.Type =
+            _ChatMessageComposerImageAttachmentsView<ExtraData>.self
+        /// The collection view of image attachments.
+        public var imageAttachmentsCollectionView: UICollectionView.Type = UICollectionView.self
+        /// The collection view layout of the image attachments collection view.
+        public var imageAttachmentsCollectionViewLayout: UICollectionViewFlowLayout.Type =
+            UICollectionViewFlowLayout.self
+        /// A view that displays the image attachment.
+        public var imageAttachmentCellView: _ChatMessageComposerImageAttachmentView<ExtraData>.Type =
+            _ChatMessageComposerImageAttachmentView<ExtraData>.self
+        /// The view cell that displays the image attachment.
+        public var imageAttachmentCollectionViewCell: _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.Type =
+            _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.self
+
         public var sendButton: _ChatMessageComposerSendButton<ExtraData>.Type = _ChatMessageComposerSendButton<ExtraData>.self
         public var composerButton: _ChatSquareButton<ExtraData>.Type = _ChatSquareButton<ExtraData>.self
         public var textView: _ChatMessageComposerInputTextView<ExtraData>.Type = _ChatMessageComposerInputTextView<ExtraData>.self
@@ -29,6 +44,7 @@ public extension _UIConfig {
             _ChatMessageComposerCheckmarkControl<ExtraData>.self
         public var slashCommandView: _ChatMessageInputSlashCommandView<ExtraData>
             .Type = _ChatMessageInputSlashCommandView<ExtraData>.self
+
         /// A view controller that shows suggestions of commands or mentions.
         public var suggestionsViewController: _ChatMessageComposerSuggestionsViewController<ExtraData>.Type =
             _ChatMessageComposerSuggestionsViewController<ExtraData>.self
