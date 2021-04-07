@@ -115,7 +115,7 @@ controller.synchronize { error in
 
 ### Observing changes to Channel List
 
-Accessing `channels` property of the controller is not ideal, so in many cases you'd require a way to observe changes to this property. There are 2 most common ways of doing so: UIKit Delegates and SwiftUI/Combine publishers.
+Accessing `channels` property of the controller is not ideal, so in many cases you'd require a way to observe changes to this property. There are 3 most common ways of doing so: UIKit Delegates, Combine publishers and SwiftUI wrappers.
 
 #### UIKit Delegates
 
@@ -169,21 +169,92 @@ func controller(_ controller: DataController, didChangeState state: DataControll
 ```
 You can use this delegate function to show any error states you might see. For more information, see [DataController Overview](404).
 
-#### SwiftUI/Combine
+#### Combine publishers
 
+`ChannelListController` has publishers for its `channels` property so it's observable, like so:
+```swift
+class ChannelsViewController: UIViewController {
+
+    let channelListController = chatClient.channelListController(
+       query: ChannelListQuery(filter: .containMembers(userIds: [chatClient.currentUserId]))
+    )
+
+    private var cancellables: Set<AnyCancellable> = []
+
+    override func viewDidLoad() {
+       super.viewDidLoad()
+
+       // update your UI with the cached channels first, for example by calling reloadData() on UITableView
+       let locallyAvailableChannels = channelListController.channels
+
+       // Observe changes to the list from the publishers
+        channelListController
+             .channelsChangesPublisher
+             .receive(on: RunLoop.main)
+             .sink { [weak self] changes in
+                // animate the changes to the channel list
+             }
+             .store(in: &cancellables)
+
+       // call `synchronize()` to update the locally cached data. the updates will be delivered using channelsChangesPublisher
+       channelListController.synchronize()
+    }
+}
+```
+
+#### SwiftUI Wrappers
+
+`ChannelListController` is fully compatible with SwiftUI.
+```swift
+// View definition
+
+struct ChannelListView: View {
+    @ObservedObject var channelList: ChatChannelListController.ObservableObject
+
+    init(channelListController: ChatChannelListController) {
+        self.channelList = channelListController.observableObject
+    }
+
+    var body: some View {
+        VStack {
+            List(channelList.channels, id: \.self) { channel in
+                Text(channel.name)
+            }
+        }
+        .navigationBarTitle("Channels")
+        .onAppear { 
+            // call `synchronize()` to update the locally cached data.
+            channelList.controller.synchronize() 
+        }
+    }
+}
+
+// Usage
+
+let channelListController = chatClient.channelListController(
+    query: ChannelListQuery(filter: .containMembers(userIds: [chatClient.currentUserId]))
+)
+
+let view = ChannelListView(channelListController: channelListController)
+```
 
 ## Paginating Channel List
 
+When you scroll to the end of locally available data, you'll need to fetch the next page of channels from backend. Controller has the function `loadNextChannels`. Typically you do this when you reach the end of the list, like so:
+```swift
+override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    if indexPath.section == tableView.numberOfSections - 1,
+       indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+        // We'll display the last channel soon, we need to load next page of channels
+        channelListController.loadNextChannels()
+    }
+}
+```
+
 ## Marking all Channels as Read
 
-
-
-
-- Creating a channel
-    - Why/When do we need `synchronize`
-- Listing channels → Displays ChannelListVC and links
-    - Using different filters to display different lists of channels
-    - Getting next page of channels
-- Observing changes to channels
-- Marking all channels as read
-
+When you're displaying, or loading a set of channels, you may want to mark all the channels as read. For this, `ChannelListController` has `markAllRead` function:
+```swift
+controller.markAllRead()
+```
+This function will reset the unread count for all the channels the controller paginates.
