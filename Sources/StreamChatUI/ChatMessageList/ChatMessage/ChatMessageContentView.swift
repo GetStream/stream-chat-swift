@@ -810,17 +810,17 @@ public struct ChatMessageContentViewLayoutOptions: OptionSet, Hashable {
 
 // MARK: - Extensions
 
-extension _ChatMessageGroupPart {
+extension _ChatMessage {
     var textContent: String {
-        guard message.type != .ephemeral else {
+        guard type != .ephemeral else {
             return ""
         }
-        
-        guard message.deletedAt == nil else {
+
+        guard deletedAt == nil else {
             return L10n.Message.deletedMessagePlaceholder
         }
-        
-        return message.text
+
+        return text
     }
 }
 
@@ -832,7 +832,7 @@ extension _ChatMessageGroupPart {
         
         var options: ChatMessageContentViewLayoutOptions = []
         
-        if !textContent.isEmpty {
+        if !message.textContent.isEmpty {
             options.insert(.text)
         }
         
