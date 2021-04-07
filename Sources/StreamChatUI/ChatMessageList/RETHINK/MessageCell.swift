@@ -8,6 +8,8 @@ import UIKit
 class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell {
     static var reuseId: String { "message_cell" }
     
+    private var isInitialized = false
+    
     var content: _ChatMessage<ExtraData>? {
         didSet {
             updateContentIfNeeded()
@@ -42,7 +44,14 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell {
         ])
     }
     
+    func setUpLayoutIfNeeded(options: ChatMessageLayoutOptions) {
+        guard !isInitialized else { return }
+        setUpLayout(options: options)
+    }
+    
     func setUpLayout(options: ChatMessageLayoutOptions) {
+        isInitialized = true
+        
         if options.contains(.text) {
             textView.setContentCompressionResistancePriority(.required, for: .horizontal)
             textView.setContentCompressionResistancePriority(.required, for: .vertical)

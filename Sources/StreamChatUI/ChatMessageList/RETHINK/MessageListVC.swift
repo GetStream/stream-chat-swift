@@ -108,11 +108,11 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         let reuseId = cellReuseIdentifier(for: message)
         let layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
         
-        let cell = self.collectionView.dequeueReusableCell(
+        let cell: MessageCell<ExtraData> = self.collectionView.dequeueReusableCell(
             withReuseIdentifier: reuseId,
             layoutOptions: layoutOptions,
             for: indexPath
-        ) as! MessageCell<ExtraData>
+        )
         
         cell.content = message
         
