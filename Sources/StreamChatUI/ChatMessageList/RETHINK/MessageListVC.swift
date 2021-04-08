@@ -6,7 +6,8 @@ import Foundation
 import StreamChat
 import UIKit
 
-class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource,
+    UIConfigProvider, _ChatMessageComposerViewControllerDelegate {
     var channelController: _ChatChannelController<ExtraData>!
 
     var minTimeIntervalBetweenMessagesInGroup: TimeInterval = 10
@@ -29,15 +30,92 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         return collection.withoutAutoresizingMaskConstraints
     }()
     
+    public private(set) lazy var messageComposerViewController = uiConfig
+        .messageComposer
+        .messageComposerViewController
+        .init()
+    
+    private var messageComposerBottomConstraint: NSLayoutConstraint?
+    
+    private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
+    
+    private lazy var keyboardObserver = ChatMessageListKeyboardObserver(
+        containerView: view,
+        scrollView: collectionView,
+        composerBottomConstraint: messageComposerBottomConstraint
+    )
+
+    public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> = {
+        channelController.client.userSearchController()
+    }()
+    
+    override func setUp() {
+        super.setUp()
+        
+        messageComposerViewController.delegate = .wrap(self)
+        messageComposerViewController.controller = channelController
+        messageComposerViewController.userSuggestionSearchController = userSuggestionSearchController
+
+        userSuggestionSearchController.search(term: nil)
+    }
+    
+    override func setUpLayout() {
+        super.setUpLayout()
+        
+        view.addSubview(collectionView)
+        collectionView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        
+        messageComposerViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        addChildViewController(messageComposerViewController, targetView: view)
+
+        messageComposerViewController.view.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
+        messageComposerViewController.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        messageComposerViewController.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        messageComposerBottomConstraint = messageComposerViewController.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
+        messageComposerBottomConstraint?.isActive = true
+    }
+
+    override func setUpAppearance() {
+        super.setUpAppearance()
+        
+        collectionView.backgroundColor = .white
+        
+        // Load from UIConfig
+        let titleView = ChatMessageListTitleView<ExtraData>()
+
+        navigationItem.titleView = titleView
+        
+        guard let channel = channelController.channel else { return }
+        let navbarListener = ChatChannelNavigationBarListener.make(
+            for: channel.cid,
+            in: channelController.client,
+            using: uiConfig.channelList.channelNamer
+        )
+        navbarListener.onDataChange = { data in
+            titleView.title = data.title
+            titleView.subtitle = data.subtitle
+        }
+        self.navbarListener = navbarListener
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.embed(collectionView)
-        collectionView.backgroundColor = .white
-        
-        collectionView.register(MessageCell<ExtraData>.self, forCellWithReuseIdentifier: MessageCell<ExtraData>.reuseId)
-        
         channelController.synchronize()
+        navigationItem.largeTitleDisplayMode = .never
+    }
+    
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        keyboardObserver.register()
+    }
+
+    override open func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        resignFirstResponder()
+        
+        keyboardObserver.unregister()
     }
 
     func isMessageLastInGroup(at indexPath: IndexPath) -> Bool {
@@ -162,5 +240,11 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             completion?(flag)
             self.scrollToMostRecentMessageIfNeeded()
         }
+    }
+    
+    // MARK: - MessageComposerViewControllerDelegate
+
+    public func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>) {
+        setNeedsScrollToMostRecentMessage()
     }
 }
