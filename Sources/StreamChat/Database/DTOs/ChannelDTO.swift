@@ -321,14 +321,14 @@ extension _ChatChannel {
             currentlyTypingMembers: Set(typingMembers),
             lastActiveWatchers: { fetchWatchers() },
             team: dto.team?.id,
-            unreadCount: unreadCount,
+            unreadCount: { unreadCount() },
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),
-//            banEnabling: .disabled,
+            //            banEnabling: .disabled,
             reads: reads,
             cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,
-//            invitedMembers: [],
+            //            invitedMembers: [],
             latestMessages: { fetchMessages() },
             pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } }
         )
