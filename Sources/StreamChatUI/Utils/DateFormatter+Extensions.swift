@@ -13,3 +13,12 @@ extension DateFormatter {
         return formatter
     }
 }
+
+extension DateComponentsFormatter {
+    static var minutes: DateComponentsFormatter = {
+        let df = DateComponentsFormatter()
+        df.allowedUnits = [.minute]
+        df.unitsStyle = .full
+        return df
+    }()
+}
