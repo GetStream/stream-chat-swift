@@ -9,7 +9,12 @@ extension UIImageView {
     func loadImage(from url: URL?, placeholder: UIImage? = nil, resizeAutomatically: Bool = true) {
         guard !SystemEnvironment.isTests else {
             // When running tests, we load the images synchronously
-            image = url.flatMap { UIImage(data: try! Data(contentsOf: $0)) }
+            if let url = url {
+                image = UIImage(data: try! Data(contentsOf: url))
+                return
+            }
+
+            image = placeholder
             return
         }
 
