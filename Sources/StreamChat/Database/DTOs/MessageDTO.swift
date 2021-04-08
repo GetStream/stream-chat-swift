@@ -481,7 +481,7 @@ private extension _ChatMessage {
         localState = dto.localMessageState
         isFlaggedByCurrentUser = dto.flaggedBy != nil
         quotedMessageId = dto.quotedMessage.map(\.id)
-
+        
         if dto.pinned,
            let pinnedAt = dto.pinnedAt,
            let pinnedBy = dto.pinnedBy,
@@ -547,6 +547,8 @@ private extension _ChatMessage {
                 )
             }
         }
+        
+        $_quotedMessage = { dto.quotedMessage?.asModel() }
     }
 }
 

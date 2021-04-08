@@ -74,6 +74,9 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     ///
     public let quotedMessageId: MessageId?
     
+    public var quotedMessage: _ChatMessage<ExtraData>? { _quotedMessage }
+    @Cached internal var _quotedMessage: _ChatMessage<ExtraData>?
+    
     /// A flag indicating whether the message is a silent message.
     ///
     /// Silent messages are special messages that don't increase the unread messages count nor mark a channel as unread.
@@ -163,6 +166,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         replyCount: Int,
         extraData: ExtraData.Message,
         quotedMessageId: MessageId?,
+        quotedMessage: @escaping () -> _ChatMessage<ExtraData>?,
         isSilent: Bool,
         reactionScores: [MessageReactionType: Int],
         author: @escaping () -> _ChatUser<ExtraData.User>,
@@ -205,6 +209,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         self.$_latestReplies = latestReplies
         self.$_latestReactions = latestReactions
         self.$_currentUserReactions = currentUserReactions
+        self.$_quotedMessage = quotedMessage
     }
 }
 
