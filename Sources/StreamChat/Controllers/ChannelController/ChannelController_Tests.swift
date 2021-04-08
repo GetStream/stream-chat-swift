@@ -863,6 +863,53 @@ class ChannelController_Tests: StressTestCase {
         }
     }
     
+    func test_channelUpdateDelegate_isCalled_whenChannelReadsAreUpdated() throws {
+        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        controller.delegate = delegate
+        
+        let userId: UserId = .unique
+        
+        let originalReadDate: Date = .unique
+        
+        // Create a channel in the DB
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
+            // Create a read for the channel
+            try $0.saveChannelRead(
+                payload: ChannelReadPayload<NoExtraData>(
+                    user: self.dummyUser(id: userId),
+                    lastReadAt: originalReadDate,
+                    unreadMessagesCount: .unique // This value doesn't matter at all. It's not updated by events. We cam ignore it.
+                ),
+                for: self.channelId
+            )
+        }
+        
+        XCTAssertEqual(
+            controller.channel?.reads.first(where: { $0.user.id == userId })?.lastReadAt,
+            originalReadDate
+        )
+        
+        // Simulate `synchronize()` call
+        controller.synchronize()
+        
+        let newReadDate: Date = .unique
+        
+        // Update the read
+        try client.databaseContainer.writeSynchronously {
+            let read = try XCTUnwrap($0.loadChannelRead(cid: self.channelId, userId: userId))
+            read.lastReadAt = newReadDate
+        }
+
+        // Assert the value is updated and the delegate is called
+        XCTAssertEqual(
+            controller.channel?.reads.first(where: { $0.user.id == userId })?.lastReadAt,
+            newReadDate
+        )
+        
+        AssertAsync.willBeEqual(delegate.didUpdateChannel_channel, .update(controller.channel!))
+    }
+    
     // MARK: - New direct message channel creation tests
     
     func test_controller_reportsInitialValues_forDMChannel_ifChannelDoesntExistLocally() throws {
