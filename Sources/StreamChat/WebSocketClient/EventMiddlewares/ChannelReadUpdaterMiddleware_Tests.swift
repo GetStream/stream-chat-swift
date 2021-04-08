@@ -52,7 +52,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let messageReadEvent = try MessageReadEvent<NoExtraData>(from: eventPayload)
+        let messageReadEvent = try MessageReadEvent(from: eventPayload)
         
         // Let the middleware handle the event
         // Middleware should mutate the loadedChannel's read
@@ -117,7 +117,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             unreadCount: .noUnread,
             createdAt: newReadDate
         )
-        let notificationMarkReadEvent = try NotificationMarkReadEvent<NoExtraData>(from: eventPayload)
+        let notificationMarkReadEvent = try NotificationMarkReadEvent(from: eventPayload)
         
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: notificationMarkReadEvent, session: database.viewContext)

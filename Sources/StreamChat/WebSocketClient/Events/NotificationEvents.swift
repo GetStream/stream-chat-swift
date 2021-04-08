@@ -4,44 +4,44 @@
 
 import Foundation
 
-public struct NotificationMessageNewEvent<ExtraData: ExtraDataTypes>: EventWithMessagePayload, EventWithChannelId {
+public struct NotificationMessageNewEvent: EventWithMessagePayload, EventWithChannelId {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
     public let createdAt: Date
-    public let unreadCount: UnreadCount
+    public let unreadCount: UnreadCount?
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         userId = try response.value(at: \.message?.user.id)
         cid = try response.value(at: \.channel?.cid)
         messageId = try response.value(at: \.message?.id)
         createdAt = try response.value(at: \.message?.createdAt)
-        unreadCount = try response.value(at: \.unreadCount)
+        unreadCount = try? response.value(at: \.unreadCount)
         payload = response
     }
 }
 
-public struct NotificationMarkAllReadEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload {
+public struct NotificationMarkAllReadEvent: EventWithUserPayload {
     public let userId: UserId
     public let readAt: Date
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         userId = try response.value(at: \.user?.id)
         readAt = try response.value(at: \.createdAt)
         payload = response
     }
 }
 
-public struct NotificationMarkReadEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
+public struct NotificationMarkReadEvent: EventWithUserPayload, EventWithChannelId {
     public let userId: UserId
     public let cid: ChannelId
     public let readAt: Date
     public let unreadCount: UnreadCount
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.channel?.cid)
         readAt = try response.value(at: \.createdAt)
