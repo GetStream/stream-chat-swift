@@ -38,8 +38,7 @@ public extension _UIConfig {
         public var sendButton: _ChatMessageComposerSendButton<ExtraData>.Type = _ChatMessageComposerSendButton<ExtraData>.self
         public var composerButton: _ChatSquareButton<ExtraData>.Type = _ChatSquareButton<ExtraData>.self
         public var textView: _ChatMessageComposerInputTextView<ExtraData>.Type = _ChatMessageComposerInputTextView<ExtraData>.self
-        public var quotedMessageView: _ChatMessageComposerQuoteBubbleView<ExtraData>.Type = _ChatMessageComposerQuoteBubbleView.self
-        public var quotedMessageAvatarView: ChatAvatarView.Type = ChatAvatarView.self
+
         public var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData>.Type =
             _ChatMessageComposerCheckmarkControl<ExtraData>.self
         public var slashCommandView: _ChatMessageInputSlashCommandView<ExtraData>

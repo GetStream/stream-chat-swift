@@ -17,6 +17,9 @@ public struct _UIConfig<ExtraData: ExtraDataTypes> {
     /// An avatar view with an online indicator.
     public var presenceAvatarView: _ChatPresenceAvatarView<ExtraData>.Type = _ChatPresenceAvatarView<ExtraData>.self
 
+    /// A view that displays a quoted message.
+    public var messageQuoteView: _ChatMessageQuoteView<ExtraData>.Type = _ChatMessageQuoteView<ExtraData>.self
+
     public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()

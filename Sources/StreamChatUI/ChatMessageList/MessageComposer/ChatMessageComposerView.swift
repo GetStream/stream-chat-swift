@@ -19,9 +19,8 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     public private(set) lazy var container = DeprecatedContainerStackView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var quotedMessageView = uiConfig
-        .messageComposer
-        .quotedMessageView.init()
+    public private(set) lazy var messageQuoteView = uiConfig
+        .messageQuoteView.init()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var imageAttachmentsView = uiConfig
@@ -157,8 +156,8 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         container.centerStackView.axis = .vertical
         container.centerStackView.alignment = .fill
         
-        quotedMessageView.isHidden = true
-        container.centerStackView.addArrangedSubview(quotedMessageView)
+        messageQuoteView.isHidden = true
+        container.centerStackView.addArrangedSubview(messageQuoteView)
         container.centerStackView.addArrangedSubview(imageAttachmentsView)
         container.centerStackView.addArrangedSubview(documentAttachmentsView)
 
