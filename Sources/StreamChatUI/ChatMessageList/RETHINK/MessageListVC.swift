@@ -65,15 +65,15 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         channelController.setDelegate(self)
         channelController.synchronize()
         
-        memberController?.setDelegate(self)
-        memberController?.synchronize()
-        
         if let channel = channelController.channel, channelController.isChannelDirect {
             memberController = channelController
                 .channel?
                 .cachedMembers
                 .first { $0.id != channelController.client.currentUserId }
                 .map { channelController.client.memberController(userId: $0.id, in: channel.cid) }
+            
+            memberController?.setDelegate(self)
+            memberController?.synchronize()
             
             timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
                 self?.updateNavigationTitle()
