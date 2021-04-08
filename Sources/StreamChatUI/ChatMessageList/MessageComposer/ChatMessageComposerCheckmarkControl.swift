@@ -14,7 +14,7 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Con
     
     // MARK: - Subviews
     
-    public private(set) lazy var container = ContainerStackView()
+    public private(set) lazy var container = DeprecatedContainerStackView()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var checkmark = UIImageView()
