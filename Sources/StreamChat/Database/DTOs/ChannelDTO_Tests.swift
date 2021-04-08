@@ -43,13 +43,6 @@ class ChannelDTO_Tests: XCTestCase {
             database.viewContext.channel(cid: channelId)?.asModel()
         )
         
-        // Prepare async computation of lastmessageAt to be used in Assert.willBeEqual
-        let computedLoadedChannel: () -> Date = {
-            // Channel.lastMessageAt is updated in write transaction by the message date. Simulate the same here.
-            let latestMessageAt: Date = loadedChannel.latestMessages[0].createdAt
-            return max(loadedChannel.lastMessageAt ?? latestMessageAt, latestMessageAt)
-        }
-        
         AssertAsync {
             // Channel details
             Assert.willBeEqual(channelId, loadedChannel.cid)
@@ -61,7 +54,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.memberCount, loadedChannel.memberCount)
             Assert.willBeEqual(payload.channel.extraData, loadedChannel.extraData)
             Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel.type.rawValue)
-            Assert.willBeEqual(computedLoadedChannel(), loadedChannel.lastMessageAt)
+            Assert.willBeEqual(payload.channel.lastMessageAt, loadedChannel.lastMessageAt)
             Assert.willBeEqual(payload.channel.createdAt, loadedChannel.createdAt)
             Assert.willBeEqual(payload.channel.updatedAt, loadedChannel.updatedAt)
             Assert.willBeEqual(payload.channel.deletedAt, loadedChannel.deletedAt)
