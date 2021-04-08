@@ -20,6 +20,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     var authorAvatarView: ChatAvatarView?
     var textView: UITextView?
     var metadataView: _ChatMessageMetadataView<ExtraData>?
+    var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
 
     lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
@@ -105,6 +106,16 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
             let textView = createTextView()
             bubbleContainer.addArrangedSubview(textView, respectsLayoutMargins: true)
         }
+
+        // Link preview
+        if options.contains(.linkPreview) {
+            let linkPreviewView = createLinkPreviewView()
+            bubbleContainer.addArrangedSubview(linkPreviewView, respectsLayoutMargins: true)
+            constraintsToActivate += [
+                // This is ugly. Ideally the link preview should be updated to fill all available space.
+                linkPreviewView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
+            ]
+        }
         
         NSLayoutConstraint.activate(constraintsToActivate)
     }
@@ -136,6 +147,9 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
 
         // Metadata
         metadataView?.content = content
+
+        // Link preview
+        linkPreviewView?.content = content?.attachments.first { $0.type.isLink } as? ChatMessageDefaultAttachment
     }
     
     override open func preferredLayoutAttributesFitting(
@@ -206,5 +220,17 @@ private extension MessageCell {
                 .withoutAutoresizingMaskConstraints
         }
         return metadataView!
+    }
+
+    func createLinkPreviewView() -> _ChatMessageLinkPreviewView<ExtraData> {
+        if linkPreviewView == nil {
+            linkPreviewView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .linkPreviewView
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return linkPreviewView!
     }
 }
