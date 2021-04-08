@@ -23,6 +23,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
     var quotedMessageView: _ChatMessageQuoteBubbleView<ExtraData>?
     var photoPreviewView: _ChatMessageImageGallery<ExtraData>?
+    var filePreviewView: _ChatMessageFileAttachmentListView<ExtraData>?
 
     lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
@@ -125,6 +126,12 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
             bubbleContainer.addArrangedSubview(textView, respectsLayoutMargins: true)
         }
 
+        // File previews
+        if options.contains(.filePreview) {
+            let filePreviewView = createFilePreviewView()
+            bubbleContainer.addArrangedSubview(filePreviewView, respectsLayoutMargins: false)
+        }
+
         // Link preview
         if options.contains(.linkPreview) {
             let linkPreviewView = createLinkPreviewView()
@@ -171,15 +178,20 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
 
         // Quoted message view
         quotedMessageView?.message = content?.quotedMessage
-
-        // Photo preview
-        photoPreviewView?.content = content.map {
+        
+        let attachments: _ChatMessageAttachmentListViewData<ExtraData>? = content.map {
             .init(
                 attachments: $0.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
                 didTapOnAttachment: nil,
                 didTapOnAttachmentAction: nil
             )
         }
+
+        // Photo preview
+        photoPreviewView?.content = attachments
+
+        // File preview
+        filePreviewView?.content = attachments
     }
     
     override open func preferredLayoutAttributesFitting(
@@ -287,5 +299,18 @@ private extension MessageCell {
                 .withoutAutoresizingMaskConstraints
         }
         return photoPreviewView!
+    }
+
+    func createFilePreviewView() -> _ChatMessageFileAttachmentListView<ExtraData> {
+        if filePreviewView == nil {
+            filePreviewView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .attachmentSubviews
+                .fileAttachmentListView
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return filePreviewView!
     }
 }
