@@ -137,7 +137,6 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        channelController.synchronize()
         navigationItem.largeTitleDisplayMode = .never
     }
     
