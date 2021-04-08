@@ -270,7 +270,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         _ vc: _ChatMessageActionsVC<ExtraData>,
         didTapOnThreadReplyFor message: _ChatMessage<ExtraData>
     ) {
-        dismiss(animated: true)
+        dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.delegate?.didTapOnRepliesForMessage?(self, message)
+        }
     }
 
     open func chatMessageActionsVC(
