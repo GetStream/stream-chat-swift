@@ -55,6 +55,5 @@ class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.userId, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.readAt.description, "2020-07-17 13:55:56 +0000")
-        XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21))
     }
 }
