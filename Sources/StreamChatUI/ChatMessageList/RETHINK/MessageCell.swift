@@ -19,6 +19,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     var bubbleView: BubbleView<ExtraData>?
     var authorAvatarView: ChatAvatarView?
     var textView: UITextView?
+    var metadataView: _ChatMessageMetadataView<ExtraData>?
 
     lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
@@ -72,7 +73,6 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
 
         // Bubble view
         let bubbleView = createBubbleView()
-        mainContainer.addArrangedSubview(bubbleView)
         if options.contains(.continuousBubble) {
             bubbleView.roundedCorners = .all
             mainContainer.layoutMargins.bottom = 0
@@ -86,6 +86,19 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
 
         let bubbleContainer = ContainerView(axis: .vertical).withoutAutoresizingMaskConstraints
         bubbleView.embed(bubbleContainer)
+
+        // Metadata
+        if options.contains(.metadata) {
+            let bubbleMetaContainer = ContainerView(
+                axis: .vertical,
+                alignment: options.contains(.flipped) ? .axisTrailing : .axisLeading,
+                views: [bubbleView, createMetadataView()],
+                spacing: 2
+            )
+            mainContainer.addArrangedSubview(bubbleMetaContainer)
+        } else {
+            mainContainer.addArrangedSubview(bubbleView)
+        }
 
         // Text
         if options.contains(.text) {
@@ -120,6 +133,9 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
                 uiConfig.colorPalette.background2 :
                 uiConfig.colorPalette.popoverBackground
         }
+
+        // Metadata
+        metadataView?.content = content
     }
     
     override open func preferredLayoutAttributesFitting(
@@ -178,5 +194,17 @@ private extension MessageCell {
             bubbleView = BubbleView<ExtraData>().withoutAutoresizingMaskConstraints
         }
         return bubbleView!
+    }
+
+    func createMetadataView() -> _ChatMessageMetadataView<ExtraData> {
+        if metadataView == nil {
+            metadataView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .metadataView
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return metadataView!
     }
 }
