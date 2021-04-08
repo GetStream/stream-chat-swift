@@ -11,6 +11,11 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
 
     var minTimeIntervalBetweenMessagesInGroup: TimeInterval = 10
     
+    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
+    public private(set) var needsToScrollToMostRecentMessage = true
+    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
+    public private(set) var needsToScrollToMostRecentMessageAnimated = false
+    
     public private(set) lazy var collectionView: MessageCollectionView = {
         let collection = MessageCollectionView(frame: .zero, collectionViewLayout: ChatMessageListCollectionViewLayout())
 
@@ -117,5 +122,45 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         cell.content = message
         
         return cell
+    }
+    
+    /// Will scroll to most recent message on next `updateMessages` call
+    public func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
+        needsToScrollToMostRecentMessage = true
+        needsToScrollToMostRecentMessageAnimated = animated
+    }
+
+    /// Force scroll to most recent message check without waiting for `updateMessages`
+    public func scrollToMostRecentMessageIfNeeded() {
+        guard needsToScrollToMostRecentMessage else { return }
+        
+        scrollToMostRecentMessage(animated: needsToScrollToMostRecentMessageAnimated)
+    }
+
+    public func scrollToMostRecentMessage(animated: Bool = true) {
+        needsToScrollToMostRecentMessage = false
+
+        // our collection is flipped, so (0; 0) item is most recent one
+        collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .bottom, animated: animated)
+    }
+
+    public func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
+        collectionView.performBatchUpdates {
+            for change in changes {
+                switch change {
+                case let .insert(_, index):
+                    collectionView.insertItems(at: [index])
+                case let .move(_, fromIndex, toIndex):
+                    collectionView.moveItem(at: fromIndex, to: toIndex)
+                case let .remove(_, index):
+                    collectionView.deleteItems(at: [index])
+                case let .update(_, index):
+                    collectionView.reloadItems(at: [index])
+                }
+            }
+        } completion: { flag in
+            completion?(flag)
+            self.scrollToMostRecentMessageIfNeeded()
+        }
     }
 }
