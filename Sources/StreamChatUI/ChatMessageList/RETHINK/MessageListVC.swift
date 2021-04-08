@@ -203,7 +203,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             case .giphy:
                 options.insert(.giphy)
             case .file:
-                options.insert(.attachment)
+                options.insert(.filePreview)
             case .link:
                 options.insert(.linkPreview)
             default:
