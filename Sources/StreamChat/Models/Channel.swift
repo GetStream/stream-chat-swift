@@ -99,7 +99,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     public let team: TeamId?
     
     /// The unread counts for the channel.
-    public let unreadCount: ChannelUnreadCount
+    public var unreadCount: ChannelUnreadCount { _unreadCount }
+    @Cached private var _unreadCount: ChannelUnreadCount
     
     /// An option to enable ban users.
 //    public let banEnabling: BanEnabling
@@ -164,7 +165,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         lastActiveWatchers: @escaping (() -> [_ChatUser<ExtraData.User>]) = { [] },
         team: TeamId? = nil,
-        unreadCount: ChannelUnreadCount = .noUnread,
+        unreadCount: @escaping () -> ChannelUnreadCount = { .noUnread },
         watcherCount: Int = 0,
         memberCount: Int = 0,
 //        banEnabling: BanEnabling = .disabled,
@@ -188,7 +189,6 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.membership = membership
         self.currentlyTypingMembers = currentlyTypingMembers
         self.team = team
-        self.unreadCount = unreadCount
         self.watcherCount = watcherCount
         self.memberCount = memberCount
 //        self.banEnabling = banEnabling
@@ -197,6 +197,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.extraData = extraData
 //        self.invitedMembers = invitedMembers
         
+        $_unreadCount = unreadCount
         $_latestMessages = latestMessages
         $_lastActiveMembers = lastActiveMembers
         $_lastActiveWatchers = lastActiveWatchers
