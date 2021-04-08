@@ -21,7 +21,201 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         super.tearDown()
     }
 
-    func test_messageReadEvent_handledCorrectly() throws {
+    func test_messageNewEvent_increasesChannelReadUnreadCount() throws {
+        // Save a channel with a channel read
+        let channelId = ChannelId.unique
+        let payload = dummyPayload(with: channelId)
+        
+        // Save dummy payload to database
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: self.dummyCurrentUser)
+            try $0.saveChannel(payload: payload)
+        }
+        
+        // Load the channel from the db and check the initial values
+        var loadedChannel: _ChatChannel<NoExtraData>? {
+            database.viewContext.channel(cid: channelId)?.asModel()
+        }
+
+        let oldReadDate = try XCTUnwrap(loadedChannel?.reads.first?.lastReadAt)
+        
+        XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
+        XCTAssertEqual(oldReadDate, Date(timeIntervalSince1970: 1))
+        
+        try [
+            // 1. The current user message shouldn't increase the unread count
+            (user: dummyCurrentUser, expectedCount: 10),
+            // 2. Other user's message should increase the unread count
+            (user: dummyUser(id: .unique), expectedCount: 11)
+            
+        ].forEach { (user, expectedCount) in
+
+            // Create a MessageNewEvent with a `createdAt` date before `oldReadDate`
+            let eldEventPayload = EventPayload<NoExtraData>(
+                eventType: .messageNew,
+                cid: channelId,
+                user: user,
+                message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate)),
+                createdAt: .unique(before: oldReadDate)
+            )
+            let oldMessageNewEvent = try MessageNewEvent(from: eldEventPayload)
+
+            var handledEvent: Event?
+            try database.writeSynchronously { session in
+                // Let the middleware handle the event
+                // Middleware should mutate the loadedChannel's read
+                handledEvent = self.middleware.handle(event: oldMessageNewEvent, session: session)
+            }
+
+            XCTAssertEqual(handledEvent?.asEquatable, oldMessageNewEvent.asEquatable)
+
+            // Assert that the read event entity is NOT updated
+            XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
+
+            // Create a MessageNewEvent with a `createdAt` date later than `oldReadDate`
+            let eventPayload = EventPayload<NoExtraData>(
+                eventType: .messageNew,
+                cid: channelId,
+                user: user,
+                message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
+                createdAt: .unique(after: oldReadDate)
+            )
+            let messageNewEvent = try MessageNewEvent(from: eventPayload)
+
+            try database.writeSynchronously { session in
+                // Let the middleware handle the event
+                // Middleware should mutate the loadedChannel's read
+                handledEvent = self.middleware.handle(event: messageNewEvent, session: session)
+            }
+
+            XCTAssertEqual(handledEvent?.asEquatable, messageNewEvent.asEquatable)
+
+            // Assert that the read event entity is updated
+            XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, expectedCount)
+        }
+    }
+    
+    func test_notificationMessageNewEvent_increasesChannelReadUnreadCount() throws {
+        // Save a channel with a channel read
+        let channelId = ChannelId.unique
+        let payload = dummyPayload(with: channelId)
+        
+        // Save dummy payload to database
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: self.dummyCurrentUser)
+            try $0.saveChannel(payload: payload)
+        }
+        
+        // Load the channel from the db and check the initial values
+        var loadedChannel: _ChatChannel<NoExtraData>? {
+            database.viewContext.channel(cid: channelId)?.asModel()
+        }
+
+        let oldReadDate = try XCTUnwrap(loadedChannel?.reads.first?.lastReadAt)
+        
+        XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
+        XCTAssertEqual(oldReadDate, Date(timeIntervalSince1970: 1))
+        
+        try [
+            // 1. The current user message shouldn't increase the unread count
+            (user: dummyCurrentUser, expectedCount: 10),
+            // 2. Other user's message should increase the unread count
+            (user: dummyUser(id: .unique), expectedCount: 11)
+            
+        ].forEach { (user, expectedCount) in
+
+            // Create a MessageNewEvent with a `createdAt` date before `oldReadDate`
+            let eldEventPayload = EventPayload<NoExtraData>(
+                eventType: .notificationMessageNew,
+                cid: channelId,
+                user: user,
+                channel: .dummy(cid: channelId),
+                message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(before: oldReadDate)),
+                createdAt: .unique(before: oldReadDate)
+            )
+            let oldMessageNewEvent = try NotificationMessageNewEvent(from: eldEventPayload)
+
+            var handledEvent: Event?
+            try database.writeSynchronously { session in
+                // Let the middleware handle the event
+                // Middleware should mutate the loadedChannel's read
+                handledEvent = self.middleware.handle(event: oldMessageNewEvent, session: session)
+            }
+
+            XCTAssertEqual(handledEvent?.asEquatable, oldMessageNewEvent.asEquatable)
+
+            // Assert that the read event entity is NOT updated
+            XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
+
+            // Create a MessageNewEvent with a `createdAt` date later than `oldReadDate`
+            let eventPayload = EventPayload<NoExtraData>(
+                eventType: .notificationMessageNew,
+                cid: channelId,
+                user: user,
+                channel: .dummy(cid: channelId),
+                message: .dummy(messageId: .unique, authorUserId: user.id, createdAt: .unique(after: oldReadDate)),
+                createdAt: .unique(after: oldReadDate)
+            )
+            let messageNewEvent = try NotificationMessageNewEvent(from: eventPayload)
+
+            try database.writeSynchronously { session in
+                // Let the middleware handle the event
+                // Middleware should mutate the loadedChannel's read
+                handledEvent = self.middleware.handle(event: messageNewEvent, session: session)
+            }
+
+            XCTAssertEqual(handledEvent?.asEquatable, messageNewEvent.asEquatable)
+
+            // Assert that the read event entity is updated
+            XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, expectedCount)
+        }
+    }
+    
+    func test_messageNewEvent_doesntIncreasesChannelReadUnreadCount_forOwnMessages() throws {
+        // Save a channel with a channel read
+        let channelId = ChannelId.unique
+        let payload = dummyPayload(with: channelId)
+        
+        // Save dummy payload to database
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: self.dummyCurrentUser)
+            try $0.saveChannel(payload: payload)
+        }
+        
+        // Load the channel from the db and check the initial values
+        var loadedChannel: _ChatChannel<NoExtraData>? {
+            database.viewContext.channel(cid: channelId)?.asModel()
+        }
+
+        let oldReadDate = try XCTUnwrap(loadedChannel?.reads.first?.lastReadAt)
+        
+        XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
+        XCTAssertEqual(oldReadDate, Date(timeIntervalSince1970: 1))
+        
+        // Create a MessageNewEvent with a `createdAt` date later than `oldReadDate`
+        let eventPayload = EventPayload<NoExtraData>(
+            eventType: .messageNew,
+            cid: channelId,
+            user: dummyUser(id: .unique),
+            message: .dummy(messageId: .unique, authorUserId: dummyCurrentUser.id, createdAt: .unique(after: oldReadDate)),
+            createdAt: .unique(after: oldReadDate)
+        )
+        let messageNewEvent = try MessageNewEvent(from: eventPayload)
+
+        var handledEvent: Event?
+        try database.writeSynchronously { session in
+            // Let the middleware handle the event
+            // Middleware should mutate the loadedChannel's read
+            handledEvent = self.middleware.handle(event: messageNewEvent, session: session)
+        }
+
+        XCTAssertEqual(handledEvent?.asEquatable, messageNewEvent.asEquatable)
+
+        // Assert that the read event entity is updated
+        XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 11)
+    }
+
+    func test_messageReadEvent_resetsChannelReadUnreadCount() throws {
         // Save a channel with a channel read
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
@@ -67,7 +261,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
     }
     
-    func test_notificationMarkReadEvent_handledCorrectly() throws {
+    func test_notificationMarkReadEvent_resetsChannelReadUnreadCount() throws {
         // Save a channel with a channel read
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
@@ -131,7 +325,7 @@ class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
     }
     
-    func test_notificationMarkAllReadEvent_handledCorrectly() throws {
+    func test_notificationMarkAllReadEvent_resetsChannelReadUnreadCount() throws {
         // Save a channel with a channel read
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
