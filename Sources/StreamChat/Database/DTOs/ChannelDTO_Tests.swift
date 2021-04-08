@@ -665,7 +665,8 @@ extension XCTestCase {
     }
     
     func dummyMessagePayload(
-        createdAt: Date = ChannelDTO_Tests.channelCreatedDate.addingTimeInterval(.random(in: 60...900_000))
+        createdAt: Date = ChannelDTO_Tests.channelCreatedDate.addingTimeInterval(.random(in: 60...900_000)),
+        mentionedUsers: [UserPayload<NoExtraData>]? = nil
     ) -> MessagePayload<NoExtraData> {
         MessagePayload(
             id: .unique,
@@ -679,7 +680,7 @@ extension XCTestCase {
             args: nil,
             parentId: nil,
             showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser],
+            mentionedUsers: mentionedUsers ?? [dummyCurrentUser],
             replyCount: 0,
             extraData: .defaultValue,
             reactionScores: ["like": 1],
