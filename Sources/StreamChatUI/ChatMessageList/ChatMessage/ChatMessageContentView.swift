@@ -26,7 +26,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     
     public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
     
-    public var quotedMessageView: _ChatMessageQuoteBubbleView<ExtraData>?
+    public var messageQuoteView: _ChatMessageQuoteView<ExtraData>?
     
     public var attachmentsView: _ChatMessageAttachmentsView<ExtraData>?
 
@@ -323,19 +323,20 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     }
     
     open func setupQuoteView() {
-        guard quotedMessageView == nil else { return }
+        guard messageQuoteView == nil else { return }
         
-        let quotedMessageView = uiConfig
-            .messageList
-            .messageContentSubviews
-            .quotedMessageBubbleView.init()
+        let messageQuoteView = uiConfig
+            .messageQuoteView.init()
             .withoutAutoresizingMaskConstraints
         
-        self.quotedMessageView = quotedMessageView
+        self.messageQuoteView = messageQuoteView
         
-        addSubview(quotedMessageView)
-        
-        quotedMessageView.isVisible = false
+        addSubview(messageQuoteView)
+
+        self.messageQuoteView?.containerView.isLayoutMarginsRelativeArrangement = false
+        self.messageQuoteView?.contentContainerView.backgroundColor = uiConfig.colorPalette.background1
+
+        messageQuoteView.isVisible = false
     }
     
     open func setupLinkPreviewView() {
@@ -420,25 +421,25 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
             ]
         case [.attachments, .quotedMessage]:
             return [
-                quotedMessageView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
-                quotedMessageView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
-                quotedMessageView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                messageQuoteView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                messageQuoteView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                messageQuoteView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
                 
                 attachmentsView!.leadingAnchor.pin(equalTo: messageBubbleView!.leadingAnchor),
                 attachmentsView!.trailingAnchor.pin(equalTo: messageBubbleView!.trailingAnchor),
-                attachmentsView!.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView!.bottomAnchor, multiplier: 1),
+                attachmentsView!.topAnchor.pin(equalToSystemSpacingBelow: messageQuoteView!.bottomAnchor, multiplier: 1),
                 attachmentsView!.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
                 attachmentsView!.bottomAnchor.pin(equalTo: messageBubbleView!.bottomAnchor)
             ]
         case [.text, .attachments, .quotedMessage]:
             return [
-                quotedMessageView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
-                quotedMessageView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
-                quotedMessageView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                messageQuoteView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                messageQuoteView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                messageQuoteView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
                 
                 attachmentsView!.leadingAnchor.pin(equalTo: messageBubbleView!.leadingAnchor),
                 attachmentsView!.trailingAnchor.pin(equalTo: messageBubbleView!.trailingAnchor),
-                attachmentsView!.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView!.bottomAnchor, multiplier: 1),
+                attachmentsView!.topAnchor.pin(equalToSystemSpacingBelow: messageQuoteView!.bottomAnchor, multiplier: 1),
                 attachmentsView!.widthAnchor.pin(equalToConstant: UIScreen.main.bounds.width * 0.6),
                 
                 textView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
@@ -455,10 +456,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
             ]
         case [.quotedMessage]:
             return [
-                quotedMessageView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
-                quotedMessageView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
-                quotedMessageView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
-                quotedMessageView!.bottomAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.bottomAnchor)
+                messageQuoteView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                messageQuoteView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                messageQuoteView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                messageQuoteView!.bottomAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.bottomAnchor)
             ]
         case [.text, .linkPreview]:
             return [
@@ -475,24 +476,24 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         // link preview cannot exist without text, we can skip `[.linkPreview]` case
         case [.text, .quotedMessage]:
             return [
-                quotedMessageView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
-                quotedMessageView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
-                quotedMessageView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                messageQuoteView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                messageQuoteView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                messageQuoteView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
                 
                 textView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
                 textView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
-                textView!.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView!.bottomAnchor, multiplier: 1),
+                textView!.topAnchor.pin(equalToSystemSpacingBelow: messageQuoteView!.bottomAnchor, multiplier: 1),
                 textView!.bottomAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.bottomAnchor)
             ]
         case [.text, .quotedMessage, .linkPreview]:
             return [
-                quotedMessageView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
-                quotedMessageView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
-                quotedMessageView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
+                messageQuoteView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
+                messageQuoteView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
+                messageQuoteView!.topAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.topAnchor),
                 
                 textView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
                 textView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
-                textView!.topAnchor.pin(equalToSystemSpacingBelow: quotedMessageView!.bottomAnchor, multiplier: 1),
+                textView!.topAnchor.pin(equalToSystemSpacingBelow: messageQuoteView!.bottomAnchor, multiplier: 1),
                 
                 linkPreviewView!.leadingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.leadingAnchor),
                 linkPreviewView!.trailingAnchor.pin(equalTo: messageBubbleView!.layoutMarginsGuide.trailingAnchor),
@@ -672,10 +673,11 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         let shouldDisplayQuotedMessage = message.layoutOptions.contains(.quotedMessage)
         
         setupQuoteView()
-        let quotedMessageView = self.quotedMessageView!
-        
-        quotedMessageView.isParentMessageSentByCurrentUser = message.isSentByCurrentUser
-        quotedMessageView.message = message.quotedMessage
+        let quotedMessageView = messageQuoteView!
+        quotedMessageView.content = .init(
+            message: message.quotedMessage,
+            avatarAlignment: message.isSentByCurrentUser ? .right : .left
+        )
         quotedMessageView.isVisible = shouldDisplayQuotedMessage
     }
     
