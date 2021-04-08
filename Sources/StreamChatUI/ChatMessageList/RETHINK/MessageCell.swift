@@ -24,6 +24,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     var quotedMessageView: _ChatMessageQuoteBubbleView<ExtraData>?
     var photoPreviewView: _ChatMessageImageGallery<ExtraData>?
     var filePreviewView: _ChatMessageFileAttachmentListView<ExtraData>?
+    var giphyView: _ChatMessageGiphyView<ExtraData>?
 
     lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
@@ -120,6 +121,16 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
             ]
         }
 
+        // Giphy
+        if options.contains(.giphy) {
+            let giphyView = createGiphyView()
+            bubbleContainer.addArrangedSubview(giphyView, respectsLayoutMargins: false)
+            constraintsToActivate += [
+                // This is ugly. Ideally the photo preview should be updated to fill all available space.
+                giphyView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
+            ]
+        }
+
         // Text
         if options.contains(.text) {
             let textView = createTextView()
@@ -170,18 +181,20 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
                 uiConfig.colorPalette.popoverBackground
         }
 
+        let defaultAttachments = content?.attachments.compactMap { $0 as? ChatMessageDefaultAttachment }
+
         // Metadata
         metadataView?.content = content
 
         // Link preview
-        linkPreviewView?.content = content?.attachments.first { $0.type.isLink } as? ChatMessageDefaultAttachment
+        linkPreviewView?.content = defaultAttachments?.first { $0.type.isLink }
 
         // Quoted message view
         quotedMessageView?.message = content?.quotedMessage
-        
-        let attachments: _ChatMessageAttachmentListViewData<ExtraData>? = content.map {
+
+        let attachments: _ChatMessageAttachmentListViewData<ExtraData>? = defaultAttachments.map {
             .init(
-                attachments: $0.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
+                attachments: $0,
                 didTapOnAttachment: nil,
                 didTapOnAttachmentAction: nil
             )
@@ -192,6 +205,9 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
 
         // File preview
         filePreviewView?.content = attachments
+
+        // Giphy view
+        giphyView?.content = defaultAttachments?.first { $0.type == .giphy }
     }
     
     override open func preferredLayoutAttributesFitting(
@@ -312,5 +328,18 @@ private extension MessageCell {
                 .withoutAutoresizingMaskConstraints
         }
         return filePreviewView!
+    }
+
+    func createGiphyView() -> _ChatMessageGiphyView<ExtraData> {
+        if giphyView == nil {
+            giphyView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .attachmentSubviews
+                .giphyAttachmentView
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return giphyView!
     }
 }
