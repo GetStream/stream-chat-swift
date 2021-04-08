@@ -26,7 +26,7 @@ public extension ChatMessageLayoutOptions {
     static let continuousBubble = Self(rawValue: 1 << 5)
 
     /// Attachments
-    static let attachment = Self(rawValue: 1 << 6)
+    static let filePreview = Self(rawValue: 1 << 6)
     static let linkPreview = Self(rawValue: 1 << 7)
     static let photoPreview = Self(rawValue: 1 << 8)
     static let giphy = Self(rawValue: 1 << 9)
