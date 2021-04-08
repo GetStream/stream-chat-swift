@@ -60,7 +60,15 @@ extension AttachmentId {
 
 extension Date {
     /// Returns a new random date
-    static var unique: Date { Date(timeIntervalSince1970: .random(in: 1...1_500_000_000)) }
+    static var unique: Date { Date(timeIntervalSince1970: .random(in: 1_000_000...1_500_000_000)) }
+   
+    static func unique(before date: Date) -> Date {
+        Date(timeIntervalSince1970: .random(in: 1..<date.timeIntervalSince1970))
+    }
+    
+    static func unique(after date: Date) -> Date {
+        Date(timeIntervalSince1970: .random(in: (date.timeIntervalSince1970 + 1)...1_500_000_000))
+    }
 }
 
 extension Int {
