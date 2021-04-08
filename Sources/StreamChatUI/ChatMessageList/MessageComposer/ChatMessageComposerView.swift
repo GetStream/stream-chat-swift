@@ -16,7 +16,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     
     // MARK: - Subviews
 
-    public private(set) lazy var container = ContainerStackView()
+    public private(set) lazy var container = DeprecatedContainerStackView()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var quotedMessageView = uiConfig

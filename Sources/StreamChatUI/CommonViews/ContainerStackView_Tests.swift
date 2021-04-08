@@ -5,7 +5,7 @@
 @testable import StreamChatUI
 import XCTest
 
-class ContainerView_Tests: XCTestCase {
+class ContainerStackView_Tests: XCTestCase {
     var views: [UIView] = []
     
     let axis: [String: NSLayoutConstraint.Axis] = [
@@ -13,19 +13,19 @@ class ContainerView_Tests: XCTestCase {
         "horizontal": .horizontal
     ]
     
-    let alignments: [String: ContainerView.Alignment] = [
+    let alignments: [String: ContainerStackView.Alignment] = [
         "fill": .fill,
         "axisLeading": .axisLeading,
         "axisTrailing": .axisTrailing,
         "center": .center
     ]
     
-    let distributions: [String: ContainerView.Distribution] = [
+    let distributions: [String: ContainerStackView.Distribution] = [
         "natural": .natural,
         "equal": .equal
     ]
     
-    let orderings: [String: ContainerView.Ordering] = [
+    let orderings: [String: ContainerStackView.Ordering] = [
         "leadingToTrailing": .leadingToTrailing,
         "trailingToLeading": .trailingToLeading
     ]
@@ -45,9 +45,27 @@ class ContainerView_Tests: XCTestCase {
             return label
         }
     }
+
+    func testAppearance_withOneViewOnly() {
+        let views = [self.views.first!]
+
+        let containerH = ContainerStackView(
+            axis: .horizontal,
+            views: views
+        ).withoutAutoresizingMaskConstraints
+
+        AssertSnapshot(containerH, variants: [.defaultLight], suffix: "horizontal")
+
+        let containerV = ContainerStackView(
+            axis: .vertical,
+            views: views
+        ).withoutAutoresizingMaskConstraints
+
+        AssertSnapshot(containerV, variants: [.defaultLight], suffix: "vertical")
+    }
     
     func testAppearance() {
-        let container = ContainerView(axis: .vertical, alignment: .fill, views: views).withoutAutoresizingMaskConstraints
+        let container = ContainerStackView(axis: .vertical, alignment: .fill, views: views).withoutAutoresizingMaskConstraints
         
         axis.forEach { (axisName, axis) in
             alignments.forEach { (alignmentName, alignment) in
