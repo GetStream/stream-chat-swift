@@ -21,6 +21,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     var textView: UITextView?
     var metadataView: _ChatMessageMetadataView<ExtraData>?
     var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
+    var quotedMessageView: _ChatMessageQuoteBubbleView<ExtraData>?
 
     lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
@@ -101,6 +102,12 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
             mainContainer.addArrangedSubview(bubbleView)
         }
 
+        // Quoted message
+        if options.contains(.quotedMessage) {
+            let quotedMessageView = createQuotedMessageView()
+            bubbleContainer.addArrangedSubview(quotedMessageView, respectsLayoutMargins: true)
+        }
+
         // Text
         if options.contains(.text) {
             let textView = createTextView()
@@ -150,6 +157,9 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
 
         // Link preview
         linkPreviewView?.content = content?.attachments.first { $0.type.isLink } as? ChatMessageDefaultAttachment
+
+        // Quoted message view
+        quotedMessageView?.message = content?.quotedMessage
     }
     
     override open func preferredLayoutAttributesFitting(
@@ -232,5 +242,17 @@ private extension MessageCell {
                 .withoutAutoresizingMaskConstraints
         }
         return linkPreviewView!
+    }
+
+    func createQuotedMessageView() -> _ChatMessageQuoteBubbleView<ExtraData> {
+        if quotedMessageView == nil {
+            quotedMessageView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .quotedMessageBubbleView
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return quotedMessageView!
     }
 }
