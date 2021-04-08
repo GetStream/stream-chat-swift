@@ -8,7 +8,7 @@ import UIKit
 public typealias ChatMessageMetadataView = _ChatMessageMetadataView<NoExtraData>
 
 open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var message: _ChatMessageGroupPart<ExtraData>? {
+    public var content: _ChatMessage<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -53,12 +53,12 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     }
 
     override open func updateContent() {
-        if let createdAt = message?.createdAt {
+        if let createdAt = content?.createdAt {
             timestampLabel.text = dateFormatter.string(from: createdAt)
         } else {
             timestampLabel.text = nil
         }
-        currentUserVisabilityIndicator.isVisible = message?.onlyVisibleForCurrentUser ?? false
+        currentUserVisabilityIndicator.isVisible = content?.onlyVisibleForCurrentUser ?? false
     }
 }
 
@@ -68,6 +68,7 @@ open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTyp
     public private(set) lazy var stack: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
+        stack.alignment = .center
         stack.spacing = UIStackView.spacingUseSystem
         return stack.withoutAutoresizingMaskConstraints
     }()
@@ -102,12 +103,12 @@ open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTyp
     }
 }
 
-private extension _ChatMessageGroupPart {
+private extension _ChatMessage {
     var onlyVisibleForCurrentUser: Bool {
-        guard message.isSentByCurrentUser else {
+        guard isSentByCurrentUser else {
             return false
         }
 
-        return message.deletedAt != nil || message.type == .ephemeral
+        return deletedAt != nil || type == .ephemeral
     }
 }
