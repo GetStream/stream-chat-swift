@@ -192,6 +192,9 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         if isLastInGroup && !message.isSentByCurrentUser {
             options.insert(.avatar)
         }
+        if message.quotedMessageId != nil {
+            options.insert(.quotedMessage)
+        }
 
         for attachment in message.attachments {
             switch attachment.type {
