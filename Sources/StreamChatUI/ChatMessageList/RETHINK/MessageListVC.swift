@@ -57,6 +57,9 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         messageComposerViewController.userSuggestionSearchController = userSuggestionSearchController
 
         userSuggestionSearchController.search(term: nil)
+        
+        channelController.setDelegate(self)
+        channelController.synchronize()
     }
     
     override func setUpLayout() {
@@ -77,6 +80,8 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     
     override func defaultAppearance() {
         super.defaultAppearance()
+        
+        view.backgroundColor = .white
         
         collectionView.backgroundColor = .white
         
@@ -246,5 +251,16 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
 
     public func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>) {
         setNeedsScrollToMostRecentMessage()
+    }
+}
+
+// MARK: - _ChatChannelControllerDelegate
+
+extension MessageListVC: _ChatChannelControllerDelegate {
+    public func channelController(
+        _ channelController: _ChatChannelController<ExtraData>,
+        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
+    ) {
+        updateMessages(with: changes)
     }
 }
