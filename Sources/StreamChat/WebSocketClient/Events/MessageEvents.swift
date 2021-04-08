@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct MessageNewEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithMessagePayload {
+public struct MessageNewEvent: EventWithUserPayload, EventWithMessagePayload {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -14,7 +14,7 @@ public struct MessageNewEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, 
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.message?.id)
@@ -59,14 +59,14 @@ public struct MessageDeletedEvent<ExtraData: ExtraDataTypes>: EventWithUserPaylo
     }
 }
 
-public struct MessageReadEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
+public struct MessageReadEvent: EventWithUserPayload, EventWithChannelId {
     public let userId: UserId
     public let cid: ChannelId
     public let readAt: Date
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         readAt = try response.value(at: \.createdAt)
