@@ -43,6 +43,13 @@ class ChannelDTO_Tests: XCTestCase {
             database.viewContext.channel(cid: channelId)?.asModel()
         )
         
+        // Prepare async computation of lastmessageAt to be used in Assert.willBeEqual
+        let computedLoadedChannel: () -> Date = {
+            // Channel.lastMessageAt is updated in write transaction by the message date. Simulate the same here.
+            let latestMessageAt: Date = loadedChannel.latestMessages[0].createdAt
+            return max(loadedChannel.lastMessageAt ?? latestMessageAt, latestMessageAt)
+        }
+        
         AssertAsync {
             // Channel details
             Assert.willBeEqual(channelId, loadedChannel.cid)
@@ -54,7 +61,7 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.memberCount, loadedChannel.memberCount)
             Assert.willBeEqual(payload.channel.extraData, loadedChannel.extraData)
             Assert.willBeEqual(payload.channel.typeRawValue, loadedChannel.type.rawValue)
-            Assert.willBeEqual(payload.channel.lastMessageAt, loadedChannel.lastMessageAt)
+            Assert.willBeEqual(computedLoadedChannel(), loadedChannel.lastMessageAt)
             Assert.willBeEqual(payload.channel.createdAt, loadedChannel.createdAt)
             Assert.willBeEqual(payload.channel.updatedAt, loadedChannel.updatedAt)
             Assert.willBeEqual(payload.channel.deletedAt, loadedChannel.deletedAt)
@@ -142,6 +149,20 @@ class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channelReads[0].unreadMessagesCount, loadedChannel.reads.first?.unreadMessagesCount)
             Assert.willBeEqual(payload.channelReads[0].user.id, loadedChannel.reads.first?.user.id)
         }
+    }
+
+    func test_defaultSortingAt_updates_whenLastMessageAtChanges() throws {
+        let channelId: ChannelId = .unique
+        
+        try database.createChannel(cid: channelId)
+        
+        try database.writeSynchronously {
+            let channel = try XCTUnwrap($0.channel(cid: channelId))
+            channel.lastMessageAt = .unique(after: channel.lastMessageAt ?? channel.createdAt)
+        }
+        
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.lastMessageAt, channel.defaultSortingAt)
     }
 
     func test_channelPayload_nilMembershipRemovesExistingMembership() throws {
@@ -236,7 +257,7 @@ class ChannelDTO_Tests: XCTestCase {
         let channel: ChannelDTO? = database.viewContext.channel(cid: channelId)
         XCTAssertEqual(channel?.oldestMessageAt, oldMessageCreatedAt)
     }
-
+    
     func test_channelPayload_truncatedMessagesAreIgnored() throws {
         // Save a channel payload with 100 messages
         let channelId: ChannelId = .unique
@@ -439,10 +460,10 @@ class ChannelDTO_Tests: XCTestCase {
         let queryWithUpdatedAtSorting = _ChannelListQuery(filter: filter, sort: [.init(key: .updatedAt, isAscending: false)])
 
         // Create dummy channels payloads with ids: a, b, c, d.
-        let payload1 = dummyPayload(with: try! .init(cid: "a:a"))
-        let payload2 = dummyPayload(with: try! .init(cid: "a:b"))
-        let payload3 = dummyPayload(with: try! .init(cid: "a:c"))
-        let payload4 = dummyPayload(with: try! .init(cid: "a:d"))
+        let payload1 = dummyPayload(with: try! .init(cid: "a:a"), numberOfMessages: 0)
+        let payload2 = dummyPayload(with: try! .init(cid: "a:b"), numberOfMessages: 0)
+        let payload3 = dummyPayload(with: try! .init(cid: "a:c"), numberOfMessages: 0)
+        let payload4 = dummyPayload(with: try! .init(cid: "a:d"), numberOfMessages: 0)
 
         // Get `lastMessageDate` and `created` dates from generated dummy channels and sort the for the default sorting.
         let createdAndLastMessageDates = [payload1, payload2, payload3, payload4]

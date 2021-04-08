@@ -73,6 +73,15 @@ class MessageDTO_Tests: XCTestCase {
             return Set(try! database.viewContext.fetch(request))
         }
         
+        // Prepare async computation of lastmessageAt to be used in Assert.willBeEqual
+        let computedLoadedChannel: () -> Date? = {
+            // Channel.lastMessageAt is updated in write transaction by the message date. Simulate the same here.
+            if let latestMessageAt: Date = loadedChannel?.latestMessages[0].createdAt {
+                return max(loadedChannel?.lastMessageAt ?? latestMessageAt, latestMessageAt)
+            }
+            return loadedChannel?.lastMessageAt
+        }
+        
         // Assert the channel data was saved correctly
         AssertAsync {
             // Channel details
@@ -83,7 +92,7 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(channelPayload.memberCount, loadedChannel?.memberCount)
             Assert.willBeEqual(channelPayload.extraData, loadedChannel?.extraData)
             Assert.willBeEqual(channelPayload.typeRawValue, loadedChannel?.type.rawValue)
-            Assert.willBeEqual(channelPayload.lastMessageAt, loadedChannel?.lastMessageAt)
+            Assert.willBeEqual(computedLoadedChannel(), loadedChannel?.lastMessageAt)
             Assert.willBeEqual(channelPayload.createdAt, loadedChannel?.createdAt)
             Assert.willBeEqual(channelPayload.updatedAt, loadedChannel?.updatedAt)
             Assert.willBeEqual(channelPayload.deletedAt, loadedChannel?.deletedAt)
@@ -907,6 +916,46 @@ class MessageDTO_Tests: XCTestCase {
         }
 
         XCTAssertEqual(loadedAttachments.count, 0)
+    }
+    
+    func test_messageUpdateChannelsLastMessageAt_whenNewer() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = .unique
+        let channelId: ChannelId = .unique
+        // Save channel with some messages
+        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId, numberOfMessages: 5)
+        let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
+        try database.writeSynchronously {
+            try $0.saveChannel(payload: channelPayload)
+        }
+        
+        // Create a new message payload that's older than `channel.lastMessageAt`
+        let olderMessagePayload: MessagePayload<NoExtraData> = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            createdAt: .unique(before: channelPayload.channel.lastMessageAt!)
+        )
+        assert(olderMessagePayload.createdAt < channelPayload.channel.lastMessageAt!)
+        // Save the message payload and check `channel.lastMessageAt` is not updated by older message
+        try database.writeSynchronously {
+            try $0.saveMessage(payload: olderMessagePayload, for: channelId)
+        }
+        var channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.lastMessageAt, originalLastMessageAt)
+        
+        // Create a new message payload that's newer than `channel.lastMessageAt`
+        let newerMessagePayload: MessagePayload<NoExtraData> = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+        )
+        assert(newerMessagePayload.createdAt > channelPayload.channel.lastMessageAt!)
+        // Save the message payload and check `channel.lastMessageAt` is updated
+        try database.writeSynchronously {
+            try $0.saveMessage(payload: newerMessagePayload, for: channelId)
+        }
+        channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.lastMessageAt, newerMessagePayload.createdAt)
     }
 }
 
