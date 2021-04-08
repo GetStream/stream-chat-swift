@@ -3578,8 +3578,6 @@
 				A3BB3FFE261DA74D00365496 /* ContainerView.swift */,
 				A3C0D773261CA25700A8A1A2 /* ContainerView_Tests.swift */,
 				DBF12127258BAFC1001919C6 /* OnlyLinkTappableTextView.swift */,
-				885B3D7625642B3D003E6BDF /* CurrentChatUserAvatarView.swift */,
-				79B4F0DE25D305CD0063FFB5 /* CurrentChatUserAvatarView_Tests.swift */,
 				885B3D7C25642B88003E6BDF /* ChatChannelCreateNewButton.swift */,
 				AD16173825D6A7D7007E9FA8 /* ChatChannelCreateNewButton_Tests.swift */,
 				22A0921625682880001FE9F0 /* ChatNavigationBar.swift */,
@@ -3860,13 +3858,15 @@
 			isa = PBXGroup;
 			children = (
 				ADB22F7925F1626200853C92 /* ChatPresenceAvatarView */,
+				E7DF7E2325C2C67E00AE9D21 /* ChatAvatarView.swift */,
 				2245B2B525602465006A612D /* ChatChannelAvatarView.swift */,
 				E791E4D525D3E2DA00B0E076 /* ChatChannelAvatarView_Tests.swift */,
 				7844B14D25EF9F5700B87E89 /* ChatChannelAvatarView+SwiftUI.swift */,
 				F86C887625FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift */,
 				AD7112F225F12AA800932AEE /* ChatUserAvatarView.swift */,
 				AD71131125F138D500932AEE /* ChatUserAvatarView_Tests.swift */,
-				E7DF7E2325C2C67E00AE9D21 /* ChatAvatarView.swift */,
+				885B3D7625642B3D003E6BDF /* CurrentChatUserAvatarView.swift */,
+				79B4F0DE25D305CD0063FFB5 /* CurrentChatUserAvatarView_Tests.swift */,
 			);
 			path = AvatarView;
 			sourceTree = "<group>";
