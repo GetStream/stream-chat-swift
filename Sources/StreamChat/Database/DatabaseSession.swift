@@ -164,7 +164,7 @@ protocol ChannelReadDatabaseSession {
     
     /// Fetches `ChannelReadDTO` with the given `cid` and `userId` from the DB.
     /// Returns `nil` if no `ChannelReadDTO` matching the `cid` and `userId`  exists.
-    func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO?
+    func loadChannelRead(cid: ChannelId, userId: UserId) -> ChannelReadDTO?
     
     /// Fetches `ChannelReadDTO`entities for the given `userId` from the DB.
     func loadChannelReads(for userId: UserId) -> [ChannelReadDTO]
