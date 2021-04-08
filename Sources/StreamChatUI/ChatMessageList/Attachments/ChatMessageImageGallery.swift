@@ -54,7 +54,7 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigP
                 previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
                 previews[0].topAnchor.pin(equalTo: topAnchor),
                 previews[0].bottomAnchor.pin(equalTo: bottomAnchor),
-                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
+                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: -anchorSpacing),
                 
                 previews[1].trailingAnchor.pin(equalTo: trailingAnchor),
                 previews[1].topAnchor.pin(equalTo: topAnchor),
@@ -65,11 +65,11 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigP
                 previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
                 previews[0].topAnchor.pin(equalTo: topAnchor),
                 previews[0].bottomAnchor.pin(equalTo: bottomAnchor),
-                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
+                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: -anchorSpacing),
                 
                 previews[1].topAnchor.pin(equalTo: topAnchor),
                 previews[1].trailingAnchor.pin(equalTo: trailingAnchor),
-                previews[1].heightAnchor.pin(equalTo: heightAnchor, multiplier: 0.5, constant: anchorSpacing),
+                previews[1].heightAnchor.pin(equalTo: heightAnchor, multiplier: 0.5, constant: -anchorSpacing),
                 previews[1].widthAnchor.pin(equalTo: previews[0].widthAnchor),
                 
                 previews[2].trailingAnchor.pin(equalTo: previews[1].trailingAnchor),
@@ -80,8 +80,8 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigP
             [
                 previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
                 previews[0].topAnchor.pin(equalTo: topAnchor),
-                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
-                previews[0].heightAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
+                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: -anchorSpacing),
+                previews[0].heightAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: -anchorSpacing),
                 
                 previews[1].topAnchor.pin(equalTo: topAnchor),
                 previews[1].trailingAnchor.pin(equalTo: trailingAnchor),
