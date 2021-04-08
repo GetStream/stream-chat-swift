@@ -264,23 +264,31 @@ extension _ChatChannel {
         
         let reads: [_ChatChannelRead<ExtraData>] = dto.reads.map { $0.asModel() }
         
-        var unreadCount = ChannelUnreadCount.noUnread
-        if let currentUser = context.currentUser(),
-           let currentUserChannelRead = reads.first(where: { $0.user.id == currentUser.user.id }) {
-            // Fetch count of all mentioned messages after last read
-            let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-            request.predicate = NSPredicate(
-                format: "(channel.cid == %@) AND (createdAt > %@) AND (%@ IN mentionedUsers)",
-                dto.cid,
-                currentUserChannelRead.lastReadAt as NSDate,
-                currentUser.user
-            )
-            let mentionedMessagesCount = try! context.count(for: request)
+        let unreadCount: () -> ChannelUnreadCount = {
+            guard let currentUser = context.currentUser() else { return .noUnread }
             
-            unreadCount = ChannelUnreadCount(
-                messages: currentUserChannelRead.unreadMessagesCount,
-                mentionedMessages: mentionedMessagesCount
-            )
+            let currentUserRead = reads.first(where: { $0.user.id == currentUser.user.id })
+            
+            let allUnreadMessages = currentUserRead?.unreadMessagesCount ?? 0
+            
+            // Fetch count of all mentioned messages after last read
+            // (this is not 100% accurate but it's the best we have)
+            let metionedUnreadMessagesRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+            metionedUnreadMessagesRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                MessageDTO.channelMessagesPredicate(for: dto.cid),
+                NSPredicate(format: "createdAt > %@", currentUserRead?.lastReadAt as NSDate? ?? NSDate(timeIntervalSince1970: 0)),
+                NSPredicate(format: "%@ IN mentionedUsers", currentUser.user)
+            ])
+            
+            do {
+                return ChannelUnreadCount(
+                    messages: allUnreadMessages,
+                    mentionedMessages: try context.count(for: metionedUnreadMessagesRequest)
+                )
+            } catch {
+                log.error("Failed to fetch unread counts for channel `\(cid)`. Error: \(error)")
+                return .noUnread
+            }
         }
         
         let fetchMessages: () -> [_ChatMessage<ExtraData>] = {
