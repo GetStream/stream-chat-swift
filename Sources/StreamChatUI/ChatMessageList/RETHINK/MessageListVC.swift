@@ -9,6 +9,7 @@ import UIKit
 class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource,
     UIConfigProvider, _ChatMessageComposerViewControllerDelegate {
     var channelController: _ChatChannelController<ExtraData>!
+    var memberController: _ChatChannelMemberController<ExtraData>?
 
     var minTimeIntervalBetweenMessagesInGroup: TimeInterval = 10
     
@@ -37,7 +38,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     
     private var messageComposerBottomConstraint: NSLayoutConstraint?
     
-    private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
+    private var timer: Timer?
     
     private lazy var keyboardObserver = ChatMessageListKeyboardObserver(
         containerView: view,
@@ -48,6 +49,9 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> = {
         channelController.client.userSearchController()
     }()
+    
+    // Load from UIConfig
+    public lazy var titleView = ChatMessageListTitleView<ExtraData>()
     
     override func setUp() {
         super.setUp()
@@ -60,6 +64,21 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         
         channelController.setDelegate(self)
         channelController.synchronize()
+        
+        memberController?.setDelegate(self)
+        memberController?.synchronize()
+        
+        if let channel = channelController.channel, channelController.isChannelDirect {
+            memberController = channelController
+                .channel?
+                .cachedMembers
+                .first { $0.id != channelController.client.currentUserId }
+                .map { channelController.client.memberController(userId: $0.id, in: channel.cid) }
+            
+            timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+                self?.updateNavigationTitle()
+            }
+        }
     }
     
     override func setUpLayout() {
@@ -85,24 +104,36 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         
         collectionView.backgroundColor = .white
         
-        // Load from UIConfig
-        let titleView = ChatMessageListTitleView<ExtraData>()
-
         navigationItem.titleView = titleView
-        
-        guard let channel = channelController.channel else { return }
-        let navbarListener = ChatChannelNavigationBarListener.make(
-            for: channel.cid,
-            in: channelController.client,
-            using: uiConfig.channelList.channelNamer
-        )
-        navbarListener.onDataChange = { data in
-            titleView.title = data.title
-            titleView.subtitle = data.subtitle
-        }
-        self.navbarListener = navbarListener
     }
     
+    private func updateNavigationTitle() {
+        let title = channelController.channel
+            .flatMap { uiConfig.channelList.channelNamer($0, channelController.client.currentUserId) }
+        
+        let subtitle: String? = {
+            if channelController.isChannelDirect {
+                guard let member = memberController?.member else { return nil }
+                
+                if member.isOnline {
+                    // ReallyNotATODO: Missing API GroupA.m1
+                    // need to specify how long user have been online
+                    return "Online"
+                } else if let minutes = member.lastActiveAt
+                    .flatMap({ DateComponentsFormatter.minutes.string(from: $0, to: Date()) }) {
+                    return "Seen \(minutes) ago"
+                } else {
+                    return "Offline"
+                }
+            } else {
+                return channelController.channel.map { "\($0.memberCount) members, \($0.watcherCount) online" }
+            }
+        }()
+        
+        titleView.title = title
+        titleView.subtitle = subtitle
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -262,5 +293,14 @@ extension MessageListVC: _ChatChannelControllerDelegate {
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         updateMessages(with: changes)
+    }
+}
+
+extension MessageListVC: _ChatChannelMemberControllerDelegate {
+    func memberController(
+        _ controller: _ChatChannelMemberController<ExtraData>,
+        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+    ) {
+        updateNavigationTitle()
     }
 }
