@@ -22,6 +22,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     var metadataView: _ChatMessageMetadataView<ExtraData>?
     var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
     var quotedMessageView: _ChatMessageQuoteBubbleView<ExtraData>?
+    var photoPreviewView: _ChatMessageImageGallery<ExtraData>?
 
     lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
@@ -107,6 +108,16 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
             let quotedMessageView = createQuotedMessageView()
             bubbleContainer.addArrangedSubview(quotedMessageView, respectsLayoutMargins: true)
         }
+        
+        // Photo preview
+        if options.contains(.photoPreview) {
+            let photoPreviewView = createPhotoPreviewView()
+            bubbleContainer.addArrangedSubview(photoPreviewView, respectsLayoutMargins: false)
+            constraintsToActivate += [
+                // This is ugly. Ideally the photo preview should be updated to fill all available space.
+                photoPreviewView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
+            ]
+        }
 
         // Text
         if options.contains(.text) {
@@ -160,6 +171,15 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
 
         // Quoted message view
         quotedMessageView?.message = content?.quotedMessage
+
+        // Photo preview
+        photoPreviewView?.content = content.map {
+            .init(
+                attachments: $0.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
+                didTapOnAttachment: nil,
+                didTapOnAttachmentAction: nil
+            )
+        }
     }
     
     override open func preferredLayoutAttributesFitting(
@@ -254,5 +274,18 @@ private extension MessageCell {
                 .withoutAutoresizingMaskConstraints
         }
         return quotedMessageView!
+    }
+
+    func createPhotoPreviewView() -> _ChatMessageImageGallery<ExtraData> {
+        if photoPreviewView == nil {
+            photoPreviewView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .attachmentSubviews
+                .imageGallery
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return photoPreviewView!
     }
 }
