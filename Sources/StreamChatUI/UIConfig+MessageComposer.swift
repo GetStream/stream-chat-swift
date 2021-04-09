@@ -36,7 +36,8 @@ public extension _UIConfig {
             _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.self
 
         public var sendButton: _ChatMessageComposerSendButton<ExtraData>.Type = _ChatMessageComposerSendButton<ExtraData>.self
-        public var composerButton: _ChatSquareButton<ExtraData>.Type = _ChatSquareButton<ExtraData>.self
+        /// Buttons used in the left side of the composer. Corresponds to attachment and actions buttons.
+        public var composerButton: UIButton.Type = UIButton.self
         public var textView: _ChatMessageComposerInputTextView<ExtraData>.Type = _ChatMessageComposerInputTextView<ExtraData>.self
 
         public var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData>.Type =
