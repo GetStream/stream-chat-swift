@@ -190,7 +190,8 @@ extension DatabaseContainer {
         pinExpires: Date? = nil,
         attachments: [AttachmentPayload] = [],
         localState: LocalMessageState? = nil,
-        type: MessageType? = nil
+        type: MessageType? = nil,
+        numberOfReplies: Int = 0
     ) throws {
         try writeSynchronously { session in
             try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
@@ -209,6 +210,19 @@ extension DatabaseContainer {
             
             let messageDTO = try session.saveMessage(payload: message, for: cid)
             messageDTO.localMessageState = localState
+            
+            for idx in 0..<numberOfReplies {
+                let reply: MessagePayload<NoExtraData> = .dummy(
+                    type: .reply,
+                    messageId: .unique,
+                    parentId: id,
+                    authorUserId: authorId,
+                    text: "Reply \(idx)"
+                )
+                
+                let replyDTO = try session.saveMessage(payload: reply, for: cid)
+                messageDTO.replies.insert(replyDTO)
+            }
         }
     }
     
