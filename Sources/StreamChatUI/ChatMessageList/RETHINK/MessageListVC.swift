@@ -9,7 +9,6 @@ import UIKit
 class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource,
     UIConfigProvider {
     var channelController: _ChatChannelController<ExtraData>!
-    var memberController: _ChatChannelMemberController<ExtraData>?
 
     var minTimeIntervalBetweenMessagesInGroup: TimeInterval = 10
     
@@ -70,13 +69,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         channelController.setDelegate(self)
         channelController.synchronize()
         
-        if let channel = channelController.channel, channelController.isChannelDirect {
-            memberController = channelController
-                .channel?
-                .cachedMembers
-                .first { $0.id != channelController.client.currentUserId }
-                .map { channelController.client.memberController(userId: $0.id, in: channel.cid) }
-            
+        if channelController.isChannelDirect {
             timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
                 self?.updateNavigationTitle()
             }
@@ -115,7 +108,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         
         let subtitle: String? = {
             if channelController.isChannelDirect {
-                guard let member = memberController?.member else { return nil }
+                guard let member = channelController.channel?.lastActiveMembers.first else { return nil }
                 
                 if member.isOnline {
                     // ReallyNotATODO: Missing API GroupA.m1
@@ -150,6 +143,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        
         resignFirstResponder()
         
         keyboardObserver.unregister()
