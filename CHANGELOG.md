@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [3.1.5](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.5)
+_April 09, 2021_
+
 ### ✅ Added
 - Channels are properly marked as read when `ChatChannelVC` is displayed [#972](https://github.com/GetStream/stream-chat-swift/pull/972)
 

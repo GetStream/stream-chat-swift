@@ -8,5 +8,5 @@ import Foundation
 
 extension SystemEnvironment {
   /// A Stream Chat version.
-  public static let version: String = "3.1.4"
+  public static let version: String = "3.1.5"
 }
