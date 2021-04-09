@@ -203,6 +203,9 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         if !message.reactionScores.isEmpty {
             options.insert(.reactions)
         }
+        if message.lastActionFailed {
+            options.insert(.error)
+        }
 
         let attachmentOptions: ChatMessageLayoutOptions = message.attachments.reduce([]) { options, attachment in
             if (attachment as? ChatMessageDefaultAttachment)?.actions.isEmpty == false {
