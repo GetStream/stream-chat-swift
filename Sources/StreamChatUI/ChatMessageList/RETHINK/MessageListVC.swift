@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource,
-    UIConfigProvider, _ChatMessageComposerViewControllerDelegate {
+    UIConfigProvider {
     var channelController: _ChatChannelController<ExtraData>!
     var memberController: _ChatChannelMemberController<ExtraData>?
 
@@ -53,6 +53,11 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     // Load from UIConfig
     public lazy var titleView = ChatMessageListTitleView<ExtraData>()
     
+    public lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+
+//    public lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
+    public lazy var router = MessageListRouter(rootViewController: self)
+    
     override func setUp() {
         super.setUp()
         
@@ -71,9 +76,6 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
                 .cachedMembers
                 .first { $0.id != channelController.client.currentUserId }
                 .map { channelController.client.memberController(userId: $0.id, in: channel.cid) }
-            
-            memberController?.setDelegate(self)
-            memberController?.synchronize()
             
             timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
                 self?.updateNavigationTitle()
@@ -152,27 +154,27 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         
         keyboardObserver.unregister()
     }
-
+    
     func isMessageLastInGroup(at indexPath: IndexPath) -> Bool {
         let message = channelController.messages[indexPath.row]
-
+        
         guard indexPath.row > 0 else { return true }
-
+        
         let nextMessage = channelController.messages[indexPath.row - 1]
-
+        
         guard nextMessage.author == message.author else { return true }
-
+        
         let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
-
+        
         return delay > minTimeIntervalBetweenMessagesInGroup
     }
     
     func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
         let message = channelController.messages[indexPath.row]
         let isLastInGroup = isMessageLastInGroup(at: indexPath)
-
+        
         var options: ChatMessageLayoutOptions = []
-
+        
         if message.isSentByCurrentUser {
             options.insert(.flipped)
         }
@@ -277,14 +279,87 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         }
     }
     
-    // MARK: - MessageComposerViewControllerDelegate
+    private func presentReactionsControllerAnimated(
+        for cell: _СhatMessageCollectionViewCell<ExtraData>,
+        with messageData: _ChatMessageGroupPart<ExtraData>,
+        actionsController: _ChatMessageActionsVC<ExtraData>,
+        reactionsController: _ChatMessageReactionsVC<ExtraData>?
+    ) {
+        // TODO: for PR: This should be doable via:
+        // 1. options: [.autoreverse, .repeat] and
+        // 2. `UIView.setAnimationRepeatCount(0)` inside the animation block...
+        //
+        // and then just set completion to the animation to transform this back. aka `cell.messageView.transform = .identity`
+        // however, this doesn't work as after the animation is done, it clips back to the value set in animation block
+        // and then on completion goes back to `.identity`... This is really strange, but I was fighting it for some time
+        // and couldn't find proper solution...
+        // Also there are some limitations to the current solution ->
+        // According to my debug view hiearchy, the content inside `messageView.messageBubbleView` is not constrainted to the
+        // bubble view itself, meaning right now if we want to scale the view of incoming message, we scale the avatarView
+        // of the sender as well...
+        UIView.animate(
+            withDuration: 0.2,
+            delay: 0,
+            options: [.curveEaseIn],
+            animations: {
+                cell.messageView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            },
+            completion: { _ in
+                self.impactFeedbackGenerator.impactOccurred()
 
+                UIView.animate(
+                    withDuration: 0.1,
+                    delay: 0,
+                    options: [.curveEaseOut],
+                    animations: {
+                        cell.messageView.transform = .identity
+                    }
+                )
+                
+                self.router.showMessageActionsPopUp(
+                    messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
+                    messageData: messageData,
+                    messageActionsController: actionsController,
+                    messageReactionsController: reactionsController
+                )
+            }
+        )
+    }
+
+    private func didSelectMessageCell(_ cell: _СhatMessageCollectionViewCell<ExtraData>) {
+        guard let messageData = cell.message, messageData.isInteractionEnabled else { return }
+        
+        let messageController = channelController.client.messageController(
+            cid: channelController.cid!,
+            messageId: messageData.message.id
+        )
+
+        let actionsController = _ChatMessageActionsVC<ExtraData>()
+        actionsController.messageController = messageController
+        actionsController.delegate = .init(delegate: self)
+
+        var reactionsController: _ChatMessageReactionsVC<ExtraData>? {
+            guard messageData.message.localState == nil else { return nil }
+
+            let controller = _ChatMessageReactionsVC<ExtraData>()
+            controller.messageController = messageController
+            return controller
+        }
+
+        presentReactionsControllerAnimated(
+            for: cell,
+            with: messageData,
+            actionsController: actionsController,
+            reactionsController: reactionsController
+        )
+    }
+}
+
+extension MessageListVC: _ChatMessageComposerViewControllerDelegate {
     public func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>) {
         setNeedsScrollToMostRecentMessage()
     }
 }
-
-// MARK: - _ChatChannelControllerDelegate
 
 extension MessageListVC: _ChatChannelControllerDelegate {
     public func channelController(
@@ -295,11 +370,33 @@ extension MessageListVC: _ChatChannelControllerDelegate {
     }
 }
 
-extension MessageListVC: _ChatChannelMemberControllerDelegate {
-    func memberController(
-        _ controller: _ChatChannelMemberController<ExtraData>,
-        didUpdateMember change: EntityChange<_ChatChannelMember<ExtraData.User>>
+extension MessageListVC: _ChatMessageActionsVCDelegate {
+    open func chatMessageActionsVC(
+        _ vc: _ChatMessageActionsVC<ExtraData>,
+        didTapOnInlineReplyFor message: _ChatMessage<ExtraData>
     ) {
-        updateNavigationTitle()
+        dismiss(animated: true) { [weak self] in
+            self?.messageComposerViewController.state = .quote(message)
+        }
+    }
+
+    open func chatMessageActionsVC(
+        _ vc: _ChatMessageActionsVC<ExtraData>,
+        didTapOnThreadReplyFor message: _ChatMessage<ExtraData>
+    ) {
+        dismiss(animated: true)
+    }
+
+    open func chatMessageActionsVC(
+        _ vc: _ChatMessageActionsVC<ExtraData>,
+        didTapOnEdit message: _ChatMessage<ExtraData>
+    ) {
+        dismiss(animated: true) { [weak self] in
+            self?.messageComposerViewController.state = .edit(message)
+        }
+    }
+
+    open func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>) {
+        dismiss(animated: true)
     }
 }
