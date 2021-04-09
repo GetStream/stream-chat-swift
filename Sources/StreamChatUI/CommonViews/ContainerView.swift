@@ -32,7 +32,7 @@ extension CGFloat {
 }
 
 public class ContainerView: UIView {
-    convenience init(axis: NSLayoutConstraint.Axis = .horizontal, alignment: Alignment = .fill, views: [UIView]) {
+    convenience init(axis: NSLayoutConstraint.Axis = .horizontal, alignment: Alignment = .fill, views: [UIView] = []) {
         self.init()
         self.axis = axis
         self.alignment = alignment
