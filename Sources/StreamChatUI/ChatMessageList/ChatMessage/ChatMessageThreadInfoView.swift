@@ -5,7 +5,58 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageThreadArrowView = _ChatMessageThreadArrowView<NoExtraData>
+open class _SimpleChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    public enum Direction {
+        case toTrailing
+        case toLeading
+    }
+
+    override public class var layerClass: AnyClass {
+        CAShapeLayer.self
+    }
+
+    public var shape: CAShapeLayer {
+        layer as! CAShapeLayer
+    }
+
+    public var direction: Direction = .toTrailing {
+        didSet {
+            setNeedsDisplay()
+        }
+    }
+
+    override open func setUpAppearance() {
+        shape.contentsScale = layer.contentsScale
+        shape.strokeColor = uiConfig.colorPalette.border.cgColor
+        shape.fillColor = nil
+        shape.lineWidth = 1
+    }
+
+    public var isLeftToRight: Bool {
+        let isLeftToRightWithTrailing = direction == .toTrailing && traitCollection.layoutDirection == .leftToRight
+        let isRightToLeftWithLeading = direction == .toLeading && traitCollection.layoutDirection == .rightToLeft
+        return isLeftToRightWithTrailing || isRightToLeftWithLeading
+    }
+
+    override open func draw(_ rect: CGRect) {
+        let corner: CGFloat = 16
+        let height = bounds.height / 2
+        let lineCenter = shape.lineWidth / 2
+
+        let startX = isLeftToRight ? lineCenter : (bounds.width - lineCenter)
+        let endX = isLeftToRight ? corner : (bounds.width - corner)
+
+        let path = CGMutablePath()
+        path.move(to: CGPoint(x: startX, y: -4 * height))
+        path.addLine(to: CGPoint(x: startX, y: height - corner))
+        path.addQuadCurve(
+            to: CGPoint(x: endX, y: height),
+            control: CGPoint(x: startX, y: height)
+        )
+        shape.path = path
+        super.draw(rect)
+    }
+}
 
 open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     public enum Direction {
@@ -32,7 +83,7 @@ open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConf
         shape.contentsScale = layer.contentsScale
         shape.strokeColor = uiConfig.colorPalette.border.cgColor
         shape.fillColor = nil
-        shape.lineWidth = 1.0
+        shape.lineWidth = 1
     }
 
     public var isLeftToRight: Bool {
@@ -64,7 +115,7 @@ open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConf
 public typealias ChatMessageThreadInfoView = _ChatMessageThreadInfoView<NoExtraData>
 
 open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
-    public var message: _ChatMessageGroupPart<ExtraData>? {
+    public var message: _ChatMessage<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -152,5 +203,59 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
         avatarView.isHidden = true
         avatarView.imageView.image = nil
         replyCountLabel.text = L10n.Message.Threads.reply
+    }
+}
+
+class ThreadInfoView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    var content: _ChatMessage<ExtraData>? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+
+    lazy var container = ContainerStackView(
+        axis: .horizontal,
+        alignment: .axisTrailing
+    ).withoutAutoresizingMaskConstraints
+
+    lazy var threadArrowView = uiConfig
+        .messageList
+        .messageContentSubviews
+        .threadArrowView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    lazy var threadInfoView = uiConfig
+        .messageList
+        .messageContentSubviews
+        .threadInfoView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
+    override func setUpLayout() {
+        let arrowContainer = UIView().withoutAutoresizingMaskConstraints
+
+        arrowContainer.embed(threadArrowView, insets: .init(top: 0, leading: 0, bottom: 8, trailing: 0))
+        container.addArrangedSubview(arrowContainer)
+        container.addArrangedSubview(threadInfoView)
+        embed(container)
+
+        NSLayoutConstraint.activate([
+            arrowContainer.heightAnchor.pin(equalToConstant: 32),
+            arrowContainer.widthAnchor.pin(equalToConstant: 16),
+            threadInfoView.heightAnchor.pin(equalToConstant: 16)
+        ])
+    }
+
+    override func updateContent() {
+        container.ordering = content?.isSentByCurrentUser == true ?
+            .trailingToLeading :
+            .leadingToTrailing
+
+        threadArrowView.direction = container.ordering == .trailingToLeading ?
+            .toLeading :
+            .toTrailing
+
+        threadInfoView.message = content
     }
 }

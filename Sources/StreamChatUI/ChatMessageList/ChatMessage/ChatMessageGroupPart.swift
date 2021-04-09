@@ -16,10 +16,12 @@ public struct _ChatMessageGroupPart<ExtraData: ExtraDataTypes> {
     public let isLastInGroup: Bool
     public let didTapOnAttachment: ((ChatMessageDefaultAttachment) -> Void)?
     public let didTapOnAttachmentAction: ((ChatMessageDefaultAttachment, AttachmentAction) -> Void)?
+}
 
-    public var isPartOfThread: Bool {
-        let isThreadStart = message.replyCount > 0
-        let isThreadReplyInChannel = message.showReplyInChannel
+public extension _ChatMessage {
+    var isPartOfThread: Bool {
+        let isThreadStart = replyCount > 0
+        let isThreadReplyInChannel = showReplyInChannel
         return isThreadStart || isThreadReplyInChannel
     }
 }

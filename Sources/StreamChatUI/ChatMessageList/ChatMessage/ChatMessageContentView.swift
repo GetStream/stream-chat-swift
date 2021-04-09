@@ -555,7 +555,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setupThreadArrowView()
         let threadArrowView = self.threadArrowView!
 
-        threadView.message = message
+        threadView.message = message.message
 
         threadArrowView.direction = isOutgoing ? .toLeading : .toTrailing
 
