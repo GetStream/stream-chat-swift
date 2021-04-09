@@ -27,6 +27,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     var giphyView: _ChatMessageGiphyView<ExtraData>?
     var actionsView: _ChatMessageInteractiveAttachmentView<ExtraData>?
     var reactionsView: _ReactionsCompactView<ExtraData>?
+    var errorIndicatorView: _ChatMessageErrorIndicator<ExtraData>?
 
     var threadReplyCountLabel: UILabel?
     var threadAvatarView: ChatAvatarView?
@@ -59,9 +60,17 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
         
         if options.contains(.flipped) {
             mainContainer.ordering = .trailingToLeading
-            constraintsToActivate += [mainContainer.trailingAnchor.pin(equalTo: contentView.trailingAnchor)]
+            constraintsToActivate += [
+                mainContainer.trailingAnchor
+                    .pin(equalTo: contentView.trailingAnchor)
+                    .almostRequired
+            ]
         } else {
-            constraintsToActivate += [mainContainer.leadingAnchor.pin(equalTo: contentView.leadingAnchor)]
+            constraintsToActivate += [
+                mainContainer.leadingAnchor
+                    .pin(equalTo: contentView.leadingAnchor)
+                    .almostRequired
+            ]
         }
 
         // Avatar view
@@ -131,6 +140,21 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
         if options.contains(.metadata) {
             let metadataView = createMetadataView()
             bubbleThreadMetaContainer.addArrangedSubview(metadataView)
+        }
+
+        // Error
+        if options.contains(.error) {
+            let errorIndicatorView = createErrorIndicatorView()
+            errorIndicatorView.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
+            errorIndicatorView.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
+            contentView.addSubview(errorIndicatorView)
+
+            let inset: CGFloat = 2
+            constraintsToActivate += [
+                errorIndicatorView.bottomAnchor.pin(equalTo: bubbleView.bottomAnchor, constant: inset),
+                errorIndicatorView.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
+                bubbleThreadMetaContainer.trailingAnchor.pin(equalTo: errorIndicatorView.centerXAnchor, constant: -inset)
+            ]
         }
 
         // Bubble content
@@ -466,5 +490,17 @@ private extension MessageCell {
                 .withoutAutoresizingMaskConstraints
         }
         return reactionsView!
+    }
+
+    func createErrorIndicatorView() -> _ChatMessageErrorIndicator<ExtraData> {
+        if errorIndicatorView == nil {
+            errorIndicatorView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .errorIndicator
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return errorIndicatorView!
     }
 }
