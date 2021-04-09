@@ -26,6 +26,7 @@ extension _ChatMessageReactionsView {
         override open func updateContent() {
             setImage(reactionImage, for: .normal)
             imageView?.tintColor = reactionImageTint
+            isUserInteractionEnabled = content?.onTap != nil
         }
 
         override open func tintColorDidChange() {
@@ -39,7 +40,7 @@ extension _ChatMessageReactionsView {
         @objc open func didTap() {
             guard let content = self.content else { return }
 
-            content.onTap(content.reaction.type)
+            content.onTap?(content.reaction.type)
         }
     }
 }
@@ -50,12 +51,12 @@ extension _ChatMessageReactionsView.ItemView {
     public struct Content {
         public let useBigIcon: Bool
         public let reaction: ChatMessageReactionData
-        public var onTap: (MessageReactionType) -> Void
+        public var onTap: ((MessageReactionType) -> Void)?
 
         public init(
             useBigIcon: Bool,
             reaction: ChatMessageReactionData,
-            onTap: @escaping (MessageReactionType) -> Void
+            onTap: ((MessageReactionType) -> Void)?
         ) {
             self.useBigIcon = useBigIcon
             self.reaction = reaction
@@ -72,9 +73,11 @@ private extension _ChatMessageReactionsView.ItemView {
 
         let appearance = uiConfig.images.availableReactions[content.reaction.type]
 
-        return content.useBigIcon ?
+        let icon = content.useBigIcon ?
             appearance?.largeIcon :
             appearance?.smallIcon
+
+        return icon ?? uiConfig.images.reactionLoveSmall
     }
 
     var reactionImageTint: UIColor? {

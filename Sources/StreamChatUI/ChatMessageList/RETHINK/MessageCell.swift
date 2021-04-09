@@ -26,6 +26,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     var filePreviewView: _ChatMessageFileAttachmentListView<ExtraData>?
     var giphyView: _ChatMessageGiphyView<ExtraData>?
     var actionsView: _ChatMessageInteractiveAttachmentView<ExtraData>?
+    var reactionsView: _ReactionsCompactView<ExtraData>?
 
     var threadReplyCountLabel: UILabel?
     var threadAvatarView: ChatAvatarView?
@@ -51,7 +52,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
         
         contentView.addSubview(mainContainer)
         constraintsToActivate += [
-            mainContainer.topAnchor.pin(equalTo: contentView.topAnchor),
+            mainContainer.topAnchor.pin(equalTo: contentView.topAnchor).with(priority: .streamAlmostRequire),
             mainContainer.bottomAnchor.pin(equalTo: contentView.bottomAnchor),
             mainContainer.widthAnchor.pin(lessThanOrEqualTo: contentView.widthAnchor, multiplier: 0.75)
         ]
@@ -193,6 +194,22 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
                 actionsView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
             ]
         }
+
+        // Reactions
+        if options.contains(.reactions) {
+            let reactionsView = createReactionsView()
+            reactionsView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
+            reactionsView.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
+            contentView.addSubview(reactionsView)
+
+            constraintsToActivate += [
+                reactionsView.topAnchor.pin(equalTo: contentView.topAnchor),
+                reactionsView.centerXAnchor.pin(
+                    equalTo: options.contains(.flipped) ? bubbleView.leadingAnchor : bubbleView.trailingAnchor
+                ),
+                bubbleView.topAnchor.pin(equalTo: reactionsView.centerYAnchor)
+            ]
+        }
         
         NSLayoutConstraint.activate(constraintsToActivate)
     }
@@ -261,6 +278,9 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
         }
         let latestReplyAuthorAvatar = content?.latestReplies.first?.author.imageURL
         threadAvatarView?.imageView.loadImage(from: latestReplyAuthorAvatar)
+
+        // Reactions view
+        reactionsView?.content = content
     }
     
     override open func preferredLayoutAttributesFitting(
@@ -438,5 +458,13 @@ private extension MessageCell {
                 .withoutAutoresizingMaskConstraints
         }
         return actionsView!
+    }
+
+    func createReactionsView() -> _ReactionsCompactView<ExtraData> {
+        if reactionsView == nil {
+            reactionsView = _ReactionsCompactView()
+                .withoutAutoresizingMaskConstraints
+        }
+        return reactionsView!
     }
 }

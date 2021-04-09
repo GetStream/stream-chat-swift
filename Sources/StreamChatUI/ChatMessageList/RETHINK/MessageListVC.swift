@@ -200,6 +200,9 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             // The bubbles with thread look like continuous bubbles
             options.insert(.continuousBubble)
         }
+        if !message.reactionScores.isEmpty {
+            options.insert(.reactions)
+        }
 
         let attachmentOptions: ChatMessageLayoutOptions = message.attachments.reduce([]) { options, attachment in
             if (attachment as? ChatMessageDefaultAttachment)?.actions.isEmpty == false {

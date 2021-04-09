@@ -22,6 +22,7 @@ public extension ChatMessageLayoutOptions {
     static let quotedMessage = Self(rawValue: 1 << 4)
     static let avatarSizePadding = Self(rawValue: 1 << 10)
     static let threadInfo = Self(rawValue: 1 << 12)
+    static let reactions = Self(rawValue: 1 << 13)
 
     /// The message bubble appearance
     static let continuousBubble = Self(rawValue: 1 << 5)
