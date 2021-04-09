@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `ChannelController`s created with `createChannelWithId` and `createChannelWithMembers` functions not reporting their initial values [#945](https://github.com/GetStream/stream-chat-swift/pull/945)
 - Fix issue where channel `lastMessageDate` was not updated when new message arrived [#949](https://github.com/GetStream/stream-chat-swift/pull/949)
 - Fix channel unread count not being updated in the real time [#969](https://github.com/GetStream/stream-chat-swift/pull/969)
+- Fix updated values not reported for some controllers if the properties were accessed for the first time after `synchronize` has finished. Affected controllers were `ChatUserListController`, `ChatChannelListController`, `ChatUserSearchController` [#974](https://github.com/GetStream/stream-chat-swift/pull/974)
 
 ### 🔄 Changed
 - `Logger.assertationFailure` was renamed to `Logger.assertionFailure` [#935](https://github.com/GetStream/stream-chat-swift/pull/935)
