@@ -4075,6 +4075,7 @@
 				E7AD958825D7510900076DC3 /* ChatMessageComposerMentionCellView_Tests.swift */,
 				22753598257C442300D1FDB6 /* ChatMessageSendButton.swift */,
 				7943382A26208D020094471F /* ChatMessageConfirmEditButton.swift */,
+				E7296E932611D50900B1AE79 /* ChatMessageSendButton_Tests.swift */,
 				226C438C25802AAD008B3648 /* ChatMessageComposerInputTextView.swift */,
 				224165A725910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift */,
 			);
@@ -4959,6 +4960,7 @@
 				F86C887725FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift in Sources */,
 				ADEB2F8025CC0B8A00EAAEB6 /* XCTestCase+TestImages.swift in Sources */,
 				E798D6F125FF6BF70002C3B9 /* SwipeableView_Tests.swift in Sources */,
+				E7296E942611D50900B1AE79 /* ChatMessageSendButton_Tests.swift in Sources */,
 				227299AA25DAA505005EAFCF /* ChatChannelReadStatusCheckmarkView_Tests.swift in Sources */,
 				227299B325DBF52D005EAFCF /* ChatChannelUnreadCountView_Tests.swift in Sources */,
 				78C8474125FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift in Sources */,
