@@ -4,7 +4,7 @@ module.exports = {
   tagline: '',
   url: 'https://getstream.github.io/stream-chat-swift/',
   baseUrl: '/stream-chat-swift/',
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
   favicon: 'https://getstream.imgix.net/images/favicons/favicon-96x96.png',
   organizationName: 'GetStream',
