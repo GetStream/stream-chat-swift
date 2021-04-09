@@ -151,24 +151,24 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     
     func isMessageLastInGroup(at indexPath: IndexPath) -> Bool {
         let message = channelController.messages[indexPath.row]
-        
+
         guard indexPath.row > 0 else { return true }
-        
+
         let nextMessage = channelController.messages[indexPath.row - 1]
-        
+
         guard nextMessage.author == message.author else { return true }
-        
+
         let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
-        
+
         return delay > minTimeIntervalBetweenMessagesInGroup
     }
     
     func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
         let message = channelController.messages[indexPath.row]
         let isLastInGroup = isMessageLastInGroup(at: indexPath)
-        
+
         var options: ChatMessageLayoutOptions = []
-        
+
         if message.isSentByCurrentUser {
             options.insert(.flipped)
         }
