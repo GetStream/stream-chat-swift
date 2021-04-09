@@ -91,6 +91,12 @@ public class ContainerView: UIView {
             invalidateConstraints()
         }
     }
+
+    func setCustomSpacing(_ spacing: CGFloat, after subview: UIView) {
+        assert(subviews.contains(subview))
+        customSpacingByView[subview] = spacing
+        invalidateConstraints()
+    }
     
     func insertArrangedSubview(_ subview: UIView, at index: Int, respectsLayoutMargins: Bool? = nil) {
         insertSubview(subview, at: index)
@@ -149,7 +155,12 @@ public class ContainerView: UIView {
             let spacingConstraint: NSLayoutConstraint
             
             if axis == .horizontal {
-                if spacing != .auto {
+                if let customSpacing = customSpacingByView[ordering == .leadingToTrailing ? lView : rView] {
+                    spacingConstraint = rView.leadingAnchor.constraint(
+                        equalTo: lView.trailingAnchor,
+                        constant: customSpacing
+                    )
+                } else if spacing != .auto {
                     spacingConstraint = rView.leadingAnchor.constraint(equalTo: lView.trailingAnchor, constant: spacing)
                 } else {
                     spacingConstraint = rView.leadingAnchor.constraint(
@@ -159,7 +170,12 @@ public class ContainerView: UIView {
                 }
                 
             } else {
-                if spacing != .auto {
+                if let customSpacing = customSpacingByView[ordering == .leadingToTrailing ? lView : rView] {
+                    spacingConstraint = rView.topAnchor.constraint(
+                        equalTo: lView.bottomAnchor,
+                        constant: customSpacing
+                    )
+                } else if spacing != .auto {
                     spacingConstraint = rView.topAnchor.constraint(equalTo: lView.bottomAnchor, constant: spacing)
                 } else {
                     spacingConstraint = rView.topAnchor.constraint(equalToSystemSpacingBelow: lView.bottomAnchor, multiplier: 1)
@@ -229,6 +245,8 @@ public class ContainerView: UIView {
     }
     
     private var customConstraints: [NSLayoutConstraint] = []
+
+    private var customSpacingByView: [UIView: CGFloat] = [:]
     
     /// The constraint for axis-trailing spacing for the given vies
     private var spacingConstraintsByView: [UIView: NSLayoutConstraint] = [:]
