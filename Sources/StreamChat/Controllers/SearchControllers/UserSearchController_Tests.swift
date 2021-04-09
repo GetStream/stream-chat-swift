@@ -13,7 +13,7 @@ class UserSearchController_Tests: StressTestCase {
     
     var controller: ChatUserSearchController!
     var controllerCallbackQueueID: UUID!
-    /// Workaround for uwrapping **controllerCallbackQueueID!** in each closure that captures it
+    /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
     
     override func setUp() {
@@ -129,6 +129,27 @@ class UserSearchController_Tests: StressTestCase {
         AssertAsync.willBeEqual(delegate.didChangeUsers_changes, [.insert(user, index: [0, 0])])
     }
     
+    /// This test simulates a bug where the `users` field was not updated if it wasn't
+    /// touched before calling synchronize.
+    func test_searchResultIsReported_evenAfterCallingSynchronize() throws {
+        // Make a search
+        controller.search(term: "test")
+        
+        // Simulate DB update
+        let userId = UserId.unique
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveUser(payload: self.dummyUser(id: userId), query: self.controller.query)
+        }
+        
+        // Simulate network call response
+        env.userListUpdater?.update_completion?(nil)
+        
+        let user: ChatUser = try XCTUnwrap(
+            client.databaseContainer.viewContext.user(id: userId)?.asModel()
+        )
+        XCTAssertEqual(controller.users, [user])
+    }
+
     func test_newlyMatchedUser_isReportedAsInserted() throws {
         // Add user to DB before searching
         let userId = UserId.unique

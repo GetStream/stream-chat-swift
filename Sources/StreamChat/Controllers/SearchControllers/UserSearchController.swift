@@ -161,6 +161,8 @@ public class _ChatUserSearchController<ExtraData: ExtraDataTypes>: DataControlle
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
     public func search(term: String?, completion: ((_ error: Error?) -> Void)? = nil) {
+        startUserListObserverIfNeeded()
+        
         var query = _UserListQuery<ExtraData.User>(sort: [.init(key: .name, isAscending: true)])
         if let term = term, !term.isEmpty {
             query.filter = .or([
