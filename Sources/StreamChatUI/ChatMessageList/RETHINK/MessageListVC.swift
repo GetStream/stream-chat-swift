@@ -327,7 +327,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             delay: 0,
             options: [.curveEaseIn],
             animations: {
-                cell.textView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                cell.mainContainer.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
             },
             completion: { _ in
                 self.impactFeedbackGenerator.impactOccurred()
@@ -337,12 +337,12 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
                     delay: 0,
                     options: [.curveEaseOut],
                     animations: {
-                        cell.textView.transform = .identity
+                        cell.mainContainer.transform = .identity
                     }
                 )
                 
                 self.router.showMessageActionsPopUp(
-                    messageContentFrame: cell.textView.superview!.convert(cell.textView.frame, to: nil),
+                    messageContentFrame: cell.mainContainer.superview!.convert(cell.mainContainer.frame, to: nil),
                     messageData: messageData,
                     messageActionsController: actionsController,
                     messageReactionsController: reactionsController
