@@ -118,7 +118,27 @@ class UserListController_Tests: StressTestCase {
         // Assert the existing user is loaded
         XCTAssertEqual(controller.users.map(\.id), [idMatchingQuery])
     }
-    
+
+    /// This test simulates a bug where the `users` field was not updated if it wasn't
+    /// touched before calling synchronize.
+    func test_usersAreFetched_afterCallingSynchronize() throws {
+        // Simulate `synchronize` call
+        controller.synchronize()
+        
+        // Create a user in the DB matching the query
+        let userId = UserId.unique
+        try client.databaseContainer.writeSynchronously { session in
+            // Insert a user matching the query
+            try session.saveUser(payload: self.dummyUser(id: userId), query: self.query)
+        }
+        
+        // Simulate successful network call.
+        env.userListUpdater?.update_completion?(nil)
+
+        // Assert the existing user is loaded
+        XCTAssertEqual(controller.users.map(\.id), [userId])
+    }
+
     func test_synchronize_callsUserQueryUpdater() {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)

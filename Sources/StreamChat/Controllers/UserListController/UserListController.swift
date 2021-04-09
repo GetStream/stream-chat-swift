@@ -112,6 +112,8 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        startUserListObserverIfNeeded()
+        
         worker.update(userListQuery: query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
