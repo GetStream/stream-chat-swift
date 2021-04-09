@@ -182,6 +182,7 @@
 		793C14DC24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 793C14DB24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift */; };
 		7943379A260E04B60094471F /* ChannelUpdated_ServerSide.json in Resources */ = {isa = PBXBuildFile; fileRef = 79433799260E04AF0094471F /* ChannelUpdated_ServerSide.json */; };
 		7943383326208D5A0094471F /* ChatMessageConfirmEditButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943382A26208D020094471F /* ChatMessageConfirmEditButton.swift */; };
+		7943385E262095DA0094471F /* ChatMessageConfirmEditButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943385D262095C50094471F /* ChatMessageConfirmEditButton_Tests.swift */; };
 		794927ED249E0BE2009D7EB7 /* ExtraData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794927EC249E0BE2009D7EB7 /* ExtraData.swift */; };
 		794927F3249E3F77009D7EB7 /* NotificationAddedToChannel.json in Resources */ = {isa = PBXBuildFile; fileRef = 794927EE249E3D37009D7EB7 /* NotificationAddedToChannel.json */; };
 		794E20F52577DF4D00790DAB /* NameGroupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 794E20F42577DF4D00790DAB /* NameGroupViewController.swift */; };
@@ -1318,6 +1319,7 @@
 		793C14DB24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserver_Tests.swift; sourceTree = "<group>"; };
 		79433799260E04AF0094471F /* ChannelUpdated_ServerSide.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelUpdated_ServerSide.json; sourceTree = "<group>"; };
 		7943382A26208D020094471F /* ChatMessageConfirmEditButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageConfirmEditButton.swift; sourceTree = "<group>"; };
+		7943385D262095C50094471F /* ChatMessageConfirmEditButton_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageConfirmEditButton_Tests.swift; sourceTree = "<group>"; };
 		794927EC249E0BE2009D7EB7 /* ExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraData.swift; sourceTree = "<group>"; };
 		794927EE249E3D37009D7EB7 /* NotificationAddedToChannel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = NotificationAddedToChannel.json; sourceTree = "<group>"; };
 		794927F0249E3DE6009D7EB7 /* EventPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPayload_Tests.swift; sourceTree = "<group>"; };
@@ -4076,6 +4078,7 @@
 				22753598257C442300D1FDB6 /* ChatMessageSendButton.swift */,
 				7943382A26208D020094471F /* ChatMessageConfirmEditButton.swift */,
 				E7296E932611D50900B1AE79 /* ChatMessageSendButton_Tests.swift */,
+				7943385D262095C50094471F /* ChatMessageConfirmEditButton_Tests.swift */,
 				226C438C25802AAD008B3648 /* ChatMessageComposerInputTextView.swift */,
 				224165A725910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift */,
 			);
@@ -4962,6 +4965,7 @@
 				E798D6F125FF6BF70002C3B9 /* SwipeableView_Tests.swift in Sources */,
 				E7296E942611D50900B1AE79 /* ChatMessageSendButton_Tests.swift in Sources */,
 				227299AA25DAA505005EAFCF /* ChatChannelReadStatusCheckmarkView_Tests.swift in Sources */,
+				7943385E262095DA0094471F /* ChatMessageConfirmEditButton_Tests.swift in Sources */,
 				227299B325DBF52D005EAFCF /* ChatChannelUnreadCountView_Tests.swift in Sources */,
 				78C8474125FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift in Sources */,
 				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,
