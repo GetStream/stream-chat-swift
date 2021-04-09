@@ -69,7 +69,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         channelController.setDelegate(self)
         channelController.synchronize()
         
-        if channelController.isChannelDirect {
+        if channelController.channel?.isDirectMessageChannel == true {
             timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
                 self?.updateNavigationTitle()
             }
@@ -107,7 +107,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             .flatMap { uiConfig.channelList.channelNamer($0, channelController.client.currentUserId) }
         
         let subtitle: String? = {
-            if channelController.isChannelDirect {
+            if channelController.channel?.isDirectMessageChannel == true {
                 guard let member = channelController.channel?.lastActiveMembers.first else { return nil }
                 
                 if member.isOnline {
@@ -377,6 +377,13 @@ extension MessageListVC: _ChatChannelControllerDelegate {
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         updateMessages(with: changes)
+    }
+    
+    func channelController(
+        _ channelController: _ChatChannelController<ExtraData>,
+        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+    ) {
+        updateNavigationTitle()
     }
 }
 
