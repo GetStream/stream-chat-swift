@@ -233,6 +233,11 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         return cell
     }
     
+    // TODO: Remove when proper handler is implemented
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        didSelectMessageCell(at: indexPath)
+    }
+    
     /// Will scroll to most recent message on next `updateMessages` call
     public func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
         needsToScrollToMostRecentMessage = true
@@ -274,7 +279,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     }
     
     private func presentReactionsControllerAnimated(
-        for cell: _СhatMessageCollectionViewCell<ExtraData>,
+        for cell: MessageCell<ExtraData>,
         with messageData: _ChatMessageGroupPart<ExtraData>,
         actionsController: _ChatMessageActionsVC<ExtraData>,
         reactionsController: _ChatMessageReactionsVC<ExtraData>?
@@ -296,7 +301,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             delay: 0,
             options: [.curveEaseIn],
             animations: {
-                cell.messageView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                cell.textView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
             },
             completion: { _ in
                 self.impactFeedbackGenerator.impactOccurred()
@@ -306,12 +311,12 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
                     delay: 0,
                     options: [.curveEaseOut],
                     animations: {
-                        cell.messageView.transform = .identity
+                        cell.textView.transform = .identity
                     }
                 )
                 
                 self.router.showMessageActionsPopUp(
-                    messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
+                    messageContentFrame: cell.textView.superview!.convert(cell.textView.frame, to: nil),
                     messageData: messageData,
                     messageActionsController: actionsController,
                     messageReactionsController: reactionsController
@@ -320,12 +325,15 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         )
     }
 
-    private func didSelectMessageCell(_ cell: _СhatMessageCollectionViewCell<ExtraData>) {
-        guard let messageData = cell.message, messageData.isInteractionEnabled else { return }
+    private func didSelectMessageCell(at indexPath: IndexPath) {
+        let message = channelController.messages[indexPath.item]
+        
+        guard let cell = collectionView.cellForItem(at: indexPath) as? MessageCell<ExtraData> else { return }
+        guard message.isInteractionEnabled else { return }
         
         let messageController = channelController.client.messageController(
             cid: channelController.cid!,
-            messageId: messageData.message.id
+            messageId: message.id
         )
 
         let actionsController = _ChatMessageActionsVC<ExtraData>()
@@ -333,7 +341,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         actionsController.delegate = .init(delegate: self)
 
         var reactionsController: _ChatMessageReactionsVC<ExtraData>? {
-            guard messageData.message.localState == nil else { return nil }
+            guard message.localState == nil else { return nil }
 
             let controller = _ChatMessageReactionsVC<ExtraData>()
             controller.messageController = messageController
@@ -342,7 +350,15 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
 
         presentReactionsControllerAnimated(
             for: cell,
-            with: messageData,
+            // only `message` is used but I don't want to break current implementation
+            with: _ChatMessageGroupPart(
+                message: message,
+                quotedMessage: nil,
+                isFirstInGroup: true,
+                isLastInGroup: true,
+                didTapOnAttachment: nil,
+                didTapOnAttachmentAction: nil
+            ),
             actionsController: actionsController,
             reactionsController: reactionsController
         )
