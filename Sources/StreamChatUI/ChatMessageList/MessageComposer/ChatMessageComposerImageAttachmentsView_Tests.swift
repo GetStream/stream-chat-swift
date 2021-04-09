@@ -88,7 +88,9 @@ private extension ChatMessageComposerImageAttachmentsView_Tests {
             TestImages.vader.image,
             TestImages.chewbacca.image,
             TestImages.r2.image
-        ]
+        ].map {
+            ImageAttachmentPreview(image: $0)
+        }
         view.addSizeConstraints()
         return view
     }

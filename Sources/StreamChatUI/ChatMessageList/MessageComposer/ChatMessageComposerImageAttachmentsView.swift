@@ -14,7 +14,7 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
     UICollectionViewDelegate,
     UICollectionViewDataSource {
     /// The images data source.
-    open var content: [UIImage] = [] {
+    open var content: [AttachmentPreview] = [] {
         didSet {
             updateContentIfNeeded()
         }
@@ -76,7 +76,7 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
         ) as! _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>
 
         cell.uiConfig = uiConfig
-        cell.imageAttachmentView.imageView.image = content[indexPath.row]
+        cell.imageAttachmentView.imageView.image = content[indexPath.row].image
         cell.imageAttachmentView.discardButtonHandler = { [weak self] in
             self?.didTapRemoveItemButton?(indexPath.row)
         }
