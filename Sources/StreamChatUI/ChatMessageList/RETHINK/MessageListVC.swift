@@ -60,6 +60,10 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     override func setUp() {
         super.setUp()
         
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
+        longPress.minimumPressDuration = 0.33
+        collectionView.addGestureRecognizer(longPress)
+        
         messageComposerViewController.delegate = .wrap(self)
         messageComposerViewController.controller = channelController
         messageComposerViewController.userSuggestionSearchController = userSuggestionSearchController
@@ -279,11 +283,6 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         return cell
     }
     
-    // TODO: Remove when proper handler is implemented
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        didSelectMessageCell(at: indexPath)
-    }
-    
     /// Will scroll to most recent message on next `updateMessages` call
     public func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
         needsToScrollToMostRecentMessage = true
@@ -302,6 +301,18 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
 
         // our collection is flipped, so (0; 0) item is most recent one
         collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .bottom, animated: animated)
+    }
+
+    @objc
+    private func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+        let location = gesture.location(in: collectionView)
+
+        guard
+            gesture.state == .began,
+            let ip = collectionView.indexPathForItem(at: location)
+        else { return }
+        
+        didSelectMessageCell(at: ip)
     }
 
     public func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
