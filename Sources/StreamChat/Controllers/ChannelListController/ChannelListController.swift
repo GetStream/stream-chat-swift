@@ -112,6 +112,8 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        startChannelListObserverIfNeeded()
+        
         worker.update(channelListQuery: query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
