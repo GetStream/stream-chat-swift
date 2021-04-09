@@ -5,11 +5,30 @@
 import StreamChat
 import UIKit
 
+extension MessageCell {
+    struct Delegate {
+        var didTapOnErrorIndicator: () -> Void
+        var didTapOnThread: () -> Void
+        var didTapOnAttachment: (ChatMessageAttachment) -> Void
+        var didTapOnAttachmentAction: (ChatMessageAttachment, AttachmentAction) -> Void
+        var didTapOnQuotedMessage: (_ChatMessage<ExtraData>) -> Void
+    }
+}
+
 class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
     static var reuseId: String { "message_cell" }
 
     var content: _ChatMessage<ExtraData>? {
         didSet {
+            updateContentIfNeeded()
+        }
+    }
+
+    var delegate: Delegate? {
+        didSet {
+            // We need this since the action closures for `photo/file` previews
+            // are set up in `updateContent`. After dequeuing the cell we set content AND the delegate which results
+            // in 2 `updateContent` executions and should be fixed/reimplemented.
             updateContentIfNeeded()
         }
     }
@@ -277,8 +296,12 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
         let attachments: _ChatMessageAttachmentListViewData<ExtraData>? = defaultAttachments.map {
             .init(
                 attachments: $0,
-                didTapOnAttachment: nil,
-                didTapOnAttachmentAction: nil
+                didTapOnAttachment: { [weak self] in
+                    self?.delegate?.didTapOnAttachment($0)
+                },
+                didTapOnAttachmentAction: { [weak self] in
+                    self?.delegate?.didTapOnAttachmentAction($0, $1)
+                }
             )
         }
 
@@ -324,6 +347,34 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
         )
 
         return preferredAttributes
+    }
+
+    // MARK: - Actions
+
+    @objc func didTapOnErrorIndicator() {
+        delegate?.didTapOnThread()
+    }
+
+    @objc func didTapOnThread() {
+        delegate?.didTapOnThread()
+    }
+
+    @objc func didTapOnLinkPreview() {
+        guard let attachment = linkPreviewView?.content else {
+            assertionFailure()
+            return
+        }
+
+        delegate?.didTapOnAttachment(attachment)
+    }
+
+    @objc func didTapOnQuotedMessage() {
+        guard let quotedMessage = quotedMessageView?.message else {
+            assertionFailure()
+            return
+        }
+
+        delegate?.didTapOnQuotedMessage(quotedMessage)
     }
 }
 
@@ -416,6 +467,8 @@ private extension MessageCell {
                 .linkPreviewView
                 .init()
                 .withoutAutoresizingMaskConstraints
+
+            linkPreviewView!.addTarget(self, action: #selector(didTapOnLinkPreview), for: .touchUpInside)
         }
         return linkPreviewView!
     }
@@ -428,6 +481,9 @@ private extension MessageCell {
                 .quotedMessageBubbleView
                 .init()
                 .withoutAutoresizingMaskConstraints
+
+            let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnQuotedMessage))
+            quotedMessageView!.addGestureRecognizer(tapRecognizer)
         }
         return quotedMessageView!
     }
@@ -500,6 +556,8 @@ private extension MessageCell {
                 .errorIndicator
                 .init()
                 .withoutAutoresizingMaskConstraints
+
+            errorIndicatorView!.addTarget(self, action: #selector(didTapOnErrorIndicator), for: .touchUpInside)
         }
         return errorIndicatorView!
     }
