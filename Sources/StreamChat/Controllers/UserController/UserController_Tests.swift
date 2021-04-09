@@ -162,6 +162,22 @@ final class UserController_Tests: StressTestCase {
         XCTAssertNotNil(env.userUpdater!.loadUser_completion)
     }
     
+    /// This test simulates a bug where the `user` field was not updated if it wasn't
+    /// touched before calling synchronize.
+    func test_userIsFetched_evenAfterCallingSynchronize() throws {
+        // Simulate `synchronize` call.
+        controller.synchronize()
+        
+        // Create a user in the DB
+        try client.databaseContainer.createUser(id: userId, extraData: .defaultValue)
+        
+        // Simulate updater callback
+        env.userUpdater?.loadUser_completion?(nil)
+        
+        // Assert the user is loaded
+        XCTAssertEqual(controller.user?.id, userId)
+    }
+    
     // MARK: - Mute user
     
     func test_muteUser_propagatesError() {

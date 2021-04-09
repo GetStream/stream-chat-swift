@@ -167,6 +167,20 @@ final class CurrentUserController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
+    /// This test simulates a bug where the `currentUser` field was not updated if it wasn't
+    /// touched before calling synchronize.
+    func test_currentUserIsFetched_afterCallingSynchronize() throws {
+        // Simulate `synchronize` call
+        controller.synchronize()
+                
+        // Create the current user in the DB
+        let userId = UserId.unique
+        try client.databaseContainer.createCurrentUser(id: userId)
+        
+        // Assert the existing user is loaded
+        XCTAssertEqual(controller.currentUser?.id, userId)
+    }
+    
     // MARK: - Delegate
     
     func test_delegate_isAssignedCorrectly() {

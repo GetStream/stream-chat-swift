@@ -163,6 +163,30 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(message.text, messagePayload.text)
     }
     
+    /// This test simulates a bug where the `message` and `replies` fields were not updated if they weren't
+    /// touched before calling synchronize.
+    func test_channelsAreFetched_afterCallingSynchronize() throws {
+        // Simulate `synchronize` call
+        controller.synchronize()
+        
+        // Create the message and replies in the DB
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+        try client.databaseContainer.createChannel(cid: cid)
+        try client.databaseContainer.createMessage(
+            id: messageId,
+            authorId: currentUserId,
+            cid: cid,
+            text: "No, I am your father.",
+            numberOfReplies: 10
+        )
+        
+        // Simulate updater completion call
+        env.messageUpdater.getMessage_completion?(nil)
+        
+        XCTAssertEqual(controller.message?.id, messageId)
+        XCTAssertEqual(controller.replies.count, 10)
+    }
+    
     // MARK: - Order
     
     func test_replies_haveCorrectOrder() throws {
