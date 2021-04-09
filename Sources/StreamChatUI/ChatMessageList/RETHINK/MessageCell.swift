@@ -25,6 +25,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     var photoPreviewView: _ChatMessageImageGallery<ExtraData>?
     var filePreviewView: _ChatMessageFileAttachmentListView<ExtraData>?
     var giphyView: _ChatMessageGiphyView<ExtraData>?
+    var actionsView: _ChatMessageInteractiveAttachmentView<ExtraData>?
 
     lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
@@ -152,6 +153,16 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
                 linkPreviewView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
             ]
         }
+
+        // Actions
+        if options.contains(.actions) {
+            let actionsView = createActionsView()
+            contentContainer.addArrangedSubview(actionsView, respectsLayoutMargins: false)
+            constraintsToActivate += [
+                // This is ugly. Ideally the action view should be updated to fill all available space.
+                actionsView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
+            ]
+        }
         
         NSLayoutConstraint.activate(constraintsToActivate)
     }
@@ -208,6 +219,9 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
 
         // Giphy view
         giphyView?.content = defaultAttachments?.first { $0.type == .giphy }
+
+        // Actions view
+        actionsView?.content = attachments?.items.first { !$0.attachment.actions.isEmpty }
     }
     
     override open func preferredLayoutAttributesFitting(
@@ -341,5 +355,18 @@ private extension MessageCell {
                 .withoutAutoresizingMaskConstraints
         }
         return giphyView!
+    }
+
+    func createActionsView() -> _ChatMessageInteractiveAttachmentView<ExtraData> {
+        if actionsView == nil {
+            actionsView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .attachmentSubviews
+                .interactiveAttachmentView
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return actionsView!
     }
 }

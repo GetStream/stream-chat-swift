@@ -195,20 +195,31 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         if message.quotedMessageId != nil {
             options.insert(.quotedMessage)
         }
+        let attachmentOptions: ChatMessageLayoutOptions = message.attachments.reduce([]) { options, attachment in
+            if (attachment as? ChatMessageDefaultAttachment)?.actions.isEmpty == false {
+                return options.union(.actions)
+            }
 
-        for attachment in message.attachments {
             switch attachment.type {
             case .image:
-                options.insert(.photoPreview)
+                return options.union(.photoPreview)
             case .giphy:
-                options.insert(.giphy)
+                return options.union(.giphy)
             case .file:
-                options.insert(.filePreview)
+                return options.union(.filePreview)
             case .link:
-                options.insert(.linkPreview)
+                return options.union(.linkPreview)
             default:
-                break
+                return options
             }
+        }
+
+        if attachmentOptions.contains(.actions) {
+            options.insert(.actions)
+        } else if attachmentOptions.intersection([.photoPreview, .giphy, .filePreview]).isEmpty == false {
+            options.formUnion(attachmentOptions.subtracting(.linkPreview))
+        } else if attachmentOptions.contains(.linkPreview) {
+            options.insert(.linkPreview)
         }
 
         return options
