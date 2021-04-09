@@ -164,6 +164,28 @@ final class ChatChannelWatcherListController_Tests: StressTestCase {
         XCTAssertNotNil(env.watcherListUpdater!.channelWatchers_completion)
     }
 
+    /// This test simulates a bug where the `watchers` field was not updated if it wasn't
+    /// touched before calling synchronize.
+    func test_watchersFetched_evenAfterCallingSynchronize() throws {
+        // Simulate `synchronize` call.
+        controller.synchronize()
+
+        let watcherId: UserId = .unique
+
+        // Create a channel and a watcher in the database.
+        try client.databaseContainer.createChannel(cid: query.cid)
+        try client.databaseContainer.writeSynchronously { session in
+            let channel = try XCTUnwrap(session.channel(cid: self.query.cid))
+            channel.watchers.removeAll() // Make sure we remove all existing data
+            channel.watchers.insert(try session.saveUser(payload: .dummy(userId: watcherId)))
+        }
+
+        // Simulate the updater callback
+        env.watcherListUpdater?.channelWatchers_completion?(nil)
+        
+        XCTAssertEqual(controller.watchers.map(\.id), [watcherId])
+    }
+
     // MARK: - Local data fetching triggers
 
     func test_observerIsTriggeredOnlyOnce() {

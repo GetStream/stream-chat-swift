@@ -170,6 +170,22 @@ final class MemberController_Tests: StressTestCase {
         XCTAssertEqual(env.memberListUpdater!.load_query!.cid, controller.cid)
         XCTAssertNotNil(env.memberListUpdater!.load_completion)
     }
+    
+    /// This test simulates a bug where the `member` field was not updated if it wasn't
+    /// touched before calling synchronize.
+    func test_memberIsFetched_evenAfterCallingSynchronize() throws {
+        // Simulate `synchronize` call.
+        controller.synchronize()
+        
+        // Create a user in the DB
+        try client.databaseContainer.createMember(userId: userId, cid: cid)
+        
+        // Simulate updater callback
+        env.memberListUpdater?.load_completion?(nil)
+        
+        // Assert the user is loaded
+        XCTAssertEqual(controller.member?.id, userId)
+    }
 
     // MARK: - Local data fetching triggers
 

@@ -205,6 +205,94 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.canBeReleased(&weakController)
     }
     
+    /// This test simulates a bug where the `channel` and `messages` fields were not updated if
+    /// they weren't touched before calling synchronize.
+    func test_fieldsAreFetched_evenAfterCallingSynchronize() throws {
+        // Simulate synchronize call
+        controller.synchronize()
+        
+        let payload = dummyPayload(with: channelId)
+        assert(!payload.messages.isEmpty)
+        
+        // Simulate successful updater response
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveChannel(payload: payload, query: nil)
+        }
+        env.channelUpdater?.update_completion?(nil)
+        
+        XCTAssertEqual(controller.channel?.cid, channelId)
+        XCTAssertEqual(controller.messages.count, payload.messages.count)
+    }
+
+    /// This test simulates a bug where the `channel` and `messages` fields were not updated if
+    /// they weren't touched before calling synchronize.
+    func test_newChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
+        setupControllerForNewChannel(query: .init(cid: channelId))
+        
+        // Simulate synchronize call
+        controller.synchronize()
+        
+        let payload = dummyPayload(with: channelId)
+        assert(!payload.messages.isEmpty)
+        
+        // Simulate successful updater response
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveChannel(payload: payload, query: nil)
+        }
+        env.channelUpdater?.update_channelCreatedCallback?(channelId)
+        env.channelUpdater?.update_completion?(nil)
+        
+        XCTAssertEqual(controller.channel?.cid, channelId)
+        XCTAssertEqual(controller.messages.count, payload.messages.count)
+    }
+
+    /// This test simulates a bug where the `channel` and `messages` fields were not updated if
+    /// they weren't touched before calling synchronize.
+    func test_newMessageChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
+        setupControllerForNewMessageChannel(cid: channelId)
+        
+        // Simulate synchronize call
+        controller.synchronize()
+        
+        let payload = dummyPayload(with: channelId)
+        assert(!payload.messages.isEmpty)
+        
+        // Simulate successful updater response
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveChannel(payload: payload, query: nil)
+        }
+        env.channelUpdater?.update_channelCreatedCallback?(channelId)
+        env.channelUpdater?.update_completion?(nil)
+        
+        XCTAssertEqual(controller.channel?.cid, channelId)
+        XCTAssertEqual(controller.messages.count, payload.messages.count)
+    }
+    
+    /// This test simulates a bug where the `channel` and `messages` fields were not updated if
+    /// they weren't touched before calling synchronize.
+    func test_newDMChannelController_fieldsAreFetched_evenAfterCallingSynchronize() throws {
+        setupControllerForNewDirectMessageChannel(
+            currentUserId: .unique,
+            otherUserId: .unique
+        )
+        
+        // Simulate synchronize call
+        controller.synchronize()
+        
+        let payload = dummyPayload(with: channelId)
+        assert(!payload.messages.isEmpty)
+        
+        // Simulate successful updater response
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveChannel(payload: payload, query: nil)
+        }
+        env.channelUpdater?.update_channelCreatedCallback?(channelId)
+        env.channelUpdater?.update_completion?(nil)
+        
+        XCTAssertEqual(controller.channel?.cid, channelId)
+        XCTAssertEqual(controller.messages.count, payload.messages.count)
+    }
+
     func test_synchronize_propagesErrorFromUpdater() {
         // Simulate `synchronize` call and catch the completion
         var completionCalledError: Error?
