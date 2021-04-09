@@ -18,7 +18,7 @@ When you don't have time and you want to start ASAP, check out our TL;DR documen
 #### Quick links:
 
 - [**Cheat Sheet**](/cheat-sheet) Real-world code examples showcasing the usage of the SDK.
-- [**Controller Overview**](/controllers-overview) This page contains a list of all available controllers within StreamChat, including their short description and typical use-cases.
+- [**Controller Overview**](/controllers/controllers-overview) This page contains a list of all available controllers within StreamChat, including their short description and typical use-cases.
 - [**Glossary**](/glossary) A list of names and terms used in the framework and documentation.
 
 <p>&nbsp;</p>
