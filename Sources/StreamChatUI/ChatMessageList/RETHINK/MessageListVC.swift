@@ -175,6 +175,9 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         if !isLastInGroup {
             options.insert(.continuousBubble)
         }
+        if !isLastInGroup && !message.isSentByCurrentUser {
+            options.insert(.avatarSizePadding)
+        }
         if isLastInGroup {
             options.insert(.metadata)
         }

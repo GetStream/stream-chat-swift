@@ -17,6 +17,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     private var layoutOptions: ChatMessageLayoutOptions!
     
     var bubbleView: BubbleView<ExtraData>?
+    var authorAvatarView: ChatAvatarView?
     var textView: UITextView?
 
     lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
@@ -51,6 +52,24 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
             constraintsToActivate += [mainContainer.leadingAnchor.pin(equalTo: contentView.leadingAnchor)]
         }
 
+        // Avatar view
+        if options.contains(.avatar) {
+            let avatarView = createAvatarView()
+            constraintsToActivate += [
+                avatarView.widthAnchor.pin(equalToConstant: 32),
+                avatarView.heightAnchor.pin(equalToConstant: 32)
+            ]
+
+            mainContainer.addArrangedSubview(avatarView)
+        }
+        
+        if options.contains(.avatarSizePadding) {
+            let spacer = UIView().withoutAutoresizingMaskConstraints
+            spacer.isHidden = true
+            constraintsToActivate += [spacer.widthAnchor.pin(equalToConstant: 32)]
+            mainContainer.addArrangedSubview(spacer)
+        }
+
         // Bubble view
         let bubbleView = createBubbleView()
         mainContainer.addArrangedSubview(bubbleView)
@@ -80,6 +99,14 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     override func updateContent() {
         // Text
         textView?.text = content?.text
+        
+        // Avatar
+        let placeholder = uiConfig.images.userAvatarPlaceholder1
+        if let imageURL = content?.author.imageURL {
+            authorAvatarView?.imageView.loadImage(from: imageURL, placeholder: placeholder)
+        } else {
+            authorAvatarView?.imageView.image = placeholder
+        }
         
         // Bubble view
         if content?.type == .ephemeral {
@@ -134,6 +161,18 @@ private extension MessageCell {
         return textView!
     }
 
+    func createAvatarView() -> ChatAvatarView {
+        if authorAvatarView == nil {
+            authorAvatarView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .authorAvatarView
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return authorAvatarView!
+    }
+    
     func createBubbleView() -> BubbleView<ExtraData> {
         if bubbleView == nil {
             bubbleView = BubbleView<ExtraData>().withoutAutoresizingMaskConstraints
