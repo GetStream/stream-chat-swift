@@ -195,6 +195,12 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         if message.quotedMessageId != nil {
             options.insert(.quotedMessage)
         }
+        if message.isPartOfThread {
+            options.insert(.threadInfo)
+            // The bubbles with thread look like continuous bubbles
+            options.insert(.continuousBubble)
+        }
+
         let attachmentOptions: ChatMessageLayoutOptions = message.attachments.reduce([]) { options, attachment in
             if (attachment as? ChatMessageDefaultAttachment)?.actions.isEmpty == false {
                 return options.union(.actions)

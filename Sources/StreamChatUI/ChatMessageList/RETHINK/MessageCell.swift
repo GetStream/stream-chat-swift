@@ -27,6 +27,10 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
     var giphyView: _ChatMessageGiphyView<ExtraData>?
     var actionsView: _ChatMessageInteractiveAttachmentView<ExtraData>?
 
+    var threadReplyCountLabel: UILabel?
+    var threadAvatarView: ChatAvatarView?
+    var threadArrowView: _SimpleChatMessageThreadArrowView<ExtraData>?
+    
     lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
     
@@ -77,45 +81,71 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
             mainContainer.addArrangedSubview(spacer)
         }
 
+        // Bubble - Thread - Metadata
+        let bubbleThreadMetaContainer = ContainerView(
+            axis: .vertical,
+            alignment: options.contains(.flipped) ? .axisTrailing : .axisLeading,
+            spacing: 4
+        )
+        mainContainer.addArrangedSubview(bubbleThreadMetaContainer)
+
         // Bubble view
         let bubbleView = createBubbleView()
+        bubbleThreadMetaContainer.addArrangedSubview(bubbleView)
+
         if options.contains(.continuousBubble) {
             bubbleView.roundedCorners = .all
             mainContainer.layoutMargins.bottom = 0
-
         } else if options.contains(.flipped) {
             bubbleView.roundedCorners = CACornerMask.all.subtracting(.layerMaxXMaxYCorner)
-
         } else {
             bubbleView.roundedCorners = CACornerMask.all.subtracting(.layerMinXMaxYCorner)
         }
 
-        let bubbleContainer = ContainerView(axis: .vertical).withoutAutoresizingMaskConstraints
-        bubbleView.embed(bubbleContainer)
+        // Thread info
+        if options.contains(.threadInfo) {
+            let threadInfoContainer = ContainerView()
+            bubbleThreadMetaContainer.addArrangedSubview(threadInfoContainer)
+            
+            let arrowView = createThreadArrowView()
+            threadInfoContainer.addArrangedSubview(arrowView)
+            threadInfoContainer.setCustomSpacing(0, after: arrowView)
+            
+            let threadAvatarView = createThreadAvatarView()
+            threadInfoContainer.addArrangedSubview(threadAvatarView)
+            constraintsToActivate += [
+                threadAvatarView.widthAnchor.constraint(equalTo: threadAvatarView.heightAnchor),
+                threadAvatarView.widthAnchor.constraint(equalToConstant: 16)
+            ]
+            
+            threadInfoContainer.addArrangedSubview(createThreadReplyCountLabel())
+            
+            if options.contains(.flipped) {
+                arrowView.direction = .toLeading
+                threadInfoContainer.ordering = .trailingToLeading
+            }
+        }
 
         // Metadata
         if options.contains(.metadata) {
-            let bubbleMetaContainer = ContainerView(
-                axis: .vertical,
-                alignment: options.contains(.flipped) ? .axisTrailing : .axisLeading,
-                views: [bubbleView, createMetadataView()],
-                spacing: 2
-            )
-            mainContainer.addArrangedSubview(bubbleMetaContainer)
-        } else {
-            mainContainer.addArrangedSubview(bubbleView)
+            let metadataView = createMetadataView()
+            bubbleThreadMetaContainer.addArrangedSubview(metadataView)
         }
+
+        // Bubble content
+        let contentContainer = ContainerView(axis: .vertical).withoutAutoresizingMaskConstraints
+        bubbleView.embed(contentContainer)
 
         // Quoted message
         if options.contains(.quotedMessage) {
             let quotedMessageView = createQuotedMessageView()
-            bubbleContainer.addArrangedSubview(quotedMessageView, respectsLayoutMargins: true)
+            contentContainer.addArrangedSubview(quotedMessageView, respectsLayoutMargins: true)
         }
         
         // Photo preview
         if options.contains(.photoPreview) {
             let photoPreviewView = createPhotoPreviewView()
-            bubbleContainer.addArrangedSubview(photoPreviewView, respectsLayoutMargins: false)
+            contentContainer.addArrangedSubview(photoPreviewView, respectsLayoutMargins: false)
             constraintsToActivate += [
                 // This is ugly. Ideally the photo preview should be updated to fill all available space.
                 photoPreviewView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
@@ -125,7 +155,7 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
         // Giphy
         if options.contains(.giphy) {
             let giphyView = createGiphyView()
-            bubbleContainer.addArrangedSubview(giphyView, respectsLayoutMargins: false)
+            contentContainer.addArrangedSubview(giphyView, respectsLayoutMargins: false)
             constraintsToActivate += [
                 // This is ugly. Ideally the photo preview should be updated to fill all available space.
                 giphyView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
@@ -135,19 +165,19 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
         // Text
         if options.contains(.text) {
             let textView = createTextView()
-            bubbleContainer.addArrangedSubview(textView, respectsLayoutMargins: true)
+            contentContainer.addArrangedSubview(textView, respectsLayoutMargins: true)
         }
 
         // File previews
         if options.contains(.filePreview) {
             let filePreviewView = createFilePreviewView()
-            bubbleContainer.addArrangedSubview(filePreviewView, respectsLayoutMargins: false)
+            contentContainer.addArrangedSubview(filePreviewView, respectsLayoutMargins: false)
         }
 
         // Link preview
         if options.contains(.linkPreview) {
             let linkPreviewView = createLinkPreviewView()
-            bubbleContainer.addArrangedSubview(linkPreviewView, respectsLayoutMargins: true)
+            contentContainer.addArrangedSubview(linkPreviewView, respectsLayoutMargins: true)
             constraintsToActivate += [
                 // This is ugly. Ideally the link preview should be updated to fill all available space.
                 linkPreviewView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
@@ -222,6 +252,15 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
 
         // Actions view
         actionsView?.content = attachments?.items.first { !$0.attachment.actions.isEmpty }
+
+        // Thread info
+        if let replyCount = content?.replyCount {
+            threadReplyCountLabel?.text = L10n.Message.Threads.count(replyCount)
+        } else {
+            threadReplyCountLabel?.text = L10n.Message.Threads.reply
+        }
+        let latestReplyAuthorAvatar = content?.latestReplies.first?.author.imageURL
+        threadAvatarView?.imageView.loadImage(from: latestReplyAuthorAvatar)
     }
     
     override open func preferredLayoutAttributesFitting(
@@ -274,7 +313,38 @@ private extension MessageCell {
         }
         return authorAvatarView!
     }
+
+    func createThreadAvatarView() -> ChatAvatarView {
+        if threadAvatarView == nil {
+            threadAvatarView = uiConfig
+                .messageList
+                .messageContentSubviews
+                .authorAvatarView
+                .init()
+                .withoutAutoresizingMaskConstraints
+        }
+        return threadAvatarView!
+    }
+
+    func createThreadArrowView() -> _SimpleChatMessageThreadArrowView<ExtraData> {
+        if threadArrowView == nil {
+            threadArrowView = .init()
+        }
+        return threadArrowView!
+    }
     
+    func createThreadReplyCountLabel() -> UILabel {
+        if threadReplyCountLabel == nil {
+            let label = UILabel().withoutAutoresizingMaskConstraints
+            label.font = uiConfig.font.footnoteBold
+            label.adjustsFontForContentSizeCategory = true
+            label.text = L10n.Message.Threads.reply
+            label.textColor = tintColor
+            threadReplyCountLabel = label.withBidirectionalLanguagesSupport
+        }
+        return threadReplyCountLabel!
+    }
+
     func createBubbleView() -> BubbleView<ExtraData> {
         if bubbleView == nil {
             bubbleView = BubbleView<ExtraData>().withoutAutoresizingMaskConstraints
