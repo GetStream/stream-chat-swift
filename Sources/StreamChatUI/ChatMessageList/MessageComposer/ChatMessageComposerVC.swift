@@ -107,7 +107,8 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             imageAttachments = []
             documentAttachments = []
             composerView.messageQuoteView.content = nil
-            composerView.sendButton.mode = .new
+            composerView.sendButton.isHidden = false
+            composerView.editButton.isHidden = true
             composerView.documentAttachmentsView.isHidden = true
             composerView.imageAttachmentsView.isHidden = true
             composerView.messageQuoteView.setAnimatedly(hidden: true)
@@ -129,7 +130,8 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             composerView.messageQuoteView.content = .init(message: messageToQuote, avatarAlignment: .left)
             composerView.invalidateIntrinsicContentSize()
         case let .edit(message):
-            composerView.sendButton.mode = .edit
+            composerView.sendButton.isHidden = true
+            composerView.editButton.isHidden = false
             composerView.titleLabel.text = L10n.Composer.Title.edit
             let image = uiConfig.images.messageComposerEditMessage.tinted(with: uiConfig.colorPalette.inactiveTint)
             composerView.stateIcon.image = image
@@ -162,6 +164,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         
         composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
+        composerView.editButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
         composerView.messageInputView.rightAccessoryButton.addTarget(
@@ -306,6 +309,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     func updateSendButton() {
         composerView.sendButton.isEnabled = !isEmpty || !imageAttachments.isEmpty || !documentAttachments.isEmpty
+        composerView.editButton.isEnabled = !isEmpty || !imageAttachments.isEmpty || !documentAttachments.isEmpty
     }
     
     // MARK: Suggestions

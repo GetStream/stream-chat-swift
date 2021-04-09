@@ -43,6 +43,11 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
     
+    public private(set) lazy var editButton = uiConfig
+        .messageComposer
+        .editButton.init()
+        .withoutAutoresizingMaskConstraints
+    
     public private(set) lazy var attachmentButton: UIButton = uiConfig
         .messageComposer
         .composerButton.init()
@@ -170,6 +175,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         container.rightStackView.alignment = .center
         container.rightStackView.spacing = UIStackView.spacingUseSystem
         container.rightStackView.addArrangedSubview(sendButton)
+        container.rightStackView.addArrangedSubview(editButton)
         
         container.leftStackView.isHidden = false
         container.leftStackView.alignment = .center
@@ -179,15 +185,19 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         
         container.bottomStackView.addArrangedSubview(checkmarkControl)
         
-        [shrinkInputButton, attachmentButton, commandsButton, sendButton, dismissButton]
+        [shrinkInputButton, attachmentButton, commandsButton, sendButton, editButton, dismissButton]
             .forEach { button in
-                button.pin(anchors: [.width], to: button.intrinsicContentSize.width)
-                button.pin(anchors: [.height], to: button.intrinsicContentSize.height)
+                // Interim solution for correctly laying out the buttons/input
+                // This will be re-worked during ComposerView audit, when we replace
+                // `ContainerStackView` with `ContainerView`
+                button.pin(anchors: [.width], to: 40)
+                button.pin(anchors: [.height], to: 40)
             }
 
         imageAttachmentsView.isHidden = true
         documentAttachmentsView.isHidden = true
         shrinkInputButton.isHidden = true
+        editButton.isHidden = true
     }
     
     open func setCheckmarkView(hidden: Bool) {
