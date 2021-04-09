@@ -204,10 +204,6 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
             }
         }
     }
-    
-    public var isChannelDirect: Bool {
-        channel?.isDirectMessageChannel ?? false
-    }
 
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var updater: ChannelUpdater<ExtraData> = self.environment.channelUpdaterBuilder(
