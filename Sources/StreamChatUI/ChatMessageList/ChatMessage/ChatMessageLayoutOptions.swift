@@ -30,6 +30,7 @@ public extension ChatMessageLayoutOptions {
     static let linkPreview = Self(rawValue: 1 << 7)
     static let photoPreview = Self(rawValue: 1 << 8)
     static let giphy = Self(rawValue: 1 << 9)
+    static let actions = Self(rawValue: 1 << 11)
 
     // Bits 28...31 are reserved for your custom options
 }
