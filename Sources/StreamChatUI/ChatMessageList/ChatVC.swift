@@ -51,6 +51,18 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         super.viewDidAppear(animated)
         
         keyboardObserver.register()
+        
+        // This is just a temporary place to do this. When it will be possible to open a channel on any
+        // arbitrary message, we should make the channel read only when it scrolls to the very last message.
+        if let channel = channelController?.channel, channel.config.readEventsEnabled, channel.unreadCount != .noUnread {
+            channelController?.markRead {
+                if let error = $0 {
+                    log.error("Failed to mark channel \(channel.cid) as read. Error: \(error)")
+                } else {
+                    log.info("Channel \(channel.cid) mark read.")
+                }
+            }
+        }
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
