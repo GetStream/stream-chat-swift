@@ -256,7 +256,24 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             layoutOptions: layoutOptions,
             for: indexPath
         )
-        
+
+        cell.delegate = .init(
+            didTapOnErrorIndicator: { [weak self] in
+                self?.handleTapOnErrorIndicator(forCellAt: indexPath)
+            },
+            didTapOnThread: { [weak self] in
+                self?.handleTapOnThread(forCellAt: indexPath)
+            },
+            didTapOnAttachment: { [weak self] in
+                self?.handleTapOnAttachment($0, forCellAt: indexPath)
+            },
+            didTapOnAttachmentAction: { [weak self] attachment, action in
+                self?.handleTapOnAttachmentAction(action, for: attachment, forCellAt: indexPath)
+            },
+            didTapOnQuotedMessage: { [weak self] in
+                self?.handleTapOnQuotedMessage($0, forCellAt: indexPath)
+            }
+        )
         cell.content = message
         
         return cell
@@ -391,6 +408,63 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             actionsController: actionsController,
             reactionsController: reactionsController
         )
+    }
+
+    open func restartUploading(for attachment: ChatMessageDefaultAttachment) {
+        guard let id = attachment.id else {
+            assertionFailure("Uploading cannot be restarted for attachment without `id`")
+            return
+        }
+
+        let messageController = channelController.client.messageController(cid: id.cid, messageId: id.messageId)
+        messageController.restartFailedAttachmentUploading(with: id)
+    }
+
+    // MARK: Cell action handlers
+
+    open func handleTapOnAttachment(_ attachment: ChatMessageAttachment, forCellAt indexPath: IndexPath) {
+        guard let attachment = attachment as? ChatMessageDefaultAttachment else {
+            return
+        }
+
+        guard attachment.localState != .uploadingFailed else {
+            restartUploading(for: attachment)
+            return
+        }
+
+        switch attachment.type {
+        case .image, .file:
+            router.showPreview(for: attachment)
+        case .link:
+            router.openLink(attachment)
+        default:
+            break
+        }
+    }
+
+    open func handleTapOnAttachmentAction(
+        _ action: AttachmentAction,
+        for attachment: ChatMessageAttachment,
+        forCellAt indexPath: IndexPath
+    ) {
+        // Can we have a helper on `ChannelController` returning a `messageController` for the provided message id?
+        let messageController = channelController.client.messageController(
+            cid: channelController.cid!,
+            messageId: channelController.messages[indexPath.row].id
+        )
+        messageController.dispatchEphemeralMessageAction(action)
+    }
+
+    open func handleTapOnQuotedMessage(_ quotedMessage: _ChatMessage<ExtraData>, forCellAt indexPath: IndexPath) {
+        didSelectMessageCell(at: indexPath)
+    }
+
+    open func handleTapOnErrorIndicator(forCellAt indexPath: IndexPath) {
+        didSelectMessageCell(at: indexPath)
+    }
+
+    open func handleTapOnThread(forCellAt indexPath: IndexPath) {
+        didSelectMessageCell(at: indexPath)
     }
 }
 
