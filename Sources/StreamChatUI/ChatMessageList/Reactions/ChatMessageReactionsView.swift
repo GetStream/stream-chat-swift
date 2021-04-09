@@ -7,6 +7,80 @@ import UIKit
 
 public typealias ChatMessageReactionsView = _ChatMessageReactionsView<NoExtraData>
 
+class _ReactionsCompactView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    var content: _ChatMessage<ExtraData>? {
+        didSet { updateContentIfNeeded() }
+    }
+
+    // MARK: - Subviews
+
+    private(set) lazy var stackView: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.distribution = .fillEqually
+        stack.spacing = UIStackView.spacingUseSystem
+        return stack.withoutAutoresizingMaskConstraints
+    }()
+
+    // MARK: - Overrides
+
+    override func setUpLayout() {
+        addSubview(stackView)
+        directionalLayoutMargins = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
+        stackView.pin(to: layoutMarginsGuide)
+    }
+
+    override func defaultAppearance() {
+        layer.contentsScale = layer.contentsScale
+        layer.borderWidth = 1
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layer.cornerRadius = bounds.height / 2
+    }
+    
+    override func updateContent() {
+        backgroundColor = content.map {
+            $0.isSentByCurrentUser ?
+                uiConfig.colorPalette.popoverBackground :
+                uiConfig.colorPalette.background2
+        }
+
+        layer.borderColor = content.map {
+            $0.isSentByCurrentUser ?
+                uiConfig.colorPalette.border.cgColor :
+                uiConfig.colorPalette.background2.cgColor
+        }
+
+        stackView.arrangedSubviews.forEach {
+            $0.removeFromSuperview()
+        }
+
+        reactions.forEach { reaction in
+            let itemView = uiConfig.messageList.messageReactions.reactionItemView.init()
+            itemView.content = .init(
+                useBigIcon: false,
+                reaction: reaction,
+                onTap: nil
+            )
+            stackView.addArrangedSubview(itemView)
+        }
+    }
+
+    private var reactions: [ChatMessageReactionData] {
+        guard let message = content else { return [] }
+
+        let userReactionIDs = Set(message.currentUserReactions.map(\.type))
+
+        return message
+            .reactionScores
+            .keys
+            .sorted { $0.rawValue < $1.rawValue }
+            .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) }
+    }
+}
+
 open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
