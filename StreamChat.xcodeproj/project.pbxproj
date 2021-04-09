@@ -295,6 +295,7 @@
 		79A0E9BC2498C31A00E9BD50 /* TypingStartCleanupMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9B82498C31300E9BD50 /* TypingStartCleanupMiddleware_Tests.swift */; };
 		79A0E9BE2498C33100E9BD50 /* TypingEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9BD2498C33100E9BD50 /* TypingEvent.swift */; };
 		79A4AE112536EE5500C32A74 /* Starscream in Frameworks */ = {isa = PBXBuildFile; productRef = 79A4AE102536EE5500C32A74 /* Starscream */; };
+		79A9EAC3262045DC00F2A72D /* MessageRead+MissingUnreadCount.json in Resources */ = {isa = PBXBuildFile; fileRef = 79A9EAC2262045DC00F2A72D /* MessageRead+MissingUnreadCount.json */; };
 		79B4F0E625D305D40063FFB5 /* CurrentChatUserAvatarView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79B4F0DE25D305CD0063FFB5 /* CurrentChatUserAvatarView_Tests.swift */; };
 		79B4F14325D3F0F70063FFB5 /* ChannelId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A71E22578EF650082498D /* ChannelId.swift */; };
 		79B4F14A25D3F1120063FFB5 /* TemporaryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9474247D7D41001F1104 /* TemporaryData.swift */; };
@@ -1409,6 +1410,7 @@
 		79A0E9B82498C31300E9BD50 /* TypingStartCleanupMiddleware_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypingStartCleanupMiddleware_Tests.swift; sourceTree = "<group>"; };
 		79A0E9B92498C31300E9BD50 /* TypingStartCleanupMiddleware.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypingStartCleanupMiddleware.swift; sourceTree = "<group>"; };
 		79A0E9BD2498C33100E9BD50 /* TypingEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TypingEvent.swift; sourceTree = "<group>"; };
+		79A9EAC2262045DC00F2A72D /* MessageRead+MissingUnreadCount.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "MessageRead+MissingUnreadCount.json"; sourceTree = "<group>"; };
 		79B4F0DE25D305CD0063FFB5 /* CurrentChatUserAvatarView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentChatUserAvatarView_Tests.swift; sourceTree = "<group>"; };
 		79B5517024E593C200CE9FEC /* UserPayloads_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPayloads_Tests.swift; sourceTree = "<group>"; };
 		79B5517124E593C200CE9FEC /* UserPayloads.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPayloads.swift; sourceTree = "<group>"; };
@@ -3706,6 +3708,7 @@
 				8A0C3BD824C1E33100CAFD19 /* MessageUpdated.json */,
 				8A0C3BDB24C1E5AE00CAFD19 /* MessageDeleted.json */,
 				8A0C3BD924C1E40E00CAFD19 /* MessageRead.json */,
+				79A9EAC2262045DC00F2A72D /* MessageRead+MissingUnreadCount.json */,
 			);
 			path = Message;
 			sourceTree = "<group>";
@@ -4667,6 +4670,7 @@
 				8A0C3BDC24C1F18700CAFD19 /* MessageNew.json in Resources */,
 				2289852A25CC0332007F2C26 /* AttachmentPayloadImage.json in Resources */,
 				8A62706224BE35E40040BFD6 /* UserStartTyping.json in Resources */,
+				79A9EAC3262045DC00F2A72D /* MessageRead+MissingUnreadCount.json in Resources */,
 				88EA9B102547271B007EE76B /* MessageReactionPayload+CustomExtraData.json in Resources */,
 				E7DD8EA825E3F7F50059A322 /* MessageWithBrokenAttachments.json in Resources */,
 				7908824B25432CC600896F03 /* StreamChatTestPlan.xctestplan in Resources */,

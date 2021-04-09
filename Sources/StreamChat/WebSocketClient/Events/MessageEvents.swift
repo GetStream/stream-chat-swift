@@ -63,6 +63,7 @@ public struct MessageReadEvent: EventWithUserPayload, EventWithChannelId {
     public let userId: UserId
     public let cid: ChannelId
     public let readAt: Date
+    public let unreadCount: UnreadCount?
     
     let payload: Any
     
@@ -70,6 +71,7 @@ public struct MessageReadEvent: EventWithUserPayload, EventWithChannelId {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         readAt = try response.value(at: \.createdAt)
+        unreadCount = try? response.value(at: \.unreadCount)
         payload = response
     }
 }
