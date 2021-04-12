@@ -7,7 +7,10 @@ private class DuckBubbleView: ChatMessageContentView {}
 
 func snippets_ux_customizing_views_injecting_custom_subclass_3() {
     // > import UIKit
+    // > import StreamChat
     // > import StreamChatUI
 
-    UIConfig.default.messageList.messageContentView = DuckBubbleView.self
+    final class DuckChatMessageCollectionViewCell: СhatMessageCollectionViewCell {
+        override class var messageContentViewClass: ChatMessageContentView.Type { DuckBubbleView.self }
+    }
 }

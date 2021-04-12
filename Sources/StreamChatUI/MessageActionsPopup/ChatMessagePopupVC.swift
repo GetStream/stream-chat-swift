@@ -5,16 +5,26 @@
 import StreamChat
 import UIKit
 
+/// `_ChatMessagePopupVC` is shown when user long-presses a message
+/// By default, it has a blurred background, reactions, and actions which are shown for a given message
+/// and with which user can interact
 public typealias ChatMessagePopupVC = _ChatMessagePopupVC<NoExtraData>
 
+/// `_ChatMessagePopupVC` is shown when user long-presses a message
+/// By default, it has a blurred background, reactions, and actions which are shown for a given message
+/// and with which user can interact
 open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
-    public private(set) lazy var scrollView = UIScrollView()
+    /// `UIScrollView` for showing content and updating its position via setting its content offset
+    open private(set) lazy var scrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints
-    public private(set) lazy var scrollContentView = UIView()
+    /// `UIView` embedded in `scrollView`
+    open private(set) lazy var scrollContentView = UIView()
         .withoutAutoresizingMaskConstraints
-    public private(set) lazy var contentView = UIView()
+    /// `containerView` encapsulating underlying views `reactionsController`, `actionsController` and `messageContentView`
+    open private(set) lazy var containerView = ContainerView(axis: .vertical)
         .withoutAutoresizingMaskConstraints
-    public private(set) lazy var blurView: UIView = {
+    /// `UIView` with `UIBlurEffect` that is shown as a background
+    open private(set) lazy var blurView: UIView = {
         let blur: UIBlurEffect
         if #available(iOS 13.0, *) {
             blur = UIBlurEffect(style: .systemUltraThinMaterial)
@@ -25,9 +35,13 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
             .withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var messageContentView = uiConfig.messageList.messageContentView.init()
+    /// New instance of `messageContentViewClass` that is populated with `message` data
+    open private(set) lazy var messageContentView = messageContentViewClass.init()
         .withoutAutoresizingMaskConstraints
 
+    /// `messageContentView` class that is populated with `message` and shown
+    public var messageContentViewClass: _ChatMessageContentView<ExtraData>.Type!
+    /// Message data that is shown
     public var message: _ChatMessageGroupPart<ExtraData>!
     public var messageViewFrame: CGRect!
     public var originalMessageView: UIView!
