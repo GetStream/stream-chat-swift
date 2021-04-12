@@ -50,12 +50,12 @@ class ChatChannelListVC_Tests: XCTestCase {
     }
 
     override func tearDown() {
-        super.tearDown()
-        
         vc = nil
         view = nil
         mockedChannelListController = nil
         mockedCurrentUserController = nil
+        
+        super.tearDown()
     }
 
     func test_emptyAppearance() {
