@@ -32,10 +32,16 @@ extension CGFloat {
 }
 
 public class ContainerView: UIView {
-    convenience init(axis: NSLayoutConstraint.Axis = .horizontal, alignment: Alignment = .fill, views: [UIView]) {
+    convenience init(
+        axis: NSLayoutConstraint.Axis = .horizontal,
+        alignment: Alignment = .fill,
+        spacing: CGFloat = .auto,
+        views: [UIView] = []
+    ) {
         self.init()
         self.axis = axis
         self.alignment = alignment
+        self.spacing = spacing
         views.forEach { addArrangedSubview($0) }
     }
     
