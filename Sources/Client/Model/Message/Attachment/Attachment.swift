@@ -64,6 +64,7 @@ public struct Attachment: Codable {
     ///   - extraData: an extra data.
     public init(type: AttachmentType,
                 title: String,
+                text: String? = nil,
                 url: URL? = nil,
                 imageURL: URL? = nil,
                 file: AttachmentFile? = nil,
@@ -72,9 +73,9 @@ public struct Attachment: Codable {
         self.url = url
         self.imageURL = imageURL
         self.title = title
+        self.text = text
         self.file = file
         self.extraData = extraData
-        text = nil
         author = nil
         actions = []
     }
@@ -150,6 +151,7 @@ public struct Attachment: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(type, forKey: .type)
+        try container.encodeIfPresent(text, forKey: .text)
         try container.encode(title, forKey: (type == .image ? .fallback : .title))
         try container.encodeIfPresent(url, forKey: .assetURL)
         try container.encodeIfPresent(imageURL, forKey: .imageURL)

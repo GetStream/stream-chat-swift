@@ -14,7 +14,7 @@ import RxCocoa
 /// A general presenter for making requests with pagination.
 public class Presenter {
     /// A list of presenter items.
-    public internal(set) var items = [PresenterItem]()
+    public var items = [PresenterItem]()
     /// A pagination of an initial page size, e.g. `.limit(25)`
     public internal(set) var pageSize: Pagination
     /// A pagination for the next request.
