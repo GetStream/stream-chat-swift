@@ -57,6 +57,8 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
 //    public lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
     public lazy var router = MessageListRouter(rootViewController: self)
     
+    public private(set) lazy var layoutOptionsResolver = uiConfig.messageList.layoutOptionsResolver
+    
     override func setUp() {
         super.setUp()
         
@@ -167,80 +169,6 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         return delay > minTimeIntervalBetweenMessagesInGroup
     }
     
-    func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
-        let message = channelController.messages[indexPath.row]
-        let isLastInGroup = isMessageLastInGroup(at: indexPath)
-
-        var options: ChatMessageLayoutOptions = []
-
-        if message.isSentByCurrentUser {
-            options.insert(.flipped)
-        }
-        if !isLastInGroup {
-            options.insert(.continuousBubble)
-        }
-        if !isLastInGroup && !message.isSentByCurrentUser {
-            options.insert(.avatarSizePadding)
-        }
-        if isLastInGroup {
-            options.insert(.metadata)
-        }
-        if !message.textContent.isEmpty {
-            options.insert(.text)
-        }
-
-        guard message.deletedAt == nil else {
-            return options
-        }
-
-        if isLastInGroup && !message.isSentByCurrentUser {
-            options.insert(.avatar)
-        }
-        if message.quotedMessageId != nil {
-            options.insert(.quotedMessage)
-        }
-        if message.isPartOfThread {
-            options.insert(.threadInfo)
-            // The bubbles with thread look like continuous bubbles
-            options.insert(.continuousBubble)
-        }
-        if !message.reactionScores.isEmpty {
-            options.insert(.reactions)
-        }
-        if message.lastActionFailed {
-            options.insert(.error)
-        }
-
-        let attachmentOptions: ChatMessageLayoutOptions = message.attachments.reduce([]) { options, attachment in
-            if (attachment as? ChatMessageDefaultAttachment)?.actions.isEmpty == false {
-                return options.union(.actions)
-            }
-
-            switch attachment.type {
-            case .image:
-                return options.union(.photoPreview)
-            case .giphy:
-                return options.union(.giphy)
-            case .file:
-                return options.union(.filePreview)
-            case .link:
-                return options.union(.linkPreview)
-            default:
-                return options
-            }
-        }
-
-        if attachmentOptions.contains(.actions) {
-            options.insert(.actions)
-        } else if attachmentOptions.intersection([.photoPreview, .giphy, .filePreview]).isEmpty == false {
-            options.formUnion(attachmentOptions.subtracting(.linkPreview))
-        } else if attachmentOptions.contains(.linkPreview) {
-            options.insert(.linkPreview)
-        }
-
-        return options
-    }
-    
     func cellReuseIdentifier(for message: _ChatMessage<ExtraData>) -> String {
         MessageCell<ExtraData>.reuseId
     }
@@ -253,7 +181,8 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         let message = channelController.messages[indexPath.item]
         
         let reuseId = cellReuseIdentifier(for: message)
-        let layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
+        let isLastInGroup = isMessageLastInGroup(at: indexPath)
+        let layoutOptions = layoutOptionsResolver(message, isLastInGroup)
         
         let cell: MessageCell<ExtraData> = self.collectionView.dequeueReusableCell(
             withReuseIdentifier: reuseId,
