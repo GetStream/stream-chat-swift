@@ -11,6 +11,14 @@ extension UIViewController {
         superview.addSubview(child.view)
         child.didMove(toParent: self)
     }
+    
+    /// Adds `child` as a child view controller to `self` and as an arranged subview of `ContainerView`.
+    func addChildViewController(_ child: UIViewController, targetView superview: ContainerStackView) {
+        child.willMove(toParent: self)
+        addChild(child)
+        superview.addArrangedSubview(child.view)
+        child.didMove(toParent: self)
+    }
 
     func removeFromParentViewController() {
         guard parent != nil else { return }

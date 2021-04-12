@@ -603,7 +603,7 @@
 		88F6DF94252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */; };
 		88F6DF97252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */; };
 		88F7692B25837EE600BD36B0 /* AttachmentUploader_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F7692A25837EE600BD36B0 /* AttachmentUploader_Tests.swift */; };
-		88F836502578D16D0039AEC8 /* ChatMessageActionsView+ActionButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F8364F2578D16D0039AEC8 /* ChatMessageActionsView+ActionButton.swift */; };
+		88F836502578D16D0039AEC8 /* ChatMessageActionControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F8364F2578D16D0039AEC8 /* ChatMessageActionControl.swift */; };
 		88F836612578D1A80039AEC8 /* ChatMessageActionItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F836602578D1A80039AEC8 /* ChatMessageActionItem.swift */; };
 		88F8366D2578D1C60039AEC8 /* ChatMessageActionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88F8366C2578D1C60039AEC8 /* ChatMessageActionsView.swift */; };
 		88F896F92541AC0900DE517D /* FlagMessagePayload+NoExtraData.json in Resources */ = {isa = PBXBuildFile; fileRef = 88F896F62541AC0900DE517D /* FlagMessagePayload+NoExtraData.json */; };
@@ -871,6 +871,8 @@
 		F6FF1DAA24FD23D300151735 /* MessageEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FF1DA924FD23D300151735 /* MessageEndpoints.swift */; };
 		F81641B325E7A36F00F49800 /* iMessageChatMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641B225E7A36E00F49800 /* iMessageChatMessageContentView.swift */; };
 		F81641BD25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F81641BC25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift */; };
+		F86A11022615B94B00D9FE19 /* ChatMessageActionsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86A11012615B94B00D9FE19 /* ChatMessageActionsVC_Tests.swift */; };
+		F86A11142616184300D9FE19 /* ChatMessagePopupVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86A11132616184300D9FE19 /* ChatMessagePopupVC_Tests.swift */; };
 		F8677F0F2624466200743078 /* XCTestCase+Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8677F0E2624466200743078 /* XCTestCase+Dummy.swift */; };
 		F86C87B525F906630000BCA9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C87B425F906630000BCA9 /* AppDelegate.swift */; };
 		F86C87B725F906630000BCA9 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F86C87B625F906630000BCA9 /* SceneDelegate.swift */; };
@@ -908,6 +910,8 @@
 		F87A496A260C7108001653A8 /* MessengerChatMessageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4969260C7108001653A8 /* MessengerChatMessageCollectionViewCell.swift */; };
 		F87A4974260C8C5A001653A8 /* MessengerChatChannelListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4973260C8C5A001653A8 /* MessengerChatChannelListRouter.swift */; };
 		F87A497E260C8D22001653A8 /* MessengerChatChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A497D260C8D22001653A8 /* MessengerChatChannelViewController.swift */; };
+		F87A4A1E2614504A001653A8 /* ChatMessageActionsView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4A1426145043001653A8 /* ChatMessageActionsView_Tests.swift */; };
+		F87A4A5A26146DAC001653A8 /* ChatMessageActionControl_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4A5926146DAB001653A8 /* ChatMessageActionControl_Tests.swift */; };
 		F8933B9525FF55E30054BBFF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933B9425FF55E30054BBFF /* AppDelegate.swift */; };
 		F8933B9E25FF55E50054BBFF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8933B9D25FF55E50054BBFF /* Assets.xcassets */; };
 		F8933BA125FF55E50054BBFF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F8933B9F25FF55E50054BBFF /* LaunchScreen.storyboard */; };
@@ -1736,7 +1740,7 @@
 		88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Tests.swift; sourceTree = "<group>"; };
 		88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberUpdater_Mock.swift; sourceTree = "<group>"; };
 		88F7692A25837EE600BD36B0 /* AttachmentUploader_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader_Tests.swift; sourceTree = "<group>"; };
-		88F8364F2578D16D0039AEC8 /* ChatMessageActionsView+ActionButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageActionsView+ActionButton.swift"; sourceTree = "<group>"; };
+		88F8364F2578D16D0039AEC8 /* ChatMessageActionControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionControl.swift; sourceTree = "<group>"; };
 		88F836602578D1A80039AEC8 /* ChatMessageActionItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionItem.swift; sourceTree = "<group>"; };
 		88F8366C2578D1C60039AEC8 /* ChatMessageActionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionsView.swift; sourceTree = "<group>"; };
 		88F896F62541AC0900DE517D /* FlagMessagePayload+NoExtraData.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "FlagMessagePayload+NoExtraData.json"; sourceTree = "<group>"; };
@@ -2020,6 +2024,8 @@
 		F6FF1DA924FD23D300151735 /* MessageEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEndpoints.swift; sourceTree = "<group>"; };
 		F81641B225E7A36E00F49800 /* iMessageChatMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatMessageContentView.swift; sourceTree = "<group>"; };
 		F81641BC25E7AEBC00F49800 /* iMessageСhatMessageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "iMessageСhatMessageCollectionViewCell.swift"; sourceTree = "<group>"; };
+		F86A11012615B94B00D9FE19 /* ChatMessageActionsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionsVC_Tests.swift; sourceTree = "<group>"; };
+		F86A11132616184300D9FE19 /* ChatMessagePopupVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessagePopupVC_Tests.swift; sourceTree = "<group>"; };
 		F8677F0E2624466200743078 /* XCTestCase+Dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Dummy.swift"; sourceTree = "<group>"; };
 		F86C87B225F906630000BCA9 /* MessengerClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MessengerClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F86C87B425F906630000BCA9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -2044,6 +2050,8 @@
 		F87A4969260C7108001653A8 /* MessengerChatMessageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatMessageCollectionViewCell.swift; sourceTree = "<group>"; };
 		F87A4973260C8C5A001653A8 /* MessengerChatChannelListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelListRouter.swift; sourceTree = "<group>"; };
 		F87A497D260C8D22001653A8 /* MessengerChatChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelViewController.swift; sourceTree = "<group>"; };
+		F87A4A1426145043001653A8 /* ChatMessageActionsView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionsView_Tests.swift; sourceTree = "<group>"; };
+		F87A4A5926146DAB001653A8 /* ChatMessageActionControl_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionControl_Tests.swift; sourceTree = "<group>"; };
 		F8933B9225FF55E30054BBFF /* SlackClone.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlackClone.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8933B9425FF55E30054BBFF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F8933B9B25FF55E30054BBFF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -3685,10 +3693,14 @@
 			isa = PBXGroup;
 			children = (
 				DB70CFFA25702EB900DDF436 /* ChatMessagePopupVC.swift */,
+				F86A11132616184300D9FE19 /* ChatMessagePopupVC_Tests.swift */,
 				88F8366C2578D1C60039AEC8 /* ChatMessageActionsView.swift */,
-				88F8364F2578D16D0039AEC8 /* ChatMessageActionsView+ActionButton.swift */,
+				F87A4A1426145043001653A8 /* ChatMessageActionsView_Tests.swift */,
+				88F8364F2578D16D0039AEC8 /* ChatMessageActionControl.swift */,
+				F87A4A5926146DAB001653A8 /* ChatMessageActionControl_Tests.swift */,
 				88F836602578D1A80039AEC8 /* ChatMessageActionItem.swift */,
 				8825333D258CE7AC00B77352 /* ChatMessageActionsVC.swift */,
+				F86A11012615B94B00D9FE19 /* ChatMessageActionsVC_Tests.swift */,
 				8825334B258CE82500B77352 /* ChatMessageActionsRouter.swift */,
 			);
 			path = MessageActionsPopup;
@@ -4851,7 +4863,7 @@
 				22FF4365256E943F00133910 /* ChatMessageComposerSuggestionsViewController.swift in Sources */,
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
 				22753599257C442300D1FDB6 /* ChatMessageSendButton.swift in Sources */,
-				88F836502578D16D0039AEC8 /* ChatMessageActionsView+ActionButton.swift in Sources */,
+                88F836502578D16D0039AEC8 /* ChatMessageActionControl.swift in Sources */,
 				88BA7F5D258B6953006CE0C5 /* ChatLoadingIndicator.swift in Sources */,
 				22086B48259509AC0007F8C0 /* ChatMessageComposerDocumentAttachmentsCollectionViewLayout.swift in Sources */,
 				E7166CB225BED22B00B03B07 /* UIConfig+ColorPalette.swift in Sources */,
@@ -4980,6 +4992,7 @@
 				7943385E262095DA0094471F /* ChatMessageConfirmEditButton_Tests.swift in Sources */,
 				227299B325DBF52D005EAFCF /* ChatChannelUnreadCountView_Tests.swift in Sources */,
 				78C8474125FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift in Sources */,
+				F86A11142616184300D9FE19 /* ChatMessagePopupVC_Tests.swift in Sources */,
 				AD71131225F138D500932AEE /* ChatUserAvatarView_Tests.swift in Sources */,
 				780057FF25F6353600D21095 /* ChatChannel.swift in Sources */,
 				7969D20225F15E3D00C66F87 /* TestRunnerEnvironment.swift in Sources */,
@@ -4997,10 +5010,13 @@
 				79158D5B25F15CF900186102 /* AssertAsync.swift in Sources */,
 				AD540AE2260CECA10082D802 /* ChatMessageQuoteView_Tests.swift in Sources */,
 				7849AFA225F24835007817D4 /* UITestsEnvironmentSetup.swift in Sources */,
+				F87A4A1E2614504A001653A8 /* ChatMessageActionsView_Tests.swift in Sources */,
 				225504C725DEA03700A5A65A /* ChatChannelListItemView_Tests.swift in Sources */,
 				79B4F0E625D305D40063FFB5 /* CurrentChatUserAvatarView_Tests.swift in Sources */,
 				AD016A1425CAFAF2009EBAD2 /* ChatChannelListVC_Tests.swift in Sources */,
 				7849AE7C25F22FA8007817D4 /* ChatChannelListVC+SwiftUI_Tests.swift in Sources */,
+				F87A4A5A26146DAC001653A8 /* ChatMessageActionControl_Tests.swift in Sources */,
+				F86A11022615B94B00D9FE19 /* ChatMessageActionsVC_Tests.swift in Sources */,
 				ADFCCD7525C9D4D10024505D /* AssertSnapshot.swift in Sources */,
 				79B4F14A25D3F1120063FFB5 /* TemporaryData.swift in Sources */,
 				AD16174125D6A7ED007E9FA8 /* ChatChannelCreateNewButton_Tests.swift in Sources */,
