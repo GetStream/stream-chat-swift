@@ -3,7 +3,6 @@
 //
 
 @testable import StreamChat
-import XCTest
 
 /// Mock implementation of `ChatClientUpdater`
 class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraData> {

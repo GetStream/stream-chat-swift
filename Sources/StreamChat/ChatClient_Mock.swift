@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 extension _ChatClient {

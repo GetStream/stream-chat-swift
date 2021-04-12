@@ -36,7 +36,7 @@ public typealias ChatMessageController = _ChatMessageController<NoExtraData>
 ///
 /// Learn more about using custom extra data in our [cheat sheet](https://github.com/GetStream/stream-chat-swift/wiki/Cheat-Sheet#working-with-extra-data).
 ///
-public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable {
+public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, DelegateCallable, DataStoreProvider {
     /// The `ChatClient` instance this controller belongs to.
     public let client: _ChatClient<ExtraData>
     

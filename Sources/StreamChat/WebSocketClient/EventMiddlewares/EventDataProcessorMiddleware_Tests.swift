@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class EventDataProcessorMiddleware_Tests: XCTestCase {
