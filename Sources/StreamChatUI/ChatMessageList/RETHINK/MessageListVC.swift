@@ -267,6 +267,12 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             },
             didTapOnThread: { [weak self] in
                 self?.handleTapOnThread(forCellAt: indexPath)
+//        guard let self = self, let channel = self.channelController.channel else { return }
+//
+//        let controller = MessageThreadVC<ExtraData>()
+//        controller.channelController = self.channelController
+//        controller.messageController = self.channelController.client.messageController(cid: channel.cid, messageId: message.id)
+//        self.navigationController?.show(controller, sender: self)
             },
             didTapOnAttachment: { [weak self] in
                 self?.handleTapOnAttachment($0, forCellAt: indexPath)
