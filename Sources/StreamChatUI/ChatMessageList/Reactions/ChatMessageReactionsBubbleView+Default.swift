@@ -83,14 +83,16 @@ private extension _ChatMessageDefaultReactionsBubbleView {
     var contentBorderColor: UIColor {
         guard let content = content else { return .clear }
 
+        let color: UIColor
         switch content.style {
         case .smallOutgoing:
-            return uiConfig.colorPalette.border
+            color = uiConfig.colorPalette.border
         case .smallIncoming:
-            return uiConfig.colorPalette.border
+            color = uiConfig.colorPalette.border
         default:
-            return contentBackgroundColor
+            color = contentBackgroundColor
         }
+        return resolvedColor(color)
     }
 
     var tailBackImage: UIImage? {
@@ -107,16 +109,20 @@ private extension _ChatMessageDefaultReactionsBubbleView {
                 )
             )
         case .smallIncoming, .smallOutgoing:
+            let borderColor = content.style.isIncoming ?
+                uiConfig.colorPalette.border :
+                uiConfig.colorPalette.border
+            
+            let innerColor = content.style.isIncoming ?
+                uiConfig.colorPalette.background2 :
+                uiConfig.colorPalette.popoverBackground
+            
             return .tail(
                 options: .small(flipped: content.style.isIncoming),
                 colors: .init(
-                    outlineColor: uiConfig.colorPalette.background,
-                    borderColor: content.style.isIncoming ?
-                        uiConfig.colorPalette.border :
-                        uiConfig.colorPalette.border,
-                    innerColor: content.style.isIncoming ?
-                        uiConfig.colorPalette.background2 :
-                        uiConfig.colorPalette.popoverBackground
+                    outlineColor: resolvedColor(uiConfig.colorPalette.background),
+                    borderColor: resolvedColor(borderColor),
+                    innerColor: resolvedColor(innerColor)
                 )
             )
         }
@@ -129,16 +135,27 @@ private extension _ChatMessageDefaultReactionsBubbleView {
         case .bigIncoming, .bigOutgoing:
             return nil
         case .smallIncoming, .smallOutgoing:
+            let innerColor = content.style.isIncoming ?
+                uiConfig.colorPalette.background2 :
+                uiConfig.colorPalette.popoverBackground
             return .tail(
                 options: .small(flipped: content.style.isIncoming),
                 colors: .init(
                     outlineColor: .clear,
                     borderColor: .clear,
-                    innerColor: content.style.isIncoming ?
-                        uiConfig.colorPalette.background2 :
-                        uiConfig.colorPalette.popoverBackground
+                    innerColor: resolvedColor(innerColor)
                 )
             )
+        }
+    }
+    
+    /// Returns color resolved with current `traitCollection`.
+    /// This is needed when a `cgColor` is used which can not be resolved by the view itself.
+    private func resolvedColor(_ color: UIColor) -> UIColor {
+        if #available(iOS 13.0, *) {
+            return color.resolvedColor(with: traitCollection)
+        } else {
+            return color
         }
     }
 }

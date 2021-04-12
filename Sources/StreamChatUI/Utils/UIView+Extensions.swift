@@ -54,6 +54,13 @@ extension UIView {
             self.isHidden = hidden
         }
     }
+    
+    /// Returns `UIView` that is flexible along defined `axis`.
+    static func spacer(axis: NSLayoutConstraint.Axis) -> UIView {
+        let view = UIView().flexible(axis: axis)
+        view.isHidden = true
+        return view
+    }
 }
 
 enum LayoutAnchorName {
