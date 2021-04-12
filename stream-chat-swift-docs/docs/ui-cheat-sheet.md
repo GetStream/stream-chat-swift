@@ -339,9 +339,11 @@ class DuckBubbleView: ChatMessageContentView {
 }
 ```
 
-Now to teach `StreamChatUI` sdk to use our 🦆 view, pass it inside `UIConfig`
+Now to teach `StreamChatUI` sdk to use our 🦆 view, we need to override the view containing this view and inject our `DuckBubbleView`
 ```swift
-UIConfig.default.messageList.messageContentView = DuckBubbleView.self
+final class DuckChatMessageCollectionViewCell: СhatMessageCollectionViewCell {
+    override class var messageContentViewClass: _ChatMessageContentView<NoExtraData>.Type { DuckBubbleView.self }
+}
 ```
 ![User now happy with duck](/img/happy_duck.png)
 
