@@ -258,31 +258,27 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     open func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
-        didTapOnInlineReplyFor message: _ChatMessage<ExtraData>
+        message: _ChatMessage<ExtraData>,
+        didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.didTapOnInlineReply?(self, message)
-        }
-    }
-
-    open func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        didTapOnThreadReplyFor message: _ChatMessage<ExtraData>
-    ) {
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.didTapOnRepliesForMessage?(self, message)
-        }
-    }
-
-    open func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        didTapOnEdit message: _ChatMessage<ExtraData>
-    ) {
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.didTapOnEdit?(self, message)
+        switch actionItem {
+        case is ThreadReplyActionItem:
+            dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.didTapOnRepliesForMessage?(self, message)
+            }
+        case is InlineReplyActionItem:
+            dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.didTapOnInlineReply?(self, message)
+            }
+        case is EditActionItem:
+            dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.didTapOnEdit?(self, message)
+            }
+        default:
+            log.error("Unhandled action for item: \(actionItem)")
         }
     }
 
@@ -366,6 +362,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
                 )
                 
                 self.router.showMessageActionsPopUp(
+                    messageContentViewClass: type(of: cell).messageContentViewClass,
                     messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
                     messageData: messageData,
                     messageActionsController: actionsController,
