@@ -19,6 +19,7 @@ public extension _UIConfig {
         public var messageContentSubviews = MessageContentViewSubviews()
         public var messageActionsSubviews = MessageActionsSubviews()
         public var messageReactions = MessageReactions()
+        public var layoutOptionsResolver: _LayoutOptionsResolver<ExtraData> = DefaultLayoutOptionsResolver()
     }
 
     struct MessageActionsSubviews {
