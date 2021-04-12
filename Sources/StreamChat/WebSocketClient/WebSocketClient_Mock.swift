@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamChatTestTools
 
 /// Mock implementation of `WebSocketClient`.
 class WebSocketClientMock: WebSocketClient {

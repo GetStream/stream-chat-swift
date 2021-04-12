@@ -7,7 +7,7 @@ import Foundation
 
 public class ChatMessageController_Mock<ExtraData: ExtraDataTypes>: _ChatMessageController<ExtraData> {
     /// Creates a new mock instance of `ChatMessageController`.
-    public static func mock() -> _ChatMessageController<ExtraData> {
+    public static func mock() -> ChatMessageController_Mock<ExtraData> {
         .init(client: .mock(), cid: try! .init(cid: "Mock:Channel"), messageId: "MockMessage")
     }
     
@@ -34,6 +34,8 @@ public extension ChatMessageController_Mock {
         message_mock = message
         replies_mock = replies
         state_mock = state
+        // Initial simulation should also have a user pre-created
+        try? client.databaseContainer.createCurrentUser()
     }
     
     /// Simulates a change of the `message` value. Observers are notified with the provided `change` value.

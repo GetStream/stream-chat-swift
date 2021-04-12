@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+import XCTest
 
 extension MessagePayload {
     /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.
@@ -36,7 +37,7 @@ extension MessagePayload {
             id: messageId,
             type: type ?? (parentId == nil ? .regular : .reply),
             user: UserPayload.dummy(userId: authorUserId) as UserPayload<T.User>,
-            createdAt: createdAt != nil ? createdAt! : ChannelDTO_Tests.channelCreatedDate
+            createdAt: createdAt != nil ? createdAt! : XCTestCase.channelCreatedDate
                 .addingTimeInterval(TimeInterval.random(in: 100...900)),
             updatedAt: .unique,
             deletedAt: deletedAt,
