@@ -66,6 +66,7 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         channelController.synchronize()
         
         messageController.setDelegate(self)
+        messageController.synchronize()
     }
     
     override func setUpLayout() {
