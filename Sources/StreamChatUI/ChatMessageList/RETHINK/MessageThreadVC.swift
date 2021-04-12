@@ -38,8 +38,6 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
     
     private var messageComposerBottomConstraint: NSLayoutConstraint?
     
-    private var timer: Timer?
-    
     private lazy var keyboardObserver = ChatMessageListKeyboardObserver(
         containerView: view,
         scrollView: collectionView,
