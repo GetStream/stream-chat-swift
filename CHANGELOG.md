@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 🔄 Changed
 
+# [2.6.5](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.5)
+_April 12, 2021_
+
+### 🔄 Changed
+
 - `Presenter.items` are not settable
 - `Attachment.text` is accepted via init
 
