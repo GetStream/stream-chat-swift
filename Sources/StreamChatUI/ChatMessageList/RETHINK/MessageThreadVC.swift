@@ -46,9 +46,8 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         composerBottomConstraint: messageComposerBottomConstraint
     )
 
-    public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> = {
-        channelController.client.userSearchController()
-    }()
+    public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> = channelController.client
+        .userSearchController()
     
     // Load from UIConfig
     public lazy var titleView = ChatMessageListTitleView<ExtraData>()
@@ -65,12 +64,6 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         
         channelController.setDelegate(self)
         channelController.synchronize()
-        
-        if channelController.channel?.isDirectMessageChannel == true {
-            timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-                self?.updateNavigationTitle()
-            }
-        }
         
         messageController.setDelegate(self)
     }
@@ -130,11 +123,11 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
     }
     
     func isMessageLastInGroup(at indexPath: IndexPath) -> Bool {
-        let message = channelController.messages[indexPath.row]
+        let message = chatMessage(for: indexPath)
 
-        guard indexPath.row > 0 else { return true }
+        guard indexPath.item > 0 else { return true }
 
-        let nextMessage = channelController.messages[indexPath.row - 1]
+        let nextMessage = messageController.replies[indexPath.item - 1]
 
         guard nextMessage.author == message.author else { return true }
 
@@ -143,8 +136,9 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         return delay > minTimeIntervalBetweenMessagesInGroup
     }
     
+    // It's not using isPartOfThread
     func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
-        let message = channelController.messages[indexPath.row]
+        let message = chatMessage(for: indexPath)
         let isLastInGroup = isMessageLastInGroup(at: indexPath)
 
         var options: ChatMessageLayoutOptions = []
@@ -174,11 +168,6 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         }
         if message.quotedMessageId != nil {
             options.insert(.quotedMessage)
-        }
-        if message.isPartOfThread {
-            options.insert(.threadInfo)
-            // The bubbles with thread look like continuous bubbles
-            options.insert(.continuousBubble)
         }
         if !message.reactionScores.isEmpty {
             options.insert(.reactions)
@@ -225,13 +214,16 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         messageController.replies.count + 1
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let message: _ChatMessage<ExtraData> = {
-            if indexPath.item == messageController.replies.count {
-                return messageController.message!
-            }
+    private func chatMessage(for indexPath: IndexPath) -> _ChatMessage<ExtraData> {
+        if indexPath.item == messageController.replies.count {
+            return messageController.message!
+        } else {
             return messageController.replies[indexPath.item]
-        }()
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let message = chatMessage(for: indexPath)
         
         let reuseId = cellReuseIdentifier(for: message)
         let layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
