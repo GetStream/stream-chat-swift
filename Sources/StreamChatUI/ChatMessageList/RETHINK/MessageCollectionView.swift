@@ -25,7 +25,7 @@ class MessageCollectionView: UICollectionView {
         }
             
         let cell = dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! MessageCell<ExtraData>
-        cell.setUpLayoutIfNeeded(options: layoutOptions)
+        cell.messageContentView.setUpLayoutIfNeeded(options: layoutOptions)
         
         return cell
     }

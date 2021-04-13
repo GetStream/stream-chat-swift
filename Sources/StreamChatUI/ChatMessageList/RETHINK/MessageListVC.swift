@@ -257,7 +257,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             for: indexPath
         )
 
-        cell.delegate = .init(
+        cell.messageContentView.delegate = .init(
             didTapOnErrorIndicator: { [weak self] in
                 self?.handleTapOnErrorIndicator(forCellAt: indexPath)
             },
@@ -274,7 +274,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
                 self?.handleTapOnQuotedMessage($0, forCellAt: indexPath)
             }
         )
-        cell.content = message
+        cell.messageContentView.content = message
         
         return cell
     }
@@ -347,7 +347,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             delay: 0,
             options: [.curveEaseIn],
             animations: {
-                cell.mainContainer.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                cell.messageContentView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
             },
             completion: { _ in
                 self.impactFeedbackGenerator.impactOccurred()
@@ -357,12 +357,12 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
                     delay: 0,
                     options: [.curveEaseOut],
                     animations: {
-                        cell.mainContainer.transform = .identity
+                        cell.messageContentView.transform = .identity
                     }
                 )
                 
                 self.router.showMessageActionsPopUp(
-                    messageContentFrame: cell.mainContainer.superview!.convert(cell.mainContainer.frame, to: nil),
+                    messageContentFrame: cell.messageContentView.superview!.convert(cell.messageContentView.frame, to: nil),
                     messageData: messageData,
                     messageActionsController: actionsController,
                     messageReactionsController: reactionsController
