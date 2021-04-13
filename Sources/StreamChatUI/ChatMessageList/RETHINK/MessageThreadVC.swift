@@ -10,8 +10,6 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
     UIConfigProvider {
     var channelController: _ChatChannelController<ExtraData>!
     var messageController: _ChatMessageController<ExtraData>!
-
-    var minTimeIntervalBetweenMessagesInGroup: TimeInterval = 10
     
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
     public private(set) var needsToScrollToMostRecentMessage = true
@@ -35,8 +33,6 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         .messageComposer
         .messageComposerViewController
         .init()
-    
-    public private(set) lazy var layoutOptionsResolver = uiConfig.messageList.layoutOptionsResolver
     
     private var messageComposerBottomConstraint: NSLayoutConstraint?
     
@@ -131,6 +127,12 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         MessageCell<ExtraData>.reuseId
     }
     
+    func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
+        var layoutOptions = uiConfig.messageList.layoutOptionsResolver(indexPath, AnyRandomAccessCollection(messages))
+        layoutOptions.remove(.threadInfo)
+        return layoutOptions
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         messages.count
     }
@@ -138,13 +140,9 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let message = messages[indexPath.item]
         
-        let reuseId = cellReuseIdentifier(for: message)
-        var layoutOptions = layoutOptionsResolver(indexPath, messages)
-        layoutOptions.remove(.threadInfo)
-        
         let cell: MessageCell<ExtraData> = self.collectionView.dequeueReusableCell(
-            withReuseIdentifier: reuseId,
-            layoutOptions: layoutOptions,
+            withReuseIdentifier: cellReuseIdentifier(for: message),
+            layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
             for: indexPath
         )
         
@@ -225,6 +223,7 @@ extension MessageThreadVC: _ChatMessageControllerDelegate {
         didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         updateMessages(with: changes)
+        LazyCachedMapCollection(source: messageController.replies + [messageController.message!], map: { $0 })
         messages = messageController.replies + [messageController.message!]
     }
 }

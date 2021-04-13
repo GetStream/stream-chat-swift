@@ -16,7 +16,7 @@ public extension _UIConfig {
         public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()
         public var messageContentSubviews = MessageContentViewSubviews()
         public var messageReactions = MessageReactions()
-        public var layoutOptionsResolver: _LayoutOptionsResolver<ExtraData> = DefaultLayoutOptionsResolver()
+        public var layoutOptionsResolver: MessageLayoutOptionsResolver<ExtraData> = DefaultMessageLayoutOptionsResolver()
     }
 
     struct MessageReactions {
