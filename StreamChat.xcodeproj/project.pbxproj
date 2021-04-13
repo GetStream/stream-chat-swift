@@ -55,6 +55,7 @@
 		22C2359A259CA87B00DC805A /* Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22C23599259CA87B00DC805A /* Animation.swift */; };
 		22CAFA7625CAE278005935D9 /* RawJSON_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22CAFA7525CAE278005935D9 /* RawJSON_Tests.swift */; };
 		22FF4365256E943F00133910 /* ChatMessageComposerSuggestionsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22FF4364256E943F00133910 /* ChatMessageComposerSuggestionsViewController.swift */; };
+		64F70D4B26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64F70D4A26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift */; };
 		6971257E260CA503003C7B47 /* NSManagedObjectContext+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6971256C260CA4CB003C7B47 /* NSManagedObjectContext+Extensions.swift */; };
 		697C6F90260CFA37000E9023 /* Deprecations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69712522260BC9B4003C7B47 /* Deprecations.swift */; };
 		780057FF25F6353600D21095 /* ChatChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780057F625F634FC00D21095 /* ChatChannel.swift */; };
@@ -1174,6 +1175,7 @@
 		22C23599259CA87B00DC805A /* Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animation.swift; sourceTree = "<group>"; };
 		22CAFA7525CAE278005935D9 /* RawJSON_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RawJSON_Tests.swift; sourceTree = "<group>"; };
 		22FF4364256E943F00133910 /* ChatMessageComposerSuggestionsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerSuggestionsViewController.swift; sourceTree = "<group>"; };
+		64F70D4A26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+InternetNotAvailable_Tests.swift"; sourceTree = "<group>"; };
 		69712522260BC9B4003C7B47 /* Deprecations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecations.swift; sourceTree = "<group>"; };
 		6971256C260CA4CB003C7B47 /* NSManagedObjectContext+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Extensions.swift"; sourceTree = "<group>"; };
 		698E2A3425F7C8AF00ED9CCC /* APIPathConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIPathConvertible.swift; sourceTree = "<group>"; };
@@ -3846,6 +3848,7 @@
 				8AE335A424FCF999002B6677 /* InternetConnection_Tests.swift */,
 				8AE335A524FCF999002B6677 /* Reachability_Vendor.swift */,
 				79200D4B25025B81002F4EB1 /* Error+InternetNotAvailable.swift */,
+				64F70D4A26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift */,
 			);
 			path = InternetConnection;
 			sourceTree = "<group>";
@@ -5315,6 +5318,7 @@
 				8A62705E24BE2CD70040BFD6 /* XCTestCase+MockJSON.swift in Sources */,
 				DA84074B2526417B005A0F62 /* JSONEncoder+Extensions.swift in Sources */,
 				88381E6E258259310047A6A3 /* FileUploadPayload_Tests.swift in Sources */,
+				64F70D4B26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift in Sources */,
 				F63CC37124E591990052844D /* EventObserver_Tests.swift in Sources */,
 				22CAFA7625CAE278005935D9 /* RawJSON_Tests.swift in Sources */,
 				795297062583B52000435B2E /* UserSearchController_Tests.swift in Sources */,
