@@ -155,20 +155,6 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         keyboardObserver.unregister()
     }
     
-    func isMessageLastInGroup(at indexPath: IndexPath) -> Bool {
-        let message = channelController.messages[indexPath.row]
-
-        guard indexPath.row > 0 else { return true }
-
-        let nextMessage = channelController.messages[indexPath.row - 1]
-
-        guard nextMessage.author == message.author else { return true }
-
-        let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
-
-        return delay > minTimeIntervalBetweenMessagesInGroup
-    }
-    
     func cellReuseIdentifier(for message: _ChatMessage<ExtraData>) -> String {
         MessageCell<ExtraData>.reuseId
     }
@@ -181,8 +167,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         let message = channelController.messages[indexPath.item]
         
         let reuseId = cellReuseIdentifier(for: message)
-        let isLastInGroup = isMessageLastInGroup(at: indexPath)
-        let layoutOptions = layoutOptionsResolver(message, isLastInGroup)
+        let layoutOptions = layoutOptionsResolver(indexPath, Array(channelController.messages))
         
         let cell: MessageCell<ExtraData> = self.collectionView.dequeueReusableCell(
             withReuseIdentifier: reuseId,

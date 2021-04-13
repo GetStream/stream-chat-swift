@@ -5,10 +5,26 @@
 import StreamChat
 
 public typealias _LayoutOptionsResolver<ExtraData: ExtraDataTypes> =
-    (_ message: _ChatMessage<ExtraData>, _ isLastInGroup: Bool) -> ChatMessageLayoutOptions
+    (_ indexPath: IndexPath, _ messages: [_ChatMessage<ExtraData>]) -> ChatMessageLayoutOptions
 
-public func DefaultLayoutOptionsResolver<ExtraData: ExtraDataTypes>() -> _LayoutOptionsResolver<ExtraData> {
-    { message, isLastInGroup in
+public func DefaultLayoutOptionsResolver<ExtraData: ExtraDataTypes>(
+    minTimeIntervalBetweenMessagesInGroup: Double = 10
+) -> _LayoutOptionsResolver<ExtraData> {
+    { indexPath, messages in
+        let message = messages[indexPath.item]
+
+        let isLastInGroup: Bool = {
+            guard indexPath.item > 0 else { return true }
+            
+            let nextMessage = messages[indexPath.item - 1]
+
+            guard nextMessage.author == message.author else { return true }
+            
+            let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
+            
+            return delay > minTimeIntervalBetweenMessagesInGroup
+        }()
+        
         var options: ChatMessageLayoutOptions = []
         
         if message.isSentByCurrentUser {
