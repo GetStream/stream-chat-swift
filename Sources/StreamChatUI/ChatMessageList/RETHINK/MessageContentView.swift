@@ -46,7 +46,7 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     var reactionsView: _ReactionsCompactView<ExtraData>?
     var errorIndicatorView: _ChatMessageErrorIndicator<ExtraData>?
 
-    var threadReplyCountLabel: UILabel?
+    var threadReplyCountButton: UIButton?
     var threadAvatarView: ChatAvatarView?
     var threadArrowView: _SimpleChatMessageThreadArrowView<ExtraData>?
     
@@ -145,7 +145,9 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
                 threadAvatarView.widthAnchor.constraint(equalToConstant: 16)
             ]
             
-            threadInfoContainer.addArrangedSubview(createThreadReplyCountLabel())
+            let threadReplyCountButton = createThreadReplyCountButton()
+            threadReplyCountButton.addTarget(self, action: #selector(didTapOnThread), for: .touchUpInside)
+            threadInfoContainer.addArrangedSubview(threadReplyCountButton)
             
             if options.contains(.flipped) {
                 arrowView.direction = .toLeading
@@ -317,9 +319,9 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
 
         // Thread info
         if let replyCount = content?.replyCount {
-            threadReplyCountLabel?.text = L10n.Message.Threads.count(replyCount)
+            threadReplyCountButton?.setTitle(L10n.Message.Threads.count(replyCount), for: .normal)
         } else {
-            threadReplyCountLabel?.text = L10n.Message.Threads.reply
+            threadReplyCountButton?.setTitle(L10n.Message.Threads.reply, for: .normal)
         }
         let latestReplyAuthorAvatar = content?.latestReplies.first?.author.imageURL
         threadAvatarView?.imageView.loadImage(from: latestReplyAuthorAvatar)
@@ -407,16 +409,17 @@ private extension MessageContentView {
         return threadArrowView!
     }
     
-    func createThreadReplyCountLabel() -> UILabel {
-        if threadReplyCountLabel == nil {
-            let label = UILabel().withoutAutoresizingMaskConstraints
-            label.font = uiConfig.font.footnoteBold
-            label.adjustsFontForContentSizeCategory = true
-            label.text = L10n.Message.Threads.reply
-            label.textColor = tintColor
-            threadReplyCountLabel = label.withBidirectionalLanguagesSupport
+    func createThreadReplyCountButton() -> UIButton {
+        if threadReplyCountButton == nil {
+            let button = UIButton(type: .system)
+            button.setTitle(L10n.Message.Threads.reply, for: [])
+            button.setTitleColor(tintColor, for: .normal)
+            button.titleLabel?.font = uiConfig.font.footnoteBold
+            button.titleLabel?.adjustsFontForContentSizeCategory = true
+            button.titleLabel?.textAlignment = .natural
+            threadReplyCountButton = button
         }
-        return threadReplyCountLabel!
+        return threadReplyCountButton!
     }
 
     func createBubbleView() -> BubbleView<ExtraData> {
