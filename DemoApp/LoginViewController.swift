@@ -39,6 +39,7 @@ class UserCredentialsCell: UITableViewCell {
 
 class LoginViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
+    var didRequestChatPresentation: ((UserCredentials) -> Void)!
     
     let builtInUsers = UserCredentials.builtInUsers
     
@@ -95,6 +96,6 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
             return
         }
         
-        presentChat(userCredentials: builtInUsers[indexPath.row])
+        didRequestChatPresentation(builtInUsers[indexPath.row])
     }
 }

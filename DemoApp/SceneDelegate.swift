@@ -9,10 +9,21 @@ extension UIColor {
 }
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    private var coordinator: DemoAppCoordinator!
     var window: UIWindow?
-
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let scene = scene as? UIWindowScene else { return }
+        let window = UIWindow(windowScene: scene)
+        
+        guard let navigationController = UIStoryboard(
+            name: "Main",
+            bundle: nil
+        ).instantiateInitialViewController() as? UINavigationController else { return }
+        window.rootViewController = navigationController
+        coordinator = DemoAppCoordinator(navigationController: navigationController)
+        self.window = window
+        window.makeKeyAndVisible()
         scene.windows.forEach { $0.tintColor = .streamBlue }
     }
 
