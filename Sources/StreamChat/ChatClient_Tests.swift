@@ -188,6 +188,7 @@ class ChatClient_Tests: StressTestCase {
         // Assert the init parameters are correct
         let webSocket = testEnv.webSocketClient
         assertMandatoryHeaderFields(webSocket?.init_sessionConfiguration)
+        XCTAssertEqual(webSocket?.init_sessionConfiguration.waitsForConnectivity, false)
         XCTAssert(webSocket?.init_requestEncoder is TestRequestEncoder)
         XCTAssert(webSocket?.init_eventNotificationCenter.database === client.databaseContainer)
         XCTAssertNotNil(webSocket?.init_eventDecoder)
