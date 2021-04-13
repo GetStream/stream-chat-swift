@@ -52,6 +52,10 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
     // Load from UIConfig
     public lazy var titleView = ChatMessageListTitleView<ExtraData>()
     
+    private lazy var messages: [_ChatMessage<ExtraData>] = {
+        messageController.replies + [messageController.message!]
+    }()
+    
     override func setUp() {
         super.setUp()
         
@@ -123,42 +127,19 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         keyboardObserver.unregister()
     }
     
-    func isMessageLastInGroup(at indexPath: IndexPath) -> Bool {
-        let message = chatMessage(for: indexPath)
-
-        guard indexPath.item > 0 else { return true }
-
-        let nextMessage = messageController.replies[indexPath.item - 1]
-
-        guard nextMessage.author == message.author else { return true }
-
-        let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
-
-        return delay > minTimeIntervalBetweenMessagesInGroup
-    }
-    
     func cellReuseIdentifier(for message: _ChatMessage<ExtraData>) -> String {
         MessageCell<ExtraData>.reuseId
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        messageController.replies.count + 1
-    }
-    
-    private func chatMessage(for indexPath: IndexPath) -> _ChatMessage<ExtraData> {
-        if indexPath.item == messageController.replies.count {
-            return messageController.message!
-        } else {
-            return messageController.replies[indexPath.item]
-        }
+        messages.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let message = chatMessage(for: indexPath)
+        let message = messages[indexPath.item]
         
         let reuseId = cellReuseIdentifier(for: message)
-        let isLastInGroup = isMessageLastInGroup(at: indexPath)
-        var layoutOptions = layoutOptionsResolver(message, isLastInGroup)
+        var layoutOptions = layoutOptionsResolver(indexPath, messages)
         layoutOptions.remove(.threadInfo)
         
         let cell: MessageCell<ExtraData> = self.collectionView.dequeueReusableCell(
@@ -244,5 +225,6 @@ extension MessageThreadVC: _ChatMessageControllerDelegate {
         didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         updateMessages(with: changes)
+        messages = messageController.replies + [messageController.message!]
     }
 }
