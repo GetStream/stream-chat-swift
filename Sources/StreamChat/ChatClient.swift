@@ -193,7 +193,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// required header auth parameters to make a successful request.
     private var urlSessionConfiguration: URLSessionConfiguration {
         let config = URLSessionConfiguration.default
-        config.waitsForConnectivity = true
+        config.waitsForConnectivity = false
         config.httpAdditionalHeaders = sessionHeaders
         return config
     }
