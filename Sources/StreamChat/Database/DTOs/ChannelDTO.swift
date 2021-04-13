@@ -338,7 +338,8 @@ extension _ChatChannel {
             extraData: extraData,
             //            invitedMembers: [],
             latestMessages: { fetchMessages() },
-            pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } }
+            pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } },
+            underlyingContext: dto.managedObjectContext
         )
     }
 }
