@@ -73,6 +73,25 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         
         messageComposerViewController.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(messageComposerViewController, targetView: view)
+        
+        if let message = messageController.message {
+            let messageView = MessageContentView<ExtraData>().withoutAutoresizingMaskConstraints
+            var layoutOptions = uiConfig.messageList.layoutOptionsResolver(
+                IndexPath(item: 0, section: 0),
+                AnyRandomAccessCollection([message])
+            )
+            layoutOptions.remove(.threadInfo)
+            
+            messageView.setUpLayoutIfNeeded(options: layoutOptions)
+
+            let messageViewSize = messageView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+            collectionView.contentInset = UIEdgeInsets(top: messageViewSize.height, left: 0, bottom: 0, right: 0)
+
+            collectionView.addSubview(messageView)
+            messageView.topAnchor.pin(equalTo: collectionView.topAnchor, constant: -messageViewSize.height).isActive = true
+            messageView.pin(anchors: [.leading, .trailing], to: collectionView.safeAreaLayoutGuide)
+            messageView.content = message
+        }
 
         messageComposerViewController.view.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
         messageComposerViewController.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
@@ -108,7 +127,9 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         
         keyboardObserver.register()
         
-        scrollToMostRecentMessageIfNeeded()
+        if !messageController.replies.isEmpty {
+            scrollToMostRecentMessageIfNeeded()
+        }
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
