@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 
 /// A type representing a chat channel. `ChatChannel` is an immutable snapshot of a channel entity at the given time.
@@ -68,7 +69,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// - Note: This property will contain no more than `ChatClientConfig.channel.lastActiveMembersLimit` members.
     ///
     public var lastActiveMembers: [_ChatChannelMember<ExtraData.User>] { _lastActiveMembers }
-    @Cached private var _lastActiveMembers: [_ChatChannelMember<ExtraData.User>]
+    @CoreDataLazy private var _lastActiveMembers: [_ChatChannelMember<ExtraData.User>]
     
     /// A list of currently typing channel members.
     public let currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>>
@@ -86,7 +87,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// - Note: This property will contain no more than `ChatClientConfig.channel.lastActiveWatchersLimit` members.
     ///
     public var lastActiveWatchers: [_ChatUser<ExtraData.User>] { _lastActiveWatchers }
-    @Cached private var _lastActiveWatchers: [_ChatUser<ExtraData.User>]
+    @CoreDataLazy private var _lastActiveWatchers: [_ChatUser<ExtraData.User>]
 
     /// The total number of online members watching this channel.
     public let watcherCount: Int
@@ -100,7 +101,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     
     /// The unread counts for the channel.
     public var unreadCount: ChannelUnreadCount { _unreadCount }
-    @Cached private var _unreadCount: ChannelUnreadCount
+    @CoreDataLazy private var _unreadCount: ChannelUnreadCount
     
     /// An option to enable ban users.
 //    public let banEnabling: BanEnabling
@@ -112,7 +113,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     ///
     /// - Important: The `latestMessages` property is loaded and evaluated lazily to maintain high performance.
     public var latestMessages: [_ChatMessage<ExtraData>] { _latestMessages }
-    @Cached private var _latestMessages: [_ChatMessage<ExtraData>]
+    @CoreDataLazy private var _latestMessages: [_ChatMessage<ExtraData>]
     
     /// Pinned messages present on the channel.
     ///
@@ -121,7 +122,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     ///
     /// - Important: The `pinnedMessages` property is loaded and evaluated lazily to maintain high performance.
     public var pinnedMessages: [_ChatMessage<ExtraData>] { _pinnedMessages }
-    @Cached private var _pinnedMessages: [_ChatMessage<ExtraData>]
+    @CoreDataLazy private var _pinnedMessages: [_ChatMessage<ExtraData>]
     
     /// Read states of the users for this channel.
     ///
@@ -174,7 +175,8 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         extraData: ExtraData.Channel,
 //        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         latestMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
-        pinnedMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] }
+        pinnedMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
+        underlyingContext: NSManagedObjectContext?
     ) {
         self.cid = cid
         self.name = name
@@ -197,11 +199,11 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         self.extraData = extraData
 //        self.invitedMembers = invitedMembers
         
-        $_unreadCount = unreadCount
-        $_latestMessages = latestMessages
-        $_lastActiveMembers = lastActiveMembers
-        $_lastActiveWatchers = lastActiveWatchers
-        $_pinnedMessages = pinnedMessages
+        $_unreadCount = (unreadCount, underlyingContext)
+        $_latestMessages = (latestMessages, underlyingContext)
+        $_lastActiveMembers = (lastActiveMembers, underlyingContext)
+        $_lastActiveWatchers = (lastActiveWatchers, underlyingContext)
+        $_pinnedMessages = (pinnedMessages, underlyingContext)
     }
 }
 
