@@ -58,7 +58,7 @@ class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerMock? = channelController
         channelController = nil
 
-        let newChannel: ChatChannel = .init(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
+        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
         controller?.channel_simulated = newChannel
         controller?.delegateCallback {
             $0.channelController(controller!, didUpdateChannel: .create(newChannel))
