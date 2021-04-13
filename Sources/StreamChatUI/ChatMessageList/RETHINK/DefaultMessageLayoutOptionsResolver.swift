@@ -4,19 +4,21 @@
 
 import StreamChat
 
-public typealias _LayoutOptionsResolver<ExtraData: ExtraDataTypes> =
-    (_ indexPath: IndexPath, _ messages: [_ChatMessage<ExtraData>]) -> ChatMessageLayoutOptions
+public typealias MessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> =
+    (_ indexPath: IndexPath, _ messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>) -> ChatMessageLayoutOptions
 
-public func DefaultLayoutOptionsResolver<ExtraData: ExtraDataTypes>(
-    minTimeIntervalBetweenMessagesInGroup: Double = 10
-) -> _LayoutOptionsResolver<ExtraData> {
+public func DefaultMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes>(
+    minTimeIntervalBetweenMessagesInGroup: TimeInterval = 10
+) -> MessageLayoutOptionsResolver<ExtraData> {
     { indexPath, messages in
-        let message = messages[indexPath.item]
+        let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
+        let message = messages[messageIndex]
 
         let isLastInGroup: Bool = {
             guard indexPath.item > 0 else { return true }
             
-            let nextMessage = messages[indexPath.item - 1]
+            let nextMessageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item - 1)
+            let nextMessage = messages[nextMessageIndex]
 
             guard nextMessage.author == message.author else { return true }
             

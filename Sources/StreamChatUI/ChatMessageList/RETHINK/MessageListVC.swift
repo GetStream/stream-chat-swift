@@ -9,8 +9,6 @@ import UIKit
 class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource,
     UIConfigProvider {
     var channelController: _ChatChannelController<ExtraData>!
-
-    var minTimeIntervalBetweenMessagesInGroup: TimeInterval = 10
     
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
     public private(set) var needsToScrollToMostRecentMessage = true
@@ -56,8 +54,6 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
 
 //    public lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
     public lazy var router = MessageListRouter(rootViewController: self)
-    
-    public private(set) lazy var layoutOptionsResolver = uiConfig.messageList.layoutOptionsResolver
     
     override func setUp() {
         super.setUp()
@@ -159,6 +155,10 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         MessageCell<ExtraData>.reuseId
     }
     
+    func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
+        uiConfig.messageList.layoutOptionsResolver(indexPath, AnyRandomAccessCollection(channelController.messages))
+    }
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         channelController.messages.count
     }
@@ -166,12 +166,9 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let message = channelController.messages[indexPath.item]
         
-        let reuseId = cellReuseIdentifier(for: message)
-        let layoutOptions = layoutOptionsResolver(indexPath, Array(channelController.messages))
-        
         let cell: MessageCell<ExtraData> = self.collectionView.dequeueReusableCell(
-            withReuseIdentifier: reuseId,
-            layoutOptions: layoutOptions,
+            withReuseIdentifier: cellReuseIdentifier(for: message),
+            layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
             for: indexPath
         )
 
