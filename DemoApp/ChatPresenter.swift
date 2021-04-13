@@ -6,34 +6,6 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-extension UIViewController {
-    // TODO: Where to put this???
-    func presentChat(userCredentials: UserCredentials) {
-        LogConfig.level = .error
-
-        // Create a token
-        let token = try! Token(rawValue: userCredentials.token)
-        
-        // Create client
-        let config = ChatClientConfig(apiKey: .init(userCredentials.apiKey))
-        let client = ChatClient(config: config, tokenProvider: .static(token))
-
-        // Config
-        UIConfig.default.navigation.channelListRouter = DemoChatChannelListRouter.self
-
-        // Channels with the current user
-        let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))
-        let chatList = ChatChannelListVC()
-        chatList.controller = controller
-        
-        let chatNavigationController = UINavigationController(rootViewController: chatList)
-        
-        UIView.transition(with: view.window!, duration: 0.3, options: .transitionFlipFromRight, animations: {
-            self.view.window!.rootViewController = chatNavigationController
-        })
-    }
-}
-
 class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
     override func openCreateNewChannel() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
