@@ -63,7 +63,8 @@ public extension _ChatMessage {
             latestReactions: { latestReactions },
             currentUserReactions: { currentUserReactions },
             isSentByCurrentUser: isSentByCurrentUser,
-            pinDetails: pinDetails
+            pinDetails: pinDetails,
+            underlyingContext: nil
         )
     }
 }
