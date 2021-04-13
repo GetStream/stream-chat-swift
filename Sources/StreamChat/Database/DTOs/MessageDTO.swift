@@ -500,24 +500,24 @@ private extension _ChatMessage {
             isSentByCurrentUser = currentUser.user.id == dto.user.id
             
             if dto.reactions.isEmpty {
-                $_currentUserReactions = { [] }
+                $_currentUserReactions = ({ [] }, nil)
             } else {
-                $_currentUserReactions = {
+                $_currentUserReactions = ({
                     Set(
                         MessageReactionDTO
                             .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
                             .map { $0.asModel() }
                     )
-                }
+                }, dto.managedObjectContext)
             }
         } else {
             isSentByCurrentUser = false
-            $_currentUserReactions = { [] }
+            $_currentUserReactions = ({ [] }, nil)
         }
         
-        $_mentionedUsers = { Set(dto.mentionedUsers.map { $0.asModel() }) }
-        $_author = { dto.user.asModel() }
-        $_attachments = {
+        $_mentionedUsers = ({ Set(dto.mentionedUsers.map { $0.asModel() }) }, dto.managedObjectContext)
+        $_author = ({ dto.user.asModel() }, dto.managedObjectContext)
+        $_attachments = ({
             dto.attachments
                 .map { $0.asModel() }
                 .sorted {
@@ -525,28 +525,28 @@ private extension _ChatMessage {
                     let index2 = $1.id?.index ?? Int.max
                     return index1 < index2
                 }
-        }
+        }, dto.managedObjectContext)
         
         if dto.replies.isEmpty {
-            $_latestReplies = { [] }
+            $_latestReplies = ({ [] }, nil)
         } else {
-            $_latestReplies = {
+            $_latestReplies = ({
                 MessageDTO
                     .loadReplies(for: dto.id, limit: 5, context: context)
                     .map(_ChatMessage.init)
-            }
+            }, dto.managedObjectContext)
         }
         
         if dto.reactions.isEmpty {
-            $_latestReactions = { [] }
+            $_latestReactions = ({ [] }, nil)
         } else {
-            $_latestReactions = {
+            $_latestReactions = ({
                 Set(
                     MessageReactionDTO
                         .loadLatestReactions(for: dto.id, limit: 5, context: context)
                         .map { $0.asModel() }
                 )
-            }
+            }, dto.managedObjectContext)
         }
     }
 }

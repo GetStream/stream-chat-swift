@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 
 /// A unique identifier of a message.
@@ -88,14 +89,14 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// - Important: The `author` property is loaded and evaluated lazily to maintain high performance.
     public var author: _ChatUser<ExtraData.User> { _author }
     
-    @Cached internal var _author: _ChatUser<ExtraData.User>
+    @CoreDataLazy internal var _author: _ChatUser<ExtraData.User>
     
     /// A list of users that are mentioned in this message.
     ///
     /// - Important: The `mentionedUsers` property is loaded and evaluated lazily to maintain high performance.
     public var mentionedUsers: Set<_ChatUser<ExtraData.User>> { _mentionedUsers }
     
-    @Cached internal var _mentionedUsers: Set<_ChatUser<ExtraData.User>>
+    @CoreDataLazy internal var _mentionedUsers: Set<_ChatUser<ExtraData.User>>
 
     /// A list of users that participated in this message thread
     public let threadParticipants: Set<UserId>
@@ -105,14 +106,14 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// - Important: The `attachments` property is loaded and evaluated lazily to maintain high performance.
     public var attachments: [ChatMessageAttachment] { _attachments }
     
-    @Cached internal var _attachments: [ChatMessageAttachment]
+    @CoreDataLazy internal var _attachments: [ChatMessageAttachment]
         
     /// A list of latest 25 replies to this message.
     ///
     /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
     public var latestReplies: [_ChatMessage<ExtraData>] { _latestReplies }
     
-    @Cached internal var _latestReplies: [_ChatMessage<ExtraData>]
+    @CoreDataLazy internal var _latestReplies: [_ChatMessage<ExtraData>]
     
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     ///
@@ -133,14 +134,14 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// - Important: The `latestReactions` property is loaded and evaluated lazily to maintain high performance.
     public var latestReactions: Set<_ChatMessageReaction<ExtraData>> { _latestReactions }
     
-    @Cached internal var _latestReactions: Set<_ChatMessageReaction<ExtraData>>
+    @CoreDataLazy internal var _latestReactions: Set<_ChatMessageReaction<ExtraData>>
     
     /// The entire list of reactions to the message left by the current user.
     ///
     /// - Important: The `currentUserReactions` property is loaded and evaluated lazily to maintain high performance.
     public var currentUserReactions: Set<_ChatMessageReaction<ExtraData>> { _currentUserReactions }
     
-    @Cached internal var _currentUserReactions: Set<_ChatMessageReaction<ExtraData>>
+    @CoreDataLazy internal var _currentUserReactions: Set<_ChatMessageReaction<ExtraData>>
     
     /// `true` if the author of the message is the currently logged-in user.
     public let isSentByCurrentUser: Bool
@@ -175,7 +176,8 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         latestReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
         currentUserReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
         isSentByCurrentUser: Bool,
-        pinDetails: _MessagePinDetails<ExtraData>?
+        pinDetails: _MessagePinDetails<ExtraData>?,
+        underlyingContext: NSManagedObjectContext?
     ) {
         self.id = id
         self.text = text
@@ -199,12 +201,12 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         self.isSentByCurrentUser = isSentByCurrentUser
         self.pinDetails = pinDetails
         
-        self.$_author = author
-        self.$_mentionedUsers = mentionedUsers
-        self.$_attachments = attachments
-        self.$_latestReplies = latestReplies
-        self.$_latestReactions = latestReactions
-        self.$_currentUserReactions = currentUserReactions
+        self.$_author = (author, underlyingContext)
+        self.$_mentionedUsers = (mentionedUsers, underlyingContext)
+        self.$_attachments = (attachments, underlyingContext)
+        self.$_latestReplies = (latestReplies, underlyingContext)
+        self.$_latestReactions = (latestReactions, underlyingContext)
+        self.$_currentUserReactions = (currentUserReactions, underlyingContext)
     }
 }
 
