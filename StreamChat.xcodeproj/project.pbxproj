@@ -220,7 +220,7 @@
 		796CBD3C2600A321003299B0 /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBD3B2600A321003299B0 /* ChatClient.swift */; };
 		79776F56261DB96F00C96A98 /* MessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79776F55261DB96F00C96A98 /* MessageListVC.swift */; };
 		79776F68261DB97C00C96A98 /* MessageCollectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79776F67261DB97C00C96A98 /* MessageCollectionView.swift */; };
-		79776F72261DB98500C96A98 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79776F71261DB98500C96A98 /* MessageCell.swift */; };
+		79776F72261DB98500C96A98 /* MessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79776F71261DB98500C96A98 /* MessageContentView.swift */; };
 		797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */; };
 		797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756524814EF8003CF16D /* SystemEnvironment.swift */; };
 		797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756724814F0D003CF16D /* Bundle+Extensions.swift */; };
@@ -1346,7 +1346,7 @@
 		796FD215250654940076C99B /* ChannelReadDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadDTO.swift; sourceTree = "<group>"; };
 		79776F55261DB96F00C96A98 /* MessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageListVC.swift; sourceTree = "<group>"; };
 		79776F67261DB97C00C96A98 /* MessageCollectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCollectionView.swift; sourceTree = "<group>"; };
-		79776F71261DB98500C96A98 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
+		79776F71261DB98500C96A98 /* MessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageContentView.swift; sourceTree = "<group>"; };
 		797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload.swift; sourceTree = "<group>"; };
 		797A756524814EF8003CF16D /* SystemEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment.swift; sourceTree = "<group>"; };
 		797A756724814F0D003CF16D /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
@@ -2725,7 +2725,7 @@
 			children = (
 				79776F55261DB96F00C96A98 /* MessageListVC.swift */,
 				79776F67261DB97C00C96A98 /* MessageCollectionView.swift */,
-				79776F71261DB98500C96A98 /* MessageCell.swift */,
+				79776F71261DB98500C96A98 /* MessageContentView.swift */,
 				88D95129261DE56100509896 /* BubbleView.swift */,
 			);
 			path = RETHINK;
@@ -4819,7 +4819,7 @@
 				88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */,
 				796CBD1C25FF9552003299B0 /* UIStackView+Extensions.swift in Sources */,
 				88F8366D2578D1C60039AEC8 /* ChatMessageActionsView.swift in Sources */,
-				79776F72261DB98500C96A98 /* MessageCell.swift in Sources */,
+				79776F72261DB98500C96A98 /* MessageContentView.swift in Sources */,
 				8850FE87256558A200C8D534 /* ChatChannelListRouter.swift in Sources */,
 				888ABA072594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift in Sources */,
 				88BD82B02549D18F00369074 /* ChatChannelListItemView.swift in Sources */,
