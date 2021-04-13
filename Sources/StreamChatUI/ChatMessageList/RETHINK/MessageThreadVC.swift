@@ -48,10 +48,6 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
     // Load from UIConfig
     public lazy var titleView = ChatMessageListTitleView<ExtraData>()
     
-    private lazy var messages: [_ChatMessage<ExtraData>] = {
-        messageController.replies + [messageController.message!]
-    }()
-    
     override func setUp() {
         super.setUp()
         
@@ -128,17 +124,20 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
     }
     
     func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
-        var layoutOptions = uiConfig.messageList.layoutOptionsResolver(indexPath, AnyRandomAccessCollection(messages))
+        var layoutOptions = uiConfig.messageList.layoutOptionsResolver(
+            indexPath,
+            AnyRandomAccessCollection(messageController.replies)
+        )
         layoutOptions.remove(.threadInfo)
         return layoutOptions
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        messages.count
+        messageController.replies.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let message = messages[indexPath.item]
+        let message = messageController.replies[indexPath.item]
         
         let cell: MessageCell<ExtraData> = self.collectionView.dequeueReusableCell(
             withReuseIdentifier: cellReuseIdentifier(for: message),
@@ -146,7 +145,7 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
             for: indexPath
         )
         
-        cell.content = message
+        cell.messageContentView.content = message
         
         return cell
     }
@@ -223,7 +222,5 @@ extension MessageThreadVC: _ChatMessageControllerDelegate {
         didChangeReplies changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         updateMessages(with: changes)
-        LazyCachedMapCollection(source: messageController.replies + [messageController.message!], map: { $0 })
-        messages = messageController.replies + [messageController.message!]
     }
 }
