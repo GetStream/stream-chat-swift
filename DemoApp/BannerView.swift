@@ -8,28 +8,30 @@ import UIKit
 final class BannerView: UIView {
     private let label = UILabel()
     
-    override func didMoveToSuperview() {
-        super.didMoveToSuperview()
-        setUpLayout()
-        defaultAppearance()
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        commonInit()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     func update(text: String) {
         label.text = text
     }
     
+    private func commonInit() {
+        setUpLayout()
+        defaultAppearance()
+    }
+    
     private func setUpLayout() {
-        guard let superview = superview else { return }
-        
         addSubview(label)
-        
-        translatesAutoresizingMaskIntoConstraints = false
         label.translatesAutoresizingMaskIntoConstraints = false
-        
         NSLayoutConstraint.activate(
             [
-                widthAnchor.constraint(equalTo: superview.widthAnchor),
-                heightAnchor.constraint(equalToConstant: 28),
                 label.trailingAnchor.constraint(equalTo: trailingAnchor),
                 label.leadingAnchor.constraint(equalTo: leadingAnchor),
                 label.topAnchor.constraint(equalTo: topAnchor),
