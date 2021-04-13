@@ -10,7 +10,9 @@ extension DispatchQueue {
         let allQoS: [DispatchQoS.QoSClass] = [
             .userInteractive,
             .userInitiated,
-            .default
+            .default,
+            .utility,
+            .background
         ]
         return DispatchQueue.global(qos: allQoS.randomElement()!)
     }
