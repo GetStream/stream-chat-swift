@@ -127,6 +127,7 @@ var streamChatSourcesExcluded: [String] { [
     "Utils/MulticastDelegate_Tests.swift",
     "Utils/InternetConnection/InternetConnection_Tests.swift",
     "Utils/Atomic_Tests.swift",
+    "Utils/CoreDataLazy_Tests.swift",
     "Utils/LazyCachedMapCollection_Tests.swift",
     "Utils/Dictionary_Tests.swift",
     "Utils/Cached_Tests.swift",
