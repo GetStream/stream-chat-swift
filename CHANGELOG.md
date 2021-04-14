@@ -20,6 +20,7 @@ _April 09, 2021_
 
 ### ✅ Added
 - Channels are properly marked as read when `ChatChannelVC` is displayed [#972](https://github.com/GetStream/stream-chat-swift/pull/972)
+- Channels now support typing indicators [#986](https://github.com/GetStream/stream-chat-swift/pull/986)
 
 ### 🐞 Fixed
 - Fix `ChannelController`s created with `createChannelWithId` and `createChannelWithMembers` functions not reporting their initial values [#945](https://github.com/GetStream/stream-chat-swift/pull/945)
