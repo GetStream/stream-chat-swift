@@ -28,11 +28,11 @@ extension UILayoutPriority {
 }
 
 extension CGFloat {
-    static let auto: CGFloat = .infinity
+    public static let auto: CGFloat = .infinity
 }
 
 public class ContainerStackView: UIView {
-    convenience init(
+    public convenience init(
         axis: NSLayoutConstraint.Axis = .horizontal,
         alignment: Alignment = .fill,
         spacing: CGFloat = .auto,
@@ -58,22 +58,22 @@ public class ContainerStackView: UIView {
         }
     }
 
-    struct Alignment: Equatable {
-        static let fill = Alignment(rawValue: 0)
-        static let axisLeading = Alignment(rawValue: 1)
-        static let axisTrailing = Alignment(rawValue: 2)
-        static let center = Alignment(rawValue: 3)
+    public struct Alignment: Equatable {
+        public static let fill = Alignment(rawValue: 0)
+        public static let axisLeading = Alignment(rawValue: 1)
+        public static let axisTrailing = Alignment(rawValue: 2)
+        public static let center = Alignment(rawValue: 3)
 
         private let rawValue: Int
     }
 
-    var alignment: Alignment = .fill {
+    public var alignment: Alignment = .fill {
         didSet {
             invalidateConstraints()
         }
     }
 
-    struct Ordering: Equatable {
+    public struct Ordering: Equatable {
         static let leadingToTrailing = Ordering(rawValue: 0)
         static let trailingToLeading = Ordering(rawValue: 1)
         private let rawValue: Int
@@ -85,14 +85,14 @@ public class ContainerStackView: UIView {
         }
     }
 
-    var isLayoutMarginsRelativeArrangement = false {
+    public var isLayoutMarginsRelativeArrangement = false {
         didSet {
             invalidateConstraints()
         }
     }
 
-    var axis: NSLayoutConstraint.Axis = .horizontal
-    var spacing: CGFloat = .auto {
+    public var axis: NSLayoutConstraint.Axis = .horizontal
+    public var spacing: CGFloat = .auto {
         didSet {
             invalidateConstraints()
         }
@@ -104,7 +104,7 @@ public class ContainerStackView: UIView {
         invalidateConstraints()
     }
 
-    func insertArrangedSubview(_ subview: UIView, at index: Int, respectsLayoutMargins: Bool? = nil) {
+    public func insertArrangedSubview(_ subview: UIView, at index: Int, respectsLayoutMargins: Bool? = nil) {
         insertSubview(subview, at: index)
         subview.translatesAutoresizingMaskIntoConstraints = false
         if let respectsLayoutMargins = respectsLayoutMargins {
@@ -116,7 +116,7 @@ public class ContainerStackView: UIView {
         invalidateConstraints()
     }
 
-    func removeArrangedSubview(_ subview: UIView) {
+    public func removeArrangedSubview(_ subview: UIView) {
         assert(subviews.contains(subview))
         subview.removeFromSuperview()
         invalidateConstraints()
@@ -269,11 +269,15 @@ public class ContainerStackView: UIView {
             : safeAreaLayoutGuide
     }
 
-    func addArrangedSubview(_ builder: () -> UIView) {
+    public func addArrangedSubview(_ builder: () -> UIView) {
         addArrangedSubview(builder())
     }
 
-    func hideSubview(_ subview: UIView, animated: Bool = true) {
+    public func addArrangedSubviews(_ subviews: [UIView]) {
+        subviews.forEach { addArrangedSubview($0) }
+    }
+
+    public func hideSubview(_ subview: UIView, animated: Bool = true) {
         assert(subviews.contains(subview))
 
         updateConstraintsIfNeeded()
