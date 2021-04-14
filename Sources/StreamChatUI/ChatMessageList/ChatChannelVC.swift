@@ -99,4 +99,33 @@ extension _ChatChannelVC: _ChatChannelControllerDelegate {
     ) {
         messageList.updateMessages(with: changes)
     }
+
+    public func channelController(
+        _ channelController: _ChatChannelController<ExtraData>,
+        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+    ) {
+        if typingMembers.contains(where: { member in member.id == self.channelController.client.currentUserId }) {
+            let typingMembersWithoutCurrentUser = typingMembers.filter { $0.id != self.channelController.client.currentUserId }
+            showTypingIndicatorIfNeeded(typingMembers: typingMembersWithoutCurrentUser)
+        } else {
+            // Current user is not member of the room but can see that someone is actually typing
+            showTypingIndicatorIfNeeded(typingMembers: typingMembers)
+        }
+    }
+
+    private func showTypingIndicatorIfNeeded(typingMembers: Set<_ChatChannelMember<ExtraData.User>>) {
+        if typingMembers.isEmpty {
+            typingIndicatorView.isHidden = true
+        } else {
+            // If we somehow cannot fetch any member name, we simply show that `Someone is typing`
+            guard let member = typingMembers.first(where: { user in user.name != nil }), let name = member.name else {
+                typingIndicatorView.content = L10n.MessageList.TypingIndicator.typingUnknown
+                typingIndicatorView.isHidden = false
+                return
+            }
+
+            typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingMembers.count - 1)
+            typingIndicatorView.isHidden = false
+        }
+    }
 }
