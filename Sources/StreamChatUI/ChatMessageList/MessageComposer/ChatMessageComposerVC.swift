@@ -102,7 +102,8 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         super.updateContent()
         switch state {
         case .initial:
-            textView.text = ""
+            textView.updateHeightConstraint()
+            textView.becomeFirstResponder()
             textView.placeholderLabel.text = L10n.Composer.Placeholder.message
             imageAttachments = []
             documentAttachments = []
@@ -519,6 +520,8 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     // MARK: - UITextViewDelegate
 
     public func textViewDidChange(_ textView: UITextView) {
+        controller?.sendKeystrokeEvent()
+
         isEmpty = textView.text.replacingOccurrences(of: " ", with: "").isEmpty
         replaceTextWithSlashCommandViewIfNeeded()
 
