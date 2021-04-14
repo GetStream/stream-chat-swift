@@ -45,8 +45,8 @@ public extension _UIConfig {
 
         public var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData>.Type =
             _ChatMessageComposerCheckmarkControl<ExtraData>.self
-        public var slashCommandView: _ChatMessageInputSlashCommandView<ExtraData>
-            .Type = _ChatMessageInputSlashCommandView<ExtraData>.self
+        public var slashCommandView: _ChatInputSlashCommandView<ExtraData>
+            .Type = _ChatInputSlashCommandView<ExtraData>.self
 
         /// A view controller that shows suggestions of commands or mentions.
         public var suggestionsViewController: _ChatMessageComposerSuggestionsViewController<ExtraData>.Type =

@@ -5,9 +5,9 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageInputSlashCommandView = _ChatMessageInputSlashCommandView<NoExtraData>
+public typealias ChatInputSlashCommandView = _ChatInputSlashCommandView<NoExtraData>
 
-open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatInputSlashCommandView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     // MARK: - Properties
     
     public var commandName: String? {

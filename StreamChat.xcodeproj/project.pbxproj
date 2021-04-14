@@ -12,7 +12,7 @@
 		22086B38259509350007F8C0 /* ChatMessageComposerDocumentAttachmentCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B37259509350007F8C0 /* ChatMessageComposerDocumentAttachmentCollectionViewCell.swift */; };
 		22086B40259509450007F8C0 /* ChatMessageComposerDocumentAttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B3F259509450007F8C0 /* ChatMessageComposerDocumentAttachmentView.swift */; };
 		22086B48259509AC0007F8C0 /* ChatMessageComposerDocumentAttachmentsCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B47259509AC0007F8C0 /* ChatMessageComposerDocumentAttachmentsCollectionViewLayout.swift */; };
-		2210525F256FE16600A5F0DB /* ChatMessageInputSlashCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2210525E256FE16600A5F0DB /* ChatMessageInputSlashCommandView.swift */; };
+		2210525F256FE16600A5F0DB /* ChatInputSlashCommandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2210525E256FE16600A5F0DB /* ChatInputSlashCommandView.swift */; };
 		2229C6D9256562AC00C56B63 /* ChatMessageAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */; };
 		2236D97B25CC68E400C47F30 /* TestAttachmentEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */; };
 		22411680258A91280034184D /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241167F258A91280034184D /* String+Extensions.swift */; };
@@ -1143,7 +1143,7 @@
 		22086B37259509350007F8C0 /* ChatMessageComposerDocumentAttachmentCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerDocumentAttachmentCollectionViewCell.swift; sourceTree = "<group>"; };
 		22086B3F259509450007F8C0 /* ChatMessageComposerDocumentAttachmentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerDocumentAttachmentView.swift; sourceTree = "<group>"; };
 		22086B47259509AC0007F8C0 /* ChatMessageComposerDocumentAttachmentsCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerDocumentAttachmentsCollectionViewLayout.swift; sourceTree = "<group>"; };
-		2210525E256FE16600A5F0DB /* ChatMessageInputSlashCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageInputSlashCommandView.swift; sourceTree = "<group>"; };
+		2210525E256FE16600A5F0DB /* ChatInputSlashCommandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatInputSlashCommandView.swift; sourceTree = "<group>"; };
 		2229C6D8256562AC00C56B63 /* ChatMessageAttachment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachment.swift; sourceTree = "<group>"; };
 		2229C6DE256562DB00C56B63 /* AttachmentPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentPayload.swift; sourceTree = "<group>"; };
 		2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAttachmentEnvelope.swift; sourceTree = "<group>"; };
@@ -3611,6 +3611,7 @@
 				F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */,
 				88BA7F5C258B6953006CE0C5 /* ChatLoadingIndicator.swift */,
 				22ADD67B256BF1550098EFEB /* ChatInputContainerView.swift */,
+				2210525E256FE16600A5F0DB /* ChatInputSlashCommandView.swift */,
 			);
 			path = CommonViews;
 			sourceTree = "<group>";
@@ -4081,7 +4082,6 @@
 				22086B37259509350007F8C0 /* ChatMessageComposerDocumentAttachmentCollectionViewCell.swift */,
 				22086B3F259509450007F8C0 /* ChatMessageComposerDocumentAttachmentView.swift */,
 				22086B47259509AC0007F8C0 /* ChatMessageComposerDocumentAttachmentsCollectionViewLayout.swift */,
-				2210525E256FE16600A5F0DB /* ChatMessageInputSlashCommandView.swift */,
 				22FF4364256E943F00133910 /* ChatMessageComposerSuggestionsViewController.swift */,
 				ADD5A9E725DE8AF6006DC88A /* ChatMessageComposerSuggestionsViewController_Tests.swift */,
 				E79AC10825831A1500C3CE5D /* ChatMessageComposerSuggestionsCollectionView.swift */,
@@ -4950,7 +4950,7 @@
 				79088339254876F200896F03 /* ChatMessageListCollectionView.swift in Sources */,
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
 				883998212576397900294DB9 /* ChatMessageImageGallery.swift in Sources */,
-				2210525F256FE16600A5F0DB /* ChatMessageInputSlashCommandView.swift in Sources */,
+				2210525F256FE16600A5F0DB /* ChatInputSlashCommandView.swift in Sources */,
 				ADB22F7C25F1626200853C92 /* ChatOnlineIndicatorView.swift in Sources */,
 				882AE057257A176A004095B3 /* ChatChannelRouter.swift in Sources */,
 				AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */,
