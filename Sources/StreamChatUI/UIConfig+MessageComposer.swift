@@ -41,7 +41,7 @@ public extension _UIConfig {
 
         /// Buttons used in the left side of the composer. Corresponds to attachment and actions buttons.
         public var composerButton: UIButton.Type = UIButton.self
-        public var textView: _ChatMessageComposerInputTextView<ExtraData>.Type = _ChatMessageComposerInputTextView<ExtraData>.self
+        public var textView: _ChatInputTextView<ExtraData>.Type = _ChatInputTextView<ExtraData>.self
 
         public var checkmarkControl: _ChatCheckmarkControl<ExtraData>.Type =
             _ChatCheckmarkControl<ExtraData>.self
