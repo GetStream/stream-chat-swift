@@ -6,10 +6,10 @@ import StreamChat
 import UIKit
 
 /// The collection view of the suggestions view controller.
-public typealias ChatMessageComposerSuggestionsCollectionView = _ChatMessageComposerSuggestionsCollectionView<NoExtraData>
+public typealias ChatSuggestionsCollectionView = _ChatSuggestionsCollectionView<NoExtraData>
 
 /// The collection view of the suggestions view controller.
-open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollectionView,
+open class _ChatSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollectionView,
     UIConfigProvider,
     AppearanceSetting,
     Customizable {

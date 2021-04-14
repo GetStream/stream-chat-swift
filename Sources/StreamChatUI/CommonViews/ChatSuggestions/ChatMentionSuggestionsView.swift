@@ -6,10 +6,10 @@ import StreamChat
 import UIKit
 
 /// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
-public typealias ChatMessageComposerMentionCellView = _ChatMessageComposerMentionCellView<NoExtraData>
+public typealias ChatMentionSuggestionsView = _ChatMentionSuggestionsView<NoExtraData>
 
 /// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
-open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMentionSuggestionsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// Content of the cell - `ChatUser` instance from which we take all information.
     open var content: _ChatUser<ExtraData.User>? {
         didSet {
@@ -124,7 +124,7 @@ open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTyp
     open class var reuseId: String { String(describing: self) }
 
     /// Instance of `ChatMessageComposerMentionCellView` which shows information about the mentioned user.
-    open lazy var mentionView: _ChatMessageComposerMentionCellView<ExtraData> = uiConfig
+    open lazy var mentionView: _ChatMentionSuggestionsView<ExtraData> = uiConfig
         .messageComposer
         .suggestionsMentionCellView.init()
         .withoutAutoresizingMaskConstraints

@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
+class ChatSuggestionsViewController_Tests: XCTestCase {
     // We need to provide a size to the suggestions view since here we are testing the view in isolation,
     // and so we can't attach it to a bottomAnchorView. The test to verify the height calculation dependent
     // on the rows should be done in the parent view controller tests.
@@ -35,12 +35,12 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
         )
     ]
     
-    var vc: ChatMessageComposerSuggestionsViewController!
+    var vc: ChatSuggestionsViewController!
     var config = UIConfig()
     
     override func setUp() {
         super.setUp()
-        vc = ChatMessageComposerSuggestionsViewController()
+        vc = ChatSuggestionsViewController()
         config.images.commandIcons["yodafy"] = TestImages.yoda.image
         config.images.messageComposerCommandFallback = TestImages.vader.image
         vc.uiConfig = config
@@ -104,7 +104,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
     }
 
     func test_commands_appearanceCustomization_usingAppearanceHook() {
-        class TestVC: ChatMessageComposerSuggestionsViewController {}
+        class TestVC: ChatSuggestionsViewController {}
         TestVC.defaultAppearance {
             $0.collectionView.backgroundColor = .lightGray
             $0.collectionView.layer.cornerRadius = 0
@@ -121,7 +121,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
     }
 
     func test_commands_appearanceCustomization_usingSubclassing() {
-        class TestVC: ChatMessageComposerSuggestionsViewController {
+        class TestVC: ChatSuggestionsViewController {
             override func setUpAppearance() {
                 super.setUpAppearance()
                 
@@ -172,7 +172,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
     }
 
     func test_mentions_appearanceCustomization_usingUIConfig() {
-        class TestView: ChatMessageComposerMentionCellView {
+        class TestView: ChatMentionSuggestionsView {
             override func setUpAppearance() {
                 super.setUpAppearance()
                 usernameLabel.textColor = .orange
@@ -206,7 +206,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
     }
 
     func test_mentions_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageComposerSuggestionsViewController {}
+        class TestView: ChatSuggestionsViewController {}
         TestView.defaultAppearance {
             $0.collectionView.layer.cornerRadius = 0
         }
@@ -223,7 +223,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
     }
 
     func test_mentions_appearanceCustomization_usingSubclassing() {
-        class TestView: ChatMessageComposerSuggestionsViewController {
+        class TestView: ChatSuggestionsViewController {
             override func defaultAppearance() {
                 super.defaultAppearance()
 

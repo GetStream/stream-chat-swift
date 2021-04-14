@@ -6,11 +6,11 @@ import StreamChat
 import UIKit
 
 /// The header reusable view of the suggestion collection view.
-public typealias ChatMessageComposerSuggestionsCommandsReusableView =
-    _ChatMessageComposerSuggestionsCommandsReusableView<NoExtraData>
+public typealias ChatSuggestionsCommandsReusableView =
+    _ChatSuggestionsCommandsReusableView<NoExtraData>
 
 /// The header reusable view of the suggestion collection view.
-open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
+open class _ChatSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
     UIConfigProvider {
     /// The reuse identifier of the reusable header view.
     open class var reuseId: String { String(describing: self) }

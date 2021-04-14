@@ -49,11 +49,11 @@ public extension _UIConfig {
             .Type = _ChatInputSlashCommandView<ExtraData>.self
 
         /// A view controller that shows suggestions of commands or mentions.
-        public var suggestionsViewController: _ChatMessageComposerSuggestionsViewController<ExtraData>.Type =
-            _ChatMessageComposerSuggestionsViewController<ExtraData>.self
+        public var suggestionsViewController: _ChatSuggestionsViewController<ExtraData>.Type =
+            _ChatSuggestionsViewController<ExtraData>.self
         /// The collection view of the suggestions view controller.
-        public var suggestionsCollectionView: _ChatMessageComposerSuggestionsCollectionView.Type =
-            _ChatMessageComposerSuggestionsCollectionView<ExtraData>.self
+        public var suggestionsCollectionView: _ChatSuggestionsCollectionView.Type =
+            _ChatSuggestionsCollectionView<ExtraData>.self
         /// A view cell that displays the the suggested mention.
         public var suggestionsMentionCollectionViewCell: _ChatMessageComposerMentionCollectionViewCell<ExtraData>.Type =
             _ChatMessageComposerMentionCollectionViewCell<ExtraData>.self
@@ -61,17 +61,17 @@ public extension _UIConfig {
         public var suggestionsCommandCollectionViewCell: _ChatMessageComposerCommandCollectionViewCell<ExtraData>.Type =
             _ChatMessageComposerCommandCollectionViewCell<ExtraData>.self
         /// A type for view embed in cell while tagging users with @ symbol in composer.
-        public var suggestionsMentionCellView: _ChatMessageComposerMentionCellView<ExtraData>.Type =
-            _ChatMessageComposerMentionCellView<ExtraData>.self
+        public var suggestionsMentionCellView: _ChatMentionSuggestionsView<ExtraData>.Type =
+            _ChatMentionSuggestionsView<ExtraData>.self
         /// A view that displays the command name, image and arguments.
-        public var suggestionsCommandCellView: _ChatMessageComposerCommandCellView<ExtraData>.Type =
-            _ChatMessageComposerCommandCellView<ExtraData>.self
+        public var suggestionsCommandCellView: _ChatCommandSuggestionsView<ExtraData>.Type =
+            _ChatCommandSuggestionsView<ExtraData>.self
         /// The collection view layout of the suggestions collection view.
         public var suggestionsCollectionViewLayout: UICollectionViewLayout.Type =
-            ChatMessageComposerSuggestionsCollectionViewLayout.self
+            ChatSuggestionsCollectionViewLayout.self
         /// The header reusable view of the suggestion collection view.
         public var suggestionsHeaderReusableView: UICollectionReusableView.Type =
-            _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>.self
+            _ChatSuggestionsCommandsReusableView<ExtraData>.self
         /// The header view of the suggestion collection view.
         public var suggestionsHeaderView: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData>.Type =
             _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData>.self

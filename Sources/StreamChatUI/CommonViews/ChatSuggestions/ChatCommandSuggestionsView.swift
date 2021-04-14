@@ -6,10 +6,10 @@ import StreamChat
 import UIKit
 
 /// A view that displays the command name, image and arguments.
-public typealias ChatMessageComposerCommandCellView = _ChatMessageComposerCommandCellView<NoExtraData>
+public typealias ChatCommandSuggestionsView = _ChatCommandSuggestionsView<NoExtraData>
 
 /// A view that displays the command name, image and arguments.
-open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatCommandSuggestionsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     /// The command that the view will display.
     open var content: Command? {
         didSet {

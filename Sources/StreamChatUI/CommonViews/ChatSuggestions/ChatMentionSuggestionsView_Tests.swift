@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatMessageComposerMentionCellView_Tests: XCTestCase {
+class ChatMentionSuggestionsView_Tests: XCTestCase {
     /// Default reference width for the cell. Not related to any screen size.
     private static var defaultCellWidth: CGFloat = 300
 
@@ -39,14 +39,14 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
     }
 
     func test_emptyAppearance() {
-        let view = ChatMessageComposerMentionCellView().withoutAutoresizingMaskConstraints
+        let view = ChatMentionSuggestionsView().withoutAutoresizingMaskConstraints
         view.widthAnchor.constraint(equalToConstant: Self.defaultCellWidth).isActive = true
 
         AssertSnapshot(view)
     }
 
     func test_defaultAppearance() {
-        let view = ChatMessageComposerMentionCellView().withoutAutoresizingMaskConstraints
+        let view = ChatMentionSuggestionsView().withoutAutoresizingMaskConstraints
         view.widthAnchor.constraint(equalToConstant: Self.defaultCellWidth).isActive = true
 
         view.content = chatUserOnline
@@ -84,7 +84,7 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
         config.onlineIndicatorView = RectIndicator.self
         config.messageComposer.mentionAvatarView = CustomAvatarView.self
 
-        let view = ChatMessageComposerMentionCellView().withoutAutoresizingMaskConstraints
+        let view = ChatMentionSuggestionsView().withoutAutoresizingMaskConstraints
         view.widthAnchor.constraint(equalToConstant: Self.defaultCellWidth).isActive = true
 
         view.uiConfig = config
@@ -99,7 +99,7 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageComposerMentionCellView {}
+        class TestView: ChatMentionSuggestionsView {}
         TestView.defaultAppearance {
             // Modify appearance
             $0.backgroundColor = .systemPink
@@ -121,7 +121,7 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingSubclassing() {
-        class TestView: ChatMessageComposerMentionCellView {
+        class TestView: ChatMentionSuggestionsView {
             override func setUpAppearance() {
                 super.setUpAppearance()
                 backgroundColor = .systemPurple

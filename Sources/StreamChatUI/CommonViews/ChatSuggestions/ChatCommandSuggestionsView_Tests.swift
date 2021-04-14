@@ -7,7 +7,7 @@ import SnapshotTesting
 @testable import StreamChatUI
 import XCTest
 
-class ChatMessageComposerCommandCollectionViewCell_Tests: XCTestCase {
+class ChatCommandSuggestionsView_Tests: XCTestCase {
     /// Default width for the cell.
     private let defaultCellWidth: CGFloat = 250
     
@@ -21,7 +21,7 @@ class ChatMessageComposerCommandCollectionViewCell_Tests: XCTestCase {
         ]
         config.images.messageComposerCommandFallback = TestImages.vader.image
         
-        let view = ChatMessageComposerCommandCellView()
+        let view = ChatCommandSuggestionsView()
         view.uiConfig = config
         view.content = .init(name: "yoda", description: "", set: "", args: "[text]")
         
@@ -37,7 +37,7 @@ class ChatMessageComposerCommandCollectionViewCell_Tests: XCTestCase {
         ]
         config.images.messageComposerCommandFallback = TestImages.vader.image
         
-        let view = ChatMessageComposerCommandCellView()
+        let view = ChatCommandSuggestionsView()
         view.uiConfig = config
         view.content = .init(name: "R2", description: "", set: "", args: "[text]")
         
@@ -66,7 +66,7 @@ class ChatMessageComposerCommandCollectionViewCell_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageComposerCommandCellView {}
+        class TestView: ChatCommandSuggestionsView {}
         TestView.defaultAppearance {
             $0.backgroundColor = .systemGray
             $0.commandNameSubtitleLabel.textColor = UIColor.white
@@ -79,7 +79,7 @@ class ChatMessageComposerCommandCollectionViewCell_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingSubclassing() {
-        class TestView: ChatMessageComposerCommandCellView {
+        class TestView: ChatCommandSuggestionsView {
             override func setUpAppearance() {
                 super.setUpAppearance()
 
@@ -105,8 +105,8 @@ class ChatMessageComposerCommandCollectionViewCell_Tests: XCTestCase {
     
     // MARK: - Factory Helper
     
-    private func makeView(_ customView: ChatMessageComposerCommandCellView.Type? = nil) -> ChatMessageComposerCommandCellView {
-        let view = customView != nil ? customView!.init() : ChatMessageComposerCommandCellView()
+    private func makeView(_ customView: ChatCommandSuggestionsView.Type? = nil) -> ChatCommandSuggestionsView {
+        let view = customView != nil ? customView!.init() : ChatCommandSuggestionsView()
         view.widthAnchor.constraint(equalToConstant: defaultCellWidth).isActive = true
         return view.withoutAutoresizingMaskConstraints
     }
