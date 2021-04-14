@@ -3629,6 +3629,10 @@
 				88BA7F5C258B6953006CE0C5 /* ChatLoadingIndicator.swift */,
 				22ADD67B256BF1550098EFEB /* ChatInputContainerView.swift */,
 				2210525E256FE16600A5F0DB /* ChatInputSlashCommandView.swift */,
+				22753598257C442300D1FDB6 /* ChatMessageSendButton.swift */,
+				7943382A26208D020094471F /* ChatMessageConfirmEditButton.swift */,
+				E7296E932611D50900B1AE79 /* ChatMessageSendButton_Tests.swift */,
+				7943385D262095C50094471F /* ChatMessageConfirmEditButton_Tests.swift */,
 			);
 			path = CommonViews;
 			sourceTree = "<group>";
@@ -4100,10 +4104,6 @@
 				22086B3F259509450007F8C0 /* ChatMessageComposerDocumentAttachmentView.swift */,
 				22086B47259509AC0007F8C0 /* ChatMessageComposerDocumentAttachmentsCollectionViewLayout.swift */,
 				E73A8B2A2578EB2B00FBDC56 /* ChatMessageComposerVC.swift */,
-				22753598257C442300D1FDB6 /* ChatMessageSendButton.swift */,
-				7943382A26208D020094471F /* ChatMessageConfirmEditButton.swift */,
-				E7296E932611D50900B1AE79 /* ChatMessageSendButton_Tests.swift */,
-				7943385D262095C50094471F /* ChatMessageConfirmEditButton_Tests.swift */,
 				226C438C25802AAD008B3648 /* ChatMessageComposerInputTextView.swift */,
 				224165A725910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift */,
 			);
