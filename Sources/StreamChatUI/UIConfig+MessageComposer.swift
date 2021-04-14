@@ -10,8 +10,8 @@ public extension _UIConfig {
             _ChatMessageComposerVC<ExtraData>.self
         public var messageComposerView: _ChatMessageComposerView<ExtraData>.Type =
             _ChatMessageComposerView<ExtraData>.self
-        public var messageInputView: _ChatMessageComposerInputContainerView<ExtraData>
-            .Type = _ChatMessageComposerInputContainerView<ExtraData>.self
+        public var messageInputView: _ChatInputContainerView<ExtraData>
+            .Type = _ChatInputContainerView<ExtraData>.self
 
         public var documentAttachmentView: _ChatMessageComposerDocumentAttachmentView<ExtraData>.Type =
             _ChatMessageComposerDocumentAttachmentView<ExtraData>.self

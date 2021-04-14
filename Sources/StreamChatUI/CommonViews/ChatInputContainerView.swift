@@ -5,9 +5,9 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerInputContainerView = _ChatMessageComposerInputContainerView<NoExtraData>
+public typealias ChatInputContainerView = _ChatInputContainerView<NoExtraData>
 
-open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatInputContainerView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     // MARK: - Properties
     
     open var rightAccessoryButtonHeight: CGFloat = 30
