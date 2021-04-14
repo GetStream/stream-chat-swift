@@ -79,7 +79,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
     
-    public private(set) lazy var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData> = uiConfig
+    public private(set) lazy var checkmarkControl: _ChatCheckmarkControl<ExtraData> = uiConfig
         .messageComposer
         .checkmarkControl.init()
         .withoutAutoresizingMaskConstraints

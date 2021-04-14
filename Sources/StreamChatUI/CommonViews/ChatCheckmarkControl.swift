@@ -5,9 +5,9 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerCheckmarkControl = _ChatMessageComposerCheckmarkControl<NoExtraData>
+public typealias ChatCheckmarkControl = _ChatCheckmarkControl<NoExtraData>
 
-open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
+open class _ChatCheckmarkControl<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
     // MARK: - Properties
     
     public var checkmarkHeight: CGFloat = 16

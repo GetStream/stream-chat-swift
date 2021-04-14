@@ -43,8 +43,8 @@ public extension _UIConfig {
         public var composerButton: UIButton.Type = UIButton.self
         public var textView: _ChatMessageComposerInputTextView<ExtraData>.Type = _ChatMessageComposerInputTextView<ExtraData>.self
 
-        public var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData>.Type =
-            _ChatMessageComposerCheckmarkControl<ExtraData>.self
+        public var checkmarkControl: _ChatCheckmarkControl<ExtraData>.Type =
+            _ChatCheckmarkControl<ExtraData>.self
         public var slashCommandView: _ChatInputSlashCommandView<ExtraData>
             .Type = _ChatInputSlashCommandView<ExtraData>.self
 
