@@ -83,14 +83,21 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
             layoutOptions.remove(.threadInfo)
             
             messageView.setUpLayoutIfNeeded(options: layoutOptions)
+            collectionView.addSubview(messageView)
+            messageView.content = message
 
-            let messageViewSize = messageView.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
+            let messageViewSize = messageView.systemLayoutSizeFitting(
+                CGSize(
+                    width: UIScreen.main.bounds.size.width,
+                    height: UIView.layoutFittingCompressedSize.height
+                ),
+                withHorizontalFittingPriority: .required,
+                verticalFittingPriority: .defaultLow
+            )
             collectionView.contentInset = UIEdgeInsets(top: messageViewSize.height, left: 0, bottom: 0, right: 0)
 
-            collectionView.addSubview(messageView)
             messageView.topAnchor.pin(equalTo: collectionView.topAnchor, constant: -messageViewSize.height).isActive = true
             messageView.pin(anchors: [.leading, .trailing], to: collectionView.safeAreaLayoutGuide)
-            messageView.content = message
         }
 
         messageComposerViewController.view.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
