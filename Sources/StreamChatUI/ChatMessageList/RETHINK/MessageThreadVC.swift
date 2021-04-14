@@ -16,8 +16,10 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
     public private(set) var needsToScrollToMostRecentMessageAnimated = false
     
+    private lazy var messageListLayout = ChatMessageListCollectionViewLayout()
+    
     public private(set) lazy var collectionView: MessageCollectionView = {
-        let collection = MessageCollectionView(frame: .zero, collectionViewLayout: ChatMessageListCollectionViewLayout())
+        let collection = MessageCollectionView(frame: .zero, collectionViewLayout: messageListLayout)
 
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
@@ -94,9 +96,10 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
                 withHorizontalFittingPriority: .required,
                 verticalFittingPriority: .defaultLow
             )
-            collectionView.contentInset = UIEdgeInsets(top: messageViewSize.height, left: 0, bottom: 0, right: 0)
+            let topInset = messageViewSize.height + messageListLayout.spacing
+            collectionView.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
 
-            messageView.topAnchor.pin(equalTo: collectionView.topAnchor, constant: -messageViewSize.height).isActive = true
+            messageView.topAnchor.pin(equalTo: collectionView.topAnchor, constant: -topInset).isActive = true
             messageView.pin(anchors: [.leading, .trailing], to: collectionView.safeAreaLayoutGuide)
         }
 
