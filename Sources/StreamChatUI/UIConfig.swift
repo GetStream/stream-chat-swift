@@ -20,6 +20,12 @@ public struct _UIConfig<ExtraData: ExtraDataTypes> {
     /// A view that displays a quoted message.
     public var messageQuoteView: _ChatMessageQuoteView<ExtraData>.Type = _ChatMessageQuoteView<ExtraData>.self
 
+    /// A `UIView` subclass which serves as container for `typingIndicator` and `UILabel` describing who is currently typing
+    public var typingIndicatorView: _TypingIndicatorView<ExtraData>.Type = _TypingIndicatorView<ExtraData>.self
+    
+    /// A `UIView` subclass with animated 3 dots for indicating that user is typing.
+    public var typingAnimationView: _TypingAnimationView<ExtraData>.Type = _TypingAnimationView<ExtraData>.self
+
     public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()
