@@ -120,6 +120,17 @@ internal enum L10n {
       internal static let reply = L10n.tr("Localizable", "message.threads.reply")
     }
   }
+
+  internal enum MessageList {
+    internal enum TypingIndicator {
+      /// Someone is typing
+      internal static let typingUnknown = L10n.tr("Localizable", "messageList.typingIndicator.typing-unknown")
+      /// Plural format key: "%@%#@typing@"
+      internal static func users(_ p1: Any, _ p2: Int) -> String {
+        return L10n.tr("Localizable", "messageList.typingIndicator.users", String(describing: p1), p2)
+      }
+    }
+  }
 }
 
 // MARK: - Implementation Details
