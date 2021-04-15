@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [3.1.6](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.6)
+_April 15, 2021_
+
 ### 🐞 Fixed
 - It's safe now to use `ChatChannel` and `ChatMessage` across multiple threads [#984](https://github.com/GetStream/stream-chat-swift/pull/984)
 - Web socket reconnection logic better handles the "no internet" errors [#970](https://github.com/GetStream/stream-chat-swift/pull/970)
