@@ -32,7 +32,9 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     }
 
     private var layoutOptions: ChatMessageLayoutOptions!
-    
+
+    var maxContentWidthMultiplier: CGFloat { 0.75 }
+
     var bubbleView: BubbleView<ExtraData>?
     var authorAvatarView: ChatAvatarView?
     var textView: UITextView?
@@ -98,17 +100,26 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         layoutOptions = options
         
         var constraintsToActivate: [NSLayoutConstraint] = []
+        var fullWidthViews: [UIView] = []
         
         // Main container
         mainContainer.alignment = .axisTrailing
         mainContainer.isLayoutMarginsRelativeArrangement = true
         mainContainer.layoutMargins.top = 0
-        
+
         addSubview(mainContainer)
         constraintsToActivate += [
             mainContainer.topAnchor.pin(equalTo: topAnchor).with(priority: .streamAlmostRequire),
             mainContainer.bottomAnchor.pin(equalTo: bottomAnchor),
-            mainContainer.widthAnchor.pin(lessThanOrEqualTo: widthAnchor, multiplier: 0.75)
+            options.contains(.maxWidth) ?
+                mainContainer.widthAnchor.pin(
+                    equalTo: widthAnchor,
+                    multiplier: maxContentWidthMultiplier
+                ) :
+                mainContainer.widthAnchor.pin(
+                    lessThanOrEqualTo: widthAnchor,
+                    multiplier: maxContentWidthMultiplier
+                )
         ]
         
         if options.contains(.flipped) {
@@ -225,26 +236,21 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         if options.contains(.photoPreview) {
             let photoPreviewView = createPhotoPreviewView()
             contentContainer.addArrangedSubview(photoPreviewView, respectsLayoutMargins: false)
-            constraintsToActivate += [
-                // This is ugly. Ideally the photo preview should be updated to fill all available space.
-                photoPreviewView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
-            ]
+            fullWidthViews.append(photoPreviewView)
         }
 
         // Giphy
         if options.contains(.giphy) {
             let giphyView = createGiphyView()
             contentContainer.addArrangedSubview(giphyView, respectsLayoutMargins: false)
-            constraintsToActivate += [
-                // This is ugly. Ideally the photo preview should be updated to fill all available space.
-                giphyView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
-            ]
+            fullWidthViews.append(giphyView)
         }
 
         // File previews
         if options.contains(.filePreview) {
             let filePreviewView = createFilePreviewView()
             contentContainer.addArrangedSubview(filePreviewView, respectsLayoutMargins: false)
+            fullWidthViews.append(filePreviewView)
         }
 
         // Text
@@ -257,20 +263,14 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         if options.contains(.linkPreview) {
             let linkPreviewView = createLinkPreviewView()
             contentContainer.addArrangedSubview(linkPreviewView, respectsLayoutMargins: true)
-            constraintsToActivate += [
-                // This is ugly. Ideally the link preview should be updated to fill all available space.
-                linkPreviewView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
-            ]
+            fullWidthViews.append(linkPreviewView)
         }
 
         // Actions
         if options.contains(.actions) {
             let actionsView = createActionsView()
             contentContainer.addArrangedSubview(actionsView, respectsLayoutMargins: false)
-            constraintsToActivate += [
-                // This is ugly. Ideally the action view should be updated to fill all available space.
-                actionsView.widthAnchor.constraint(equalToConstant: window!.bounds.width * 0.75).almostRequired
-            ]
+            fullWidthViews.append(actionsView)
         }
 
         // Reactions
@@ -291,6 +291,14 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
                         mainContainer.trailingAnchor
                 )
             ]
+        }
+
+        constraintsToActivate += fullWidthViews.map { view in
+            view.widthAnchor
+                .pin(equalTo: mainContainer.widthAnchor)
+                // should work with just .streamLow but it doesn't
+                // work for stream preview
+                .with(priority: .streamAlmostRequire)
         }
         
         NSLayoutConstraint.activate(constraintsToActivate)

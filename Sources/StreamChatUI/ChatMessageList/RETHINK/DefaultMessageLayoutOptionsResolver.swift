@@ -93,7 +93,21 @@ public func DefaultMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes>(
         } else if attachmentOptions.contains(.linkPreview) {
             options.insert(.linkPreview)
         }
+
+        if !options.intersection(.maxWidthRequirments).isEmpty {
+            options.insert(.maxWidth)
+        }
         
         return options
     }
+}
+
+extension ChatMessageLayoutOptions {
+    static let maxWidthRequirments: ChatMessageLayoutOptions = [
+        .photoPreview,
+        .filePreview,
+        .linkPreview,
+        .actions,
+        .giphy
+    ]
 }
