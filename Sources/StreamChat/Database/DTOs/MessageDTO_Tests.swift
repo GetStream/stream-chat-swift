@@ -343,12 +343,18 @@ class MessageDTO_Tests: XCTestCase {
         let messageAuthorId: UserId = .unique
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
+        let quotedMessageId: MessageId = .unique
+        let quotedMessageAuthorId: UserId = .unique
 
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: channelId, withMessages: false)
         
         let messagePayload: MessagePayload<NoExtraData> = .dummy(
             messageId: messageId,
+            quotedMessage: .dummy(
+                messageId: quotedMessageId,
+                authorUserId: quotedMessageAuthorId
+            ),
             authorUserId: messageAuthorId,
             latestReactions: (0..<3).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: .unique))
@@ -417,6 +423,10 @@ class MessageDTO_Tests: XCTestCase {
                 loadedMessage.attachments.map { ($0 as? ChatMessageDefaultAttachment)?.id },
             messagePayload.attachmentIDs(cid: channelId)
         )
+        // Quoted message
+        XCTAssertEqual(loadedMessage.quotedMessage?.id, messagePayload.quotedMessage?.id)
+        XCTAssertEqual(loadedMessage.quotedMessage?.author.id, messagePayload.quotedMessage?.user.id)
+        XCTAssertEqual(loadedMessage.quotedMessage?.extraData, messagePayload.quotedMessage?.extraData)
     }
     
     func test_newMessage_asRequestBody() throws {
