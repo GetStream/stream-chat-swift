@@ -58,7 +58,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     public lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    public lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
+    public lazy var router = uiConfig.navigation._messageListRouter(rootViewController: self)
 
     public private(set) lazy var collectionViewLayout = uiConfig
         .messageList

@@ -45,7 +45,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMe
 }
 
 // Exact copy of `_ChatMessageListRouter` but we need correct generic controller passed to `ChatRouter`
-class MessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<MessageListVC<ExtraData>> {
+public class MessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<MessageListVC<ExtraData>> {
     open func showMessageActionsPopUp(
         messageContentFrame: CGRect,
         messageData: _ChatMessageGroupPart<ExtraData>,

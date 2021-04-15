@@ -6,10 +6,10 @@ import Foundation
 import StreamChat
 import UIKit
 
-class MessageCollectionView: UICollectionView {
+open class MessageCollectionView: UICollectionView {
     private var identifiers: Set<String> = .init()
     
-    func dequeueReusableCell<ExtraData: ExtraDataTypes>(
+    public func dequeueReusableCell<ExtraData: ExtraDataTypes>(
         withReuseIdentifier identifier: String,
         layoutOptions: ChatMessageLayoutOptions,
         for indexPath: IndexPath
