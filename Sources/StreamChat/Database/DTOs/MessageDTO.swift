@@ -481,8 +481,7 @@ private extension _ChatMessage {
         threadParticipants = Set(dto.threadParticipants.map(\.id))
         localState = dto.localMessageState
         isFlaggedByCurrentUser = dto.flaggedBy != nil
-        quotedMessageId = dto.quotedMessage.map(\.id)
-
+        
         if dto.pinned,
            let pinnedAt = dto.pinnedAt,
            let pinnedBy = dto.pinnedBy,
