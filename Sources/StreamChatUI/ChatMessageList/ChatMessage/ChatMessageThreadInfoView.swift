@@ -47,7 +47,7 @@ open class _SimpleChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, 
         let endX = isLeftToRight ? corner : (bounds.width - corner)
 
         let path = CGMutablePath()
-        path.move(to: CGPoint(x: startX, y: -4 * height))
+        path.move(to: CGPoint(x: startX, y: -3 * height))
         path.addLine(to: CGPoint(x: startX, y: height - corner))
         path.addQuadCurve(
             to: CGPoint(x: endX, y: height),
