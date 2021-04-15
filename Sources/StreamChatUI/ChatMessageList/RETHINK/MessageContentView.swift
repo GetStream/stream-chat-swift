@@ -204,11 +204,10 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
             errorIndicatorView.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
             addSubview(errorIndicatorView)
 
-            let inset: CGFloat = 2
             constraintsToActivate += [
-                errorIndicatorView.bottomAnchor.pin(equalTo: bubbleView.bottomAnchor, constant: inset),
+                errorIndicatorView.bottomAnchor.pin(equalTo: bubbleView.bottomAnchor),
                 errorIndicatorView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                bubbleThreadMetaContainer.trailingAnchor.pin(equalTo: errorIndicatorView.centerXAnchor, constant: -inset)
+                bubbleThreadMetaContainer.trailingAnchor.pin(equalTo: errorIndicatorView.centerXAnchor)
             ]
         }
 
