@@ -43,8 +43,10 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     var filePreviewView: _ChatMessageFileAttachmentListView<ExtraData>?
     var giphyView: _ChatMessageGiphyView<ExtraData>?
     var actionsView: _ChatMessageInteractiveAttachmentView<ExtraData>?
-    var reactionsView: _ReactionsCompactView<ExtraData>?
     var errorIndicatorView: _ChatMessageErrorIndicator<ExtraData>?
+
+    var reactionsView: _ReactionsCompactView<ExtraData>?
+    var reactionsBubbleView: ReactionsBubbleView<ExtraData>?
 
     var threadReplyCountButton: UIButton?
     var threadAvatarView: ChatAvatarView?
@@ -52,6 +54,40 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     
     lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        maskContainerByReactionsBubble()
+    }
+
+    func maskContainerByReactionsBubble() {
+        guard let reactionsBubble = reactionsBubbleView else {
+            mainContainer.mask = nil
+            return
+        }
+
+        let bubbleOriginInMainContainer = reactionsBubble.superview!
+            .convert(reactionsBubble.frame.origin, to: mainContainer)
+
+        let moveToMainContainer = CGAffineTransform(
+            translationX: bubbleOriginInMainContainer.x,
+            y: bubbleOriginInMainContainer.y
+        )
+
+        let conainerMaskingPath = reactionsBubble.maskingPath
+        conainerMaskingPath.apply(moveToMainContainer)
+
+        let maskImage = UIGraphicsImageRenderer(size: mainContainer.bounds.size)
+            .image {
+                let layer = CAShapeLayer()
+                layer.path = conainerMaskingPath.cgPath
+                layer.render(in: $0.cgContext)
+            }
+            .asAlphaMask()
+
+        mainContainer.mask = UIImageView(image: maskImage)
+    }
     
     func setUpLayoutIfNeeded(options: ChatMessageLayoutOptions) {
         guard layoutOptions == nil else {
@@ -240,17 +276,21 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
 
         // Reactions
         if options.contains(.reactions) {
+            let reactionsBubbleView = createReactionsBubbleView()
+            addSubview(reactionsBubbleView)
+
             let reactionsView = createReactionsView()
-            reactionsView.setContentCompressionResistancePriority(.defaultHigh, for: .horizontal)
-            reactionsView.setContentCompressionResistancePriority(.defaultHigh, for: .vertical)
-            addSubview(reactionsView)
+            reactionsBubbleView.addSubview(reactionsView)
+            reactionsView.pin(to: reactionsBubbleView.layoutMarginsGuide)
 
             constraintsToActivate += [
-                reactionsView.topAnchor.pin(equalTo: topAnchor),
-                reactionsView.centerXAnchor.pin(
-                    equalTo: options.contains(.flipped) ? bubbleView.leadingAnchor : bubbleView.trailingAnchor
-                ),
-                bubbleView.topAnchor.pin(equalTo: reactionsView.centerYAnchor)
+                reactionsBubbleView.topAnchor.pin(equalTo: topAnchor),
+                bubbleView.topAnchor.pin(equalTo: reactionsBubbleView.centerYAnchor),
+                reactionsBubbleView.centerXAnchor.pin(
+                    equalTo: options.contains(.flipped) ?
+                        mainContainer.leadingAnchor :
+                        mainContainer.trailingAnchor
+                )
             ]
         }
         
@@ -327,6 +367,8 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         threadAvatarView?.imageView.loadImage(from: latestReplyAuthorAvatar)
 
         // Reactions view
+        reactionsBubbleView?.tailDirection = content
+            .map { $0.isSentByCurrentUser ? .toTrailing : .toLeading }
         reactionsView?.content = content
     }
 
@@ -542,5 +584,13 @@ private extension MessageContentView {
             errorIndicatorView!.addTarget(self, action: #selector(didTapOnErrorIndicator), for: .touchUpInside)
         }
         return errorIndicatorView!
+    }
+
+    func createReactionsBubbleView() -> ReactionsBubbleView<ExtraData> {
+        if reactionsBubbleView == nil {
+            reactionsBubbleView = ReactionsBubbleView()
+                .withoutAutoresizingMaskConstraints
+        }
+        return reactionsBubbleView!
     }
 }
