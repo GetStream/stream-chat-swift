@@ -156,7 +156,13 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     }
     
     func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
-        uiConfig.messageList.layoutOptionsResolver(indexPath, AnyRandomAccessCollection(channelController.messages))
+        guard let channel = channelController.channel else { return [] }
+
+        return uiConfig.messageList.layoutOptionsResolver(
+            indexPath,
+            AnyRandomAccessCollection(channelController.messages),
+            channel
+        )
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

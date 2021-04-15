@@ -68,8 +68,7 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
             timestampLabel.text = nil
         }
         currentUserVisabilityIndicator.isVisible = content?.onlyVisibleForCurrentUser ?? false
-
-        authorLabel.isHidden = content?.isSentByCurrentUser ?? true
+        
         authorLabel.text = content?.author.name
     }
 }

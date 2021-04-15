@@ -332,6 +332,7 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         let defaultAttachments = content?.attachments.compactMap { $0 as? ChatMessageDefaultAttachment }
 
         // Metadata
+        metadataView?.authorLabel.isVisible = layoutOptions?.contains(.authorName) ?? false
         metadataView?.content = content
 
         // Link preview

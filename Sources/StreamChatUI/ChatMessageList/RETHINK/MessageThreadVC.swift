@@ -76,11 +76,12 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
         messageComposerViewController.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(messageComposerViewController, targetView: view)
         
-        if let message = messageController.message {
+        if let message = messageController.message, let channel = channelController.channel {
             let messageView = MessageContentView<ExtraData>().withoutAutoresizingMaskConstraints
             var layoutOptions = uiConfig.messageList.layoutOptionsResolver(
                 IndexPath(item: 0, section: 0),
-                AnyRandomAccessCollection([message])
+                AnyRandomAccessCollection([message]),
+                channel
             )
             layoutOptions.remove(.threadInfo)
             
@@ -155,9 +156,12 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
     }
     
     func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
+        guard let channel = channelController.channel else { return [] }
+
         var layoutOptions = uiConfig.messageList.layoutOptionsResolver(
             indexPath,
-            AnyRandomAccessCollection(messageController.replies)
+            AnyRandomAccessCollection(messageController.replies),
+            channel
         )
         layoutOptions.remove(.threadInfo)
         return layoutOptions
