@@ -69,11 +69,14 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     ///
     public let extraData: ExtraData.Message
     
-    /// Quoted message id.
+    /// Quoted message.
     ///
-    /// If message is inline reply this property will contain id of the message quoted by this reply.
+    /// If message is inline reply this property will contain the message quoted by this reply.
     ///
     public let quotedMessageId: MessageId?
+    public var quotedMessage: _ChatMessage<ExtraData>? { _quotedMessage }
+
+    @CoreDataLazy internal var _quotedMessage: _ChatMessage<ExtraData>?
     
     /// A flag indicating whether the message is a silent message.
     ///
@@ -164,6 +167,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         replyCount: Int,
         extraData: ExtraData.Message,
         quotedMessageId: MessageId?,
+        quotedMessage: @escaping () -> _ChatMessage<ExtraData>?,
         isSilent: Bool,
         reactionScores: [MessageReactionType: Int],
         author: @escaping () -> _ChatUser<ExtraData.User>,
@@ -207,6 +211,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         self.$_latestReplies = (latestReplies, underlyingContext)
         self.$_latestReactions = (latestReactions, underlyingContext)
         self.$_currentUserReactions = (currentUserReactions, underlyingContext)
+        self.$_quotedMessage = (quotedMessage, underlyingContext)
     }
 }
 
