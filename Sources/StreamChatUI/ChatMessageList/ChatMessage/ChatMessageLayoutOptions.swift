@@ -15,6 +15,7 @@ public struct ChatMessageLayoutOptions: OptionSet, Hashable {
 public extension ChatMessageLayoutOptions {
     /// Typically the messages sent by the current user have flipped content
     static let flipped = Self(rawValue: 1 << 0)
+    static let maxWidth = Self(rawValue: 1 << 15)
 
     static let avatar = Self(rawValue: 1 << 1)
     static let metadata = Self(rawValue: 1 << 2)
