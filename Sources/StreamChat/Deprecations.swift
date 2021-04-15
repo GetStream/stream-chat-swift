@@ -23,6 +23,15 @@ public extension _ChatChannel {
     var watchers: Set<_ChatUser<ExtraData.User>> { Set(lastActiveWatchers) }
 }
 
+public extension _ChatMessage {
+    /// Quoted message id.
+    ///
+    /// If message is inline reply this property will contain id of the message quoted by this reply.
+    ///
+    @available(*, deprecated, message: "Use quotedMessage?.id instead")
+    var quotedMessageId: MessageId? { quotedMessage?.id }
+}
+
 public extension Logger {
     /// Stops program execution with `Swift.assertionFailure`. In RELEASE builds only
     /// logs the failure.

@@ -163,7 +163,6 @@ extension _ChatMessage {
             showReplyInChannel: true,
             replyCount: 2,
             extraData: .init(),
-            quotedMessageId: nil,
             quotedMessage: { nil },
             isSilent: false,
             reactionScores: ["": 1],

@@ -73,7 +73,6 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     ///
     /// If message is inline reply this property will contain the message quoted by this reply.
     ///
-    public let quotedMessageId: MessageId?
     public var quotedMessage: _ChatMessage<ExtraData>? { _quotedMessage }
 
     @CoreDataLazy internal var _quotedMessage: _ChatMessage<ExtraData>?
@@ -166,7 +165,6 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         showReplyInChannel: Bool,
         replyCount: Int,
         extraData: ExtraData.Message,
-        quotedMessageId: MessageId?,
         quotedMessage: @escaping () -> _ChatMessage<ExtraData>?,
         isSilent: Bool,
         reactionScores: [MessageReactionType: Int],
@@ -196,7 +194,6 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         self.showReplyInChannel = showReplyInChannel
         self.replyCount = replyCount
         self.extraData = extraData
-        self.quotedMessageId = quotedMessageId
         self.isSilent = isSilent
         self.reactionScores = reactionScores
         self.threadParticipants = threadParticipants
