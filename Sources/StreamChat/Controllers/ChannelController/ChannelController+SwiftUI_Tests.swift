@@ -164,6 +164,7 @@ extension _ChatMessage {
             replyCount: 2,
             extraData: .init(),
             quotedMessageId: nil,
+            quotedMessage: { nil },
             isSilent: false,
             reactionScores: ["": 1],
             author: { .mock(id: .unique) },
