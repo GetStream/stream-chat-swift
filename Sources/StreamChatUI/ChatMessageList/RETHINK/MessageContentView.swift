@@ -241,16 +241,16 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
             ]
         }
 
-        // Text
-        if options.contains(.text) {
-            let textView = createTextView()
-            contentContainer.addArrangedSubview(textView, respectsLayoutMargins: true)
-        }
-
         // File previews
         if options.contains(.filePreview) {
             let filePreviewView = createFilePreviewView()
             contentContainer.addArrangedSubview(filePreviewView, respectsLayoutMargins: false)
+        }
+
+        // Text
+        if options.contains(.text) {
+            let textView = createTextView()
+            contentContainer.addArrangedSubview(textView, respectsLayoutMargins: true)
         }
 
         // Link preview
