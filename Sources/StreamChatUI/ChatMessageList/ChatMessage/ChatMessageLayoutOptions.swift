@@ -19,6 +19,7 @@ public extension ChatMessageLayoutOptions {
 
     static let avatar = Self(rawValue: 1 << 1)
     static let metadata = Self(rawValue: 1 << 2)
+    static let authorName = Self(rawValue: 1 << 16)
     static let text = Self(rawValue: 1 << 3)
     static let quotedMessage = Self(rawValue: 1 << 4)
     static let avatarSizePadding = Self(rawValue: 1 << 10)

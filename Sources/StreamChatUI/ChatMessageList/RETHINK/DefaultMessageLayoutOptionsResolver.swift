@@ -4,13 +4,16 @@
 
 import StreamChat
 
-public typealias MessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> =
-    (_ indexPath: IndexPath, _ messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>) -> ChatMessageLayoutOptions
+public typealias MessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> = (
+    _ indexPath: IndexPath,
+    _ messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>,
+    _ channel: _ChatChannel<ExtraData>
+) -> ChatMessageLayoutOptions
 
 public func DefaultMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes>(
     minTimeIntervalBetweenMessagesInGroup: TimeInterval = 10
 ) -> MessageLayoutOptionsResolver<ExtraData> {
-    { indexPath, messages in
+    { indexPath, messages, channel in
         let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
         let message = messages[messageIndex]
 
@@ -51,6 +54,9 @@ public func DefaultMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes>(
         
         if isLastInGroup && !message.isSentByCurrentUser {
             options.insert(.avatar)
+        }
+        if isLastInGroup && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
+            options.insert(.authorName)
         }
         if message.quotedMessageId != nil {
             options.insert(.quotedMessage)
