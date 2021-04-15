@@ -548,6 +548,8 @@ private extension _ChatMessage {
                 )
             }, dto.managedObjectContext)
         }
+        
+        $_quotedMessage = ({ dto.quotedMessage?.asModel() }, dto.managedObjectContext)
     }
 }
 
