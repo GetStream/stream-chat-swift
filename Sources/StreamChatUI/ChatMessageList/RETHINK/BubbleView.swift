@@ -22,7 +22,7 @@ class BubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         borderLayer.frame = bounds
     }
 
-    override func defaultAppearance() {
+    override func setUpAppearance() {
         layer.cornerRadius = 16
         layer.masksToBounds = true
         borderLayer.contentsScale = layer.contentsScale

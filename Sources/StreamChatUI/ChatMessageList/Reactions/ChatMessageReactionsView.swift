@@ -7,6 +7,122 @@ import UIKit
 
 public typealias ChatMessageReactionsView = _ChatMessageReactionsView<NoExtraData>
 
+class ReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+    private let tailHeight: CGFloat = 6
+
+    var tailDirection: _ChatMessageThreadArrowView<ExtraData>.Direction? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+
+    override func setUpAppearance() {
+        super.setUpAppearance()
+
+        backgroundColor = .clear
+    }
+
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+
+        strokeColor?.setStroke()
+        fillColor?.setFill()
+
+        let bubbleAndTail = bubblePath()
+        bubbleAndTail.stroke()
+        bubbleAndTail.fill()
+    }
+
+    override func setUpLayout() {
+        directionalLayoutMargins.bottom += tailHeight
+    }
+
+    override func updateContent() {
+        setNeedsDisplay()
+    }
+
+    var maskingPath: UIBezierPath {
+        bubblePath(withRadiiIncreasedBy: 4)
+    }
+}
+
+private extension ReactionsBubbleView {
+    var fillColor: UIColor? {
+        tailDirection.map {
+            $0 == .toTrailing ?
+                uiConfig.colorPalette.popoverBackground :
+                uiConfig.colorPalette.background2
+        }
+    }
+
+    var strokeColor: UIColor? {
+        tailDirection.map {
+            $0 == .toTrailing ?
+                uiConfig.colorPalette.border :
+                uiConfig.colorPalette.background2
+        }
+    }
+
+    var bubbleBodyCenter: CGPoint {
+        bounds
+            .inset(by: .init(top: 0, left: 0, bottom: tailHeight, right: 0))
+            .center
+    }
+
+    var bigTailCirleCenter: CGPoint {
+        bubbleBodyCenter.offsetBy(
+            dx: tailDirection == .toTrailing ? 10 : -10,
+            dy: 14
+        )
+    }
+
+    var smallTailCirleCenter: CGPoint {
+        bigTailCirleCenter.offsetBy(
+            dx: tailDirection == .toTrailing ? 4 : -4,
+            dy: 6
+        )
+    }
+
+    func bubblePath(withRadiiIncreasedBy dr: CGFloat = 0) -> UIBezierPath {
+        let borderLineWidth: CGFloat = 1
+        let dr = dr - borderLineWidth / 2
+
+        let bubbleBodyRect = CGRect(
+            center: bubbleBodyCenter,
+            size: .init(
+                width: bounds.width + dr,
+                height: bounds.height - tailHeight + dr
+            )
+        )
+
+        let bubbleBodyPath = UIBezierPath(
+            roundedRect: bubbleBodyRect,
+            cornerRadius: bubbleBodyRect.height / 2
+        )
+
+        let bigTailPath = UIBezierPath(
+            ovalIn: .circleBounds(
+                center: bigTailCirleCenter,
+                radius: 4 + dr
+            )
+        )
+
+        let smallTailPath = UIBezierPath(
+            ovalIn: .circleBounds(
+                center: smallTailCirleCenter,
+                radius: 2 + dr
+            )
+        )
+
+        let path = UIBezierPath()
+        path.lineWidth = borderLineWidth
+        path.append(bubbleBodyPath)
+        path.append(bigTailPath)
+        path.append(smallTailPath)
+        return path
+    }
+}
+
 class _ReactionsCompactView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     var content: _ChatMessage<ExtraData>? {
         didSet { updateContentIfNeeded() }
@@ -25,34 +141,10 @@ class _ReactionsCompactView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider 
     // MARK: - Overrides
 
     override func setUpLayout() {
-        addSubview(stackView)
-        directionalLayoutMargins = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
-        stackView.pin(to: layoutMarginsGuide)
-    }
-
-    override func defaultAppearance() {
-        layer.contentsScale = layer.contentsScale
-        layer.borderWidth = 1
-    }
-
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        layer.cornerRadius = bounds.height / 2
+        embed(stackView)
     }
     
     override func updateContent() {
-        backgroundColor = content.map {
-            $0.isSentByCurrentUser ?
-                uiConfig.colorPalette.popoverBackground :
-                uiConfig.colorPalette.background2
-        }
-
-        layer.borderColor = content.map {
-            $0.isSentByCurrentUser ?
-                uiConfig.colorPalette.border.cgColor :
-                uiConfig.colorPalette.background2.cgColor
-        }
-
         stackView.arrangedSubviews.forEach {
             $0.removeFromSuperview()
         }
@@ -111,6 +203,8 @@ open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, UIConfig
 
         content.reactions.forEach { reaction in
             let itemView = uiConfig.messageList.messageReactions.reactionItemView.init()
+            itemView.setContentCompressionResistancePriority(.required, for: .horizontal)
+            itemView.setContentCompressionResistancePriority(.required, for: .vertical)
             itemView.content = .init(
                 useBigIcon: content.useBigIcons,
                 reaction: reaction,
