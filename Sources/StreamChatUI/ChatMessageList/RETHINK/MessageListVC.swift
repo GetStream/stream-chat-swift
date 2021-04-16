@@ -11,11 +11,16 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     /// Controller for observing data changes within the channel
     public var channelController: _ChatChannelController<ExtraData>!
     
-    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
-    public private(set) var needsToScrollToMostRecentMessage = true
-    
-    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
-    public private(set) var needsToScrollToMostRecentMessageAnimated = false
+    /// Observer responsible for setting the correct offset when keyboard frame is changed
+    public lazy var keyboardObserver = ChatMessageListKeyboardObserver(
+        containerView: view,
+        scrollView: collectionView,
+        composerBottomConstraint: messageComposerBottomConstraint
+    )
+
+    /// User search controller passed directly to the composer
+    public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
+        channelController.client.userSearchController()
     
     /// View used to display the messages
     public private(set) lazy var collectionView: MessageCollectionView = {
@@ -37,26 +42,14 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
         .messageComposerViewController
         .init()
     
-    /// Constraint connection list of messages and composer controller.
-    /// It's used to change the message list's height based on the keyboard visibility.
-    private var messageComposerBottomConstraint: NSLayoutConstraint?
-    
-    /// Timer used to update the online status of member in the chat channel
-    private var timer: Timer?
-    
-    /// Observer responsible for setting the correct offset when keyboard frame is changed
-    private lazy var keyboardObserver = ChatMessageListKeyboardObserver(
-        containerView: view,
-        scrollView: collectionView,
-        composerBottomConstraint: messageComposerBottomConstraint
-    )
-
-    /// User search controller passed directly to the composer
-    public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
-        channelController.client.userSearchController()
-    
     // Load from UIConfig
     public lazy var titleView = ChatMessageListTitleView<ExtraData>()
+    
+    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
+    public private(set) var needsToScrollToMostRecentMessage = true
+    
+    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
+    public private(set) var needsToScrollToMostRecentMessageAnimated = false
     
     /// Feedback generator used when presenting actions controller on selected message
     public lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
@@ -66,6 +59,13 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
         .navigation
         .messageListRouter
         .init(rootViewController: self)
+    
+    /// Constraint connection list of messages and composer controller.
+    /// It's used to change the message list's height based on the keyboard visibility.
+    private var messageComposerBottomConstraint: NSLayoutConstraint?
+    
+    /// Timer used to update the online status of member in the chat channel
+    private var timer: Timer?
     
     override open func setUp() {
         super.setUp()
@@ -404,27 +404,32 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
         }
     }
 
+    /// Executes the provided action on the message
     open func handleTapOnAttachmentAction(
         _ action: AttachmentAction,
         for attachment: ChatMessageAttachment,
         forCellAt indexPath: IndexPath
     ) {
         // Can we have a helper on `ChannelController` returning a `messageController` for the provided message id?
-        let messageController = channelController.client.messageController(
-            cid: channelController.cid!,
-            messageId: channelController.messages[indexPath.row].id
-        )
-        messageController.dispatchEphemeralMessageAction(action)
+        channelController.client
+            .messageController(
+                cid: channelController.cid!,
+                messageId: channelController.messages[indexPath.row].id
+            )
+            .dispatchEphemeralMessageAction(action)
     }
 
-    open func handleTapOnQuotedMessage(_ quotedMessage: _ChatMessage<ExtraData>, forCellAt indexPath: IndexPath) {
-        didSelectMessageCell(at: indexPath)
+    // TODO: Currently not supported
+    private func handleTapOnQuotedMessage(_ quotedMessage: _ChatMessage<ExtraData>, forCellAt indexPath: IndexPath) {
+        print(#function, quotedMessage)
     }
 
+    /// Opens the action menu with action to resend the message
     open func handleTapOnErrorIndicator(forCellAt indexPath: IndexPath) {
         didSelectMessageCell(at: indexPath)
     }
 
+    /// Opens thread detail for cell at `indexPath`
     open func handleTapOnThread(forCellAt indexPath: IndexPath) {
         guard let channel = channelController.channel else { return }
         
