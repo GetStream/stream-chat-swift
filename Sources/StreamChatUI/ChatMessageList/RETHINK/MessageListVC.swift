@@ -231,15 +231,15 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
                 if member.isOnline {
                     // ReallyNotATODO: Missing API GroupA.m1
                     // need to specify how long user have been online
-                    return "Online"
+                    return L10n.Message.Title.online
                 } else if let minutes = member.lastActiveAt
                     .flatMap({ DateComponentsFormatter.minutes.string(from: $0, to: Date()) }) {
-                    return "Seen \(minutes) ago"
+                    return L10n.Message.Title.seeMinutesAgo(minutes)
                 } else {
-                    return "Offline"
+                    return L10n.Message.Title.offline
                 }
             } else {
-                return channelController.channel.map { "\($0.memberCount) members, \($0.watcherCount) online" }
+                return channelController.channel.map { L10n.Message.Title.group($0.memberCount, $0.watcherCount) }
             }
         }()
         
