@@ -123,3 +123,11 @@ final class ChannelMemberTypingStateUpdaterMiddleware_Tests: XCTestCase {
 private struct TestEvent: Event, Equatable {
     let id = UUID()
 }
+
+extension TypingEvent: Equatable {
+    static var unique: Self = .init(isTyping: true, cid: .unique, userId: .newUniqueId)
+    
+    public static func == (lhs: TypingEvent, rhs: TypingEvent) -> Bool {
+        lhs.cid == rhs.cid && lhs.userId == rhs.userId
+    }
+}

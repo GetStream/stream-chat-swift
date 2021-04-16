@@ -90,6 +90,10 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     }
     
     open func updateContent() {}
+
+    open func updateHeightConstraint() {
+        textViewHeightConstraint.constant = calculatedTextHeight() + textContainerInset.bottom + textContainerInset.top
+    }
     
     func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
@@ -98,7 +102,8 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         
     @objc func textDidChange() {
         placeholderLabel.isHidden = !text.isEmpty
-        textViewHeightConstraint.constant = calculatedTextHeight() + textContainerInset.bottom + textContainerInset.top
+
+        updateHeightConstraint()
         layoutIfNeeded()
     }
 }

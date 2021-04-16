@@ -31,6 +31,7 @@ public extension _UIConfig {
         public var background3: UIColor = .streamOverlay
         public var background4: UIColor = .streamOverlayDark
 
+        public var overlayBackground: UIColor = .streamOverlayLight
         public var popoverBackground: UIColor = .streamWhite
         public var highlightedBackground: UIColor = .streamGrayGainsboro
         public var highlightedAccentBackground: UIColor = .streamAccentBlue
@@ -63,6 +64,7 @@ private extension UIColor {
     static let streamGrayWhisper = mode(0xecebeb, 0x1c1e22)
     static let streamWhiteSmoke = mode(0xf2f2f2, 0x13151b)
     static let streamWhiteSnow = mode(0xfcfcfc, 0x070a0d)
+    static let streamOverlayLight = mode(0xfcfcfc, lightAlpha: 0.9, 0x070a0d, darkAlpha: 0.9)
     static let streamWhite = mode(0xffffff, 0x101418)
     static let streamBlueAlice = mode(0xe9f2ff, 0x00193d)
     static let streamAccentBlue = mode(0x005fff, 0x005fff)

@@ -22,6 +22,8 @@
 "message.actions.user-mute" = "Mute User";
 "message.actions.resend" = "Resend";
 
+"messageList.typingIndicator.typing-unknown" = "Someone is typing";
+
 "message.threads.reply" = "Thread Reply";
 
 "alert.actions.cancel" = "Cancel";

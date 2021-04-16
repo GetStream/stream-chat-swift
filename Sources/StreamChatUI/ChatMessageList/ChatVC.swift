@@ -30,6 +30,11 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         .messageListVC
         .init()
 
+    public private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = uiConfig
+        .typingIndicatorView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
     
     private var messageComposerBottomConstraint: NSLayoutConstraint?
@@ -83,6 +88,8 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         messageList.dataSource = .wrap(self)
 
         userSuggestionSearchController.search(term: nil) // Initially, load all users
+
+        typingIndicatorView.isHidden = true
     }
 
     override open func setUpLayout() {
@@ -106,6 +113,14 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         messageComposerBottomConstraint =
             messageComposerViewController.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
+
+        if channelController.channel?.config.typingEventsEnabled ?? false {
+            view.addSubview(typingIndicatorView)
+            typingIndicatorView.heightAnchor.pin(equalToConstant: 22).isActive = true
+            typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
+            typingIndicatorView.bottomAnchor.pin(equalTo: messageComposerViewController.view.topAnchor).isActive = true
+            messageList.collectionView.contentInset.bottom = 22
+        }
     }
 
     override public func defaultAppearance() {

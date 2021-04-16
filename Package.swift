@@ -145,7 +145,6 @@ var streamChatSourcesExcluded: [String] { [
     "Workers/Background/MessageSender_Tests.swift",
     "Workers/Background/MessageEditor_Tests.swift",
     "Workers/ChannelMemberUpdater_Tests.swift",
-    "Workers/EventObservers/TypingEventObserver_Tests.swift",
     "Workers/EventObservers/MemberEventObserver_Tests.swift",
     "Workers/EventObservers/EventObserver_Tests.swift",
     "Workers/UserUpdater_Mock.swift",
