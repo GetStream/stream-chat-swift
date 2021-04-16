@@ -278,7 +278,8 @@ public class ContainerStackView: UIView {
     }
 
     public func hideSubview(_ subview: UIView, animated: Bool = true) {
-        assert(subviews.contains(subview))
+        guard subviews.contains(subview) else { return }
+        guard subview.alpha != 0 else { return }
 
         updateConstraintsIfNeeded()
 
@@ -289,7 +290,10 @@ public class ContainerStackView: UIView {
 
         Animate(isAnimated: animated) {
             subview.alpha = 0
-            self.hideConstraintsByView[subview]?.width.isActive = true
+
+            if self.axis == .horizontal {
+                self.hideConstraintsByView[subview]?.width.isActive = true
+            }
             self.hideConstraintsByView[subview]?.height.isActive = true
 
             self.spacingConstraintsByView[subview]?.setTemporaryConstant(0)
@@ -298,8 +302,9 @@ public class ContainerStackView: UIView {
         }
     }
 
-    func showSubview(_ subview: UIView, animated: Bool = true) {
-        assert(subviews.contains(subview))
+    public func showSubview(_ subview: UIView, animated: Bool = true) {
+        guard subviews.contains(subview) else { return }
+        guard subview.alpha == 0 else { return }
 
         updateConstraintsIfNeeded()
 
