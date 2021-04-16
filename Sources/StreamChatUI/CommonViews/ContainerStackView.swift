@@ -194,7 +194,6 @@ public class ContainerStackView: UIView {
         }
 
         if distribution == .equal {
-            // Add constraints for distribution
             zip(subviews, subviews.dropFirst()).forEach { lView, rView in
                 if axis == .horizontal {
                     customConstraints.append(
