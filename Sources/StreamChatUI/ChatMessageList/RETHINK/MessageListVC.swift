@@ -9,21 +9,21 @@ import UIKit
 open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource,
     UIConfigProvider {
     /// Controller for observing data changes within the channel
-    public var channelController: _ChatChannelController<ExtraData>!
+    open var channelController: _ChatChannelController<ExtraData>!
     
     /// Observer responsible for setting the correct offset when keyboard frame is changed
-    public lazy var keyboardObserver = ChatMessageListKeyboardObserver(
+    open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
         containerView: view,
         scrollView: collectionView,
         composerBottomConstraint: messageComposerBottomConstraint
     )
 
     /// User search controller passed directly to the composer
-    public lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
+    open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
         channelController.client.userSearchController()
     
     /// View used to display the messages
-    public private(set) lazy var collectionView: MessageCollectionView = {
+    open private(set) lazy var collectionView: MessageCollectionView = {
         let collection = MessageCollectionView(frame: .zero, collectionViewLayout: ChatMessageListCollectionViewLayout())
 
         collection.isPrefetchingEnabled = false
@@ -37,7 +37,7 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     }()
     
     /// Controller that handles the composer view
-    public private(set) lazy var messageComposerViewController = uiConfig
+    open private(set) lazy var messageComposerViewController = uiConfig
         .messageComposer
         .messageComposerViewController
         .init()
@@ -46,19 +46,19 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     /// View displaying status of the channel.
     ///
     /// The status differs based on the fact if the channel is direct or not.
-    public lazy var titleView = ChatMessageListTitleView<ExtraData>()
+    open lazy var titleView = ChatMessageListTitleView<ExtraData>()
     
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
-    public private(set) var needsToScrollToMostRecentMessage = true
+    open private(set) var needsToScrollToMostRecentMessage = true
     
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
-    public private(set) var needsToScrollToMostRecentMessageAnimated = false
+    open private(set) var needsToScrollToMostRecentMessageAnimated = false
     
     /// Feedback generator used when presenting actions controller on selected message
-    public lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
+    open lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
     /// Handles navigation actions from messages
-    public lazy var router = uiConfig
+    open lazy var router = uiConfig
         .navigation
         .messageListRouter
         .init(rootViewController: self)
@@ -159,11 +159,11 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
         )
     }
     
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         channelController.messages.count
     }
     
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let message = channelController.messages[indexPath.item]
         
         let cell: MessageCell<ExtraData> = self.collectionView.dequeueReusableCell(
@@ -195,20 +195,20 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     }
     
     /// Will scroll to most recent message on next `updateMessages` call
-    public func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
+    open func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
         needsToScrollToMostRecentMessage = true
         needsToScrollToMostRecentMessageAnimated = animated
     }
 
     /// Force scroll to most recent message check without waiting for `updateMessages`
-    public func scrollToMostRecentMessageIfNeeded() {
+    open func scrollToMostRecentMessageIfNeeded() {
         guard needsToScrollToMostRecentMessage else { return }
         
         scrollToMostRecentMessage(animated: needsToScrollToMostRecentMessageAnimated)
     }
 
     /// Scrolls to most recent message
-    public func scrollToMostRecentMessage(animated: Bool = true) {
+    open func scrollToMostRecentMessage(animated: Bool = true) {
         needsToScrollToMostRecentMessage = false
 
         // our collection is flipped, so (0; 0) item is most recent one
@@ -263,7 +263,7 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     }
 
     /// Updates the collection view data with given `changes`.
-    public func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
+    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
         collectionView.performBatchUpdates {
             for change in changes {
                 switch change {
@@ -455,20 +455,20 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
 }
 
 extension MessageListVC: _ChatMessageComposerViewControllerDelegate {
-    public func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>) {
+    open func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>) {
         setNeedsScrollToMostRecentMessage()
     }
 }
 
 extension MessageListVC: _ChatChannelControllerDelegate {
-    public func channelController(
+    open func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
         didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
     ) {
         updateMessages(with: changes)
     }
     
-    public func channelController(
+    open func channelController(
         _ channelController: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
