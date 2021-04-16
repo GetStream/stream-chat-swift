@@ -9,14 +9,25 @@ public typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
 
 open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     UIConfigProvider {
-    // MARK: - Properties
-    
-    public var attachmentsViewHeight: CGFloat = .zero
-    public var stateIconHeight: CGFloat = .zero
-    
-    // MARK: - Subviews
+    public private(set) lazy var container = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var container = DeprecatedContainerStackView()
+    public private(set) lazy var topContainer = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var bottomContainer = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var centerContainer = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var centerContentContainer = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var centerLeftContainer = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var centerRightContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var messageQuoteView = uiConfig
@@ -97,26 +108,17 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         updateContent()
     }
     
-    override open var intrinsicContentSize: CGSize {
-        let size = CGSize(
-            width: UIView.noIntrinsicMetric,
-            height: container.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize).height
-        )
-        return size
-    }
-    
     // MARK: - Public
     
     override open func setUpAppearance() {
         super.setUpAppearance()
-        stateIconHeight = 40
         
         backgroundColor = uiConfig.colorPalette.popoverBackground
         
-        container.centerStackView.clipsToBounds = true
-        container.centerStackView.layer.cornerRadius = 25
-        container.centerStackView.layer.borderWidth = 1
-        container.centerStackView.layer.borderColor = uiConfig.colorPalette.border.cgColor
+        centerContentContainer.clipsToBounds = true
+        centerContentContainer.layer.cornerRadius = 25
+        centerContentContainer.layer.borderWidth = 1
+        centerContentContainer.layer.borderColor = uiConfig.colorPalette.border.cgColor
         
         layer.shadowColor = UIColor.systemGray.cgColor
         layer.shadowOpacity = 1
@@ -144,65 +146,70 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     override open func setUpLayout() {
         super.setUpLayout()
         embed(container)
-                
-        container.preservesSuperviewLayoutMargins = true
-        container.isLayoutMarginsRelativeArrangement = true
-        
-        container.spacing = UIStackView.spacingUseSystem
-        
-        container.topStackView.alignment = .fill
-        container.topStackView.addArrangedSubview(stateIcon)
-        container.topStackView.addArrangedSubview(titleLabel)
-        container.topStackView.addArrangedSubview(dismissButton)
-        
-        stateIcon.heightAnchor.pin(equalToConstant: stateIconHeight).isActive = true
-        
-        container.centerStackView.isHidden = false
-        container.centerStackView.axis = .vertical
-        container.centerStackView.alignment = .fill
-        
-        messageQuoteView.isHidden = true
-        container.centerStackView.addArrangedSubview(messageQuoteView)
-        container.centerStackView.addArrangedSubview(imageAttachmentsView)
-        container.centerStackView.addArrangedSubview(documentAttachmentsView)
 
+        container.isLayoutMarginsRelativeArrangement = true
+        container.spacing = 0
+        container.axis = .vertical
+        container.alignment = .fill
+        container.addArrangedSubview(topContainer)
+        container.addArrangedSubview(centerContainer)
+        container.addArrangedSubview(bottomContainer)
+        container.hideSubview(bottomContainer)
+        container.hideSubview(topContainer)
+
+        bottomContainer.addArrangedSubview(checkmarkControl)
+
+        topContainer.alignment = .fill
+        topContainer.addArrangedSubview(stateIcon)
+        topContainer.addArrangedSubview(titleLabel)
+        topContainer.addArrangedSubview(dismissButton)
+        stateIcon.heightAnchor.pin(equalToConstant: 40).isActive = true
+
+        centerContainer.axis = .horizontal
+        centerContainer.alignment = .fill
+        centerContainer.spacing = .auto
+        centerContainer.addArrangedSubview(centerLeftContainer)
+        centerContainer.addArrangedSubview(centerContentContainer)
+        centerContainer.addArrangedSubview(centerRightContainer)
+
+        centerContentContainer.axis = .vertical
+        centerContentContainer.alignment = .fill
+        centerContentContainer.distribution = .natural
+        centerContentContainer.spacing = 0
+        centerContentContainer.addArrangedSubview(messageQuoteView)
+        centerContentContainer.addArrangedSubview(imageAttachmentsView)
+        centerContentContainer.addArrangedSubview(documentAttachmentsView)
+        centerContentContainer.addArrangedSubview(messageInputView)
+        centerContentContainer.hideSubview(messageQuoteView, animated: false)
+        centerContentContainer.hideSubview(imageAttachmentsView, animated: false)
+        centerContentContainer.hideSubview(documentAttachmentsView, animated: false)
         imageAttachmentsView.heightAnchor.pin(equalToConstant: 120).isActive = true
-        
-        container.centerStackView.addArrangedSubview(messageInputView)
-        messageInputView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        
-        container.rightStackView.isHidden = false
-        container.rightStackView.alignment = .center
-        container.rightStackView.spacing = UIStackView.spacingUseSystem
-        container.rightStackView.addArrangedSubview(sendButton)
-        container.rightStackView.addArrangedSubview(editButton)
-        
-        container.leftStackView.isHidden = false
-        container.leftStackView.alignment = .center
-        container.leftStackView.addArrangedSubview(shrinkInputButton)
-        container.leftStackView.addArrangedSubview(attachmentButton)
-        container.leftStackView.addArrangedSubview(commandsButton)
-        
-        container.bottomStackView.addArrangedSubview(checkmarkControl)
+
+        centerRightContainer.alignment = .center
+        centerRightContainer.spacing = .auto
+        centerRightContainer.addArrangedSubview(sendButton)
+        centerRightContainer.addArrangedSubview(editButton)
+        centerRightContainer.hideSubview(editButton)
+
+        centerLeftContainer.axis = .horizontal
+        centerLeftContainer.alignment = .center
+        centerLeftContainer.spacing = .auto
+        centerLeftContainer.addArrangedSubview(attachmentButton)
+        centerLeftContainer.addArrangedSubview(commandsButton)
+        centerLeftContainer.addArrangedSubview(shrinkInputButton)
         
         [shrinkInputButton, attachmentButton, commandsButton, sendButton, editButton, dismissButton]
             .forEach { button in
-                // Interim solution for correctly laying out the buttons/input
-                // This will be re-worked during ComposerView audit, when we replace
-                // `ContainerStackView` with `ContainerView`
-                button.pin(anchors: [.width], to: 40)
-                button.pin(anchors: [.height], to: 40)
+                button.pin(anchors: [.width], to: 20)
+                button.pin(anchors: [.height], to: 20)
             }
-
-        imageAttachmentsView.isHidden = true
-        documentAttachmentsView.isHidden = true
-        shrinkInputButton.isHidden = true
-        editButton.isHidden = true
     }
     
     open func setCheckmarkView(hidden: Bool) {
-        if container.bottomStackView.isHidden != hidden {
-            container.bottomStackView.isHidden = hidden
+        if hidden {
+            container.hideSubview(bottomContainer)
+        } else {
+            container.showSubview(bottomContainer)
         }
     }
 }

@@ -46,7 +46,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     public var state: State = .initial {
         didSet {
-            updateContent()
+            updateContentIfNeeded()
         }
     }
     
@@ -95,7 +95,6 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     override open func setUp() {
         super.setUp()
         setupInputView()
-        observeSizeChanges()
     }
 
     override open func updateContent() {
@@ -108,14 +107,11 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             imageAttachments = []
             documentAttachments = []
             composerView.messageQuoteView.content = nil
-            composerView.sendButton.isHidden = false
-            composerView.editButton.isHidden = true
-            composerView.documentAttachmentsView.isHidden = true
-            composerView.imageAttachmentsView.isHidden = true
-            composerView.messageQuoteView.setAnimatedly(hidden: true)
-            composerView.container.topStackView.setAnimatedly(hidden: true)
+            composerView.centerRightContainer.showSubview(composerView.sendButton)
+            composerView.centerRightContainer.hideSubview(composerView.editButton)
+            composerView.centerContentContainer.hideSubview(composerView.messageQuoteView)
+            composerView.container.hideSubview(composerView.topContainer)
             composerView.messageInputView.setSlashCommandViews(hidden: true)
-            composerView.invalidateIntrinsicContentSize()
         case let .slashCommand(command):
             textView.text = ""
             textView.placeholderLabel.text = command.name.firstUppercased
@@ -126,19 +122,19 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             composerView.titleLabel.text = L10n.Composer.Title.reply
             let image = uiConfig.images.messageComposerReplyButton.tinted(with: uiConfig.colorPalette.inactiveTint)
             composerView.stateIcon.image = image
-            composerView.container.topStackView.setAnimatedly(hidden: false)
-            composerView.messageQuoteView.setAnimatedly(hidden: false)
+            composerView.container.showSubview(composerView.topContainer)
+            composerView.centerContentContainer.showSubview(composerView.messageQuoteView)
+            composerView.messageInputView.slashCommandView.isHidden = true
             composerView.messageQuoteView.content = .init(message: messageToQuote, avatarAlignment: .left)
-            composerView.invalidateIntrinsicContentSize()
         case let .edit(message):
-            composerView.sendButton.isHidden = true
-            composerView.editButton.isHidden = false
+            composerView.centerRightContainer.showSubview(composerView.editButton)
+            composerView.centerRightContainer.hideSubview(composerView.sendButton)
             composerView.titleLabel.text = L10n.Composer.Title.edit
             let image = uiConfig.images.messageComposerEditMessage.tinted(with: uiConfig.colorPalette.inactiveTint)
             composerView.stateIcon.image = image
-            composerView.container.topStackView.setAnimatedly(hidden: false)
+            composerView.container.showSubview(composerView.topContainer)
+            composerView.messageInputView.slashCommandView.isHidden = true
             textView.text = message.text
-            composerView.invalidateIntrinsicContentSize()
         }
         
         if let memberCount = controller?.channel?.memberCount,
@@ -160,7 +156,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     func setupInputView() {
         view.embed(composerView)
-        
+
         composerView.messageInputView.textView.delegate = self
         
         composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
@@ -177,31 +173,10 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         
         composerView.imageAttachmentsView.didTapRemoveItemButton = { [weak self] index in
             self?.imageAttachments.remove(at: index)
-            self?.composerView.imageAttachmentsView.invalidateIntrinsicContentSize()
         }
         
         composerView.documentAttachmentsView.didTapRemoveItemButton = { [weak self] index in
             self?.documentAttachments.remove(at: index)
-            self?.composerView.documentAttachmentsView.invalidateIntrinsicContentSize()
-        }
-    }
-    
-    public func observeSizeChanges() {
-        composerView.addObserver(self, forKeyPath: "safeAreaInsets", options: .new, context: nil)
-        textView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
-    }
-    
-    // There are some issues with new-style KVO so that is something that will need attention later.
-    override open func observeValue(
-        forKeyPath keyPath: String?,
-        of object: Any?,
-        change: [NSKeyValueChangeKey: Any]?,
-        context: UnsafeMutableRawPointer?
-    ) {
-        if object as AnyObject? === textView, keyPath == "contentSize" {
-            composerView.invalidateIntrinsicContentSize()
-        } else if object as AnyObject? === composerView, keyPath == "safeAreaInsets" {
-            composerView.invalidateIntrinsicContentSize()
         }
     }
     
@@ -290,10 +265,19 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     func setInput(shrinked: Bool) {
-        for button in composerView.container.leftStackView.arrangedSubviews where button !== composerView.shrinkInputButton {
-            button.setAnimatedly(hidden: !shrinked)
+        for button in composerView.centerLeftContainer.subviews
+            where button !== composerView.shrinkInputButton {
+            if shrinked {
+                composerView.centerLeftContainer.showSubview(button)
+            } else {
+                composerView.centerLeftContainer.hideSubview(button)
+            }
         }
-        composerView.shrinkInputButton.setAnimatedly(hidden: shrinked)
+        if shrinked {
+            composerView.centerLeftContainer.hideSubview(composerView.shrinkInputButton)
+        } else {
+            composerView.centerLeftContainer.showSubview(composerView.shrinkInputButton)
+        }
     }
     
     @objc func showAvailableCommands() {
@@ -410,9 +394,12 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             .map {
                 ImageAttachmentPreview(image: $0.preview)
             }
-        composerView.imageAttachmentsView.setAnimatedly(hidden: imageAttachments.isEmpty)
-        composerView.imageAttachmentsView.invalidateIntrinsicContentSize()
-        composerView.invalidateIntrinsicContentSize()
+
+        if imageAttachments.isEmpty {
+            composerView.centerContentContainer.hideSubview(composerView.imageAttachmentsView)
+        } else {
+            composerView.centerContentContainer.showSubview(composerView.imageAttachmentsView)
+        }
         updateSendButton()
     }
     
@@ -420,9 +407,11 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.documentAttachmentsView.documents = documentAttachments.map {
             ($0.preview, $0.localURL.lastPathComponent, $0.size)
         }
-        composerView.documentAttachmentsView.setAnimatedly(hidden: documentAttachments.isEmpty)
-        composerView.documentAttachmentsView.invalidateIntrinsicContentSize()
-        composerView.invalidateIntrinsicContentSize()
+        if documentAttachments.isEmpty {
+            composerView.centerContentContainer.hideSubview(composerView.documentAttachmentsView)
+        } else {
+            composerView.centerContentContainer.showSubview(composerView.documentAttachmentsView)
+        }
         updateSendButton()
     }
     
@@ -528,7 +517,6 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         updateMentionFlag(with: textView.text as NSString, till: textView.selectedRange.location)
 
         promptSuggestionIfNeeded(for: textView.text!)
-        composerView.invalidateIntrinsicContentSize()
     }
 
     func updateMentionFlag(with text: NSString, till caret: Int) {
