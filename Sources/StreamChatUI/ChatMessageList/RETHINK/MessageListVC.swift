@@ -42,7 +42,10 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
         .messageComposerViewController
         .init()
     
-    // Load from UIConfig
+    // TODO: Load from UIConfig, seperate PR for this component is already created
+    /// View displaying status of the channel.
+    ///
+    /// The status differs based on the fact if the channel is direct or not.
     public lazy var titleView = ChatMessageListTitleView<ExtraData>()
     
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
@@ -114,38 +117,6 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
         collectionView.backgroundColor = .white
         
         navigationItem.titleView = titleView
-    }
-    
-    /// Updates the status data in `titleView`.
-    ///
-    /// If the channel is direct between two people this method is called repeatedly every minute
-    /// to update the online status of the members.
-    /// For group chat is called everytime the channel changes.
-    open func updateNavigationTitle() {
-        let title = channelController.channel
-            .flatMap { uiConfig.channelList.channelNamer($0, channelController.client.currentUserId) }
-        
-        let subtitle: String? = {
-            if channelController.channel?.isDirectMessageChannel == true {
-                guard let member = channelController.channel?.lastActiveMembers.first else { return nil }
-                
-                if member.isOnline {
-                    // ReallyNotATODO: Missing API GroupA.m1
-                    // need to specify how long user have been online
-                    return "Online"
-                } else if let minutes = member.lastActiveAt
-                    .flatMap({ DateComponentsFormatter.minutes.string(from: $0, to: Date()) }) {
-                    return "Seen \(minutes) ago"
-                } else {
-                    return "Offline"
-                }
-            } else {
-                return channelController.channel.map { "\($0.memberCount) members, \($0.watcherCount) online" }
-            }
-        }()
-        
-        titleView.title = title
-        titleView.subtitle = subtitle
     }
 
     override open func viewDidLoad() {
@@ -243,9 +214,44 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
         // our collection is flipped, so (0; 0) item is most recent one
         collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .bottom, animated: animated)
     }
+    
+    /// Updates the status data in `titleView`.
+    ///
+    /// If the channel is direct between two people this method is called repeatedly every minute
+    /// to update the online status of the members.
+    /// For group chat is called everytime the channel changes.
+    open func updateNavigationTitle() {
+        let title = channelController.channel
+            .flatMap { uiConfig.channelList.channelNamer($0, channelController.client.currentUserId) }
+        
+        let subtitle: String? = {
+            if channelController.channel?.isDirectMessageChannel == true {
+                guard let member = channelController.channel?.lastActiveMembers.first else { return nil }
+                
+                if member.isOnline {
+                    // ReallyNotATODO: Missing API GroupA.m1
+                    // need to specify how long user have been online
+                    return "Online"
+                } else if let minutes = member.lastActiveAt
+                    .flatMap({ DateComponentsFormatter.minutes.string(from: $0, to: Date()) }) {
+                    return "Seen \(minutes) ago"
+                } else {
+                    return "Offline"
+                }
+            } else {
+                return channelController.channel.map { "\($0.memberCount) members, \($0.watcherCount) online" }
+            }
+        }()
+        
+        titleView.title = title
+        titleView.subtitle = subtitle
+    }
 
-    @objc
-    private func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+    /// Handles long press action on collection view.
+    ///
+    /// Default implementation will convert the gesture location to collection view's `indexPath`
+    /// and then call selection action on the selected cell.
+    @objc open func didLongPress(_ gesture: UILongPressGestureRecognizer) {
         let location = gesture.location(in: collectionView)
 
         guard
