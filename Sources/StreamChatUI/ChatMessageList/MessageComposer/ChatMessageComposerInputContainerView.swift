@@ -11,9 +11,9 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _V
     // MARK: - Properties
     
     open var rightAccessoryButtonHeight: CGFloat = 30
-    
+
     // MARK: - Subviews
-    
+
     public private(set) lazy var container = UIStackView().withoutAutoresizingMaskConstraints
         
     public private(set) lazy var textView = uiConfig
