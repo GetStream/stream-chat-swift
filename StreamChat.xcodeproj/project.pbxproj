@@ -392,13 +392,11 @@
 		804CA80D25D43ECA00731116 /* 02-Typealiases.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA80C25D43ECA00731116 /* 02-Typealiases.swift */; };
 		804CA81725D4595F00731116 /* 00-View-Lifecycle-Methods.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA81625D4595F00731116 /* 00-View-Lifecycle-Methods.swift */; };
 		804CA82725D45A1800731116 /* 01-Changing-Main-Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA82625D45A1800731116 /* 01-Changing-Main-Color.swift */; };
-		804CA83025D45BEE00731116 /* 02-Changing-Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA82F25D45BEE00731116 /* 02-Changing-Appearance.swift */; };
-		804CA83925D45C5A00731116 /* 03-Changing-Appearance-2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA83825D45C5A00731116 /* 03-Changing-Appearance-2.swift */; };
-		804CA84925D45D0F00731116 /* 04-Subclassing-Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA84825D45D0F00731116 /* 04-Subclassing-Components.swift */; };
-		804CA85225D45DDC00731116 /* 05-Changing-Component-Arrangement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA85125D45DDC00731116 /* 05-Changing-Component-Arrangement.swift */; };
-		804CA85B25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA85A25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift */; };
-		804CA86B25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA86A25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift */; };
-		804CA87425D4604200731116 /* 08-Injecting-Custom-Subclass-3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA87325D4604100731116 /* 08-Injecting-Custom-Subclass-3.swift */; };
+		804CA84925D45D0F00731116 /* 02-Subclassing-Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA84825D45D0F00731116 /* 02-Subclassing-Components.swift */; };
+		804CA85225D45DDC00731116 /* 03-Changing-Component-Arrangement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA85125D45DDC00731116 /* 03-Changing-Component-Arrangement.swift */; };
+		804CA85B25D45F0600731116 /* 04-Injecting-Custom-Subclass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA85A25D45F0600731116 /* 04-Injecting-Custom-Subclass.swift */; };
+		804CA86B25D45FF300731116 /* 05-Injecting-Custom-Subclass-2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA86A25D45FF300731116 /* 05-Injecting-Custom-Subclass-2.swift */; };
+		804CA87425D4604200731116 /* 06-Injecting-Custom-Subclass-3.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA87325D4604100731116 /* 06-Injecting-Custom-Subclass-3.swift */; };
 		804CA88C25D4647D00731116 /* 00-Customization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA88B25D4647D00731116 /* 00-Customization.swift */; };
 		804CA89D25D4726500731116 /* 00-Initialization-Users.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA89C25D4726500731116 /* 00-Initialization-Users.swift */; };
 		804CA8AE25D4740F00731116 /* 01-Connecting-User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 804CA8AD25D4740F00731116 /* 01-Connecting-User.swift */; };
@@ -1526,13 +1524,11 @@
 		804CA80C25D43ECA00731116 /* 02-Typealiases.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Typealiases.swift"; sourceTree = "<group>"; };
 		804CA81625D4595F00731116 /* 00-View-Lifecycle-Methods.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-View-Lifecycle-Methods.swift"; sourceTree = "<group>"; };
 		804CA82625D45A1800731116 /* 01-Changing-Main-Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Changing-Main-Color.swift"; sourceTree = "<group>"; };
-		804CA82F25D45BEE00731116 /* 02-Changing-Appearance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Changing-Appearance.swift"; sourceTree = "<group>"; };
-		804CA83825D45C5A00731116 /* 03-Changing-Appearance-2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "03-Changing-Appearance-2.swift"; sourceTree = "<group>"; };
-		804CA84825D45D0F00731116 /* 04-Subclassing-Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "04-Subclassing-Components.swift"; sourceTree = "<group>"; };
-		804CA85125D45DDC00731116 /* 05-Changing-Component-Arrangement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "05-Changing-Component-Arrangement.swift"; sourceTree = "<group>"; };
-		804CA85A25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "06-Injecting-Custom-Subclass.swift"; sourceTree = "<group>"; };
-		804CA86A25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "07-Injecting-Custom-Subclass-2.swift"; sourceTree = "<group>"; };
-		804CA87325D4604100731116 /* 08-Injecting-Custom-Subclass-3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "08-Injecting-Custom-Subclass-3.swift"; sourceTree = "<group>"; };
+		804CA84825D45D0F00731116 /* 02-Subclassing-Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "02-Subclassing-Components.swift"; sourceTree = "<group>"; };
+		804CA85125D45DDC00731116 /* 03-Changing-Component-Arrangement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "03-Changing-Component-Arrangement.swift"; sourceTree = "<group>"; };
+		804CA85A25D45F0600731116 /* 04-Injecting-Custom-Subclass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "04-Injecting-Custom-Subclass.swift"; sourceTree = "<group>"; };
+		804CA86A25D45FF300731116 /* 05-Injecting-Custom-Subclass-2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "05-Injecting-Custom-Subclass-2.swift"; sourceTree = "<group>"; };
+		804CA87325D4604100731116 /* 06-Injecting-Custom-Subclass-3.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "06-Injecting-Custom-Subclass-3.swift"; sourceTree = "<group>"; };
 		804CA88B25D4647D00731116 /* 00-Customization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Customization.swift"; sourceTree = "<group>"; };
 		804CA89C25D4726500731116 /* 00-Initialization-Users.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "00-Initialization-Users.swift"; sourceTree = "<group>"; };
 		804CA8AD25D4740F00731116 /* 01-Connecting-User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "01-Connecting-User.swift"; sourceTree = "<group>"; };
@@ -3203,13 +3199,11 @@
 			children = (
 				804CA81625D4595F00731116 /* 00-View-Lifecycle-Methods.swift */,
 				804CA82625D45A1800731116 /* 01-Changing-Main-Color.swift */,
-				804CA82F25D45BEE00731116 /* 02-Changing-Appearance.swift */,
-				804CA83825D45C5A00731116 /* 03-Changing-Appearance-2.swift */,
-				804CA84825D45D0F00731116 /* 04-Subclassing-Components.swift */,
-				804CA85125D45DDC00731116 /* 05-Changing-Component-Arrangement.swift */,
-				804CA85A25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift */,
-				804CA86A25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift */,
-				804CA87325D4604100731116 /* 08-Injecting-Custom-Subclass-3.swift */,
+				804CA84825D45D0F00731116 /* 02-Subclassing-Components.swift */,
+				804CA85125D45DDC00731116 /* 03-Changing-Component-Arrangement.swift */,
+				804CA85A25D45F0600731116 /* 04-Injecting-Custom-Subclass.swift */,
+				804CA86A25D45FF300731116 /* 05-Injecting-Custom-Subclass-2.swift */,
+				804CA87325D4604100731116 /* 06-Injecting-Custom-Subclass-3.swift */,
 			);
 			path = "06-Customizing-Views";
 			sourceTree = "<group>";
@@ -5564,7 +5558,7 @@
 				804CA8C825D475A000731116 /* 00-Tokens.swift in Sources */,
 				8026AE7C25FBFB9200533EA7 /* 02-Quote-Message.swift in Sources */,
 				804CA92525D5668900731116 /* 00-Server-User-Updates.swift in Sources */,
-				804CA84925D45D0F00731116 /* 04-Subclassing-Components.swift in Sources */,
+				804CA84925D45D0F00731116 /* 02-Subclassing-Components.swift in Sources */,
 				804CA7EE25D43C5800731116 /* 01-Custom-ExtraDataTypes.swift in Sources */,
 				8051F74B25D9A00400D4F938 /* 01-User-Search.swift in Sources */,
 				8051F6C725D6EA4A00D4F938 /* 03-Query-Accepted-Invites.swift in Sources */,
@@ -5572,7 +5566,7 @@
 				804CA88C25D4647D00731116 /* 00-Customization.swift in Sources */,
 				8051F71725D6F55300D4F938 /* 00-Querying-Members.swift in Sources */,
 				8026AE6025FBE02B00533EA7 /* 02-Cumulative-Reactions.swift in Sources */,
-				804CA86B25D45FF300731116 /* 07-Injecting-Custom-Subclass-2.swift in Sources */,
+				804CA86B25D45FF300731116 /* 05-Injecting-Custom-Subclass-2.swift in Sources */,
 				804CA9AF25D5768600731116 /* 00-Creating-Channel-Id.swift in Sources */,
 				804CA7E525D43B5900731116 /* 00-Channel-Extra-Data.swift in Sources */,
 				8051F6FB25D6F27000D4F938 /* 00-Channel-Mute.swift in Sources */,
@@ -5592,7 +5586,7 @@
 				804CA7C825D4045000731116 /* 05-Handle-Push-Notifications.swift in Sources */,
 				804CA7BF25D4045000731116 /* 01-Connecting.swift in Sources */,
 				804CA9EC25D5A72C00731116 /* 01-Filters-Messaging-Team.swift in Sources */,
-				804CA87425D4604200731116 /* 08-Injecting-Custom-Subclass-3.swift in Sources */,
+				804CA87425D4604200731116 /* 06-Injecting-Custom-Subclass-3.swift in Sources */,
 				8051F78025D9DC9000D4F938 /* 04-Delete-Message.swift in Sources */,
 				804CA7C525D4045000731116 /* 02-Development-Token.swift in Sources */,
 				8051F73B25D99F3600D4F938 /* 00-Multi-Tenant-Teams.swift in Sources */,
@@ -5603,7 +5597,6 @@
 				8026AE6A25FBF94700533EA7 /* 00-Create-Thread.swift in Sources */,
 				804CA91225D479EF00731116 /* 05-Anonymous-Users.swift in Sources */,
 				8051F72125D99DE100D4F938 /* 00-Channel-Slow-Mode.swift in Sources */,
-				804CA83925D45C5A00731116 /* 03-Changing-Appearance-2.swift in Sources */,
 				804CA7BD25D4045000731116 /* 02-Disconnecting.swift in Sources */,
 				804CA90225D4798700731116 /* 04-Guest-Users.swift in Sources */,
 				804CA7BC25D4045000731116 /* 03-Enable-Logs.swift in Sources */,
@@ -5612,12 +5605,11 @@
 				804CA81725D4595F00731116 /* 00-View-Lifecycle-Methods.swift in Sources */,
 				808278CA25D1CBCC008039DD /* 00-Client-Setup.swift in Sources */,
 				804CA95025D56B4300731116 /* 00-Anonymous-Users.swift in Sources */,
-				804CA83025D45BEE00731116 /* 02-Changing-Appearance.swift in Sources */,
 				8026AE5725FBDED800533EA7 /* 01-Remove-Reaction.swift in Sources */,
 				8026AE8D25FC07C400533EA7 /* 00-Silent-Messages.swift in Sources */,
 				804CA82725D45A1800731116 /* 01-Changing-Main-Color.swift in Sources */,
 				804CA9D125D596D500731116 /* 00-Watching-Channel.swift in Sources */,
-				804CA85B25D45F0600731116 /* 06-Injecting-Custom-Subclass.swift in Sources */,
+				804CA85B25D45F0600731116 /* 04-Injecting-Custom-Subclass.swift in Sources */,
 				80750A5925D1D5B90027F951 /* 02-Channels-Code.swift in Sources */,
 				804CA7C925D4045000731116 /* 00-Local-Notifications-Template.swift in Sources */,
 				8026AEC925FC0D7300533EA7 /* 01-Mutes.swift in Sources */,
@@ -5653,7 +5645,7 @@
 				8082786225D1BAE9008039DD /* 00-ChatClient.swift in Sources */,
 				804CA8AE25D4740F00731116 /* 01-Connecting-User.swift in Sources */,
 				804CA8E825D4768200731116 /* 02-Development-Tokens.swift .swift in Sources */,
-				804CA85225D45DDC00731116 /* 05-Changing-Component-Arrangement.swift in Sources */,
+				804CA85225D45DDC00731116 /* 03-Changing-Component-Arrangement.swift in Sources */,
 				8051F77725D9DBD300D4F938 /* 03-Update-Message.swift in Sources */,
 				8051F6EA25D6F00300D4F938 /* 01-Hiding-Channel.swift in Sources */,
 				804CA8D825D475F900731116 /* 01-Tokens-1.swift in Sources */,

@@ -108,7 +108,7 @@ To make subclassing and customization simple, almost all view components in `Str
 func setUp()
 
 /// Main point of customization for the view appearance. It's called zero or one time(s) during the view's
-/// lifetime. The default implementation of this method is empty so calling `super` is usually not needed.
+/// lifetime. Calling super implementation is recommended but not needed as you might want to keep some of the default appearance.
 func setUpAppearance()
 
 /// Main point of customization for the view layout. It's called zero or one time(s) during the view's
@@ -138,36 +138,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 | default `tintColor`  | `tintColor = .systemPink` |
 | ------------- | ------------- |
 | ![Chat UI with default tint color](/img/blue-tint.png)  | ![Chat UI with pink tint color](/img/pink-tint.png)  |
-
-### Changing Appearance
-
-**- 🅱️ Beta only -**
-
-`StreamChatUI` offers a simple way of customizing the default appearance of almost every UI element using the `DefaultAppearance` protocol. Elements conforming to this protocol expose the `defaultAppearance` property which allows adding custom appearance rules.
-
-For example, this is the default appearance of the list of channels:
-
-![Channel list default appearance](/img/default-appearance-1.png)
-
-We can easily change the appearance of the channel list items using the `defaultAppearance` API:
-```swift
-var uiConfig = UIConfig.default
-uiConfig.channelList.channelListItemView.defaultAppearance.addRule {
-    $0.backgroundColor = UIColor.yellow.withAlphaComponent(0.2)
-    $0.titleLabel.textColor = .darkGray
-}
-```
-
-![Channel list adjusted appearance](/img/default-appearance-2.png)
-
-The unread count indicator now seems quite off. We can change its color, too:
-```swift
-uiConfig.channelList.channelListItemSubviews.unreadCountView.defaultAppearance.addRule {
-    $0.backgroundColor = .darkGray
-}
-```
-
-![Channel list adjusted appearance](/img/default-appearance-3.png)
 
 ### Changing Layout
 
