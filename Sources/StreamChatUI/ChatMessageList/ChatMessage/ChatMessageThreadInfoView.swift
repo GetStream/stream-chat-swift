@@ -134,7 +134,12 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
     }
 
     open func updateForThreadStart() {
-        if let latestReplyAuthorAvatar = message?.latestReplies.first?.author.imageURL {
+        let lastAuthor: _ChatUser<ExtraData.User>? = message?
+            .lastActiveThreadParticipant
+            ?? message?.latestReplies.first?.author
+            ?? nil
+        
+        if let latestReplyAuthorAvatar = lastAuthor?.imageURL {
             avatarView.isHidden = false
             avatarView.imageView.loadImage(from: latestReplyAuthorAvatar)
         } else {
@@ -152,5 +157,17 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
         avatarView.isHidden = true
         avatarView.imageView.image = nil
         replyCountLabel.text = L10n.Message.Threads.reply
+    }
+}
+
+extension _ChatMessage {
+    var lastActiveThreadParticipant: _ChatUser<ExtraData.User>? {
+        func sortingCriteriaDate(_ user: _ChatUser<ExtraData.User>) -> Date {
+            user.lastActiveAt ?? user.userUpdatedAt
+        }
+        
+        return threadParticipants
+            .sorted(by: { sortingCriteriaDate($0) > sortingCriteriaDate($1) })
+            .first
     }
 }
