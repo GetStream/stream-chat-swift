@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type representing an attachment of type `image`.
-public struct ChatMessageImageAttachment: ChatMessageAttachment, AttachmentEnvelope, Decodable {
+public struct ChatMessageImageAttachment: ChatMessageUploadableAttachment, AttachmentEnvelope, Decodable {
     public var type: AttachmentType { .image }
     /// A unique identifier of the attachment.
     public var id: AttachmentId?
@@ -16,6 +16,8 @@ public struct ChatMessageImageAttachment: ChatMessageAttachment, AttachmentEnvel
     public var localURL: URL?
     /// A local attachment state
     public var localState: LocalAttachmentState?
+    /// A file info.
+    public let file: AttachmentFile?
     
     /// A title, usually the name of the image.
     public let title: String?
@@ -24,8 +26,9 @@ public struct ChatMessageImageAttachment: ChatMessageAttachment, AttachmentEnvel
     /// A link to the image preview.
     public let imagePreviewURL: URL?
     
-    init(title: String) {
+    init(title: String, file: AttachmentFile?) {
         self.title = title
+        self.file = file
         imagePreviewURL = nil
     }
     
@@ -55,6 +58,8 @@ public struct ChatMessageImageAttachment: ChatMessageAttachment, AttachmentEnvel
         )?.attachmentFixedURL
         
         imagePreviewURL = try container.decodeIfPresent(String.self, forKey: .thumbURL)?.attachmentFixedURL
+        
+        file = try AttachmentFile(from: decoder)
     }
     
     public func encode(to encoder: Encoder) throws {
@@ -63,5 +68,6 @@ public struct ChatMessageImageAttachment: ChatMessageAttachment, AttachmentEnvel
         try container.encode(type, forKey: .type)
         try container.encode(title, forKey: .fallback)
         try container.encode(imageURL, forKey: .imageURL)
+        try file?.encode(to: encoder)
     }
 }

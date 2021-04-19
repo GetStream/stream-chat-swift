@@ -127,7 +127,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
             
             switch seed.type {
             case .image:
-                attachment = ChatMessageImageAttachment(title: seed.fileName)
+                attachment = ChatMessageImageAttachment(title: seed.fileName, file: seed.file)
             case .file:
                 attachment = ChatMessageFileAttachment(title: seed.fileName, file: seed.file)
             default:

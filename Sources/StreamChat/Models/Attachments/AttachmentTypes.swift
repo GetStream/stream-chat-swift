@@ -10,6 +10,13 @@ public protocol ChatMessageAttachment {
     var id: AttachmentId? { get set }
 }
 
+/// A protocol for attachment model objects that are created from database `AttachmentDTO` objects and exposed.
+public protocol ChatMessageUploadableAttachment: ChatMessageAttachment {
+    var title: String? { get }
+    var localState: LocalAttachmentState? { get }
+    var file: AttachmentFile? { get }
+}
+
 /// A protocol for attachment objects being manipulated outside the SDK and can be sent to backend without prior uploading.
 public protocol AttachmentEnvelope: Encodable {
     var type: AttachmentType { get }

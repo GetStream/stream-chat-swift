@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type representing an attachment of type `file`.
-public struct ChatMessageFileAttachment: ChatMessageAttachment, AttachmentEnvelope, Decodable {
+public struct ChatMessageFileAttachment: ChatMessageUploadableAttachment, AttachmentEnvelope, Decodable {
     public var type: AttachmentType { .file }
     /// A unique identifier of the attachment.
     public var id: AttachmentId?
