@@ -24,34 +24,15 @@ final class iMessageChatChannelListItemView: ChatChannelListItemView {
     
     override func setUpLayout() {
         super.setUpLayout()
-        
-        unreadView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(unreadView)
-        NSLayoutConstraint.activate([
-            unreadView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            unreadView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 5),
-            unreadView.heightAnchor.constraint(equalToConstant: 10),
-            unreadView.widthAnchor.constraint(equalTo: unreadView.heightAnchor)
-        ])
-        
-        let timestampStackView = UIStackView()
-        timestampStackView.spacing = 14
-        timestampStackView.alignment = .center
-        timestampStackView.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(timestampStackView)
-        NSLayoutConstraint.activate([
-            timestampStackView.topAnchor.constraint(equalTo: topAnchor, constant: 9),
-            timestampStackView.leadingAnchor.constraint(equalTo: avatarView.trailingAnchor, constant: 12),
-            timestampStackView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -20)
-        ])
 
-        timestampStackView.addArrangedSubview(titleLabel)
-        
-        timestampLabel.setContentHuggingPriority(.required, for: .horizontal)
-        timestampLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-        NSLayoutConstraint.deactivate(layout.timestampLabelConstraints)
-        timestampStackView.addArrangedSubview(timestampLabel)
-        
+        // Add left unread view blue dot.
+        unreadView.translatesAutoresizingMaskIntoConstraints = false
+        mainContainer.insertArrangedSubview(unreadView, at: 0)
+
+        // Also we need to remove unreadCountView while we use the leading-sided unread indicator.
+        topContainer.removeArrangedSubview(unreadCountView)
+
+        // Create timestamp with chevron ContainerView.
         let timestampAccessoryView = UIImageView(
             image: UIImage(
                 systemName: "chevron.right",
@@ -64,31 +45,41 @@ final class iMessageChatChannelListItemView: ChatChannelListItemView {
         )
         timestampAccessoryView.tintColor = UIColor.gray.withAlphaComponent(0.6)
         timestampAccessoryView.translatesAutoresizingMaskIntoConstraints = false
-        timestampAccessoryView.setContentHuggingPriority(.required, for: .horizontal)
-        timestampStackView.addArrangedSubview(timestampAccessoryView)
+
+        // Create container holding the timestamp and accessoryView.
+        let timestampContainer = ContainerStackView(
+            axis: .horizontal,
+            alignment: .axisTrailing,
+            spacing: 14,
+            views: [timestampLabel, timestampAccessoryView]
+        )
+
+        topContainer.insertArrangedSubview(timestampContainer, at: 1)
+        bottomContainer.alignment = .axisLeading
+        mainContainer.spacing = 8
+
+        // Activate all constraints
+
         NSLayoutConstraint.activate([
-            timestampAccessoryView.heightAnchor.constraint(equalTo: timestampLabel.heightAnchor, constant: -6)
-        ])
-        
-        titleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        
-        NSLayoutConstraint.activate([
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
-            subtitleLabel.trailingAnchor.constraint(equalTo: timestampAccessoryView.trailingAnchor),
-            subtitleLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
-            avatarView.topAnchor.constraint(equalTo: timestampStackView.topAnchor, constant: 6),
+            // Set the constraints for avatarView
+            avatarView.topAnchor.constraint(equalTo: topContainer.topAnchor, constant: 6),
             avatarView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 26),
             avatarView.heightAnchor.constraint(equalToConstant: 48),
-            avatarView.widthAnchor.constraint(equalTo: avatarView.heightAnchor)
+            avatarView.widthAnchor.constraint(equalTo: avatarView.heightAnchor),
+            // Set constraints to unreadView
+            unreadView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            unreadView.heightAnchor.constraint(equalToConstant: 10),
+            unreadView.widthAnchor.constraint(equalTo: unreadView.heightAnchor),
+            // Set constraint from right to container
+            mainContainer.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8)
         ])
     }
     
     override func updateContent() {
         super.updateContent()
 
-        unreadView.isHidden = unreadCountView.isHidden
-        unreadCountView.isHidden = true
-
+        avatarView.presenceAvatarView.isOnlineIndicatorVisible = false
+        unreadView.isHidden = unreadCountView.content == .noUnread
         timestampLabel.text = content?.lastMessageAt?.formatRelativeString() ?? ""
     }
 }

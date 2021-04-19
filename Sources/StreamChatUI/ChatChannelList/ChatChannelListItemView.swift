@@ -17,20 +17,18 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
 
     /// The date formatter of the `timestampLabel`
     public lazy var dateFormatter: DateFormatter = .makeDefault()
-    
-    /// Properties tied to `ChatChannelListItemView` layout
-    public struct Layout {
-        /// Constraints of `timestampLabel`
-        public fileprivate(set) var timestampLabelConstraints: [NSLayoutConstraint] = []
-        /// Constraints of `avatarView`
-        public fileprivate(set) var avatarViewConstraints: [NSLayoutConstraint] = []
-        /// Constraints of `titleLabel`
-        public fileprivate(set) var titleLabelConstraints: [NSLayoutConstraint] = []
-        /// Constraints of `subtitleLabel`
-        public fileprivate(set) var subtitleLabelConstraints: [NSLayoutConstraint] = []
-        /// Constraints of `unreadCountView`
-        public fileprivate(set) var unreadCountViewConstraints: [NSLayoutConstraint] = []
-    }
+
+    /// Main container which holds `avatarView` and two horizontal containers `title` and `unreadCount` and
+    /// `subtitle` and `timestampLabel`
+    open private(set) lazy var mainContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+
+    /// By default contains `title` and `unreadCount`.
+    /// This container is embed inside `mainContainer ` and is the one above `bottomContainer`
+    open private(set) lazy var topContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+
+    /// By default contains `subtitle` and `timestampLabel`.
+    /// This container is embed inside `mainContainer ` and is the one below `topContainer`
+    open private(set) lazy var bottomContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
     
     /// The `UILabel` instance showing the channel name.
     open private(set) lazy var titleLabel: UILabel = uiConfig
@@ -107,9 +105,6 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         }
     }
 
-    /// Layout properties of this view
-    public private(set) var layout = Layout()
-
     /*
          TODO: ReadStatusView, Missing LLC API
      /// The view showing indicator for read status of the last message in channel.
@@ -134,106 +129,37 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
 
     override open func setUpLayout() {
         super.setUpLayout()
+
+        /// Default layout:
+        /// ```
+        /// |----------------------------------------------------|
+        /// |            | titleLabel          | unreadCountView |
+        /// | avatarView | --------------------------------------|
+        /// |            | subtitleLabel        | timestampLabel |
+        /// |----------------------------------------------------|
+        /// ```
         
-        addSubview(titleLabel)
-        addSubview(subtitleLabel)
-        addSubview(timestampLabel)
-        addSubview(avatarView)
-        addSubview(unreadCountView)
-        
-        // A helper layout guide that helps to visually center views around the vertical center of the cell
-        // with defined vertical spacing
-        let visualCenterGuide = UILayoutGuide()
-        addLayoutGuide(visualCenterGuide)
-        
-        // Helper vertical center layout guide
+        topContainer.addArrangedSubviews([
+            titleLabel.flexible(axis: .horizontal), unreadCountView
+        ])
+
+        bottomContainer.addArrangedSubviews([
+            subtitleLabel.flexible(axis: .horizontal), timestampLabel
+        ])
+
         NSLayoutConstraint.activate([
-            // Pin the center guide to the vertical center
-            visualCenterGuide.centerYAnchor.pin(equalTo: centerYAnchor),
-            
-            // Set its height to the current vertical margin to match the current spacing
-            visualCenterGuide.heightAnchor.pin(equalToConstant: layoutMargins.top)
+            avatarView.heightAnchor.pin(equalToConstant: 48),
+            avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor)
+        ])
+
+        mainContainer.addArrangedSubviews([
+            avatarView, ContainerStackView(axis: .vertical, spacing: 4, views: [topContainer, bottomContainer])
         ])
         
-        // Avatar view
-        layout.avatarViewConstraints = [
-            // Default avatar view size
-            avatarView.heightAnchor.pin(equalToConstant: 48),
-            
-            // Pin size/width ratio to 1:1
-            avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor),
-            
-            // Align avatar to the left
-            avatarView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-            
-            // Always center the avatar vertically
-            avatarView.centerYAnchor.pin(equalTo: visualCenterGuide.centerYAnchor),
-            
-            // Avatar top and bottom should always be inside the cell
-            avatarView.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
-            avatarView.bottomAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor)
-        ]
+        mainContainer.alignment = .center
+        mainContainer.isLayoutMarginsRelativeArrangement = true
         
-        // Title label
-        layout.titleLabelConstraints = [
-            // Bottom of the label is aligned with avatar vertical center
-            titleLabel.lastBaselineAnchor.pin(equalTo: visualCenterGuide.topAnchor),
-            
-            // Pin the title label leading anchor to avatar's trailing + spacing
-            titleLabel.leadingAnchor.pin(equalToSystemSpacingAfter: avatarView.trailingAnchor),
-            
-            // Title label top should always be inside the cell
-            titleLabel.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor)
-        ]
-
-        // Subtitle label
-        layout.subtitleLabelConstraints = [
-            // Top of the label is aligned with avatar vertical center
-            subtitleLabel.topAnchor.pin(equalTo: visualCenterGuide.bottomAnchor),
-            
-            // Pin the subtitle label leading anchor to avatar's trailing + spacing
-            subtitleLabel.leadingAnchor.pin(equalToSystemSpacingAfter: avatarView.trailingAnchor)
-        ]
-
-        // Unread count view
-        layout.unreadCountViewConstraints = [
-            // Pin the label to the trailing anchor
-            unreadCountView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-            
-            // Align it vertically with the title
-            unreadCountView.centerYAnchor.pin(equalTo: titleLabel.centerYAnchor),
-            
-            // Title label shouldn't overlap
-            unreadCountView.leadingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: titleLabel.trailingAnchor)
-        ]
-
-        // Set titleLabel compression resistance smaller than the unread count view
-        titleLabel.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
-        unreadCountView.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
-
-        // Timestamp label
-        layout.timestampLabelConstraints = [
-            // Pin the label to the trailing anchor
-            timestampLabel.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-            
-            // Align it vertically with the subtitle
-            timestampLabel.centerYAnchor.pin(equalTo: subtitleLabel.centerYAnchor),
-            
-            // Subtitle label shouldn't overlap
-            timestampLabel.leadingAnchor.pin(greaterThanOrEqualToSystemSpacingAfter: subtitleLabel.trailingAnchor)
-        ]
-
-        // Set subtitleLabel compression resistance smaller than the timestamp label
-        subtitleLabel.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
-        timestampLabel.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
-
-        NSLayoutConstraint.activate(
-            layout.avatarViewConstraints
-                + layout.timestampLabelConstraints
-                + layout.titleLabelConstraints
-                + layout.subtitleLabelConstraints
-                + layout.unreadCountViewConstraints
-        )
+        embed(mainContainer)
     }
     
     override open func updateContent() {
