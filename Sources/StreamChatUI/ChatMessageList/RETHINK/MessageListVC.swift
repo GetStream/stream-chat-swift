@@ -340,8 +340,25 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
 
     // MARK: Cell action handlers
 
-    open func handleTapOnAttachment(_ attachment: ChatMessageAttachment, forCellAt indexPath: IndexPath) {
-        guard let attachment = attachment as? ChatMessageDefaultAttachment else {
+    open func didTapOnErrorIndicator(at indexPath: IndexPath) {
+        didSelectMessageCell(at: indexPath)
+    }
+
+    open func didTapOnThread(at indexPath: IndexPath) {
+        guard let channel = channelController.channel else { return }
+
+        let controller = MessageThreadVC<ExtraData>()
+        controller.channelController = channelController
+        controller.messageController = channelController.client.messageController(
+            cid: channel.cid,
+            messageId: channelController.messages[indexPath.item].id
+        )
+        navigationController?.show(controller, sender: self)
+    }
+
+    open func didTapOnQuotedMessage(at indexPath: IndexPath) {
+        didSelectMessageCell(at: indexPath)
+    }
             return
         }
 
@@ -371,26 +388,6 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             messageId: channelController.messages[indexPath.row].id
         )
         messageController.dispatchEphemeralMessageAction(action)
-    }
-
-    open func handleTapOnQuotedMessage(_ quotedMessage: _ChatMessage<ExtraData>, forCellAt indexPath: IndexPath) {
-        didSelectMessageCell(at: indexPath)
-    }
-
-    open func handleTapOnErrorIndicator(forCellAt indexPath: IndexPath) {
-        didSelectMessageCell(at: indexPath)
-    }
-
-    open func handleTapOnThread(forCellAt indexPath: IndexPath) {
-        guard let channel = channelController.channel else { return }
-        
-        let controller = MessageThreadVC<ExtraData>()
-        controller.channelController = channelController
-        controller.messageController = channelController.client.messageController(
-            cid: channel.cid,
-            messageId: channelController.messages[indexPath.item].id
-        )
-        navigationController?.show(controller, sender: self)
     }
 }
 

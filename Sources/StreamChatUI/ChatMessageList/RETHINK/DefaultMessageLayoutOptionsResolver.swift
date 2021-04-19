@@ -73,47 +73,10 @@ public func DefaultMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes>(
             options.insert(.error)
         }
 
-        let attachmentOptions: ChatMessageLayoutOptions = message.attachments.reduce([]) { options, attachment in
-            if (attachment as? ChatMessageDefaultAttachment)?.actions.isEmpty == false {
-                return options.union(.actions)
-            }
-            
-            switch attachment.type {
-            case .image:
-                return options.union(.photoPreview)
-            case .giphy:
-                return options.union(.giphy)
-            case .file:
-                return options.union(.filePreview)
-            case .link:
-                return options.union(.linkPreview)
-            default:
-                return options
-            }
-        }
-        
-        if attachmentOptions.contains(.actions) {
-            options.insert(.actions)
-        } else if attachmentOptions.intersection([.photoPreview, .giphy, .filePreview]).isEmpty == false {
-            options.formUnion(attachmentOptions.subtracting(.linkPreview))
-        } else if attachmentOptions.contains(.linkPreview) {
-            options.insert(.linkPreview)
-        }
-
-        if !options.intersection(.maxWidthRequirments).isEmpty {
+        if !message.attachments.isEmpty {
             options.insert(.maxWidth)
         }
         
         return options
     }
-}
-
-extension ChatMessageLayoutOptions {
-    static let maxWidthRequirments: ChatMessageLayoutOptions = [
-        .photoPreview,
-        .filePreview,
-        .linkPreview,
-        .actions,
-        .giphy
-    ]
 }

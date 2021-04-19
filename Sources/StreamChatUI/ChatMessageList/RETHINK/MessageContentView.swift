@@ -5,56 +5,46 @@
 import StreamChat
 import UIKit
 
-extension MessageContentView {
-    struct Delegate {
-        var didTapOnErrorIndicator: () -> Void
-        var didTapOnThread: () -> Void
-        var didTapOnAttachment: (ChatMessageAttachment) -> Void
-        var didTapOnAttachmentAction: (ChatMessageAttachment, AttachmentAction) -> Void
-        var didTapOnQuotedMessage: (_ChatMessage<ExtraData>) -> Void
-    }
+public protocol MessageContentViewDelegate: AnyObject {
+    func didTapOnErrorIndicator(at indexPath: IndexPath)
+    func didTapOnThread(at indexPath: IndexPath)
+    func didTapOnQuotedMessage(at indexPath: IndexPath)
 }
 
 class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    var content: _ChatMessage<ExtraData>? {
-        didSet {
-            updateContentIfNeeded()
-        }
-    }
-
-    var delegate: Delegate? {
-        didSet {
-            // We need this since the action closures for `photo/file` previews
-            // are set up in `updateContent`. After dequeuing the cell we set content AND the delegate which results
-            // in 2 `updateContent` executions and should be fixed/reimplemented.
-            updateContentIfNeeded()
-        }
-    }
-
     private var layoutOptions: ChatMessageLayoutOptions!
 
-    var maxContentWidthMultiplier: CGFloat { 0.75 }
+    // MARK: Content && Actions
+
+    var indexPath: IndexPath?
+    weak var delegate: MessageContentViewDelegate?
+
+    var content: _ChatMessage<ExtraData>? {
+        didSet { updateContentIfNeeded() }
+    }
+
+    // MARK: Content views
 
     var bubbleView: BubbleView<ExtraData>?
     var authorAvatarView: ChatAvatarView?
     var textView: UITextView?
     var metadataView: _ChatMessageMetadataView<ExtraData>?
-    var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>?
-    var quotedMessageView: _ChatMessageQuoteBubbleView<ExtraData>?
-    var photoPreviewView: _ChatMessageImageGallery<ExtraData>?
-    var filePreviewView: _ChatMessageFileAttachmentListView<ExtraData>?
-    var giphyView: _ChatMessageGiphyView<ExtraData>?
-    var actionsView: _ChatMessageInteractiveAttachmentView<ExtraData>?
     var errorIndicatorView: _ChatMessageErrorIndicator<ExtraData>?
-
+    var quotedMessageView: _ChatMessageQuoteBubbleView<ExtraData>?
     var reactionsView: _ReactionsCompactView<ExtraData>?
     var reactionsBubbleView: ReactionsBubbleView<ExtraData>?
-
     var threadReplyCountButton: UIButton?
     var threadAvatarView: ChatAvatarView?
     var threadArrowView: _SimpleChatMessageThreadArrowView<ExtraData>?
-    
-    lazy var mainContainer: ContainerView = ContainerView(axis: .horizontal)
+
+    // MARK: Containers
+
+    var maxContentWidthMultiplier: CGFloat { 0.75 }
+    lazy var mainContainer = ContainerView(axis: .horizontal)
+        .withoutAutoresizingMaskConstraints
+    lazy var bubbleThreadMetaContainer = ContainerView(axis: .vertical, spacing: 4)
+        .withoutAutoresizingMaskConstraints
+    lazy var bubbleContentContainer = ContainerView(axis: .vertical)
         .withoutAutoresizingMaskConstraints
 
     override func layoutSubviews() {
@@ -96,12 +86,13 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
             assert(layoutOptions == options, "Attempt to apply different layout")
             return
         }
-        
+        layout(options: options)
         layoutOptions = options
-        
+    }
+
+    func layout(options: ChatMessageLayoutOptions) {
         var constraintsToActivate: [NSLayoutConstraint] = []
-        var fullWidthViews: [UIView] = []
-        
+
         // Main container
         mainContainer.alignment = .axisTrailing
         mainContainer.isLayoutMarginsRelativeArrangement = true
@@ -156,11 +147,7 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         }
 
         // Bubble - Thread - Metadata
-        let bubbleThreadMetaContainer = ContainerView(
-            axis: .vertical,
-            alignment: options.contains(.flipped) ? .axisTrailing : .axisLeading,
-            spacing: 4
-        )
+        bubbleThreadMetaContainer.alignment = options.contains(.flipped) ? .axisTrailing : .axisLeading
         mainContainer.addArrangedSubview(bubbleThreadMetaContainer)
 
         // Bubble view
@@ -193,7 +180,6 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
             ]
             
             let threadReplyCountButton = createThreadReplyCountButton()
-            threadReplyCountButton.addTarget(self, action: #selector(didTapOnThread), for: .touchUpInside)
             threadInfoContainer.addArrangedSubview(threadReplyCountButton)
             
             if options.contains(.flipped) {
@@ -223,54 +209,18 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         }
 
         // Bubble content
-        let contentContainer = ContainerView(axis: .vertical).withoutAutoresizingMaskConstraints
-        bubbleView.embed(contentContainer)
+        bubbleView.embed(bubbleContentContainer)
 
         // Quoted message
         if options.contains(.quotedMessage) {
             let quotedMessageView = createQuotedMessageView()
-            contentContainer.addArrangedSubview(quotedMessageView, respectsLayoutMargins: true)
-        }
-        
-        // Photo preview
-        if options.contains(.photoPreview) {
-            let photoPreviewView = createPhotoPreviewView()
-            contentContainer.addArrangedSubview(photoPreviewView, respectsLayoutMargins: false)
-            fullWidthViews.append(photoPreviewView)
-        }
-
-        // Giphy
-        if options.contains(.giphy) {
-            let giphyView = createGiphyView()
-            contentContainer.addArrangedSubview(giphyView, respectsLayoutMargins: false)
-            fullWidthViews.append(giphyView)
-        }
-
-        // File previews
-        if options.contains(.filePreview) {
-            let filePreviewView = createFilePreviewView()
-            contentContainer.addArrangedSubview(filePreviewView, respectsLayoutMargins: false)
-            fullWidthViews.append(filePreviewView)
+            bubbleContentContainer.addArrangedSubview(quotedMessageView, respectsLayoutMargins: true)
         }
 
         // Text
         if options.contains(.text) {
             let textView = createTextView()
-            contentContainer.addArrangedSubview(textView, respectsLayoutMargins: true)
-        }
-
-        // Link preview
-        if options.contains(.linkPreview) {
-            let linkPreviewView = createLinkPreviewView()
-            contentContainer.addArrangedSubview(linkPreviewView, respectsLayoutMargins: true)
-            fullWidthViews.append(linkPreviewView)
-        }
-
-        // Actions
-        if options.contains(.actions) {
-            let actionsView = createActionsView()
-            contentContainer.addArrangedSubview(actionsView, respectsLayoutMargins: false)
-            fullWidthViews.append(actionsView)
+            bubbleContentContainer.addArrangedSubview(textView, respectsLayoutMargins: true)
         }
 
         // Reactions
@@ -292,14 +242,6 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
                 )
             ]
         }
-
-        constraintsToActivate += fullWidthViews.map { view in
-            view.widthAnchor
-                .pin(equalTo: mainContainer.widthAnchor)
-                // should work with just .streamLow but it doesn't
-                // work for stream preview
-                .with(priority: .streamAlmostRequire)
-        }
         
         NSLayoutConstraint.activate(constraintsToActivate)
     }
@@ -319,51 +261,18 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         // Bubble view
         if content?.type == .ephemeral {
             bubbleView?.backgroundColor = uiConfig.colorPalette.popoverBackground
-            
-        } else if layoutOptions?.contains(.linkPreview) == true {
-            bubbleView?.backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
-            
         } else {
             bubbleView?.backgroundColor = content?.isSentByCurrentUser == true ?
                 uiConfig.colorPalette.background2 :
                 uiConfig.colorPalette.popoverBackground
         }
 
-        let defaultAttachments = content?.attachments.compactMap { $0 as? ChatMessageDefaultAttachment }
-
         // Metadata
         metadataView?.authorLabel.isVisible = layoutOptions?.contains(.authorName) ?? false
         metadataView?.content = content
 
-        // Link preview
-        linkPreviewView?.content = defaultAttachments?.first { $0.type.isLink }
-
         // Quoted message view
         quotedMessageView?.message = content?.quotedMessage
-
-        let attachments: _ChatMessageAttachmentListViewData<ExtraData>? = defaultAttachments.map {
-            .init(
-                attachments: $0,
-                didTapOnAttachment: { [weak self] in
-                    self?.delegate?.didTapOnAttachment($0)
-                },
-                didTapOnAttachmentAction: { [weak self] in
-                    self?.delegate?.didTapOnAttachmentAction($0, $1)
-                }
-            )
-        }
-
-        // Photo preview
-        photoPreviewView?.content = attachments
-
-        // File preview
-        filePreviewView?.content = attachments
-
-        // Giphy view
-        giphyView?.content = defaultAttachments?.first { $0.type == .giphy }
-
-        // Actions view
-        actionsView?.content = attachments?.items.first { !$0.attachment.actions.isEmpty }
 
         // Thread info
         if let replyCount = content?.replyCount {
@@ -380,32 +289,32 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         reactionsView?.content = content
     }
 
+    func prepareForReuse() {
+        content = nil
+        delegate = nil
+        indexPath = nil
+    }
+
     // MARK: - Actions
 
-    @objc func didTapOnErrorIndicator() {
-        delegate?.didTapOnThread()
+    @objc func handleTapOnErrorIndicator() {
+        guard let indexPath = indexPath else { return }
+        delegate?.didTapOnErrorIndicator(at: indexPath)
     }
 
-    @objc func didTapOnThread() {
-        delegate?.didTapOnThread()
+    @objc func handleTapOnThread() {
+        guard let indexPath = indexPath else { return }
+        delegate?.didTapOnThread(at: indexPath)
     }
 
-    @objc func didTapOnLinkPreview() {
-        guard let attachment = linkPreviewView?.content else {
-            assertionFailure()
-            return
-        }
-
-        delegate?.didTapOnAttachment(attachment)
-    }
-
-    @objc func didTapOnQuotedMessage() {
+    @objc func handleTapOnQuotedMessage() {
         guard let quotedMessage = quotedMessageView?.message else {
             assertionFailure()
             return
         }
 
-        delegate?.didTapOnQuotedMessage(quotedMessage)
+        guard let indexPath = indexPath else { return }
+        delegate?.didTapOnQuotedMessage(at: indexPath)
     }
 }
 
@@ -467,6 +376,7 @@ private extension MessageContentView {
             button.titleLabel?.font = uiConfig.font.footnoteBold
             button.titleLabel?.adjustsFontForContentSizeCategory = true
             button.titleLabel?.textAlignment = .natural
+            button.addTarget(self, action: #selector(handleTapOnThread), for: .touchUpInside)
             threadReplyCountButton = button
         }
         return threadReplyCountButton!
@@ -491,20 +401,6 @@ private extension MessageContentView {
         return metadataView!
     }
 
-    func createLinkPreviewView() -> _ChatMessageLinkPreviewView<ExtraData> {
-        if linkPreviewView == nil {
-            linkPreviewView = uiConfig
-                .messageList
-                .messageContentSubviews
-                .linkPreviewView
-                .init()
-                .withoutAutoresizingMaskConstraints
-
-            linkPreviewView!.addTarget(self, action: #selector(didTapOnLinkPreview), for: .touchUpInside)
-        }
-        return linkPreviewView!
-    }
-
     func createQuotedMessageView() -> _ChatMessageQuoteBubbleView<ExtraData> {
         if quotedMessageView == nil {
             quotedMessageView = uiConfig
@@ -514,62 +410,10 @@ private extension MessageContentView {
                 .init()
                 .withoutAutoresizingMaskConstraints
 
-            let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnQuotedMessage))
+            let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapOnQuotedMessage))
             quotedMessageView!.addGestureRecognizer(tapRecognizer)
         }
         return quotedMessageView!
-    }
-
-    func createPhotoPreviewView() -> _ChatMessageImageGallery<ExtraData> {
-        if photoPreviewView == nil {
-            photoPreviewView = uiConfig
-                .messageList
-                .messageContentSubviews
-                .attachmentSubviews
-                .imageGallery
-                .init()
-                .withoutAutoresizingMaskConstraints
-        }
-        return photoPreviewView!
-    }
-
-    func createFilePreviewView() -> _ChatMessageFileAttachmentListView<ExtraData> {
-        if filePreviewView == nil {
-            filePreviewView = uiConfig
-                .messageList
-                .messageContentSubviews
-                .attachmentSubviews
-                .fileAttachmentListView
-                .init()
-                .withoutAutoresizingMaskConstraints
-        }
-        return filePreviewView!
-    }
-
-    func createGiphyView() -> _ChatMessageGiphyView<ExtraData> {
-        if giphyView == nil {
-            giphyView = uiConfig
-                .messageList
-                .messageContentSubviews
-                .attachmentSubviews
-                .giphyAttachmentView
-                .init()
-                .withoutAutoresizingMaskConstraints
-        }
-        return giphyView!
-    }
-
-    func createActionsView() -> _ChatMessageInteractiveAttachmentView<ExtraData> {
-        if actionsView == nil {
-            actionsView = uiConfig
-                .messageList
-                .messageContentSubviews
-                .attachmentSubviews
-                .interactiveAttachmentView
-                .init()
-                .withoutAutoresizingMaskConstraints
-        }
-        return actionsView!
     }
 
     func createReactionsView() -> _ReactionsCompactView<ExtraData> {
@@ -589,7 +433,7 @@ private extension MessageContentView {
                 .init()
                 .withoutAutoresizingMaskConstraints
 
-            errorIndicatorView!.addTarget(self, action: #selector(didTapOnErrorIndicator), for: .touchUpInside)
+            errorIndicatorView!.addTarget(self, action: #selector(handleTapOnErrorIndicator), for: .touchUpInside)
         }
         return errorIndicatorView!
     }
