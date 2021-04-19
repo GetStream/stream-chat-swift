@@ -82,7 +82,8 @@ class ChatChannelListItemView_Tests: XCTestCase {
             
             override func setUpLayout() {
                 super.setUpLayout()
-                timestampLabel.isHidden = true
+                topContainer.addArrangedSubview { timestampLabel }
+                bottomContainer.addArrangedSubview { unreadCountView }
                 
                 addSubview(footnoteLabel)
                 footnoteLabel.leadingAnchor.constraint(equalTo: avatarView.leadingAnchor).isActive = true
@@ -96,7 +97,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
             
             override func updateContent() {
                 super.updateContent()
-                
+                unreadCountView.content = .mock(messages: 3)
                 footnoteLabel.text = dateFormatter.string(from: content!.lastMessageAt!)
             }
         }
