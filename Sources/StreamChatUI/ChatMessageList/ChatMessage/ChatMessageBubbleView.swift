@@ -24,7 +24,8 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigPro
         borderLayer.frame = bounds
     }
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         layer.cornerRadius = 16
         layer.masksToBounds = true
         borderLayer.contentsScale = layer.contentsScale

@@ -13,8 +13,8 @@ open class _CellSeparatorReusableView<ExtraData: ExtraDataTypes>: _CollectionReu
     /// The visible part of separator view.
     open lazy var separatorView = UIView().withoutAutoresizingMaskConstraints
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = .clear
         separatorView.backgroundColor = uiConfig.colorPalette.border
     }

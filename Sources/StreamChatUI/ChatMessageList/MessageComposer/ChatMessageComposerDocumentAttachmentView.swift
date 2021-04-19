@@ -29,7 +29,8 @@ open class _ChatMessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>
         addGestureRecognizer(tapRecognizer)
     }
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = uiConfig.colorPalette.background
         layer.cornerRadius = 15
         layer.masksToBounds = true

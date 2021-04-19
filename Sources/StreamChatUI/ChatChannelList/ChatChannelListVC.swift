@@ -104,7 +104,8 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
     }
     
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         title = "Stream Chat"
         
         navigationItem.backButtonTitle = ""

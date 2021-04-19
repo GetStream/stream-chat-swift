@@ -18,7 +18,8 @@ extension _ChatMessageInteractiveAttachmentView {
             defaultIntrinsicContentSize
         }
 
-        override public func defaultAppearance() {
+        override open func setUpAppearance() {
+            super.setUpAppearance()
             titleLabel?.font = uiConfig.font.body
         }
 

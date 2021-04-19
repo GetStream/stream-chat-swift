@@ -18,9 +18,8 @@ open class ChatAvatarView: _View {
         imageView.layer.cornerRadius = min(imageView.bounds.width, imageView.bounds.height) / 2
     }
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-        
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
     }

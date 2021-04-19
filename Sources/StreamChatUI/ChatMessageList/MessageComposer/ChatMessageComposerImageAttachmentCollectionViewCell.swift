@@ -51,7 +51,8 @@ open class _ChatMessageComposerImageAttachmentView<ExtraData: ExtraDataTypes>: _
         discardButton.addTarget(self, action: #selector(discard), for: .touchUpInside)
     }
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         discardButton.setImage(uiConfig.images.messageComposerDiscardAttachment, for: .normal)
 
         layer.masksToBounds = true

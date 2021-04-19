@@ -39,7 +39,8 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Con
         addTarget(self, action: #selector(toggleSelected), for: .touchUpInside)
     }
     
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         label.font = uiConfig.font.subheadline
         label.textColor = uiConfig.colorPalette.subtitleText
         

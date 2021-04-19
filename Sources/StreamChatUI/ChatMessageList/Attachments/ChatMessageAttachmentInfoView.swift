@@ -61,7 +61,8 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         fileSizeLabel.textColor = uiConfig.colorPalette.subtitleText
     }
 

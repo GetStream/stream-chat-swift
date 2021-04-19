@@ -46,7 +46,8 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         preview.layer.cornerRadius = 8
         preview.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         preview.clipsToBounds = true

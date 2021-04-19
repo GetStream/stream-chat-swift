@@ -52,9 +52,8 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
         view.embed(messageActionsContainerStackView)
     }
     
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-        
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         messageActionsContainerStackView.layer.cornerRadius = 16
         messageActionsContainerStackView.layer.masksToBounds = true
         messageActionsContainerStackView.backgroundColor = uiConfig.colorPalette.border

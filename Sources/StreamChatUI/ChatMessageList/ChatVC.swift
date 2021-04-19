@@ -123,9 +123,8 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         view.backgroundColor = uiConfig.colorPalette.background
         
         let titleView = ChatMessageListTitleView<ExtraData>()

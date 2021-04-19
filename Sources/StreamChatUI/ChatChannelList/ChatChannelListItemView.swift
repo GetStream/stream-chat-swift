@@ -113,9 +113,8 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
          .withoutAutoresizingMaskConstraints
       */
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = uiConfig.colorPalette.background
 
         titleLabel.font = uiConfig.font.bodyBold

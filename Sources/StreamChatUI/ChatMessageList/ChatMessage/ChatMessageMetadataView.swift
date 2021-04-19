@@ -35,7 +35,8 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         let color = uiConfig.colorPalette.subtitleText
         currentUserVisabilityIndicator.textLabel.textColor = color
         currentUserVisabilityIndicator.imageView.tintColor = color
@@ -86,7 +87,8 @@ open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTyp
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         imageView.image = uiConfig.images.onlyVisibleToCurrentUser
         textLabel.text = L10n.Message.onlyVisibleToYou
     }

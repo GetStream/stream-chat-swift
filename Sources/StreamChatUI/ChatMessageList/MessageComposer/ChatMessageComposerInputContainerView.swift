@@ -34,7 +34,8 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _V
         
     // MARK: - Public
     
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         let rightAccessoryImage = uiConfig.images.close1.tinted(with: uiConfig.colorPalette.inactiveTint)
         rightAccessoryButton.setImage(rightAccessoryImage, for: .normal)
     }

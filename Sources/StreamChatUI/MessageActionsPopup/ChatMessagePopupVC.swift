@@ -58,8 +58,8 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
         scrollView.isScrollEnabled = false
     }
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         view.backgroundColor = .clear
     }
 

@@ -66,7 +66,8 @@ open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
         textView.isUserInteractionEnabled = false
     }
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         textView.textContainer.maximumNumberOfLines = 6
         textView.textContainer.lineBreakMode = .byTruncatingTail
         textView.textContainer.lineFragmentPadding = .zero

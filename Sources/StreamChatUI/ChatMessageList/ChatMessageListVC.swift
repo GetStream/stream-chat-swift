@@ -136,9 +136,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
     }
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         view.backgroundColor = uiConfig.colorPalette.background
         collectionView.backgroundColor = .clear
     }

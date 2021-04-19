@@ -39,7 +39,8 @@ open class _TypingAnimationView<ExtraData: ExtraDataTypes>: _View, UIConfigProvi
         widthAnchor.pin(equalToConstant: viewWidthConstant).isActive = true
     }
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = .clear
         dotLayer.backgroundColor = uiConfig.colorPalette.text.cgColor
         replicatorLayer.frame = bounds
