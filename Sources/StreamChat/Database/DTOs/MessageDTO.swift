@@ -477,8 +477,6 @@ private extension _ChatMessage {
             extraData = .defaultValue
         }
         self.extraData = extraData
-        
-        threadParticipants = Set(dto.threadParticipants.map(\.id))
         localState = dto.localMessageState
         isFlaggedByCurrentUser = dto.flaggedBy != nil
         
@@ -512,6 +510,15 @@ private extension _ChatMessage {
         } else {
             isSentByCurrentUser = false
             $_currentUserReactions = ({ [] }, nil)
+        }
+        
+        if dto.threadParticipants.isEmpty {
+            $_threadParticipants = ({ [] }, nil)
+        } else {
+            $_threadParticipants = (
+                { Set(dto.threadParticipants.map { $0.asModel() }) },
+                dto.managedObjectContext
+            )
         }
         
         $_mentionedUsers = ({ Set(dto.mentionedUsers.map { $0.asModel() }) }, dto.managedObjectContext)
