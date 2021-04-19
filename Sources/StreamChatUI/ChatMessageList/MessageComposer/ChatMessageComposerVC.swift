@@ -475,7 +475,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
                 textView.textStorage.replaceCharacters(
                     in: NSRange(location: atRange.location, length: cursorPosition.location - atRange.location),
-                    with: "@\(user.id) "
+                    with: self.mentionText(forUser: user)
                 )
 
                 let newPosition = (textView.text as NSString).length - oldPositionTillTheEnd
@@ -492,6 +492,10 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 self.dismissSuggestionsViewController()
             }
         )
+    }
+
+    open func mentionText(forUser user: _ChatUser<ExtraData.User>) -> String {
+      "@\(user.id) "
     }
 
     func replaceTextWithSlashCommandViewIfNeeded() {
