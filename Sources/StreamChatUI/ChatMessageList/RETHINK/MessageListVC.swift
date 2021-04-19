@@ -6,8 +6,7 @@ import Foundation
 import StreamChat
 import UIKit
 
-class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource,
-    UIConfigProvider {
+class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource, GalleryContentViewDelegate, UIConfigProvider {
     var channelController: _ChatChannelController<ExtraData>!
     
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
@@ -162,6 +161,17 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     }
 
     func cellContentCellForMessage(at indexPath: IndexPath) -> MessageContentView<ExtraData>.Type {
+        let message = channelController.messages[indexPath.row]
+
+        for attachment in message.attachments {
+            switch attachment {
+            case is ChatMessageImageAttachment:
+                return GalleryContentView<ExtraData>.self
+            default:
+                continue
+            }
+        }
+
         return MessageContentView<ExtraData>.self
     }
     
@@ -359,9 +369,15 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     open func didTapOnQuotedMessage(at indexPath: IndexPath) {
         didSelectMessageCell(at: indexPath)
     }
+
+    open func didTapOnImageAttachment(_ attachment: ChatMessageImageAttachment, at indexPath: IndexPath) {
+        guard attachment.localState != .uploadingFailed else {
+            restartUploading(for: attachment)
             return
         }
 
+        router.showPreview(for: attachment.imageURL)
+    }
         guard attachment.localState != .uploadingFailed else {
             restartUploading(for: attachment)
             return
