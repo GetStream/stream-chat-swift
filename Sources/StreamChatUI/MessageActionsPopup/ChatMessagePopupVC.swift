@@ -53,7 +53,9 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
     override open func setUp() {
         super.setUp()
         
-        scrollView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(didTapOnOverlay)))
+        let overlayGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnOverlay))
+        overlayGestureRecognizer.cancelsTouchesInView = false
+        scrollView.addGestureRecognizer(overlayGestureRecognizer)
         scrollView.contentInsetAdjustmentBehavior = .always
         scrollView.isScrollEnabled = false
     }
