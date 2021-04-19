@@ -6,7 +6,8 @@ import Foundation
 import StreamChat
 import UIKit
 
-class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource, GalleryContentViewDelegate, UIConfigProvider {
+class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource,
+    GalleryContentViewDelegate, UIConfigProvider {
     var channelController: _ChatChannelController<ExtraData>!
     
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
@@ -167,6 +168,8 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             switch attachment {
             case is ChatMessageImageAttachment:
                 return GalleryContentView<ExtraData>.self
+            case is ChatMessageFileAttachment:
+                return FileListContentView<ExtraData>.self
             default:
                 continue
             }
@@ -378,19 +381,14 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
 
         router.showPreview(for: attachment.imageURL)
     }
+
+    open func didTapOnFileAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath) {
         guard attachment.localState != .uploadingFailed else {
             restartUploading(for: attachment)
             return
         }
 
-        switch attachment.type {
-        case .image, .file:
-            router.showPreview(for: attachment)
-        case .link:
-            router.openLink(attachment)
-        default:
-            break
-        }
+        router.showPreview(for: attachment.assetURL)
     }
 
     open func handleTapOnAttachmentAction(
