@@ -168,7 +168,7 @@ extension _ChatMessage {
             reactionScores: ["": 1],
             author: { .mock(id: .unique) },
             mentionedUsers: { [] },
-            threadParticipants: [],
+            threadParticipants: { [] },
             attachments: { [] },
             latestReplies: { [] },
             localState: nil,

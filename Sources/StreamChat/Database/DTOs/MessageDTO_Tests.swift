@@ -405,7 +405,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.parentMessageId, messagePayload.parentId)
         XCTAssertEqual(loadedMessage.showReplyInChannel, messagePayload.showReplyInChannel)
         XCTAssertEqual(loadedMessage.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
-        XCTAssertEqual(loadedMessage.threadParticipants, Set(messagePayload.threadParticipants.map(\.id)))
+        XCTAssertEqual(loadedMessage.threadParticipants.map(\.id), messagePayload.threadParticipants.map(\.id))
         XCTAssertEqual(loadedMessage.replyCount, messagePayload.replyCount)
         XCTAssertEqual(loadedMessage.extraData, messagePayload.extraData)
         XCTAssertEqual(loadedMessage.reactionScores, messagePayload.reactionScores)
