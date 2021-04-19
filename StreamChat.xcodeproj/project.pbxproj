@@ -325,7 +325,6 @@
 		79D6CF1825FA671C00BE2EEC /* MemberEventMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CF1725FA671C00BE2EEC /* MemberEventMiddleware.swift */; };
 		79D6CF2125FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */; };
 		79D7A1CE2593A40900D3C2BF /* ChannelPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D7A1CD2593A40900D3C2BF /* ChannelPayload.swift */; };
-		79D86E832562BAB900DCD1D2 /* AppearanceSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D86E822562BAB900DCD1D2 /* AppearanceSetting.swift */; };
 		79DDF80E249CB920002F4412 /* RequestDecoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF80D249CB920002F4412 /* RequestDecoder.swift */; };
 		79DDF810249CB92E002F4412 /* RequestDecoder_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF80F249CB92E002F4412 /* RequestDecoder_Tests.swift */; };
 		79DDF812249CD5AC002F4412 /* APIClient_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79DDF811249CD5AC002F4412 /* APIClient_Tests.swift */; };
@@ -1462,7 +1461,6 @@
 		79D6CF1725FA671C00BE2EEC /* MemberEventMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventMiddleware.swift; sourceTree = "<group>"; };
 		79D6CF2025FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberEventMiddleware_Tests.swift; sourceTree = "<group>"; };
 		79D7A1CD2593A40900D3C2BF /* ChannelPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelPayload.swift; sourceTree = "<group>"; };
-		79D86E822562BAB900DCD1D2 /* AppearanceSetting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSetting.swift; sourceTree = "<group>"; };
 		79DDF80D249CB920002F4412 /* RequestDecoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoder.swift; sourceTree = "<group>"; };
 		79DDF80F249CB92E002F4412 /* RequestDecoder_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestDecoder_Tests.swift; sourceTree = "<group>"; };
 		79DDF811249CD5AC002F4412 /* APIClient_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient_Tests.swift; sourceTree = "<group>"; };
@@ -2253,7 +2251,6 @@
 				88F0D6EA257E409E00F4B050 /* Generated */,
 				7908823125432C6400896F03 /* StreamChatUI.h */,
 				7908823225432C6400896F03 /* Info.plist */,
-				79D86E822562BAB900DCD1D2 /* AppearanceSetting.swift */,
 			);
 			path = StreamChatUI;
 			sourceTree = "<group>";
@@ -4900,7 +4897,6 @@
 				DBC8A564258113F700B20A82 /* ChatThreadVC.swift in Sources */,
 				DB8230F2259B8DBF00E7D7FE /* ChatMessageGiphyView.swift in Sources */,
 				22086B38259509350007F8C0 /* ChatMessageComposerDocumentAttachmentCollectionViewCell.swift in Sources */,
-				79D86E832562BAB900DCD1D2 /* AppearanceSetting.swift in Sources */,
 				22086B40259509450007F8C0 /* ChatMessageComposerDocumentAttachmentView.swift in Sources */,
 				E768AAFB2627691600328E6E /* TypingAnimationView.swift in Sources */,
 				ADB4166C26208F1C00E623E3 /* AttachmentPreview.swift in Sources */,
