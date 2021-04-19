@@ -101,36 +101,6 @@ class ChatChannelListVC_Tests: XCTestCase {
         AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
     }
 
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestSeparatorView: CellSeparatorReusableView {}
-        class TestView: TestChatChannelListVC {}
-
-        TestView.defaultAppearance {
-            $0.createNewChannelButton.tintColor = UIColor.orange
-
-            if let listLayout = $0.collectionViewLayout as? ListCollectionViewLayout {
-                listLayout.separatorHeight = 4
-            }
-
-            TestSeparatorView.defaultAppearance {
-                $0.separatorView.backgroundColor = UIColor.orange
-            }
-        }
-
-        let vc = TestView()
-        vc.controller = mockedChannelListController
-        
-        var config = UIConfig()
-        config.channelList.cellSeparatorReusableView = TestSeparatorView.self
-        vc.uiConfig = config
-
-        mockedChannelListController.simulateInitial(
-            channels: channels,
-            state: .remoteDataFetched
-        )
-        AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
-    }
-
     func test_appearanceCustomization_usingSubclassing() {
         class TestSeparatorView: CellSeparatorReusableView {
             override func setUpAppearance() {

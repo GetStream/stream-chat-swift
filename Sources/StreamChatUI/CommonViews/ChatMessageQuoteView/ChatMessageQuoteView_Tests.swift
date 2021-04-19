@@ -82,20 +82,6 @@ class ChatMessageQuoteView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageQuoteView {}
-        TestView.defaultAppearance {
-            $0.contentContainerView.layer.borderColor = UIColor.yellow.cgColor
-            $0.contentContainerView.backgroundColor = .lightGray
-        }
-
-        let view = TestView().withoutAutoresizingMaskConstraints
-        view.content = makeContent(text: "Hello Vader!")
-        view.addSizeConstraints()
-
-        AssertSnapshot(view, variants: [.defaultLight])
-    }
-
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageQuoteView {
             override func setUpAppearance() {

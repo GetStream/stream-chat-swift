@@ -86,22 +86,6 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         AssertSnapshot(vc)
     }
     
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: TestChatMessagePopupVC {}
-
-        TestView.defaultAppearance {
-            $0.view.backgroundColor = .cyan
-        }
-
-        let vc = TestView()
-        vc.actionsController = actionsController
-        vc.messageContentViewClass = ChatMessageContentView.self
-        vc.messageViewFrame = CGRect(x: 50, y: 300, width: 200, height: 50)
-        vc.message = message
-
-        AssertSnapshot(vc)
-    }
-    
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: TestChatMessagePopupVC {
             override var blurView: UIView {

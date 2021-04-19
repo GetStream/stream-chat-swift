@@ -51,19 +51,6 @@ class ChatMessageActionsVC_Tests: XCTestCase {
         AssertSnapshot(vc.embedded())
     }
     
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageActionsVC {}
-
-        TestView.defaultAppearance {
-            $0.view.backgroundColor = .cyan
-        }
-
-        let vc = TestView()
-        vc.messageController = chatMessageController
-
-        AssertSnapshot(vc.embedded())
-    }
-    
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageActionsVC {
             override var messageActions: [ChatMessageActionItem] {

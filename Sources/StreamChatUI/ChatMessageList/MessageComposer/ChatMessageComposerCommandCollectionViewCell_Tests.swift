@@ -65,19 +65,6 @@ class ChatMessageComposerCommandCollectionViewCell_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageComposerCommandCellView {}
-        TestView.defaultAppearance {
-            $0.backgroundColor = .systemGray
-            $0.commandNameSubtitleLabel.textColor = UIColor.white
-            $0.commandNameLabel.textColor = UIColor.darkGray
-        }
-        
-        let view = makeView(TestView.self)
-        view.content = defaultCommand
-        AssertSnapshot(view, variants: [.defaultLight])
-    }
-
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageComposerCommandCellView {
             override func setUpAppearance() {

@@ -98,28 +98,6 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
         AssertSnapshot(view, suffix: "user name not set")
     }
 
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageComposerMentionCellView {}
-        TestView.defaultAppearance {
-            // Modify appearance
-            $0.backgroundColor = .systemPink
-            $0.usernameLabel.textColor = .systemBlue
-            $0.usernameTagLabel.textColor = .systemTeal
-        }
-
-        let view = TestView().withoutAutoresizingMaskConstraints
-        view.widthAnchor.constraint(equalToConstant: Self.defaultCellWidth).isActive = true
-
-        view.content = chatUserOnline
-        AssertSnapshot(view, suffix: "online indicator visible")
-
-        view.content = chatUserOffline
-        AssertSnapshot(view)
-
-        view.content = chatUserNoName
-        AssertSnapshot(view, suffix: "user name not set")
-    }
-
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageComposerMentionCellView {
             override func setUpAppearance() {

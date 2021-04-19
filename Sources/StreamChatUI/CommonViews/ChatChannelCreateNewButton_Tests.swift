@@ -25,44 +25,6 @@ class ChatChannelCreateNewButton_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
-    func test_customizationUsingAppearanceHook() {
-        class TestView: ChatChannelCreateNewButton {}
-        TestView.defaultAppearance {
-            $0.layer.borderWidth = 1
-            $0.layer.borderColor = UIColor.green.cgColor
-            $0.backgroundColor = .black
-            $0.tintColor = .lightGray
-        }
-        
-        let view = TestView().withoutAutoresizingMaskConstraints
-        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
-    }
-
-    func test_customizationUsingSubclassingHook() {
-        class TestView: ChatChannelCreateNewButton {
-            override func defaultAppearance() {
-                super.defaultAppearance()
-                layer.borderWidth = 1
-                layer.borderColor = UIColor.green.cgColor
-                backgroundColor = .black
-                tintColor = .lightGray
-                setImage(uiConfig.images.close, for: .normal)
-            }
-            
-            override func setUpLayout() {
-                super.setUpLayout()
-                
-                NSLayoutConstraint.activate([
-                    heightAnchor.constraint(equalToConstant: 20),
-                    widthAnchor.constraint(equalToConstant: 20)
-                ])
-            }
-        }
-        
-        let view = TestView().withoutAutoresizingMaskConstraints
-        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
-    }
-    
     func test_customizationUsingUIConfig() {
         var config = UIConfig()
         config.images.newChat = config.images.close

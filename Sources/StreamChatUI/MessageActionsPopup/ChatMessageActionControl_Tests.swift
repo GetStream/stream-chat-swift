@@ -120,18 +120,6 @@ class ChatMessageActionControl_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageActionControl {}
-        TestView.defaultAppearance {
-            $0.backgroundColor = .cyan
-        }
-
-        let view = TestView().withoutAutoresizingMaskConstraints
-
-        view.content = content
-        AssertSnapshot(view)
-    }
-
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageActionControl {
             override func setUpAppearance() {

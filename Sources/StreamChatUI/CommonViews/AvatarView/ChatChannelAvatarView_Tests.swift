@@ -72,19 +72,6 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatChannelAvatarView {}
-        TestView.defaultAppearance {
-            $0.presenceAvatarView.onlineIndicatorView.backgroundColor = .red
-            $0.backgroundColor = .yellow
-        }
-
-        let view = TestView().withoutAutoresizingMaskConstraints
-        view.addSizeConstraints()
-        view.content = (channel: channel, currentUserId: currentUserId)
-        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
-    }
-
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatChannelAvatarView {
             override func setUpAppearance() {
