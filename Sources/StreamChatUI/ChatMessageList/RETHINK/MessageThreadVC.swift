@@ -228,6 +228,7 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
         scrollToMostRecentMessage(animated: needsToScrollToMostRecentMessageAnimated)
     }
 
+    /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
         needsToScrollToMostRecentMessage = false
 
@@ -359,10 +360,14 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
             }
         )
     }
+    
+    func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
+        messageController.replies[indexPath.item]
+    }
 
     /// Presents custom actions controller with all possible actions with the selected message.
     private func didSelectMessageCell(at indexPath: IndexPath) {
-        let message = messageController.replies[indexPath.item]
+        let message = messageForIndexPath(indexPath)
         
         guard let cell = collectionView.cellForItem(at: indexPath) as? MessageCell<ExtraData> else { return }
         guard message.isInteractionEnabled else { return }
