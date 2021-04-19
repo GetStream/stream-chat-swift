@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ---
 
 # Upcoming
+- Introduce `mentionText(forUser:)` on `ChatMessageComposerVC` to allow subclasses to provide custom @ mention text.
+   [#1000](https://github.com/GetStream/stream-chat-swift/pull/1000)
 
 ### 🐞 Fixed
 - It's safe now to use `ChatChannel` and `ChatMessage` across multiple threads [#984](https://github.com/GetStream/stream-chat-swift/pull/984)
