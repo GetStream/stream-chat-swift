@@ -151,10 +151,6 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         keyboardObserver.unregister()
     }
     
-    func cellReuseIdentifier(for message: _ChatMessage<ExtraData>) -> String {
-        MessageCell<ExtraData>.reuseId
-    }
-    
     func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
         guard let channel = channelController.channel else { return [] }
 
@@ -164,6 +160,10 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             channel
         )
     }
+
+    func cellContentCellForMessage(at indexPath: IndexPath) -> MessageContentView<ExtraData>.Type {
+        return MessageContentView<ExtraData>.self
+    }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         channelController.messages.count
@@ -171,31 +171,19 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let message = channelController.messages[indexPath.item]
-        
-        let cell: MessageCell<ExtraData> = self.collectionView.dequeueReusableCell(
-            withReuseIdentifier: cellReuseIdentifier(for: message),
-            layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
-            for: indexPath
+        let contentClass = cellContentCellForMessage(at: indexPath)
+        let layoutOptions = cellLayoutOptionsForMessage(at: indexPath)
+
+        let cell = self.collectionView.dequeueReusableCell(
+            layoutOptions: layoutOptions,
+            contentViewClass: contentClass,
+            indexPath: indexPath
         )
 
-        cell.messageContentView.delegate = .init(
-            didTapOnErrorIndicator: { [weak self] in
-                self?.handleTapOnErrorIndicator(forCellAt: indexPath)
-            },
-            didTapOnThread: { [weak self] in
-                self?.handleTapOnThread(forCellAt: indexPath)
-            },
-            didTapOnAttachment: { [weak self] in
-                self?.handleTapOnAttachment($0, forCellAt: indexPath)
-            },
-            didTapOnAttachmentAction: { [weak self] attachment, action in
-                self?.handleTapOnAttachmentAction(action, for: attachment, forCellAt: indexPath)
-            },
-            didTapOnQuotedMessage: { [weak self] in
-                self?.handleTapOnQuotedMessage($0, forCellAt: indexPath)
-            }
-        )
-        cell.messageContentView.content = message
+        cell.uiConfig = uiConfig
+        cell.messageContentView?.indexPath = indexPath
+        cell.messageContentView?.delegate = self
+        cell.messageContentView?.content = message
         
         return cell
     }
@@ -258,6 +246,8 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         actionsController: _ChatMessageActionsVC<ExtraData>,
         reactionsController: _ChatMessageReactionsVC<ExtraData>?
     ) {
+        guard let contentView = cell.messageContentView else { return }
+
         // TODO: for PR: This should be doable via:
         // 1. options: [.autoreverse, .repeat] and
         // 2. `UIView.setAnimationRepeatCount(0)` inside the animation block...
@@ -275,7 +265,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
             delay: 0,
             options: [.curveEaseIn],
             animations: {
-                cell.messageContentView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+                contentView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
             },
             completion: { _ in
                 self.impactFeedbackGenerator.impactOccurred()
@@ -285,12 +275,12 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
                     delay: 0,
                     options: [.curveEaseOut],
                     animations: {
-                        cell.messageContentView.transform = .identity
+                        contentView.transform = .identity
                     }
                 )
                 
                 self.router.showMessageActionsPopUp(
-                    messageContentFrame: cell.messageContentView.superview!.convert(cell.messageContentView.frame, to: nil),
+                    messageContentFrame: contentView.superview!.convert(contentView.frame, to: nil),
                     messageData: messageData,
                     messageActionsController: actionsController,
                     messageReactionsController: reactionsController

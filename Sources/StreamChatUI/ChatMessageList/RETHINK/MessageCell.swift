@@ -8,25 +8,26 @@ import UIKit
 class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
     static var reuseId: String { "message_cell" }
 
-    class var messageContentViewClass: MessageContentView<ExtraData>.Type {
-        MessageContentView.self
-    }
-
-    let messageContentView = messageContentViewClass
-        .init()
-        .withoutAutoresizingMaskConstraints
-
-    override func setUpLayout() {
-        super.setUpLayout()
-
-        contentView.embed(messageContentView)
-    }
+    private(set) var messageContentView: MessageContentView<ExtraData>?
 
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        messageContentView.delegate = nil
-        messageContentView.content = nil
+        messageContentView?.prepareForReuse()
+    }
+
+    func setMessageContentIfNeeded(
+        contentViewClass: MessageContentView<ExtraData>.Type,
+        options: ChatMessageLayoutOptions
+    ) {
+        guard messageContentView == nil else {
+            assert(type(of: messageContentView!) == contentViewClass)
+            return
+        }
+
+        messageContentView = contentViewClass.init().withoutAutoresizingMaskConstraints
+        messageContentView!.setUpLayoutIfNeeded(options: options)
+        contentView.embed(messageContentView!)
     }
 
     override open func preferredLayoutAttributesFitting(

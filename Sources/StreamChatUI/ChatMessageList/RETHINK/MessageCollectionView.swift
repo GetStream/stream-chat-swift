@@ -10,11 +10,11 @@ class MessageCollectionView: UICollectionView {
     private var identifiers: Set<String> = .init()
     
     func dequeueReusableCell<ExtraData: ExtraDataTypes>(
-        withReuseIdentifier identifier: String,
         layoutOptions: ChatMessageLayoutOptions,
-        for indexPath: IndexPath
+        contentViewClass: MessageContentView<ExtraData>.Type,
+        indexPath: IndexPath
     ) -> MessageCell<ExtraData> {
-        let reuseIdentifier = "\(identifier)_\(layoutOptions.rawValue)"
+        let reuseIdentifier = "\(MessageCell<ExtraData>.reuseId)_\(layoutOptions.rawValue)_\(contentViewClass)"
         
         // There is no public API to find out
         // if the given `identifier` is registered.
@@ -25,8 +25,7 @@ class MessageCollectionView: UICollectionView {
         }
             
         let cell = dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath) as! MessageCell<ExtraData>
-        cell.messageContentView.setUpLayoutIfNeeded(options: layoutOptions)
-        
+        cell.setMessageContentIfNeeded(contentViewClass: contentViewClass, options: layoutOptions)
         return cell
     }
 }

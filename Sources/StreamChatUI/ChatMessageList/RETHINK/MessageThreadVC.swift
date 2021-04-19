@@ -173,14 +173,16 @@ class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionV
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let message = messageController.replies[indexPath.item]
-        
+
+        // TODO: reuse dequeue logic from `MessageListVC`
         let cell: MessageCell<ExtraData> = self.collectionView.dequeueReusableCell(
-            withReuseIdentifier: cellReuseIdentifier(for: message),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
-            for: indexPath
+            contentViewClass: MessageContentView<ExtraData>.self,
+            indexPath: indexPath
         )
-        
-        cell.messageContentView.content = message
+
+        cell.uiConfig = uiConfig
+        cell.messageContentView?.content = message
         
         return cell
     }
