@@ -101,7 +101,9 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     @CoreDataLazy internal var _mentionedUsers: Set<_ChatUser<ExtraData.User>>
 
     /// A list of users that participated in this message thread
-    public let threadParticipants: Set<UserId>
+    public var threadParticipants: Set<_ChatUser<ExtraData.User>> { _threadParticipants }
+    
+    @CoreDataLazy internal var _threadParticipants: Set<_ChatUser<ExtraData.User>>
     
     /// A list of attachments in this message.
     ///
@@ -170,7 +172,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         reactionScores: [MessageReactionType: Int],
         author: @escaping () -> _ChatUser<ExtraData.User>,
         mentionedUsers: @escaping () -> Set<_ChatUser<ExtraData.User>>,
-        threadParticipants: Set<UserId>,
+        threadParticipants: @escaping () -> Set<_ChatUser<ExtraData.User>>,
         attachments: @escaping () -> [ChatMessageAttachment],
         latestReplies: @escaping () -> [_ChatMessage<ExtraData>],
         localState: LocalMessageState?,
@@ -196,7 +198,6 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         self.extraData = extraData
         self.isSilent = isSilent
         self.reactionScores = reactionScores
-        self.threadParticipants = threadParticipants
         self.localState = localState
         self.isFlaggedByCurrentUser = isFlaggedByCurrentUser
         self.isSentByCurrentUser = isSentByCurrentUser
@@ -204,6 +205,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         
         self.$_author = (author, underlyingContext)
         self.$_mentionedUsers = (mentionedUsers, underlyingContext)
+        self.$_threadParticipants = (threadParticipants, underlyingContext)
         self.$_attachments = (attachments, underlyingContext)
         self.$_latestReplies = (latestReplies, underlyingContext)
         self.$_latestReactions = (latestReactions, underlyingContext)
