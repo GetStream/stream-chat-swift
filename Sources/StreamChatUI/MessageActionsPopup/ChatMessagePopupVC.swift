@@ -21,7 +21,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
     open private(set) lazy var scrollContentView = UIView()
         .withoutAutoresizingMaskConstraints
     /// `ContainerStackView` encapsulating underlying views `reactionsController`, `actionsController` and `messageContentView`.
-    open private(set) lazy var messageContainerStackView = ContainerStackView(axis: .vertical)
+    open private(set) lazy var messageContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
     /// `UIView` with `UIBlurEffect` that is shown as a background.
     open private(set) lazy var blurView: UIView = {
@@ -69,6 +69,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
         view.embed(blurView)
         view.embed(scrollView)
 
+        messageContainerStackView.axis = .vertical
         messageContainerStackView.spacing = 8
         scrollContentView.addSubview(messageContainerStackView)
 
@@ -172,7 +173,8 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
 
     override open func updateContent() {
         messageContentView.message = message
-        messageContentView.reactionsBubble?.isHidden = true
+        messageContentView.reactionsBubble?.isVisible = false
+        messageContentView.constraintsToActivate.removeAll(where: { $0 == messageContentView.bubbleToReactionsConstraint })
     }
 
     override open func viewWillAppear(_ animated: Bool) {

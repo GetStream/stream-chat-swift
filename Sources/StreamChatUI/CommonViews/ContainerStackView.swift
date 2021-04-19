@@ -193,17 +193,18 @@ public class ContainerStackView: UIView {
             customConstraints.append(spacingConstraint)
         }
 
-        // Add constraints for distribution
-        zip(subviews, subviews.dropFirst()).forEach { lView, rView in
-            if axis == .horizontal {
-                customConstraints.append(
-                    lView.widthAnchor.constraint(equalTo: rView.widthAnchor).priority(distribution == .equal ? .required : .lowest)
-                )
-            } else {
-                customConstraints.append(
-                    lView.heightAnchor.constraint(equalTo: rView.heightAnchor)
-                        .priority(distribution == .equal ? .required : .lowest)
-                )
+        if distribution == .equal {
+            // Add constraints for distribution
+            zip(subviews, subviews.dropFirst()).forEach { lView, rView in
+                if axis == .horizontal {
+                    customConstraints.append(
+                        lView.widthAnchor.constraint(equalTo: rView.widthAnchor)
+                    )
+                } else {
+                    customConstraints.append(
+                        lView.heightAnchor.constraint(equalTo: rView.heightAnchor)
+                    )
+                }
             }
         }
 

@@ -73,7 +73,21 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         super.tearDown()
     }
     
-    func test_defaultAppearance() {
+    func test_defaultAppearance_when_largeLongMessage() {
+        vc.messageViewFrame = CGRect(x: 50, y: 100, width: 200, height: 50)
+        message = ChatMessageGroupPart(
+            message: .mock(
+                id: .unique,
+                text: repeatElement("Message text", count: 8).joined(separator: "\n"),
+                author: .mock(id: .unique)
+            ),
+            quotedMessage: .none,
+            isFirstInGroup: false,
+            isLastInGroup: false,
+            didTapOnAttachment: { _ in },
+            didTapOnAttachmentAction: { _, _ in }
+        )
+        vc.message = message
         AssertSnapshot(vc)
     }
     
