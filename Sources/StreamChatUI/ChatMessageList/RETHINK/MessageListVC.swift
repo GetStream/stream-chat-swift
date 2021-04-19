@@ -22,9 +22,12 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
         channelController.client.userSearchController()
     
+    // TODO: Documentation
+    open lazy var messageListLayout = ChatMessageListCollectionViewLayout()
+    
     /// View used to display the messages
     open private(set) lazy var collectionView: MessageCollectionView = {
-        let collection = MessageCollectionView(frame: .zero, collectionViewLayout: ChatMessageListCollectionViewLayout())
+        let collection = MessageCollectionView(frame: .zero, collectionViewLayout: messageListLayout)
 
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
@@ -500,7 +503,9 @@ extension MessageListVC: _ChatMessageActionsVCDelegate {
         }
     }
 
-    open func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>) {
+    open func chatMessageActionsVCDidFinish(
+        _ vc: _ChatMessageActionsVC<ExtraData>
+    ) {
         dismiss(animated: true)
     }
 }

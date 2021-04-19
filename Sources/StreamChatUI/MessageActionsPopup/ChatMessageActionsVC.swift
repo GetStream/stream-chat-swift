@@ -83,10 +83,14 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
         switch message.localState {
         case nil:
             var actions: [ChatMessageActionItem] = [
-                inlineReplyActionItem(),
-                threadReplyActionItem(),
-                copyActionItem()
+                inlineReplyActionItem()
             ]
+            
+            if message.type != .reply {
+                actions.append(threadReplyActionItem())
+            }
+            
+            actions.append(copyActionItem())
 
             if message.isSentByCurrentUser {
                 actions += [editActionItem(), deleteActionItem()]

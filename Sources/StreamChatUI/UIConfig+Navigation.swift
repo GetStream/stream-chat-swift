@@ -8,7 +8,7 @@ public extension _UIConfig {
         public var channelListRouter: _ChatChannelListRouter<ExtraData>.Type = _ChatChannelListRouter<ExtraData>.self
         // TODO: Remove
         public var _messageListRouter: _ChatMessageListRouter<ExtraData>.Type = _ChatMessageListRouter<ExtraData>.self
-        public var messageListRouter: MessageListRouter<ExtraData>.Type = MessageListRouter<ExtraData>.self
+        public var messageListRouter: _ChatMessageListRouter<ExtraData>.Type = _ChatMessageListRouter<ExtraData>.self
         public var channelDetailRouter: _ChatChannelRouter<ExtraData>.Type = _ChatChannelRouter<ExtraData>.self
         public var messageActionsRouter: _ChatMessageActionsRouter<ExtraData>.Type = _ChatMessageActionsRouter<ExtraData>.self
     }
