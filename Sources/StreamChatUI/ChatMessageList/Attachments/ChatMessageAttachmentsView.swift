@@ -103,36 +103,33 @@ open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConf
     }
 
     override open func updateContent() {
-        let layoutOptions = calculateLayoutOptions()
-
-        imageGallery.content = content.map {
-            .init(
-                attachments: $0.attachments.filter { $0.type == .image },
-                didTapOnAttachment: $0.didTapOnAttachment,
-                didTapOnAttachmentAction: nil
-            )
-        }
-        imageGallery.isVisible = layoutOptions.contains(.images)
-
-        fileList.content = content.map {
-            .init(
-                attachments: $0.attachments.filter { $0.type == .file },
-                didTapOnAttachment: $0.didTapOnAttachment,
-                didTapOnAttachmentAction: nil
-            )
-        }
-        fileList.isVisible = layoutOptions.contains(.files)
-
-        giphyView.content = content?.attachments.first { $0.type == .giphy }
-        giphyView.isVisible = layoutOptions.contains(.giphy)
-
-        interactiveAttachmentView.content = content?.items.first {
-            !$0.attachment.actions.isEmpty
-        }
-        interactiveAttachmentView.isVisible = layoutOptions.contains(.interactiveAttachment)
-
-        layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
-        layoutConstraints[layoutOptions]?.forEach { $0.isActive = true }
+//        let layoutOptions = calculateLayoutOptions()
+//
+//        imageGallery.content = content?.attachments.compactMap { $0 as? ChatMessageImageAttachment } ?? []
+//        imageGallery.didTapOnImage = { [weak self] in
+//            self?.content?.didTapOnAttachment($0)
+//        }
+//        imageGallery.isVisible = layoutOptions.contains(.images)
+//
+//        fileList.content = content.map {
+//            .init(
+//                attachments: $0.attachments.filter { $0.type == .file },
+//                didTapOnAttachment: $0.didTapOnAttachment,
+//                didTapOnAttachmentAction: nil
+//            )
+//        }
+//        fileList.isVisible = layoutOptions.contains(.files)
+//
+//        giphyView.content = content?.attachments.first { $0.type == .giphy }
+//        giphyView.isVisible = layoutOptions.contains(.giphy)
+//
+//        interactiveAttachmentView.content = content?.items.first {
+//            !$0.attachment.actions.isEmpty
+//        }
+//        interactiveAttachmentView.isVisible = layoutOptions.contains(.interactiveAttachment)
+//
+//        layoutConstraints.values.flatMap { $0 }.forEach { $0.isActive = false }
+//        layoutConstraints[layoutOptions]?.forEach { $0.isActive = true }
     }
 
     // MARK: - Private

@@ -338,7 +338,7 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
         )
     }
 
-    open func restartUploading(for attachment: ChatMessageDefaultAttachment) {
+    open func restartUploading(for attachment: ChatMessageUploadableAttachment) {
         guard let id = attachment.id else {
             assertionFailure("Uploading cannot be restarted for attachment without `id`")
             return

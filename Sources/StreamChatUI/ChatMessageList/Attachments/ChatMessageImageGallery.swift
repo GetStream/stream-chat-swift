@@ -10,9 +10,11 @@ public typealias ChatMessageImageGallery = _ChatMessageImageGallery<NoExtraData>
 open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     open var interItemSpacing: CGFloat = 2
 
-    public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
+    public var content: [ChatMessageImageAttachment] = [] {
         didSet { updateContentIfNeeded() }
     }
+
+    public var didTapOnImage: ((ChatMessageImageAttachment) -> Void)?
 
     // MARK: - Subviews
 
@@ -115,22 +117,31 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigP
     }
 
     override open func updateContent() {
-        let items = content?.items
+        let items = content
         for (index, itemPreview) in previews.enumerated() {
-            itemPreview.content = items?[safe: index]
+            itemPreview.content = items[safe: index]
             itemPreview.isHidden = itemPreview.content == nil
         }
+        updateActionHandlers()
 
         let visiblePreviewsCount = previews.filter { !$0.isHidden }.count
         layouts.flatMap { $0 }.forEach { $0.isActive = false }
         layouts[max(visiblePreviewsCount - 1, 0)].forEach { $0.isActive = true }
 
-        let otherImagesCount = (content?.attachments.count ?? 0) - previews.count
+        let otherImagesCount = content.count - previews.count
         moreImagesOverlay.isHidden = otherImagesCount <= 0
         moreImagesOverlay.text = "+\(otherImagesCount)"
     }
 
     // MARK: - Private
+
+    private func updateActionHandlers() {
+        previews.forEach { preview in
+            preview.didTapOnAttachment = { [weak self] in
+                self?.didTapOnImage?($0)
+            }
+        }
+    }
 
     private func createImagePreview() -> ImagePreview {
         uiConfig

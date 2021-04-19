@@ -8,9 +8,11 @@ import UIKit
 
 extension _ChatMessageImageGallery {
     open class ImagePreview: _View, UIConfigProvider {
-        public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
+        public var content: ChatMessageImageAttachment? {
             didSet { updateContentIfNeeded() }
         }
+
+        public var didTapOnAttachment: ((ChatMessageImageAttachment) -> Void)?
         
         private var imageTask: ImageTask? {
             didSet { oldValue?.cancel() }
@@ -50,7 +52,7 @@ extension _ChatMessageImageGallery {
         override open func setUp() {
             super.setUp()
             
-            let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnAttachment(_:)))
+            let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleTapOnAttachment))
             addGestureRecognizer(tapRecognizer)
         }
 
@@ -64,7 +66,7 @@ extension _ChatMessageImageGallery {
         }
 
         override open func updateContent() {
-            let attachment = content?.attachment
+            let attachment = content
 
             if let url = attachment?.localURL ?? attachment?.imagePreviewURL ?? attachment?.imageURL {
                 loadingIndicator.isVisible = true
@@ -78,14 +80,18 @@ extension _ChatMessageImageGallery {
                 imageTask = nil
             }
 
-            uploadingOverlay.content = content
+            uploadingOverlay.content = attachment
             uploadingOverlay.isVisible = attachment?.localState != nil
+            uploadingOverlay.didTapOnAttachment = { [weak self] in
+                self?.handleTapOnAttachment()
+            }
         }
 
         // MARK: - Actions
 
-        @objc open func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
-            content?.didTapOnAttachment()
+        @objc open func handleTapOnAttachment() {
+            guard let attachment = content else { return }
+            didTapOnAttachment?(attachment)
         }
 
         // MARK: - Init & Deinit

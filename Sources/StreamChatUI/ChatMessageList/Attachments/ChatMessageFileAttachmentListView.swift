@@ -8,8 +8,12 @@ import UIKit
 public typealias ChatMessageFileAttachmentListView = _ChatMessageFileAttachmentListView<NoExtraData>
 
 open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
+    public var content: [ChatMessageFileAttachment] = [] {
         didSet { updateContentIfNeeded() }
+    }
+
+    public var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)? {
+        didSet { updateActionHandlers() }
     }
 
     // MARK: - Subviews
@@ -32,10 +36,21 @@ open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View,
             $0.removeFromSuperview()
         }
 
-        content?.items.forEach {
+        content.forEach {
             let item = uiConfig.messageList.messageContentSubviews.attachmentSubviews.fileAttachmentItemView.init()
             item.content = $0
             stackView.addArrangedSubview(item)
+        }
+
+        updateActionHandlers()
+    }
+
+    private func updateActionHandlers() {
+        let itemViews = stackView.arrangedSubviews.compactMap { $0 as? ItemView }
+        zip(itemViews, content).forEach { (item, attachment) in
+            item.didTapOnAttachment = { [weak self] in
+                self?.didTapOnAttachment?(attachment)
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     public var onThreadTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
     public var onErrorIndicatorTap: (_ChatMessageGroupPart<ExtraData>?) -> Void = { _ in }
-    public var onLinkTap: (ChatMessageDefaultAttachment?) -> Void = { _ in } {
+    public var onLinkTap: (ChatMessageLinkAttachment?) -> Void = { _ in } {
         didSet { updateContentIfNeeded() }
     }
 
@@ -696,7 +696,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setupLinkPreviewView()
         let linkPreviewView = self.linkPreviewView!
         
-        linkPreviewView.content = message.attachments.first { $0.type.isLink } as? ChatMessageDefaultAttachment
+        linkPreviewView.content = message.attachments.first { $0.type.isLink } as? ChatMessageLinkAttachment
         
         linkPreviewView.isVisible = shouldDisplayLinkPreviewView
     }

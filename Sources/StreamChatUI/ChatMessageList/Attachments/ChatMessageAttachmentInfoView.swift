@@ -8,9 +8,11 @@ import UIKit
 public typealias ChatMessageAttachmentInfoView = _ChatMessageAttachmentInfoView<NoExtraData>
 
 open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
+    public var content: ChatMessageUploadableAttachment? {
         didSet { updateContentIfNeeded() }
     }
+
+    public var didTapOnAttachment: (() -> Void)?
 
     // MARK: - Subviews
 
@@ -94,11 +96,11 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
     }
 
     override open func updateContent() {
-        fileNameLabel.text = content?.attachment.title
+        fileNameLabel.text = content?.title
         fileSizeLabel.text = fileSize
         actionIconImageView.image = fileAttachmentActionIcon
 
-        switch content?.attachment.localState {
+        switch content?.localState {
         case .pendingUpload, .uploading:
             loadingIndicator.isVisible = true
         default:
@@ -109,7 +111,7 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
     // MARK: - Actions
 
     @objc open func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
-        content?.didTapOnAttachment()
+        didTapOnAttachment?()
     }
 }
 
@@ -117,15 +119,15 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
 
 private extension _ChatMessageAttachmentInfoView {
     var fileAttachmentActionIcon: UIImage? {
-        guard let attachment = content?.attachment else { return nil }
+        guard let attachment = content else { return nil }
 
         return uiConfig.images.fileAttachmentActionIcons[attachment.localState]
     }
 
     var fileSize: String? {
-        guard let file = content?.attachment.file else { return nil }
+        guard let file = content?.file else { return nil }
 
-        switch content?.attachment.localState {
+        switch content?.localState {
         case let .uploading(progress):
             let uploadedByteCount = Int64(Double(file.size) * progress)
             let uploadedSize = AttachmentFile.sizeFormatter.string(fromByteCount: uploadedByteCount)

@@ -47,8 +47,8 @@ extension _ChatMessageImageGallery {
 
         override open func updateContent() {
             super.updateContent()
-
-            if case .uploadingFailed = content?.attachment.localState {
+            
+            if case .uploadingFailed = content?.localState {
                 fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed
             }
 

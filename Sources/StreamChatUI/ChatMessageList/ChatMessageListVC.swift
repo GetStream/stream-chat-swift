@@ -402,11 +402,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
             let messageController = dataSource.controllerForMessage(self, message)
             messageController.restartFailedAttachmentUploading(with: id)
         default:
-            router.showPreview(for: attachment)
+            router.showPreview(for: attachment.type == .file ? attachment.url : attachment.imageURL)
         }
     }
 
-    private func didTapOnLink(_ link: ChatMessageDefaultAttachment) {
+    private func didTapOnLink(_ link: ChatMessageLinkAttachment) {
         router.openLink(link)
     }
 }

@@ -8,14 +8,9 @@ import UIKit
 public typealias ChatMessageLinkPreviewView = _ChatMessageLinkPreviewView<NoExtraData>
 
 open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
-    public var content: ChatMessageDefaultAttachment? { didSet { updateContentIfNeeded() } }
+    public var content: ChatMessageLinkAttachment? { didSet { updateContentIfNeeded() } }
 
-    public private(set) lazy var imagePreview = uiConfig
-        .messageList
-        .messageContentSubviews
-        .attachmentSubviews
-        .imageGalleryItem
-        .init()
+    public private(set) lazy var imagePreview = UIImageView()
         .withoutAutoresizingMaskConstraints
 
     public private(set) lazy var authorBackground: UIView = {
@@ -126,21 +121,17 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
     override open func updateContent() {
         super.updateContent()
 
-        let isImageHidden = content?.imagePreviewURL == nil
+        let isImageHidden = content?.thumbURL == nil
         let isAuthorHidden = content?.author == nil
 
         authorLabel.textColor = tintColor
         outlineView.backgroundColor = tintColor
 
-        imagePreview.content = content.map {
-            .init(
-                attachment: $0,
-                didTapOnAttachment: {},
-                didTapOnAttachmentAction: { _ in }
-            )
-        }
-
+        imagePreview.image = nil
         imagePreview.isHidden = isImageHidden
+        if let url = content?.thumbURL ?? content?.imageURL, imagePreview.isVisible {
+            imagePreview.loadImage(from: url)
+        }
 
         authorLabel.text = content?.author
         authorLabel.isHidden = isAuthorHidden
