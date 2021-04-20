@@ -64,6 +64,7 @@ protocol MessageDatabaseSession {
         attachments: [AttachmentEnvelope],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
+        mentionedUsers: [String],
         extraData: ExtraData
     ) throws -> MessageDTO
     
@@ -116,6 +117,7 @@ extension MessageDatabaseSession {
         text: String,
         pinning: MessagePinning?,
         quotedMessageId: MessageId?,
+        mentionedUsers: [String] = [],
         attachments: [AttachmentEnvelope] = [],
         attachmentSeeds: [ChatMessageAttachmentSeed] = [],
         extraData: ExtraData = .defaultValue
@@ -130,6 +132,7 @@ extension MessageDatabaseSession {
             attachments: attachments,
             showReplyInChannel: false,
             quotedMessageId: quotedMessageId,
+            mentionedUsers: mentionedUsers,
             extraData: extraData
         )
     }

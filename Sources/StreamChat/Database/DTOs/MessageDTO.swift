@@ -217,6 +217,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         attachments: [AttachmentEnvelope],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
+        mentionedUsers: [String],
         extraData: ExtraData
     ) throws -> MessageDTO {
         guard let currentUserDTO = currentUser() else {
@@ -269,6 +270,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 
         message.showReplyInChannel = showReplyInChannel
         message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
+        
+        let mentionedUserDTOsFromMentionedUserIds = mentionedUsers.map { UserDTO.loadOrCreate(id: $0, context: self) }
+        message.mentionedUsers = Set(mentionedUserDTOsFromMentionedUserIds)
         
         message.user = currentUserDTO.user
         message.channel = channelDTO

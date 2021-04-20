@@ -115,6 +115,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         arguments: String?,
         attachments: [AttachmentEnvelope] = [],
         quotedMessageId: MessageId?,
+        mentionedUsers: [String] = [],
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -130,6 +131,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
                 attachments: attachments,
                 showReplyInChannel: false,
                 quotedMessageId: quotedMessageId,
+                mentionedUsers: mentionedUsers,
                 extraData: extraData
             )
             

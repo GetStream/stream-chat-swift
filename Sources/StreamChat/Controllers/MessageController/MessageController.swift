@@ -226,6 +226,7 @@ public extension _ChatMessageController {
         attachments: [AttachmentEnvelope] = [],
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
+        mentionedUsers: [String] = [],
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -239,6 +240,7 @@ public extension _ChatMessageController {
             attachments: attachments,
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessageId,
+            mentionedUsers: mentionedUsers,
             extraData: extraData
         ) { result in
             self.callback {

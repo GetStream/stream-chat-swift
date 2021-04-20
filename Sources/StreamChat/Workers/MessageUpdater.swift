@@ -132,6 +132,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         attachments: [AttachmentEnvelope],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
+        mentionedUsers: [String],
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -147,6 +148,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                 attachments: attachments,
                 showReplyInChannel: showReplyInChannel,
                 quotedMessageId: quotedMessageId,
+                mentionedUsers: mentionedUsers,
                 extraData: extraData
             )
             

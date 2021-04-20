@@ -731,6 +731,7 @@ public extension _ChatChannelController {
 //        arguments: String? = nil,
         attachments: [AttachmentEnvelope] = [],
         quotedMessageId: MessageId? = nil,
+        mentionedUsers: [String] = [],
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -753,6 +754,7 @@ public extension _ChatChannelController {
             arguments: nil,
             attachments: attachments,
             quotedMessageId: quotedMessageId,
+            mentionedUsers: mentionedUsers,
             extraData: extraData
         ) { result in
             self.callback {
