@@ -56,15 +56,14 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
     open private(set) var needsToScrollToMostRecentMessageAnimated = false
-    
-    /// Feedback generator used when presenting actions controller on selected message
-    open lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
     /// Handles navigation actions from messages
     open lazy var router = uiConfig
         .navigation
         .messageListRouter
         .init(rootViewController: self)
+    
+    open lazy var popupPresenter = PopupPresenter(rootViewController: self)
     
     /// Constraint connection list of messages and composer controller.
     /// It's used to change the message list's height based on the keyboard visibility.
@@ -199,23 +198,17 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     
     /// Will scroll to most recent message on next `updateMessages` call
     open func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
-        needsToScrollToMostRecentMessage = true
-        needsToScrollToMostRecentMessageAnimated = animated
+        collectionView.setNeedsScrollToMostRecentMessage(animated: animated)
     }
 
     /// Force scroll to most recent message check without waiting for `updateMessages`
     open func scrollToMostRecentMessageIfNeeded() {
-        guard needsToScrollToMostRecentMessage else { return }
-        
-        scrollToMostRecentMessage(animated: needsToScrollToMostRecentMessageAnimated)
+        collectionView.scrollToMostRecentMessageIfNeeded()
     }
 
     /// Scrolls to most recent message
     open func scrollToMostRecentMessage(animated: Bool = true) {
-        needsToScrollToMostRecentMessage = false
-
-        // our collection is flipped, so (0; 0) item is most recent one
-        collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .bottom, animated: animated)
+        collectionView.scrollToMostRecentMessage(animated: animated)
     }
     
     /// Updates the status data in `titleView`.
@@ -267,84 +260,38 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
-        collectionView.performBatchUpdates {
-            for change in changes {
-                switch change {
-                case let .insert(_, index):
-                    collectionView.insertItems(at: [index])
-                case let .move(_, fromIndex, toIndex):
-                    collectionView.moveItem(at: fromIndex, to: toIndex)
-                case let .remove(_, index):
-                    collectionView.deleteItems(at: [index])
-                case let .update(_, index):
-                    collectionView.reloadItems(at: [index])
-                }
-            }
-        } completion: { flag in
-            completion?(flag)
-            self.scrollToMostRecentMessageIfNeeded()
+        collectionView.updateMessages(with: changes) {
+            completion?($0)
+            self.scrollToMostRecentMessage()
         }
     }
     
-    private func presentReactionsControllerAnimated(
-        for cell: MessageCell<ExtraData>,
-        with messageData: _ChatMessageGroupPart<ExtraData>,
-        actionsController: _ChatMessageActionsVC<ExtraData>,
-        reactionsController: _ChatMessageReactionsVC<ExtraData>?
-    ) {
-        // TODO: for PR: This should be doable via:
-        // 1. options: [.autoreverse, .repeat] and
-        // 2. `UIView.setAnimationRepeatCount(0)` inside the animation block...
-        //
-        // and then just set completion to the animation to transform this back. aka `cell.messageView.transform = .identity`
-        // however, this doesn't work as after the animation is done, it clips back to the value set in animation block
-        // and then on completion goes back to `.identity`... This is really strange, but I was fighting it for some time
-        // and couldn't find proper solution...
-        // Also there are some limitations to the current solution ->
-        // According to my debug view hiearchy, the content inside `messageView.messageBubbleView` is not constrainted to the
-        // bubble view itself, meaning right now if we want to scale the view of incoming message, we scale the avatarView
-        // of the sender as well...
-        UIView.animate(
-            withDuration: 0.2,
-            delay: 0,
-            options: [.curveEaseIn],
-            animations: {
-                cell.messageContentView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-            },
-            completion: { _ in
-                self.impactFeedbackGenerator.impactOccurred()
-
-                UIView.animate(
-                    withDuration: 0.1,
-                    delay: 0,
-                    options: [.curveEaseOut],
-                    animations: {
-                        cell.messageContentView.transform = .identity
-                    }
-                )
-                
-                self.router.showMessageActionsPopUp(
-                    messageContentFrame: cell.messageContentView.superview!.convert(cell.messageContentView.frame, to: nil),
-                    messageData: messageData,
-                    messageActionsController: actionsController,
-                    messageReactionsController: reactionsController
-                )
-            }
-        )
+    open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
+        channelController.messages[indexPath.item]
     }
-
-    /// Presents custom actions controller with all possible actions with the selected message.
+    
     private func didSelectMessageCell(at indexPath: IndexPath) {
         let message = channelController.messages[indexPath.item]
         
-        guard let cell = collectionView.cellForItem(at: indexPath) as? MessageCell<ExtraData> else { return }
-        guard message.isInteractionEnabled else { return }
+        guard
+            let cell = collectionView.cellForItem(at: indexPath) as? MessageCell<ExtraData>,
+            message.isInteractionEnabled
+        else { return }
         
         let messageController = channelController.client.messageController(
             cid: channelController.cid!,
             messageId: message.id
         )
+        
+        presentActionsForMessage(message, cell: cell, messageController: messageController)
+    }
 
+    /// Presents custom actions controller with all possible actions with the selected message.
+    private func presentActionsForMessage(
+        _ message: _ChatMessage<ExtraData>,
+        cell: MessageCell<ExtraData>,
+        messageController: _ChatMessageController<ExtraData>
+    ) {
         let actionsController = _ChatMessageActionsVC<ExtraData>()
         actionsController.messageController = messageController
         actionsController.delegate = .init(delegate: self)
@@ -356,18 +303,10 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
             controller.messageController = messageController
             return controller
         }
-
-        presentReactionsControllerAnimated(
-            for: cell,
-            // only `message` is used but I don't want to break current implementation
-            with: _ChatMessageGroupPart(
-                message: message,
-                quotedMessage: nil,
-                isFirstInGroup: true,
-                isLastInGroup: true,
-                didTapOnAttachment: nil,
-                didTapOnAttachmentAction: nil
-            ),
+        
+        popupPresenter.present(
+            targetView: cell.messageContentView,
+            message: message,
             actionsController: actionsController,
             reactionsController: reactionsController
         )
