@@ -183,6 +183,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let parentId: String?
     let showReplyInChannel: Bool
     let quotedMessageId: String?
+    let mentionedUsers: [String]
     let attachments: [Encodable]
     var pinned: Bool
     var pinExpires: Date?
@@ -197,6 +198,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         parentId: String? = nil,
         showReplyInChannel: Bool = false,
         quotedMessageId: String? = nil,
+        mentionedUsers: [String] = [],
         attachments: [Encodable] = [],
         pinned: Bool = false,
         pinExpires: Date? = nil,
@@ -210,6 +212,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         self.parentId = parentId
         self.showReplyInChannel = showReplyInChannel
         self.quotedMessageId = quotedMessageId
+        self.mentionedUsers = mentionedUsers
         self.attachments = attachments
         self.pinned = pinned
         self.pinExpires = pinExpires
@@ -225,6 +228,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         try container.encodeIfPresent(parentId, forKey: .parentId)
         try container.encodeIfPresent(showReplyInChannel, forKey: .showReplyInChannel)
         try container.encodeIfPresent(quotedMessageId, forKey: .quotedMessageId)
+        try container.encodeIfPresent(mentionedUsers, forKey: .mentionedUsers)
         try container.encode(pinned, forKey: .pinned)
         try container.encodeIfPresent(pinExpires, forKey: .pinExpires)
 

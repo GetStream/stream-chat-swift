@@ -345,6 +345,7 @@ class MessageDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let quotedMessageId: MessageId = .unique
         let quotedMessageAuthorId: UserId = .unique
+        let mentionedUsers: [String] = [.unique]
 
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: channelId, withMessages: false)
@@ -355,6 +356,7 @@ class MessageDTO_Tests: XCTestCase {
                 messageId: quotedMessageId,
                 authorUserId: quotedMessageAuthorId
             ),
+            mentionedUsers: mentionedUsers,
             authorUserId: messageAuthorId,
             latestReactions: (0..<3).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: .unique))
@@ -452,6 +454,7 @@ class MessageDTO_Tests: XCTestCase {
         let messageAttachmentSeeds: [ChatMessageAttachmentSeed] = [.dummy(), .dummy(), .dummy()]
         let messageShowReplyInChannel = true
         let messageExtraData: NoExtraData = .defaultValue
+        let messageMentionedUsers: [String] = [.unique]
 
         // Create message with attachments in the database.
         try database.writeSynchronously { session in
@@ -465,6 +468,7 @@ class MessageDTO_Tests: XCTestCase {
                 attachments: messageAttachments + messageAttachmentSeeds,
                 showReplyInChannel: true,
                 quotedMessageId: nil,
+                mentionedUsers: messageMentionedUsers,
                 extraData: messageExtraData
             ).id
         }
@@ -483,6 +487,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.parentId, parentMessageId)
         XCTAssertEqual(requestBody.showReplyInChannel, messageShowReplyInChannel)
         XCTAssertEqual(requestBody.extraData, messageExtraData)
+        XCTAssertEqual(requestBody.mentionedUsers, messageMentionedUsers)
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
 
@@ -574,6 +579,7 @@ class MessageDTO_Tests: XCTestCase {
                     attachments: [TestAttachmentEnvelope](),
                     showReplyInChannel: false,
                     quotedMessageId: nil,
+                    mentionedUsers: [],
                     extraData: NoExtraData.defaultValue
                 )
                 message1Id = message1DTO.id
@@ -590,6 +596,7 @@ class MessageDTO_Tests: XCTestCase {
                     attachments: [TestAttachmentEnvelope](),
                     showReplyInChannel: false,
                     quotedMessageId: nil,
+                    mentionedUsers: [],
                     extraData: NoExtraData.defaultValue
                 )
                 message2Id = message2DTO.id
@@ -673,6 +680,7 @@ class MessageDTO_Tests: XCTestCase {
             .dummy()
         ]
         let newMessagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
+        let newMentionedUsers: [String] = [.unique]
                 
         _ = try await { completion in
             database.write({
@@ -686,6 +694,7 @@ class MessageDTO_Tests: XCTestCase {
                     attachments: newMessageAttachments + newMessageAttachmentSeeds,
                     showReplyInChannel: true,
                     quotedMessageId: nil,
+                    mentionedUsers: newMentionedUsers,
                     extraData: NoExtraData.defaultValue
                 )
                 newMessageId = messageDTO.id
@@ -734,6 +743,7 @@ class MessageDTO_Tests: XCTestCase {
                     attachments: [TestAttachmentEnvelope](),
                     showReplyInChannel: true,
                     quotedMessageId: nil,
+                    mentionedUsers: [.unique],
                     extraData: NoExtraData.defaultValue
                 )
             }, completion: completion)
@@ -769,6 +779,7 @@ class MessageDTO_Tests: XCTestCase {
                     attachments: [TestAttachmentEnvelope](),
                     showReplyInChannel: true,
                     quotedMessageId: nil,
+                    mentionedUsers: [.unique],
                     extraData: NoExtraData.defaultValue
                 )
             }, completion: completion)
@@ -844,6 +855,7 @@ class MessageDTO_Tests: XCTestCase {
                 attachments: [TestAttachmentEnvelope](),
                 showReplyInChannel: false,
                 quotedMessageId: nil,
+                mentionedUsers: [],
                 extraData: NoExtraData.defaultValue
             )
             // Get reply messageId

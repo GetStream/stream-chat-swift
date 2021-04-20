@@ -26,6 +26,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
     @Atomic var createNewReply_attachments: [AttachmentEnvelope]?
     @Atomic var createNewReply_showReplyInChannel: Bool?
     @Atomic var createNewReply_quotedMessageId: MessageId?
+    @Atomic var createNewReply_mentionedUsers: [String]?
     @Atomic var createNewReply_pinning: MessagePinning?
     @Atomic var createNewReply_extraData: ExtraData.Message?
     @Atomic var createNewReply_completion: ((Result<MessageId, Error>) -> Void)?
@@ -89,6 +90,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         createNewReply_parentMessageId = nil
         createNewReply_attachments = nil
         createNewReply_showReplyInChannel = nil
+        createNewReply_mentionedUsers = nil
         createNewReply_extraData = nil
         createNewReply_completion = nil
         
@@ -163,6 +165,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         attachments: [AttachmentEnvelope],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
+        mentionedUsers: [String],
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -174,6 +177,7 @@ final class MessageUpdaterMock<ExtraData: ExtraDataTypes>: MessageUpdater<ExtraD
         createNewReply_attachments = attachments
         createNewReply_showReplyInChannel = showReplyInChannel
         createNewReply_quotedMessageId = quotedMessageId
+        createNewReply_mentionedUsers = mentionedUsers
         createNewReply_pinning = pinning
         createNewReply_extraData = extraData
         createNewReply_completion = completion

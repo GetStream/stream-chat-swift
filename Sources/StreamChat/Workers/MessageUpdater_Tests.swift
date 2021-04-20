@@ -397,6 +397,7 @@ final class MessageUpdater_Tests: StressTestCase {
             .dummy(),
             .dummy()
         ]
+        let mentionedUsers: [String] = [.unique]
         let extraData: NoExtraData = .defaultValue
         
         // Create new reply message
@@ -411,6 +412,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 attachments: attachments + attachmentSeeds,
                 showReplyInChannel: showReplyInChannel,
                 quotedMessageId: nil,
+                mentionedUsers: mentionedUsers,
                 extraData: extraData
             ) { result in
                 if let newMessageId = try? result.get() {
@@ -470,6 +472,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 attachments: [],
                 showReplyInChannel: false,
                 quotedMessageId: nil,
+                mentionedUsers: [.unique],
                 extraData: .defaultValue
             ) { completion($0) }
         }

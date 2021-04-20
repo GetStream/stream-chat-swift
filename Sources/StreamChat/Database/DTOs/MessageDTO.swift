@@ -444,6 +444,7 @@ extension MessageDTO {
             parentId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessage?.id,
+            mentionedUsers: mentionedUsers.map { $0.id },
             attachments: attachments
                 .sorted { $0.attachmentID.index < $1.attachmentID.index }
                 .map { $0.asRequestPayload() },

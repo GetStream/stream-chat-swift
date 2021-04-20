@@ -46,6 +46,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var createNewMessage_attachments: [AttachmentEnvelope]?
     @Atomic var createNewMessage_attachmentSeeds: [ChatMessageAttachmentSeed]?
     @Atomic var createNewMessage_quotedMessageId: MessageId?
+    @Atomic var createNewMessage_mentionedUsers: [String]?
     @Atomic var createNewMessage_pinning: MessagePinning?
     @Atomic var createNewMessage_extraData: ExtraData.Message?
     @Atomic var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
@@ -106,6 +107,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         createNewMessage_arguments = nil
         createNewMessage_attachments = nil
         createNewMessage_attachmentSeeds = nil
+        createNewMessage_mentionedUsers = nil
         createNewMessage_extraData = nil
         createNewMessage_completion = nil
         
@@ -176,6 +178,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         arguments: String?,
         attachments: [AttachmentEnvelope],
         quotedMessageId: MessageId?,
+        mentionedUsers: [String],
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
@@ -185,6 +188,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         createNewMessage_arguments = arguments
         createNewMessage_attachments = attachments
         createNewMessage_quotedMessageId = quotedMessageId
+        createNewMessage_mentionedUsers = mentionedUsers
         createNewMessage_pinning = pinning
         createNewMessage_extraData = extraData
         createNewMessage_completion = completion

@@ -82,6 +82,7 @@ extension DatabaseSessionMock {
         attachments: [AttachmentEnvelope],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
+        mentionedUsers: [String],
         extraData: ExtraData
     ) throws -> MessageDTO where ExtraData: MessageExtraData {
         try throwErrorIfNeeded()
@@ -96,6 +97,7 @@ extension DatabaseSessionMock {
             attachments: attachments,
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessageId,
+            mentionedUsers: mentionedUsers,
             extraData: extraData
         )
     }
