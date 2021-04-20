@@ -166,7 +166,7 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
         
         // Simulate a health check event is received and the connection state is updated
-        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
+        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
         
         AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
@@ -240,7 +240,7 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.staysTrue(reconnectionStrategy.sucessfullyConnected_calledCount == 0)
         
         // Simulate a health check event
-        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
+        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
         
         // `sucessfullyConnected` should be called now
@@ -340,7 +340,7 @@ class WebSocketClient_Tests: StressTestCase {
         assert(pingController.pongRecievedCount == 1)
         
         // Simulate a health check (pong) event is received
-        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
+        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
         
         AssertAsync.willBeEqual(pingController.pongRecievedCount, 2)
@@ -409,7 +409,7 @@ class WebSocketClient_Tests: StressTestCase {
         
         // Make the decoder always return TestEvent
         let testEvent = TestEvent()
-        decoder.decodedEvent = testEvent
+        decoder.decodedEvent = .success(testEvent)
         
         // Clean up pending events and start logging the new ones
         eventNotificationCenter.pendingEvents = []
@@ -435,7 +435,7 @@ class WebSocketClient_Tests: StressTestCase {
 
         // Make the decoder return an event
         let incomingEvent = TestEvent()
-        decoder.decodedEvent = incomingEvent
+        decoder.decodedEvent = .success(incomingEvent)
         
         let processedEvent = TestEvent()
         eventNotificationCenterMiddleware.closure = { middlewareIncomingEvent, session in
@@ -697,11 +697,19 @@ private struct TestEvent: Event, Equatable {
 
 private class EventDecoderMock: AnyEventDecoder {
     var decode_calledWithData: Data?
-    var decodedEvent: Event!
+    var decodedEvent: Result<Event, Error>!
     
     func decode(from data: Data) throws -> Event {
         decode_calledWithData = data
-        return decodedEvent
+        
+        switch decodedEvent {
+        case let .success(event): return event
+        case let .failure(error): throw error
+        case .none:
+            XCTFail("Undefined state, `decodedEvent` should not be nil")
+            // just dummy error to make compiler happy
+            throw NSError(domain: "some error", code: 0, userInfo: nil)
+        }
     }
 }
 
