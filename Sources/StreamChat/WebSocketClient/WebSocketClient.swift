@@ -272,7 +272,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
             // Check if the message contains an error object from the server
             let webSocketError = message
                 .data(using: .utf8)
-                .map { try? JSONDecoder.default.decode(WebSocketErrorContainer.self, from: $0) }
+                .flatMap { try? JSONDecoder.default.decode(WebSocketErrorContainer.self, from: $0) }
                 .map { ClientError.WebSocket(with: $0?.error) }
             
             if let webSocketError = webSocketError {
