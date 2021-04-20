@@ -34,9 +34,9 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
         return navbarListener
     }
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+        
         guard let channel = channelController.channel else { return }
 
         let avatar = _ChatChannelAvatarView<ExtraData>()

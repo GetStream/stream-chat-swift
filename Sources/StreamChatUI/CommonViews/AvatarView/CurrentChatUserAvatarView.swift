@@ -33,9 +33,8 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, UICo
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
     
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-        
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = .clear
         avatarView.imageView.backgroundColor = uiConfig.colorPalette.background
     }

@@ -41,7 +41,8 @@ open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: _View, 
     
     // MARK: - Public
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         layer.masksToBounds = true
         backgroundColor = uiConfig.colorPalette.highlightedAccentBackground
 

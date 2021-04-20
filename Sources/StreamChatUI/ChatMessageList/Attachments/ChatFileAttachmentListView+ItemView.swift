@@ -17,7 +17,8 @@ extension _ChatMessageFileAttachmentListView {
 
         // MARK: - Overrides
 
-        override public func defaultAppearance() {
+        override open func setUpAppearance() {
+            super.setUpAppearance()
             backgroundColor = uiConfig.colorPalette.popoverBackground
             layer.cornerRadius = 12
             layer.masksToBounds = true

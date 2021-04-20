@@ -41,7 +41,8 @@ open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: _ViewContr
 
     // MARK: - Life Cycle
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         view.backgroundColor = .white
         navigationItem.leftBarButtonItem = closeButton
         navigationItem.rightBarButtonItems = [

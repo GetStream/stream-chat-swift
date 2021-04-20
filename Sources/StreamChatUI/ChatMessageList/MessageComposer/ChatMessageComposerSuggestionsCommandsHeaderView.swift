@@ -38,7 +38,8 @@ open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDat
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = uiConfig.colorPalette.popoverBackground
 
         headerLabel.font = uiConfig.font.body

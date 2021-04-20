@@ -26,7 +26,8 @@ open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, UIConf
         layer.cornerRadius = bounds.height / 2
     }
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         layer.masksToBounds = true
         backgroundColor = uiConfig.colorPalette.alert
 

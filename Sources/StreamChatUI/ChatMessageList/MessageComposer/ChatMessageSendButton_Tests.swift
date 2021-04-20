@@ -44,23 +44,6 @@ class ChatMessageSendButton_Tests: XCTestCase {
         AssertSnapshot(container, variants: .onlyUserInterfaceStyles, suffix: "new-disabled")
     }
 
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageSendButton {}
-        TestView.defaultAppearance {
-            $0.tintColor = .green
-        }
-
-        let view = TestView().withoutAutoresizingMaskConstraints
-
-        container.embed(view)
-
-        view.isEnabled = true
-        AssertSnapshot(container, variants: .onlyUserInterfaceStyles, suffix: "new-enabled")
-
-        view.isEnabled = false
-        AssertSnapshot(container, variants: .onlyUserInterfaceStyles, suffix: "new-disabled")
-    }
-
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageSendButton {
             override func setUpLayout() {

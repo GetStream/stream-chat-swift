@@ -64,7 +64,7 @@ extension UIConfigProvider where Self: _View {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _View: UIView, AppearanceSetting, Customizable {
+open class _View: UIView, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     fileprivate var isInitialized: Bool = false
     
@@ -76,12 +76,10 @@ open class _View: UIView, AppearanceSetting, Customizable {
         
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
@@ -94,7 +92,6 @@ open class _View: UIView, AppearanceSetting, Customizable {
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
-            (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
@@ -108,7 +105,7 @@ open class _View: UIView, AppearanceSetting, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customizable {
+open class _CollectionViewCell: UICollectionViewCell, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -120,12 +117,10 @@ open class _CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customi
         
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
@@ -138,7 +133,6 @@ open class _CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customi
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
-            (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
@@ -152,7 +146,7 @@ open class _CollectionViewCell: UICollectionViewCell, AppearanceSetting, Customi
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _CollectionReusableView: UICollectionReusableView, AppearanceSetting, Customizable {
+open class _CollectionReusableView: UICollectionReusableView, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
 
@@ -164,12 +158,10 @@ open class _CollectionReusableView: UICollectionReusableView, AppearanceSetting,
 
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         updateContent()
     }
 
-    public func defaultAppearance() { /* default empty implementation */ }
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
@@ -182,7 +174,6 @@ open class _CollectionReusableView: UICollectionReusableView, AppearanceSetting,
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
-            (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
@@ -196,7 +187,7 @@ open class _CollectionReusableView: UICollectionReusableView, AppearanceSetting,
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _Control: UIControl, AppearanceSetting, Customizable {
+open class _Control: UIControl, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -208,12 +199,10 @@ open class _Control: UIControl, AppearanceSetting, Customizable {
         
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
@@ -226,7 +215,6 @@ open class _Control: UIControl, AppearanceSetting, Customizable {
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
-            (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
@@ -240,7 +228,7 @@ open class _Control: UIControl, AppearanceSetting, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _Button: UIButton, AppearanceSetting, Customizable {
+open class _Button: UIButton, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -252,12 +240,10 @@ open class _Button: UIButton, AppearanceSetting, Customizable {
         
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
@@ -270,7 +256,6 @@ open class _Button: UIButton, AppearanceSetting, Customizable {
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
-            (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
@@ -284,7 +269,7 @@ open class _Button: UIButton, AppearanceSetting, Customizable {
 
 /// Base class for overridable views StreamChatUI provides.
 /// All conformers will have StreamChatUI appearance settings by default.
-open class _NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
+open class _NavigationBar: UINavigationBar, Customizable {
     // Flag for preventing multiple lifecycle methods calls.
     private var isInitialized: Bool = false
     
@@ -296,12 +281,10 @@ open class _NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
         
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
@@ -314,7 +297,6 @@ open class _NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
-            (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }
@@ -326,18 +308,16 @@ open class _NavigationBar: UINavigationBar, AppearanceSetting, Customizable {
     }
 }
 
-open class _ViewController: UIViewController, AppearanceSetting, Customizable {
+open class _ViewController: UIViewController, Customizable {
     override open func viewDidLoad() {
         super.viewDidLoad()
         
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         updateContent()
     }
     
-    public func defaultAppearance() { /* default empty implementation */ }
     open func setUp() { /* default empty implementation */ }
     open func setUpAppearance() { /* default empty implementation */ }
     open func setUpLayout() { /* default empty implementation */ }
@@ -350,7 +330,6 @@ open class _ViewController: UIViewController, AppearanceSetting, Customizable {
         guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
 
         TraitCollectionReloadStack.push {
-            (self as! Self).applyDefaultAppearance()
             self.setUpAppearance()
             self.updateContent()
         }

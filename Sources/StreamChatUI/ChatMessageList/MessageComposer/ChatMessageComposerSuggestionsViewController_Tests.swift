@@ -103,23 +103,6 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
         AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
     }
 
-    func test_commands_appearanceCustomization_usingAppearanceHook() {
-        class TestVC: ChatMessageComposerSuggestionsViewController {}
-        TestVC.defaultAppearance {
-            $0.collectionView.backgroundColor = .lightGray
-            $0.collectionView.layer.cornerRadius = 0
-        }
-        
-        let vc = TestVC()
-        vc.uiConfig = config
-        vc.dataSource = ChatMessageComposerSuggestionsCommandDataSource(
-            with: commands,
-            collectionView: vc.collectionView
-        )
-        
-        AssertSnapshot(vc, variants: [.defaultLight], screenSize: defaultSuggestionsSize)
-    }
-
     func test_commands_appearanceCustomization_usingSubclassing() {
         class TestVC: ChatMessageComposerSuggestionsViewController {
             override func setUpAppearance() {
@@ -205,28 +188,10 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
         AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
     }
 
-    func test_mentions_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageComposerSuggestionsViewController {}
-        TestView.defaultAppearance {
-            $0.collectionView.layer.cornerRadius = 0
-        }
-        
-        let vc = TestView()
-        let searchController = ChatUserSearchController_Mock<NoExtraData>.mock()
-        searchController.users_mock = mentions
-        vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
-            collectionView: vc.collectionView,
-            searchController: searchController
-        )
-        
-        AssertSnapshot(vc, variants: [.defaultLight], screenSize: defaultSuggestionsSize)
-    }
-
     func test_mentions_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageComposerSuggestionsViewController {
-            override func defaultAppearance() {
-                super.defaultAppearance()
-
+            override func setUpAppearance() {
+                super.setUpAppearance()
                 collectionView.layer.cornerRadius = 0
             }
             

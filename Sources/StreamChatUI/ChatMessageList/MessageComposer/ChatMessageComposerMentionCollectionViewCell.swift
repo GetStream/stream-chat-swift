@@ -39,7 +39,8 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
     /// StackView which holds username and userTag labels in vertical axis by default.
     open private(set) lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = uiConfig.colorPalette.popoverBackground
         usernameLabel.font = uiConfig.font.headlineBold
 

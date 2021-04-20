@@ -25,9 +25,8 @@ open class _ChatMessageDefaultReactionsBubbleView<ExtraData: ExtraDataTypes>: _C
         contentViewBackground.layer.cornerRadius = contentViewBackground.bounds.height / 2
     }
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         contentViewBackground.layer.borderWidth = 1
     }
     

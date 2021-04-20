@@ -21,7 +21,8 @@ open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProv
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         imageView.image = uiConfig.images.loadingIndicator
     }
 

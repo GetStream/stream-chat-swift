@@ -54,7 +54,8 @@ open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvi
         informationLabel.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
     }
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = uiConfig.colorPalette.overlayBackground
         informationLabel.textColor = uiConfig.colorPalette.subtitleText
         informationLabel.font = uiConfig.font.body

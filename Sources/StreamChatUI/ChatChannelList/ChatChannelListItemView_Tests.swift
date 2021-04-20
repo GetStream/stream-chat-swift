@@ -50,21 +50,6 @@ class ChatChannelListItemView_Tests: XCTestCase {
         AssertSnapshot(view)
     }
         
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatChannelListItemView {}
-        TestView.defaultAppearance {
-            $0.subtitleLabel.font = .italicSystemFont(ofSize: 20)
-            $0.backgroundColor = .cyan
-        }
-        
-        let view = TestView().withoutAutoresizingMaskConstraints
-        
-        view.addSizeConstraints()
-        
-        view.content = content
-        AssertSnapshot(view)
-    }
-    
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatChannelListItemView {
             lazy var footnoteLabel = UILabel()
@@ -73,6 +58,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
                 .withBidirectionalLanguagesSupport
             
             override func setUpAppearance() {
+                super.setUpAppearance()
                 titleLabel.textColor = .cyan
                 subtitleLabel.textColor = .blue
                 

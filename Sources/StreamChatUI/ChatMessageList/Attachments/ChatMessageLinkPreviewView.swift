@@ -78,8 +78,8 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
     var authorOnImageConstraint: NSLayoutConstraint?
     var noAuthorWithImageConstraint: NSLayoutConstraint?
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         authorBackground.backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
         backgroundColor = .clear
         imagePreview.layer.cornerRadius = 8

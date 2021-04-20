@@ -31,8 +31,8 @@ open class _ChatMessageActionControl<ExtraData: ExtraDataTypes>: _Control, UICon
     /// `UIImageView` to show `image`.
     public lazy var imageView: UIImageView = UIImageView()
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         titleLabel.font = uiConfig.font.body
         titleLabel.adjustsFontForContentSizeCategory = true
     }

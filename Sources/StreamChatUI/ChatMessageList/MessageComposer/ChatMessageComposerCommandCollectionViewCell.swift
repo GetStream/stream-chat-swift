@@ -37,7 +37,8 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View
     open private(set) lazy var textStackView: UIStackView = UIStackView()
         .withoutAutoresizingMaskConstraints
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = .clear
 
         commandNameLabel.font = uiConfig.font.bodyBold

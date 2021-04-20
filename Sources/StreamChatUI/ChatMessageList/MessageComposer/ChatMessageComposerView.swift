@@ -92,7 +92,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
+        
         setUpAppearance()
         updateContent()
     }
@@ -107,8 +107,8 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     
     // MARK: - Public
     
-    override public func defaultAppearance() {
-        super.defaultAppearance()
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         stateIconHeight = 40
         
         backgroundColor = uiConfig.colorPalette.popoverBackground

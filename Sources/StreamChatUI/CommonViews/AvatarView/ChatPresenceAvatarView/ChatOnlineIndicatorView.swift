@@ -20,9 +20,8 @@ public typealias ChatOnlineIndicatorView = _ChatOnlineIndicatorView<NoExtraData>
 
 /// A view used to indicate the presence of a user.
 open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, MaskProviding {
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = uiConfig.colorPalette.alternativeActiveTint
     }
 

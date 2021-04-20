@@ -50,16 +50,6 @@ class ChatMessageComposerImageAttachmentsView_Tests: XCTestCase {
         AssertSnapshot(view, variants: [.defaultLight])
     }
 
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageComposerImageAttachmentsView {}
-        TestView.defaultAppearance {
-            $0.backgroundColor = .yellow
-        }
-
-        let view = makeView(TestView.self)
-        AssertSnapshot(view, variants: [.defaultLight])
-    }
-
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageComposerImageAttachmentsView {
             override func setUpAppearance() {

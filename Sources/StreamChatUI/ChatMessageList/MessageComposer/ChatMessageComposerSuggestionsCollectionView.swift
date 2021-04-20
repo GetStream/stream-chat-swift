@@ -11,7 +11,6 @@ public typealias ChatMessageComposerSuggestionsCollectionView = _ChatMessageComp
 /// The collection view of the suggestions view controller.
 open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTypes>: UICollectionView,
     UIConfigProvider,
-    AppearanceSetting,
     Customizable {
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
@@ -19,7 +18,6 @@ open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTyp
 
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
         setUpAppearance()
         updateContent()
     }
@@ -35,8 +33,10 @@ open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTyp
     }
 
     // MARK: - Appearance
+    
+    public func setUp() {}
 
-    public func defaultAppearance() {
+    public func setUpAppearance() {
         backgroundColor = uiConfig.colorPalette.popoverBackground
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
@@ -45,10 +45,6 @@ open class _ChatMessageComposerSuggestionsCollectionView<ExtraData: ExtraDataTyp
         layer.masksToBounds = true
         layer.cornerRadius = 10
     }
-    
-    public func setUp() {}
-
-    public func setUpAppearance() {}
 
     public func setUpLayout() {}
 

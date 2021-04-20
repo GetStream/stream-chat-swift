@@ -37,28 +37,10 @@ class CurrentChatUserAvatarView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
-    func test_customizationUsingAppearanceHook() {
-        class TestView: CurrentChatUserAvatarView {}
-        TestView.defaultAppearance {
-            $0.avatarView.backgroundColor = .blue
-            $0.avatarView.imageView.backgroundColor = .brown
-            $0.layer.borderWidth = 1
-            $0.layer.borderColor = UIColor.green.cgColor
-        }
-        
-        let view = TestView().withoutAutoresizingMaskConstraints
-        
-        // Snapshot empty appearance
-        AssertSnapshot(view, variants: .onlyUserInterfaceStyles, suffix: "empty")
-        
-        // Snapshot appearance with data
-        view.controller = currentUserController
-        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
-    }
-
-    func test_customizationUsingSubclassingHook() {
+    func test_customizationUsingSubclassing() {
         class TestView: CurrentChatUserAvatarView {
-            override func defaultAppearance() {
+            override func setUpAppearance() {
+                super.setUpAppearance()
                 avatarView.backgroundColor = .blue
                 avatarView.imageView.backgroundColor = .brown
                 layer.borderWidth = 1

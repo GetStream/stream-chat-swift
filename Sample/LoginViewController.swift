@@ -119,16 +119,7 @@ extension LoginViewController {
             let channelList = ChatChannelListVC()
             
             channelList.controller = channelListController
-            
-            // An example of change default appearance
-            ChatChannelListItemView.defaultAppearance {
-                $0.backgroundColor = .yellow
-            }
-
-            ChatChannelListVC.defaultAppearance {
-                $0.title = "Custom title"
-            }
-            
+   
             let navigation = UINavigationController(
                 navigationBarClass: channelList.uiConfig.navigation.navigationBar.self,
                 toolbarClass: nil

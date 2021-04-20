@@ -29,9 +29,8 @@ open class _ChatChannelReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: _View
         updateContentIfNeeded()
     }
     
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-        
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         imageView.contentMode = .scaleAspectFit
     }
     

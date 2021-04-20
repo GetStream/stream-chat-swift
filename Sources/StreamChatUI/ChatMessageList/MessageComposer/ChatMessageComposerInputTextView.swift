@@ -8,7 +8,6 @@ import UIKit
 public typealias ChatMessageComposerInputTextView = _ChatMessageComposerInputTextView<NoExtraData>
 
 open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
-    AppearanceSetting,
     Customizable,
     UIConfigProvider
 {
@@ -42,14 +41,23 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
+        
         setUpAppearance()
         updateContent()
     }
     
     // MARK: Public
+        
+    open func setUp() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textDidChange),
+            name: UITextView.textDidChangeNotification,
+            object: nil
+        )
+    }
     
-    open func defaultAppearance() {
+    open func setUpAppearance() {
         font = uiConfig.font.body
         textContainer.lineFragmentPadding = 10
         textColor = uiConfig.colorPalette.text
@@ -60,17 +68,6 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         
         backgroundColor = .clear
     }
-    
-    open func setUp() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(textDidChange),
-            name: UITextView.textDidChangeNotification,
-            object: nil
-        )
-    }
-    
-    open func setUpAppearance() {}
     
     open func setUpLayout() {
         embed(
