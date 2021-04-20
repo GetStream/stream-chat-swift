@@ -314,6 +314,21 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.staysTrue(engine!.connect_calledCount == 0)
     }
     
+    func test_connectionState_afterDecodingError() {
+        // Simulate connection
+        test_connectionFlow()
+        
+        decoder.decodedEvent = .failure(
+            DecodingError.keyNotFound(
+                EventPayload<NoExtraData>.CodingKeys.eventType,
+                .init(codingPath: [], debugDescription: "")
+            )
+        )
+        engine!.simulateMessageReceived()
+        
+        AssertAsync.staysEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
+    }
+    
     // MARK: - Ping Controller
     
     func test_webSocketPingController_connectionStateDidChange_calledWhenConnectionChanges() {
