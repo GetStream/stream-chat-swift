@@ -101,6 +101,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         super.updateContent()
         switch state {
         case .initial:
+            textView.text = ""
             textView.updateHeightConstraint()
             textView.becomeFirstResponder()
             textView.placeholderLabel.text = L10n.Composer.Placeholder.message
