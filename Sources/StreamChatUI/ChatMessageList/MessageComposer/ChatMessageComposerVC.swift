@@ -219,14 +219,16 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 pinning: nil,
                 attachments: attachments + attachmentSeeds,
                 showReplyInChannel: composerView.checkmarkControl.isSelected,
-                quotedMessageId: quotedMessageId
+                quotedMessageId: quotedMessageId,
+                mentionedUsers: Array(mentionedUsers.keys)
             )
         } else {
             controller?.createNewMessage(
                 text: text,
                 pinning: nil,
                 attachments: attachments + attachmentSeeds,
-                quotedMessageId: quotedMessageId
+                quotedMessageId: quotedMessageId,
+                mentionedUsers: Array(mentionedUsers.keys)
             )
         }
     }
@@ -478,6 +480,9 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                     with: "@\(user.id) "
                 )
 
+                // Add to mentioned users
+                self.mentionedUsers[user.id] = user.id
+                
                 let newPosition = (textView.text as NSString).length - oldPositionTillTheEnd
                 textView.selectedRange = NSRange(location: newPosition, length: 0)
                 
@@ -493,6 +498,9 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             }
         )
     }
+
+    /// Dictionary mapping user ids to mention text.
+    private(set) var mentionedUsers: [String: String] = [:]
 
     func replaceTextWithSlashCommandViewIfNeeded() {
         // Extract potential command name from input text
@@ -518,6 +526,13 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         updateMentionFlag(with: textView.text as NSString, till: textView.selectedRange.location)
 
         promptSuggestionIfNeeded(for: textView.text!)
+
+        // remove any users where the mention text is no longer present
+        mentionedUsers.forEach { userMap in
+          if !textView.text.contains(userMap.value) {
+            mentionedUsers.removeValue(forKey: userMap.key)
+          }
+        }
     }
 
     func updateMentionFlag(with text: NSString, till caret: Int) {
