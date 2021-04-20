@@ -8,7 +8,7 @@ import Foundation
 
 /// The DTO object mirroring the JSON representation of an event.
 struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case eventType = "type"
         case connectionId = "connection_id"
         case cid
