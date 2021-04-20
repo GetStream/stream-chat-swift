@@ -50,12 +50,6 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     ///
     /// The status differs based on the fact if the channel is direct or not.
     open lazy var titleView = ChatMessageListTitleView<ExtraData>()
-    
-    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
-    open private(set) var needsToScrollToMostRecentMessage = true
-    
-    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
-    open private(set) var needsToScrollToMostRecentMessageAnimated = false
 
     /// Handles navigation actions from messages
     open lazy var router = uiConfig
@@ -270,7 +264,7 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
         channelController.messages[indexPath.item]
     }
     
-    private func didSelectMessageCell(at indexPath: IndexPath) {
+    open func didSelectMessageCell(at indexPath: IndexPath) {
         let message = channelController.messages[indexPath.item]
         
         guard
@@ -287,7 +281,7 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     }
 
     /// Presents custom actions controller with all possible actions with the selected message.
-    private func presentActionsForMessage(
+    open func presentActionsForMessage(
         _ message: _ChatMessage<ExtraData>,
         cell: MessageCell<ExtraData>,
         messageController: _ChatMessageController<ExtraData>

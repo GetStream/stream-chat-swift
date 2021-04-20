@@ -289,7 +289,7 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
     }
 
     /// Presents custom actions controller with all possible actions with the selected message.
-    private func didSelectMessageCell(at indexPath: IndexPath) {
+    open func didSelectMessageCell(at indexPath: IndexPath) {
         let message = messageController.replies[indexPath.item]
         
         guard
@@ -306,7 +306,7 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
     }
     
     /// Presents custom actions controller with all possible actions with the selected message.
-    private func presentActionsForMessage(
+    open func presentActionsForMessage(
         _ message: _ChatMessage<ExtraData>,
         cell: MessageCell<ExtraData>,
         messageController: _ChatMessageController<ExtraData>
