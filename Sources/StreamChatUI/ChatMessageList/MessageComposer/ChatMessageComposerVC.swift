@@ -475,13 +475,14 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
                 let oldPositionTillTheEnd = (textView.text as NSString).length - cursorPosition.location
 
+                let mentionText = "@\(user.id) "
                 textView.textStorage.replaceCharacters(
                     in: NSRange(location: atRange.location, length: cursorPosition.location - atRange.location),
-                    with: "@\(user.id) "
+                    with: mentionText
                 )
 
                 // Add to mentioned users
-                self.mentionedUsers[user.id] = user.id
+                self.mentionedUsers[user.id] = mentionText
                 
                 let newPosition = (textView.text as NSString).length - oldPositionTillTheEnd
                 textView.selectedRange = NSRange(location: newPosition, length: 0)
