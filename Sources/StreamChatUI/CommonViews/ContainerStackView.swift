@@ -45,14 +45,14 @@ public class ContainerStackView: UIView {
         views.forEach { addArrangedSubview($0) }
     }
 
-    struct Distribution: Equatable {
-        static let natural = Distribution(rawValue: 0)
-        static let equal = Distribution(rawValue: 1)
+    public struct Distribution: Equatable {
+        public static let natural = Distribution(rawValue: 0)
+        public static let equal = Distribution(rawValue: 1)
 
         private let rawValue: Int
     }
 
-    var distribution: Distribution = .natural {
+    public var distribution: Distribution = .natural {
         didSet {
             invalidateConstraints()
         }
@@ -122,7 +122,7 @@ public class ContainerStackView: UIView {
         invalidateConstraints()
     }
 
-    func addArrangedSubview(_ subview: UIView, respectsLayoutMargins: Bool? = nil) {
+    public func addArrangedSubview(_ subview: UIView, respectsLayoutMargins: Bool? = nil) {
         insertArrangedSubview(subview, at: subviews.count, respectsLayoutMargins: respectsLayoutMargins)
     }
 
