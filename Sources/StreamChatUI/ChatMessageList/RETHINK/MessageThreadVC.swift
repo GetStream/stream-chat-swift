@@ -105,7 +105,7 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
         messageComposerBottomConstraint?.isActive = true
     }
 
-    override func setUpAppearance() {
+    override open func setUpAppearance() {
         super.setUpAppearance()
         
         view.backgroundColor = .white

@@ -105,7 +105,7 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
         messageComposerBottomConstraint?.isActive = true
     }
 
-    override func setUpAppearance() {
+    override open func setUpAppearance() {
         super.setUpAppearance()
         
         view.backgroundColor = .white
@@ -413,7 +413,7 @@ extension MessageListVC: _ChatChannelControllerDelegate {
 }
 
 extension MessageListVC: _ChatMessageActionsVCDelegate {
-    func chatMessageActionsVC(
+    open func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
         message: _ChatMessage<ExtraData>,
         didTapOnActionItem actionItem: ChatMessageActionItem

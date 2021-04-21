@@ -15,6 +15,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes> {
     }
     
     open func showMessageActionsPopUp(
+        messageContentViewClass: _ChatMessageContentView<ExtraData>.Type,
         messageContentFrame: CGRect,
         messageData: _ChatMessageGroupPart<ExtraData>,
         messageActionsController: _ChatMessageActionsVC<ExtraData>,
@@ -23,6 +24,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes> {
         let popup = _ChatMessagePopupVC<ExtraData>()
         popup.messageContentViewClass = _ChatMessageContentView<ExtraData>.self
         popup.message = messageData
+        popup.messageContentViewClass = messageContentViewClass
         popup.messageViewFrame = messageContentFrame
         popup.actionsController = messageActionsController
         popup.reactionsController = messageReactionsController

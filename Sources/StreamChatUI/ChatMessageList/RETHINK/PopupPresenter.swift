@@ -62,6 +62,8 @@ open class PopupPresenter {
                     didTapOnAttachment: nil,
                     didTapOnAttachmentAction: nil
                 )
+                // TODO: Whole PopupVC has to be updated for the new MessageCell
+                popup.messageContentViewClass = _ChatMessageContentView<ExtraData>.self
                 popup.messageViewFrame = targetView.superview!.convert(targetView.frame, to: nil)
                 popup.actionsController = actionsController
                 popup.reactionsController = reactionsController
