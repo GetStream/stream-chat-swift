@@ -390,17 +390,23 @@ class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionVie
     open func handleTapOnErrorIndicator(forCellAt indexPath: IndexPath) {
         didSelectMessageCell(at: indexPath)
     }
-
-    open func handleTapOnThread(forCellAt indexPath: IndexPath) {
+    
+    /// Opens thread detail for given `message`
+    open func showThread(for message: _ChatMessage<ExtraData>) {
         guard let channel = channelController.channel else { return }
         
         let controller = MessageThreadVC<ExtraData>()
         controller.channelController = channelController
         controller.messageController = channelController.client.messageController(
             cid: channel.cid,
-            messageId: channelController.messages[indexPath.item].id
+            messageId: message.id
         )
         navigationController?.show(controller, sender: self)
+    }
+
+    /// Opens thread detail for cell at `indexPath`
+    open func handleTapOnThread(forCellAt indexPath: IndexPath) {
+        showThread(for: channelController.messages[indexPath.item])
     }
 }
 
@@ -438,6 +444,8 @@ extension MessageListVC: _ChatMessageActionsVCDelegate {
                 self?.messageComposerViewController.state = .edit(message)
             case is InlineReplyActionItem:
                 self?.messageComposerViewController.state = .quote(message)
+            case is ThreadReplyActionItem:
+                self?.showThread(for: message)
             default:
                 return
             }
