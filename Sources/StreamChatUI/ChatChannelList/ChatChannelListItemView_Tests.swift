@@ -68,8 +68,8 @@ class ChatChannelListItemView_Tests: XCTestCase {
             
             override func setUpLayout() {
                 super.setUpLayout()
-                topContainer.addArrangedSubview { timestampLabel }
-                bottomContainer.addArrangedSubview { unreadCountView }
+                topContainer.addArrangedSubview(timestampLabel)
+                bottomContainer.addArrangedSubview(unreadCountView)
                 
                 addSubview(footnoteLabel)
                 footnoteLabel.leadingAnchor.constraint(equalTo: avatarView.leadingAnchor).isActive = true

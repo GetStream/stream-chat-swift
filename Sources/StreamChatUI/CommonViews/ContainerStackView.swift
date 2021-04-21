@@ -344,11 +344,6 @@ public class ContainerStackView: UIView {
             : safeAreaLayoutGuide
     }
 
-    public func addArrangedSubview(_ builder: () -> UIView) {
-        addArrangedSubview(builder())
-    }
-
-
     /// Hides the arranged subview by setting the width, height and spacing constraints to 0.
     private func hideArrangedSubview(_ subview: UIView) {
         guard subviews.contains(subview) else { return }
