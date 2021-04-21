@@ -12,6 +12,7 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _Collecti
 
     class var reuseId: String { String(describing: self) + String(describing: Self.messageContentViewClass) }
     
+    public static var incomingMessage0ReuseId: String { "incoming_0_\(reuseId)" }
     public static var incomingMessage2ReuseId: String { "incoming_2_\(reuseId)" }
     public static var incomingMessage3ReuseId: String { "incoming_3_\(reuseId)" }
     public static var incomingMessage6ReuseId: String { "incoming_6_\(reuseId)" }
@@ -22,6 +23,7 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _Collecti
     public static var incomingMessage5ReuseId: String { "incoming_5_\(reuseId)" }
     public static var incomingMessage13ReuseId: String { "incoming_13_\(reuseId)" }
     
+    public static var outgoingMessage0ReuseId: String { "outgoing_0_\(reuseId)" }
     public static var outgoingMessage2ReuseId: String { "outgoing_2_\(reuseId)" }
     public static var outgoingMessage3ReuseId: String { "outgoing_3_\(reuseId)" }
     public static var outgoingMessage6ReuseId: String { "outgoing_6_\(reuseId)" }
