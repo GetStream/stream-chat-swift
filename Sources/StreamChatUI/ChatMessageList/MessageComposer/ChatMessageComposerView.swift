@@ -154,8 +154,8 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         container.addArrangedSubview(topContainer)
         container.addArrangedSubview(centerContainer)
         container.addArrangedSubview(bottomContainer)
-        container.hideSubview(bottomContainer)
-        container.hideSubview(topContainer)
+        bottomContainer.isHidden = true
+        topContainer.isHidden = true
 
         bottomContainer.addArrangedSubview(checkmarkControl)
 
@@ -180,16 +180,16 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         centerContentContainer.addArrangedSubview(imageAttachmentsView)
         centerContentContainer.addArrangedSubview(documentAttachmentsView)
         centerContentContainer.addArrangedSubview(messageInputView)
-        centerContentContainer.hideSubview(messageQuoteView, animated: false)
-        centerContentContainer.hideSubview(imageAttachmentsView, animated: false)
-        centerContentContainer.hideSubview(documentAttachmentsView, animated: false)
+        messageQuoteView.isHidden = true
+        imageAttachmentsView.isHidden = true
+        documentAttachmentsView.isHidden = true
         imageAttachmentsView.heightAnchor.pin(equalToConstant: 120).isActive = true
 
         centerRightContainer.alignment = .center
         centerRightContainer.spacing = .auto
         centerRightContainer.addArrangedSubview(sendButton)
         centerRightContainer.addArrangedSubview(editButton)
-        centerRightContainer.hideSubview(editButton)
+        editButton.isHidden = true
 
         centerLeftContainer.axis = .horizontal
         centerLeftContainer.alignment = .center
@@ -203,13 +203,5 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
                 button.pin(anchors: [.width], to: 20)
                 button.pin(anchors: [.height], to: 20)
             }
-    }
-    
-    open func setCheckmarkView(hidden: Bool) {
-        if hidden {
-            container.hideSubview(bottomContainer)
-        } else {
-            container.showSubview(bottomContainer)
-        }
     }
 }

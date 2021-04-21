@@ -108,10 +108,12 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             imageAttachments = []
             documentAttachments = []
             composerView.messageQuoteView.content = nil
-            composerView.centerRightContainer.showSubview(composerView.sendButton)
-            composerView.centerRightContainer.hideSubview(composerView.editButton)
-            composerView.centerContentContainer.hideSubview(composerView.messageQuoteView)
-            composerView.container.hideSubview(composerView.topContainer)
+            Animate {
+                self.composerView.sendButton.isHidden = false
+                self.composerView.editButton.isHidden = true
+                self.composerView.messageQuoteView.isHidden = true
+                self.composerView.topContainer.isHidden = true
+            }
             composerView.messageInputView.setSlashCommandViews(hidden: true)
         case let .slashCommand(command):
             textView.text = ""
@@ -123,24 +125,30 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             composerView.titleLabel.text = L10n.Composer.Title.reply
             let image = uiConfig.images.messageComposerReplyButton.tinted(with: uiConfig.colorPalette.inactiveTint)
             composerView.stateIcon.image = image
-            composerView.container.showSubview(composerView.topContainer)
-            composerView.centerContentContainer.showSubview(composerView.messageQuoteView)
-            composerView.messageInputView.slashCommandView.isHidden = true
+            Animate {
+                self.composerView.topContainer.isHidden = false
+                self.composerView.messageQuoteView.isHidden = false
+                self.composerView.messageInputView.slashCommandView.isHidden = true
+            }
             composerView.messageQuoteView.content = .init(message: messageToQuote, avatarAlignment: .left)
         case let .edit(message):
-            composerView.centerRightContainer.showSubview(composerView.editButton)
-            composerView.centerRightContainer.hideSubview(composerView.sendButton)
             composerView.titleLabel.text = L10n.Composer.Title.edit
             let image = uiConfig.images.messageComposerEditMessage.tinted(with: uiConfig.colorPalette.inactiveTint)
             composerView.stateIcon.image = image
-            composerView.container.showSubview(composerView.topContainer)
-            composerView.messageInputView.slashCommandView.isHidden = true
+            Animate {
+                self.composerView.editButton.isHidden = false
+                self.composerView.sendButton.isHidden = true
+                self.composerView.topContainer.isHidden = false
+                self.composerView.messageInputView.slashCommandView.isHidden = true
+            }
             textView.text = message.text
         }
         
         if let memberCount = controller?.channel?.memberCount,
            threadParentMessage != nil {
-            composerView.setCheckmarkView(hidden: false)
+            Animate {
+                self.composerView.bottomContainer.isHidden = false
+            }
             
             if memberCount > 2 {
                 composerView.checkmarkControl.label.text = L10n.Composer.Checkmark.channelReply
@@ -266,18 +274,11 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     func setInput(shrinked: Bool) {
-        for button in composerView.centerLeftContainer.subviews
-            where button !== composerView.shrinkInputButton {
-            if shrinked {
-                composerView.centerLeftContainer.showSubview(button)
-            } else {
-                composerView.centerLeftContainer.hideSubview(button)
+        Animate {
+            for button in self.composerView.centerLeftContainer.subviews where button !== self.composerView.shrinkInputButton {
+                button.isHidden = !shrinked
             }
-        }
-        if shrinked {
-            composerView.centerLeftContainer.hideSubview(composerView.shrinkInputButton)
-        } else {
-            composerView.centerLeftContainer.showSubview(composerView.shrinkInputButton)
+            self.composerView.shrinkInputButton.isHidden = shrinked
         }
     }
     
@@ -395,11 +396,8 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             .map {
                 ImageAttachmentPreview(image: $0.preview)
             }
-
-        if imageAttachments.isEmpty {
-            composerView.centerContentContainer.hideSubview(composerView.imageAttachmentsView)
-        } else {
-            composerView.centerContentContainer.showSubview(composerView.imageAttachmentsView)
+        Animate {
+            self.composerView.imageAttachmentsView.isHidden = self.imageAttachments.isEmpty
         }
         updateSendButton()
     }
@@ -408,10 +406,8 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.documentAttachmentsView.documents = documentAttachments.map {
             ($0.preview, $0.localURL.lastPathComponent, $0.size)
         }
-        if documentAttachments.isEmpty {
-            composerView.centerContentContainer.hideSubview(composerView.documentAttachmentsView)
-        } else {
-            composerView.centerContentContainer.showSubview(composerView.documentAttachmentsView)
+        Animate {
+            self.composerView.documentAttachmentsView.isHidden = self.documentAttachments.isEmpty
         }
         updateSendButton()
     }
