@@ -260,6 +260,7 @@ extension MessageThreadVC: _ChatMessageControllerDelegate {
     }
 }
 
+// It's not implemented in current version :(
 extension MessageThreadVC: _ChatMessageActionsVCDelegate {
     open func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
