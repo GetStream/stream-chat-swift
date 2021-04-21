@@ -45,9 +45,6 @@ open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvi
 
         componentContainerView.addArrangedSubview(informationLabel)
         componentContainerView.alignment = .center
-        // UIStackView.spacingUseSystem returns 0, because we are not really in stackView in here,
-        // so let's use `directionalLayoutMargins`
-        componentContainerView.spacing = directionalLayoutMargins.trailing
 
         typingAnimationView.heightAnchor.pin(equalToConstant: 5).isActive = true
         typingAnimationView.centerYAnchor.pin(equalTo: centerYAnchor).isActive = true
