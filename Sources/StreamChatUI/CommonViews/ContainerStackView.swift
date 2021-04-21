@@ -32,6 +32,32 @@ extension ContainerStackView {
 
         private let rawValue: Int
     }
+
+    /// Describes the Spacing between the arranged subviews.
+    public struct Spacing: Equatable, ExpressibleByFloatLiteral, ExpressibleByIntegerLiteral {
+        /// The actual value of the Spacing.
+        public var rawValue: CGFloat
+
+        /// `Spacing` can be expressed by a `Double`.
+        /// Example: `spacing = 10.0`, instead of `spacing = Spacing(10.0)`.
+        public init(floatLiteral value: Double) {
+            rawValue = CGFloat(value)
+        }
+
+        /// `Spacing` can be expressed by an `Int`.
+        /// Example: `spacing = 10`, instead of `spacing = Spacing(10)`.
+        public init(integerLiteral value: Int) {
+            rawValue = CGFloat(value)
+        }
+
+        public init(_ rawValue: CGFloat) {
+            self.rawValue = rawValue
+        }
+
+        /// The default system spacing between the arranged subviews.
+        /// Example: `spacing = .auto`.
+        public static let auto = Spacing(.infinity)
+    }
 }
 
 /// A view that works similar to a `UIStackView` but in a more simpler and flexible way.
@@ -73,7 +99,7 @@ public class ContainerStackView: UIView {
     public convenience init(
         axis: NSLayoutConstraint.Axis = .horizontal,
         alignment: Alignment = .fill,
-        spacing: CGFloat = .auto,
+        spacing: Spacing = .auto,
         distribution: Distribution = .natural,
         arrangedSubviews: [UIView] = []
     ) {
@@ -103,7 +129,7 @@ public class ContainerStackView: UIView {
     public var axis: NSLayoutConstraint.Axis = .horizontal
 
     /// The spacing between each arranged subview.
-    public var spacing: CGFloat = .auto {
+    public var spacing: Spacing = .auto {
         didSet {
             invalidateConstraints()
         }
@@ -174,9 +200,9 @@ public class ContainerStackView: UIView {
     /// - Parameters:
     ///   - spacing: The value of the spacing.
     ///   - subview: The subview that the spacing will be applied (after this subview).
-    public func setCustomSpacing(_ spacing: Spacing, after subview: UIView) {
+    func setCustomSpacing(_ spacing: Spacing, after subview: UIView) {
         assert(subviews.contains(subview))
-        customSpacingByView[subview] = spacing
+        customSpacingByView[subview] = spacing.rawValue
         invalidateConstraints()
     }
 
@@ -214,7 +240,7 @@ public class ContainerStackView: UIView {
                         constant: customSpacing
                     )
                 } else if spacing != .auto {
-                    spacingConstraint = rView.leadingAnchor.constraint(equalTo: lView.trailingAnchor, constant: spacing)
+                    spacingConstraint = rView.leadingAnchor.constraint(equalTo: lView.trailingAnchor, constant: spacing.rawValue)
                 } else {
                     spacingConstraint = rView.leadingAnchor.constraint(
                         equalToSystemSpacingAfter: lView.trailingAnchor,
@@ -229,7 +255,7 @@ public class ContainerStackView: UIView {
                         constant: customSpacing
                     )
                 } else if spacing != .auto {
-                    spacingConstraint = rView.topAnchor.constraint(equalTo: lView.bottomAnchor, constant: spacing)
+                    spacingConstraint = rView.topAnchor.constraint(equalTo: lView.bottomAnchor, constant: spacing.rawValue)
                 } else {
                     spacingConstraint = rView.topAnchor.constraint(equalToSystemSpacingBelow: lView.bottomAnchor, multiplier: 1)
                 }
@@ -410,10 +436,6 @@ extension NSLayoutConstraint {
 
 extension UILayoutPriority {
     static let lowest = UILayoutPriority(defaultLow.rawValue / 2.0)
-}
-
-extension CGFloat {
-    public static let auto: CGFloat = .infinity
 }
 
 extension NSLayoutConstraint {

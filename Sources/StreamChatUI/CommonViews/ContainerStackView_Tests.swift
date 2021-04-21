@@ -25,7 +25,7 @@ class ContainerStackView_Tests: XCTestCase {
         "equal": .equal
     ]
     
-    let spacings: [CGFloat] = [.auto, 32, 0]
+    let spacings: [CGFloat] = [.infinity, 32, 0]
     
     override func setUp() {
         super.setUp()
@@ -73,7 +73,7 @@ class ContainerStackView_Tests: XCTestCase {
                         container.axis = axis
                         container.alignment = alignment
                         container.distribution = distribution
-                        container.spacing = spacing
+                        container.spacing = .init(spacing)
 
                         container.setNeedsLayout()
                         container.layoutIfNeeded()
