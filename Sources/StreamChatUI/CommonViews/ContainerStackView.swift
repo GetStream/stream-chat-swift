@@ -32,6 +32,7 @@ extension CGFloat {
 }
 
 public class ContainerStackView: UIView {
+    private var hidingObserversByView: [UIView: NSKeyValueObservation] = [:]
     public convenience init(
         axis: NSLayoutConstraint.Axis = .horizontal,
         alignment: Alignment = .fill,
@@ -113,22 +114,36 @@ public class ContainerStackView: UIView {
             respectsLayoutMarginsByView.removeValue(forKey: subview)
         }
 
+        hidingObserversByView[subview] = subview
+            .observe(\.isHidden, options: [.new]) { [weak self] (view, isHiddenChange) in
+                if isHiddenChange.newValue == true {
+                    self?.hideArrangedSubview(view)
+                } else {
+                    self?.showArrangedSubview(view)
+                }
+            }
+
         invalidateConstraints()
     }
 
+    /// Removes an arranged subview from the container.
+    /// - Parameter subview: The subview to be removed.
     public func removeArrangedSubview(_ subview: UIView) {
         assert(subviews.contains(subview))
         subview.removeFromSuperview()
-        invalidateConstraints()
-    }
 
-    public func addArrangedSubview(_ subview: UIView, respectsLayoutMargins: Bool? = nil) {
-        insertArrangedSubview(subview, at: subviews.count, respectsLayoutMargins: respectsLayoutMargins)
+        hidingObserversByView[subview] = nil
+
+        invalidateConstraints()
     }
 
     private func invalidateConstraints() {
         NSLayoutConstraint.deactivate(customConstraints)
+        NSLayoutConstraint.deactivate(customTopConstraintsByView.map(\.value))
+        NSLayoutConstraint.deactivate(customLeadingConstraintsByView.map(\.value))
         customConstraints = []
+        customTopConstraintsByView = [:]
+        customLeadingConstraintsByView = [:]
         setNeedsUpdateConstraints()
     }
 
@@ -211,16 +226,19 @@ public class ContainerStackView: UIView {
 
             if axis == .horizontal {
                 if alignment == .axisLeading || alignment == .fill {
-                    customConstraints.append(guide(for: subview).topAnchor.constraint(equalTo: subview.topAnchor))
+                    let constraint = guide(for: subview).topAnchor.constraint(equalTo: subview.topAnchor)
+                    customTopConstraintsByView[subview] = constraint
                 } else {
-                    customConstraints.append(guide(for: subview).topAnchor.constraint(lessThanOrEqualTo: subview.topAnchor))
+                    let constraint = guide(for: subview).topAnchor.constraint(lessThanOrEqualTo: subview.topAnchor)
+                    customTopConstraintsByView[subview] = constraint
                 }
 
                 if alignment == .axisTrailing || alignment == .fill {
-                    customConstraints.append(guide(for: subview).bottomAnchor.constraint(equalTo: subview.bottomAnchor))
+                    let constraint = guide(for: subview).bottomAnchor.constraint(equalTo: subview.bottomAnchor)
+                    customConstraints.append(constraint)
                 } else {
-                    customConstraints
-                        .append(guide(for: subview).bottomAnchor.constraint(greaterThanOrEqualTo: subview.bottomAnchor))
+                    let constraint = guide(for: subview).bottomAnchor.constraint(greaterThanOrEqualTo: subview.bottomAnchor)
+                    customConstraints.append(constraint)
                 }
 
                 if alignment == .center {
@@ -228,16 +246,19 @@ public class ContainerStackView: UIView {
                 }
             } else {
                 if alignment == .axisLeading || alignment == .fill {
-                    customConstraints.append(guide(for: subview).leadingAnchor.constraint(equalTo: subview.leadingAnchor))
+                    let constraint = guide(for: subview).leadingAnchor.constraint(equalTo: subview.leadingAnchor)
+                    customLeadingConstraintsByView[subview] = constraint
                 } else {
-                    customConstraints.append(guide(for: subview).leadingAnchor.constraint(lessThanOrEqualTo: subview.leadingAnchor))
+                    let constraint = guide(for: subview).leadingAnchor.constraint(lessThanOrEqualTo: subview.leadingAnchor)
+                    customLeadingConstraintsByView[subview] = constraint
                 }
 
                 if alignment == .axisTrailing || alignment == .fill {
-                    customConstraints.append(guide(for: subview).trailingAnchor.constraint(equalTo: subview.trailingAnchor))
+                    let constraint = guide(for: subview).trailingAnchor.constraint(equalTo: subview.trailingAnchor)
+                    customConstraints.append(constraint)
                 } else {
-                    customConstraints
-                        .append(guide(for: subview).trailingAnchor.constraint(greaterThanOrEqualTo: subview.trailingAnchor))
+                    let constraint = guide(for: subview).trailingAnchor.constraint(greaterThanOrEqualTo: subview.trailingAnchor)
+                    customConstraints.append(constraint)
                 }
 
                 if alignment == .center {
@@ -249,16 +270,28 @@ public class ContainerStackView: UIView {
         customConstraints.forEach {
             $0.isActive = true
         }
+
+        for (view, constraint) in customLeadingConstraintsByView where !view.isHidden {
+            constraint.isActive = true
+        }
+
+        for (view, constraint) in customTopConstraintsByView where !view.isHidden {
+            constraint.isActive = true
+        }
     }
 
     private var customConstraints: [NSLayoutConstraint] = []
 
     private var customSpacingByView: [UIView: CGFloat] = [:]
 
+    private var customTopConstraintsByView: [UIView: NSLayoutConstraint] = [:]
+
+    private var customLeadingConstraintsByView: [UIView: NSLayoutConstraint] = [:]
+
     /// The constraint for axis-trailing spacing for the given vies
     private var spacingConstraintsByView: [UIView: NSLayoutConstraint] = [:]
 
-    private var hideConstraintsByView: [UIView: (width: NSLayoutConstraint, height: NSLayoutConstraint)] = [:]
+    private var hideConstraintsByView: [UIView: NSLayoutConstraint] = [:]
 
     private var respectsLayoutMarginsByView: [UIView: Bool] = [:]
 
@@ -277,45 +310,57 @@ public class ContainerStackView: UIView {
         subviews.forEach { addArrangedSubview($0) }
     }
 
-    public func hideSubview(_ subview: UIView, animated: Bool = true) {
+    /// Hides the arranged subview by setting the width, height and spacing constraints to 0.
+    private func hideArrangedSubview(_ subview: UIView) {
         guard subviews.contains(subview) else { return }
         guard subview.alpha != 0 else { return }
 
         updateConstraintsIfNeeded()
 
-        hideConstraintsByView[subview] = (
-            width: subview.widthAnchor.constraint(equalToConstant: 0),
-            height: subview.heightAnchor.constraint(equalToConstant: 0)
-        )
-
-        Animate(isAnimated: animated) {
-            subview.alpha = 0
-
-            if self.axis == .horizontal {
-                self.hideConstraintsByView[subview]?.width.isActive = true
-            }
-            self.hideConstraintsByView[subview]?.height.isActive = true
-
-            self.spacingConstraintsByView[subview]?.setTemporaryConstant(0)
-
-            self.layoutIfNeeded()
+        if axis == .horizontal {
+            hideConstraintsByView[subview] = subview.widthAnchor.constraint(equalToConstant: 0)
+        } else {
+            hideConstraintsByView[subview] = subview.heightAnchor.constraint(equalToConstant: 0)
         }
+
+        subview.alpha = 0
+
+        if axis == .horizontal {
+            customTopConstraintsByView[subview]?.isActive = false
+        } else {
+            customLeadingConstraintsByView[subview]?.isActive = false
+        }
+
+        hideConstraintsByView[subview]?.isActive = true
+
+        spacingConstraintsByView[subview]?.setTemporaryConstant(0)
+
+        layoutIfNeeded()
     }
 
-    public func showSubview(_ subview: UIView, animated: Bool = true) {
+    /// Shows the arranged subview by setting the width, height and spacing constraints to the original value before being hidden.
+    private func showArrangedSubview(_ subview: UIView) {
         guard subviews.contains(subview) else { return }
         guard subview.alpha == 0 else { return }
 
         updateConstraintsIfNeeded()
 
-        Animate(isAnimated: animated) {
-            subview.alpha = 1
-            self.hideConstraintsByView[subview]?.width.isActive = false
-            self.hideConstraintsByView[subview]?.height.isActive = false
+        subview.alpha = 1
 
-            self.spacingConstraintsByView[subview]?.resetTemporaryConstant()
-            self.layoutIfNeeded()
+        if axis == .horizontal {
+            customTopConstraintsByView[subview]?.isActive = true
+        } else {
+            customLeadingConstraintsByView[subview]?.isActive = true
         }
+
+        hideConstraintsByView[subview]?.isActive = false
+
+        spacingConstraintsByView[subview]?.resetTemporaryConstant()
+        layoutIfNeeded()
+    }
+
+    deinit {
+        hidingObserversByView = [:]
     }
 }
 

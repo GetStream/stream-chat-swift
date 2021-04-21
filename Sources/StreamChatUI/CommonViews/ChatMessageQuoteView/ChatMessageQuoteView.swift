@@ -219,11 +219,15 @@ private extension _ChatMessageQuoteView {
 
     /// Show the attachment preview view.
     func showAttachmentPreview() {
-        contentContainerView.showSubview(attachmentPreviewView, animated: false)
+        Animate {
+            self.attachmentPreviewView.isHidden = false
+        }
     }
 
     /// Hide the attachment preview view.
     func hideAttachmentPreview() {
-        contentContainerView.hideSubview(attachmentPreviewView, animated: false)
+        Animate {
+            self.attachmentPreviewView.isHidden = true
+        }
     }
 }
