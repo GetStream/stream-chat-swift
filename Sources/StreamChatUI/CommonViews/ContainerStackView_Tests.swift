@@ -15,8 +15,8 @@ class ContainerStackView_Tests: XCTestCase {
     
     let alignments: [String: ContainerStackView.Alignment] = [
         "fill": .fill,
-        "axisLeading": .axisLeading,
-        "axisTrailing": .axisTrailing,
+        "axisLeading": .leading,
+        "axisTrailing": .trailing,
         "center": .center
     ]
     
@@ -51,21 +51,25 @@ class ContainerStackView_Tests: XCTestCase {
 
         let containerH = ContainerStackView(
             axis: .horizontal,
-            views: views
+            arrangedSubviews: views
         ).withoutAutoresizingMaskConstraints
 
         AssertSnapshot(containerH, variants: [.defaultLight], suffix: "horizontal")
 
         let containerV = ContainerStackView(
             axis: .vertical,
-            views: views
+            arrangedSubviews: views
         ).withoutAutoresizingMaskConstraints
 
         AssertSnapshot(containerV, variants: [.defaultLight], suffix: "vertical")
     }
     
     func testAppearance() {
-        let container = ContainerStackView(axis: .vertical, alignment: .fill, views: views).withoutAutoresizingMaskConstraints
+        let container = ContainerStackView(
+            axis: .vertical,
+            alignment: .fill,
+            arrangedSubviews: views
+        ).withoutAutoresizingMaskConstraints
         
         axis.forEach { (axisName, axis) in
             alignments.forEach { (alignmentName, alignment) in

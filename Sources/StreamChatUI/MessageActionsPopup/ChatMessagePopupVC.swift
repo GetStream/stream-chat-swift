@@ -132,7 +132,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
         }
         
         if message.isSentByCurrentUser {
-            messageContainerStackView.alignment = .axisTrailing
+            messageContainerStackView.alignment = .trailing
             constraints.append(
                 messageContainerStackView.trailingAnchor.pin(
                     equalTo: scrollContentView.leadingAnchor,
@@ -140,7 +140,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
                 )
             )
         } else {
-            messageContainerStackView.alignment = .axisLeading
+            messageContainerStackView.alignment = .leading
             constraints.append(
                 messageContainerStackView.leadingAnchor.pin(
                     equalTo: scrollContentView.leadingAnchor,

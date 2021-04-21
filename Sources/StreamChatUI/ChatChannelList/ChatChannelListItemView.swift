@@ -152,7 +152,12 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         ])
 
         mainContainer.addArrangedSubviews([
-            avatarView, ContainerStackView(axis: .vertical, spacing: 4, views: [topContainer, bottomContainer])
+            avatarView,
+            ContainerStackView(
+                axis: .vertical,
+                spacing: 4,
+                arrangedSubviews: [topContainer, bottomContainer]
+            )
         ])
         
         mainContainer.alignment = .center
