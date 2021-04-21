@@ -25,11 +25,6 @@ class ContainerStackView_Tests: XCTestCase {
         "equal": .equal
     ]
     
-    let orderings: [String: ContainerStackView.Ordering] = [
-        "leadingToTrailing": .leadingToTrailing,
-        "trailingToLeading": .trailingToLeading
-    ]
-    
     let spacings: [CGFloat] = [.auto, 32, 0]
     
     override func setUp() {
@@ -74,19 +69,16 @@ class ContainerStackView_Tests: XCTestCase {
         axis.forEach { (axisName, axis) in
             alignments.forEach { (alignmentName, alignment) in
                 distributions.forEach { (distributionName, distribution) in
-                    orderings.forEach { (orderingName, ordering) in
-                        spacings.forEach { spacing in
-                            container.axis = axis
-                            container.alignment = alignment
-                            container.distribution = distribution
-                            container.ordering = ordering
-                            container.spacing = spacing
-                            
-                            container.setNeedsLayout()
-                            container.layoutIfNeeded()
-                            let suffix = "\(axisName)-\(alignmentName)-\(distributionName)-\(orderingName)-\(spacing)"
-                            AssertSnapshot(container, variants: [.defaultLight], suffix: suffix)
-                        }
+                    spacings.forEach { spacing in
+                        container.axis = axis
+                        container.alignment = alignment
+                        container.distribution = distribution
+                        container.spacing = spacing
+
+                        container.setNeedsLayout()
+                        container.layoutIfNeeded()
+                        let suffix = "\(axisName)-\(alignmentName)-\(distributionName)-\(spacing)"
+                        AssertSnapshot(container, variants: [.defaultLight], suffix: suffix)
                     }
                 }
             }

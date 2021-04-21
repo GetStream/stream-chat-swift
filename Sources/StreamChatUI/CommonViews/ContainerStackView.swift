@@ -5,7 +5,6 @@
 import UIKit
 
 extension ContainerStackView {
-
     /// Describes the size distribution of the arranged subviews in a container stack view.
     public struct Distribution: Equatable {
         /// Makes the arranged subviews with their natural size.
@@ -100,15 +99,9 @@ public class ContainerStackView: UIView {
         }
     }
 
-    public struct Ordering: Equatable {
-        static let leadingToTrailing = Ordering(rawValue: 0)
-        static let trailingToLeading = Ordering(rawValue: 1)
-        private let rawValue: Int
-    }
     /// The axis where the arranged subviews are rendered.
     public var axis: NSLayoutConstraint.Axis = .horizontal
 
-    var ordering: Ordering = .leadingToTrailing {
     /// The spacing between each arranged subview.
     public var spacing: CGFloat = .auto {
         didSet {
@@ -124,14 +117,12 @@ public class ContainerStackView: UIView {
         }
     }
 
-
     /// Adds a collection of subviews to the current arranged subviews.
     /// If there are already arranged subviews, this will not replace the old ones.
     /// - Parameter subviews: The collection of subviews to be added to the arranged subviews.
     public func addArrangedSubviews(_ subviews: [UIView]) {
         subviews.forEach { addArrangedSubview($0) }
     }
-
 
     /// Adds an arranged subview to the container in the last position.
     /// - Parameters:
@@ -196,8 +187,6 @@ public class ContainerStackView: UIView {
         // Update custom constraints only if they were explicitly invalidated
         guard customConstraints.isEmpty else { return }
 
-        let subviews = ordering == .leadingToTrailing ? self.subviews : self.subviews.reversed()
-
         // Check if we have at least one subview
         guard let firstSubview = subviews.first, let lastSubview = subviews.last else { return }
 
@@ -219,7 +208,7 @@ public class ContainerStackView: UIView {
             let spacingConstraint: NSLayoutConstraint
 
             if axis == .horizontal {
-                if let customSpacing = customSpacingByView[ordering == .leadingToTrailing ? lView : rView] {
+                if let customSpacing = customSpacingByView[lView] {
                     spacingConstraint = rView.leadingAnchor.constraint(
                         equalTo: lView.trailingAnchor,
                         constant: customSpacing
@@ -234,7 +223,7 @@ public class ContainerStackView: UIView {
                 }
 
             } else {
-                if let customSpacing = customSpacingByView[ordering == .leadingToTrailing ? lView : rView] {
+                if let customSpacing = customSpacingByView[lView] {
                     spacingConstraint = rView.topAnchor.constraint(
                         equalTo: lView.bottomAnchor,
                         constant: customSpacing
