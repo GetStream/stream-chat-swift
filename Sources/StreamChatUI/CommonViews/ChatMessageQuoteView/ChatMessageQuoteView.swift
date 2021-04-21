@@ -90,10 +90,10 @@ open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
 
         containerView.isLayoutMarginsRelativeArrangement = true
         containerView.spacing = .auto
-        containerView.alignment = .axisTrailing
+        containerView.alignment = .bottom
 
         contentContainerView.isLayoutMarginsRelativeArrangement = true
-        contentContainerView.alignment = .axisLeading
+        contentContainerView.alignment = .top
 
         embed(containerView)
         containerView.addArrangedSubview(authorAvatarView)

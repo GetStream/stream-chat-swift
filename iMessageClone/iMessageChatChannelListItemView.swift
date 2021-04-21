@@ -49,13 +49,13 @@ final class iMessageChatChannelListItemView: ChatChannelListItemView {
         // Create container holding the timestamp and accessoryView.
         let timestampContainer = ContainerStackView(
             axis: .horizontal,
-            alignment: .axisTrailing,
+            alignment: .bottom,
             spacing: 14,
-            views: [timestampLabel, timestampAccessoryView]
+            arrangedSubviews: [timestampLabel, timestampAccessoryView]
         )
 
         topContainer.insertArrangedSubview(timestampContainer, at: 1)
-        bottomContainer.alignment = .axisLeading
+        bottomContainer.alignment = .top
         mainContainer.spacing = 8
 
         // Activate all constraints

@@ -15,8 +15,8 @@ final class SlackChatChannelListItemView: ChatChannelListItemView {
         super.setUpLayout()
 
         // Switch unreadCount and timestamp
-        topContainer.addArrangedSubview { timestampLabel }
-        bottomContainer.addArrangedSubview { unreadCountView }
+        topContainer.addArrangedSubview(timestampLabel)
+        bottomContainer.addArrangedSubview(unreadCountView)
 
         NSLayoutConstraint.activate([
             avatarView.heightAnchor.constraint(equalToConstant: 35),
