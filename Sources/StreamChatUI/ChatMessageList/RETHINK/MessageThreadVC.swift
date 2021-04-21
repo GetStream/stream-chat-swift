@@ -152,13 +152,19 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
     /// By default there is one message with all possible layout and layout options
     /// determines which parts of the message are visible for the given message.
     open func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
-        guard let channel = channelController.channel else { return [] }
-
-        var layoutOptions = uiConfig.messageList.layoutOptionsResolver(
-            indexPath,
-            AnyRandomAccessCollection(messageController.replies),
-            channel
+        cellLayoutOptionsForMessage(
+            at: indexPath,
+            messages: AnyRandomAccessCollection(messageController.replies)
         )
+    }
+    
+    open func cellLayoutOptionsForMessage(
+        at indexPath: IndexPath,
+        messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
+    ) -> ChatMessageLayoutOptions {
+        guard let channel = channelController.channel else { return [] }
+        
+        var layoutOptions = uiConfig.messageList.layoutOptionsResolver(indexPath, messages, channel)
         layoutOptions.remove(.threadInfo)
         return layoutOptions
     }
@@ -239,11 +245,10 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
     open func addHeaderMessage() {
         if let message = messageController.message {
             let messageView = MessageContentView<ExtraData>().withoutAutoresizingMaskConstraints
-            var layoutOptions = uiConfig.messageList.layoutOptionsResolver(
-                IndexPath(item: 0, section: 0),
-                AnyRandomAccessCollection([message])
+            let layoutOptions = cellLayoutOptionsForMessage(
+                at: IndexPath(item: 0, section: 0),
+                messages: AnyRandomAccessCollection([message])
             )
-            layoutOptions.remove(.threadInfo)
             
             messageView.setUpLayoutIfNeeded(options: layoutOptions)
             collectionView.addSubview(messageView)
