@@ -237,7 +237,14 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UICo
     }
 
     /// Triggered when `blurView` is tapped.
-    @objc open func didTapOnOverlay() {
+    @objc open func didTapOnOverlay(_ recognizer: UITapGestureRecognizer) {
+        let location = recognizer.location(in: recognizer.view)
+        
+        if let childView = scrollView.hitTest(location, with: nil),
+           childView.isDescendant(of: actionsController.view) {
+            return
+        }
+        
         dismiss(animated: true)
     }
 }

@@ -259,3 +259,30 @@ extension MessageThreadVC: _ChatMessageControllerDelegate {
         updateMessages(with: changes)
     }
 }
+
+extension MessageThreadVC: _ChatMessageActionsVCDelegate {
+    open func chatMessageActionsVC(
+        _ vc: _ChatMessageActionsVC<ExtraData>,
+        message: _ChatMessage<ExtraData>,
+        didTapOnActionItem actionItem: ChatMessageActionItem
+    ) {
+        switch actionItem {
+        case is EditActionItem:
+            dismiss(animated: true) { [weak self] in
+                self?.messageComposerViewController.state = .edit(message)
+            }
+        case is InlineReplyActionItem:
+            dismiss(animated: true) { [weak self] in
+                self?.messageComposerViewController.state = .quote(message)
+            }
+        default:
+            return
+        }
+    }
+
+    open func chatMessageActionsVCDidFinish(
+        _ vc: _ChatMessageActionsVC<ExtraData>
+    ) {
+        dismiss(animated: true)
+    }
+}
