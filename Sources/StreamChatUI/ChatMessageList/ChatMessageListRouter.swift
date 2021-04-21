@@ -53,6 +53,7 @@ class MessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<MessageListVC<Ext
         messageReactionsController: _ChatMessageReactionsVC<ExtraData>?
     ) {
         let popup = _ChatMessagePopupVC<ExtraData>()
+        popup.messageContentViewClass = _ChatMessageContentView<ExtraData>.self
         popup.message = messageData
         popup.messageViewFrame = messageContentFrame
         popup.actionsController = messageActionsController
