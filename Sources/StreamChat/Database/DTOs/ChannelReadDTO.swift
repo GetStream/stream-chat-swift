@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -14,6 +14,16 @@ class ChannelReadDTO: NSManagedObject {
     
     @NSManaged var channel: ChannelDTO
     @NSManaged var user: UserDTO
+    
+    override func willSave() {
+        super.willSave()
+        
+        // When the read is updated, we need to propagate this change up to holding channel
+        if hasPersistentChangedValues, !channel.hasChanges {
+            // this will not change object, but mark it as dirty, triggering updates
+            channel.cid = channel.cid
+        }
+    }
     
     static func fetchRequest(userId: String) -> NSFetchRequest<ChannelReadDTO> {
         let request = NSFetchRequest<ChannelReadDTO>(entityName: ChannelReadDTO.entityName)

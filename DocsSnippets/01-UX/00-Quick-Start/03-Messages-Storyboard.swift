@@ -22,8 +22,8 @@ func snippet_ux_quick_start_messages_storyboard() {
              
             // Find a UINavigationController from the window root view controller.
             if let navigationController = window?.rootViewController as? UINavigationController,
-                // Get a MyChannelVC from the navigation controller.
-                let channelVC = navigationController.viewControllers.first as? MyChannelVC {
+               // Get a MyChannelVC from the navigation controller.
+               let channelVC = navigationController.viewControllers.first as? MyChannelVC {
                 // Pass a ChatChannelController instance to channelVC:
                 channelVC.channelController = chatClient.channelController(for: .init(type: .messaging, id: "general"))
             }

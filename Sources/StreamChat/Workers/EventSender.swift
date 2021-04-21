@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -34,7 +34,7 @@ class EventSender<ExtraData: ExtraDataTypes>: Worker {
         // If the user is typing too long, it should resend `.typingStart` event.
         // Checks the last typing time and returns if it was less then `.startTypingResendInterval`.
         if let lastTypingDate = currentUserLastTypingDate,
-            timer.currentTime().timeIntervalSince(lastTypingDate) < .startTypingResendInterval {
+           timer.currentTime().timeIntervalSince(lastTypingDate) < .startTypingResendInterval {
             completion?(nil)
             return
         }

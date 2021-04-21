@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -8,7 +8,7 @@ import XCTest
 class WebSocketPingController_Tests: XCTestCase {
     var time: VirtualTime!
     var pingController: WebSocketPingController!
-    private var delegate: TestWebSocketPingControllerDelegate! // swiftlint:disable:this weak_delegate
+    private var delegate: TestWebSocketPingControllerDelegate!
     
     override func setUp() {
         super.setUp()

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -31,7 +31,7 @@ public struct UnreadCount: Decodable, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         
         if let channels = try container.decodeIfPresent(Int.self, forKey: .channels),
-            let messages = try container.decodeIfPresent(Int.self, forKey: .messages) {
+           let messages = try container.decodeIfPresent(Int.self, forKey: .messages) {
             self.channels = channels
             self.messages = messages
         } else if let currentUserUnreadCount = try container.decodeIfPresent(UnreadCount.self, forKey: .currentUserUnreadCount) {

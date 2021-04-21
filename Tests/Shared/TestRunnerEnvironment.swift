@@ -1,19 +1,21 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
-struct TestRunnerEnvironment {
+enum TestRunnerEnvironment {
     /// `true` if the tests are currently running on the CI. We get this information by checking for the custom `CI` environment
     /// variable passed in to the process.
     static var isCI: Bool {
         ProcessInfo.processInfo.environment["CI"] == "TRUE"
     }
     
-    /// `true` if the current tests are stress test. We get this information by checking for the custom `STRESS_TESTS` environment
-    /// variable passed in to the process.
-    static var isStressTest: Bool {
-        ProcessInfo.processInfo.environment["STRESS_TESTS"] == "TRUE"
+    /// Number of stress test invocations
+    static var testInvocations: Int {
+        ProcessInfo.processInfo.environment["TEST_INVOCATIONS"].flatMap(Int.init) ?? 1
     }
+    
+    /// `true` if we invoke stress tests more than a single time
+    static var isStressTest: Bool { testInvocations > 1 }
 }

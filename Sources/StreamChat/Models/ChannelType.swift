@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -22,6 +22,8 @@ public enum ChannelType: Codable, Hashable {
     case commerce
     
     /// The type of the channel is custom.
+    ///
+    /// Only small letters, underscore and numbers should be used
     case custom(String)
     
     /// A channel type title.
@@ -35,7 +37,9 @@ public enum ChannelType: Codable, Hashable {
         case .team: return "team"
         case .gaming: return "gaming"
         case .commerce: return "commerce"
-        case let .custom(value): return value
+        case let .custom(value):
+            Self.assertCustomTypeValue(value)
+            return value
         }
     }
     
@@ -49,7 +53,9 @@ public enum ChannelType: Codable, Hashable {
         case "team": self = .team
         case "gaming": self = .gaming
         case "commerce": self = .commerce
-        default: self = .custom(rawValue)
+        default:
+            Self.assertCustomTypeValue(rawValue)
+            self = .custom(rawValue)
         }
     }
     
@@ -57,10 +63,25 @@ public enum ChannelType: Codable, Hashable {
         let container = try decoder.singleValueContainer()
         let value = try container.decode(String.self)
         self.init(rawValue: value)
+        
+        if case let .custom(value) = self {
+            Self.assertCustomTypeValue(value)
+        }
     }
     
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(rawValue)
+    }
+    
+    /// Check that custom types have valid `rawValue`
+    private static func assertCustomTypeValue(_ value: String) {
+        let allowedCharacters = CharacterSet.lowercaseLetters.union(CharacterSet(charactersIn: "0123456789_"))
+        let valueCharacters = CharacterSet(charactersIn: value)
+        log.assert(
+            valueCharacters.isSubset(of: allowedCharacters),
+            // swiftlint:disable:next line_length
+            "Value \"\(value)\" is not valid `ChannelType.custom` identifier, allowed characters are small letters, numbers and underscore."
+        )
     }
 }

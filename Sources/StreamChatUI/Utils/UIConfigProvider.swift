@@ -21,6 +21,7 @@ private extension UIResponder {
 public protocol GenericUIConfigProvider: AnyObject {
     func register<T: ExtraDataTypes>(config: _UIConfig<T>)
     func uiConfig<T: ExtraDataTypes>(_ type: T.Type) -> _UIConfig<T>
+    func uiConfigDidRegister()
 }
 
 public protocol UIConfigProvider: GenericUIConfigProvider {
@@ -31,8 +32,11 @@ public protocol UIConfigProvider: GenericUIConfigProvider {
 // MARK: - Protocol extensions for UIView
 
 public extension GenericUIConfigProvider where Self: UIResponder {
+    func uiConfigDidRegister() {}
+    
     func register<T: ExtraDataTypes>(config: _UIConfig<T>) {
         anyUIConfig = config
+        uiConfigDidRegister()
     }
     
     func uiConfig<T: ExtraDataTypes>(_ type: T.Type = T.self) -> _UIConfig<T> {

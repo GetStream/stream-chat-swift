@@ -3,8 +3,11 @@
 //
 
 "channel.name.and" = "and";
-"channel.name.more" = "more";
+"channel.name.andXMore" = "and %@ more";
 "channel.name.missing" = "NoChannel";
+"channel.item.empty-messages" = "No messages";
+"channel.item.typing-singular" = "is typing ...";
+"channel.item.typing-plural" = "are typing ...";
 
 "message.actions.inline-reply" = "Reply";
 "message.actions.thread-reply" = "Thread Reply";
@@ -18,6 +21,8 @@
 "message.actions.user-unmute" = "Unmute User";
 "message.actions.user-mute" = "Mute User";
 "message.actions.resend" = "Resend";
+
+"messageList.typingIndicator.typing-unknown" = "Someone is typing";
 
 "message.threads.reply" = "Thread Reply";
 

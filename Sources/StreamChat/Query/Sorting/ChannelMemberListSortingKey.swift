@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -24,6 +24,11 @@ public enum ChannelMemberListSortingKey: String, SortingKey {
 extension ChannelMemberListSortingKey {
     static let defaultSortDescriptor: NSSortDescriptor = {
         let dateKeyPath: KeyPath<MemberDTO, Date> = \MemberDTO.memberCreatedAt
+        return .init(keyPath: dateKeyPath, ascending: false)
+    }()
+    
+    static let lastActiveSortDescriptor: NSSortDescriptor = {
+        let dateKeyPath: KeyPath<MemberDTO, Date?> = \MemberDTO.user.lastActivityAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
     

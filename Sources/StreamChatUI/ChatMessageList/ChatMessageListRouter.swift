@@ -9,12 +9,14 @@ public typealias ChatMessageListRouter = _ChatMessageListRouter<NoExtraData>
 
 open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMessageListVC<ExtraData>> {
     open func showMessageActionsPopUp(
+        messageContentViewClass: _ChatMessageContentView<ExtraData>.Type,
         messageContentFrame: CGRect,
         messageData: _ChatMessageGroupPart<ExtraData>,
         messageActionsController: _ChatMessageActionsVC<ExtraData>,
         messageReactionsController: _ChatMessageReactionsVC<ExtraData>?
     ) {
         let popup = _ChatMessagePopupVC<ExtraData>()
+        popup.messageContentViewClass = messageContentViewClass
         popup.message = messageData
         popup.messageViewFrame = messageContentFrame
         popup.actionsController = messageActionsController
@@ -22,7 +24,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMe
         popup.modalPresentationStyle = .overFullScreen
         popup.modalTransitionStyle = .crossDissolve
 
-        rootViewController.present(popup, animated: true)
+        rootViewController.present(popup, animated: false)
     }
     
     open func showPreview(for attachment: ChatMessageDefaultAttachment) {

@@ -3,6 +3,7 @@
 //
 
 import SnapshotTesting
+import SwiftUI
 import XCTest
 
 /// The default view controller size. Simulates an iPhone in portrait mode.
@@ -34,7 +35,12 @@ func AssertSnapshot(
     function: String = #function
 ) {
     let viewController = isEmbeddedInNavigationController ? UINavigationController(rootViewController: vc) : vc
-    variants.forEach { variant in
+    
+    // Test the variants in multiple orders to make sure there's
+    // no layout issues when transitioning between multiple traits.
+    let variantsToTest = record ? variants : variants + variants.reversed()
+    
+    variantsToTest.forEach { variant in
         assertSnapshot(
             matching: viewController,
             as: .image(size: screenSize, traits: variant.traits),
@@ -69,10 +75,83 @@ func AssertSnapshot(
     file: StaticString = #file,
     function: String = #function
 ) {
-    variants.forEach { variant in
+    // Test the variants in multiple orders to make sure there's
+    // no layout issues when transitioning between multiple traits.
+    let variantsToTest = record ? variants : variants + variants.reversed()
+    
+    variantsToTest.forEach { variant in
         assertSnapshot(
             matching: view,
             as: size != nil ? .image(size: size!, traits: variant.traits) : .image(traits: variant.traits),
+            named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
+            record: record,
+            file: file,
+            testName: function,
+            line: line
+        )
+    }
+}
+
+@available(iOS 13.0, *)
+/// Snapshot of a UIViewControllerRepresentable. All variants will be tested by default. For each variant, it will take a snapshot.
+/// This uses the default view controller screen size.
+func AssertSnapshot<View: UIViewControllerRepresentable>(
+    _ view: View,
+    isEmbeddedInNavigationController: Bool = false,
+    variants: [SnapshotVariant] = SnapshotVariant.all,
+    screenSize: CGSize = defaultScreenSize,
+    suffix: String? = nil,
+    record: Bool = false,
+    line: UInt = #line,
+    file: StaticString = #file,
+    function: String = #function
+) {
+    let hostingVC = UIHostingController(rootView: view)
+    AssertSnapshot(
+        hostingVC,
+        isEmbeddedInNavigationController: isEmbeddedInNavigationController,
+        variants: variants,
+        screenSize: screenSize,
+        suffix: suffix,
+        record: record,
+        line: line,
+        file: file,
+        function: function
+    )
+}
+
+@available(iOS 13.0, *)
+/// Snapshot of a SwiftUI view. Used for SwiftUI view components.
+///
+/// - Parameters:
+///   - view: The View component to be tested.
+///   - variants: The variants that a snapshot will be taken.
+///   Only the light and dark variants should be tested in small components.
+///   - device: Device on which the snapshots will be taken.
+///   - size: The size of the view.
+///   - suffix: When multiple snapshots are recorded from within the same test, the suffix will be added
+///   to the name of the snapshot image file to uniquely identify it.
+///   - record: True if a new reference should be saved. False by default,
+///   so that the newly captured snapshot is compared with the current reference.
+func AssertSnapshot<View: SwiftUI.View>(
+    _ view: View,
+    variants: [SnapshotVariant] = SnapshotVariant.all,
+    device: ViewImageConfig = .iPhoneX,
+    size: CGSize? = nil,
+    suffix: String? = nil,
+    record: Bool = false,
+    line: UInt = #line,
+    file: StaticString = #file,
+    function: String = #function
+) {
+    // Test the variants in multiple orders to make sure there's
+    // no layout issues when transitioning between multiple traits.
+    let variantsToTest = record ? variants : variants + variants.reversed()
+    
+    variantsToTest.forEach { variant in
+        assertSnapshot(
+            matching: view,
+            as: size != nil ? .image(layout: .sizeThatFits) : .image(layout: .device(config: device), traits: variant.traits),
             named: variant.snapshotName + (suffix.map { "." + $0 } ?? ""),
             record: record,
             file: file,

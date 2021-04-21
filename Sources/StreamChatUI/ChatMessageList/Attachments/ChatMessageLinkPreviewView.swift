@@ -29,14 +29,14 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
         let label = UILabel().withoutAutoresizingMaskConstraints
         label.font = uiConfig.font.bodyBold
         label.adjustsFontForContentSizeCategory = true
-        return label
+        return label.withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var headlineLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
         label.font = uiConfig.font.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
-        return label
+        return label.withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var bodyTextView: UITextView = {
@@ -78,8 +78,8 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
     var authorOnImageConstraint: NSLayoutConstraint?
     var noAuthorWithImageConstraint: NSLayoutConstraint?
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         authorBackground.backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
         backgroundColor = .clear
         imagePreview.layer.cornerRadius = 8

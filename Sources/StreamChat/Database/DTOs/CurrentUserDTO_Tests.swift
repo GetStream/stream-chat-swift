@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class CurrentUserModelDTO_Tests: XCTestCase {
@@ -10,7 +11,12 @@ class CurrentUserModelDTO_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
+    }
+    
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
     }
     
     func test_currentUserPayload_isStoredAndLoadedFromDB() {
@@ -26,7 +32,8 @@ class CurrentUserModelDTO_Tests: XCTestCase {
                 .dummy(userId: .unique),
                 .dummy(userId: .unique),
                 .dummy(userId: .unique)
-            ]
+            ],
+            teams: ["GREEN", "RED"]
         )
         
         let mutedUserIDs = Set(payload.mutedUsers.map(\.mutedUser.id))
@@ -57,7 +64,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(mutedUserIDs, Set(loadedCurrentUser?.mutedUsers.map(\.id) ?? []))
             Assert.willBeEqual(payload.devices.count, loadedCurrentUser?.devices.count)
             Assert.willBeEqual(payload.devices.first?.id, loadedCurrentUser?.devices.first?.id)
-            // TODO: Teams
+            Assert.willBeEqual(payload.teams, loadedCurrentUser?.user.teams?.map(\.id))
         }
     }
     
@@ -70,7 +77,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             // Save the user
             let userDTO = try! session.saveCurrentUser(payload: payload)
             // Make the extra data JSON invalid
-            userDTO.user.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+            userDTO.user.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
         let loadedUser: CurrentChatUser? = database.viewContext.currentUser()?.asModel()

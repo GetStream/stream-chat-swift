@@ -5,41 +5,60 @@
 import UIKit.UICollectionViewLayout
 
 public extension _UIConfig {
-    struct ChannelListUI {
-        public var channelCollectionView: ChatChannelListCollectionView.Type = ChatChannelListCollectionView.self
-        public var channelCollectionLayout: UICollectionViewLayout.Type = ChatChannelListCollectionViewLayout.self
-        public var channelListSwipeableItemView: _ChatChannelSwipeableListItemView<ExtraData>.Type =
-            _ChatChannelSwipeableListItemView<ExtraData>.self
-        /// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
-        public var channelListItemView: _ChatChannelListItemView<ExtraData>.Type = _ChatChannelListItemView<ExtraData>.self
-        /// A `UICollectionViewCell` subclass that shows channel information.
-        public var channelViewCell: _ChatChannelListCollectionViewCell<ExtraData>.Type =
-            _ChatChannelListCollectionViewCell<ExtraData>.self
+    struct ChannelList {
         /// A button used for creating new channels.
         public var newChannelButton: UIButton.Type = _ChatChannelCreateNewButton<ExtraData>.self
-        public var channelNamer: ChatChannelNamer.Type = ChatChannelNamer.self
-        public var channelListItemSubviews = ChannelListItemSubviews()
-    }
-    
-    struct ChannelListItemSubviews {
-        /// A view that shows a user avatar including an indicator of the user presence (online/offline).
-        public var avatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
-        /// A type for the view that shows a number of unread messages in channel.
-        public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
-        /// A type for the view that shows a read/unread status of the last message in channel.
-        public var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData>.Type =
-            _ChatChannelReadStatusCheckmarkView<ExtraData>.self
-        /// A type for the view used as an online activity indicator for avatars.
-        public var onlineIndicator: UIView.Type = _ChatOnlineIndicatorView<ExtraData>.self
-    }
-}
 
-// MARK: - CurrentUser
+        /// The logic to generate a name for the given channel.
+        public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()
 
-public extension _UIConfig {
-    struct CurrentUserUI {
-        public var currentUserViewAvatarView: _CurrentChatUserAvatarView<ExtraData>.Type = _CurrentChatUserAvatarView<ExtraData>
-            .self
-        public var avatarView: ChatAvatarView.Type = ChatAvatarView.self
+        /// The collection view of the Channel List.
+        public var collectionView: UICollectionView.Type = UICollectionView.self
+
+        /// The collection view layout of the Channel List.
+        public var collectionLayout: UICollectionViewLayout.Type = ListCollectionViewLayout.self
+
+        /// A `UICollectionViewCell` subclass that shows channel information.
+        public var collectionViewCell: _ChatChannelListCollectionViewCell<ExtraData>.Type =
+            _ChatChannelListCollectionViewCell<ExtraData>.self
+
+        /// The Cell Separator View.
+        public var cellSeparatorReusableView: UICollectionReusableView.Type = _CellSeparatorReusableView<ExtraData>.self
+
+        /// `SwibeableView` instance wrapped in the cell to support action views on swipe in the cell.
+        public var swipeableView: _SwipeableView<ExtraData>.Type =
+            _SwipeableView<ExtraData>.self
+
+        /// The `UIStackView` that arranges buttons revealed by swipe gesture.
+        public var swipeableViewStackView: UIStackView.Type = UIStackView.self
+
+        /// A `ChatChannelListItemView` subclass view that shows channel information.
+        public var itemView: _ChatChannelListItemView<ExtraData>.Type = _ChatChannelListItemView<ExtraData>.self
+
+        /// The subviews that compose the `itemView`.
+        public var itemSubviews = ItemSubviews()
+
+        /// The subviews of that compose the `itemView`.
+        public struct ItemSubviews {
+            /// A label that shows a title of channel. This should be result of `ChatChannelNamer`.
+            public var titleLabel: UILabel.Type = UILabel.self
+
+            /// A label that shows a subtitle of channel, typically shows if users are typing or last message,
+            /// see `typingMemberOrLastMessageString` in `ChatChannelListItemView`.
+            public var subtitleLabel: UILabel.Type = UILabel.self
+
+            /// A label that shows last time of message sent.
+            public var timestampLabel: UILabel.Type = UILabel.self
+
+            /// A view that shows a user avatar including an indicator of the user presence (online/offline).
+            public var avatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
+
+            /// A view that shows a number of unread messages in channel.
+            public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
+
+            /// A view that shows a read/unread status of the last message in channel.
+            public var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData>.Type =
+                _ChatChannelReadStatusCheckmarkView<ExtraData>.self
+        }
     }
 }

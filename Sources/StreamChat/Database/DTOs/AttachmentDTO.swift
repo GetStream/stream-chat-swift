@@ -262,7 +262,7 @@ extension AttachmentDTO {
 private extension RawJSON {
     static func create(fromDTO dto: AttachmentDTO) -> RawJSON? {
         if let data = dto.data,
-            let rawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: data) {
+           let rawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: data) {
             return rawJSON
         } else {
             log.error("Internal error. Unable to decode attachment `data` for sending to backend.")

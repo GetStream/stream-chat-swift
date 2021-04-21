@@ -8,7 +8,6 @@ import UIKit
 public typealias ChatMessageComposerInputTextView = _ChatMessageComposerInputTextView<NoExtraData>
 
 open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
-    AppearanceSetting,
     Customizable,
     UIConfigProvider
 {
@@ -18,8 +17,10 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     
     // MARK: - Subviews
     
-    public lazy var placeholderLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
-    
+    public lazy var placeholderLabel: UILabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withBidirectionalLanguagesSupport
+
     // MARK: - Overrides
     
     override public var text: String! {
@@ -40,14 +41,23 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         
         setUp()
         setUpLayout()
-        (self as! Self).applyDefaultAppearance()
+        
         setUpAppearance()
         updateContent()
     }
     
     // MARK: Public
+        
+    open func setUp() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(textDidChange),
+            name: UITextView.textDidChangeNotification,
+            object: nil
+        )
+    }
     
-    open func defaultAppearance() {
+    open func setUpAppearance() {
         font = uiConfig.font.body
         textContainer.lineFragmentPadding = 10
         textColor = uiConfig.colorPalette.text
@@ -58,17 +68,6 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         
         backgroundColor = .clear
     }
-    
-    open func setUp() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(textDidChange),
-            name: UITextView.textDidChangeNotification,
-            object: nil
-        )
-    }
-    
-    open func setUpAppearance() {}
     
     open func setUpLayout() {
         embed(
@@ -88,6 +87,10 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     }
     
     open func updateContent() {}
+
+    open func updateHeightConstraint() {
+        textViewHeightConstraint.constant = calculatedTextHeight() + textContainerInset.bottom + textContainerInset.top
+    }
     
     func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
@@ -96,7 +99,8 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         
     @objc func textDidChange() {
         placeholderLabel.isHidden = !text.isEmpty
-        textViewHeightConstraint.constant = calculatedTextHeight() + textContainerInset.bottom + textContainerInset.top
+
+        updateHeightConstraint()
         layoutIfNeeded()
     }
 }

@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class DataStore_Tests: StressTestCase {
@@ -12,6 +13,11 @@ class DataStore_Tests: StressTestCase {
     override func setUp() {
         super.setUp()
         _client = _ChatClient.mock
+    }
+    
+    override func tearDown() {
+        AssertAsync.canBeReleased(&_client)
+        super.tearDown()
     }
     
     func test_userIsLoaded() throws {

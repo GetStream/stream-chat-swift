@@ -54,7 +54,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     public var dataSource: DataSource = .empty()
-    public var delegate: Delegate? // swiftlint:disable:this weak_delegate
+    public var delegate: Delegate?
+
+    public lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
     public lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
 
@@ -62,27 +64,45 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         .messageList
         .collectionLayout
         .init()
-    
+
+    /// Registers the provided message cell to be used in the collection view.
+    ///
+    /// - Note: For performance optimization reasons, each cell is registered using multiple reuse identifiers to reduce
+    /// cell layout changes.
+    ///
+    /// - Parameter cellType: The cell type to be registered.
+    ///
+    open func registerMessageCell(_ cellType: _СhatMessageCollectionViewCell<ExtraData>.Type) {
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage2ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage3ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage6ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage7ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage1ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage4ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage9ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage5ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage13ReuseId)
+        
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage2ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage3ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage6ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage7ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage1ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage4ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage9ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage5ReuseId)
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage13ReuseId)
+    }
+
     public private(set) lazy var collectionView: UICollectionView = {
         let collection = uiConfig.messageList.collectionView.init(layout: collectionViewLayout)
-        
-        let incomingCell = uiConfig.messageList.incomingMessageCell
-        let outgoingCell = uiConfig.messageList.outgoingMessageCell
-        collection.register(incomingCell, forCellWithReuseIdentifier: incomingCell.reuseId)
-        collection.register(outgoingCell, forCellWithReuseIdentifier: outgoingCell.reuseId)
-        
-        let incomingAttachmentCell = uiConfig.messageList.incomingMessageAttachmentCell
-        let outgoingAttachmentCell = uiConfig.messageList.outgoingMessageAttachmentCell
-        collection.register(incomingAttachmentCell, forCellWithReuseIdentifier: incomingAttachmentCell.reuseId)
-        collection.register(outgoingAttachmentCell, forCellWithReuseIdentifier: outgoingAttachmentCell.reuseId)
-        
+
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
         collection.alwaysBounceVertical = true
         collection.keyboardDismissMode = .onDrag
         collection.dataSource = self
         collection.delegate = self
-        collection.isHidden = true
 
         return collection
     }()
@@ -92,43 +112,32 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
     public private(set) var needsToScrollToMostRecentMessageAnimated = false
 
-    /// When controller loaded first time, message layout is in estimated state.
-    /// We force layout reload on first appear, before showing message list.
-    /// This way we able to hide ugly jump
-    public private(set) var hideInitialLayout = true
-
     open var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
 
     // MARK: - Life Cycle
-
-    override open func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        if hideInitialLayout {
-            collectionView.reloadData()
-            collectionView.isHidden = false
-            hideInitialLayout = false
-        }
-    }
 
     override open func setUp() {
         super.setUp()
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
+        longPress.minimumPressDuration = 0.33
         collectionView.addGestureRecognizer(longPress)
+
+        registerMessageCell(uiConfig.messageList.defaultMessageCell)
+        // registerMessageCell(uiConfig.messageList.textOnlyMessageCell)
     }
 
     override open func setUpLayout() {
         super.setUpLayout()
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(collectionView)
         collectionView.pin(to: view.safeAreaLayoutGuide)
         collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
     }
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         view.backgroundColor = uiConfig.colorPalette.background
         collectionView.backgroundColor = .clear
     }
@@ -177,19 +186,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     open func cellReuseIdentifierForMessage(_ message: _ChatMessageGroupPart<ExtraData>) -> String {
-        if message.attachments.contains(where: { $0.type == .image || $0.type == .giphy || $0.type == .file }) {
-            if message.isSentByCurrentUser {
-                return uiConfig.messageList.outgoingMessageAttachmentCell.reuseId
-            } else {
-                return uiConfig.messageList.incomingMessageAttachmentCell.reuseId
-            }
-        } else {
-            if message.isSentByCurrentUser {
-                return uiConfig.messageList.outgoingMessageCell.reuseId
-            } else {
-                return uiConfig.messageList.incomingMessageCell.reuseId
-            }
-        }
+        "\(message.isSentByCurrentUser ? "outgoing" : "incoming")_\(message.layoutOptions.rawValue)_\(uiConfig.messageList.defaultMessageCell.reuseId)"
     }
 
     // MARK: - Actions
@@ -260,28 +257,27 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     open func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
-        didTapOnInlineReplyFor message: _ChatMessage<ExtraData>
+        message: _ChatMessage<ExtraData>,
+        didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.didTapOnInlineReply?(self, message)
-        }
-    }
-
-    open func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        didTapOnThreadReplyFor message: _ChatMessage<ExtraData>
-    ) {
-        dismiss(animated: true)
-    }
-
-    open func chatMessageActionsVC(
-        _ vc: _ChatMessageActionsVC<ExtraData>,
-        didTapOnEdit message: _ChatMessage<ExtraData>
-    ) {
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.didTapOnEdit?(self, message)
+        switch actionItem {
+        case is ThreadReplyActionItem:
+            dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.didTapOnRepliesForMessage?(self, message)
+            }
+        case is InlineReplyActionItem:
+            dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.didTapOnInlineReply?(self, message)
+            }
+        case is EditActionItem:
+            dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.didTapOnEdit?(self, message)
+            }
+        default:
+            log.error("Unhandled action for item: \(actionItem)")
         }
     }
 
@@ -301,10 +297,19 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
             let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
             return delay > minTimeInvteralBetweenMessagesInGroup
         }
+        
+        var isFirstInGroup: Bool {
+            guard indexPath.row < dataSource.numberOfMessages(self) - 1 else { return true }
+            let previousMessage = dataSource.messageAtIndex(self, indexPath.row + 1)
+            guard previousMessage.author == message.author else { return true }
+            let delay = previousMessage.createdAt.timeIntervalSince(message.createdAt)
+            return delay > minTimeInvteralBetweenMessagesInGroup
+        }
 
         return .init(
             message: message,
             quotedMessage: dataSource.replyMessageForMessageAtIndex(self, message, indexPath.row),
+            isFirstInGroup: isFirstInGroup,
             isLastInGroup: isLastInGroup,
             didTapOnAttachment: { [weak self] attachment in
                 self?.didTapOnAttachment(attachment, in: message)
@@ -314,6 +319,54 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
                 let messageController = self.dataSource.controllerForMessage(self, message)
                 messageController.dispatchEphemeralMessageAction(action)
+            }
+        )
+    }
+
+    private func presentReactionsControllerAnimated(
+        for cell: _СhatMessageCollectionViewCell<ExtraData>,
+        with messageData: _ChatMessageGroupPart<ExtraData>,
+        actionsController: _ChatMessageActionsVC<ExtraData>,
+        reactionsController: _ChatMessageReactionsVC<ExtraData>?
+    ) {
+        // TODO: for PR: This should be doable via:
+        // 1. options: [.autoreverse, .repeat] and
+        // 2. `UIView.setAnimationRepeatCount(0)` inside the animation block...
+        //
+        // and then just set completion to the animation to transform this back. aka `cell.messageView.transform = .identity`
+        // however, this doesn't work as after the animation is done, it clips back to the value set in animation block
+        // and then on completion goes back to `.identity`... This is really strange, but I was fighting it for some time
+        // and couldn't find proper solution...
+        // Also there are some limitations to the current solution ->
+        // According to my debug view hiearchy, the content inside `messageView.messageBubbleView` is not constrainted to the
+        // bubble view itself, meaning right now if we want to scale the view of incoming message, we scale the avatarView
+        // of the sender as well...
+        UIView.animate(
+            withDuration: 0.2,
+            delay: 0,
+            options: [.curveEaseIn],
+            animations: {
+                cell.messageView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
+            },
+            completion: { _ in
+                self.impactFeedbackGenerator.impactOccurred()
+
+                UIView.animate(
+                    withDuration: 0.1,
+                    delay: 0,
+                    options: [.curveEaseOut],
+                    animations: {
+                        cell.messageView.transform = .identity
+                    }
+                )
+                
+                self.router.showMessageActionsPopUp(
+                    messageContentViewClass: type(of: cell).messageContentViewClass,
+                    messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
+                    messageData: messageData,
+                    messageActionsController: actionsController,
+                    messageReactionsController: reactionsController
+                )
             }
         )
     }
@@ -333,11 +386,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
             return controller
         }
 
-        router.showMessageActionsPopUp(
-            messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
-            messageData: messageData,
-            messageActionsController: actionsController,
-            messageReactionsController: reactionsController
+        presentReactionsControllerAnimated(
+            for: cell,
+            with: messageData,
+            actionsController: actionsController,
+            reactionsController: reactionsController
         )
     }
 

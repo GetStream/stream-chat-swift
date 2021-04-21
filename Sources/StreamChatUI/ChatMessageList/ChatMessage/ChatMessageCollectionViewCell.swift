@@ -8,7 +8,31 @@ import UIKit
 public typealias СhatMessageCollectionViewCell = _СhatMessageCollectionViewCell<NoExtraData>
 
 open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
-    class var reuseId: String { String(describing: self) }
+    // MARK: - Reuse identifiers
+
+    class var reuseId: String { String(describing: self) + String(describing: Self.messageContentViewClass) }
+    
+    public static var incomingMessage2ReuseId: String { "incoming_2_\(reuseId)" }
+    public static var incomingMessage3ReuseId: String { "incoming_3_\(reuseId)" }
+    public static var incomingMessage6ReuseId: String { "incoming_6_\(reuseId)" }
+    public static var incomingMessage7ReuseId: String { "incoming_7_\(reuseId)" }
+    public static var incomingMessage1ReuseId: String { "incoming_1_\(reuseId)" }
+    public static var incomingMessage4ReuseId: String { "incoming_4_\(reuseId)" }
+    public static var incomingMessage9ReuseId: String { "incoming_9_\(reuseId)" }
+    public static var incomingMessage5ReuseId: String { "incoming_5_\(reuseId)" }
+    public static var incomingMessage13ReuseId: String { "incoming_13_\(reuseId)" }
+    
+    public static var outgoingMessage2ReuseId: String { "outgoing_2_\(reuseId)" }
+    public static var outgoingMessage3ReuseId: String { "outgoing_3_\(reuseId)" }
+    public static var outgoingMessage6ReuseId: String { "outgoing_6_\(reuseId)" }
+    public static var outgoingMessage7ReuseId: String { "outgoing_7_\(reuseId)" }
+    public static var outgoingMessage1ReuseId: String { "outgoing_1_\(reuseId)" }
+    public static var outgoingMessage4ReuseId: String { "outgoing_4_\(reuseId)" }
+    public static var outgoingMessage9ReuseId: String { "outgoing_9_\(reuseId)" }
+    public static var outgoingMessage5ReuseId: String { "outgoing_5_\(reuseId)" }
+    public static var outgoingMessage13ReuseId: String { "outgoing_13_\(reuseId)" }
+    
+    // MARK: - Properties
 
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
@@ -16,17 +40,17 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _Collecti
 
     // MARK: - Subviews
 
-    public private(set) lazy var messageView = uiConfig.messageList.messageContentView.init().withoutAutoresizingMaskConstraints
+    open class var messageContentViewClass: _ChatMessageContentView<ExtraData>.Type { _ChatMessageContentView<ExtraData>.self }
+
+    public private(set) lazy var messageView: _ChatMessageContentView<ExtraData> = Self.messageContentViewClass.init()
+        .withoutAutoresizingMaskConstraints
+    
+    private var messageViewLeadingConstraint: NSLayoutConstraint?
+    private var messageViewTrailingConstraint: NSLayoutConstraint?
+
     private var hasCompletedStreamSetup = false
 
     // MARK: - Lifecycle
-
-    override open func didMoveToSuperview() {
-        super.didMoveToSuperview()
-
-        guard superview != nil, !hasCompletedStreamSetup else { return }
-        hasCompletedStreamSetup = true
-    }
 
     override open func setUpLayout() {
         contentView.addSubview(messageView)
@@ -40,6 +64,27 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _Collecti
 
     override open func updateContent() {
         messageView.message = message
+
+        switch message?.isSentByCurrentUser {
+        case true?:
+            assert(messageViewLeadingConstraint == nil, "The cell was already used for incoming message")
+            if messageViewTrailingConstraint == nil {
+                messageViewTrailingConstraint = messageView.trailingAnchor
+                    .pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor)
+                messageViewTrailingConstraint!.isActive = true
+            }
+
+        case false?:
+            assert(messageViewTrailingConstraint == nil, "The cell was already used for outgoing message")
+            if messageViewLeadingConstraint == nil {
+                messageViewLeadingConstraint = messageView.leadingAnchor
+                    .pin(equalTo: contentView.layoutMarginsGuide.leadingAnchor)
+                messageViewLeadingConstraint!.isActive = true
+            }
+
+        case nil:
+            break
+        }
     }
 
     // MARK: - Overrides
@@ -53,14 +98,6 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _Collecti
     override open func preferredLayoutAttributesFitting(
         _ layoutAttributes: UICollectionViewLayoutAttributes
     ) -> UICollectionViewLayoutAttributes {
-        guard hasCompletedStreamSetup else {
-            // We cannot calculate size properly right now, because our view hierarchy is not ready yet.
-            // If we just return default size, small text bubbles would not resize itself properly for no reason.
-            let attributes = layoutAttributes.copy() as! UICollectionViewLayoutAttributes
-            attributes.frame.size.height = 300
-            return attributes
-        }
-
         let preferredAttributes = super.preferredLayoutAttributesFitting(layoutAttributes)
 
         let targetSize = CGSize(
@@ -75,56 +112,5 @@ open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _Collecti
         )
 
         return preferredAttributes
-    }
-}
-
-class СhatIncomingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageCollectionViewCell<ExtraData> {
-    override func setUpLayout() {
-        super.setUpLayout()
-        messageView.leadingAnchor.pin(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
-    }
-}
-
-class СhatOutgoingMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageCollectionViewCell<ExtraData> {
-    override func setUpLayout() {
-        super.setUpLayout()
-        messageView.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
-    }
-}
-
-public typealias СhatMessageAttachmentCollectionViewCell = _СhatMessageAttachmentCollectionViewCell<NoExtraData>
-
-open class _СhatMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _СhatMessageCollectionViewCell<ExtraData> {
-    private var _messageAttachmentContentView: _ChatMessageAttachmentContentView<ExtraData>?
-    
-    override public var messageView: _ChatMessageContentView<ExtraData> {
-        if let messageContentView = _messageAttachmentContentView {
-            return messageContentView
-        } else {
-            _messageAttachmentContentView = uiConfig
-                .messageList
-                .messageAttachmentContentView
-                .init()
-                .withoutAutoresizingMaskConstraints
-            return _messageAttachmentContentView!
-        }
-    }
-}
-
-// swiftlint:disable:next colon
-class СhatIncomingMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>:
-    _СhatMessageAttachmentCollectionViewCell<ExtraData> {
-    override func setUpLayout() {
-        super.setUpLayout()
-        messageView.leadingAnchor.pin(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
-    }
-}
-
-// swiftlint:disable:next colon
-class СhatOutgoingMessageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>:
-    _СhatMessageAttachmentCollectionViewCell<ExtraData> {
-    override func setUpLayout() {
-        super.setUpLayout()
-        messageView.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor).isActive = true
     }
 }

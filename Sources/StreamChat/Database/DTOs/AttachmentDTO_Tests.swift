@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class AttachmentDTO_Tests: XCTestCase {
@@ -10,7 +11,12 @@ class AttachmentDTO_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
+    }
+    
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
     }
 
     func test_attachmentSeed_isStoredAndLoadedFromDB() throws {
@@ -262,6 +268,7 @@ class AttachmentDTO_Tests: XCTestCase {
             let message = try session.createNewMessage(
                 in: cid,
                 text: "Message pending send",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachments: [TestAttachmentEnvelope()],
                 attachmentSeeds: [],

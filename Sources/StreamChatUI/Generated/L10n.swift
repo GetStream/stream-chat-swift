@@ -1,14 +1,10 @@
-// swiftlint:disable all
 // Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
 
 import Foundation
 
-// swiftlint:disable superfluous_disable_command file_length implicit_return
 
 // MARK: - Strings
 
-// swiftlint:disable explicit_type_interface function_parameter_count identifier_name line_length
-// swiftlint:disable nesting type_body_length type_name vertical_whitespace_opening_braces
 internal enum L10n {
 
   internal enum Alert {
@@ -21,13 +17,23 @@ internal enum L10n {
   }
 
   internal enum Channel {
+    internal enum Item {
+      /// No messages
+      internal static let emptyMessages = L10n.tr("Localizable", "channel.item.empty-messages")
+      /// are typing ...
+      internal static let typingPlural = L10n.tr("Localizable", "channel.item.typing-plural")
+      /// is typing ...
+      internal static let typingSingular = L10n.tr("Localizable", "channel.item.typing-singular")
+    }
     internal enum Name {
       /// and
       internal static let and = L10n.tr("Localizable", "channel.name.and")
+      /// and %@ more
+      internal static func andXMore(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "channel.name.andXMore", String(describing: p1))
+      }
       /// NoChannel
       internal static let missing = L10n.tr("Localizable", "channel.name.missing")
-      /// more
-      internal static let more = L10n.tr("Localizable", "channel.name.more")
     }
   }
 
@@ -114,9 +120,18 @@ internal enum L10n {
       internal static let reply = L10n.tr("Localizable", "message.threads.reply")
     }
   }
+
+  internal enum MessageList {
+    internal enum TypingIndicator {
+      /// Someone is typing
+      internal static let typingUnknown = L10n.tr("Localizable", "messageList.typingIndicator.typing-unknown")
+      /// Plural format key: "%@%#@typing@"
+      internal static func users(_ p1: Any, _ p2: Int) -> String {
+        return L10n.tr("Localizable", "messageList.typingIndicator.users", String(describing: p1), p2)
+      }
+    }
+  }
 }
-// swiftlint:enable explicit_type_interface function_parameter_count identifier_name line_length
-// swiftlint:enable nesting type_body_length type_name vertical_whitespace_opening_braces
 
 // MARK: - Implementation Details
 
@@ -127,9 +142,7 @@ extension L10n {
   }
 }
 
-// swiftlint:disable convenience_type
 private final class BundleToken {
   static let bundle: Bundle = .streamChatUI
 }
 
-// swiftlint:enable convenience_type

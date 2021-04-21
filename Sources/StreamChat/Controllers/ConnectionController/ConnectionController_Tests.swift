@@ -4,6 +4,7 @@
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class ChatConnectionController_Tests: StressTestCase {

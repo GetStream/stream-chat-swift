@@ -12,9 +12,31 @@ public typealias ChatChannelListVC = _ChatChannelListVC<NoExtraData>
 open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
-    UIConfigProvider {
+    UIConfigProvider,
+    SwipeableViewDelegate {
     /// The `ChatChannelListController` instance that provides channels data.
     public var controller: _ChatChannelListController<ExtraData>!
+    
+    /// A helper flag to find out if the VC's view is currently layouting its subviews.
+    var isLayoutingSubviews = false
+    
+    override open func viewWillLayoutSubviews() {
+        isLayoutingSubviews = true
+        super.viewWillLayoutSubviews()
+    }
+
+    override open func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        isLayoutingSubviews = false
+    }
+
+    open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
+        if #available(iOS 13.0, *) {
+            return UIActivityIndicatorView(style: .large).withoutAutoresizingMaskConstraints
+        } else {
+            return UIActivityIndicatorView(style: .whiteLarge).withoutAutoresizingMaskConstraints
+        }
+    }()
     
     /// The `_ChatChannelListRouter` instance responsible for navigation.
     open private(set) lazy var router: _ChatChannelListRouter<ExtraData> = uiConfig
@@ -24,12 +46,13 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// The `UICollectionViewLayout` that used by `ChatChannelListCollectionView`.
     open private(set) lazy var collectionViewLayout: UICollectionViewLayout = uiConfig
         .channelList
-        .channelCollectionLayout.init()
+        .collectionLayout.init()
     
     /// The `UICollectionView` instance that displays channel list.
-    open private(set) lazy var collectionView: ChatChannelListCollectionView = uiConfig
+    open private(set) lazy var collectionView: UICollectionView = uiConfig
         .channelList
-        .channelCollectionView.init(layout: collectionViewLayout)
+        .collectionView.init(frame: .zero, collectionViewLayout: collectionViewLayout)
+        .withoutAutoresizingMaskConstraints
     
     /// The `UIButton` instance used for navigating to new channel screen creation,
     open private(set) lazy var createNewChannelButton: UIButton = uiConfig
@@ -43,13 +66,28 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         .currentUserViewAvatarView.init()
         .withoutAutoresizingMaskConstraints
     
+    /// Reuse identifier of separator
+    open var separatorReuseIdentifier: String { "CellSeparatorIdentifier" }
+    
+    /// Reuse identifier of `collectionViewCell`
+    open var collectionViewCellReuseIdentifier: String { "Cell" }
+
     override open func setUp() {
         super.setUp()
-        
         controller.setDelegate(self)
         controller.synchronize()
         
-        collectionView.register(uiConfig.channelList.channelViewCell.self, forCellWithReuseIdentifier: "Cell")
+        collectionView.register(
+            uiConfig.channelList.collectionViewCell.self,
+            forCellWithReuseIdentifier: collectionViewCellReuseIdentifier
+        )
+        
+        collectionView.register(
+            uiConfig.channelList.cellSeparatorReusableView,
+            forSupplementaryViewOfKind: ListCollectionViewLayout.separatorKind,
+            withReuseIdentifier: separatorReuseIdentifier
+        )
+
         collectionView.dataSource = self
         collectionView.delegate = self
         
@@ -61,11 +99,13 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     override open func setUpLayout() {
         super.setUpLayout()
-        
         view.embed(collectionView)
+        collectionView.addSubview(loadingIndicator)
+        loadingIndicator.pin(anchors: [.centerX, .centerY], to: view)
     }
     
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         title = "Stream Chat"
         
         navigationItem.backButtonTitle = ""
@@ -73,8 +113,16 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
         
         collectionView.backgroundColor = uiConfig.colorPalette.background
+
+        if let flowLayout = collectionViewLayout as? ListCollectionViewLayout {
+            flowLayout.itemSize = UICollectionViewFlowLayout.automaticSize
+            flowLayout.estimatedItemSize = .init(
+                width: collectionView.bounds.width,
+                height: 64
+            )
+        }
     }
-        
+
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         controller.channels.count
     }
@@ -84,14 +132,29 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: "Cell",
+            withReuseIdentifier: collectionViewCellReuseIdentifier,
             for: indexPath
         ) as! _ChatChannelListCollectionViewCell<ExtraData>
     
         cell.uiConfig = uiConfig
-        cell.channelView.content = (controller.channels[indexPath.row], controller.client.currentUserId)
+        cell.itemView.content = controller.channels[indexPath.row]
+
+        cell.swipeableView.delegate = self
+        cell.swipeableView.indexPath = indexPath
         
         return cell
+    }
+    
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        collectionView.dequeueReusableSupplementaryView(
+            ofKind: ListCollectionViewLayout.separatorKind,
+            withReuseIdentifier: separatorReuseIdentifier,
+            for: indexPath
+        )
     }
         
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
@@ -106,14 +169,72 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
         
     @objc open func didTapOnCurrentUserAvatar(_ sender: Any) {
-        guard let currentUser = userAvatarView.controller?.currentUser else { return }
-        
+        guard let currentUser = userAvatarView.controller?.currentUser else {
+            log.error(
+                "Current user is nil while tapping on CurrentUserAvatar, please check that both controller and currentUser are set"
+            )
+            return
+        }
         router.openCurrentUserProfile(for: currentUser)
     }
     
     @objc open func didTapCreateNewChannel(_ sender: Any) {
         router.openCreateNewChannel()
     }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        collectionViewLayout.invalidateLayout()
+
+        // Required to correctly setup navigation when view is wrapped
+        // using UIHostingController and used in SwiftUI
+        guard
+            let parent = parent,
+            parent.isUIHostingController
+        else { return }
+
+        if #available(iOS 13.0, *) {
+            setupParentNavigation(parent: parent)
+        }
+    }
+
+    public func swipeableViewWillShowActionViews(for indexPath: IndexPath) {
+        // Close other open cells
+        collectionView.visibleCells.forEach {
+            let cell = ($0 as? _ChatChannelListCollectionViewCell<ExtraData>)
+            cell?.swipeableView.close()
+        }
+
+        Animate { self.collectionView.layoutIfNeeded() }
+    }
+
+    public func swipeableViewActionViews(for indexPath: IndexPath) -> [UIView] {
+        let deleteView = CellActionView().withoutAutoresizingMaskConstraints
+        deleteView.actionButton.setImage(uiConfig.images.messageActionDelete, for: .normal)
+
+        deleteView.actionButton.backgroundColor = uiConfig.colorPalette.alert
+        deleteView.actionButton.tintColor = .white
+
+        deleteView.action = { self.deleteButtonPressedForCell(at: indexPath) }
+
+        let moreView = CellActionView().withoutAutoresizingMaskConstraints
+        moreView.actionButton.setImage(uiConfig.images.more, for: .normal)
+
+        moreView.actionButton.backgroundColor = uiConfig.colorPalette.background1
+        moreView.actionButton.tintColor = uiConfig.colorPalette.text
+
+        moreView.action = { self.moreButtonPressedForCell(at: indexPath) }
+
+        return [moreView, deleteView]
+    }
+
+    /// This function is called when delete button is pressed from action items of a cell.
+    /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
+    open func deleteButtonPressedForCell(at indexPath: IndexPath) {}
+
+    /// This function is called when delete more button is pressed from action items of a cell.
+    /// - Parameter indexPath: IndexPath of given cell to fetch the content of it.
+    open func moreButtonPressedForCell(at indexPath: IndexPath) {}
 }
 
 extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
@@ -121,7 +242,14 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
+        // We can't call `performBatchUpdates` unless all views are properly laid out.
+        guard isLayoutingSubviews == false else {
+            collectionView.reloadData()
+            return
+        }
+        
         var movedItems: [IndexPath] = []
+        
         collectionView.performBatchUpdates(
             {
                 for change in changes {
@@ -144,5 +272,20 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
                 self.collectionView.reloadItems(at: movedItems)
             }
         )
+    }
+}
+
+extension _ChatChannelListVC: DataControllerStateDelegate {
+    public func controller(_ controller: DataController, didChangeState state: DataController.State) {
+        switch state {
+        case .initialized, .localDataFetched:
+            if self.controller.channels.isEmpty {
+                loadingIndicator.startAnimating()
+            } else {
+                loadingIndicator.stopAnimating()
+            }
+        default:
+            loadingIndicator.stopAnimating()
+        }
     }
 }

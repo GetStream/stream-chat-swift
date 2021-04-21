@@ -8,168 +8,244 @@ import UIKit
 public protocol _ChatMessageActionsVCDelegate: AnyObject {
     associatedtype ExtraData: ExtraDataTypes
 
-    func chatMessageActionsVC(_ vc: _ChatMessageActionsVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>)
-    func chatMessageActionsVC(_ vc: _ChatMessageActionsVC<ExtraData>, didTapOnThreadReplyFor message: _ChatMessage<ExtraData>)
-    func chatMessageActionsVC(_ vc: _ChatMessageActionsVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>)
+    func chatMessageActionsVC(
+        _ vc: _ChatMessageActionsVC<ExtraData>,
+        message: _ChatMessage<ExtraData>,
+        didTapOnActionItem actionItem: ChatMessageActionItem
+    )
     func chatMessageActionsVCDidFinish(_ vc: _ChatMessageActionsVC<ExtraData>)
 }
 
 public typealias ChatMessageActionsVC = _ChatMessageActionsVC<NoExtraData>
 
+/// View controller to show message actions.
 open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
+    /// `_ChatMessageController` instance used to obtain current data.
     public var messageController: _ChatMessageController<ExtraData>!
-    public var delegate: Delegate? // swiftlint:disable:this weak_delegate
-    public lazy var router = uiConfig.navigation.messageActionsRouter.init(rootViewController: self)
+    /// `_ChatMessageActionsVC.Delegate` instance.
+    public var delegate: Delegate?
 
-    private var message: _ChatMessage<ExtraData>? {
+    /// Message that should be shown in this view controller.
+    open var message: _ChatMessage<ExtraData>? {
         messageController.message
     }
+    
+    /// The `_ChatMessageActionsRouter` instance responsible for navigation.
+    open private(set) lazy var router = uiConfig
+        .navigation
+        .messageActionsRouter
+        .init(rootViewController: self)
 
-    // MARK: - Subviews
-
-    private lazy var messageActionView = uiConfig
-        .messageList
-        .messageActionsSubviews
-        .actionsView
-        .init()
+    /// `ContainerView` for showing message's actions.
+    open private(set) lazy var messageActionsContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
-
-    // MARK: - Life Cycle
+    
+    /// Class used for buttons in `messageActionsContainerView`.
+    open var actionButtonClass: _ChatMessageActionControl<ExtraData>.Type { _ChatMessageActionControl<ExtraData>.self }
 
     override open func setUpLayout() {
-        view.embed(messageActionView)
+        super.setUpLayout()
+        
+        messageActionsContainerStackView.axis = .vertical
+        messageActionsContainerStackView.alignment = .fill
+        messageActionsContainerStackView.spacing = 1
+        view.embed(messageActionsContainerStackView)
+    }
+    
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+        messageActionsContainerStackView.layer.cornerRadius = 16
+        messageActionsContainerStackView.layer.masksToBounds = true
+        messageActionsContainerStackView.backgroundColor = uiConfig.colorPalette.border
     }
 
     override open func updateContent() {
-        messageActionView.actionItems = messageActions
+        messageActionsContainerStackView.subviews.forEach {
+            messageActionsContainerStackView.removeArrangedSubview($0)
+        }
+
+        messageActions.forEach {
+            let actionView = actionButtonClass.init()
+            actionView.containerStackView.layoutMargins = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+            actionView.content = $0
+            messageActionsContainerStackView.addArrangedSubview(actionView)
+        }
     }
 
-    // MARK: - Actions
-
-    open var messageActions: [ChatMessageActionItem<ExtraData>] {
+    /// Array of `ChatMessageActionItem`s - override this to setup your own custom actions
+    open var messageActions: [ChatMessageActionItem] {
         guard
-            let currentUser = messageController.client.currentUserController().currentUser,
+            let currentUser = messageController.dataStore.currentUser(),
             let message = message,
             message.deletedAt == nil
         else { return [] }
 
-        let editAction: ChatMessageActionItem<ExtraData> = .edit { [weak self] in self?.handleEditAction() }
-        let deleteAction: ChatMessageActionItem<ExtraData> = .delete { [weak self] in self?.handleDeleteAction() }
-
         switch message.localState {
         case nil:
-            var actions: [ChatMessageActionItem<ExtraData>] = [
-                .inlineReply { [weak self] in self?.handleInlineReplyAction() },
-                .threadReply { [weak self] in self?.handleThreadReplyAction() },
-                .copy(
-                    action: { [weak self] in self?.handleCopyAction() },
-                    uiConfig: uiConfig
-                )
+            var actions: [ChatMessageActionItem] = [
+                inlineReplyActionItem(),
+                threadReplyActionItem(),
+                copyActionItem()
             ]
 
             if message.isSentByCurrentUser {
-                actions += [editAction, deleteAction]
+                actions += [editActionItem(), deleteActionItem()]
             } else if currentUser.mutedUsers.contains(message.author) {
-                actions.append(.unmuteUser { [weak self] in self?.handleUnmuteAuthorAction() })
+                actions.append(
+                    unmuteActionItem()
+                )
             } else {
-                actions.append(.muteUser { [weak self] in self?.handleMuteAuthorAction() })
+                actions.append(
+                    muteActionItem()
+                )
             }
 
             return actions
         case .pendingSend, .sendingFailed, .pendingSync, .syncingFailed, .deletingFailed:
             return [
-                message.localState == .sendingFailed ? .resend { [weak self] in self?.handleResendAction() } : nil,
-                editAction,
-                deleteAction
-            ].compactMap { $0 }
+                message.localState == .sendingFailed ? resendActionItem() : nil,
+                editActionItem(),
+                deleteActionItem()
+            ]
+            .compactMap { $0 }
         case .sending, .syncing, .deleting:
             return []
         }
     }
-
-    open func handleCopyAction() {
-        UIPasteboard.general.string = message?.text
-
-        delegate?.didFinish(self)
+    
+    /// Returns `ChatMessageActionItem` for edit action
+    open func editActionItem() -> ChatMessageActionItem {
+        EditActionItem(
+            action: { [weak self] in self?.handleAction($0) },
+            uiConfig: uiConfig
+        )
     }
+    
+    /// Returns `ChatMessageActionItem` for delete action
+    open func deleteActionItem() -> ChatMessageActionItem {
+        DeleteActionItem(
+            action: { [weak self] _ in
+                guard let self = self else { return }
+                self.router.showMessageDeletionConfirmationAlert { confirmed in
+                    guard confirmed else { return }
 
-    open func handleInlineReplyAction() {
-        guard let message = message else { return }
-
-        delegate?.didTapOnInlineReply(self, message)
+                    self.messageController.deleteMessage { _ in
+                        self.delegate?.didFinish(self)
+                    }
+                }
+            },
+            uiConfig: uiConfig
+        )
     }
-
-    open func handleThreadReplyAction() {
-        guard let message = message else { return }
-
-        delegate?.didTapOnThreadReply(self, message)
+    
+    /// Returns `ChatMessageActionItem` for resend action.
+    open func resendActionItem() -> ChatMessageActionItem {
+        ResendActionItem(
+            action: { [weak self] _ in
+                guard let self = self else { return }
+                self.messageController.resendMessage { _ in
+                    self.delegate?.didFinish(self)
+                }
+            },
+            uiConfig: uiConfig
+        )
     }
+    
+    /// Returns `ChatMessageActionItem` for mute action.
+    open func muteActionItem() -> ChatMessageActionItem {
+        MuteUserActionItem(
+            action: { [weak self] _ in
+                guard
+                    let self = self,
+                    let author = self.message?.author
+                else { return }
 
-    open func handleEditAction() {
-        guard let message = message else { return }
-
-        delegate?.didTapOnEdit(self, message)
+                self.messageController.client
+                    .userController(userId: author.id)
+                    .mute { _ in self.delegate?.didFinish(self) }
+            },
+            uiConfig: uiConfig
+        )
     }
+    
+    /// Returns `ChatMessageActionItem` for unmute action.
+    open func unmuteActionItem() -> ChatMessageActionItem {
+        UnmuteUserActionItem(
+            action: { [weak self] _ in
+                guard
+                    let self = self,
+                    let author = self.message?.author
+                else { return }
 
-    open func handleDeleteAction() {
-        router.showMessageDeletionConfirmationAlert { confirmed in
-            guard confirmed else { return }
+                self.messageController.client
+                    .userController(userId: author.id)
+                    .unmute { _ in self.delegate?.didFinish(self) }
+            },
+            uiConfig: uiConfig
+        )
+    }
+    
+    /// Returns `ChatMessageActionItem` for inline reply action.
+    open func inlineReplyActionItem() -> ChatMessageActionItem {
+        InlineReplyActionItem(
+            action: { [weak self] in self?.handleAction($0) },
+            uiConfig: uiConfig
+        )
+    }
+    
+    /// Returns `ChatMessageActionItem` for thread reply action.
+    open func threadReplyActionItem() -> ChatMessageActionItem {
+        ThreadReplyActionItem(
+            action: { [weak self] in self?.handleAction($0) },
+            uiConfig: uiConfig
+        )
+    }
+    
+    /// Returns `ChatMessageActionItem` for copy action.
+    open func copyActionItem() -> ChatMessageActionItem {
+        CopyActionItem(
+            action: { [weak self] _ in
+                guard let self = self else { return }
+                UIPasteboard.general.string = self.message?.text
 
-            self.messageController.deleteMessage { _ in
                 self.delegate?.didFinish(self)
-            }
-        }
+            },
+            uiConfig: uiConfig
+        )
     }
 
-    open func handleResendAction() {
-        messageController.resendMessage { _ in
-            self.delegate?.didFinish(self)
-        }
-    }
-
-    open func handleMuteAuthorAction() {
-        guard let author = message?.author else { return }
-
-        messageController.client
-            .userController(userId: author.id)
-            .mute { _ in self.delegate?.didFinish(self) }
-    }
-
-    open func handleUnmuteAuthorAction() {
-        guard let author = message?.author else { return }
-
-        messageController.client
-            .userController(userId: author.id)
-            .unmute { _ in self.delegate?.didFinish(self) }
+    /// Triggered for actions which should be handled by `delegate` and not in this view controller.
+    open func handleAction(_ actionItem: ChatMessageActionItem) {
+        guard let message = message else { return }
+        delegate?.didTapOnActionItem(self, message, actionItem)
     }
 }
 
 // MARK: - Delegate
 
-extension _ChatMessageActionsVC {
-    public struct Delegate {
-        public var didTapOnInlineReply: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
-        public var didTapOnThreadReply: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
-        public var didTapOnEdit: (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void
+public extension _ChatMessageActionsVC {
+    /// Delegate instance for `_ChatMessageActionsVC`.
+    struct Delegate {
+        /// Triggered when action item was tapped.
+        /// You can decide what to do with message based on which instance of `ChatMessageActionItem` you received.
+        public var didTapOnActionItem: (_ChatMessageActionsVC, _ChatMessage<ExtraData>, ChatMessageActionItem) -> Void
+        /// Triggered when `_ChatMessageActionsVC` should be dismissed.
         public var didFinish: (_ChatMessageActionsVC) -> Void
 
+        /// Init of `_ChatMessageActionsVC.Delegate`.
         public init(
-            didTapOnInlineReply: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
-            didTapOnThreadReply: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
-            didTapOnEdit: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>) -> Void = { _, _ in },
+            didTapOnActionItem: @escaping (_ChatMessageActionsVC, _ChatMessage<ExtraData>, ChatMessageActionItem)
+                -> Void = { _, _, _ in },
             didFinish: @escaping (_ChatMessageActionsVC) -> Void = { _ in }
         ) {
-            self.didTapOnInlineReply = didTapOnInlineReply
-            self.didTapOnThreadReply = didTapOnThreadReply
-            self.didTapOnEdit = didTapOnEdit
+            self.didTapOnActionItem = didTapOnActionItem
             self.didFinish = didFinish
         }
 
+        /// Wraps `_ChatMessageActionsVCDelegate` into `_ChatMessageActionsVC.Delegate`.
         public init<Delegate: _ChatMessageActionsVCDelegate>(delegate: Delegate) where Delegate.ExtraData == ExtraData {
             self.init(
-                didTapOnInlineReply: { [weak delegate] in delegate?.chatMessageActionsVC($0, didTapOnInlineReplyFor: $1) },
-                didTapOnThreadReply: { [weak delegate] in delegate?.chatMessageActionsVC($0, didTapOnThreadReplyFor: $1) },
-                didTapOnEdit: { [weak delegate] in delegate?.chatMessageActionsVC($0, didTapOnEdit: $1) },
+                didTapOnActionItem: { [weak delegate] in delegate?.chatMessageActionsVC($0, message: $1, didTapOnActionItem: $2) },
                 didFinish: { [weak delegate] in delegate?.chatMessageActionsVCDidFinish($0) }
             )
         }

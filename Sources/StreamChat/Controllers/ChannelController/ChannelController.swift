@@ -6,10 +6,9 @@ import CoreData
 import Foundation
 
 public extension _ChatClient {
-    /// Creates a new `ChatChannelController` for the channel with the provided id and options.
+    /// Creates a new `ChatChannelController` for the channel with the provided id.
     ///
-    /// - Parameter channelId: The id of the channel this controller represents.
-    /// - Parameter options: Query options (See `QueryOptions`)
+    /// - Parameter cid: The id of the channel this controller represents.
     ///
     /// - Returns: A new instance of `ChatChannelController`.
     ///
@@ -27,7 +26,10 @@ public extension _ChatClient {
         .init(channelQuery: channelQuery, client: self)
     }
     
-    /// Creates a new `ChatChannelController` that will create a new channel.
+    /// Creates a `ChatChannelController` that will create a new channel, if the channel doesn't exist already.
+    ///
+    /// It's safe to call this method for already existing channels. However, if you queried the channel before and you're sure it exists locally,
+    /// it can be faster and more convenient to use `channelController(for cid: ChannelId)` to create a controller for it.
     ///
     /// - Parameters:
     ///   - cid: The `ChannelId` for the new channel.
@@ -42,13 +44,13 @@ public extension _ChatClient {
     /// - Returns: A new instance of `ChatChannelController`.
     func channelController(
         createChannelWithId cid: ChannelId,
-        name: String?,
-        imageURL: URL?,
+        name: String? = nil,
+        imageURL: URL? = nil,
         team: String? = nil,
         members: Set<UserId> = [],
         isCurrentUserMember: Bool = true,
         invites: Set<UserId> = [],
-        extraData: ExtraData.Channel
+        extraData: ExtraData.Channel = .defaultValue
     ) throws -> _ChatChannelController<ExtraData> {
         guard let currentUserId = currentUserId else {
             throw ClientError.CurrentUserDoesNotExist()
@@ -67,13 +69,16 @@ public extension _ChatClient {
         return .init(channelQuery: .init(channelPayload: payload), client: self, isChannelAlreadyCreated: false)
     }
 
-    /// Creates a new `ChatChannelController` that will create new a channel with provided members without having to specify
-    /// the channel id explicitly.
+    /// Creates a `ChatChannelController` that will create a new channel with the provided members without having to specify
+    /// the channel id explicitly. This is great for direct message channels because the channel should be uniquely identified by
+    /// its members. If the channel for these members already exist, it will be reused.
     ///
-    /// This is great for direct message channels because the channel should be uniquely identified by its members.
+    /// It's safe to call this method for already existing channels. However, if you queried the channel before and you're sure it exists locally,
+    /// it can be faster and more convenient to use `channelController(for cid: ChannelId)` to create a controller for it.
     ///
     /// - Parameters:
     ///   - members: Members for the new channel. Must not be empty.
+    ///   - type: The type of the channel.
     ///   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
     ///   - name: The new channel name.
     ///   - imageURL: The new channel avatar URL.
@@ -85,17 +90,18 @@ public extension _ChatClient {
     /// - Returns: A new instance of `ChatChannelController`.
     func channelController(
         createDirectMessageChannelWith members: Set<UserId>,
+        type: ChannelType = .messaging,
         isCurrentUserMember: Bool = true,
-        name: String?,
-        imageURL: URL?,
+        name: String? = nil,
+        imageURL: URL? = nil,
         team: String? = nil,
-        extraData: ExtraData.Channel
+        extraData: ExtraData.Channel = .defaultValue
     ) throws -> _ChatChannelController<ExtraData> {
         guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
 
         let payload = ChannelEditDetailPayload<ExtraData>(
-            type: .messaging,
+            type: type,
             name: name,
             imageURL: imageURL,
             team: team,
@@ -325,10 +331,11 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
             self.callback { completion?(error) }
         }
         
-        /// Setup event observers if channel is already created on backend side and have a valid `cid`.
-        /// Otherwise they will be set up after channel creation.
-        if let cid = cid, isChannelAlreadyCreated {
+        /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
+        /// Otherwise they will be set up after channel creation, in `set(cid:)`.
+        if let cid = cid {
             setupEventObservers(for: cid)
+            setLocalStateBasedOnError(startDatabaseObservers())
         }
     }
 
@@ -339,16 +346,34 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
     /// If the newly created channel has a different cid than initially thought
     /// (such is the case for direct messages - backend generates custom cid),
     /// this function will set the new cid and reset observers.
-    /// If the cid is still the same, this function will only reset the observers
-    /// - since we don't need to set a new query in that case.
+    /// If the cid is not changed, this function will not do anything.
     /// - Parameter cid: New cid for the channel
     /// - Returns: Error if it occurs while setting up database observers.
     private func set(cid: ChannelId) -> Error? {
-        if channelQuery.cid != cid {
-            channelQuery = _ChannelQuery(cid: cid, channelQuery: channelQuery)
-        }
+        guard self.cid != cid else { return nil }
+        
+        channelQuery = _ChannelQuery(cid: cid, channelQuery: channelQuery)
         setupEventObservers(for: cid)
-        return startDatabaseObservers()
+        
+        let error = startDatabaseObservers()
+        guard error == nil else { return error }
+        
+        // If there's a channel already in the database, we must
+        // simulate the existing data callbacks.
+        // Otherwise, the changes will be reported when DB write is completed.
+        
+        // The reason is, when we don't have the cid, the initial fetches return empty/nil entities
+        // and only following updates are reported, hence initial values are ignored.
+        guard let channel = channel else { return nil }
+        delegateCallback {
+            $0.channelController(self, didUpdateChannel: .create(channel))
+            $0.channelController(
+                self,
+                didUpdateMessages: self.messages.enumerated()
+                    .map { ListChange.insert($1, index: IndexPath(item: $0, section: 0)) }
+            )
+        }
+        return nil
     }
 
     private func startDatabaseObservers() -> Error? {
@@ -504,6 +529,27 @@ public extension _ChatChannelController {
         }
         
         updater.deleteChannel(cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Truncates the channel this controller manages.
+    ///
+    /// Removes all of the messages of the channel but doesn't affect the channel data or members.
+    ///
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    /// If request fails, the completion will be called with an error.
+    ///
+    func truncateChannel(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+
+        updater.truncateChannel(cid: cid) { error in
             self.callback {
                 completion?(error)
             }
@@ -670,15 +716,17 @@ public extension _ChatChannelController {
     ///
     /// - Parameters:
     ///   - text: Text of the message.
-    ///   - extraData: Additional extra data of the message object.
+    ///   - pinning: Pins the new message. `nil` if should not be pinned.
     ///   - attachments: An array of the attachments for the message.
     ///     `Note`: can be built-in types, custom attachment types conforming to `AttachmentEnvelope` protocol
     ///     and `ChatMessageAttachmentSeed`s.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
+    ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
     ///
     func createNewMessage(
         text: String,
+        pinning: MessagePinning? = nil,
 //        command: String? = nil,
 //        arguments: String? = nil,
         attachments: [AttachmentEnvelope] = [],
@@ -700,6 +748,7 @@ public extension _ChatChannelController {
         updater.createNewMessage(
             in: cid,
             text: text,
+            pinning: pinning,
             command: nil,
             arguments: nil,
             attachments: attachments,
@@ -776,6 +825,109 @@ public extension _ChatChannelController {
             return
         }
         updater.markRead(cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Enables slow mode for the channel
+    ///
+    /// When slow mode is enabled, users can only send a message every `cooldownDuration` time interval.
+    /// `cooldownDuration` is specified in seconds, and should be between 1-120.
+    /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
+    ///
+    /// - Parameters:
+    ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
+    ///   Specified in seconds. Should be between 1-120.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func enableSlowMode(cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        guard cooldownDuration >= 1, cooldownDuration <= 120 else {
+            callback {
+                completion?(ClientError.InvalidCooldownDuration())
+            }
+            return
+        }
+        updater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Disables slow mode for the channel
+    ///
+    /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
+    ///
+    /// - Parameters:
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func disableSlowMode(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        updater.enableSlowMode(cid: cid, cooldownDuration: 0) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Start watching a channel
+    ///
+    /// Watching a channel is defined as observing notifications about this channel.
+    /// Usually you don't need to call this function since `ChannelController` watches channels
+    /// by default.
+    ///
+    /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
+    ///
+    /// We keep these functions internal since we're not sure how we should interface this behavior.
+    /// If you have suggestions, please open a ticket or send us an email at support@getstream.io
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    internal func startWatching(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        updater.startWatching(cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+    
+    /// Stop watching a channel
+    ///
+    /// Watching a channel is defined as observing notifications about this channel.
+    /// `ChannelController` watches the channel by default so if you want to create a `ChannelController`
+    ///  without watching the channel, either you can create it and call this function, or you can create it as:
+    /// ```
+    /// var query = _ChannelQuery<ExtraData>(cid: cid)
+    /// query.options = [] // by default, we pass `.watch` option here
+    /// let controller = client.channelController(for: query)
+    /// ```
+    ///
+    /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
+    ///
+    /// We keep these functions internal since we're not sure how we should interface this behavior.
+    /// If you have suggestions, please open a ticket or send us an email at support@getstream.io
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    internal func stopWatching(completion: ((Error?) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let cid = cid, isChannelAlreadyCreated else {
+            channelModificationFailed(completion)
+            return
+        }
+        updater.stopWatching(cid: cid) { error in
             self.callback {
                 completion?(error)
             }
@@ -1040,7 +1192,6 @@ extension AnyChannelControllerDelegate where ExtraData == NoExtraData {
 extension ClientError {
     class ChannelNotCreatedYet: ClientError {
         override public var localizedDescription: String {
-            // swiftlint:disable:next line_length
             "You can't modify the channel because the channel hasn't been created yet. Call `synchronize()` to create the channel and wait for the completion block to finish. Alternatively, you can observe the `state` changes of the controller and wait for the `remoteDataFetched` state."
         }
     }
@@ -1054,6 +1205,12 @@ extension ClientError {
     class ChannelEmptyMessages: ClientError {
         override public var localizedDescription: String {
             "You can't load new messages when there is no messages in the channel."
+        }
+    }
+    
+    class InvalidCooldownDuration: ClientError {
+        override public var localizedDescription: String {
+            "You can't specify a value outside the range 1-120 for cooldown duration."
         }
     }
 }

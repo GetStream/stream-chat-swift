@@ -27,7 +27,8 @@ open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConf
         }
     }
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         shape.contentsScale = layer.contentsScale
         shape.strokeColor = uiConfig.colorPalette.border.cgColor
         shape.fillColor = nil
@@ -79,7 +80,7 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
         label.adjustsFontForContentSizeCategory = true
         label.text = L10n.Message.Threads.reply
         label.textColor = tintColor
-        return label
+        return label.withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var stack: UIStackView = {

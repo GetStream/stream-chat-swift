@@ -8,32 +8,14 @@ import UIKit.UIImage
 public extension _UIConfig {
     struct MessageListUI {
         public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
-        public var incomingMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
-            СhatIncomingMessageCollectionViewCell<ExtraData>.self
-        public var outgoingMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
-            СhatOutgoingMessageCollectionViewCell<ExtraData>.self
-        
-        public var incomingMessageAttachmentCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
-            СhatIncomingMessageAttachmentCollectionViewCell<ExtraData>.self
-        public var outgoingMessageAttachmentCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
-            СhatOutgoingMessageAttachmentCollectionViewCell<ExtraData>.self
 
+        public var defaultMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
+            _СhatMessageCollectionViewCell<ExtraData>.self
         public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
-        public var channelNamer: ChatChannelNamer.Type = ChatChannelNamer.self
-        public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
-        public var messageAttachmentContentView: _ChatMessageAttachmentContentView<ExtraData>
-            .Type = _ChatMessageAttachmentContentView<ExtraData>.self
+        public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()
         public var messageContentSubviews = MessageContentViewSubviews()
-        public var messageActionsSubviews = MessageActionsSubviews()
         public var messageReactions = MessageReactions()
-    }
-
-    struct MessageActionsSubviews {
-        public var actionsView: _ChatMessageActionsView<ExtraData>.Type =
-            _ChatMessageActionsView<ExtraData>.self
-        public var actionButton: _ChatMessageActionsView<ExtraData>.ActionButton.Type =
-            _ChatMessageActionsView<ExtraData>.ActionButton.self
     }
 
     struct MessageReactions {
@@ -47,10 +29,7 @@ public extension _UIConfig {
     struct MessageContentViewSubviews {
         public var authorAvatarView: ChatAvatarView.Type = ChatAvatarView.self
         public var bubbleView: _ChatMessageBubbleView<ExtraData>.Type = _ChatMessageBubbleView<ExtraData>.self
-        public var attachmentBubbleView: _ChatMessageAttachmentBubbleView<ExtraData>
-            .Type = _ChatMessageAttachmentBubbleView<ExtraData>.self
         public var metadataView: _ChatMessageMetadataView<ExtraData>.Type = _ChatMessageMetadataView<ExtraData>.self
-        public var quotedMessageBubbleView: _ChatMessageQuoteBubbleView<ExtraData>.Type = _ChatMessageQuoteBubbleView.self
         public var attachmentSubviews = MessageAttachmentViewSubviews()
         public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.Type =
             ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.self

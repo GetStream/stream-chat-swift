@@ -40,6 +40,7 @@ class UserCredentialsCell: UITableViewCell {
 
 class LoginViewController: UIViewController {
     @IBOutlet var tableView: UITableView!
+    var didRequestChatPresentation: ((UserCredentials) -> Void)!
     
     let builtInUsers = UserCredentials.builtInUsers
     
@@ -47,9 +48,7 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
-        
-        tableView.bounces = false
-        
+                
         // An old trick to force the table view to hide empty lines
         tableView.tableFooterView = UIView()
     }
@@ -98,7 +97,7 @@ extension LoginViewController: UITableViewDelegate, UITableViewDataSource {
             return
         }
         
-        presentChat(userCredentials: builtInUsers[indexPath.row])
+        didRequestChatPresentation(builtInUsers[indexPath.row])
     }
     
     func presentChat(userCredentials: UserCredentials) {

@@ -4,6 +4,7 @@
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class ChannelMemberListQueryDTO_Tests: XCTestCase {
@@ -13,11 +14,11 @@ final class ChannelMemberListQueryDTO_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
     }
     
     override func tearDown() {
-        database = nil
+        AssertAsync.canBeReleased(&database)
         super.tearDown()
     }
     

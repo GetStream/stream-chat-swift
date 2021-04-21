@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class UserListUpdater_Tests: StressTestCase {
@@ -17,7 +18,7 @@ class UserListUpdater_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
         
         listUpdater = UserListUpdater(database: database, apiClient: apiClient)
     }
@@ -25,7 +26,10 @@ class UserListUpdater_Tests: StressTestCase {
     override func tearDown() {
         apiClient.cleanUp()
         
-        AssertAsync.canBeReleased(&listUpdater)
+        AssertAsync {
+            Assert.canBeReleased(&listUpdater)
+            Assert.canBeReleased(&database)
+        }
         
         super.tearDown()
     }

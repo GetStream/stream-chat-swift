@@ -3,62 +3,90 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class TypingStartCleanupMiddleware_Tests: XCTestCase {
-    var middleware: TypingStartCleanupMiddleware<NoExtraData>!
     var currentUser: ChatUser!
-    
     var time: VirtualTime!
+    // The database is not really used in the middleware but it's a requirement by the protocol
+    // to provide a database session
+    var database: DatabaseContainer!
     
     override func setUp() {
         super.setUp()
-        
-        currentUser = ChatUser(id: "Luke")
-        middleware = TypingStartCleanupMiddleware(excludedUserIds: { [self.currentUser.id] })
+
+        currentUser = .mock(id: "Luke")
         
         time = VirtualTime()
         VirtualTimeTimer.time = time
-        middleware.timer = VirtualTimeTimer.self
+
+        database = DatabaseContainerMock()
     }
-    
+
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+
+        super.tearDown()
+    }
+
     func test_stopTypingEvent_notSentForExcludedUsers() {
-        var result: [EquatableEvent?] = []
-        let typingStartEvent = TypingEvent(isTyping: true, cid: .unique, userId: currentUser.id)
+        // Create a middleware and store emitted events.
+        var emittedEvents: [Event] = []
+        var middleware: TypingStartCleanupMiddleware<NoExtraData>! = .init(
+            excludedUserIds: { [self.currentUser.id] },
+            emitEvent: { emittedEvents.append($0) }
+        )
+        middleware.timer = VirtualTimeTimer.self
+
         // Handle a new TypingStart event for the current user and collect resulting events
-        middleware.handle(event: typingStartEvent) {
-            result.append($0.map(EquatableEvent.init))
-        }
-        
+        let typingStartEvent = TypingEvent(isTyping: true, cid: .unique, userId: currentUser.id)
+        let forwardedEvent = middleware.handle(event: typingStartEvent, session: database.viewContext)
+        XCTAssertEqual(forwardedEvent?.asEquatable, typingStartEvent.asEquatable)
+
         // Simulate time passed for the `typingStartTimeout` period
         time.run(numberOfSeconds: .incomingTypingStartEventTimeout + 1)
-        
-        XCTAssertEqual(result, [typingStartEvent].asEquatable())
+
+        // Assert no events are emitted.
+        XCTAssertTrue(emittedEvents.isEmpty)
+
+        // Assert the middleware can be released.
+        AssertAsync.canBeReleased(&middleware)
     }
-    
+
     func test_stopTypingEvent_sentAfterTimeout() {
+        // Create a middleware and store emitted events.
+        var emittedEvents: [Event] = []
+        var middleware: TypingStartCleanupMiddleware<NoExtraData>! = .init(
+            excludedUserIds: { [self.currentUser.id] },
+            emitEvent: { emittedEvents.append($0) }
+        )
+        middleware.timer = VirtualTimeTimer.self
+
         // Simulate some user started typing
-        let otherUser = ChatUser(id: UUID().uuidString)
+        let otherUser = ChatUser.mock(id: .unique)
         let cid = ChannelId.unique
-        
-        var result: [EquatableEvent?] = []
+
         let startTyping = TypingEvent(isTyping: true, cid: cid, userId: otherUser.id)
         // Handle a new TypingStart event for the current user and collect resulting events
-        middleware.handle(event: startTyping) {
-            result.append($0.map(EquatableEvent.init))
-        }
-        
-        // Wait for some timeout shorter than `typingStartTimeout` and assert only `TypingStart` event is sent
+        let forwardedEvent = middleware.handle(event: startTyping, session: database.viewContext)
+        // Assert `TypingStart` event is propagated synchronously
+        XCTAssertEqual(forwardedEvent?.asEquatable, startTyping.asEquatable)
+
+        // Wait for some timeout shorter than `typingStartTimeout` and assert no events are emitted
         time.run(numberOfSeconds: .incomingTypingStartEventTimeout - 1)
-        XCTAssertEqual(result, [startTyping.asEquatable])
-        
+        XCTAssertTrue(emittedEvents.isEmpty)
+
         // Wait for more time and expect a `typingStop` event.
         time.run(numberOfSeconds: 2)
         let stopTyping = TypingEvent(isTyping: false, cid: cid, userId: otherUser.id)
-        XCTAssertEqual(result, [startTyping.asEquatable, stopTyping.asEquatable])
-        
+        XCTAssertEqual(emittedEvents.map(\.asEquatable), [stopTyping.asEquatable])
+
         // Wait much longer and assert no more `typingStop` events.
         time.run(numberOfSeconds: 5 + .incomingTypingStartEventTimeout)
-        XCTAssertEqual(result, [startTyping.asEquatable, stopTyping.asEquatable])
+        XCTAssertEqual(emittedEvents.map(\.asEquatable), [stopTyping.asEquatable])
+
+        // Assert the middleware can be released.
+        AssertAsync.canBeReleased(&middleware)
     }
 }

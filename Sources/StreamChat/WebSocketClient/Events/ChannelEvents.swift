@@ -1,21 +1,23 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
-public struct ChannelUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
-    public let userId: UserId
+public struct ChannelUpdatedEvent: EventWithChannelId {
     public let cid: ChannelId
+    public let userId: UserId?
     public let messageId: MessageId?
     public let inviteAnswer: InviteAnswer?
     public let updatedAt: Date
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
-        userId = try response.value(at: \.user?.id)
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.channel?.cid)
+        // The `user` is only present in the event if the update is done by client-side auth
+        // so it'll not be present if update was done by server-side or CLI (which is also server-side auth)
+        userId = response.user?.id
         messageId = response.message?.id
         updatedAt = try response.value(at: \.createdAt)
         payload = response
@@ -60,6 +62,18 @@ public struct ChannelHiddenEvent<ExtraData: ExtraDataTypes>: EventWithUserPayloa
         cid = try response.value(at: \.cid)
         hiddenAt = try response.value(at: \.createdAt)
         isHistoryCleared = try response.value(at: \.isChannelHistoryCleared)
+        payload = response
+    }
+}
+
+public struct ChannelTruncatedEvent: EventWithUserPayload, EventWithChannelId {
+    public let userId: UserId
+    public let cid: ChannelId
+    let payload: Any
+
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        userId = try response.value(at: \.user?.id)
+        cid = try response.value(at: \.cid)
         payload = response
     }
 }

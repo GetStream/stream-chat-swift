@@ -4,7 +4,7 @@ default_platform :ios
 require 'json'
 
 # The number of times the stress test suite is ran
-stress_tests_cycles = 10
+stress_tests_cycles = 50
 
 before_all do
   if is_ci
@@ -79,7 +79,7 @@ lane :release do |options|
 end
 
 lane :set_SDK_version do |options|
-  pathToVersionFile = "../Sources/StreamChat/Utils/SystemEnvironment+Version.swift"
+  pathToVersionFile = "../Sources/StreamChat/Generated/SystemEnvironment+Version.swift"
   versionGeneratedFile = "
 //
 // Copyright © 2021 Stream.io Inc. All rights reserved.
@@ -107,6 +107,9 @@ lane :match_me do |options|
       app_identifier: [
         "io.getstream.StreamChat",
         "io.getstream.iOS.ChatDemoApp",
+        "io.getstream.iOS.iMessageClone",
+        "io.getstream.iOS.SlackClone",
+        "io.getstream.iOS.MessengerClone",
       ],
       readonly: readonly,
       force_for_new_devices: !is_ci
@@ -216,13 +219,27 @@ lane :test_ui do |options|
     testplan: "StreamChatUITestPlan",
     configuration: "Debug",
     clean: true,
-    devices: options[:device],
-    code_coverage: false
-    )
+    devices: options[:device]
+  )
+end
+
+desc "Runs ui tests in Release config"
+lane :test_ui_release do |options|
+
+  setCIEnvironmentVariable("../Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan")
+
+  scan(
+    project: "StreamChat.xcodeproj",
+    scheme: "StreamChatUI",
+    testplan: "StreamChatUITestPlan",
+    configuration: "ReleaseTests",
+    clean: true,
+    devices: options[:device]
+  )
 end
 
 desc "Runs tests in Release config"
-lane :test_release do
+lane :test_release do |options|
 
   setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatTestPlan.xctestplan")
 
@@ -232,16 +249,18 @@ lane :test_release do
     testplan: "StreamChatTestPlan",
     configuration: "ReleaseTests",
     clean: true,
+    devices: options[:device]
   )
 end
 
-desc "Runs stress tests for v3 in Debug config"
-lane :stress_test do
+desc "Runs stress tests for in Debug config"
+lane :stress_test do |options|
   scan(
     project: "StreamChat.xcodeproj",
     scheme: "StreamChat",
     clean: true,
-    build_for_testing: true
+    build_for_testing: true,
+    devices: options[:device]
   )
 
   setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan")
@@ -252,19 +271,21 @@ lane :stress_test do
       scheme: "StreamChat",
       test_without_building: true,
       testplan: "StreamChatStressTestPlan",
+      devices: options[:device],
       xcpretty_args: "--test" # simplify logs
     )
   }
 end
 
-desc "Runs stress tests for v3 in Release config"
-lane :stress_test_release do
+desc "Runs stress tests in Release config"
+lane :stress_test_release do |options|
   scan(
     project: "StreamChat.xcodeproj",
     scheme: "StreamChat",
     configuration: "ReleaseTests",
     clean: true,
-    build_for_testing: true
+    build_for_testing: true,
+    devices: options[:device]
   )
 
   setCIEnvironmentVariable("../Tests/StreamChatTests/StreamChatStressTestPlan.xctestplan")
@@ -276,16 +297,41 @@ lane :stress_test_release do
       configuration: "ReleaseTests",
       test_without_building: true,
       testplan: "StreamChatStressTestPlan",
+      devices: options[:device],
       xcpretty_args: "--test" # simplify logs
     )
   }
 end
 
-desc "Builds v3 Sample app"
+desc "Builds Sample app"
 lane :build_sample do |options|
+  build_example_app("Sample", options)
+end
+
+desc "Builds Demo app"
+lane :build_demo do |options|
+  build_example_app("DemoApp", options)
+end
+
+desc "Builds iMessageClone app"
+lane :build_imessage_clone do |options|
+  build_example_app("iMessageClone", options)
+end
+
+desc "Builds SlackClone app"
+lane :build_slack_clone do |options|
+  build_example_app("SlackClone", options)
+end
+
+desc "Builds MessengerClone app"
+lane :build_messenger_clone do |options|
+  build_example_app("MessengerClone", options)
+end
+
+def build_example_app(scheme, options)
   scan(
     project: "StreamChat.xcodeproj",
-    scheme: "Sample",
+    scheme: scheme,
     clean: true,
     build_for_testing: true,
     devices: options[:device],
@@ -299,6 +345,7 @@ lane :build_docs_snippets do |options|
     scheme: "DocsSnippets",
     clean: true,
     build_for_testing: true,
+    devices: options[:device]
   )
 end
 

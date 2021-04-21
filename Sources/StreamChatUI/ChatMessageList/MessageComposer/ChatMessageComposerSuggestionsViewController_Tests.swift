@@ -2,13 +2,12 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import StreamChatTestTools
 @testable import StreamChat
+import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
 class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
-    
     // We need to provide a size to the suggestions view since here we are testing the view in isolation,
     // and so we can't attach it to a bottomAnchorView. The test to verify the height calculation dependent
     // on the rows should be done in the parent view controller tests.
@@ -21,7 +20,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
         .init(name: "vaderfy", description: "", set: "", args: "[@username] [text]")
     ]
     
-    private let mentions: [ _ChatUser<NoExtraData>] = [
+    private let mentions: [_ChatUser<NoExtraData>] = [
         .mock(
             id: "vader",
             name: "Mr Vader",
@@ -102,23 +101,6 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
         )
         
         AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
-    }
-
-    func test_commands_appearanceCustomization_usingAppearanceHook() {
-        class TestVC: ChatMessageComposerSuggestionsViewController {}
-        TestVC.defaultAppearance {
-            $0.collectionView.backgroundColor = .lightGray
-            $0.collectionView.layer.cornerRadius = 0
-        }
-        
-        let vc = TestVC()
-        vc.uiConfig = config
-        vc.dataSource = ChatMessageComposerSuggestionsCommandDataSource(
-            with: commands,
-            collectionView: vc.collectionView
-        )
-        
-        AssertSnapshot(vc, variants: [.defaultLight], screenSize: defaultSuggestionsSize)
     }
 
     func test_commands_appearanceCustomization_usingSubclassing() {
@@ -206,28 +188,10 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
         AssertSnapshot(vc, variants: .onlyUserInterfaceStyles, screenSize: defaultSuggestionsSize)
     }
 
-    func test_mentions_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageComposerSuggestionsViewController {}
-        TestView.defaultAppearance {
-            $0.collectionView.layer.cornerRadius = 0
-        }
-        
-        let vc = TestView()
-        let searchController = ChatUserSearchController_Mock<NoExtraData>.mock()
-        searchController.users_mock = mentions
-        vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(
-            collectionView: vc.collectionView,
-            searchController: searchController
-        )
-        
-        AssertSnapshot(vc, variants: [.defaultLight], screenSize: defaultSuggestionsSize)
-    }
-
     func test_mentions_appearanceCustomization_usingSubclassing() {
         class TestView: ChatMessageComposerSuggestionsViewController {
-            override func defaultAppearance() {
-                super.defaultAppearance()
-
+            override func setUpAppearance() {
+                super.setUpAppearance()
                 collectionView.layer.cornerRadius = 0
             }
             

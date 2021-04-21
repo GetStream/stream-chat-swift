@@ -1,12 +1,87 @@
 # StreamChat iOS SDK CHANGELOG
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
 # Upcoming
 
+### 🐞 Fixed
+- It's safe now to use `ChatChannel` and `ChatMessage` across multiple threads [#984](https://github.com/GetStream/stream-chat-swift/pull/984)
+- Web socket reconnection logic better handles the "no internet" errors [#970](https://github.com/GetStream/stream-chat-swift/pull/970)
+
+### ✅ Added
+- Expose the entire quoted message on `ChatMessage` instead of its `id` [#992](https://github.com/GetStream/stream-chat-swift/pull/992)
+
+### ⛔️ Deprecated
+- `ChatMessage.quotedMessageId` is now deprecated. Use `quotedMessage?.id` instead [#992](https://github.com/GetStream/stream-chat-swift/pull/992)
+
+# [3.1.5](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.5)
+_April 09, 2021_
+
+### ✅ Added
+- Channels are properly marked as read when `ChatChannelVC` is displayed [#972](https://github.com/GetStream/stream-chat-swift/pull/972)
+- Channels now support typing indicators [#986](https://github.com/GetStream/stream-chat-swift/pull/986)
+
+### 🐞 Fixed
+- Fix `ChannelController`s created with `createChannelWithId` and `createChannelWithMembers` functions not reporting their initial values [#945](https://github.com/GetStream/stream-chat-swift/pull/945)
+- Fix issue where channel `lastMessageDate` was not updated when new message arrived [#949](https://github.com/GetStream/stream-chat-swift/pull/949)
+- Fix channel unread count not being updated in the real time [#969](https://github.com/GetStream/stream-chat-swift/pull/969)
+- Fix updated values not reported for some controllers if the properties were accessed for the first time after `synchronize` has finished. Affected controllers were `ChatUserListController`, `ChatChannelListController`, `ChatUserSearchController` [#974](https://github.com/GetStream/stream-chat-swift/pull/974)
+
 ### 🔄 Changed
+- `Logger.assertationFailure` was renamed to `Logger.assertionFailure` [#935](https://github.com/GetStream/stream-chat-swift/pull/935)
+
+# [3.1.4](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.4)
+_March 29, 2021_
+
+### 🐞 Fixed
+- Fix `ChannelDoesNotExist` error is logged by `UserWatchingEventMiddleware` when channels are fetched for the first time [#893](https://github.com/GetStream/stream-chat-swift/issues/893)
+- Improve model loading performance by lazy loading expensive properties [#906](https://github.com/GetStream/stream-chat-swift/issues/906)
+- Fix possible loops when accessing controllers' data from within delegate callbacks [#915](https://github.com/GetStream/stream-chat-swift/issues/915)
+- Fix `channel.updated` events failing to parse due to missing `user` field [#922](https://github.com/GetStream/stream-chat-swift/issues/922)
+  This was due to backend not sending `user` field when the update was done by server-side auth.
+
+### ✅ Added
+- Introduce support for [multitenancy](https://getstream.io/chat/docs/react/multi_tenant_chat/?language=swift) - `teams` for `User` and `team` for `Channel` are now exposed. [#905](https://github.com/GetStream/stream-chat-swift/pull/905)
+- Introduce support for [pinned messages](https://getstream.io/chat/docs/react/pinned_messages/?language=swift) [#896](https://github.com/GetStream/stream-chat-swift/pull/896)
+- Expose `pinnedMessages` on `ChatChannel` which contains the last 10 pinned messages [#896](https://github.com/GetStream/stream-chat-swift/pull/896)
+- Expose `pinDetails` on `ChatMessage` which contains the pinning information, like the expiration date [#896](https://github.com/GetStream/stream-chat-swift/pull/896) 
+- Add support for pinning and unpinning messages through `pin()` and `unpin()` methods in `MessageController` [#896](https://github.com/GetStream/stream-chat-swift/pull/896)
+- Add new optional `pinning: Pinning` parameter when creating a new message in `ChannelController` to create a new message and pin it instantly [#896](https://github.com/GetStream/stream-chat-swift/pull/896)
+- Add `lastActiveMembers` and `lastActiveWatchers` to `ChatChannel`. The max number of entities these fields expose is configurable via `ChatClientConfig.localCaching.chatChannel` [#911](https://github.com/GetStream/stream-chat-swift/pull/911)
+
+### 🔄 Changed
+- `ChatChannel.latestMessages` now by default contains max 5 messages. You can change this setting in `ChatClientConfig.localCaching.chatChannel.latestMessagesLimit` [#923](https://github.com/GetStream/stream-chat-swift/pull/923)
+
+### ⛔️ Deprecated
+- `ChatChannel`'s properties `cachedMembers` and `watchers` were deprecated. Use `lastActiveMembers` and `lastActiveWatchers` instead [#911](https://github.com/GetStream/stream-chat-swift/pull/911)
+
+# [3.1.3](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.3)
+_March 12, 2021_
+
+### 🐞 Fixed
+- Fix app getting terminated in background during an unfinished background task [#877](https://github.com/GetStream/stream-chat-swift/issues/877)
+
+### ✅ Added
+- Introduce `MemberEventMiddleware` to observe member events and update database accordingly [#880](https://github.com/GetStream/stream-chat-swift/issues/880)
+- Expose `membership` value on `ChatChannel` which contains information about the current user membership [#885](https://github.com/GetStream/stream-chat-swift/issues/885)
+- `ChatChannelMember` now contains channel-specific ban information: `isBannedFromChannel` and `banExpiresAt` [#885](https://github.com/GetStream/stream-chat-swift/issues/885)
+- Channel-specific ban events are handled and the models are properly updated [#885](https://github.com/GetStream/stream-chat-swift/pull/885)
+
+# [3.1.2](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.2)
+_March 09, 2021_
+
+### ✅ Added
+- Add support for slow mode. See more info in the [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift) [#859](https://github.com/GetStream/stream-chat-swift/issues/859)
+- Add support for channel watching events. See more info in the [documentation](https://getstream.io/chat/docs/ios/watch_channel/?language=swift) [#864](https://github.com/GetStream/stream-chat-swift/issues/864)
+- Add support for channel truncating [#864](https://github.com/GetStream/stream-chat-swift/issues/864)
+
+### 🔄 Changed
+- `ChatChannelNamer` is now closure instead of class so it allows better customization of channel naming in `ChatChannelListItemView`.
+
+### 🐞 Fixed
+- Fix encoding of channels with custom type [#872](https://github.com/GetStream/stream-chat-swift/pull/872)
+- Fix `CurreUserController.currentUser` returning nil before `synchronize()` is called [#875](https://github.com/GetStream/stream-chat-swift/pull/875)
 
 # [3.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.1)
 _February 26, 2021_

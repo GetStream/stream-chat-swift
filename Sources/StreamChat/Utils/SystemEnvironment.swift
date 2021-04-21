@@ -4,7 +4,7 @@
 
 import UIKit
 
-public enum SystemEnvironment {
+enum SystemEnvironment {
     static let systemName = UIDevice.current.systemName + UIDevice.current.systemVersion
     
     static var deviceModelName: String {
@@ -58,7 +58,7 @@ public enum SystemEnvironment {
     }
     
     static var isTests: Bool {
-        #if DEBUG
+        #if TESTS
         return NSClassFromString("XCTest") != nil
         #else
         return false

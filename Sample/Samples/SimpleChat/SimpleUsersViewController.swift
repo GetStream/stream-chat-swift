@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import StreamChat
@@ -170,7 +170,7 @@ class SimpleUsersViewController: UITableViewController, ChatUserListControllerDe
     ///
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.section == tableView.numberOfSections - 1,
-            indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+           indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             userListController.loadNextUsers()
         }
     }

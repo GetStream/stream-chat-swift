@@ -27,7 +27,10 @@ class ChannelPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(ChannelPayload<NoExtraData>.self, from: channelJSON)
         
         XCTAssertEqual(payload.watcherCount, 7)
+        XCTAssertEqual(payload.watchers?.count, 3)
         XCTAssertEqual(payload.members.count, 4)
+        
+        XCTAssertEqual(payload.watchers?.first?.id, "cilvia")
         
         XCTAssertEqual(payload.messages.count, 25)
         let firstMessage = payload.messages.first(where: { $0.id == "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9" })!
@@ -46,6 +49,8 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssert(firstMessage.reactionScores.isEmpty)
         XCTAssertEqual(firstMessage.replyCount, 0)
         XCTAssertFalse(firstMessage.isSilent)
+
+        XCTAssertEqual(payload.pinnedMessages.map(\.id), ["broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9"])
         
         let channel = payload.channel
         XCTAssertEqual(channel.cid, try! ChannelId(cid: "messaging:general"))
@@ -55,6 +60,8 @@ class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(channel.isFrozen, true)
         XCTAssertEqual(channel.memberCount, 4)
         XCTAssertEqual(channel.updatedAt, "2019-05-10T14:03:49.505006Z".toDate())
+        XCTAssertEqual(channel.cooldownDuration, 10)
+        XCTAssertEqual(channel.team, "GREEN")
         
         XCTAssertEqual(channel.name, "The water cooler")
         XCTAssertEqual(
@@ -86,5 +93,7 @@ class ChannelPayload_Tests: XCTestCase {
         )
         XCTAssertEqual(config.createdAt, "2019-03-21T15:49:15.40182Z".toDate())
         XCTAssertEqual(config.updatedAt, "2020-03-17T18:54:09.460881Z".toDate())
+
+        XCTAssertEqual(payload.membership?.user.id, "broken-waterfall-5")
     }
 }

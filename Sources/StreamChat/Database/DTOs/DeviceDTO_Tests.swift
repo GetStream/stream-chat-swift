@@ -1,8 +1,9 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class DeviceDTO_Tests: XCTestCase {
@@ -10,7 +11,12 @@ class DeviceDTO_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
+    }
+    
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
     }
     
     func test_deviceListPayload_isStoredAndLoadedFromDB() throws {

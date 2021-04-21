@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -35,4 +35,7 @@ public enum ChannelCodingKeys: String, CodingKey {
     /// The team the channel belongs to.
     case team
     case memberCount = "member_count"
+    /// Cooldown duration for the channel, if it's in slow mode.
+    /// This value will be 0 if the channel is not in slow mode.
+    case cooldownDuration = "cooldown"
 }

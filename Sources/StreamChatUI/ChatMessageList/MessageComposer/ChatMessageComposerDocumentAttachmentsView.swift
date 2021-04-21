@@ -47,7 +47,8 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
     
     // MARK: - Public
     
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         collectionView.backgroundColor = .clear
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.showsVerticalScrollIndicator = false
@@ -65,6 +66,7 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
     }
     
     override open func setUpLayout() {
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
         embed(collectionView)
         
         flowLayout.itemHeight = documentPreviewItemHeight

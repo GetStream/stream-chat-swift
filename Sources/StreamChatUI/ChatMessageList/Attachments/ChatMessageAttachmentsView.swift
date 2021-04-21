@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageAttachmentsView = _ChatMessageAttachmentsView<NoExtraData>
 
-open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
     /// All attachments with `type == .image` will be shown in a gallery
     /// All the other ones will be treated as files.
     public var content: _ChatMessageAttachmentListViewData<ExtraData>? {

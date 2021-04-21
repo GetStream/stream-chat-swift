@@ -18,7 +18,7 @@ open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: _View, 
 
     // MARK: - Subviews
     
-    public private(set) lazy var container = ContainerStackView()
+    public private(set) lazy var container = DeprecatedContainerStackView()
         .withoutAutoresizingMaskConstraints
     
     private lazy var commandLabel = UILabel()
@@ -41,7 +41,8 @@ open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: _View, 
     
     // MARK: - Public
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         layer.masksToBounds = true
         backgroundColor = uiConfig.colorPalette.highlightedAccentBackground
 

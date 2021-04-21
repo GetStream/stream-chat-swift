@@ -16,6 +16,9 @@ public typealias ChatUser = _ChatUser<NoExtraData>
 /// A unique identifier of a user.
 public typealias UserId = String
 
+/// A unique identifier of team.
+public typealias TeamId = String
+
 /// A type representing a chat user. `ChatUser` is an immutable snapshot of a chat user entity at the given time.
 ///
 /// - Note: `_ChatUser` type is not meant to be used directly. If you're using default extra data, use `ChatUser`
@@ -62,7 +65,7 @@ public class _ChatUser<ExtraData: UserExtraData> {
     ///
     /// You need to enable multi-tenancy if you want to use this, else it'll be empty. Refer to
     /// [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
-    public let teams: [String]
+    public let teams: Set<TeamId>
     
     /// Custom additional data of the user object. You can modify it by setting your custom `ExtraData` type.
     ///
@@ -72,17 +75,17 @@ public class _ChatUser<ExtraData: UserExtraData> {
     
     init(
         id: UserId,
-        name: String? = nil,
-        imageURL: URL? = nil,
-        isOnline: Bool = false,
-        isBanned: Bool = false,
-        isFlaggedByCurrentUser: Bool = false,
-        userRole: UserRole = .user,
-        createdAt: Date = .init(),
-        updatedAt: Date = .init(),
-        lastActiveAt: Date? = nil,
-        teams: [String] = [],
-        extraData: ExtraData = .defaultValue
+        name: String?,
+        imageURL: URL?,
+        isOnline: Bool,
+        isBanned: Bool,
+        isFlaggedByCurrentUser: Bool,
+        userRole: UserRole,
+        createdAt: Date,
+        updatedAt: Date,
+        lastActiveAt: Date?,
+        teams: Set<TeamId>,
+        extraData: ExtraData
     ) {
         self.id = id
         self.name = name

@@ -1,9 +1,10 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class EntityChange_Tests: XCTestCase {
@@ -57,7 +58,7 @@ class EntityDatabaseObserver_Tests: XCTestCase {
         fetchRequest = NSFetchRequest(entityName: "TestManagedObject")
         fetchRequest.sortDescriptors = [.init(keyPath: \TestManagedObject.testId, ascending: true)]
         database = try! DatabaseContainerMock(
-            kind: .inMemory,
+            kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
             modelName: "TestDataModel",
             bundle: Bundle(for: EntityDatabaseObserver_Tests.self)
         )

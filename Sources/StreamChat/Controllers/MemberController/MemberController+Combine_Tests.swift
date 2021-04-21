@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -84,17 +84,22 @@ extension _ChatChannelMember {
             imageURL: .unique(),
             isOnline: true,
             isBanned: false,
+            isFlaggedByCurrentUser: false,
             userRole: .user,
             userCreatedAt: .unique,
             userUpdatedAt: .unique,
             lastActiveAt: .unique,
+            teams: [],
             extraData: .defaultValue,
             memberRole: .member,
             memberCreatedAt: .unique,
             memberUpdatedAt: .unique,
             isInvited: true,
             inviteAcceptedAt: .unique,
-            inviteRejectedAt: nil
+            inviteRejectedAt: nil,
+            isBannedFromChannel: true,
+            banExpiresAt: .unique,
+            isShadowBannedFromChannel: true
         )
     }
 }

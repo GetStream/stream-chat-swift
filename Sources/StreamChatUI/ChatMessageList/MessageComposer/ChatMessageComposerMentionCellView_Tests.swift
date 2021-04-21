@@ -60,15 +60,19 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingUIConfig() {
-        class RectIndicator: UIView {
+        class RectIndicator: UIView & MaskProviding {
             override func didMoveToSuperview() {
                 super.didMoveToSuperview()
                 backgroundColor = .green
                 widthAnchor.constraint(equalTo: heightAnchor, multiplier: 1).isActive = true
             }
+            
+            var maskingPath: CGPath? {
+                UIBezierPath(rect: frame.insetBy(dx: -frame.width / 4, dy: -frame.height / 4)).cgPath
+            }
         }
 
-        class CustomAvatarView: _ChatChannelAvatarView<NoExtraData> {
+        class CustomAvatarView: _ChatUserAvatarView<NoExtraData> {
             override func didMoveToSuperview() {
                 super.didMoveToSuperview()
                 backgroundColor = .green
@@ -77,35 +81,13 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
         }
 
         var config = UIConfig()
-        config.channelList.channelListItemSubviews.onlineIndicator = RectIndicator.self
+        config.onlineIndicatorView = RectIndicator.self
         config.messageComposer.mentionAvatarView = CustomAvatarView.self
 
         let view = ChatMessageComposerMentionCellView().withoutAutoresizingMaskConstraints
         view.widthAnchor.constraint(equalToConstant: Self.defaultCellWidth).isActive = true
 
         view.uiConfig = config
-        view.content = chatUserOnline
-        AssertSnapshot(view, suffix: "online indicator visible")
-
-        view.content = chatUserOffline
-        AssertSnapshot(view)
-
-        view.content = chatUserNoName
-        AssertSnapshot(view, suffix: "user name not set")
-    }
-
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatMessageComposerMentionCellView {}
-        TestView.defaultAppearance {
-            // Modify appearance
-            $0.backgroundColor = .systemPink
-            $0.usernameLabel.textColor = .systemBlue
-            $0.usernameTagLabel.textColor = .systemTeal
-        }
-
-        let view = TestView().withoutAutoresizingMaskConstraints
-        view.widthAnchor.constraint(equalToConstant: Self.defaultCellWidth).isActive = true
-
         view.content = chatUserOnline
         AssertSnapshot(view, suffix: "online indicator visible")
 

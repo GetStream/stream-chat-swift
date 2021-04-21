@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class ChannelUpdater_Tests: StressTestCase {
@@ -19,13 +20,14 @@ class ChannelUpdater_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         
         channelUpdater = ChannelUpdater(database: database, apiClient: apiClient)
     }
     
     override func tearDown() {
         apiClient.cleanUp()
+        AssertAsync.canBeReleased(&database)
         
         super.tearDown()
     }
@@ -140,6 +142,7 @@ class ChannelUpdater_Tests: StressTestCase {
             channelUpdater.createNewMessage(
                 in: cid,
                 text: text,
+                pinning: MessagePinning(expirationDate: .unique),
                 command: command,
                 arguments: arguments,
                 attachments: attachments + attachmentSeeds,
@@ -174,6 +177,7 @@ class ChannelUpdater_Tests: StressTestCase {
             )
             Assert.willBeEqual(message?.extraData, extraData)
             Assert.willBeEqual(message?.localState, .pendingSend)
+            Assert.willBeEqual(message?.isPinned, true)
         }
     }
     
@@ -337,6 +341,50 @@ class ChannelUpdater_Tests: StressTestCase {
         // Simulate `deleteChannel(cid:, completion:)` call
         var completionCalledError: Error?
         channelUpdater.deleteChannel(cid: .unique) { completionCalledError = $0 }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    // MARK: - Truncate channel
+
+    func test_truncateChannel_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+
+        // Simulate `truncateChannel(cid:, completion:)` call
+        channelUpdater.truncateChannel(cid: channelID)
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .truncateChannel(cid: channelID)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_truncateChannel_successfulResponse_isPropagatedToCompletion() {
+        // Simulate `truncateChannel(cid:, completion:)` call
+        var completionCalled = false
+        channelUpdater.truncateChannel(cid: .unique) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_truncateChannel_errorResponse_isPropagatedToCompletion() {
+        // Simulate `truncateChannel(cid:, completion:)` call
+        var completionCalledError: Error?
+        channelUpdater.truncateChannel(cid: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
@@ -570,5 +618,191 @@ class ChannelUpdater_Tests: StressTestCase {
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
         
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Enable slow mode (cooldown)
+    
+    func test_enableSlowMode_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        let cooldownDuration = Int.random(in: 0...120)
+        
+        channelUpdater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
+        
+        let referenceEndpoint = Endpoint<EmptyResponse>.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_enableSlowMode_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        channelUpdater.enableSlowMode(cid: .unique, cooldownDuration: .random(in: 0...120)) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_enableSlowMode_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        channelUpdater.enableSlowMode(cid: .unique, cooldownDuration: .random(in: 0...120)) { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Start watching
+    
+    func test_startWatching_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        
+        channelUpdater.startWatching(cid: cid)
+        
+        var query = _ChannelQuery<ExtraData>(cid: cid)
+        query.options = .all
+        let referenceEndpoint: Endpoint<ChannelPayload<ExtraData>> = .channel(query: query)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_startWatching_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        let cid = ChannelId.unique
+        channelUpdater.startWatching(cid: cid) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        // Simulate API response with channel data
+        let payload = dummyPayload(with: cid)
+        apiClient.test_simulateResponse(.success(payload))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_startWatching_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        channelUpdater.startWatching(cid: .unique) { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<ChannelPayload<NoExtraData>, Error>.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Stop watching
+    
+    func test_stopWatching_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        
+        channelUpdater.stopWatching(cid: cid)
+
+        let referenceEndpoint: Endpoint<EmptyResponse> = .stopWatching(cid: cid)
+        
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_stopWatching_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        let cid = ChannelId.unique
+        channelUpdater.stopWatching(cid: cid) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_stopWatching_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        channelUpdater.stopWatching(cid: .unique) { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    // MARK: - Channel watchers
+    
+    func test_channelWatchers_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        let query = ChannelWatcherListQuery(cid: cid)
+        
+        channelUpdater.channelWatchers(query: query)
+        
+        let referenceEndpoint: Endpoint<ChannelPayload<NoExtraData>> = .channelWatchers(query: query)
+        
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_channelWatchers_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        let cid = ChannelId.unique
+        let query = ChannelWatcherListQuery(cid: cid)
+        channelUpdater.channelWatchers(query: query) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        apiClient.test_simulateResponse(
+            Result<ChannelPayload<NoExtraData>, Error>.success(dummyPayload(with: cid))
+        )
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_channelWatchers_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        let query = ChannelWatcherListQuery(cid: .unique)
+        channelUpdater.channelWatchers(query: query) { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<ChannelPayload<NoExtraData>, Error>.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+    
+    func test_channelWatchers_clearsWatchers_whenFirstPageIsRequestedAndEmpty() throws {
+        // Create a dummy channel
+        let cid = ChannelId.unique
+        try database.createChannel(cid: cid, withMessages: false)
+        
+        var channel: ChatChannel? {
+            database.viewContext.channel(cid: cid)?.asModel()
+        }
+        
+        // Assert that the dummy channel has a watcher
+        assert(!(channel?.lastActiveWatchers.isEmpty ?? true))
+        
+        // Save first watcher's id so we can compare later
+        let firstWatcherId = channel?.lastActiveWatchers.first?.id
+        
+        // Call `channelWatchers` for this channel
+        // This query doesn't provide any `offset` so it's requesting the first page of watchers
+        let query = ChannelWatcherListQuery(cid: cid)
+        channelUpdater.channelWatchers(query: query)
+        
+        // Simulate successful response
+        apiClient.test_simulateResponse(
+            Result<ChannelPayload<NoExtraData>, Error>.success(dummyPayload(with: cid, watchers: []))
+        )
+        
+        // Assert that the old watcher is replaced
+        AssertAsync {
+            Assert.willBeFalse(channel?.lastActiveWatchers.contains(where: { $0.id == firstWatcherId }) ?? true)
+        }
     }
 }

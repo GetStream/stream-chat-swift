@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -34,7 +34,7 @@ public struct UserUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload,
 
 // MARK: - User Watching
 
-public struct UserWatchingEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
+public struct UserWatchingEvent: EventWithUserPayload, EventWithChannelId {
     public let cid: ChannelId
     public let userId: UserId
     public let createdAt: Date?
@@ -43,7 +43,7 @@ public struct UserWatchingEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         createdAt = response.createdAt
@@ -55,7 +55,7 @@ public struct UserWatchingEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload
 
 // MARK: - User Ban
 
-public struct UserBannedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithOwnerPayload, EventWithChannelId {
+public struct UserBannedEvent: EventWithUserPayload, EventWithOwnerPayload, EventWithChannelId {
     public let cid: ChannelId
     public let userId: UserId
     public let ownerId: UserId
@@ -65,7 +65,7 @@ public struct UserBannedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, 
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         ownerId = try response.value(at: \.createdBy?.id)
@@ -76,14 +76,14 @@ public struct UserBannedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, 
     }
 }
 
-public struct UserUnbannedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
+public struct UserUnbannedEvent: EventWithUserPayload, EventWithChannelId {
     public let cid: ChannelId
     public let userId: UserId
     public let createdAt: Date?
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         createdAt = response.createdAt

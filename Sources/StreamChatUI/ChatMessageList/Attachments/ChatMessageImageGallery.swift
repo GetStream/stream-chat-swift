@@ -28,7 +28,9 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigP
         label.font = uiConfig.font.title
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center
-        return label.withoutAutoresizingMaskConstraints
+        return label
+            .withoutAutoresizingMaskConstraints
+            .withBidirectionalLanguagesSupport
     }()
 
     private var layouts: [[NSLayoutConstraint]] = []
@@ -107,7 +109,8 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigP
         ])
     }
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         moreImagesOverlay.textColor = .white
         moreImagesOverlay.backgroundColor = uiConfig.colorPalette.background4
     }

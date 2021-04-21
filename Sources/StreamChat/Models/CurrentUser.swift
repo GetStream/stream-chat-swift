@@ -61,23 +61,24 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
     /// The unread counts for the current user.
     public let unreadCount: UnreadCount
     
-    public init(
+    init(
         id: String,
-        name: String? = nil,
-        imageURL: URL? = nil,
-        isOnline: Bool = false,
-        isBanned: Bool = false,
-        userRole: UserRole = .user,
-        createdAt: Date = .init(),
-        updatedAt: Date = .init(),
-        lastActiveAt: Date? = nil,
-        extraData: ExtraData = .defaultValue,
-        devices: [Device] = [],
-        currentDevice: Device? = nil,
-        mutedUsers: Set<_ChatUser<ExtraData>> = [],
-        flaggedUsers: Set<_ChatUser<ExtraData>> = [],
-        flaggedMessageIDs: Set<MessageId> = [],
-        unreadCount: UnreadCount = .noUnread
+        name: String?,
+        imageURL: URL?,
+        isOnline: Bool,
+        isBanned: Bool,
+        userRole: UserRole,
+        createdAt: Date,
+        updatedAt: Date,
+        lastActiveAt: Date?,
+        teams: Set<TeamId>,
+        extraData: ExtraData,
+        devices: [Device],
+        currentDevice: Device?,
+        mutedUsers: Set<_ChatUser<ExtraData>>,
+        flaggedUsers: Set<_ChatUser<ExtraData>>,
+        flaggedMessageIDs: Set<MessageId>,
+        unreadCount: UnreadCount
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
@@ -92,10 +93,12 @@ public class _CurrentChatUser<ExtraData: UserExtraData>: _ChatUser<ExtraData> {
             imageURL: imageURL,
             isOnline: isOnline,
             isBanned: isBanned,
+            isFlaggedByCurrentUser: false,
             userRole: userRole,
             createdAt: createdAt,
             updatedAt: updatedAt,
             lastActiveAt: lastActiveAt,
+            teams: teams,
             extraData: extraData
         )
     }

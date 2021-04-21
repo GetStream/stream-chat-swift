@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class MessageReactionsMiddleware_Tests: XCTestCase {
@@ -15,7 +16,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
         super.setUp()
         
         database = DatabaseContainerMock()
-        middleware = .init(database: database)
+        middleware = .init()
     }
     
     override func tearDown() {
@@ -31,9 +32,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
         let event = TestEvent()
         
         // Handle non-reaction event
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert event is forwarded as it is
         XCTAssertEqual(forwardedEvent as! TestEvent, event)
@@ -55,9 +54,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
         
         // Simulate and handle reaction event.
         let event = try ReactionNewEvent(from: eventPayload)
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert `ReactionNewEvent` is forwarded even though database error happened.
         XCTAssertTrue(forwardedEvent is ReactionNewEvent)
@@ -84,9 +81,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
         try database.createMessage(id: reactionPayload.messageId)
 
         // Simulate `ReactionNewEvent` event.
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Load the message.
         let message = try XCTUnwrap(
@@ -129,9 +124,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
         try database.createMessage(id: reactionPayload.messageId)
 
         // Simulate `ReactionNewEvent` event.
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Load the message.
         let message = try XCTUnwrap(
@@ -177,9 +170,7 @@ final class MessageReactionsMiddleware_Tests: XCTestCase {
 
         // Simulate `ReactionDeletedEvent` event.
         let event = try ReactionDeletedEvent(from: eventPayload)
-        let forwardedEvent = try await {
-            self.middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Load the message.
         let message = try XCTUnwrap(

@@ -1,12 +1,11 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
 import XCTest
 
 class MulticastDelegate_Tests: XCTestCase {
-    // swiftlint:disable:next weak_delegate
     fileprivate var multicastDelegate: MulticastDelegate<TestDelegate>!
     
     override func setUp() {

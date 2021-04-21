@@ -33,7 +33,12 @@ class MessageDTO: NSManagedObject {
     @NSManaged var reactions: Set<MessageReactionDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
     @NSManaged var quotedMessage: MessageDTO?
-    
+
+    @NSManaged var pinned: Bool
+    @NSManaged var pinnedBy: UserDTO?
+    @NSManaged var pinnedAt: Date?
+    @NSManaged var pinExpires: Date?
+
     // The timestamp the message was created locally. Applies only for the messages of the current user.
     @NSManaged var locallyCreatedAt: Date?
     
@@ -107,10 +112,24 @@ class MessageDTO: NSManagedObject {
             ])
         ])
 
+        let nonTruncatedMessagePredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "channel.truncatedAt == nil"),
+            .init(format: "createdAt > channel.truncatedAt")
+        ])
+        
+        // Some pinned messages might be in the local database, but should not be fetched
+        // if they do not belong to the regular channel query.
+        let ignoreOlderMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            .init(format: "channel.oldestMessageAt == nil"),
+            .init(format: "createdAt >= channel.oldestMessageAt")
+        ])
+
         return .init(andPredicateWithSubpredicates: [
             channelMessage,
             messageTypePredicate,
-            deletedMessagePredicate
+            deletedMessagePredicate,
+            nonTruncatedMessagePredicate,
+            ignoreOlderMessagesPredicate
         ])
     }
     
@@ -191,6 +210,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     func createNewMessage<ExtraData: MessageExtraData>(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
@@ -213,6 +233,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.createdAt = createdDate
         message.locallyCreatedAt = createdDate
         message.updatedAt = createdDate
+
+        if let pinning = pinning {
+            try pin(message: message, pinning: pinning)
+        }
         
         message.type = parentMessageId == nil ? MessageType.regular.rawValue : MessageType.reply.rawValue
         message.text = text
@@ -249,13 +273,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.user = currentUserDTO.user
         message.channel = channelDTO
         
-        // We should update the channel dates so the list of channels ordering is updated.
-        // Updating it locally, makes it work also in offline.
         channelDTO.lastMessageAt = createdDate
         channelDTO.defaultSortingAt = createdDate
         
         if let parentMessageId = parentMessageId,
-            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(message)
         }
         
@@ -289,6 +311,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.replyCount = Int32(payload.replyCount)
         dto.extraData = try JSONEncoder.default.encode(payload.extraData)
         dto.isSilent = payload.isSilent
+        dto.pinned = payload.pinned
+        dto.pinExpires = payload.pinExpires
+        dto.pinnedAt = payload.pinnedAt
+        if let pinnedByUser = payload.pinnedBy {
+            dto.pinnedBy = try saveUser(payload: pinnedByUser)
+        }
 
         dto.quotedMessage = try payload.quotedMessage.flatMap { try saveMessage(payload: $0, for: cid) }
 
@@ -309,14 +337,28 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             payload.threadParticipants.map { try saveUser(payload: $0) }
         )
 
+        var channelDTO: ChannelDTO?
+
         if let channelPayload = payload.channel {
-            let channelDTO = try saveChannel(payload: channelPayload, query: nil)
-            dto.channel = channelDTO
+            channelDTO = try saveChannel(payload: channelPayload, query: nil)
         } else if let cid = cid {
-            let channelDTO = ChannelDTO.loadOrCreate(cid: cid, context: self)
+            channelDTO = ChannelDTO.load(cid: cid, context: self)
+        } else {
+            log.assertionFailure("Should never happen because either `cid` or `payload.channel` should be present.")
+        }
+
+        if let channelDTO = channelDTO {
+            channelDTO.lastMessageAt = max(channelDTO.lastMessageAt ?? payload.createdAt, payload.createdAt)
+            
+            if dto.pinned {
+                channelDTO.pinnedMessages.insert(dto)
+            } else {
+                channelDTO.pinnedMessages.remove(dto)
+            }
+            
             dto.channel = channelDTO
         } else {
-            log.assertationFailure("Should never happen because either `cid` or `payload.channel` should be present.")
+            log.assertionFailure("Should never happen, a channel should have been fetched.")
         }
         
         let reactions = payload.latestReactions + payload.ownReactions
@@ -334,8 +376,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.attachments = attachments
         
         if let parentMessageId = payload.parentId,
-            let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
+           let parentMessageDTO = MessageDTO.load(id: parentMessageId, context: self) {
             parentMessageDTO.replies.insert(dto)
+        }
+
+        dto.pinned = payload.pinned
+        dto.pinnedAt = payload.pinnedAt
+        dto.pinExpires = payload.pinExpires
+        if let pinnedBy = payload.pinnedBy {
+            dto.pinnedBy = try saveUser(payload: pinnedBy)
         }
         
         return dto
@@ -345,6 +394,24 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     
     func delete(message: MessageDTO) {
         delete(message)
+    }
+
+    func pin(message: MessageDTO, pinning: MessagePinning) throws {
+        guard let currentUserDTO = currentUser() else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+        let pinnedDate = Date()
+        message.pinned = true
+        message.pinnedAt = pinnedDate
+        message.pinnedBy = currentUserDTO.user
+        message.pinExpires = pinning.expirationDate
+    }
+
+    func unpin(message: MessageDTO) {
+        message.pinned = false
+        message.pinnedAt = nil
+        message.pinnedBy = nil
+        message.pinExpires = nil
     }
 }
 
@@ -358,7 +425,7 @@ extension MessageDTO {
         do {
             extraData = try JSONDecoder.default.decode(ExtraData.Message.self, from: self.extraData)
         } catch {
-            log.assertationFailure(
+            log.assertionFailure(
                 "Failed decoding saved extra data with error: \(error). This should never happen because"
                     + "the extra data must be a valid JSON to be saved."
             )
@@ -376,6 +443,8 @@ extension MessageDTO {
             attachments: attachments
                 .sorted { $0.attachmentID.index < $1.attachmentID.index }
                 .map { $0.asRequestPayload() },
+            pinned: pinned,
+            pinExpires: pinExpires,
             extraData: extraData ?? .defaultValue
         )
     }
@@ -409,56 +478,77 @@ private extension _ChatMessage {
         }
         self.extraData = extraData
         
-        author = dto.user.asModel()
-        mentionedUsers = Set(dto.mentionedUsers.map { $0.asModel() })
         threadParticipants = Set(dto.threadParticipants.map(\.id))
-
-        if dto.replies.isEmpty {
-            latestReplies = []
-        } else {
-            latestReplies = MessageDTO
-                .loadReplies(for: dto.id, limit: 5, context: context)
-                .map(_ChatMessage.init)
-        }
         localState = dto.localMessageState
-        
         isFlaggedByCurrentUser = dto.flaggedBy != nil
-
-        if dto.reactions.isEmpty {
-            latestReactions = []
-        } else {
-            latestReactions = Set(
-                MessageReactionDTO
-                    .loadLatestReactions(for: dto.id, limit: 5, context: context)
-                    .map { $0.asModel() }
+        
+        if dto.pinned,
+           let pinnedAt = dto.pinnedAt,
+           let pinnedBy = dto.pinnedBy,
+           let pinExpires = dto.pinExpires {
+            pinDetails = .init(
+                pinnedAt: pinnedAt,
+                pinnedBy: pinnedBy.asModel(),
+                expiresAt: pinExpires
             )
+        } else {
+            pinDetails = nil
         }
         
         if let currentUser = context.currentUser() {
-            if dto.reactions.isEmpty {
-                currentUserReactions = []
-            } else {
-                currentUserReactions = Set(
-                    MessageReactionDTO
-                        .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
-                        .map { $0.asModel() }
-                )
-            }
             isSentByCurrentUser = currentUser.user.id == dto.user.id
+            
+            if dto.reactions.isEmpty {
+                $_currentUserReactions = ({ [] }, nil)
+            } else {
+                $_currentUserReactions = ({
+                    Set(
+                        MessageReactionDTO
+                            .loadReactions(for: dto.id, authoredBy: currentUser.user.id, context: context)
+                            .map { $0.asModel() }
+                    )
+                }, dto.managedObjectContext)
+            }
         } else {
-            currentUserReactions = []
             isSentByCurrentUser = false
+            $_currentUserReactions = ({ [] }, nil)
         }
         
-        attachments = dto.attachments
-            .map { $0.asModel() }
-            .sorted {
-                let index1 = $0.id?.index ?? Int.max
-                let index2 = $1.id?.index ?? Int.max
-                return index1 < index2
-            }
-
-        quotedMessageId = dto.quotedMessage.map(\.id)
+        $_mentionedUsers = ({ Set(dto.mentionedUsers.map { $0.asModel() }) }, dto.managedObjectContext)
+        $_author = ({ dto.user.asModel() }, dto.managedObjectContext)
+        $_attachments = ({
+            dto.attachments
+                .map { $0.asModel() }
+                .sorted {
+                    let index1 = $0.id?.index ?? Int.max
+                    let index2 = $1.id?.index ?? Int.max
+                    return index1 < index2
+                }
+        }, dto.managedObjectContext)
+        
+        if dto.replies.isEmpty {
+            $_latestReplies = ({ [] }, nil)
+        } else {
+            $_latestReplies = ({
+                MessageDTO
+                    .loadReplies(for: dto.id, limit: 5, context: context)
+                    .map(_ChatMessage.init)
+            }, dto.managedObjectContext)
+        }
+        
+        if dto.reactions.isEmpty {
+            $_latestReactions = ({ [] }, nil)
+        } else {
+            $_latestReactions = ({
+                Set(
+                    MessageReactionDTO
+                        .loadLatestReactions(for: dto.id, limit: 5, context: context)
+                        .map { $0.asModel() }
+                )
+            }, dto.managedObjectContext)
+        }
+        
+        $_quotedMessage = ({ dto.quotedMessage?.asModel() }, dto.managedObjectContext)
     }
 }
 

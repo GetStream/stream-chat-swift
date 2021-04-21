@@ -18,7 +18,7 @@ extension Endpoint {
     
     static func channel<ExtraData: ExtraDataTypes>(query: _ChannelQuery<ExtraData>) -> Endpoint<ChannelPayload<ExtraData>> {
         .init(
-            path: "channels/\(query.pathParameters)/query",
+            path: "channels/" + query.apiPath + "/query",
             method: .post,
             queryItems: nil,
             requiresConnectionId: query.options.contains(oneOf: [.presence, .state, .watch]),
@@ -29,7 +29,7 @@ extension Endpoint {
     static func updateChannel<ExtraData: ExtraDataTypes>(channelPayload: ChannelEditDetailPayload<ExtraData>)
         -> Endpoint<EmptyResponse> {
         .init(
-            path: "channels/\(channelPayload.pathParameters)",
+            path: "channels/" + channelPayload.apiPath,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -49,17 +49,27 @@ extension Endpoint {
     
     static func deleteChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/" + cid.apiPath,
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
             body: nil
         )
     }
-    
+
+    static func truncateChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath + "/truncate",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
     static func hideChannel(cid: ChannelId, clearHistory: Bool) -> Endpoint<EmptyResponse> {
         .init(
-            path: "channels/\(cid.type)/\(cid.id)/hide",
+            path: "channels/" + cid.apiPath + "/hide",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -69,7 +79,7 @@ extension Endpoint {
     
     static func showChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
-            path: "channels/\(cid.type)/\(cid.id)/show",
+            path: "channels/" + cid.apiPath + "/show",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -80,7 +90,7 @@ extension Endpoint {
     static func sendMessage<ExtraData: ExtraDataTypes>(cid: ChannelId, messagePayload: MessageRequestBody<ExtraData>)
         -> Endpoint<MessagePayload<ExtraData>.Boxed> {
         .init(
-            path: "channels/\(cid.type)/\(cid.id)/message",
+            path: "channels/" + cid.apiPath + "/message",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -90,7 +100,7 @@ extension Endpoint {
     
     static func addMembers(cid: ChannelId, userIds: Set<UserId>) -> Endpoint<EmptyResponse> {
         .init(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/" + cid.apiPath,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -100,7 +110,7 @@ extension Endpoint {
     
     static func removeMembers(cid: ChannelId, userIds: Set<UserId>) -> Endpoint<EmptyResponse> {
         .init(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/" + cid.apiPath,
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -110,7 +120,7 @@ extension Endpoint {
     
     static func markRead(cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
-            path: "channels/\(cid.type)/\(cid.id)/read",
+            path: "channels/" + cid.apiPath + "/read",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -130,11 +140,41 @@ extension Endpoint {
     
     static func sendEvent(cid: ChannelId, eventType: EventType) -> Endpoint<EmptyResponse> {
         .init(
-            path: "channels/\(cid.type)/\(cid.id)/event",
+            path: "channels/" + cid.apiPath + "/event",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
             body: ["event": ["type": eventType]]
+        )
+    }
+    
+    static func enableSlowMode(cid: ChannelId, cooldownDuration: Int) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["cooldown": cooldownDuration]
+        )
+    }
+    
+    static func stopWatching(cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath + "/stop-watching",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: nil
+        )
+    }
+    
+    static func channelWatchers<ExtraData: ExtraDataTypes>(query: ChannelWatcherListQuery) -> Endpoint<ChannelPayload<ExtraData>> {
+        .init(
+            path: "channels/" + query.cid.apiPath + "/query",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: query
         )
     }
 }

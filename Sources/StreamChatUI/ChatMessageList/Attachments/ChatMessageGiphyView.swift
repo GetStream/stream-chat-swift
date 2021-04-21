@@ -61,8 +61,8 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
         loadingIndicator.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
     }
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = .clear
         imageView.contentMode = .scaleAspectFill
     }
@@ -97,7 +97,7 @@ extension _ChatMessageGiphyView {
             label.text = "GIPHY"
             label.textColor = uiConfig.colorPalette.staticColorText
             label.font = uiConfig.font.bodyBold
-            return label
+            return label.withBidirectionalLanguagesSupport
         }()
 
         public private(set) lazy var lightning = UIImageView(
@@ -121,9 +121,8 @@ extension _ChatMessageGiphyView {
             contentStack.pin(to: layoutMarginsGuide)
         }
 
-        override public func defaultAppearance() {
-            super.defaultAppearance()
-
+        override open func setUpAppearance() {
+            super.setUpAppearance()
             backgroundColor = UIColor.black.withAlphaComponent(0.6)
             lightning.tintColor = uiConfig.colorPalette.staticColorText
         }

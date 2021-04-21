@@ -4,6 +4,7 @@
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class MessageReactionDTO_Tests: XCTestCase {
@@ -13,11 +14,11 @@ final class MessageReactionDTO_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
     }
     
     override func tearDown() {
-        database = nil
+        AssertAsync.canBeReleased(&database)
         super.tearDown()
     }
     
@@ -112,7 +113,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
             // Save message reaction to the database.
             let dto = try session.saveReaction(payload: payload)
             // Corrupt extra data.
-            dto.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+            dto.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
         // Load saved message reaction.

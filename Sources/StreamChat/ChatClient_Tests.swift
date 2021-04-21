@@ -4,6 +4,7 @@
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class ChatClient_Tests: StressTestCase {
@@ -13,7 +14,8 @@ class ChatClient_Tests: StressTestCase {
     // A helper providing ChatClientConfig with in-memory DB option
     var inMemoryStorageConfig: ChatClientConfig {
         var config = ChatClientConfig()
-        config.isLocalStorageEnabled = false
+        config.isLocalStorageEnabled = true
+        config.localStorageFolderURL = .newTemporaryFileURL()
         config.baseURL = BaseURL(urlString: .unique)!
         return config
     }
@@ -58,17 +60,22 @@ class ChatClient_Tests: StressTestCase {
         config.shouldFlushLocalStorageOnStart = true
         config.localStorageFolderURL = storeFolderURL
         
+        config.localCaching.chatChannel.lastActiveMembersLimit = .unique
+        config.localCaching.chatChannel.lastActiveWatchersLimit = .unique
+        
         var usedDatabaseKind: DatabaseContainer.Kind?
         var shouldFlushDBOnStart: Bool?
         var shouldResetEphemeralValues: Bool?
+        var localCachingSettings: ChatClientConfig.LocalCaching?
         
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart in
+        env.databaseContainerBuilder = { kind, shouldFlushOnStart, shouldResetEphemeralValuesOnStart, cachingSettings in
             usedDatabaseKind = kind
             shouldFlushDBOnStart = shouldFlushOnStart
             shouldResetEphemeralValues = shouldResetEphemeralValuesOnStart
+            localCachingSettings = cachingSettings
             return DatabaseContainerMock()
         }
         
@@ -87,6 +94,7 @@ class ChatClient_Tests: StressTestCase {
         )
         XCTAssertEqual(shouldFlushDBOnStart, config.shouldFlushLocalStorageOnStart)
         XCTAssertEqual(shouldResetEphemeralValues, config.isClientInActiveMode)
+        XCTAssertEqual(localCachingSettings, config.localCaching)
     }
     
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
@@ -99,7 +107,7 @@ class ChatClient_Tests: StressTestCase {
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, _, _ in
+        env.databaseContainerBuilder = { kind, _, _, _ in
             usedDatabaseKind = kind
             return DatabaseContainerMock()
         }
@@ -135,7 +143,7 @@ class ChatClient_Tests: StressTestCase {
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
         env.clientUpdaterBuilder = ChatClientUpdaterMock.init
-        env.databaseContainerBuilder = { kind, _, _ in
+        env.databaseContainerBuilder = { kind, _, _, _ in
             usedDatabaseKinds.append(kind)
             // Return error for the first time
             if let error = errorsToReturn.pop() {
@@ -180,7 +188,9 @@ class ChatClient_Tests: StressTestCase {
         // Assert the init parameters are correct
         let webSocket = testEnv.webSocketClient
         assertMandatoryHeaderFields(webSocket?.init_sessionConfiguration)
+        XCTAssertEqual(webSocket?.init_sessionConfiguration.waitsForConnectivity, false)
         XCTAssert(webSocket?.init_requestEncoder is TestRequestEncoder)
+        XCTAssert(webSocket?.init_eventNotificationCenter.database === client.databaseContainer)
         XCTAssertNotNil(webSocket?.init_eventDecoder)
         
         // EventDataProcessorMiddleware must be always first
@@ -222,6 +232,14 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertTrue(typingStateUpdaterMiddlewareIndex! > typingStartCleanupMiddlewareIndex!)
         // Assert `MessageReactionsMiddleware` exists
         XCTAssert(middlewares.contains(where: { $0 is MessageReactionsMiddleware<NoExtraData> }))
+        // Assert `ChannelTruncatedEventMiddleware` exists
+        XCTAssert(middlewares.contains(where: { $0 is ChannelTruncatedEventMiddleware<NoExtraData> }))
+        // Assert `MemberEventMiddleware` exists
+        XCTAssert(middlewares.contains(where: { $0 is MemberEventMiddleware<NoExtraData> }))
+        // Assert `UserChannelBanEventsMiddleware` exists
+        XCTAssert(middlewares.contains(where: { $0 is UserChannelBanEventsMiddleware<NoExtraData> }))
+        // Assert `UserWatchingEventMiddleware` exists
+        XCTAssert(middlewares.contains(where: { $0 is UserWatchingEventMiddleware<NoExtraData> }))
     }
     
     func test_connectionStatus_isExposed() {
@@ -399,7 +417,7 @@ class ChatClient_Tests: StressTestCase {
         config.shouldConnectAutomatically = false
 
         // Create a new chat client
-        let client = ChatClient(
+        var client: ChatClient! = ChatClient(
             config: config,
             tokenProvider: .anonymous
         )
@@ -412,6 +430,8 @@ class ChatClient_Tests: StressTestCase {
         XCTAssert(client.backgroundWorkers.contains { $0 is MessageEditor<NoExtraData> })
         XCTAssert(client.backgroundWorkers.contains { $0 is MissingEventsPublisher<NoExtraData> })
         XCTAssert(client.backgroundWorkers.contains { $0 is AttachmentUploader })
+        
+        AssertAsync.canBeReleased(&client)
     }
     
     func test_backgroundWorkersConfiguration() {
@@ -450,13 +470,15 @@ class ChatClient_Tests: StressTestCase {
         var config = ChatClientConfig(apiKeyString: .unique)
         config.shouldConnectAutomatically = false
         // Create an active client to save the current user to the database.
-        let chatClient = ChatClient(
+        var chatClient: ChatClient! = ChatClient(
             config: config,
             tokenProvider: .static(.unique(userId: currentUserId))
         )
         // Create current user in the database.
         try chatClient.databaseContainer.createCurrentUser(id: currentUserId)
 
+        AssertAsync.canBeReleased(&chatClient)
+        
         // Take main then background queue.
         for queue in [DispatchQueue.main, DispatchQueue.global()] {
             let error: Error? = try await { completion in
@@ -474,7 +496,7 @@ class ChatClient_Tests: StressTestCase {
                     // 1. Check `currentUserId` is fetched synchronously
                     // 2. `webSocket` has correct connect endpoint
                     if chatClient.currentUserId == currentUserId,
-                        chatClient.webSocketClient?.connectEndpoint.map(AnyEndpoint.init) == expectedWebSocketEndpoint {
+                       chatClient.webSocketClient?.connectEndpoint.map(AnyEndpoint.init) == expectedWebSocketEndpoint {
                         completion(nil)
                     } else {
                         completion(TestError())
@@ -630,7 +652,8 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                 self.databaseContainer = try! DatabaseContainerMock(
                     kind: $0,
                     shouldFlushOnStart: $1,
-                    shouldResetEphemeralValuesOnStart: $2
+                    shouldResetEphemeralValuesOnStart: $2,
+                    localCachingSettings: $3
                 )
                 return self.databaseContainer!
             },
@@ -650,7 +673,7 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
                 return self.eventDecoder!
             },
             notificationCenterBuilder: {
-                self.notificationCenter = EventNotificationCenterMock(middlewares: $0)
+                self.notificationCenter = EventNotificationCenterMock(database: $0)
                 return self.notificationCenter!
             },
             clientUpdaterBuilder: {
@@ -676,7 +699,7 @@ extension ChatClient_Tests {
         let headers = config.httpAdditionalHeaders as? [String: String] ?? [:]
         XCTAssertEqual(
             headers["X-Stream-Client"],
-            "stream-chat-swift-client-\(SystemEnvironment.version)"
+            "stream-chat-swift-client-v\(SystemEnvironment.version)"
         )
     }
 }
@@ -705,4 +728,12 @@ private extension ChatClientConfig {
 
 // MARK: - Mock
 
-class EventNotificationCenterMock: EventNotificationCenter {}
+class EventNotificationCenterMock: EventNotificationCenter {
+    /// Logs all events the `process` method was called with
+    @Atomic var process_loggedEvents: [Event] = []
+    
+    override func process(_ event: Event) {
+        super.process(event)
+        _process_loggedEvents { $0.append(event) }
+    }
+}

@@ -64,7 +64,17 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             completion?($0.error)
         }
     }
-    
+
+    /// Truncates the specific channel.
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func truncateChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .truncateChannel(cid: cid)) {
+            completion?($0.error)
+        }
+    }
+
     /// Hides the channel from queryChannels for the user until a message is added.
     /// - Parameters:
     ///   - cid: The channel identifier.
@@ -91,6 +101,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
+    ///   - pinning: Pins the new message. Nil if should not be pinned.
     ///   - attachments: An array of the attachments for the message.
     ///   - quotedMessageId: An id of the message new message quotes. (inline reply)
     ///   - extraData: Additional extra data of the message object.
@@ -99,6 +110,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     func createNewMessage(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning? = nil,
         command: String?,
         arguments: String?,
         attachments: [AttachmentEnvelope] = [],
@@ -111,6 +123,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             let newMessageDTO = try session.createNewMessage(
                 in: cid,
                 text: text,
+                pinning: pinning,
                 command: command,
                 arguments: arguments,
                 parentMessageId: nil,
@@ -161,6 +174,84 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     func markRead(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .markRead(cid: cid)) {
             completion?($0.error)
+        }
+    }
+
+    ///
+    /// When slow mode is enabled, users can only send a message every `cooldownDuration` time interval.
+    /// `cooldownDuration` is specified in seconds, and should be between 0-120.
+    /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
+    ///
+    /// - Parameters:
+    ///   - cid: Channel id of the channel to be marked as read
+    ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
+    ///   Specified in seconds. Should be between 0-120. Pass 0 to disable slow mode.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)) {
+            completion?($0.error)
+        }
+    }
+    
+    /// Start watching a channel
+    ///
+    /// Watching a channel is defined as observing notifications about this channel.
+    /// Usually you don't need to call this function since `ChannelController` watches channels
+    /// by default.
+    ///
+    /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
+    ///
+    /// - Parameter cid: Channel id of the channel to be watched
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func startWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        var query = _ChannelQuery<ExtraData>(cid: cid)
+        query.options = .all
+        apiClient.request(endpoint: .channel(query: query)) {
+            completion?($0.error)
+        }
+    }
+    
+    /// Stop watching a channel
+    ///
+    /// Watching a channel is defined as observing notifications about this channel.
+    ///
+    /// Please check [documentation](https://getstream.io/chat/docs/android/watch_channel/?language=swift) for more information.
+    /// - Parameter cid: Channel id of the channel to stop watching
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func stopWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .stopWatching(cid: cid)) {
+            completion?($0.error)
+        }
+    }
+    
+    /// Queries the watchers of a channel.
+    ///
+    /// For more information about channel watchers, please check [documentation](https://getstream.io/chat/docs/ios/watch_channel/?language=swift)
+    ///
+    /// - Parameters:
+    ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelPayload<ExtraData>, Error>) in
+            do {
+                let payload = try result.get()
+                self.database.write { (session) in
+                    if let channel = session.channel(cid: query.cid) {
+                        if query.pagination.offset == 0, (payload.watchers?.isEmpty ?? false) {
+                            // This is the first page of the watchers, and backend reported empty array
+                            // We can clear the existing watchers safely
+                            channel.watchers.removeAll()
+                        }
+                    }
+                    // In any case (backend reported another page of watchers or no watchers)
+                    // we should save the payload as it's the latest state of the channel
+                    try session.saveChannel(payload: payload)
+                } completion: { error in
+                    completion?(error)
+                }
+            } catch {
+                completion?(error)
+            }
         }
     }
 }

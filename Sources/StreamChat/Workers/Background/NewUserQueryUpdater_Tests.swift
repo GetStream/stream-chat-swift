@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class NewUserQueryUpdater_Tests: StressTestCase {
@@ -20,7 +21,7 @@ class NewUserQueryUpdater_Tests: StressTestCase {
         super.setUp()
         env = TestEnvironment()
         
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         

@@ -1,15 +1,10 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
 
 class MainButton: UIButton {
-    override func tintColorDidChange() {
-        backgroundColor = tintColor
-        setTitleColor(.white, for: .normal)
-    }
-    
     override func updateConstraints() {
         super.updateConstraints()
         translatesAutoresizingMaskIntoConstraints = false
@@ -28,16 +23,5 @@ class AdvancedOptionsViewController: UIViewController {
             mainStackView.preservesSuperviewLayoutMargins = true
             mainStackView.isLayoutMarginsRelativeArrangement = true
         }
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        title = "Advanced Options"
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        navigationController?.isNavigationBarHidden = false
     }
 }

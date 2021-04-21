@@ -50,7 +50,10 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
     /// To observe changes of the users, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> { userListObserver.items }
+    public var users: LazyCachedMapCollection<_ChatUser<ExtraData.User>> {
+        startUserListObserverIfNeeded()
+        return userListObserver.items
+    }
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var worker: UserListUpdater<ExtraData.User> = self.environment
@@ -66,7 +69,7 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
             
             // After setting delegate local changes will be fetched and observed.
-            startUserListObserver()
+            startUserListObserverIfNeeded()
         }
     }
     
@@ -84,14 +87,6 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
             self.delegateCallback {
                 $0.controller(self, didChangeUsers: changes)
             }
-        }
-        
-        do {
-            try observer.startObserving()
-            state = .localDataFetched
-        } catch {
-            state = .localDataFetchFailed(ClientError(with: error))
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
         
         return observer
@@ -117,17 +112,29 @@ public class _ChatUserListController<ExtraData: ExtraDataTypes>: DataController,
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        startUserListObserverIfNeeded()
+        
         worker.update(userListQuery: query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
     }
     
-    /// Initializing of `userListObserver` will start local data observing.
-    /// In most cases it will be done by accessing `users` but it's possible that only
-    /// changes will be observed.
-    private func startUserListObserver() {
-        _ = userListObserver
+    /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
+    /// `userListObserver` to fetch the local data and start observing the changes. It also changes
+    /// `state` based on the result.
+    ///
+    /// It's safe to call this method repeatedly.
+    ///
+    private func startUserListObserverIfNeeded() {
+        guard state == .initialized else { return }
+        do {
+            try userListObserver.startObserving()
+            state = .localDataFetched
+        } catch {
+            state = .localDataFetchFailed(ClientError(with: error))
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+        }
     }
     
     /// Sets the provided object as a delegate of this controller.

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -14,6 +14,10 @@ class MemberDTO: NSManagedObject {
     @NSManaged var channelRoleRaw: String?
     @NSManaged var memberCreatedAt: Date
     @NSManaged var memberUpdatedAt: Date
+
+    @NSManaged var banExpiresAt: Date?
+    @NSManaged var isBanned: Bool
+    @NSManaged var isShadowBanned: Bool
     
     //  @NSManaged var invitedAcceptedAt: Date?
     //  @NSManaged var invitedRejectedAt: Date?
@@ -72,6 +76,14 @@ extension MemberDTO {
         new.id = Self.createId(userId: id, channeldId: channelId)
         return new
     }
+    
+    static func loadLastActiveMembers(cid: ChannelId, context: NSManagedObjectContext) -> [MemberDTO] {
+        let request = NSFetchRequest<MemberDTO>(entityName: MemberDTO.entityName)
+        request.predicate = NSPredicate(format: "channel.cid == %@", cid.rawValue)
+        request.sortDescriptors = [ChannelMemberListSortingKey.lastActiveSortDescriptor]
+        request.fetchLimit = context.localCachingSettings?.chatChannel.lastActiveMembersLimit ?? 5
+        return try! context.fetch(request)
+    }
 }
 
 extension NSManagedObjectContext {
@@ -92,10 +104,17 @@ extension NSManagedObjectContext {
         
         dto.memberCreatedAt = payload.createdAt
         dto.memberUpdatedAt = payload.updatedAt
+        dto.isBanned = payload.isBanned ?? false
+        dto.isShadowBanned = payload.isShadowBanned ?? false
+        dto.banExpiresAt = payload.banExpiresAt
         
         if let query = query {
             let queryDTO = try saveQuery(query)
             queryDTO.members.insert(dto)
+        }
+        
+        if let channelDTO = channel(cid: channelId) {
+            channelDTO.members.insert(dto)
         }
         
         return dto
@@ -131,17 +150,22 @@ extension _ChatChannelMember {
             imageURL: dto.user.imageURL,
             isOnline: dto.user.isOnline,
             isBanned: dto.user.isBanned,
+            isFlaggedByCurrentUser: dto.user.flaggedBy != nil,
             userRole: UserRole(rawValue: dto.user.userRoleRaw)!,
             userCreatedAt: dto.user.userCreatedAt,
             userUpdatedAt: dto.user.userUpdatedAt,
             lastActiveAt: dto.user.lastActivityAt,
+            teams: Set(dto.user.teams?.map(\.id) ?? []),
             extraData: extraData,
             memberRole: role,
             memberCreatedAt: dto.memberCreatedAt,
             memberUpdatedAt: dto.memberUpdatedAt,
             isInvited: false,
             inviteAcceptedAt: nil,
-            inviteRejectedAt: nil
+            inviteRejectedAt: nil,
+            isBannedFromChannel: dto.isBanned,
+            banExpiresAt: dto.banExpiresAt,
+            isShadowBannedFromChannel: dto.isShadowBanned
         )
     }
 }

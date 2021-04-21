@@ -11,11 +11,11 @@ class UIConfigProvider_Tests: XCTestCase {
     typealias ExtraData = NoExtraData
     
     func test_uiConfig_passedDownToSubview() {
-        let parentView = TestView<ExtraData>()
-        let subView = TestView<ExtraData>()
+        let parentView = TestViewWithExtraData<ExtraData>()
+        let subView = TestViewWithExtraData<ExtraData>()
         var uiConfig = UIConfig()
         // Set some random subclass to check if the config is passed down
-        uiConfig.channelList.newChannelButton = TestButton.self
+        uiConfig.channelList.newChannelButton = TestCreateChannelButton.self
         
         parentView.addSubview(subView)
         parentView.uiConfig = uiConfig
@@ -28,12 +28,12 @@ class UIConfigProvider_Tests: XCTestCase {
     }
     
     func test_uiConfig_passedDown_ignoringNonProviders() {
-        let parentView = TestView<ExtraData>()
+        let parentView = TestViewWithExtraData<ExtraData>()
         let intermediateView = UIView()
-        let subView = TestView<ExtraData>()
+        let subView = TestViewWithExtraData<ExtraData>()
         var uiConfig = UIConfig()
         // Set some random subclass to check if the config is passed down
-        uiConfig.channelList.newChannelButton = TestButton.self
+        uiConfig.channelList.newChannelButton = TestCreateChannelButton.self
         
         parentView.addSubview(intermediateView)
         intermediateView.addSubview(subView)
@@ -47,10 +47,10 @@ class UIConfigProvider_Tests: XCTestCase {
     }
     
     func test_uiConfig_passedDownToVCView() {
-        let vc = TestViewController<ExtraData>()
+        let vc = TestViewWithExtraDataController<ExtraData>()
         var uiConfig = UIConfig()
         // Set some random subclass to check if the config is passed down
-        uiConfig.channelList.newChannelButton = TestButton.self
+        uiConfig.channelList.newChannelButton = TestCreateChannelButton.self
         
         vc.uiConfig = uiConfig
         
@@ -65,10 +65,10 @@ class UIConfigProvider_Tests: XCTestCase {
     }
     
     func test_vcSubviews_initedFromConfig() {
-        let vc = TestViewController<ExtraData>()
+        let vc = TestViewWithExtraDataController<ExtraData>()
         var uiConfig = UIConfig()
         // Set some random subclass to check if the config is passed down
-        uiConfig.channelList.newChannelButton = TestButton.self
+        uiConfig.channelList.newChannelButton = TestCreateChannelButton.self
         
         vc.uiConfig = uiConfig
         
@@ -77,24 +77,24 @@ class UIConfigProvider_Tests: XCTestCase {
         
         // We can only compare string descriptions, which should be good enough
         XCTAssertEqual(
-            String(describing: type(of: vc.testButton)),
+            String(describing: type(of: vc.TestCreateChannelButton)),
             String(describing: uiConfig.channelList.newChannelButton)
         )
     }
 }
 
-private class TestView<ExtraData: ExtraDataTypes>: UIView, UIConfigProvider {}
+private class TestViewWithExtraData<ExtraData: ExtraDataTypes>: UIView, UIConfigProvider {}
 
-private class TestViewController<ExtraData: ExtraDataTypes>: UIViewController, UIConfigProvider {
-    let subView = TestView<ExtraData>()
-    lazy var testButton = uiConfig.channelList.newChannelButton.init()
+private class TestViewWithExtraDataController<ExtraData: ExtraDataTypes>: UIViewController, UIConfigProvider {
+    let subView = TestViewWithExtraData<ExtraData>()
+    lazy var TestCreateChannelButton = uiConfig.channelList.newChannelButton.init()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view.addSubview(subView)
-        view.addSubview(testButton)
+        view.addSubview(TestCreateChannelButton)
     }
 }
 
-private class TestButton: ChatChannelCreateNewButton {}
+private class TestCreateChannelButton: ChatChannelCreateNewButton {}

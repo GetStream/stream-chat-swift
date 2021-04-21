@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class ChannelWatchStateUpdater_Tests: StressTestCase {
@@ -17,7 +18,7 @@ class ChannelWatchStateUpdater_Tests: StressTestCase {
     override func setUp() {
         super.setUp()
         
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
         

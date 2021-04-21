@@ -20,7 +20,9 @@ extension UITextView {
         layoutManager.addTextContainer(customTextContainer)
         
         textStorage.addLayoutManager(layoutManager)
-        textStorage.addAttribute(.font, value: font!, range: .init(0..<textStorage.length))
+        if let font = font {
+            textStorage.addAttribute(.font, value: font, range: .init(0..<textStorage.length))
+        }
         
         customTextContainer.lineFragmentPadding = textContainer.lineFragmentPadding
         customTextContainer.maximumNumberOfLines = textContainer.maximumNumberOfLines

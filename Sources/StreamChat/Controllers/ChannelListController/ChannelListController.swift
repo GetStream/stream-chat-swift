@@ -50,7 +50,10 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     /// To observe changes of the channels, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> { channelListObserver.items }
+    public var channels: LazyCachedMapCollection<_ChatChannel<ExtraData>> {
+        startChannelListObserverIfNeeded()
+        return channelListObserver.items
+    }
     
     /// The worker used to fetch the remote data and communicate with servers.
     private lazy var worker: ChannelListUpdater<ExtraData> = self.environment
@@ -66,7 +69,7 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
             stateMulticastDelegate.additionalDelegates = multicastDelegate.additionalDelegates
             
             // After setting delegate local changes will be fetched and observed.
-            startChannelListObserver()
+            startChannelListObserverIfNeeded()
         }
     }
     
@@ -84,14 +87,6 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
             self.delegateCallback {
                 $0.controller(self, didChangeChannels: changes)
             }
-        }
-        
-        do {
-            try observer.startObserving()
-            state = .localDataFetched
-        } catch {
-            state = .localDataFetchFailed(ClientError(with: error))
-            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
         }
         
         return observer
@@ -117,17 +112,29 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
     }
     
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        startChannelListObserverIfNeeded()
+        
         worker.update(channelListQuery: query) { error in
             self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
             self.callback { completion?(error) }
         }
     }
     
-    /// Initializing of `channelListObserver` will start local data observing.
-    /// In most cases it will be done by accessing `channels` but it's possible that only
-    /// changes will be observed.
-    private func startChannelListObserver() {
-        _ = channelListObserver
+    /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
+    /// `channelListObserver` to fetch the local data and start observing the changes. It also changes
+    /// `state` based on the result.
+    ///
+    /// It's safe to call this method repeatedly.
+    ///
+    private func startChannelListObserverIfNeeded() {
+        guard state == .initialized else { return }
+        do {
+            try channelListObserver.startObserving()
+            state = .localDataFetched
+        } catch {
+            state = .localDataFetchFailed(ClientError(with: error))
+            log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+        }
     }
     
     /// Sets the provided object as a delegate of this controller.
@@ -143,11 +150,9 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
         where Delegate.ExtraData == ExtraData {
         multicastDelegate.mainDelegate = AnyChannelListControllerDelegate(delegate)
     }
-}
 
-// MARK: - Actions
+    // MARK: - Actions
 
-public extension _ChatChannelListController {
     /// Loads next channels from backend.
     ///
     /// - Parameters:
@@ -155,7 +160,7 @@ public extension _ChatChannelListController {
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    func loadNextChannels(
+    public func loadNextChannels(
         limit: Int = 25,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -165,12 +170,12 @@ public extension _ChatChannelListController {
             self.callback { completion?(error) }
         }
     }
-    
+
     /// Marks all channels for a user as read.
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func markAllRead(completion: ((Error?) -> Void)? = nil) {
+    public func markAllRead(completion: ((Error?) -> Void)? = nil) {
         worker.markAllRead { error in
             self.callback {
                 completion?(error)

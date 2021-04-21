@@ -2,7 +2,9 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class WebSocketClient_Tests: StressTestCase {
@@ -30,6 +32,8 @@ class WebSocketClient_Tests: StressTestCase {
     var eventNotificationCenter: EventNotificationCenter!
     private var eventNotificationCenterMiddleware: EventMiddlewareMock!
     
+    var database: DatabaseContainer!
+    
     override func setUp() {
         super.setUp()
         
@@ -46,7 +50,9 @@ class WebSocketClient_Tests: StressTestCase {
         reconnectionStrategy = MockReconnectionStrategy()
         
         requestEncoder = TestRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
-        eventNotificationCenter = EventNotificationCenter()
+        
+        database = DatabaseContainerMock()
+        eventNotificationCenter = EventNotificationCenter(database: database)
         eventNotificationCenterMiddleware = EventMiddlewareMock()
         eventNotificationCenter.add(middleware: eventNotificationCenterMiddleware)
         
@@ -69,13 +75,14 @@ class WebSocketClient_Tests: StressTestCase {
         )
         
         connectionId = UUID().uuidString
-        user = ChatUser(id: "test_user_\(UUID().uuidString)")
+        user = .mock(id: "test_user_\(UUID().uuidString)")
     }
     
     override func tearDown() {
         AssertAsync.canBeReleased(&webSocketClient)
         AssertAsync.canBeReleased(&eventNotificationCenter)
         AssertAsync.canBeReleased(&eventNotificationCenterMiddleware)
+        AssertAsync.canBeReleased(&database)
         
         super.tearDown()
     }
@@ -159,7 +166,7 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
         
         // Simulate a health check event is received and the connection state is updated
-        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
+        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
         
         AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
@@ -233,7 +240,7 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.staysTrue(reconnectionStrategy.sucessfullyConnected_calledCount == 0)
         
         // Simulate a health check event
-        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
+        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
         
         // `sucessfullyConnected` should be called now
@@ -307,6 +314,21 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.staysTrue(engine!.connect_calledCount == 0)
     }
     
+    func test_connectionState_afterDecodingError() {
+        // Simulate connection
+        test_connectionFlow()
+        
+        decoder.decodedEvent = .failure(
+            DecodingError.keyNotFound(
+                EventPayload<NoExtraData>.CodingKeys.eventType,
+                .init(codingPath: [], debugDescription: "")
+            )
+        )
+        engine!.simulateMessageReceived()
+        
+        AssertAsync.staysEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
+    }
+    
     // MARK: - Ping Controller
     
     func test_webSocketPingController_connectionStateDidChange_calledWhenConnectionChanges() {
@@ -333,7 +355,7 @@ class WebSocketClient_Tests: StressTestCase {
         assert(pingController.pongRecievedCount == 1)
         
         // Simulate a health check (pong) event is received
-        decoder.decodedEvent = HealthCheckEvent(connectionId: connectionId)
+        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
         
         AssertAsync.willBeEqual(pingController.pongRecievedCount, 2)
@@ -402,9 +424,10 @@ class WebSocketClient_Tests: StressTestCase {
         
         // Make the decoder always return TestEvent
         let testEvent = TestEvent()
-        decoder.decodedEvent = testEvent
+        decoder.decodedEvent = .success(testEvent)
         
-        // Start logging events
+        // Clean up pending events and start logging the new ones
+        eventNotificationCenter.pendingEvents = []
         let eventLogger = EventLogger(eventNotificationCenter)
         
         // Simulate incoming data
@@ -422,14 +445,18 @@ class WebSocketClient_Tests: StressTestCase {
         // Simulate connection
         test_connectionFlow()
         
+        // Clean up pending events
+        eventNotificationCenter.pendingEvents = []
+
         // Make the decoder return an event
         let incomingEvent = TestEvent()
-        decoder.decodedEvent = incomingEvent
+        decoder.decodedEvent = .success(incomingEvent)
         
         let processedEvent = TestEvent()
-        eventNotificationCenterMiddleware.closure = { middlewareIncomingEvent, completion in
+        eventNotificationCenterMiddleware.closure = { middlewareIncomingEvent, session in
             XCTAssertEqual(incomingEvent.asEquatable, middlewareIncomingEvent.asEquatable)
-            completion(processedEvent)
+            XCTAssertEqual(session as? NSManagedObjectContext, self.database.writableContext)
+            return processedEvent
         }
         
         // Start logging events
@@ -458,7 +485,7 @@ class WebSocketClient_Tests: StressTestCase {
         connectionStates.forEach { webSocketClient.simulateConnectionStatus($0) }
         
         let expectedEvents = connectionStates.map { ConnectionStatusUpdated(webSocketConnectionState: $0).asEquatable }
-        XCTAssertEqual(eventLogger.equatableEvents, expectedEvents)
+        AssertAsync.willBeEqual(eventLogger.equatableEvents, expectedEvents)
     }
     
     // MARK: - Background task tests
@@ -590,11 +617,36 @@ class WebSocketClient_Tests: StressTestCase {
         // Check the background task is terminated
         AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, task)
     }
+    
+    func test_backgroundTaskIsCancelled_whenExpirationHandlerIsCalled() {
+        // Simulate connection and start a background task
+        test_connectionFlow()
+        let task = UIBackgroundTaskIdentifier(rawValue: .random(in: 1...100))
+        backgroundTaskScheduler.beginBackgroundTask = task
+        NotificationCenter.default.post(name: UIApplication.didEnterBackgroundNotification, object: nil)
+        
+        // Wait for `beginBackgroundTask` being called since it can be done asynchronously
+        AssertAsync.willBeTrue(backgroundTaskScheduler.beginBackgroundTask_called)
+        assert(backgroundTaskScheduler.endBackgroundTask_called == nil)
+        
+        // We don't simulate explicit cancelation here
+        // since we expect expiration handler to call disconnect
+        
+        // Call expiration handler
+        backgroundTaskScheduler.beginBackgroundTask_expirationHandler!()
+        
+        // Check the background task is terminated
+        AssertAsync.willBeEqual(backgroundTaskScheduler.endBackgroundTask_called, task)
+    }
 }
 
 final class HealthCheckMiddleware_Tests: XCTestCase {
     var middleware: HealthCheckMiddleware!
     var webSocketClient: WebSocketClientMock!
+    
+    // The database is not needed for the middleware but it's a requirement by the protocol that we provide a valid
+    // db session, so we need to have it.
+    var database: DatabaseContainer!
     
     // MARK: - Setup
     
@@ -603,10 +655,13 @@ final class HealthCheckMiddleware_Tests: XCTestCase {
         
         webSocketClient = WebSocketClientMock()
         middleware = HealthCheckMiddleware(webSocketClient: webSocketClient)
+        
+        database = DatabaseContainerMock()
     }
     
     override func tearDown() {
         AssertAsync.canBeReleased(&webSocketClient)
+        AssertAsync.canBeReleased(&database)
         
         super.tearDown()
     }
@@ -617,9 +672,7 @@ final class HealthCheckMiddleware_Tests: XCTestCase {
         let event = TestEvent()
         
         // Simulate incoming public event
-        let forwardedEvent = try await {
-            middleware.handle(event: event, completion: $0)
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
         // Assert event is forwared as it is
         XCTAssertEqual(forwardedEvent as? TestEvent, event)
@@ -632,30 +685,22 @@ final class HealthCheckMiddleware_Tests: XCTestCase {
         AssertAsync.canBeReleased(&webSocketClient)
         
         // Simulate `HealthCheckEvent`
-        var forwardedEvent: Event?
-        middleware.handle(event: event) {
-            forwardedEvent = $0
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
         
-        // Assert event is not forwared
-        AssertAsync.staysTrue(forwardedEvent == nil)
+        // Assert event is not forwarded
+        XCTAssertNil(forwardedEvent)
     }
     
     func test_middleware_handlesHealthCheckEvents() throws {
         let event = HealthCheckEvent(connectionId: .unique)
         
         // Simulate `HealthCheckEvent`
-        var forwardedEvent: Event?
-        middleware.handle(event: event) {
-            forwardedEvent = $0
-        }
-        
-        AssertAsync {
-            // Assert event is not forwared
-            Assert.staysTrue(forwardedEvent == nil)
-            // Connection state is updated
-            Assert.willBeEqual(self.middleware.webSocketClient?.connectionState, .connected(connectionId: event.connectionId))
-        }
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Assert event is not forwared
+        XCTAssertNil(forwardedEvent)
+        // Connection state is updated
+        XCTAssertEqual(middleware.webSocketClient?.connectionState, .connected(connectionId: event.connectionId))
     }
 }
 
@@ -667,11 +712,19 @@ private struct TestEvent: Event, Equatable {
 
 private class EventDecoderMock: AnyEventDecoder {
     var decode_calledWithData: Data?
-    var decodedEvent: Event!
+    var decodedEvent: Result<Event, Error>!
     
     func decode(from data: Data) throws -> Event {
         decode_calledWithData = data
-        return decodedEvent
+        
+        switch decodedEvent {
+        case let .success(event): return event
+        case let .failure(error): throw error
+        case .none:
+            XCTFail("Undefined state, `decodedEvent` should not be nil")
+            // just dummy error to make compiler happy
+            throw NSError(domain: "some error", code: 0, userInfo: nil)
+        }
     }
 }
 

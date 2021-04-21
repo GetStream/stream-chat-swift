@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
@@ -14,8 +15,13 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
         currentUserController = CurrentUserControllerMock()
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&currentUserController)
+        super.tearDown()
+    }
+    
     func test_controllerInitialValuesAreLoaded() {
-        currentUserController.currentUser_simulated = .init(id: .unique)
+        currentUserController.currentUser_simulated = .mock(id: .unique)
         
         let observableObject = currentUserController.observableObject
         
@@ -26,7 +32,7 @@ class CurrentUserController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = currentUserController.observableObject
         
         // Simulate current user change
-        let newCurrentUser: CurrentChatUser = .init(id: .unique)
+        let newCurrentUser: CurrentChatUser = .mock(id: .unique)
         currentUserController.currentUser_simulated = newCurrentUser
         currentUserController.delegateCallback {
             $0.currentUserController(

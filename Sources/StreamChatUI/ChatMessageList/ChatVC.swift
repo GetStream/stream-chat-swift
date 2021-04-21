@@ -30,9 +30,19 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         .messageListVC
         .init()
 
+    public private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = uiConfig
+        .typingIndicatorView
+        .init()
+        .withoutAutoresizingMaskConstraints
+
     private var navbarListener: ChatChannelNavigationBarListener<ExtraData>?
     
     private var messageComposerBottomConstraint: NSLayoutConstraint?
+    private lazy var keyboardObserver = ChatMessageListKeyboardObserver(
+        containerView: view,
+        scrollView: messageList.collectionView,
+        composerBottomConstraint: messageComposerBottomConstraint
+    )
     
     // MARK: - Life Cycle
 
@@ -41,10 +51,30 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         navigationItem.largeTitleDisplayMode = .never
     }
+    
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        keyboardObserver.register()
+        
+        // This is just a temporary place to do this. When it will be possible to open a channel on any
+        // arbitrary message, we should make the channel read only when it scrolls to the very last message.
+        if let channel = channelController?.channel, channel.config.readEventsEnabled, channel.unreadCount != .noUnread {
+            channelController?.markRead {
+                if let error = $0 {
+                    log.error("Failed to mark channel \(channel.cid) as read. Error: \(error)")
+                } else {
+                    log.info("Channel \(channel.cid) mark read.")
+                }
+            }
+        }
+    }
 
     override open func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         resignFirstResponder()
+        
+        keyboardObserver.unregister()
     }
 
     override open func setUp() {
@@ -59,59 +89,7 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         userSuggestionSearchController.search(term: nil) // Initially, load all users
 
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(keyboardWillChangeFrame),
-            name: UIResponder.keyboardWillChangeFrameNotification,
-            object: nil
-        )
-    }
-    
-    @objc func keyboardWillChangeFrame(notification: NSNotification) {
-        guard
-            let frame = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-            let oldFrame = (notification.userInfo?[UIResponder.keyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue,
-            let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? Double,
-            let curve = notification.userInfo![UIResponder.keyboardAnimationCurveUserInfoKey] as? UInt
-        else { return }
-
-        let localFrame = view.convert(frame, from: nil)
-        let localOldFrame = view.convert(oldFrame, from: nil)
-
-        // message composer follows keyboard
-        messageComposerBottomConstraint?.constant = -(view.bounds.height - localFrame.minY)
-
-        // calculate new contentOffset for message list, so bottom message still visible when keyboard appears
-        var keyboardTop = localFrame.minY
-        if keyboardTop == view.bounds.height {
-            keyboardTop -= view.safeAreaInsets.bottom
-        }
-
-        var oldKeyboardTop = localOldFrame.minY
-        if oldKeyboardTop == view.bounds.height {
-            oldKeyboardTop -= view.safeAreaInsets.bottom
-        }
-
-        let keyboardDelta = oldKeyboardTop - keyboardTop
-        let newContentOffset = CGPoint(
-            x: 0,
-            y: messageList.collectionView.contentOffset.y + keyboardDelta
-        )
-
-        // changing contentOffset will cancel any scrolling in collectionView, bad UX
-        let needUpdateContentOffset = !messageList.collectionView.isDecelerating && !messageList.collectionView.isDragging
-        
-        UIView.animate(
-            withDuration: duration,
-            delay: 0.0,
-            options: UIView.AnimationOptions(rawValue: curve),
-            animations: { [weak self] in
-                self?.view.layoutIfNeeded()
-                if needUpdateContentOffset {
-                    self?.messageList.collectionView.contentOffset = newContentOffset
-                }
-            }
-        )
+        typingIndicatorView.isHidden = true
     }
 
     override open func setUpLayout() {
@@ -135,29 +113,27 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         messageComposerBottomConstraint =
             messageComposerViewController.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
+
+        if channelController.channel?.config.typingEventsEnabled ?? false {
+            view.addSubview(typingIndicatorView)
+            typingIndicatorView.heightAnchor.pin(equalToConstant: 22).isActive = true
+            typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
+            typingIndicatorView.bottomAnchor.pin(equalTo: messageComposerViewController.view.topAnchor).isActive = true
+            messageList.collectionView.contentInset.bottom = 22
+        }
     }
 
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         view.backgroundColor = uiConfig.colorPalette.background
-        let title = UILabel()
-        title.textAlignment = .center
-        title.font = uiConfig.font.headlineBold
-
-        let subtitle = UILabel()
-        subtitle.textAlignment = .center
-        subtitle.font = uiConfig.font.caption1
-        subtitle.textColor = uiConfig.colorPalette.subtitleText
-
-        let titleView = UIStackView(arrangedSubviews: [title, subtitle])
-        titleView.axis = .vertical
+        
+        let titleView = ChatMessageListTitleView<ExtraData>()
 
         navigationItem.titleView = titleView
 
         navbarListener = makeNavbarListener { data in
-            title.text = data.title
-            subtitle.text = data.subtitle
+            titleView.title = data.title
+            titleView.subtitle = data.subtitle
         }
     }
 
@@ -171,22 +147,18 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     // MARK: - ChatMessageListVCDataSource
 
-    // swiftlint:disable:next unavailable_function
     public func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int {
         fatalError("Abstract class violation")
     }
 
-    // swiftlint:disable:next unavailable_function
     public func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData> {
         fatalError("Abstract class violation")
     }
 
-    // swiftlint:disable:next unavailable_function
     public func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) {
         fatalError("Abstract class violation")
     }
 
-    // swiftlint:disable:next unavailable_function
     public func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         replyMessageFor message: _ChatMessage<ExtraData>,
@@ -195,7 +167,6 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         fatalError("Abstract class violation")
     }
 
-    // swiftlint:disable:next unavailable_function
     public func chatMessageListVC(
         _ vc: _ChatMessageListVC<ExtraData>,
         controllerFor message: _ChatMessage<ExtraData>

@@ -34,23 +34,10 @@ class ChatChannelUnreadCountView_Tests: XCTestCase {
         AssertSnapshot(view)
     }
 
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatChannelUnreadCountView {}
-        
-        TestView.defaultAppearance {
-            $0.backgroundColor = .blue
-            $0.unreadCountLabel.font = .boldSystemFont(ofSize: 32)
-        }
-
-        let view = TestView().withoutAutoresizingMaskConstraints
-
-        view.content = .mock(messages: 10)
-        AssertSnapshot(view)
-    }
-
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatChannelUnreadCountView {
             override func setUpAppearance() {
+                super.setUpAppearance()
                 backgroundColor = .blue
             }
 

@@ -18,7 +18,8 @@ extension _ChatMessageImageGallery {
             fileSizeContainer.layer.cornerRadius = fileSizeContainer.bounds.height / 2
         }
 
-        override public func defaultAppearance() {
+        override open func setUpAppearance() {
+            super.setUpAppearance()
             backgroundColor = uiConfig.colorPalette.background4
             fileSizeContainer.backgroundColor = uiConfig.colorPalette.popoverBackground
             fileSizeContainer.layer.masksToBounds = true

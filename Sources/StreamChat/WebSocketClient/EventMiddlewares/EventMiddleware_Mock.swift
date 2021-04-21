@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -7,13 +7,13 @@ import Foundation
 
 /// A test middleware that can be initiated with a closure
 final class EventMiddlewareMock: EventMiddleware {
-    var closure: (Event, @escaping (Event?) -> Void) -> Void
+    var closure: (Event, DatabaseSession) -> Event?
     
-    init(closure: @escaping (Event, @escaping (Event?) -> Void) -> Void = { $1($0) }) {
+    init(closure: @escaping (Event, DatabaseSession) -> Event? = { event, _ in event }) {
         self.closure = closure
     }
     
-    func handle(event: Event, completion: @escaping (Event?) -> Void) {
-        closure(event, completion)
+    func handle(event: Event, session: DatabaseSession) -> Event? {
+        closure(event, session)
     }
 }

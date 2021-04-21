@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import UIKit
@@ -23,7 +23,7 @@ enum ChatMessageReactionsBubbleTail {
         }
 
         static func large(flipped: Bool) -> Self {
-            return .init(
+            .init(
                 smallRadius: 3,
                 bigRadius: 6,
                 border: 0,
@@ -87,7 +87,7 @@ private extension ChatMessageReactionsBubbleTail.Options {
     var bigFrame: CGRect {
         .init(
             x: flipped ?
-                imageSize.width - outline - border - 2*bigRadius :
+                imageSize.width - outline - border - 2 * bigRadius :
                 outline + border,
             y: outline + border,
             width: bigRadius * 2,

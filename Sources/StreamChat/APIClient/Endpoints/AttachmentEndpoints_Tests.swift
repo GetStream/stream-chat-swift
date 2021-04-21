@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -21,7 +21,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
 
         for (type, pathComponent) in testCases {
             let expectedEndpoint: Endpoint<FileUploadPayload> = .init(
-                path: "channels/\(id.cid.type)/\(id.cid.id)/\(pathComponent)",
+                path: "channels/\(id.cid.type.rawValue)/\(id.cid.id)/\(pathComponent)",
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: false,

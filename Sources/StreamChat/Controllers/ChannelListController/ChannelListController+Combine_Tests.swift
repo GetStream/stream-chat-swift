@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Combine
@@ -58,7 +58,7 @@ class ChannelListController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelListControllerMock? = channelListController
         channelListController = nil
 
-        let newChannel: ChatChannel = .init(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
+        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
         controller?.channels_simulated = [newChannel]
         controller?.delegateCallback {
             $0.controller(controller!, didChangeChannels: [.insert(newChannel, index: [0, 1])])

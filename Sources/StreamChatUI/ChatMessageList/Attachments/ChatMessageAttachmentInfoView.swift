@@ -18,14 +18,18 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
         let label = UILabel()
         label.font = uiConfig.font.bodyBold
         label.adjustsFontForContentSizeCategory = true
-        return label.withoutAutoresizingMaskConstraints
+        return label
+            .withoutAutoresizingMaskConstraints
+            .withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var fileSizeLabel: UILabel = {
         let label = UILabel()
         label.font = uiConfig.font.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
-        return label.withoutAutoresizingMaskConstraints
+        return label
+            .withoutAutoresizingMaskConstraints
+            .withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var loadingIndicator = uiConfig
@@ -57,7 +61,8 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         fileSizeLabel.textColor = uiConfig.colorPalette.subtitleText
     }
 

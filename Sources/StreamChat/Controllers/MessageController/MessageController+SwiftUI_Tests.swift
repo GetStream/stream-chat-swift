@@ -14,6 +14,11 @@ class MessageController_SwiftUI_Tests: iOS13TestCase {
         messageController = MessageControllerMock()
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&messageController)
+        super.tearDown()
+    }
+    
     func test_controllerInitialValuesAreLoaded() {
         messageController.state_simulated = .localDataFetched
         messageController.message_simulated = .unique

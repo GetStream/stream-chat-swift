@@ -27,7 +27,9 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
         label.font = uiConfig.font.bodyItalic
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center
-        return label.withoutAutoresizingMaskConstraints
+        return label
+            .withoutAutoresizingMaskConstraints
+            .withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var separator = UIView()
@@ -44,7 +46,8 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         preview.layer.cornerRadius = 8
         preview.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         preview.clipsToBounds = true

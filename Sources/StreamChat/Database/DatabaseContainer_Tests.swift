@@ -4,6 +4,7 @@
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class DatabaseContainer_Tests: StressTestCase {
@@ -205,6 +206,18 @@ class DatabaseContainer_Tests: StressTestCase {
                 bundle: Bundle(for: DatabaseContainer_Tests.self)
             )
         )
+    }
+    
+    func test_channelConfig_isStoredInAllContexts() throws {
+        var cachingSettings = ChatClientConfig.LocalCaching()
+        cachingSettings.chatChannel.lastActiveMembersLimit = .unique
+        cachingSettings.chatChannel.lastActiveWatchersLimit = .unique
+        
+        let database = try DatabaseContainerMock(kind: .inMemory, localCachingSettings: cachingSettings)
+        
+        XCTAssertEqual(database.viewContext.localCachingSettings, cachingSettings)
+        XCTAssertEqual(database.writableContext.localCachingSettings, cachingSettings)
+        XCTAssertEqual(database.backgroundReadOnlyContext.localCachingSettings, cachingSettings)
     }
 }
 

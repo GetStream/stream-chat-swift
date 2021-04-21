@@ -10,6 +10,10 @@ if [[ $(command -v brew) == "" ]]; then
     exit 1
 fi
 
+set -Eeuo pipefail
+
+trap "echo ; echo ❌ The Bootstrap script failed to finish without error. See the log above to debug. ; echo" ERR
+
 echo
 echo -e "👉 Install Mint if needed"
 # List installed Mint versions, if fails, install Mint
@@ -22,6 +26,10 @@ echo
 echo -e "👉 Bootstrap Mint dependencies"
 mint bootstrap
 
+echo
+echo -e "👉 Create git/hooks folder if needed"
+mkdir -p .git/hooks
+
 # Symlink hooks folder to .git/hooks folder
 echo
 echo -e "👉 Create symlink for pre-commit hooks"
@@ -30,12 +38,7 @@ ln -sf ../../hooks/pre-commit.sh .git/hooks/pre-commit
 chmod +x .git/hooks/pre-commit
 chmod +x ./hooks/git-format-staged
 
-# Get SwiftLint version from Mintfile to be used by danger-swiftlint too
-SWIFTLINT_VERSION=$(cat Mintfile | grep SwiftLint | awk -F@ '{print $2}')
-
 # Install gems
 echo
 echo -e "👉 Install bundle dependencies"
-echo "SwiftLint version: " $SWIFTLINT_VERSION
-bundle config SWIFTLINT_VERSION "$SWIFTLINT_VERSION"
 bundle install

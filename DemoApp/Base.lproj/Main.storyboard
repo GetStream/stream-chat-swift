@@ -3,6 +3,7 @@
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17703"/>
+        <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Named colors" minToolsVersion="9.0"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
@@ -120,7 +121,7 @@
                     <navigationItem key="navigationItem" id="u60-gi-N8s"/>
                     <connections>
                         <outlet property="tableView" destination="b2C-Ge-Ivw" id="5sp-Sf-IDQ"/>
-                        <segue destination="yjx-9T-97B" kind="show" identifier="show_advanced_options" id="lV5-dW-IzB"/>
+                        <segue destination="yjx-9T-97B" kind="presentation" identifier="show_advanced_options" id="lV5-dW-IzB"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -132,11 +133,11 @@
             <objects>
                 <viewController id="yjx-9T-97B" customClass="AdvancedOptionsViewController" customModule="ChatSample" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" layoutMarginsFollowReadableWidth="YES" id="LM0-SF-FGq">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="842"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="8QA-pW-MTy">
-                                <rect key="frame" x="0.0" y="104" width="414" height="160"/>
+                                <rect key="frame" x="0.0" y="16" width="414" height="160"/>
                                 <subviews>
                                     <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Chat API Key" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Jye-aX-OTy">
                                         <rect key="frame" x="0.0" y="0.0" width="414" height="34"/>
@@ -161,7 +162,7 @@
                                 </subviews>
                             </stackView>
                             <button opaque="NO" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" layoutMarginsFollowReadableWidth="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="NAL-Cp-UKn" customClass="MainButton" customModule="ChatSample" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="296" width="414" height="44"/>
+                                <rect key="frame" x="0.0" y="208" width="414" height="44"/>
                                 <color key="backgroundColor" name="AccentColor"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="JRh-ZO-YhQ"/>
@@ -175,9 +176,9 @@
                         <constraints>
                             <constraint firstItem="8QA-pW-MTy" firstAttribute="leading" secondItem="tcf-9B-eio" secondAttribute="leading" id="0Hc-zp-VRf"/>
                             <constraint firstItem="tcf-9B-eio" firstAttribute="trailing" secondItem="8QA-pW-MTy" secondAttribute="trailing" id="GAZ-Qz-94z"/>
-                            <constraint firstItem="tcf-9B-eio" firstAttribute="trailing" secondItem="NAL-Cp-UKn" secondAttribute="trailing" id="Zy7-3Y-DqS"/>
+                            <constraint firstItem="NAL-Cp-UKn" firstAttribute="leading" secondItem="iFV-cQ-oZA" secondAttribute="leading" id="Klb-ST-SQC"/>
+                            <constraint firstItem="NAL-Cp-UKn" firstAttribute="trailing" secondItem="iFV-cQ-oZA" secondAttribute="trailing" id="bBg-Fm-XdB"/>
                             <constraint firstItem="8QA-pW-MTy" firstAttribute="top" secondItem="tcf-9B-eio" secondAttribute="top" constant="16" id="gTl-BX-qq8"/>
-                            <constraint firstItem="NAL-Cp-UKn" firstAttribute="leading" secondItem="tcf-9B-eio" secondAttribute="leading" id="mug-kk-zH9"/>
                             <constraint firstItem="NAL-Cp-UKn" firstAttribute="top" secondItem="8QA-pW-MTy" secondAttribute="bottom" constant="32" id="zLe-dh-aXa"/>
                         </constraints>
                     </view>
@@ -235,8 +236,10 @@
                                     </textField>
                                     <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3vQ-eI-nnd">
                                         <rect key="frame" x="363" y="0.0" width="19" height="56"/>
-                                        <color key="tintColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <state key="normal" image="person" catalog="system"/>
+                                        <color key="tintColor" systemColor="labelColor"/>
+                                        <state key="normal">
+                                            <imageReference key="image" image="person" catalog="system" renderingMode="template"/>
+                                        </state>
                                         <connections>
                                             <action selector="addPersonTapped:" destination="rmm-yd-0KJ" eventType="touchUpInside" id="Xai-xu-cPZ"/>
                                         </connections>

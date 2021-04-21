@@ -4,6 +4,7 @@
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class ChannelListController_Tests: StressTestCase {
@@ -177,6 +178,25 @@ class ChannelListController_Tests: StressTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
     
+    /// This test simulates a bug where the `channels` field was not updated if it wasn't
+    /// touched before calling synchronize.
+    func test_channelsAreFetched_afterCallingSynchronize() throws {
+        // Simulate `synchronize` call
+        controller.synchronize()
+        
+        // Create a channel in the DB matching the query
+        let channelId = ChannelId.unique
+        try client.databaseContainer.writeSynchronously {
+            try $0.saveChannel(payload: .dummy(cid: channelId), query: self.query)
+        }
+        
+        // Simulate successful network call.
+        env.channelListUpdater?.update_completion?(nil)
+
+        // Assert the channels are loaded
+        XCTAssertEqual(controller.channels.map(\.cid), [channelId])
+    }
+
     // MARK: - Change propagation tests
     
     func test_changesInTheDatabase_arePropagated() throws {

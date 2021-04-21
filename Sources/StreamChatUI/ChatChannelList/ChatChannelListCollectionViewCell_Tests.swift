@@ -14,10 +14,10 @@ class ChatChannelListCollectionViewCell_Tests: XCTestCase {
         let view = ChatChannelListCollectionViewCell().withoutAutoresizingMaskConstraints
         view.executeLifecycleMethods()
         
-        XCTAssertEqual(view.uiConfig.colorPalette.background, view.channelView.backgroundColor)
+        XCTAssertEqual(view.uiConfig.colorPalette.background, view.itemView.backgroundColor)
         
         view.isHighlighted = true
         
-        XCTAssertEqual(view.uiConfig.colorPalette.highlightedBackground, view.channelView.backgroundColor)
+        XCTAssertEqual(view.uiConfig.colorPalette.highlightedBackground, view.itemView.backgroundColor)
     }
 }

@@ -4,6 +4,8 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamChatTestTools
+import XCTest
 
 extension ChannelDetailPayload where ExtraData == NoExtraData {
     /// Returns a dummy channel detail payload with the given cid
@@ -63,13 +65,14 @@ extension ChannelDetailPayload where ExtraData == NoExtraData {
                         args: "test"
                     )
                 ],
-                createdAt: .unique,
+                createdAt: XCTestCase.channelCreatedDate,
                 updatedAt: .unique
             ),
             isFrozen: true,
             memberCount: 100,
-            team: "",
-            members: [member]
+            team: .unique,
+            members: [member],
+            cooldownDuration: .random(in: 0...120)
         )
     }
 }

@@ -70,9 +70,10 @@ public extension _ChatChannel {
         createdBy: _ChatUser<ExtraData.User>? = nil,
         config: ChannelConfig = .mock(),
         isFrozen: Bool = false,
-        members: Set<_ChatChannelMember<ExtraData.User>> = [],
+        lastActiveMembers: [_ChatChannelMember<ExtraData.User>] = [],
+        membership: _ChatChannelMember<ExtraData.User>? = nil,
         currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
-        watchers: Set<_ChatUser<ExtraData.User>> = [],
+        lastActiveWatchers: [_ChatUser<ExtraData.User>] = [],
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
         memberCount: Int = 0,
@@ -91,15 +92,17 @@ public extension _ChatChannel {
             createdBy: createdBy,
             config: config,
             isFrozen: isFrozen,
-            members: members,
+            lastActiveMembers: { lastActiveMembers },
+            membership: membership,
             currentlyTypingMembers: currentlyTypingMembers,
-            watchers: watchers,
-            unreadCount: unreadCount,
+            lastActiveWatchers: { lastActiveWatchers },
+            unreadCount: { unreadCount },
             watcherCount: watcherCount,
             memberCount: memberCount,
             reads: reads,
             extraData: extraData,
-            latestMessages: latestMessages
+            latestMessages: { latestMessages },
+            underlyingContext: nil
         )
     }
     
@@ -114,9 +117,9 @@ public extension _ChatChannel {
         createdBy: _ChatUser<ExtraData.User>? = nil,
         config: ChannelConfig = .mock(),
         isFrozen: Bool = false,
-        members: Set<_ChatChannelMember<ExtraData.User>> = [],
+        lastActiveMembers: [_ChatChannelMember<ExtraData.User>] = [],
         currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
-        watchers: Set<_ChatUser<ExtraData.User>> = [],
+        lastActiveWatchers: [_ChatUser<ExtraData.User>] = [],
         unreadCount: ChannelUnreadCount = .noUnread,
         watcherCount: Int = 0,
         memberCount: Int = 0,
@@ -135,15 +138,16 @@ public extension _ChatChannel {
             createdBy: createdBy,
             config: config,
             isFrozen: isFrozen,
-            members: members,
+            lastActiveMembers: { lastActiveMembers },
             currentlyTypingMembers: currentlyTypingMembers,
-            watchers: watchers,
-            unreadCount: unreadCount,
+            lastActiveWatchers: { lastActiveWatchers },
+            unreadCount: { unreadCount },
             watcherCount: watcherCount,
             memberCount: memberCount,
             reads: reads,
             extraData: extraData,
-            latestMessages: latestMessages
+            latestMessages: { latestMessages },
+            underlyingContext: nil
         )
     }
 }

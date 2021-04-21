@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class MessageSender_Tests: StressTestCase {
@@ -21,7 +22,7 @@ class MessageSender_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         
         sender = MessageSender(database: database, apiClient: apiClient)
         
@@ -57,6 +58,7 @@ class MessageSender_Tests: StressTestCase {
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send without attachments",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -67,6 +69,7 @@ class MessageSender_Tests: StressTestCase {
             let message2 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send with attachments",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [
                     ChatMessageAttachmentSeed.dummy(),
@@ -81,6 +84,7 @@ class MessageSender_Tests: StressTestCase {
             let message3 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message without local state",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -145,6 +149,7 @@ class MessageSender_Tests: StressTestCase {
             let message = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachments: [TestAttachmentEnvelope(), TestAttachmentEnvelope()],
                 extraData: ExtraData.Message.defaultValue
@@ -169,6 +174,7 @@ class MessageSender_Tests: StressTestCase {
             let message = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachments: [TestAttachmentEnvelope(), TestAttachmentEnvelope()],
                 attachmentSeeds: [.dummy()],
@@ -203,6 +209,7 @@ class MessageSender_Tests: StressTestCase {
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -233,6 +240,7 @@ class MessageSender_Tests: StressTestCase {
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -262,6 +270,7 @@ class MessageSender_Tests: StressTestCase {
             let message1 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send 1",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -272,6 +281,7 @@ class MessageSender_Tests: StressTestCase {
             let message2 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send 2",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -282,6 +292,7 @@ class MessageSender_Tests: StressTestCase {
             let message3 = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send 3",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -349,6 +360,7 @@ class MessageSender_Tests: StressTestCase {
             let messageA1 = try session.createNewMessage(
                 in: cidA,
                 text: "Channel A message 1",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -359,6 +371,7 @@ class MessageSender_Tests: StressTestCase {
             let messageA2 = try session.createNewMessage(
                 in: cidA,
                 text: "Channel A message 2",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -369,6 +382,7 @@ class MessageSender_Tests: StressTestCase {
             let messageB1 = try session.createNewMessage(
                 in: cidB,
                 text: "Channel B message 1",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -379,6 +393,7 @@ class MessageSender_Tests: StressTestCase {
             let messageB2 = try session.createNewMessage(
                 in: cidB,
                 text: "Channel B message 2",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
@@ -442,6 +457,7 @@ class MessageSender_Tests: StressTestCase {
             let message = try session.createNewMessage(
                 in: self.cid,
                 text: "Message pending send",
+                pinning: nil,
                 quotedMessageId: nil,
                 attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue

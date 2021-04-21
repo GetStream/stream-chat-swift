@@ -41,7 +41,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         AssertJSONEqual(encodedJSON, expectedJSON)
     }
     
-    func test_pathParameters() {
+    func test_apiPath() {
         // Create payload without id specified
         let payload1: ChannelEditDetailPayload<NoExtraData> = .init(
             type: .messaging,
@@ -54,7 +54,7 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         )
         
         // Assert only type is part of path
-        XCTAssertEqual(payload1.pathParameters, "\(payload1.type)")
+        XCTAssertEqual(payload1.apiPath, "\(payload1.type)")
         
         // Create payload with id and type specified
         let cid: ChannelId = .unique
@@ -69,6 +69,6 @@ class ChannelEditDetailPayload_Tests: XCTestCase {
         )
         
         // Assert type and id are part of path
-        XCTAssertEqual(payload2.pathParameters, "\(payload2.type)/\(payload2.id!)")
+        XCTAssertEqual(payload2.apiPath, "\(payload2.type.rawValue)/\(payload2.id!)")
     }
 }

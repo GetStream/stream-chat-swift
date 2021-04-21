@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
@@ -10,7 +10,7 @@ enum WaiterError: Error {
 
 /// The maximum time `await` waits for the wrapped function to complete. When running stress tests, this value
 /// is much higher because the system might be under very heavy load.
-private let awaitTimeout: TimeInterval = TestRunnerEnvironment.isStressTest ? 5 : 1
+private let awaitTimeout: TimeInterval = TestRunnerEnvironment.isStressTest || TestRunnerEnvironment.isCI ? 10 : 1
 
 /// Allows calling an asynchronous function in the synchronous way in tests.
 ///
@@ -35,16 +35,20 @@ func await<T>(
     line: UInt = #line,
     _ action: (_ done: @escaping (T) -> Void) -> Void
 ) throws -> T {
-    let expecation = XCTestExpectation(description: "Action completed")
+    let expectation = XCTestExpectation(description: "Action completed")
     var result: T?
     action { resultValue in
-        DispatchQueue.main.async {
-            result = resultValue
-            expecation.fulfill()
+        result = resultValue
+        if Thread.isMainThread {
+            expectation.fulfill()
+        } else {
+            DispatchQueue.main.async {
+                expectation.fulfill()
+            }
         }
     }
     
-    let waiterResult = XCTWaiter.wait(for: [expecation], timeout: timeout)
+    let waiterResult = XCTWaiter.wait(for: [expectation], timeout: timeout)
     switch waiterResult {
     case .completed where result != nil:
         return result!

@@ -41,7 +41,8 @@ struct SimpleEntry: TimelineEntry {
 
 extension ChatChannel {
     var displayName: String {
-        return ChatChannelNamer().name(for: self, as: nil)
+        let namer: ChatChannelNamer<NoExtraData> = DefaultChatChannelNamer()
+        return namer(self, nil) ?? "Unnamed"
     }
 }
 

@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 
 /// A unique identifier of a message.
@@ -68,11 +69,13 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     ///
     public let extraData: ExtraData.Message
     
-    /// Quoted message id.
+    /// Quoted message.
     ///
-    /// If message is inline reply this property will contain id of the message quoted by this reply.
+    /// If message is inline reply this property will contain the message quoted by this reply.
     ///
-    public let quotedMessageId: MessageId?
+    public var quotedMessage: _ChatMessage<ExtraData>? { _quotedMessage }
+
+    @CoreDataLazy internal var _quotedMessage: _ChatMessage<ExtraData>?
     
     /// A flag indicating whether the message is a silent message.
     ///
@@ -84,19 +87,35 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     public let reactionScores: [MessageReactionType: Int]
     
     /// The user which is the author of the message.
-    public let author: _ChatUser<ExtraData.User>
+    ///
+    /// - Important: The `author` property is loaded and evaluated lazily to maintain high performance.
+    public var author: _ChatUser<ExtraData.User> { _author }
+    
+    @CoreDataLazy internal var _author: _ChatUser<ExtraData.User>
     
     /// A list of users that are mentioned in this message.
-    public let mentionedUsers: Set<_ChatUser<ExtraData.User>>
+    ///
+    /// - Important: The `mentionedUsers` property is loaded and evaluated lazily to maintain high performance.
+    public var mentionedUsers: Set<_ChatUser<ExtraData.User>> { _mentionedUsers }
+    
+    @CoreDataLazy internal var _mentionedUsers: Set<_ChatUser<ExtraData.User>>
 
     /// A list of users that participated in this message thread
     public let threadParticipants: Set<UserId>
     
     /// A list of attachments in this message.
-    public let attachments: [ChatMessageAttachment]
+    ///
+    /// - Important: The `attachments` property is loaded and evaluated lazily to maintain high performance.
+    public var attachments: [ChatMessageAttachment] { _attachments }
+    
+    @CoreDataLazy internal var _attachments: [ChatMessageAttachment]
         
     /// A list of latest 25 replies to this message.
-    public let latestReplies: [_ChatMessage<ExtraData>]
+    ///
+    /// - Important: The `latestReplies` property is loaded and evaluated lazily to maintain high performance.
+    public var latestReplies: [_ChatMessage<ExtraData>] { _latestReplies }
+    
+    @CoreDataLazy internal var _latestReplies: [_ChatMessage<ExtraData>]
     
     /// A possible additional local state of the message. Applies only for the messages of the current user.
     ///
@@ -114,12 +133,90 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// The latest reactions to the message created by any user.
     ///
     /// - Note: There can be `10` reactions at max.
-    public let latestReactions: Set<_ChatMessageReaction<ExtraData>>
+    /// - Important: The `latestReactions` property is loaded and evaluated lazily to maintain high performance.
+    public var latestReactions: Set<_ChatMessageReaction<ExtraData>> { _latestReactions }
+    
+    @CoreDataLazy internal var _latestReactions: Set<_ChatMessageReaction<ExtraData>>
     
     /// The entire list of reactions to the message left by the current user.
-    public let currentUserReactions: Set<_ChatMessageReaction<ExtraData>>
+    ///
+    /// - Important: The `currentUserReactions` property is loaded and evaluated lazily to maintain high performance.
+    public var currentUserReactions: Set<_ChatMessageReaction<ExtraData>> { _currentUserReactions }
     
+    @CoreDataLazy internal var _currentUserReactions: Set<_ChatMessageReaction<ExtraData>>
+    
+    /// `true` if the author of the message is the currently logged-in user.
     public let isSentByCurrentUser: Bool
+
+    /// The message pinning information. Is `nil` if the message is not pinned.
+    public let pinDetails: _MessagePinDetails<ExtraData>?
+    
+    internal init(
+        id: MessageId,
+        text: String,
+        type: MessageType,
+        command: String?,
+        createdAt: Date,
+        locallyCreatedAt: Date?,
+        updatedAt: Date,
+        deletedAt: Date?,
+        arguments: String?,
+        parentMessageId: MessageId?,
+        showReplyInChannel: Bool,
+        replyCount: Int,
+        extraData: ExtraData.Message,
+        quotedMessage: @escaping () -> _ChatMessage<ExtraData>?,
+        isSilent: Bool,
+        reactionScores: [MessageReactionType: Int],
+        author: @escaping () -> _ChatUser<ExtraData.User>,
+        mentionedUsers: @escaping () -> Set<_ChatUser<ExtraData.User>>,
+        threadParticipants: Set<UserId>,
+        attachments: @escaping () -> [ChatMessageAttachment],
+        latestReplies: @escaping () -> [_ChatMessage<ExtraData>],
+        localState: LocalMessageState?,
+        isFlaggedByCurrentUser: Bool,
+        latestReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
+        currentUserReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
+        isSentByCurrentUser: Bool,
+        pinDetails: _MessagePinDetails<ExtraData>?,
+        underlyingContext: NSManagedObjectContext?
+    ) {
+        self.id = id
+        self.text = text
+        self.type = type
+        self.command = command
+        self.createdAt = createdAt
+        self.locallyCreatedAt = locallyCreatedAt
+        self.updatedAt = updatedAt
+        self.deletedAt = deletedAt
+        self.arguments = arguments
+        self.parentMessageId = parentMessageId
+        self.showReplyInChannel = showReplyInChannel
+        self.replyCount = replyCount
+        self.extraData = extraData
+        self.isSilent = isSilent
+        self.reactionScores = reactionScores
+        self.threadParticipants = threadParticipants
+        self.localState = localState
+        self.isFlaggedByCurrentUser = isFlaggedByCurrentUser
+        self.isSentByCurrentUser = isSentByCurrentUser
+        self.pinDetails = pinDetails
+        
+        self.$_author = (author, underlyingContext)
+        self.$_mentionedUsers = (mentionedUsers, underlyingContext)
+        self.$_attachments = (attachments, underlyingContext)
+        self.$_latestReplies = (latestReplies, underlyingContext)
+        self.$_latestReactions = (latestReactions, underlyingContext)
+        self.$_currentUserReactions = (currentUserReactions, underlyingContext)
+        self.$_quotedMessage = (quotedMessage, underlyingContext)
+    }
+}
+
+extension _ChatMessage {
+    /// Indicates whether the message is pinned or not.
+    public var isPinned: Bool {
+        pinDetails != nil
+    }
 }
 
 extension _ChatMessage: Hashable {
@@ -160,6 +257,18 @@ public enum MessageType: String, Codable {
     
     /// A deleted message.
     case deleted
+}
+
+// The pinning information of a message.
+public struct _MessagePinDetails<ExtraData: ExtraDataTypes> {
+    /// Date when the message got pinned
+    public let pinnedAt: Date
+
+    /// The user that pinned the message
+    public let pinnedBy: _ChatUser<ExtraData.User>
+
+    /// Date when the message pin expires. An nil value means that message does not expire
+    public let expiresAt: Date
 }
 
 /// A possible additional local state of the message. Applies only for the messages of the current user.

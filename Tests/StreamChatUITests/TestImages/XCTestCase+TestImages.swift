@@ -15,16 +15,19 @@ extension XCTestCase {
         static let yoda: (url: URL, image: UIImage) = {
             getImage(withName: "yoda")
         }()
+
+        static let r2: (url: URL, image: UIImage) = {
+            getImage(withName: "r2")
+        }()
+
+        static let chewbacca: (url: URL, image: UIImage) = {
+            getImage(withName: "chewbacca")
+        }()
         
         private static func getImage(withName name: String, fileExtension: String = "jpg") -> (url: URL, image: UIImage) {
             let bundle = Bundle(for: ThisBundle.self)
             let imageURL = bundle.url(forResource: name, withExtension: fileExtension)!
             let image = UIImage(contentsOfFile: imageURL.path)!
-
-            // Preload image with Nuke, this makes sure the image is set synchronously
-            let request = ImageRequest(url: imageURL)
-            ImageCache.shared[request] = ImageContainer(image: image)
-
             return (imageURL, image)
         }
     }

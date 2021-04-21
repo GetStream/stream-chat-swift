@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -11,6 +11,9 @@ extension TimeInterval {
 
 /// Automatically sends a `TypingStop` event if it hasn't come in a specified time after `TypingStart`.
 class TypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
+    /// A closure that will be invoked with `stop typing` event when the `incomingTypingStartEventTimeout` has passed
+    /// after `start typing` event.
+    let emitEvent: (Event) -> Void
     /// A closure to get a list of user ids to skip typing events for them.
     let excludedUserIds: () -> Set<UserId>
     /// A timer type.
@@ -22,40 +25,35 @@ class TypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
     /// Creates a new `TypingStartCleanupMiddleware`
     ///
     /// - Parameter excludedUsers: A set of users for which the `typingStart` event shouldn't be cleaned up automatically.
-    init(excludedUserIds: @escaping () -> Set<UserId>) {
+    init(excludedUserIds: @escaping () -> Set<UserId>, emitEvent: @escaping (Event) -> Void) {
         self.excludedUserIds = excludedUserIds
+        self.emitEvent = emitEvent
     }
-    
-    func handle(event: Event, completion: @escaping (Event?) -> Void) {
-        defer { completion(event) }
-        
+
+    func handle(event: Event, session: DatabaseSession) -> Event? {
         // Skip other events and typing events from `excludedUserIds`.
         guard let typingEvent = event as? TypingEvent, excludedUserIds().contains(typingEvent.userId) == false else {
-            return
+            return event
         }
-        
-        guard typingEvent.isTyping else {
-            // User stops typing.
-            _typingEventTimeoutTimerControls {
-                $0[typingEvent.userId]?.cancel()
-                $0[typingEvent.userId] = nil
+
+        _typingEventTimeoutTimerControls {
+            $0[typingEvent.userId]?.cancel()
+            $0[typingEvent.userId] = nil
+
+            guard typingEvent.isTyping else { return }
+
+            let stopTyping = { [emitEvent] in
+                let typingStopEvent = TypingEvent(isTyping: false, cid: typingEvent.cid, userId: typingEvent.userId)
+                emitEvent(typingStopEvent)
             }
-            return
-        }
-        
-        // User is typing.
-        let userId = typingEvent.userId
-        _typingEventTimeoutTimerControls.mutate { typingEventTimeoutTimerControls in
 
-            typingEventTimeoutTimerControls[userId]?.cancel()
-
-            let stopTypingEventTimerControl =
-                timer.schedule(timeInterval: .incomingTypingStartEventTimeout, queue: .global()) {
-                    let typingStopEvent = TypingEvent(isTyping: false, cid: typingEvent.cid, userId: userId)
-                    completion(typingStopEvent)
-                }
-            
-            typingEventTimeoutTimerControls[userId] = stopTypingEventTimerControl
+            $0[typingEvent.userId] = timer.schedule(
+                timeInterval: .incomingTypingStartEventTimeout,
+                queue: .global(),
+                onFire: stopTyping
+            )
         }
+
+        return event
     }
 }

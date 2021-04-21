@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -30,6 +30,14 @@ class Cached<T> {
         }
         
         return returnValue
+    }
+    
+    var projectedValue: (() -> T) {
+        get {
+            log.assert(computeValue != nil, "You must set the `computeValue` closure before accessing it.")
+            return computeValue
+        }
+        set { computeValue = newValue }
     }
     
     @Atomic private var _cached: T?

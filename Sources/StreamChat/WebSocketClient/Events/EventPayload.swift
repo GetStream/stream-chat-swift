@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -8,7 +8,7 @@ import Foundation
 
 /// The DTO object mirroring the JSON representation of an event.
 struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
-    private enum CodingKeys: String, CodingKey {
+    enum CodingKeys: String, CodingKey {
         case eventType = "type"
         case connectionId = "connection_id"
         case cid

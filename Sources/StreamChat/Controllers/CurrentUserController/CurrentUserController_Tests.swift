@@ -4,6 +4,7 @@
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class CurrentUserController_Tests: StressTestCase {
@@ -41,6 +42,18 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     // MARK: Controller
+
+    // MARK: - currentUser tests
+
+    func test_currentUser_startsObserving_returnsCurrentUserObserverItem() {
+        let expectedId = UserId.unique
+        let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique)
+
+        env.currentUserObserverItem = .mock(id: expectedId, unreadCount: expectedUnreadCount)
+
+        XCTAssertEqual(controller.currentUser?.id, expectedId)
+        XCTAssertTrue(env.currentUserObserver.startObservingCalled)
+    }
     
     // MARK: - Synchronize tests
     
@@ -48,7 +61,7 @@ final class CurrentUserController_Tests: StressTestCase {
         let expectedId = UserId.unique
         let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique)
         
-        env.currentUserObserverItem = .init(id: expectedId, unreadCount: expectedUnreadCount)
+        env.currentUserObserverItem = .mock(id: expectedId, unreadCount: expectedUnreadCount)
         
         controller.synchronize()
         
@@ -67,7 +80,7 @@ final class CurrentUserController_Tests: StressTestCase {
         XCTAssertEqual(controller.state, .initialized)
         
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         // Simulate `synchronize` call.
         controller.synchronize()
@@ -123,7 +136,7 @@ final class CurrentUserController_Tests: StressTestCase {
         assert(controller.state == .initialized)
         
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         // Simulate `synchronize` call
         controller.synchronize()
@@ -138,7 +151,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_synchronize_propagesErrorFromUpdater() {
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         // Simulate `synchronize` call and catch the completion
         var completionCalledError: Error?
@@ -153,6 +166,20 @@ final class CurrentUserController_Tests: StressTestCase {
         
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    /// This test simulates a bug where the `currentUser` field was not updated if it wasn't
+    /// touched before calling synchronize.
+    func test_currentUserIsFetched_afterCallingSynchronize() throws {
+        // Simulate `synchronize` call
+        controller.synchronize()
+                
+        // Create the current user in the DB
+        let userId = UserId.unique
+        try client.databaseContainer.createCurrentUser(id: userId)
+        
+        // Assert the existing user is loaded
+        XCTAssertEqual(controller.currentUser?.id, userId)
     }
     
     // MARK: - Delegate
@@ -289,7 +316,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_updateUserData_callCurrentUserUpdater_withCorrectValues() {
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         let expectedName = String.unique
         let expectedImageUrl = URL.unique()
@@ -308,7 +335,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_updateUserData_propagatesError() throws {
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         var completionError: Error?
         controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: nil) { [callbackQueueID] in
@@ -326,7 +353,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_updateUserData_propagatesNilError() throws {
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         var completionIsCalled = false
         controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: nil) { [callbackQueueID] error in
@@ -374,7 +401,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_addDevice_callCurrentUserUpdater_withCorrectValues() {
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         let expectedToken = "test".data(using: .utf8)!
         
@@ -387,7 +414,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_addDevice_propagatesError() throws {
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         var completionError: Error?
         controller.addDevice(token: "test".data(using: .utf8)!) { [callbackQueueID] in
@@ -405,7 +432,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_addDevice_propagatesNilError() throws {
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         var completionIsCalled = false
         controller.addDevice(token: "test".data(using: .utf8)!) { [callbackQueueID] error in
@@ -446,7 +473,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_removeDevice_callCurrentUserUpdater_withCorrectValues() {
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         let expectedId = String.unique
         
@@ -459,7 +486,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_removeDevice_propagatesError() throws {
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         let expectedId = String.unique
         
@@ -479,7 +506,7 @@ final class CurrentUserController_Tests: StressTestCase {
     
     func test_removeDevice_propagatesNilError() throws {
         // Simulate current user
-        env.currentUserObserverItem = .init(id: .unique)
+        env.currentUserObserverItem = .mock(id: .unique)
         
         let expectedId = String.unique
         

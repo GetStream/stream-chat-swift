@@ -41,21 +41,6 @@ class ChatChannelReadStatusCheckmarkView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles, suffix: "read")
     }
     
-    func test_appearanceCustomization_usingAppearanceHook() {
-        class TestView: ChatChannelReadStatusCheckmarkView {}
-        TestView.defaultAppearance {
-            $0.imageView.contentMode = .bottom
-            $0.imageView.backgroundColor = .yellow
-        }
-        
-        let view = TestView().withoutAutoresizingMaskConstraints
-        
-        view.addSizeConstraints()
-        
-        view.content = .unread
-        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
-    }
-    
     func test_appearanceCustomization_usingSubclassing() {
         class TestView: ChatChannelReadStatusCheckmarkView {
             override func setUpAppearance() {

@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamChatTestTools
 
 /// Mock implementation of `WebSocketClient`.
 class WebSocketClientMock: WebSocketClient {
@@ -61,7 +62,7 @@ extension WebSocketClientMock {
             sessionConfiguration: .default,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             eventDecoder: EventDecoder<NoExtraData>(),
-            eventNotificationCenter: .init(),
+            eventNotificationCenter: EventNotificationCenterMock(database: DatabaseContainerMock()),
             internetConnection: InternetConnection()
         )
     }

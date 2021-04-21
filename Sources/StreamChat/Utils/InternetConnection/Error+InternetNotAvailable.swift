@@ -14,7 +14,14 @@ private let offlineErrors: [(domain: String, errorCode: Int)] = [
 extension Error {
     /// Returns `true` if the error is one of the known errors for internet connection not being available.
     var isInternetOfflineError: Bool {
+        let engineError = (self as? WebSocketEngineError)?.engineError
+        return offlineErrors.contains {
+            self.has(parameters: $0) || (engineError?.has(parameters: $0) ?? false)
+        }
+    }
+    
+    private func has(parameters: (domain: String, errorCode: Int)) -> Bool {
         let error = self as NSError
-        return offlineErrors.contains { $0.domain == error.domain && $0.errorCode == error.code }
+        return error.domain == parameters.domain && error.code == parameters.errorCode
     }
 }

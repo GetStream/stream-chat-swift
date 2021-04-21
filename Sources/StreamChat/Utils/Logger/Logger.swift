@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -229,12 +229,12 @@ public class Logger {
         log(.error, functionName: functionName, fileName: fileName, lineNumber: lineNumber, message: "Assert failed: \(message())")
     }
     
-    /// Stops program execution with `Swift.assertationFailure`. In RELEASE builds only
+    /// Stops program execution with `Swift.assertionFailure`. In RELEASE builds only
     /// logs the failure.
     ///
     /// - Parameters:
     ///   - message: A custom message to log if `condition` is evaluated to false.
-    public func assertationFailure(
+    public func assertionFailure(
         _ message: @autoclosure () -> Any,
         functionName: StaticString = #function,
         fileName: StaticString = #file,
@@ -257,6 +257,19 @@ private extension Logger {
             } else {
                 return String(format: "[%p] ", Thread.current)
             }
+        }
+    }
+}
+
+extension Data {
+    /// Converts the data into a pretty-printed JSON string. Use only for debug purposes since this operation can be expensive.
+    var debugPrettyPrintedJSON: String {
+        do {
+            let jsonObject = try JSONSerialization.jsonObject(with: self, options: [.allowFragments])
+            let prettyPrintedData = try JSONSerialization.data(withJSONObject: jsonObject, options: [.prettyPrinted])
+            return String(data: prettyPrintedData, encoding: .utf8) ?? "Error: Data to String decoding failed."
+        } catch {
+            return "JSON decoding failed with error: \(error)"
         }
     }
 }

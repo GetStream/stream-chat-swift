@@ -19,22 +19,62 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var defaultSortingAt: Date
     @NSManaged var updatedAt: Date
     @NSManaged var lastMessageAt: Date?
+
+    // The oldest message of the channel we have locally coming from a regular channel query.
+    // This property only lives locally, and it is useful to filter out older pinned messages
+    // that do not belong to the regular channel query.
+    @NSManaged var oldestMessageAt: Date?
+
+    // This field lives only locally and is not populated from the payload. The main purpose of having this is to
+    // visually truncate the channel that exists and have messages locally already. It should be safe to have this
+    // only locally because once the DB is flushed and the channels are fetched fresh, the messages before the
+    // `truncatedAt` date are not returned from the backend.
+    @NSManaged var truncatedAt: Date?
     
     @NSManaged var watcherCount: Int64
     @NSManaged var memberCount: Int64
     
     @NSManaged var isFrozen: Bool
+    @NSManaged var cooldownDuration: Int
     
     // MARK: - Relationships
     
     @NSManaged var createdBy: UserDTO
     @NSManaged var team: TeamDTO?
     @NSManaged var members: Set<MemberDTO>
+
+    /// If the current user is a member of the channel, this is their MemberDTO
+    @NSManaged var membership: MemberDTO?
     @NSManaged var currentlyTypingMembers: Set<MemberDTO>
     @NSManaged var messages: Set<MessageDTO>
+    @NSManaged var pinnedMessages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
     @NSManaged var attachments: Set<AttachmentDTO>
-    
+    @NSManaged var watchers: Set<UserDTO>
+
+    override func willSave() {
+        super.willSave()
+
+        // Change to the `trunctedAt` value have effect on messages, we need to mark them dirty manually
+        // to triggers related FRC updates
+        if changedValues().keys.contains("truncatedAt") {
+            messages
+                .filter { !$0.hasChanges }
+                .forEach {
+                    // Simulate an update
+                    $0.willChangeValue(for: \.id)
+                    $0.didChangeValue(for: \.id)
+                }
+        }
+        
+        // Update the date for sorting every time new message in this channel arrive.
+        // This will ensure that the channel list is updated/sorted when new message arrives.
+        let lastDate = lastMessageAt ?? createdAt
+        if lastDate != defaultSortingAt {
+            defaultSortingAt = lastDate
+        }
+    }
+
     /// The fetch request that returns all existed channels from the database
     static var allChannelsFetchRequest: NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
@@ -70,6 +110,8 @@ class ChannelDTO: NSManagedObject {
 extension ChannelDTO: EphemeralValuesContainer {
     func resetEphemeralValues() {
         currentlyTypingMembers.removeAll()
+        watchers.removeAll()
+        watcherCount = 0
     }
 }
 
@@ -95,19 +137,20 @@ extension NSManagedObjectContext {
         dto.memberCount = Int64(clamping: payload.memberCount)
 
         dto.isFrozen = payload.isFrozen
+        dto.cooldownDuration = payload.cooldownDuration
+
+        dto.team = try payload.team.map { try saveTeam(teamId: $0) }
 
         if let createdByPayload = payload.createdBy {
             let creatorDTO = try saveUser(payload: createdByPayload)
             dto.createdBy = creatorDTO
         }
-        
-        // TODO: Team
-        
+
         try payload.members?.forEach { memberPayload in
             let member = try saveMember(payload: memberPayload, channelId: payload.cid)
             dto.members.insert(member)
         }
-        
+
         if let query = query {
             let queryDTO = saveQuery(query: query)
             queryDTO.channels.insert(dto)
@@ -123,6 +166,12 @@ extension NSManagedObjectContext {
         let dto = try saveChannel(payload: payload.channel, query: query)
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, for: payload.channel.cid) }
+
+        dto.updateOldestMessageAt(payload: payload)
+
+        try payload.pinnedMessages.forEach {
+            _ = try saveMessage(payload: $0, for: payload.channel.cid)
+        }
         
         try payload.channelReads.forEach { _ = try saveChannelRead(payload: $0, for: payload.channel.cid) }
         
@@ -131,8 +180,27 @@ extension NSManagedObjectContext {
             let member = try saveMember(payload: $0, channelId: payload.channel.cid)
             dto.members.insert(member)
         }
+
+        if let membership = payload.membership {
+            let membership = try saveMember(payload: membership, channelId: payload.channel.cid)
+            dto.membership = membership
+        } else {
+            dto.membership = nil
+        }
         
         dto.watcherCount = Int64(clamping: payload.watcherCount ?? 0)
+        
+        if let watchers = payload.watchers {
+            // We don't call `removeAll` on watchers since user could've requested
+            // a different page
+            try watchers.forEach {
+                let user = try saveUser(payload: $0)
+                dto.watchers.insert(user)
+            }
+        }
+        // We don't reset `watchers` array if it's missing
+        // since that can mean that user didn't request watchers
+        // This is done in `ChannelUpdater.channelWatchers` func
         
         return dto
     }
@@ -177,7 +245,6 @@ extension ChannelDTO {
 extension _ChatChannel {
     /// Create a ChannelModel struct from its DTO
     fileprivate static func create(fromDTO dto: ChannelDTO) -> _ChatChannel {
-        let members: [_ChatChannelMember<ExtraData.User>] = dto.members.map { $0.asModel() }
         let typingMembers: [_ChatChannelMember<ExtraData.User>] = dto.currentlyTypingMembers.map { $0.asModel() }
 
         let extraData: ExtraData.Channel
@@ -195,30 +262,55 @@ extension _ChatChannel {
         
         let context = dto.managedObjectContext!
         
-        // TODO: make messagesLimit a param
-        let latestMessages: [_ChatMessage<ExtraData>] = MessageDTO
-            .load(for: dto.cid, limit: 25, context: context)
-            .map { $0.asModel() }
-        
         let reads: [_ChatChannelRead<ExtraData>] = dto.reads.map { $0.asModel() }
         
-        var unreadCount = ChannelUnreadCount.noUnread
-        if let currentUser = context.currentUser(),
-            let currentUserChannelRead = reads.first(where: { $0.user.id == currentUser.user.id }) {
-            // Fetch count of all mentioned messages after last read
-            let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
-            request.predicate = NSPredicate(
-                format: "(channel.cid == %@) AND (createdAt > %@) AND (%@ IN mentionedUsers)",
-                dto.cid,
-                currentUserChannelRead.lastReadAt as NSDate,
-                currentUser.user
-            )
-            let mentionedMessagesCount = try! context.count(for: request)
+        let unreadCount: () -> ChannelUnreadCount = {
+            guard let currentUser = context.currentUser() else { return .noUnread }
             
-            unreadCount = ChannelUnreadCount(
-                messages: currentUserChannelRead.unreadMessagesCount,
-                mentionedMessages: mentionedMessagesCount
-            )
+            let currentUserRead = reads.first(where: { $0.user.id == currentUser.user.id })
+            
+            let allUnreadMessages = currentUserRead?.unreadMessagesCount ?? 0
+            
+            // Fetch count of all mentioned messages after last read
+            // (this is not 100% accurate but it's the best we have)
+            let metionedUnreadMessagesRequest = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+            metionedUnreadMessagesRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+                MessageDTO.channelMessagesPredicate(for: dto.cid),
+                NSPredicate(format: "createdAt > %@", currentUserRead?.lastReadAt as NSDate? ?? NSDate(timeIntervalSince1970: 0)),
+                NSPredicate(format: "%@ IN mentionedUsers", currentUser.user)
+            ])
+            
+            do {
+                return ChannelUnreadCount(
+                    messages: allUnreadMessages,
+                    mentionedMessages: try context.count(for: metionedUnreadMessagesRequest)
+                )
+            } catch {
+                log.error("Failed to fetch unread counts for channel `\(cid)`. Error: \(error)")
+                return .noUnread
+            }
+        }
+        
+        let fetchMessages: () -> [_ChatMessage<ExtraData>] = {
+            MessageDTO
+                .load(
+                    for: dto.cid,
+                    limit: dto.managedObjectContext?.localCachingSettings?.chatChannel.latestMessagesLimit ?? 25,
+                    context: context
+                )
+                .map { $0.asModel() }
+        }
+        
+        let fetchWatchers: () -> [_ChatUser<ExtraData.User>] = {
+            UserDTO
+                .loadLastActiveWatchers(cid: cid, context: context)
+                .map { $0.asModel() }
+        }
+        
+        let fetchMembers: () -> [_ChatChannelMember<ExtraData.User>] = {
+            MemberDTO
+                .loadLastActiveMembers(cid: cid, context: context)
+                .map { $0.asModel() }
         }
         
         return _ChatChannel(
@@ -232,18 +324,37 @@ extension _ChatChannel {
             createdBy: dto.createdBy.asModel(),
             config: try! JSONDecoder().decode(ChannelConfig.self, from: dto.config),
             isFrozen: dto.isFrozen,
-            members: Set(members),
+            lastActiveMembers: { fetchMembers() },
+            membership: dto.membership.map { $0.asModel() },
             currentlyTypingMembers: Set(typingMembers),
-            watchers: [],
-//            team: "",
-            unreadCount: unreadCount,
+            lastActiveWatchers: { fetchWatchers() },
+            team: dto.team?.id,
+            unreadCount: { unreadCount() },
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),
-//            banEnabling: .disabled,
+            //            banEnabling: .disabled,
             reads: reads,
+            cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,
-//            invitedMembers: [],
-            latestMessages: latestMessages
+            //            invitedMembers: [],
+            latestMessages: { fetchMessages() },
+            pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } },
+            underlyingContext: dto.managedObjectContext
         )
+    }
+}
+
+// Helpers
+private extension ChannelDTO {
+    /// Updates the `oldestMessageAt` of the channel. It should only updates if the current `messages: [Message]`
+    /// is older than the current `ChannelDTO.oldestMessageAt`, unless the current `ChannelDTO.oldestMessageAt`
+    /// is the default one, which is by default a very old date, so are sure the first messages are always fetched.
+    func updateOldestMessageAt<ExtraData: ExtraDataTypes>(payload: ChannelPayload<ExtraData>) {
+        if let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() {
+            let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt ?? Date.distantFuture)
+            if isOlderThanCurrentOldestMessage {
+                oldestMessageAt = payloadOldestMessageAt
+            }
+        }
     }
 }

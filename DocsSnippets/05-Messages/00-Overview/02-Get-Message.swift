@@ -10,13 +10,13 @@ func snippet_messages_overview_get_message() {
     /// 1: Create a `ChannelId` that represents the channel you want to get a message from.
     let channelId = ChannelId(type: .messaging, id: "general")
 
-    /// 1: Create a `MessageId` that represents the message you want to get.
+    /// 2: Create a `MessageId` that represents the message you want to get.
     let messageId = "message-id"
 
-    /// 2: Use the `ChatClient` to create a `ChatChannelController` with the `ChannelId`.
+    /// 3: Use the `ChatClient` to create a `ChatMessageController` with the `ChannelId` and message id.
     let messageController = chatClient.messageController(cid: channelId, messageId: messageId)
-
-    /// 3: Call `ChatChannelController.createNewMessage` to create the message.
+    
+    /// 4: Call `ChatMessageController.synchronize` to get the message.
     messageController.synchronize { error in
         // handle possible errors / access message
         print(error ?? messageController.message!)

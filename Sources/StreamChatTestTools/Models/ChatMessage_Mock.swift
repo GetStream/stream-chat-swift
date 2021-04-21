@@ -19,7 +19,7 @@ public extension _ChatMessage {
         deletedAt: Date? = nil,
         arguments: String? = nil,
         parentMessageId: MessageId? = nil,
-        quotedMessageId: MessageId? = nil,
+        quotedMessage: _ChatMessage<ExtraData>? = nil,
         showReplyInChannel: Bool = false,
         replyCount: Int = 0,
         extraData: ExtraData.Message = .defaultValue,
@@ -33,7 +33,8 @@ public extension _ChatMessage {
         isFlaggedByCurrentUser: Bool = false,
         latestReactions: Set<_ChatMessageReaction<ExtraData>> = [],
         currentUserReactions: Set<_ChatMessageReaction<ExtraData>> = [],
-        isSentByCurrentUser: Bool = false
+        isSentByCurrentUser: Bool = false,
+        pinDetails: _MessagePinDetails<ExtraData>? = nil
     ) -> Self {
         .init(
             id: id,
@@ -49,19 +50,21 @@ public extension _ChatMessage {
             showReplyInChannel: showReplyInChannel,
             replyCount: replyCount,
             extraData: extraData,
-            quotedMessageId: quotedMessageId,
+            quotedMessage: { quotedMessage },
             isSilent: isSilent,
             reactionScores: reactionScores,
-            author: author,
-            mentionedUsers: mentionedUsers,
+            author: { author },
+            mentionedUsers: { mentionedUsers },
             threadParticipants: threadParticipants,
-            attachments: attachments,
-            latestReplies: latestReplies,
+            attachments: { attachments },
+            latestReplies: { latestReplies },
             localState: localState,
             isFlaggedByCurrentUser: isFlaggedByCurrentUser,
-            latestReactions: latestReactions,
-            currentUserReactions: currentUserReactions,
-            isSentByCurrentUser: isSentByCurrentUser
+            latestReactions: { latestReactions },
+            currentUserReactions: { currentUserReactions },
+            isSentByCurrentUser: isSentByCurrentUser,
+            pinDetails: pinDetails,
+            underlyingContext: nil
         )
     }
 }

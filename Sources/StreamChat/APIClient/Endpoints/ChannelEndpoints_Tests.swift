@@ -60,7 +60,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         for (query, requiresConnectionId) in testCases {
             let expectedEndpoint =
                 Endpoint<ChannelPayload<NoExtraData>>(
-                    path: "channels/\(query.pathParameters)/query",
+                    path: "channels/\(query.apiPath)/query",
                     method: .post,
                     queryItems: nil,
                     requiresConnectionId: requiresConnectionId,
@@ -79,7 +79,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let channelPayload: ChannelEditDetailPayload<NoExtraData> = .unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(channelPayload.pathParameters)",
+            path: "channels/\(channelPayload.apiPath)",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -97,7 +97,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)",
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
@@ -110,7 +110,25 @@ final class ChannelEndpoints_Tests: XCTestCase {
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
-    
+
+    func test_truncateChannel_buildsCorrectly() {
+        let cid = ChannelId.unique
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/truncate",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .truncateChannel(cid: cid)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+
     func test_hideChannel_buildsCorrectly() {
         let testCases = [true, false]
         
@@ -118,7 +136,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
             let cid = ChannelId.unique
 
             let expectedEndpoint = Endpoint<EmptyResponse>(
-                path: "channels/\(cid.type)/\(cid.id)/hide",
+                path: "channels/\(cid.type.rawValue)/\(cid.id)/hide",
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: false,
@@ -162,7 +180,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)/show",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/show",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -191,7 +209,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         )
         
         let expectedEndpoint = Endpoint<MessagePayload<NoExtraData>.Boxed>(
-            path: "channels/\(cid.type)/\(cid.id)/message",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/message",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -210,7 +228,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -229,7 +247,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -247,7 +265,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let cid = ChannelId.unique
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)/read",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/read",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -278,7 +296,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let eventType = EventType.userStartTyping
         
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: "channels/\(cid.type)/\(cid.id)/event",
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/event",
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -286,6 +304,57 @@ final class ChannelEndpoints_Tests: XCTestCase {
         )
         
         let endpoint = Endpoint<EmptyResponse>.sendEvent(cid: cid, eventType: eventType)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+    
+    func test_enableSlowMode_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let cooldownDuration = Int.random(in: 0...120)
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type.rawValue)/\(cid.id)",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["cooldown": cooldownDuration]
+        )
+        
+        let endpoint = Endpoint<EmptyResponse>.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+    
+    func test_stopWatching_buildsCorrectly() {
+        let cid = ChannelId.unique
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/\(cid.type.rawValue)/\(cid.id)/stop-watching",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: nil
+        )
+        
+        let endpoint = Endpoint<EmptyResponse>.stopWatching(cid: cid)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
+    
+    func test_channelWatchers_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let pagination = Pagination(pageSize: .random(in: 10...100), offset: .random(in: 10...100))
+        let query = ChannelWatcherListQuery(cid: cid, pagination: pagination)
+        
+        let expectedEndpoint = Endpoint<ChannelPayload<NoExtraData>>(
+            path: "channels/\(query.cid.type.rawValue)/\(query.cid.id)/query",
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: query
+        )
+        
+        let endpoint: Endpoint<ChannelPayload<NoExtraData>> = .channelWatchers(query: query)
         
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }

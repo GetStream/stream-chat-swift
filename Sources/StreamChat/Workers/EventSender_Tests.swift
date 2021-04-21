@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class EventSender_Tests: StressTestCase {
@@ -19,7 +20,7 @@ class EventSender_Tests: StressTestCase {
         
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
         
         time = VirtualTime()
         VirtualTimeTimer.time = time
@@ -30,6 +31,7 @@ class EventSender_Tests: StressTestCase {
     
     override func tearDown() {
         apiClient.cleanUp()
+        AssertAsync.canBeReleased(&database)
         super.tearDown()
     }
     

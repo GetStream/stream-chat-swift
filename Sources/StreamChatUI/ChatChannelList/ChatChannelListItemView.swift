@@ -5,159 +5,187 @@
 import StreamChat
 import UIKit
 
-/// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
+/// An `UIView` subclass that shows summary and preview information about a given channel.
 public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
-/// A  `ChatChannelSwipeableListItemView` subclass view that shows channel information.
-open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _ChatChannelSwipeableListItemView<ExtraData> {
+/// An `UIView` subclass that shows summary and preview information about a given channel.
+open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
     /// The data this view component shows.
-    public var content: (channel: _ChatChannel<ExtraData>?, currentUserId: UserId?) {
+    public var content: _ChatChannel<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
-        
-    private lazy var uiConfigSubviews: _UIConfig.ChannelListItemSubviews = uiConfig.channelList.channelListItemSubviews
-    
-    /// The `ContainerStackView` instance used to arrange view,
-    open private(set) lazy var container: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+
+    /// The date formatter of the `timestampLabel`
+    public lazy var dateFormatter: DateFormatter = .makeDefault()
+
+    /// Main container which holds `avatarView` and two horizontal containers `title` and `unreadCount` and
+    /// `subtitle` and `timestampLabel`
+    open private(set) lazy var mainContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+
+    /// By default contains `title` and `unreadCount`.
+    /// This container is embed inside `mainContainer ` and is the one above `bottomContainer`
+    open private(set) lazy var topContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
+
+    /// By default contains `subtitle` and `timestampLabel`.
+    /// This container is embed inside `mainContainer ` and is the one below `topContainer`
+    open private(set) lazy var bottomContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
     
     /// The `UILabel` instance showing the channel name.
-    open private(set) lazy var titleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    open private(set) lazy var titleLabel: UILabel = uiConfig
+        .channelList
+        .itemSubviews
+        .titleLabel
+        .init()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
     
     /// The `UILabel` instance showing the last message or typing members if any.
-    open private(set) lazy var subtitleLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    open private(set) lazy var subtitleLabel: UILabel = uiConfig
+        .channelList
+        .itemSubviews
+        .subtitleLabel
+        .init()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
     
     /// The `UILabel` instance showing the time of the last sent message.
-    open private(set) lazy var timestampLabel: UILabel = UILabel().withoutAutoresizingMaskConstraints
+    open private(set) lazy var timestampLabel: UILabel = uiConfig
+        .channelList
+        .itemSubviews
+        .timestampLabel
+        .init()
+        .withoutAutoresizingMaskConstraints
+        .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
     
     /// The view used to show channels avatar.
-    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfigSubviews
+    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
+        .channelList
+        .itemSubviews
         .avatarView
         .init()
         .withoutAutoresizingMaskConstraints
     
     /// The view showing number of unread messages in channel if any.
-    open private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfigSubviews
+    open private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfig
+        .channelList
+        .itemSubviews
         .unreadCountView.init()
         .withoutAutoresizingMaskConstraints
 
-    /// The view showing indicator for read status of the last message in channel.
-    open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
-        .readStatusView.init()
-        .withoutAutoresizingMaskConstraints
-
-    override public func defaultAppearance() {
-        super.defaultAppearance()
-
-        backgroundColor = uiConfig.colorPalette.background
-
-        titleLabel.adjustsFontForContentSizeCategory = true
-        titleLabel.font = uiConfig.font.bodyBold
-
-        subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
-        subtitleLabel.adjustsFontForContentSizeCategory = true
-        subtitleLabel.font = uiConfig.font.subheadline
-        
-        timestampLabel.textColor = uiConfig.colorPalette.subtitleText
-        timestampLabel.adjustsFontForContentSizeCategory = true
-        timestampLabel.font = uiConfig.font.subheadline
-    }
-
-    override open func setUpLayout() {
-        super.setUpLayout()
-
-        cellContentView.embed(container, insets: directionalLayoutMargins)
-                
-        container.leftStackView.isHidden = false
-        container.leftStackView.alignment = .center
-        container.leftStackView.isLayoutMarginsRelativeArrangement = true
-        container.leftStackView.directionalLayoutMargins = .init(
-            top: 0,
-            leading: 0,
-            bottom: 0,
-            trailing: avatarView.directionalLayoutMargins.trailing
-        )
-        
-        avatarView.heightAnchor.pin(equalToConstant: 48).isActive = true
-        avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor).isActive = true
-        container.leftStackView.addArrangedSubview(avatarView)
-        
-        // UIStackView embedded in UIView with flexible top and bottom constraints to make
-        // containing UIStackView centred and preserving content size.
-        let containerCenterView = UIView()
-        let stackView = UIStackView()
-        stackView.axis = .vertical
-        
-        containerCenterView.addSubview(stackView)
-        stackView.topAnchor.pin(greaterThanOrEqualTo: containerCenterView.layoutMarginsGuide.topAnchor).isActive = true
-        stackView.bottomAnchor.pin(lessThanOrEqualTo: containerCenterView.layoutMarginsGuide.bottomAnchor).isActive = true
-        stackView.pin(anchors: [.leading, .centerY], to: containerCenterView)
-        stackView.trailingAnchor.pin(equalTo: containerCenterView.trailingAnchor).with(priority: .streamAlmostRequire)
-            .isActive = true
-        stackView.spacing = 2
-        
-        let topCenterStackView = UIStackView()
-        topCenterStackView.alignment = .top
-        topCenterStackView.spacing = UIStackView.spacingUseSystem
-        topCenterStackView.addArrangedSubview(titleLabel)
-        topCenterStackView.addArrangedSubview(unreadCountView)
-        
-        let bottomCenterStackView = UIStackView()
-        bottomCenterStackView.spacing = UIStackView.spacingUseSystem
-        
-        subtitleLabel.setContentHuggingPriority(.defaultLow, for: .horizontal)
-        subtitleLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        timestampLabel.setContentHuggingPriority(.defaultHigh, for: .horizontal)
-        
-        bottomCenterStackView.addArrangedSubview(subtitleLabel)
-        bottomCenterStackView.setCustomSpacing(UIStackView.spacingUseSystem, after: subtitleLabel)
-        bottomCenterStackView.addArrangedSubview(readStatusView)
-        bottomCenterStackView.addArrangedSubview(timestampLabel)
-        
-        stackView.addArrangedSubview(topCenterStackView)
-        stackView.addArrangedSubview(bottomCenterStackView)
-        
-        container.centerStackView.isHidden = false
-        container.centerStackView.addArrangedSubview(containerCenterView)
-    }
-    
-    override open func updateContent() {
-        if let channel = content.channel {
-            let namer = uiConfig.channelList.channelNamer.init()
-            titleLabel.text = namer.name(for: channel, as: content.currentUserId)
+    /// Text of `titleLabel` which contains the channel name.
+    open var titleText: String? {
+        if let channel = content {
+            return uiConfig.channelList.channelNamer(channel, channel.membership?.id)
         } else {
-            titleLabel.text = L10n.Channel.Name.missing
+            return nil
         }
-                
-        subtitleLabel.text = typingMemberOrLastMessageString
-
-        avatarView.content = .channelAndUserId(channel: content.channel, currentUserId: content.currentUserId)
-
-        unreadCountView.content = content.channel?.unreadCount ?? .noUnread
-        unreadCountView.invalidateIntrinsicContentSize()
-                
-        timestampLabel.text = content.channel?.lastMessageAt?.getFormattedDate(format: "hh:mm a")
-        
-        // TODO: ReadStatusView
-        // Missing LLC API
-        readStatusView.isHidden = true
     }
-}
 
-extension _ChatChannelListItemView {
-    var typingMemberString: String? {
-        guard let members = content.channel?.currentlyTypingMembers, !members.isEmpty else { return nil }
-        let names = members.compactMap(\.name).sorted()
-        return names.joined(separator: ", ") + " \(names.count == 1 ? "is" : "are") typing..."
-    }
-    
-    var typingMemberOrLastMessageString: String? {
-        guard let channel = content.channel else { return nil }
+    /// Text of `subtitleLabel` which contains current typing member or the last message in the channel.
+    open var subtitleText: String? {
+        guard let channel = content else { return nil }
         if let typingMembersInfo = typingMemberString {
             return typingMembersInfo
         } else if let latestMessage = channel.latestMessages.first {
             return "\(latestMessage.author.name ?? latestMessage.author.id): \(latestMessage.text)"
         } else {
-            return "No messages"
+            return L10n.Channel.Item.emptyMessages
         }
+    }
+
+    /// Text of `timestampLabel` which contains the time of the last sent message.
+    open var timestampText: String? {
+        if let lastMessageAt = content?.lastMessageAt {
+            return dateFormatter.string(from: lastMessageAt)
+        } else {
+            return nil
+        }
+    }
+
+    /*
+         TODO: ReadStatusView, Missing LLC API
+     /// The view showing indicator for read status of the last message in channel.
+     open private(set) lazy var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData> = uiConfigSubviews
+         .readStatusView.init()
+         .withoutAutoresizingMaskConstraints
+      */
+
+    override open func setUpAppearance() {
+        super.setUpAppearance()
+        backgroundColor = uiConfig.colorPalette.background
+
+        titleLabel.font = uiConfig.font.bodyBold
+
+        subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
+        subtitleLabel.font = uiConfig.font.footnote
+        
+        timestampLabel.textColor = uiConfig.colorPalette.subtitleText
+        timestampLabel.font = uiConfig.font.footnote
+    }
+
+    override open func setUpLayout() {
+        super.setUpLayout()
+
+        /// Default layout:
+        /// ```
+        /// |----------------------------------------------------|
+        /// |            | titleLabel          | unreadCountView |
+        /// | avatarView | --------------------------------------|
+        /// |            | subtitleLabel        | timestampLabel |
+        /// |----------------------------------------------------|
+        /// ```
+        
+        topContainer.addArrangedSubviews([
+            titleLabel.flexible(axis: .horizontal), unreadCountView
+        ])
+
+        bottomContainer.addArrangedSubviews([
+            subtitleLabel.flexible(axis: .horizontal), timestampLabel
+        ])
+
+        NSLayoutConstraint.activate([
+            avatarView.heightAnchor.pin(equalToConstant: 48),
+            avatarView.widthAnchor.pin(equalTo: avatarView.heightAnchor)
+        ])
+
+        mainContainer.addArrangedSubviews([
+            avatarView, ContainerStackView(axis: .vertical, spacing: 4, views: [topContainer, bottomContainer])
+        ])
+        
+        mainContainer.alignment = .center
+        mainContainer.isLayoutMarginsRelativeArrangement = true
+        
+        embed(mainContainer)
+    }
+    
+    override open func updateContent() {
+        titleLabel.text = titleText
+        subtitleLabel.text = subtitleText
+        timestampLabel.text = timestampText
+
+        avatarView.content = (content, content?.membership?.id)
+
+        unreadCountView.content = content?.unreadCount ?? .noUnread
+        unreadCountView.invalidateIntrinsicContentSize()
+    }
+}
+
+extension _ChatChannelListItemView {
+    /// The formatted string containing the typing member.
+    var typingMemberString: String? {
+        guard let members = content?.currentlyTypingMembers, !members.isEmpty else { return nil }
+
+        let names = members
+            .compactMap(\.name)
+            .sorted()
+            .joined(separator: ", ")
+
+        let typingSingularText = L10n.Channel.Item.typingSingular
+        let typingPluralText = L10n.Channel.Item.typingPlural
+
+        return names + " \(members.count == 1 ? typingSingularText : typingPluralText)"
     }
 }

@@ -113,6 +113,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     /// - Parameters:
     ///   - cid: The cid of the channel the message is create in.
     ///   - text: Text of the message.
+    ///   - pinning: Pins the new message. Nil if should not be pinned.
     ///   - parentMessageId: The `MessageId` of the message this message replies to.
     ///   - attachments: An array of the attachments for the message.
     ///   - showReplyInChannel: Set this flag to `true` if you want the message to be also visible in the channel, not only
@@ -124,6 +125,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     func createNewReply(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         command: String?,
         arguments: String?,
         parentMessageId: MessageId,
@@ -138,6 +140,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
             let newMessageDTO = try session.createNewMessage(
                 in: cid,
                 text: text,
+                pinning: pinning,
                 command: command,
                 arguments: arguments,
                 parentMessageId: parentMessageId,
@@ -268,6 +271,63 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) {
             completion?($0.error)
         }
+    }
+
+    /// Pin the message with the provided message id.
+    ///  - Parameters:
+    ///   - messageId: The message identifier.
+    ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
+    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
+    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
+        database.write({ session in
+            guard let messageDTO = session.message(id: messageId) else {
+                throw ClientError.MessageDoesNotExist(messageId: messageId)
+            }
+
+            switch messageDTO.localMessageState {
+            case nil, .pendingSync, .syncingFailed, .deletingFailed:
+                try session.pin(message: messageDTO, pinning: pinning)
+                messageDTO.localMessageState = .pendingSync
+            case .pendingSend, .sendingFailed:
+                try session.pin(message: messageDTO, pinning: pinning)
+                messageDTO.localMessageState = .pendingSend
+            case .sending, .syncing, .deleting:
+                throw ClientError.MessageEditing(
+                    messageId: messageId,
+                    reason: "message is in `\(messageDTO.localMessageState!)` state"
+                )
+            }
+        }, completion: {
+            completion?($0)
+        })
+    }
+
+    /// Unpin the message with the provided message id.
+    ///  - Parameters:
+    ///   - messageId: The message identifier.
+    ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
+    func unpinMessage(messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
+        database.write({ session in
+            guard let messageDTO = session.message(id: messageId) else {
+                throw ClientError.MessageDoesNotExist(messageId: messageId)
+            }
+
+            switch messageDTO.localMessageState {
+            case nil, .pendingSync, .syncingFailed, .deletingFailed:
+                session.unpin(message: messageDTO)
+                messageDTO.localMessageState = .pendingSync
+            case .pendingSend, .sendingFailed:
+                session.unpin(message: messageDTO)
+                messageDTO.localMessageState = .pendingSend
+            case .sending, .syncing, .deleting:
+                throw ClientError.MessageEditing(
+                    messageId: messageId,
+                    reason: "message is in `\(messageDTO.localMessageState!)` state"
+                )
+            }
+        }, completion: {
+            completion?($0)
+        })
     }
 
     /// Updates local state of attachment with provided `id` to be enqueued by attachment uploader.

@@ -145,6 +145,7 @@ extension _CurrentChatUser {
             createdAt: user.userCreatedAt,
             updatedAt: user.userUpdatedAt,
             lastActiveAt: user.lastActivityAt,
+            teams: Set(user.teams?.map(\.id) ?? []),
             extraData: extraData,
             devices: dto.devices.map { $0.asModel() },
             currentDevice: nil,

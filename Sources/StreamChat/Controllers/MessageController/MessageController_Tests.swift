@@ -4,6 +4,7 @@
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class MessageController_Tests: StressTestCase {
@@ -161,6 +162,30 @@ final class MessageController_Tests: StressTestCase {
         message = try XCTUnwrap(controller.message)
         XCTAssertEqual(message.id, messageId)
         XCTAssertEqual(message.text, messagePayload.text)
+    }
+    
+    /// This test simulates a bug where the `message` and `replies` fields were not updated if they weren't
+    /// touched before calling synchronize.
+    func test_channelsAreFetched_afterCallingSynchronize() throws {
+        // Simulate `synchronize` call
+        controller.synchronize()
+        
+        // Create the message and replies in the DB
+        try client.databaseContainer.createCurrentUser(id: currentUserId)
+        try client.databaseContainer.createChannel(cid: cid)
+        try client.databaseContainer.createMessage(
+            id: messageId,
+            authorId: currentUserId,
+            cid: cid,
+            text: "No, I am your father.",
+            numberOfReplies: 10
+        )
+        
+        // Simulate updater completion call
+        env.messageUpdater.getMessage_completion?(nil)
+        
+        XCTAssertEqual(controller.message?.id, messageId)
+        XCTAssertEqual(controller.replies.count, 10)
     }
     
     // MARK: - Order
@@ -626,11 +651,13 @@ final class MessageController_Tests: StressTestCase {
             .dummy(),
             .dummy()
         ]
+        let pin = MessagePinning(expirationDate: .unique)
 
         // Simulate `createNewReply` calls and catch the completion
         var completionCalled = false
         controller.createNewReply(
             text: text,
+            pinning: pin,
 //            command: command,
 //            arguments: arguments,
             attachments: attachments + attachmentSeeds,
@@ -673,6 +700,9 @@ final class MessageController_Tests: StressTestCase {
         env.messageUpdater.createNewReply_completion?(.success(newMessageId))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.createNewReply_completion = nil
+
+        // Pin
+        XCTAssertEqual(env.messageUpdater.createNewReply_pinning, pin)
         
         // Completion should be called
         AssertAsync.willBeTrue(completionCalled)
@@ -952,9 +982,108 @@ final class MessageController_Tests: StressTestCase {
         AssertAsync.staysTrue(weakController != nil)
     }
 
+    // MARK: - Pinning message
+
+    func test_pinMessage_callsMessageUpdater() throws {
+        let pinning = MessagePinning(expirationDate: .unique)
+
+        // Simulate `pin` calls and catch the completion
+        var completionCalled = false
+        controller.pin(pinning) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        XCTAssertEqual(env.messageUpdater?.pinMessage_messageId, messageId)
+        XCTAssertEqual(env.messageUpdater?.pinMessage_pinning, pinning)
+
+        // Simulate successful update
+        env.messageUpdater?.pinMessage_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.messageUpdater!.pinMessage_completion = nil
+
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_pinMessage_callsMessageUpdaterWithError() {
+        // Simulate `pin` call and catch the completion
+        var completionCalledError: Error?
+        controller.pin(.noExpiration) { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+
+        // Simulate failed update
+        let testError = TestError()
+        env.messageUpdater!.pinMessage_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
+    func test_unpinMessage_callsMessageUpdater() throws {
+        // Simulate `unpin` calls and catch the completion
+        var completionCalled = false
+        controller.unpin { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Completion shouldn't be called yet
+        XCTAssertFalse(completionCalled)
+        XCTAssertEqual(env.messageUpdater?.unpinMessage_messageId, messageId)
+
+        // Simulate successful update
+        env.messageUpdater?.unpinMessage_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.messageUpdater!.unpinMessage_completion = nil
+
+        // Completion should be called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_unpinMessage_callsMessageUpdaterWithError() {
+        // Simulate `unpin` call and catch the completion
+        var completionCalledError: Error?
+        controller.unpin { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+
+        // Simulate failed update
+        let testError = TestError()
+        env.messageUpdater!.unpinMessage_completion?(testError)
+
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+
     // MARK: - Restart uploading for failed attachment
 
-    func test_restartFailedAttachmentUploading_callsChannelUpdater() {
+    func test_restartFailedAttachmentUploading_callsMessageUpdater() {
         let attachmentId: AttachmentId = .unique
 
         // Simulate `restartFailedAttachmentUploading` call and catch the completion

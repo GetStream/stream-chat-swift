@@ -21,6 +21,9 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var deleteChannel_cid: ChannelId?
     @Atomic var deleteChannel_completion: ((Error?) -> Void)?
 
+    @Atomic var truncateChannel_cid: ChannelId?
+    @Atomic var truncateChannel_completion: ((Error?) -> Void)?
+
     @Atomic var hideChannel_cid: ChannelId?
     @Atomic var hideChannel_clearHistory: Bool?
     @Atomic var hideChannel_completion: ((Error?) -> Void)?
@@ -43,11 +46,25 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var createNewMessage_attachments: [AttachmentEnvelope]?
     @Atomic var createNewMessage_attachmentSeeds: [ChatMessageAttachmentSeed]?
     @Atomic var createNewMessage_quotedMessageId: MessageId?
+    @Atomic var createNewMessage_pinning: MessagePinning?
     @Atomic var createNewMessage_extraData: ExtraData.Message?
     @Atomic var createNewMessage_completion: ((Result<MessageId, Error>) -> Void)?
     
     @Atomic var markRead_cid: ChannelId?
     @Atomic var markRead_completion: ((Error?) -> Void)?
+    
+    @Atomic var enableSlowMode_cid: ChannelId?
+    @Atomic var enableSlowMode_cooldownDuration: Int?
+    @Atomic var enableSlowMode_completion: ((Error?) -> Void)?
+    
+    @Atomic var startWatching_cid: ChannelId?
+    @Atomic var startWatching_completion: ((Error?) -> Void)?
+    
+    @Atomic var stopWatching_cid: ChannelId?
+    @Atomic var stopWatching_completion: ((Error?) -> Void)?
+    
+    @Atomic var channelWatchers_query: ChannelWatcherListQuery?
+    @Atomic var channelWatchers_completion: ((Error?) -> Void)?
     
     // Cleans up all recorded values
     func cleanUp() {
@@ -64,6 +81,9 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         
         deleteChannel_cid = nil
         deleteChannel_completion = nil
+
+        truncateChannel_cid = nil
+        truncateChannel_completion = nil
         
         hideChannel_cid = nil
         hideChannel_clearHistory = nil
@@ -91,6 +111,19 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         
         markRead_cid = nil
         markRead_completion = nil
+        
+        enableSlowMode_cid = nil
+        enableSlowMode_cooldownDuration = nil
+        enableSlowMode_completion = nil
+        
+        startWatching_cid = nil
+        startWatching_completion = nil
+        
+        stopWatching_cid = nil
+        stopWatching_completion = nil
+        
+        channelWatchers_query = nil
+        channelWatchers_completion = nil
     }
     
     override func update(
@@ -119,6 +152,11 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         deleteChannel_completion = completion
     }
 
+    override func truncateChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        truncateChannel_cid = cid
+        truncateChannel_completion = completion
+    }
+
     override func hideChannel(cid: ChannelId, clearHistory: Bool, completion: ((Error?) -> Void)? = nil) {
         hideChannel_cid = cid
         hideChannel_clearHistory = clearHistory
@@ -133,6 +171,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     override func createNewMessage(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         command: String?,
         arguments: String?,
         attachments: [AttachmentEnvelope],
@@ -146,6 +185,7 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         createNewMessage_arguments = arguments
         createNewMessage_attachments = attachments
         createNewMessage_quotedMessageId = quotedMessageId
+        createNewMessage_pinning = pinning
         createNewMessage_extraData = extraData
         createNewMessage_completion = completion
     }
@@ -165,5 +205,26 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     override func markRead(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
         markRead_cid = cid
         markRead_completion = completion
+    }
+    
+    override func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
+        enableSlowMode_cid = cid
+        enableSlowMode_cooldownDuration = cooldownDuration
+        enableSlowMode_completion = completion
+    }
+    
+    override func startWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        startWatching_cid = cid
+        startWatching_completion = completion
+    }
+    
+    override func stopWatching(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        stopWatching_cid = cid
+        stopWatching_completion = completion
+    }
+    
+    override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
+        channelWatchers_query = query
+        channelWatchers_completion = completion
     }
 }

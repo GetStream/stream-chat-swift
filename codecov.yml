@@ -1,5 +1,5 @@
 ignore:
-  - "Tests_v3/"
+  - "Tests/**/*"
   - "**/*_Tests.swift"
   - "**/*_Mock.swift"
   - "**/*_Vendor.swift"

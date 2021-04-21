@@ -37,7 +37,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
     let isOnline: Bool
     let isInvisible: Bool
     let isBanned: Bool
-    let teams: [String]
+    let teams: [TeamId]
     let extraData: ExtraData
     
     init(
@@ -51,7 +51,7 @@ class UserPayload<ExtraData: UserExtraData>: Decodable {
         isOnline: Bool,
         isInvisible: Bool,
         isBanned: Bool,
-        teams: [String] = [],
+        teams: [TeamId] = [],
         extraData: ExtraData
     ) {
         self.id = id

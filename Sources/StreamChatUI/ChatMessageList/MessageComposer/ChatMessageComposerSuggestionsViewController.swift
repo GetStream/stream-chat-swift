@@ -18,7 +18,6 @@ public typealias ChatMessageComposerSuggestionsViewController = _ChatMessageComp
 open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewController,
     UIConfigProvider,
     UICollectionViewDelegate {
-    
     /// The data provider of the collection view. A custom `UICollectionViewDataSource` can be provided,
     /// by default `ChatMessageComposerSuggestionsCommandDataSource` is used.
     /// A subclass of `ChatMessageComposerSuggestionsCommandDataSource` can also be provided.
@@ -69,7 +68,8 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
         collectionView.delegate = self
     }
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         view.backgroundColor = .clear
         view.layer.addShadow(color: uiConfig.colorPalette.shadow)
     }
@@ -98,7 +98,7 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
                     let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
 
                     guard let newSize = change.newValue,
-                        newSize.height < cellHeight * self.numberOfVisibleRows
+                          newSize.height < cellHeight * self.numberOfVisibleRows
                     else {
                         self.view.frame.size.height = cellHeight * self.numberOfVisibleRows
                         self.updateViewFrame()
@@ -219,7 +219,6 @@ public typealias ChatMessageComposerSuggestionsMentionDataSource = _ChatMessageC
 open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraDataTypes>: NSObject,
     UICollectionViewDataSource,
     _ChatUserSearchControllerDelegate {
-    
     /// The collection view of the mentions.
     open var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
     

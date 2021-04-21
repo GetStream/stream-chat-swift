@@ -22,6 +22,7 @@ final class UserListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Int>.unreadChannelsCount.rawValue, UserPayloadsCodingKeys.unreadChannelsCount.rawValue)
         XCTAssertEqual(Key<Int>.unreadMessagesCount.rawValue, UserPayloadsCodingKeys.unreadMessagesCount.rawValue)
         XCTAssertEqual(Key<Bool>.isAnonymous.rawValue, UserPayloadsCodingKeys.isAnonymous.rawValue)
+        XCTAssertEqual(Key<TeamId>.teams.rawValue, UserPayloadsCodingKeys.teams.rawValue)
     }
 }
 

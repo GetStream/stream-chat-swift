@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class DatabaseSession_Tests: StressTestCase {
@@ -10,7 +11,12 @@ class DatabaseSession_Tests: StressTestCase {
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainerMock(kind: .inMemory)
+        database = DatabaseContainerMock()
+    }
+    
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
     }
     
     func test_eventPayloadChannelData_isSavedToDatabase() {
@@ -81,7 +87,7 @@ class DatabaseSession_Tests: StressTestCase {
             id: messageId,
             type: .regular,
             user: userPayload,
-            createdAt: .unique,
+            createdAt: channelPayload.createdAt.addingTimeInterval(300),
             updatedAt: .unique,
             text: "No, I am your father 🤯",
             showReplyInChannel: false,
@@ -150,6 +156,83 @@ class DatabaseSession_Tests: StressTestCase {
         
         // Assert message is deleted
         XCTAssertNil(database.viewContext.message(id: messageId))
+    }
+
+    func test_pinMessage() throws {
+        let channelId: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create current user in the DB
+        try database.createCurrentUser()
+
+        // Create channel in the DB
+        try database.createChannel(cid: channelId)
+
+        // Save the message to the DB and remember the messageId
+        try database.createMessage(id: messageId, cid: channelId)
+
+        // Pin message
+        let expireDate = Date.unique
+        try database.writeSynchronously { session in
+            let dto = try XCTUnwrap(session.message(id: messageId))
+            try session.pin(message: dto, pinning: .expirationDate(expireDate))
+        }
+
+        let message = database.viewContext.message(id: messageId)
+        XCTAssertNotNil(message)
+        XCTAssertNotNil(message?.pinnedAt)
+        XCTAssertNotNil(message?.pinnedBy)
+        XCTAssertEqual(message?.pinned, true)
+        XCTAssertEqual(message?.pinExpires, expireDate)
+    }
+
+    func test_pinMessage_whenNoCurrentUser_throwsError() throws {
+        let channelId: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create channel in the DB
+        try database.createChannel(cid: channelId)
+
+        // Save the message to the DB and remember the messageId
+        try database.createMessage(id: messageId, cid: channelId)
+
+        XCTAssertThrowsError(
+            // Pin message
+            try database.writeSynchronously { session in
+                let dto = try XCTUnwrap(session.message(id: messageId))
+                try session.pin(message: dto, pinning: MessagePinning(expirationDate: .unique))
+            }
+        ) { error in
+            XCTAssertTrue(error is ClientError.CurrentUserDoesNotExist)
+        }
+    }
+
+    func test_unpinMessage() throws {
+        let channelId: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        // Create current user in the DB
+        try database.createCurrentUser()
+
+        // Create channel in the DB
+        try database.createChannel(cid: channelId)
+
+        // Save the message to the DB and remember the messageId
+        try database.createMessage(id: messageId, cid: channelId)
+
+        // Unpin message
+        try database.writeSynchronously { session in
+            let dto = try XCTUnwrap(session.message(id: messageId))
+            try session.pin(message: dto, pinning: .expirationTime(300))
+            session.unpin(message: dto)
+        }
+
+        let message = database.viewContext.message(id: messageId)
+        XCTAssertNotNil(message)
+        XCTAssertNil(message?.pinnedAt)
+        XCTAssertNil(message?.pinnedBy)
+        XCTAssertNil(message?.pinExpires)
+        XCTAssertEqual(message?.pinned, false)
     }
     
     func test_saveEvent_unreadCountFromEventPayloadIsApplied() throws {

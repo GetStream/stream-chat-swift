@@ -140,7 +140,7 @@ class SimpleChannelsViewController: UITableViewController, ChatChannelListContro
     ///
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.section == tableView.numberOfSections - 1,
-            indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
+           indexPath.row == tableView.numberOfRows(inSection: indexPath.section) - 1 {
             channelListController.loadNextChannels()
         }
     }

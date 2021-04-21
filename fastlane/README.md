@@ -56,6 +56,11 @@ Runs tests in Debug config
 fastlane test_ui
 ```
 Runs ui tests in Debug config
+### test_ui_release
+```
+fastlane test_ui_release
+```
+Runs ui tests in Release config
 ### test_release
 ```
 fastlane test_release
@@ -65,17 +70,37 @@ Runs tests in Release config
 ```
 fastlane stress_test
 ```
-Runs stress tests for v3 in Debug config
+Runs stress tests for in Debug config
 ### stress_test_release
 ```
 fastlane stress_test_release
 ```
-Runs stress tests for v3 in Release config
+Runs stress tests in Release config
 ### build_sample
 ```
 fastlane build_sample
 ```
-Builds v3 Sample app
+Builds Sample app
+### build_demo
+```
+fastlane build_demo
+```
+Builds Demo app
+### build_imessage_clone
+```
+fastlane build_imessage_clone
+```
+Builds iMessageClone app
+### build_slack_clone
+```
+fastlane build_slack_clone
+```
+Builds SlackClone app
+### build_messenger_clone
+```
+fastlane build_messenger_clone
+```
+Builds MessengerClone app
 ### build_docs_snippets
 ```
 fastlane build_docs_snippets

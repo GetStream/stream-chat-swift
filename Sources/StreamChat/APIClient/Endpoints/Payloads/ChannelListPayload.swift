@@ -14,27 +14,38 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     let watcherCount: Int?
     
-    let members: [MemberPayload<ExtraData.User>]
+    let watchers: [UserPayload<ExtraData.User>]?
     
+    let members: [MemberPayload<ExtraData.User>]
+
+    let membership: MemberPayload<ExtraData.User>?
+
     let messages: [MessagePayload<ExtraData>]
+
+    let pinnedMessages: [MessagePayload<ExtraData>]
     
     let channelReads: [ChannelReadPayload<ExtraData>]
-    
+
     private enum CodingKeys: String, CodingKey {
         case channel
         case messages
+        case pinnedMessages = "pinned_messages"
         case channelReads = "read"
         case members
-//    case watchers
+        case watchers
+        case membership
         case watcherCount = "watcher_count"
     }
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channel = try container.decode(ChannelDetailPayload<ExtraData>.self, forKey: .channel)
+        watchers = try container.decodeIfPresent([UserPayload<ExtraData.User>].self, forKey: .watchers)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         members = try container.decode([MemberPayload<ExtraData.User>].self, forKey: .members)
+        membership = try container.decodeIfPresent(MemberPayload<ExtraData.User>.self, forKey: .membership)
         messages = try container.decode([MessagePayload<ExtraData>].self, forKey: .messages)
+        pinnedMessages = try container.decode([MessagePayload<ExtraData>].self, forKey: .pinnedMessages)
         channelReads = try container.decodeIfPresent([ChannelReadPayload<ExtraData>].self, forKey: .channelReads) ?? []
     }
     
@@ -43,14 +54,20 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     init(
         channel: ChannelDetailPayload<ExtraData>,
         watcherCount: Int,
+        watchers: [UserPayload<ExtraData.User>]?,
         members: [MemberPayload<ExtraData.User>],
+        membership: MemberPayload<ExtraData.User>?,
         messages: [MessagePayload<ExtraData>],
+        pinnedMessages: [MessagePayload<ExtraData>],
         channelReads: [ChannelReadPayload<ExtraData>]
     ) {
         self.channel = channel
         self.watcherCount = watcherCount
+        self.watchers = watchers
         self.members = members
+        self.membership = membership
         self.messages = messages
+        self.pinnedMessages = pinnedMessages
         self.channelReads = channelReads
     }
 }
@@ -92,7 +109,11 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     
     /// The team the channel belongs to. You need to enable multi-tenancy if you want to use this, else it'll be nil.
     /// Refer to [docs](https://getstream.io/chat/docs/multi_tenant_chat/?language=swift) for more info.
-    public let team: String
+    public let team: TeamId?
+    
+    /// Cooldown duration for the channel, if it's in slow mode.
+    /// This value will be 0 if the channel is not in slow mode.
+    let cooldownDuration: Int
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ChannelCodingKeys.self)
@@ -110,10 +131,12 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         createdBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .createdBy)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: .lastMessageAt)
         isFrozen = try container.decode(Bool.self, forKey: .frozen)
-        team = try container.decodeIfPresent(String.self, forKey: .team) ?? ""
+        team = try container.decodeIfPresent(String.self, forKey: .team)
         memberCount = try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? 0
         
         members = try container.decodeIfPresent([MemberPayload<ExtraData.User>].self, forKey: .members)
+        
+        cooldownDuration = try container.decodeIfPresent(Int.self, forKey: .cooldownDuration) ?? 0
         
         extraData = try ExtraData.Channel(from: decoder)
     }
@@ -134,8 +157,9 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         config: ChannelConfig,
         isFrozen: Bool,
         memberCount: Int,
-        team: String,
-        members: [MemberPayload<ExtraData.User>]?
+        team: String?,
+        members: [MemberPayload<ExtraData.User>]?,
+        cooldownDuration: Int
     ) {
         self.cid = cid
         self.name = name
@@ -152,6 +176,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.memberCount = memberCount
         self.team = team
         self.members = members
+        self.cooldownDuration = cooldownDuration
     }
 }
 
@@ -184,7 +209,6 @@ public struct ChannelReadPayload<ExtraData: ExtraDataTypes>: Decodable {
 
 /// A channel config.
 public struct ChannelConfig: Codable {
-    // swiftlint:disable:next nesting
     private enum CodingKeys: String, CodingKey {
         case reactionsEnabled = "reactions"
         case typingEventsEnabled = "typing_events"

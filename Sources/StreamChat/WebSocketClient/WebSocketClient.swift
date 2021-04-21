@@ -132,7 +132,7 @@ class WebSocketClient {
     /// Calling this method has no effect is the web socket is already connected, or is in the connecting phase.
     func connect() {
         guard let endpoint = connectEndpoint else {
-            log.assertationFailure("Attempt to connect `web-socket` while endpoint is missing")
+            log.assertionFailure("Attempt to connect `web-socket` while endpoint is missing")
             return
         }
 
@@ -187,6 +187,8 @@ class WebSocketClient {
         
         let backgroundTask = backgroundTaskScheduler?.beginBackgroundTask { [weak self] in
             self?.disconnect(source: .systemInitiated)
+            // We need to call `endBackgroundTask` else our app will be killed
+            self?.cancelBackgroundTaskIfNeeded()
         }
         
         if backgroundTask != .invalid {
@@ -259,6 +261,8 @@ extension WebSocketClient: WebSocketEngineDelegate {
     func webSocketDidReceiveMessage(_ message: String) {
         do {
             let messageData = Data(message.utf8)
+            log.debug("Event received:\n\(messageData.debugPrettyPrintedJSON)")
+
             let event = try eventDecoder.decode(from: messageData)
             eventNotificationCenter.process(event)
         } catch is ClientError.UnsupportedEventType {
@@ -268,7 +272,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
             // Check if the message contains an error object from the server
             let webSocketError = message
                 .data(using: .utf8)
-                .map { try? JSONDecoder.default.decode(WebSocketErrorContainer.self, from: $0) }
+                .flatMap { try? JSONDecoder.default.decode(WebSocketErrorContainer.self, from: $0) }
                 .map { ClientError.WebSocket(with: $0?.error) }
             
             if let webSocketError = webSocketError {
@@ -290,7 +294,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
         }
         
         if shouldReconnect,
-            let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) {
+           let reconnectionDelay = reconnectionStrategy.reconnectionDelay(forConnectionError: disconnectionError) {
             let clientError = disconnectionError.map { ClientError.WebSocket(with: $0) }
             connectionState = .waitingForReconnect(error: clientError)
             
@@ -308,7 +312,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
                 // Check the current state is still "disconnected" with an internet-down error. If not, it means
                 // the state was changed manually and we don't want to reconnect automatically.
                 if case let .disconnected(error) = self?.connectionState,
-                    error?.underlyingError?.isInternetOfflineError == true {
+                   error?.underlyingError?.isInternetOfflineError == true {
                     self?.connect()
                 }
             }
@@ -381,11 +385,10 @@ extension UIApplication: BackgroundTaskScheduler {}
 struct HealthCheckMiddleware: EventMiddleware {
     private(set) weak var webSocketClient: WebSocketClient?
 
-    func handle(event: Event, completion: @escaping (Event?) -> Void) {
+    func handle(event: Event, session: DatabaseSession) -> Event? {
         guard let healthCheckEvent = event as? HealthCheckEvent else {
             // Do nothing and forward the event
-            completion(event)
-            return
+            return event
         }
         
         if let webSocketClient = webSocketClient {
@@ -396,6 +399,6 @@ struct HealthCheckMiddleware: EventMiddleware {
         }
         
         // Don't forward the event
-        completion(nil)
+        return nil
     }
 }

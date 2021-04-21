@@ -37,7 +37,7 @@ class ChannelQuery_Tests: XCTestCase {
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
     
-    func test_pathParameters() {
+    func test_apiPath() {
         // Create query without id specified
         let query1: ChannelQuery = .init(channelPayload: .init(
             type: .messaging,
@@ -50,13 +50,39 @@ class ChannelQuery_Tests: XCTestCase {
         ))
         
         // Assert only type is part of path
-        XCTAssertEqual(query1.pathParameters, "\(query1.type)")
+        XCTAssertEqual(query1.apiPath, "\(query1.type)")
         
         // Create query with id and type specified
         let cid: ChannelId = .unique
         let query2: ChannelQuery = .init(cid: cid)
         
         // Assert type and id are part of path
-        XCTAssertEqual(query2.pathParameters, "\(query2.type)/\(query2.id!)")
+        XCTAssertEqual(query2.apiPath, "\(query2.type.rawValue)/\(query2.id!)")
+    }
+    
+    func test_apiPath_customType() {
+        let query: ChannelQuery = .init(channelPayload: .init(
+            type: .custom("custom_type"),
+            name: .unique,
+            imageURL: .unique(),
+            team: nil,
+            members: [.unique],
+            invites: [],
+            extraData: .defaultValue
+        ))
+        XCTAssertEqual(query.apiPath, "custom_type")
+    }
+    
+    func test_apiPath_customTypeAndId() {
+        let query: ChannelQuery = .init(channelPayload: .init(
+            cid: .init(type: .custom("custom_type"), id: "id"),
+            name: .unique,
+            imageURL: .unique(),
+            team: nil,
+            members: [.unique],
+            invites: [],
+            extraData: .defaultValue
+        ))
+        XCTAssertEqual(query.apiPath, "custom_type/id")
     }
 }

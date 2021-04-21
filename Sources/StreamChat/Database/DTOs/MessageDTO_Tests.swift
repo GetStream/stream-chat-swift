@@ -4,6 +4,7 @@
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class MessageDTO_Tests: XCTestCase {
@@ -11,7 +12,12 @@ class MessageDTO_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        database = try! DatabaseContainer(kind: .inMemory)
+        database = DatabaseContainerMock()
+    }
+    
+    override func tearDown() {
+        AssertAsync.canBeReleased(&database)
+        super.tearDown()
     }
     
     func test_messagePayload_isStoredAndLoadedFromDB() {
@@ -38,7 +44,11 @@ class MessageDTO_Tests: XCTestCase {
             ownReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
             ],
-            channel: channelPayload
+            channel: channelPayload,
+            pinned: true,
+            pinnedByUserId: .unique,
+            pinnedAt: .unique,
+            pinExpires: .unique
         )
         
         // Asynchronously save the payload to the db
@@ -74,7 +84,11 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(channelPayload.memberCount, loadedChannel?.memberCount)
             Assert.willBeEqual(channelPayload.extraData, loadedChannel?.extraData)
             Assert.willBeEqual(channelPayload.typeRawValue, loadedChannel?.type.rawValue)
-            Assert.willBeEqual(channelPayload.lastMessageAt, loadedChannel?.lastMessageAt)
+            // `lastMessageAt` is calculated as the max of the current `lastMessageAt` and the newest message's `createdAt`
+            Assert.willBeEqual(
+                loadedChannel?.lastMessageAt,
+                max(channelPayload.lastMessageAt ?? .init(timeIntervalSince1970: 0), messagePayload.createdAt)
+            )
             Assert.willBeEqual(channelPayload.createdAt, loadedChannel?.createdAt)
             Assert.willBeEqual(channelPayload.updatedAt, loadedChannel?.updatedAt)
             Assert.willBeEqual(channelPayload.deletedAt, loadedChannel?.deletedAt)
@@ -104,7 +118,6 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(channelPayload.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
             Assert.willBeEqual(channelPayload.createdBy!.role, loadedChannel?.createdBy?.userRole)
             Assert.willBeEqual(channelPayload.createdBy!.extraData, loadedChannel?.createdBy?.extraData)
-            Assert.willBeEqual(channelPayload.createdBy!.teams, loadedChannel?.createdBy?.teams)
         }
         
         // Assert the message was saved correctly
@@ -121,6 +134,10 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
             Assert.willBeEqual(messagePayload.quotedMessage?.id, loadedMessage?.quotedMessage?.id)
             Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
+            Assert.willBeEqual(messagePayload.pinned, loadedMessage?.pinned)
+            Assert.willBeEqual(messagePayload.pinExpires, loadedMessage?.pinExpires!)
+            Assert.willBeEqual(messagePayload.pinnedAt, loadedMessage?.pinnedAt!)
+            Assert.willBeEqual(messagePayload.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
             Assert.willBeEqual(
                 messagePayload.mentionedUsers.map(\.id),
                 loadedMessage?.mentionedUsers.map(\.id)
@@ -169,7 +186,11 @@ class MessageDTO_Tests: XCTestCase {
             ],
             ownReactions: [
                 .dummy(messageId: messageId, user: UserPayload.dummy(userId: userId))
-            ]
+            ],
+            pinned: true,
+            pinnedByUserId: .unique,
+            pinnedAt: .unique,
+            pinExpires: .unique
         )
         
         // Asynchronously save the payload to the db
@@ -205,6 +226,10 @@ class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
             Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
+            Assert.willBeEqual(messagePayload.pinned, loadedMessage?.pinned)
+            Assert.willBeEqual(messagePayload.pinExpires, loadedMessage?.pinExpires!)
+            Assert.willBeEqual(messagePayload.pinnedAt, loadedMessage?.pinnedAt!)
+            Assert.willBeEqual(messagePayload.pinnedBy!.id, loadedMessage?.pinnedBy!.id)
             Assert.willBeEqual(
                 messagePayload.mentionedUsers.map(\.id),
                 loadedMessage?.mentionedUsers.map(\.id)
@@ -226,7 +251,57 @@ class MessageDTO_Tests: XCTestCase {
             )
         }
     }
-    
+
+    func test_messagePayload_isPinned_addedToPinnedMessages() throws {
+        let channelId: ChannelId = .unique
+        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
+        let payload: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
+            pinned: true
+        )
+
+        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try await { completion in
+            // Asynchronously save the payload to the db
+            database.write { session in
+                // Create the channel first
+                let channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
+
+                // Save the message
+                let messageDTO = try! session.saveMessage(payload: payload, for: channelId)
+                completion((channelDTO, messageDTO))
+            }
+        }
+
+        XCTAssertTrue(channelDTO.pinnedMessages.contains(messageDTO))
+    }
+
+    func test_messagePayload_isNotPinned_removedFromPinnedMessages() throws {
+        let channelId: ChannelId = .unique
+        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId)
+        let payload: MessagePayload<NoExtraData> = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: "2018-12-12T15:33:46.488935Z".toDate(),
+            pinned: false
+        )
+
+        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try await { completion in
+            // Asynchronously save the payload to the db
+            database.write { session in
+                // Create the channel first
+                let channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
+
+                // Save the message
+                let messageDTO = try! session.saveMessage(payload: payload, for: channelId)
+                completion((channelDTO, messageDTO))
+            }
+        }
+
+        XCTAssertFalse(channelDTO.pinnedMessages.contains(messageDTO))
+    }
+
     func test_messagePayloadNotStored_withoutChannelInfo() throws {
         let payload: MessagePayload<NoExtraData> = .dummy(messageId: .unique, authorUserId: .unique)
         assert(payload.channel == nil, "Channel must be `nil`")
@@ -256,7 +331,7 @@ class MessageDTO_Tests: XCTestCase {
             // Save the message
             let messageDTO = try! session.saveMessage(payload: messagePayload, for: channelId)
             // Make the extra data JSON invalid
-            messageDTO.extraData = #"{"invalid": json}"# .data(using: .utf8)!
+            messageDTO.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
         let loadedMessage: ChatMessage? = database.viewContext.message(id: messageId)?.asModel()
@@ -268,19 +343,29 @@ class MessageDTO_Tests: XCTestCase {
         let messageAuthorId: UserId = .unique
         let messageId: MessageId = .unique
         let channelId: ChannelId = .unique
+        let quotedMessageId: MessageId = .unique
+        let quotedMessageAuthorId: UserId = .unique
 
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: channelId, withMessages: false)
         
         let messagePayload: MessagePayload<NoExtraData> = .dummy(
             messageId: messageId,
+            quotedMessage: .dummy(
+                messageId: quotedMessageId,
+                authorUserId: quotedMessageAuthorId
+            ),
             authorUserId: messageAuthorId,
             latestReactions: (0..<3).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: .unique))
             },
             ownReactions: (0..<2).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: messageAuthorId))
-            }
+            },
+            pinned: true,
+            pinnedByUserId: .unique,
+            pinnedAt: .unique,
+            pinExpires: .unique
         )
         
         // Asynchronously save the payload to the db
@@ -327,12 +412,21 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
         XCTAssertEqual(loadedMessage.latestReactions, latestReactions)
         XCTAssertEqual(loadedMessage.currentUserReactions, currentUserReactions)
+        XCTAssertEqual(loadedMessage.isPinned, true)
+        let pin = try XCTUnwrap(loadedMessage.pinDetails)
+        XCTAssertEqual(pin.expiresAt, messagePayload.pinExpires)
+        XCTAssertEqual(pin.pinnedAt, messagePayload.pinnedAt)
+        XCTAssertEqual(pin.pinnedBy.id, messagePayload.pinnedBy?.id)
         XCTAssertEqual(
             isAttachmentModelSeparationChangesApplied ?
                 loadedMessage.attachments.map { ($0 as? ChatMessageImageAttachment)?.id } :
                 loadedMessage.attachments.map { ($0 as? ChatMessageDefaultAttachment)?.id },
             messagePayload.attachmentIDs(cid: channelId)
         )
+        // Quoted message
+        XCTAssertEqual(loadedMessage.quotedMessage?.id, messagePayload.quotedMessage?.id)
+        XCTAssertEqual(loadedMessage.quotedMessage?.author.id, messagePayload.quotedMessage?.user.id)
+        XCTAssertEqual(loadedMessage.quotedMessage?.extraData, messagePayload.quotedMessage?.extraData)
     }
     
     func test_newMessage_asRequestBody() throws {
@@ -351,6 +445,7 @@ class MessageDTO_Tests: XCTestCase {
 
         var messageId: MessageId!
         let messageText: String = .unique
+        let messagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
         let messageCommand: String = .unique
         let messageArguments: String = .unique
         let messageAttachments: [TestAttachmentEnvelope] = [.init(), .init()]
@@ -363,6 +458,7 @@ class MessageDTO_Tests: XCTestCase {
             messageId = try session.createNewMessage(
                 in: cid,
                 text: messageText,
+                pinning: messagePinning,
                 command: messageCommand,
                 arguments: messageArguments,
                 parentMessageId: parentMessageId,
@@ -387,6 +483,8 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.parentId, parentMessageId)
         XCTAssertEqual(requestBody.showReplyInChannel, messageShowReplyInChannel)
         XCTAssertEqual(requestBody.extraData, messageExtraData)
+        XCTAssertEqual(requestBody.pinned, true)
+        XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
 
         // Assert attachments are in correct order.
         let attachmentsTitles: [String] = requestBody.attachments.compactMap { rawJSON -> String? in
@@ -467,6 +565,7 @@ class MessageDTO_Tests: XCTestCase {
                 let message1DTO = try session.createNewMessage(
                     in: cid,
                     text: .unique,
+                    pinning: nil,
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
@@ -482,6 +581,7 @@ class MessageDTO_Tests: XCTestCase {
                 let message2DTO = try session.createNewMessage(
                     in: cid,
                     text: .unique,
+                    pinning: nil,
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
@@ -568,12 +668,14 @@ class MessageDTO_Tests: XCTestCase {
             .dummy(),
             .dummy()
         ]
+        let newMessagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
                 
         _ = try await { completion in
             database.write({
                 let messageDTO = try $0.createNewMessage(
                     in: cid,
                     text: newMessageText,
+                    pinning: newMessagePinning,
                     command: newMessageCommand,
                     arguments: newMessageArguments,
                     parentMessageId: newMessageParentMessageId,
@@ -596,6 +698,9 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.arguments, newMessageArguments)
         XCTAssertEqual(loadedMessage.parentMessageId, newMessageParentMessageId)
         XCTAssertEqual(loadedMessage.author.id, currentUserId)
+        XCTAssertEqual(loadedMessage.pinDetails?.expiresAt, newMessagePinning!.expirationDate)
+        XCTAssertEqual(loadedMessage.pinDetails?.pinnedBy.id, currentUserId)
+        XCTAssertNotNil(loadedMessage.pinDetails?.pinnedAt)
         // Assert the created date of the message is roughly "now"
         XCTAssertLessThan(loadedMessage.createdAt.timeIntervalSince(Date()), 0.1)
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.locallyCreatedAt)
@@ -618,6 +723,7 @@ class MessageDTO_Tests: XCTestCase {
                 try session.createNewMessage(
                     in: .unique,
                     text: .unique,
+                    pinning: MessagePinning(expirationDate: .unique),
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
@@ -650,6 +756,7 @@ class MessageDTO_Tests: XCTestCase {
                 try session.createNewMessage(
                     in: .unique,
                     text: .unique,
+                    pinning: MessagePinning(expirationDate: .unique),
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
@@ -688,6 +795,7 @@ class MessageDTO_Tests: XCTestCase {
             let messageDTO = try session.createNewMessage(
                 in: cid,
                 text: newMessageText,
+                pinning: MessagePinning(expirationDate: .unique),
                 quotedMessageId: nil,
                 attachmentSeeds: newMessageAttachmentSeeds,
                 extraData: NoExtraData.defaultValue
@@ -721,6 +829,7 @@ class MessageDTO_Tests: XCTestCase {
             let replyDTO = try session.createNewMessage(
                 in: cid,
                 text: "Reply",
+                pinning: nil,
                 command: nil,
                 arguments: nil,
                 parentMessageId: messageId,
@@ -813,6 +922,46 @@ class MessageDTO_Tests: XCTestCase {
         }
 
         XCTAssertEqual(loadedAttachments.count, 0)
+    }
+    
+    func test_messageUpdateChannelsLastMessageAt_whenNewer() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = .unique
+        let channelId: ChannelId = .unique
+        // Save channel with some messages
+        let channelPayload: ChannelPayload<NoExtraData> = dummyPayload(with: channelId, numberOfMessages: 5)
+        let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
+        try database.writeSynchronously {
+            try $0.saveChannel(payload: channelPayload)
+        }
+        
+        // Create a new message payload that's older than `channel.lastMessageAt`
+        let olderMessagePayload: MessagePayload<NoExtraData> = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            createdAt: .unique(before: channelPayload.channel.lastMessageAt!)
+        )
+        assert(olderMessagePayload.createdAt < channelPayload.channel.lastMessageAt!)
+        // Save the message payload and check `channel.lastMessageAt` is not updated by older message
+        try database.writeSynchronously {
+            try $0.saveMessage(payload: olderMessagePayload, for: channelId)
+        }
+        var channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.lastMessageAt, originalLastMessageAt)
+        
+        // Create a new message payload that's newer than `channel.lastMessageAt`
+        let newerMessagePayload: MessagePayload<NoExtraData> = .dummy(
+            messageId: messageId,
+            authorUserId: userId,
+            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+        )
+        assert(newerMessagePayload.createdAt > channelPayload.channel.lastMessageAt!)
+        // Save the message payload and check `channel.lastMessageAt` is updated
+        try database.writeSynchronously {
+            try $0.saveMessage(payload: newerMessagePayload, for: channelId)
+        }
+        channel = try XCTUnwrap(database.viewContext.channel(cid: channelId))
+        XCTAssertEqual(channel.lastMessageAt, newerMessagePayload.createdAt)
     }
 }
 

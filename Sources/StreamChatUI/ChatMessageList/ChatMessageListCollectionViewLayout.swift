@@ -27,6 +27,11 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         public func attribute(for index: Int, width: CGFloat) -> UICollectionViewLayoutAttributes {
             let attribute = UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
             attribute.frame = CGRect(x: 0, y: offset, width: width, height: height)
+            // default `zIndex` value is 0, but for some undocumented reason self-sizing
+            // (concretely `contentView.systemLayoutFitting(...)`) doesn't work correctly,
+            // so we need to make sure we do not use it, we need to add 1 so indexPath 0-0 doesn't have
+            // problematic 0 zIndex
+            attribute.zIndex = index + 1
             return attribute
         }
     }
@@ -50,8 +55,18 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     open var animatingAttributes: [IndexPath: UICollectionViewLayoutAttributes] = [:]
 
     override open var collectionViewContentSize: CGSize {
+        // This is a workaround for `layoutAttributesForElementsInRect:` not getting invoked enough
+        // times if `collectionViewContentSize.width` is not smaller than the width of the collection
+        // view, minus horizontal insets. This results in visual defects when performing batch
+        // updates. To work around this, we subtract 0.0001 from our content size width calculation;
+        // this small decrease in `collectionViewContentSize.width` is enough to work around the
+        // incorrect, internal collection view `CGRect` checks, without introducing any visual
+        // differences for elements in the collection view.
+        // See https://openradar.appspot.com/radar?id=5025850143539200 for more details.
+        //
+        // Credit to https://github.com/airbnb/MagazineLayout/blob/6f88742c282de208e48cb738a7a14b7dc2651701/MagazineLayout/Public/MagazineLayout.swift#L69
         CGSize(
-            width: collectionView!.bounds.width,
+            width: collectionView!.bounds.width - 0.0001,
             height: currentItems.first?.maxY ?? 0
         )
     }
@@ -66,6 +81,14 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     /// If we return wrong attributes user will see artifacts and broken layout during batch update animation.
     /// By not returning any attributes during batch updates we are able to prevent such artifacts.
     open var preBatchUpdatesCall = false
+    
+    /// As we very often need to preserve scroll offset after performBatchUpdates, the simplest solution is to save original
+    /// contentOffset and set it when batch updates end
+    open var restoreOffset: CGFloat?
+
+    /// Flag to make sure the `prepare()` function is only executed when the collection view had been loaded.
+    /// The rest of the updates should come from `prepare(forCollectionViewUpdates:)`.
+    private var didPerformInitialLayout = false
 
     // MARK: - Initialization
 
@@ -89,9 +112,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         forPreferredLayoutAttributes preferredAttributes: UICollectionViewLayoutAttributes,
         withOriginalAttributes originalAttributes: UICollectionViewLayoutAttributes
     ) -> Bool {
-        let idx = originalAttributes.indexPath.item
-        return preferredAttributes.frame.minY != currentItems[idx].offset
-            || preferredAttributes.frame.height != currentItems[idx].height
+        preferredAttributes.size.height != originalAttributes.size.height
     }
 
     override open func invalidationContext(
@@ -108,11 +129,6 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         currentItems[idx].height = preferredAttributes.frame.height
         // if item have been inserted recently or deleted, we need to update its attributes to prevent weird flickering
         animatingAttributes[preferredAttributes.indexPath]?.frame.size.height = preferredAttributes.frame.height
-
-        // we are bottom-top layout with 0 being most bottom item. So when item X changes its attributes, it affect all
-        // items before it in [0; X] range.
-        let invalidNow = (0...idx).map { IndexPath(item: $0, section: 0) }
-        invalidationContext.invalidateItems(at: invalidNow)
 
         for i in 0..<idx {
             currentItems[i].offset += delta
@@ -133,23 +149,57 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
         return invalidationContext
     }
+    
+    override open func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        collectionView.map { $0.bounds.size != newBounds.size } ?? true
+    }
+    
+    override open func invalidationContext(forBoundsChange newBounds: CGRect) -> UICollectionViewLayoutInvalidationContext {
+        let context = super.invalidationContext(forBoundsChange: newBounds)
+        
+        guard let collectionView = collectionView else { return context }
+        
+        let delta = newBounds.height - collectionView.bounds.height
+        
+        // If collectionView is shrinking and most recent message is visible, we will make sure it is still fully visible,
+        // but if the conversation is short and not scrollable, this adjustment would be unwanted
+        if delta < 0,
+           collectionView.indexPathsForVisibleItems.contains(IndexPath(item: 0, section: 0)),
+           collectionView.contentOffset.y > -collectionView.contentInset.top {
+            context.contentOffsetAdjustment = CGPoint(x: 0, y: -delta)
+        }
+
+        return context
+    }
 
     // MARK: - Animation updates
 
     override open func prepare(forCollectionViewUpdates updateItems: [UICollectionViewUpdateItem]) {
         previousItems = currentItems
+        
+        // used to determine what contentOffset should be restored after batch updates
+        restoreOffset = collectionView.map { collectionViewContentSize.height - $0.contentOffset.y }
+        
         let delete: (UICollectionViewUpdateItem) -> Void = { update in
             guard let ip = update.indexPathBeforeUpdate else { return }
             let idx = ip.item
+            let item = self.previousItems[idx]
             self.disappearingItems.insert(ip)
-            var delta = self.currentItems[idx].height
+            var delta = item.height
             if idx > 0 {
                 delta += self.spacing
             }
             for i in 0..<idx {
-                self.currentItems[i].offset -= delta
+                guard let oldId = self.oldIdForItem(at: i) else { return }
+                
+                if let idx = self.idxForItem(with: oldId) {
+                    self.currentItems[idx].offset -= delta
+                }
             }
-            self.currentItems.remove(at: idx)
+            
+            if let idx = self.idxForItem(with: item.id) {
+                self.currentItems.remove(at: idx)
+            }
         }
 
         let insert: (UICollectionViewUpdateItem) -> Void = { update in
@@ -195,9 +245,16 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         disappearingItems.removeAll()
         animatingAttributes.removeAll()
         super.finalizeCollectionViewUpdates()
-        // for some reason when adding / deleting items cv do not reload attributes for rows out of view
-        // this will force reload
-        invalidateLayout()
+        restoreOffset = nil
+    }
+    
+    override open func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint) -> CGPoint {
+        guard let collectionView = self.collectionView else { return proposedContentOffset }
+        // if we have any content offset to restore and if the collection view has enough items to scroll, restore it
+        if let restore = restoreOffset, collectionView.contentSize.height > collectionView.bounds.height {
+            return CGPoint(x: 0, y: collectionViewContentSize.height - restore)
+        }
+        return proposedContentOffset
     }
 
     // MARK: - Main layout access
@@ -205,12 +262,15 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     override open func prepare() {
         super.prepare()
 
+        guard !didPerformInitialLayout else { return }
+        didPerformInitialLayout = true
+
         guard currentItems.isEmpty else { return }
         guard let cv = collectionView else { return }
         currentCollectionViewWidth = cv.bounds.width
 
         let count = cv.numberOfItems(inSection: 0)
-        guard count > 0 else { return } // swiftlint:disable:this empty_count
+        guard count > 0 else { return }
 
         let height = estimatedItemHeight * CGFloat(count) + spacing * CGFloat(count - 1)
         var offset: CGFloat = height

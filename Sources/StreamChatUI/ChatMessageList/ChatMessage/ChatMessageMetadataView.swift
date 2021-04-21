@@ -11,6 +11,9 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
+
+    /// The date formatter of the `timestampLabel`
+    public lazy var dateFormatter: DateFormatter = .makeDefault()
     
     // MARK: - Subviews
 
@@ -28,11 +31,12 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var timestampLabel: UILabel = UILabel()
+    public private(set) lazy var timestampLabel: UILabel = UILabel().withBidirectionalLanguagesSupport
     
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         let color = uiConfig.colorPalette.subtitleText
         currentUserVisabilityIndicator.textLabel.textColor = color
         currentUserVisabilityIndicator.imageView.tintColor = color
@@ -49,7 +53,11 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     }
 
     override open func updateContent() {
-        timestampLabel.text = message?.createdAt.getFormattedDate(format: "hh:mm a")
+        if let createdAt = message?.createdAt {
+            timestampLabel.text = dateFormatter.string(from: createdAt)
+        } else {
+            timestampLabel.text = nil
+        }
         currentUserVisabilityIndicator.isVisible = message?.onlyVisibleForCurrentUser ?? false
     }
 }
@@ -79,7 +87,8 @@ open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTyp
 
     // MARK: - Overrides
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         imageView.image = uiConfig.images.onlyVisibleToCurrentUser
         textLabel.text = L10n.Message.onlyVisibleToYou
     }

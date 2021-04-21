@@ -1,8 +1,9 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
+import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
@@ -71,7 +72,7 @@ final class UserController_SwiftUI_Tests: iOS13TestCase {
 
 extension _ChatUser {
     static var unique: _ChatUser {
-        .init(
+        .mock(
             id: .unique,
             isOnline: true,
             isBanned: true,

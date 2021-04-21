@@ -11,7 +11,7 @@ class MessageEvents_Tests: XCTestCase {
     
     func test_new() throws {
         let json = XCTestCase.mockData(fromFile: "MessageNew")
-        let event = try eventDecoder.decode(from: json) as? MessageNewEvent<NoExtraData>
+        let event = try eventDecoder.decode(from: json) as? MessageNewEvent
         XCTAssertEqual(event?.userId, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.messageId, messageId)
@@ -22,7 +22,7 @@ class MessageEvents_Tests: XCTestCase {
     
     func test_new_withMissingFields() throws {
         let json = XCTestCase.mockData(fromFile: "MessageNew+MissingFields")
-        let event = try eventDecoder.decode(from: json) as? MessageNewEvent<NoExtraData>
+        let event = try eventDecoder.decode(from: json) as? MessageNewEvent
         XCTAssertEqual(event?.userId, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.messageId, messageId)
@@ -51,10 +51,19 @@ class MessageEvents_Tests: XCTestCase {
     
     func test_read() throws {
         let json = XCTestCase.mockData(fromFile: "MessageRead")
-        let event = try eventDecoder.decode(from: json) as? MessageReadEvent<NoExtraData>
+        let event = try eventDecoder.decode(from: json) as? MessageReadEvent
         XCTAssertEqual(event?.userId, "steep-moon-9")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.readAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21))
+    }
+    
+    func test_read_withoutUnreadCount() throws {
+        let json = XCTestCase.mockData(fromFile: "MessageRead+MissingUnreadCount")
+        let event = try eventDecoder.decode(from: json) as? MessageReadEvent
+        XCTAssertEqual(event?.userId, "steep-moon-9")
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.readAt.description, "2020-07-17 13:55:56 +0000")
+        XCTAssertEqual(event?.unreadCount, nil)
     }
 }

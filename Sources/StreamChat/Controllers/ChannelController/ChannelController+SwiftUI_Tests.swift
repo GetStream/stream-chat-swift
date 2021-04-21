@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
@@ -14,9 +15,14 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         channelController = ChannelControllerMock()
     }
     
+    override func tearDown() {
+        AssertAsync.canBeReleased(&channelController)
+        super.tearDown()
+    }
+    
     func test_controllerInitialValuesAreLoaded() {
         channelController.state_simulated = .localDataFetched
-        channelController.channel_simulated = .init(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
+        channelController.channel_simulated = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
         channelController.messages_simulated = [.unique]
         
         let observableObject = channelController.observableObject
@@ -30,7 +36,7 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
         let observableObject = channelController.observableObject
         
         // Simulate channel change
-        let newChannel: ChatChannel = .init(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
+        let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: .defaultValue)
         channelController.channel_simulated = newChannel
         channelController.delegateCallback {
             $0.channelController(
@@ -83,17 +89,22 @@ class ChannelController_SwiftUI_Tests: iOS13TestCase {
             imageURL: .unique(),
             isOnline: true,
             isBanned: false,
+            isFlaggedByCurrentUser: false,
             userRole: .user,
             userCreatedAt: .unique,
             userUpdatedAt: .unique,
             lastActiveAt: .unique,
+            teams: [],
             extraData: .defaultValue,
             memberRole: .member,
             memberCreatedAt: .unique,
             memberUpdatedAt: .unique,
             isInvited: false,
             inviteAcceptedAt: nil,
-            inviteRejectedAt: nil
+            inviteRejectedAt: nil,
+            isBannedFromChannel: true,
+            banExpiresAt: .unique,
+            isShadowBannedFromChannel: true
         )
         
         // Simulate typing members change
@@ -152,19 +163,21 @@ extension _ChatMessage {
             showReplyInChannel: true,
             replyCount: 2,
             extraData: .init(),
-            quotedMessageId: nil,
+            quotedMessage: { nil },
             isSilent: false,
             reactionScores: ["": 1],
-            author: .init(id: .unique),
-            mentionedUsers: [],
+            author: { .mock(id: .unique) },
+            mentionedUsers: { [] },
             threadParticipants: [],
-            attachments: [],
-            latestReplies: [],
+            attachments: { [] },
+            latestReplies: { [] },
             localState: nil,
             isFlaggedByCurrentUser: false,
-            latestReactions: [],
-            currentUserReactions: [],
-            isSentByCurrentUser: false
+            latestReactions: { [] },
+            currentUserReactions: { [] },
+            isSentByCurrentUser: false,
+            pinDetails: nil,
+            underlyingContext: nil
         )
     }
 }

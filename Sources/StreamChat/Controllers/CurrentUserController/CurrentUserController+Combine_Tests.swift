@@ -5,6 +5,7 @@
 import Combine
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 @available(iOS 13, *)
@@ -39,7 +40,7 @@ class CurrentUserController_Combine_Tests: iOS13TestCase {
         weak var controller: CurrentUserControllerMock? = currentUserController
         currentUserController = nil
 
-        let newCurrentUser: CurrentChatUser = .init(id: .unique)
+        let newCurrentUser: CurrentChatUser = .mock(id: .unique)
         controller?.currentUser_simulated = newCurrentUser
         controller?.delegateCallback {
             $0.currentUserController(controller!, didChangeCurrentUser: .create(newCurrentUser))

@@ -41,24 +41,46 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
     /// If the member rejected a channel invitation, this field contains date of when the invitation was rejected,
     /// otherwise it's `nil`.
     public let inviteRejectedAt: Date?
-    
-    public init(
+
+    /// `true` if the member if banned from the channel.
+    ///
+    /// Learn more about banning in the [documentation](https://getstream.io/chat/docs/ios-swift/moderation/?language=swift#ban).
+    public let isBannedFromChannel: Bool
+
+    /// If the member is banned from the channel, this field contains the date when the ban expires.
+    ///
+    /// Learn more about banning in the [documentation](https://getstream.io/chat/docs/ios-swift/moderation/?language=swift#ban).
+    public let banExpiresAt: Date?
+
+    /// `true` if the member if shadow banned from the channel.
+    ///
+    /// Learn more about shadow banning in the [documentation](https://getstream.io/chat/docs/ios-swift/moderation/?language=swift#shadow-ban).
+    ///
+    // TODO: Make public when working on CIS-720
+    internal let isShadowBannedFromChannel: Bool
+
+    init(
         id: String,
         name: String?,
         imageURL: URL?,
         isOnline: Bool,
         isBanned: Bool,
+        isFlaggedByCurrentUser: Bool,
         userRole: UserRole,
         userCreatedAt: Date,
         userUpdatedAt: Date,
         lastActiveAt: Date?,
+        teams: Set<TeamId>,
         extraData: ExtraData,
         memberRole: MemberRole,
         memberCreatedAt: Date,
         memberUpdatedAt: Date,
         isInvited: Bool,
         inviteAcceptedAt: Date?,
-        inviteRejectedAt: Date?
+        inviteRejectedAt: Date?,
+        isBannedFromChannel: Bool,
+        banExpiresAt: Date?,
+        isShadowBannedFromChannel: Bool
     ) {
         self.memberRole = memberRole
         self.memberCreatedAt = memberCreatedAt
@@ -66,6 +88,9 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
         self.isInvited = isInvited
         self.inviteAcceptedAt = inviteAcceptedAt
         self.inviteRejectedAt = inviteRejectedAt
+        self.isBannedFromChannel = isBannedFromChannel
+        self.isShadowBannedFromChannel = isShadowBannedFromChannel
+        self.banExpiresAt = banExpiresAt
         
         super.init(
             id: id,
@@ -73,10 +98,12 @@ public class _ChatChannelMember<ExtraData: UserExtraData>: _ChatUser<ExtraData> 
             imageURL: imageURL,
             isOnline: isOnline,
             isBanned: isBanned,
+            isFlaggedByCurrentUser: isFlaggedByCurrentUser,
             userRole: userRole,
             createdAt: userCreatedAt,
             updatedAt: userUpdatedAt,
             lastActiveAt: lastActiveAt,
+            teams: teams,
             extraData: extraData
         )
     }
@@ -95,4 +122,24 @@ public enum MemberRole: String, Codable, Hashable {
 
     /// This rele allows the member to perform destructive actions on the channel.
     case owner
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let value = try container.decode(String.self)
+        switch value {
+        case "member", "channel_member":
+            self = .member
+        case "moderator", "channel_moderator":
+            self = .moderator
+        case "admin":
+            self = .admin
+        case "owner":
+            self = .owner
+        default:
+            throw DecodingError.dataCorruptedError(
+                in: container,
+                debugDescription: "MemberRole string value `\(value)` doesn't match any of the known roles"
+            )
+        }
+    }
 }

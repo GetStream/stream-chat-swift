@@ -9,9 +9,9 @@
   <a href="https://codecov.io/gh/GetStream/stream-chat-swift"><img src="https://codecov.io/gh/GetStream/stream-chat-swift/branch/main/graph/badge.svg" /></a>
 </p>
 
-# The official iOS SDK for [StreamChat](https://getstream.io/chat/)
+# The official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/)
 
-The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://getstream.io/chat), a service for building chat and messaging applications.
+The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications.
 
 --- 
 
@@ -43,6 +43,10 @@ The **StreamChatUI SDK**  is the official iOS SDK for [Stream Chat](https://gets
 
 * Information about the 2.x version can be found at [v2.x README](https://github.com/GetStream/stream-chat-swift/tree/main_v2/).
 
+## Free for Makers
+
+Stream is free for most side and hobby projects. To qualify your project/company needs to have < 5 team members and < $10k in monthly revenue.
+For complete pricing details visit our [Chat Pricing Page](https://getstream.io/chat/pricing/)
 
 ## Main Principles
 
@@ -65,20 +69,28 @@ Please check [our wiki page for migration](https://github.com/GetStream/stream-c
 
 ## Roadmap
 
-* Open UI components for subclassing and customization (3/2021, available in 🅱️ `3.2.0-beta`)
-* Local notification support (3/2021)
-* SwiftUI wrappers for UI components (4/2021)
-* Pinned messages (4/2021)
-* Better photo gallery experience (4/2021)
-* Multi-tenancy, teams (4/2021)
-* Silent messages (4/2021)
-* Expired tokens (4/2021)
-* Channel invites (4/2021)
-* Paginating reactions (4/2021)
-* Message search (5/2021)
-* RxSwift wrappers (tbd)
+- [ ] Open UI components for subclassing and customization (3/2021, available in 🅱️ `3.2.0-beta`)
+- [x] Pinned messages (released in `3.1.4`)
+- [x] Multi-tenancy, teams (released in `3.1.4`)
+- [ ] Local notification support (4/2021)
+- [ ] SwiftUI wrappers for UI components (4/2021)
+- [ ] Better photo gallery experience (4/2021)
+- [ ] Silent messages (4/2021)
+- [ ] Expired tokens (4/2021)
+- [ ] Channel invites (4/2021)
+- [ ] Paginating reactions (4/2021)
+- [ ] Message search (5/2021)
+- [ ] RxSwift wrappers (tbd)
 
 ---
+
+## We are hiring
+We've recently closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.
+Our APIs are used by more than a billion end-users, and you'll have a chance to make a huge impact on the product within a team of the strongest engineers all over the world.
+Check out our current openings and apply via [Stream's website](https://getstream.io/team/#jobs).
+
+---
+
 ## Quick Overview
 
 ### Channel List

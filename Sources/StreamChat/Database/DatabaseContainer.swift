@@ -41,6 +41,7 @@ class DatabaseContainer: NSPersistentContainer {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        context.localCachingSettings = localCachingSettings
         return context
     }()
     
@@ -48,7 +49,7 @@ class DatabaseContainer: NSPersistentContainer {
     /// It’s just an optimization for removing as much as possible from the main thread.
     ///
     /// Updating DTOs from this context will lead to issues.
-    /// Use `writableContext` to mutate database entitites.
+    /// Use `writableContext` to mutate database entities.
     ///
     /// Use this context to observe non-time sensitive changes.
     /// If you need a time sensitive context, use `viewContext` instead.
@@ -56,10 +57,12 @@ class DatabaseContainer: NSPersistentContainer {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
+        context.localCachingSettings = localCachingSettings
         return context
     }()
     
     private var loggerNotificationObserver: NSObjectProtocol?
+    private let localCachingSettings: ChatClientConfig.LocalCaching?
     
     /// All `NSManagedObjectContext`s this container owns.
     private lazy var allContext: [NSManagedObjectContext] = [viewContext, backgroundReadOnlyContext, writableContext]
@@ -74,20 +77,22 @@ class DatabaseContainer: NSPersistentContainer {
     ///   - shouldFlushOnStart: Flag indicating that all local data should be deleted on `DatabaseContainer` creation.
     ///   (non-recoverable operation)
     ///   - modelName: The name of the model the container loads.
-    ///   - completion: Called when the container finishes its initialization. If the initialization fails, called
-    ///   with an error.
+    ///   - localCachingSettings: The defaults used for model serialization.
     ///
     init(
         kind: Kind,
         shouldFlushOnStart: Bool = false,
         shouldResetEphemeralValuesOnStart: Bool = true,
         modelName: String = "StreamChatModel",
-        bundle: Bundle? = .streamChat
+        bundle: Bundle? = .streamChat,
+        localCachingSettings: ChatClientConfig.LocalCaching? = nil
     ) throws {
         // It's safe to unwrap the following values because this is not settable by users and it's always a programmer error.
         let bundle = bundle ?? Bundle(for: DatabaseContainer.self)
         let modelURL = bundle.url(forResource: modelName, withExtension: "momd")!
         let model = NSManagedObjectModel(contentsOf: modelURL)!
+        
+        self.localCachingSettings = localCachingSettings
         
         super.init(name: modelName, managedObjectModel: model)
         
@@ -118,6 +123,7 @@ class DatabaseContainer: NSPersistentContainer {
         
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
+        viewContext.localCachingSettings = localCachingSettings
         
         setupLoggerForDatabaseChanges()
         
@@ -257,8 +263,8 @@ class DatabaseContainer: NSPersistentContainer {
         
         // If the store was SQLite store, remove the actual DB file
         if storeDescription.type == NSSQLiteStoreType,
-            let storeURL = storeDescription.url,
-            storeURL.absoluteString.hasSuffix("/dev/null") == false {
+           let storeURL = storeDescription.url,
+           storeURL.absoluteString.hasSuffix("/dev/null") == false {
             try persistentStoreCoordinator.destroyPersistentStore(at: storeURL, ofType: NSSQLiteStoreType, options: nil)
             try FileManager.default.removeItem(at: storeURL)
         }

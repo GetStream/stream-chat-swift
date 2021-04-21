@@ -13,10 +13,6 @@ extension _ChatMessageReactionsView {
 
         // MARK: - Overrides
 
-        override open var intrinsicContentSize: CGSize {
-            reactionImage?.size ?? .zero
-        }
-
         override open func setUp() {
             super.setUp()
 
@@ -25,6 +21,7 @@ extension _ChatMessageReactionsView {
 
         override open func updateContent() {
             setImage(reactionImage, for: .normal)
+            setContentCompressionResistancePriority(.streamRequire, for: .vertical)
             imageView?.tintColor = reactionImageTint
         }
 

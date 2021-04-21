@@ -12,10 +12,11 @@
     "codeCoverage" : false,
     "environmentVariableEntries" : [
       {
-        "key" : "STRESS_TESTS",
-        "value" : "TRUE"
+        "key" : "TEST_INVOCATIONS",
+        "value" : "10"
       }
-    ]
+    ],
+    "testExecutionOrdering" : "random"
   },
   "testTargets" : [
     {

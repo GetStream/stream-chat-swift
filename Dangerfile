@@ -40,12 +40,9 @@ has_changelog_escape = has_meta_label || has_no_changelog_tag || has_skip_change
 
 # Add a CHANGELOG entry for app changes
 if !has_changelog_escape && !git.modified_files.include?("CHANGELOG.md") && has_app_changes
-    fail("Please include a CHANGELOG entry. \nYou can find it at [CHANGELOG.md](https://github.com/GetStream/stream-chat-swift/blob/main/CHANGELOG.md).")
+    message("There seems to be app changes but CHANGELOG wasn't modified.\nPlease include an entry if the PR includes user-facing changes.\nYou can find it at [CHANGELOG.md](https://github.com/GetStream/stream-chat-swift/blob/main/CHANGELOG.md).")
 end
 
 # Check all commits have correct format. Disable the length rule, since it's hardcoded
 # to 50 and GitHub has the limit 80.
 commit_lint.check disable: [:subject_length]
-
-swiftlint.lint_files inline_mode: true
-

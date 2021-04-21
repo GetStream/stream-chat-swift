@@ -18,7 +18,7 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
     }
 
     /// `_ChatChannelAvatarView` instance which holds photo of user for tagging.
-    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
+    open private(set) lazy var avatarView: _ChatUserAvatarView<ExtraData> = uiConfig
         .messageComposer
         .mentionAvatarView
         .init()
@@ -28,16 +28,19 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
     open private(set) lazy var usernameLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
     /// Subtitle label which shows username tag etc. `@user`.
     open private(set) lazy var usernameTagLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
     /// ImageView which is located at the right part of the cell, showing @ symbol by default.
     open private(set) lazy var mentionSymbolImageView: UIImageView = UIImageView().withoutAutoresizingMaskConstraints
     /// StackView which holds username and userTag labels in vertical axis by default.
     open private(set) lazy var textStackView: UIStackView = UIStackView().withoutAutoresizingMaskConstraints
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = uiConfig.colorPalette.popoverBackground
         usernameLabel.font = uiConfig.font.headlineBold
 
@@ -67,7 +70,7 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
             usernameTagLabel.text = ""
         }
 
-        avatarView.content = .user(user: content)
+        avatarView.content = content
     }
 
     private func setupLeftImageViewConstraints() {

@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -37,6 +37,11 @@ extension UserListSortingKey {
     static let defaultSortDescriptor: NSSortDescriptor = {
         let stringKeyPath: KeyPath<UserDTO, String> = \UserDTO.id
         return .init(keyPath: stringKeyPath, ascending: false)
+    }()
+    
+    static let lastActiveSortDescriptor: NSSortDescriptor = {
+        let dateKeyPath: KeyPath<UserDTO, Date?> = \UserDTO.lastActivityAt
+        return .init(keyPath: dateKeyPath, ascending: false)
     }()
     
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {

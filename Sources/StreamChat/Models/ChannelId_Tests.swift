@@ -1,5 +1,5 @@
 //
-// Copyright © 2020 Stream.io Inc. All rights reserved.
+// Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
 @testable import StreamChat
@@ -41,6 +41,11 @@ class ChannelId_Tests: XCTestCase {
         XCTAssertNil(decode(value: "*"))
         XCTAssertEqual(decode(value: "messaging:123"), ChannelId(type: .messaging, id: "123"))
         XCTAssertEqual(decode(value: "asd:123"), ChannelId(type: .custom("asd"), id: "123"))
+    }
+    
+    func test_apiPath() {
+        let channelId = ChannelId.unique
+        XCTAssertEqual(channelId.apiPath, channelId.type.rawValue + "/" + channelId.id)
     }
     
     @available(iOS, deprecated: 12.0, message: "Remove this workaround when dropping iOS 12 support.")

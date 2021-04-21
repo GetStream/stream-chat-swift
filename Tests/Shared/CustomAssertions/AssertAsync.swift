@@ -5,10 +5,10 @@
 import XCTest
 
 /// The default timeout value used by the `willBe___` family of assertions.
-let defaultTimeout: TimeInterval = TestRunnerEnvironment.isCI ? 5 : 1
+let defaultTimeout: TimeInterval = TestRunnerEnvironment.isCI || TestRunnerEnvironment.isStressTest ? 10 : 1
 
 /// The default timeout value used by the `stays___` family of assertions.
-let defaultTimeoutForInversedExpecations: TimeInterval = TestRunnerEnvironment.isStressTest ? 0.001 : 0.1
+let defaultTimeoutForInversedExpecations: TimeInterval = TestRunnerEnvironment.isCI || TestRunnerEnvironment.isStressTest ? 1 : 0.1
 
 /// How big is the period between expression evaluations.
 let evaluationPeriod: TimeInterval = 0.00001
@@ -89,6 +89,32 @@ extension Assert {
             expression1() == nil,
             timeout: timeout,
             message: "Failed to become `nil`",
+            file: file,
+            line: line
+        )
+    }
+
+    /// Periodically checks if the expression does not evaluate to `nil`. Fails if the expression result is `nil` within
+    /// the `timeout` period.
+    ///
+    /// - Parameters:
+    ///   - expression: The expression to evaluate.
+    ///   - timeout: The maximum time the function waits for the expression results to equal.
+    ///   - message: The message to print when the assertion fails.
+    ///
+    /// - Warning: ⚠️ The expression is evaluated repeatedly during the function execution. It should not have
+    ///   any side effects which can affect its result.
+    static func willNotBeNil<T>(
+        _ expression1: @autoclosure @escaping () -> T?,
+        timeout: TimeInterval = defaultTimeout,
+        message: @autoclosure () -> String = "Failed to not be `nil`",
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> Assertion {
+        willBeTrue(
+            expression1() != nil,
+            timeout: timeout,
+            message: "Failed to not be `nil`",
             file: file,
             line: line
         )
@@ -311,7 +337,7 @@ struct AssertAsync {
 }
 
 @_functionBuilder
-struct AssertionBuilder {
+enum AssertionBuilder {
     static func buildBlock(_ assertion: Assertion) -> Assertion {
         assertion
     }

@@ -4,6 +4,7 @@
 
 import CoreData
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class ListChange_Tests: XCTestCase {
@@ -93,7 +94,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
         fetchRequest = NSFetchRequest(entityName: "TestManagedObject")
         fetchRequest.sortDescriptors = [.init(key: "testId", ascending: true)]
         database = try! DatabaseContainerMock(
-            kind: .inMemory,
+            kind: .onDisk(databaseFileURL: .newTemporaryFileURL()),
             modelName: "TestDataModel",
             bundle: Bundle(for: ListDatabaseObserver_Tests.self)
         )
@@ -107,7 +108,10 @@ class ListDatabaseObserver_Tests: XCTestCase {
     }
     
     override func tearDown() {
-        AssertAsync.canBeReleased(&observer)
+        AssertAsync {
+            Assert.canBeReleased(&observer)
+            Assert.canBeReleased(&database)
+        }
         super.tearDown()
     }
     

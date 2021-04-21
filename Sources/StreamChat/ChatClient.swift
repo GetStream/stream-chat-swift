@@ -84,15 +84,28 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     private let eventWorkerBuilders: [EventWorkerBuilder]
 
     /// The notification center used to send and receive notifications about incoming events.
-    private(set) lazy var eventNotificationCenter = environment.notificationCenterBuilder([
-        EventDataProcessorMiddleware<ExtraData>(database: databaseContainer),
-        TypingStartCleanupMiddleware<ExtraData>(
-            excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) }
-        ),
-        ChannelReadUpdaterMiddleware<ExtraData>(database: databaseContainer),
-        ChannelMemberTypingStateUpdaterMiddleware<ExtraData>(database: databaseContainer),
-        MessageReactionsMiddleware<ExtraData>(database: databaseContainer)
-    ])
+    private(set) lazy var eventNotificationCenter: EventNotificationCenter = {
+        let center = environment.notificationCenterBuilder(databaseContainer)
+
+        let middlewares: [EventMiddleware] = [
+            EventDataProcessorMiddleware<ExtraData>(),
+            TypingStartCleanupMiddleware<ExtraData>(
+                excludedUserIds: { [weak self] in Set([self?.currentUserId].compactMap { $0 }) },
+                emitEvent: { [weak center] in center?.process($0) }
+            ),
+            ChannelReadUpdaterMiddleware<ExtraData>(),
+            ChannelMemberTypingStateUpdaterMiddleware<ExtraData>(),
+            MessageReactionsMiddleware<ExtraData>(),
+            ChannelTruncatedEventMiddleware<ExtraData>(),
+            MemberEventMiddleware<ExtraData>(),
+            UserChannelBanEventsMiddleware<ExtraData>(),
+            UserWatchingEventMiddleware<ExtraData>()
+        ]
+
+        center.add(middlewares: middlewares)
+
+        return center
+    }()
     
     /// The `APIClient` instance `Client` uses to communicate with Stream REST API.
     lazy var apiClient: APIClient = {
@@ -147,12 +160,13 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
                 return try environment.databaseContainerBuilder(
                     .onDisk(databaseFileURL: dbFileURL),
                     config.shouldFlushLocalStorageOnStart,
-                    config.isClientInActiveMode // Only reset Ephemeral values in active mode
+                    config.isClientInActiveMode, // Only reset Ephemeral values in active mode
+                    config.localCaching
                 )
             }
             
         } catch is ClientError.MissingLocalStorageURL {
-            log.assertationFailure("The URL provided in ChatClientConfig can't be `nil`. Falling back to the in-memory option.")
+            log.assertionFailure("The URL provided in ChatClientConfig can't be `nil`. Falling back to the in-memory option.")
             
         } catch {
             log.error("Failed to initalized the local storage with error: \(error). Falling back to the in-memory option.")
@@ -162,9 +176,9 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             return try environment.databaseContainerBuilder(
                 .inMemory,
                 config.shouldFlushLocalStorageOnStart,
-                config
-                    .isClientInActiveMode
-            ) // Only reset Ephemeral values in active mode
+                config.isClientInActiveMode, // Only reset Ephemeral values in active mode
+                config.localCaching
+            )
         } catch {
             fatalError("Failed to initialize the in-memory storage with error: \(error). This is a non-recoverable error.")
         }
@@ -179,14 +193,14 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     /// required header auth parameters to make a successful request.
     private var urlSessionConfiguration: URLSessionConfiguration {
         let config = URLSessionConfiguration.default
-        config.waitsForConnectivity = true
+        config.waitsForConnectivity = false
         config.httpAdditionalHeaders = sessionHeaders
         return config
     }
     
     /// Stream-specific request headers.
     private let sessionHeaders: [String: String] = [
-        "X-Stream-Client": "stream-chat-swift-client-\(SystemEnvironment.version)"
+        "X-Stream-Client": "stream-chat-swift-client-v\(SystemEnvironment.version)"
     ]
     
     /// The current connection id
@@ -348,9 +362,10 @@ extension _ChatClient {
         var databaseContainerBuilder: (
             _ kind: DatabaseContainer.Kind,
             _ shouldFlushOnStart: Bool,
-            _ shouldResetEphemeralValuesOnStart: Bool
+            _ shouldResetEphemeralValuesOnStart: Bool,
+            _ localCachingSettings: ChatClientConfig.LocalCaching?
         ) throws -> DatabaseContainer = {
-            try DatabaseContainer(kind: $0, shouldFlushOnStart: $1, shouldResetEphemeralValuesOnStart: $2)
+            try DatabaseContainer(kind: $0, shouldFlushOnStart: $1, shouldResetEphemeralValuesOnStart: $2, localCachingSettings: $3)
         }
         
         var requestEncoderBuilder: (_ baseURL: URL, _ apiKey: APIKey) -> RequestEncoder = DefaultRequestEncoder.init
@@ -358,7 +373,7 @@ extension _ChatClient {
         
         var eventDecoderBuilder: () -> EventDecoder<ExtraData> = EventDecoder<ExtraData>.init
         
-        var notificationCenterBuilder: ([EventMiddleware]) -> EventNotificationCenter = EventNotificationCenter.init
+        var notificationCenterBuilder = EventNotificationCenter.init
         
         var internetConnection: () -> InternetConnection = { InternetConnection() }
 

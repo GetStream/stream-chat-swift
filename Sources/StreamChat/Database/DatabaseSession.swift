@@ -57,6 +57,7 @@ protocol MessageDatabaseSession {
     func createNewMessage<ExtraData: MessageExtraData>(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
@@ -75,6 +76,16 @@ protocol MessageDatabaseSession {
         payload: MessagePayload<ExtraData>,
         for cid: ChannelId?
     ) throws -> MessageDTO
+
+    /// Pins the provided message
+    /// - Parameters:
+    ///   - message: The DTO to be pinned
+    ///   - pinning: The pinning information, including the expiration.
+    func pin(message: MessageDTO, pinning: MessagePinning) throws
+
+    /// Unpins the provided message
+    /// - Parameter message: The DTO to be unpinned
+    func unpin(message: MessageDTO)
     
     /// Fetches `MessageDTO` with the given `id` from the DB. Returns `nil` if no `MessageDTO` matching the `id` exists.
     func message(id: MessageId) -> MessageDTO?
@@ -103,6 +114,7 @@ extension MessageDatabaseSession {
     func createNewMessage<ExtraData: MessageExtraData>(
         in cid: ChannelId,
         text: String,
+        pinning: MessagePinning?,
         quotedMessageId: MessageId?,
         attachments: [AttachmentEnvelope] = [],
         attachmentSeeds: [ChatMessageAttachmentSeed] = [],
@@ -111,6 +123,7 @@ extension MessageDatabaseSession {
         try createNewMessage(
             in: cid,
             text: text,
+            pinning: pinning,
             command: nil,
             arguments: nil,
             parentMessageId: nil,
@@ -151,7 +164,7 @@ protocol ChannelReadDatabaseSession {
     
     /// Fetches `ChannelReadDTO` with the given `cid` and `userId` from the DB.
     /// Returns `nil` if no `ChannelReadDTO` matching the `cid` and `userId`  exists.
-    func loadChannelRead(cid: ChannelId, userId: String) -> ChannelReadDTO?
+    func loadChannelRead(cid: ChannelId, userId: UserId) -> ChannelReadDTO?
     
     /// Fetches `ChannelReadDTO`entities for the given `userId` from the DB.
     func loadChannelReads(for userId: UserId) -> [ChannelReadDTO]
@@ -244,10 +257,7 @@ extension DatabaseSession {
             try saveUser(payload: userPayload)
         }
         
-        // Save a member data.
-        if let cid = payload.cid, let memberPayload = payload.memberContainer?.member {
-            try saveMember(payload: memberPayload, channelId: cid)
-        }
+        // Member events are handled in `MemberEventMiddleware`
         
         // Save a channel detail data.
         if let channelDetailPayload = payload.channel {

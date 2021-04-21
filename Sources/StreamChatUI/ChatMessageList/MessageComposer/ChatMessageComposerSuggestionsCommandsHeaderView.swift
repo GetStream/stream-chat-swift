@@ -12,7 +12,6 @@ public typealias ChatMessageComposerSuggestionsCommandsReusableView =
 /// The header reusable view of the suggestion collection view.
 open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
     UIConfigProvider {
-    
     /// The reuse identifier of the reusable header view.
     open class var reuseId: String { String(describing: self) }
     
@@ -29,7 +28,6 @@ public typealias ChatMessageComposerSuggestionsCommandsHeaderView = _ChatMessage
 
 /// The header view of the suggestion collection view.
 open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
-    
     /// The image icon of the commands header view.
     open private(set) lazy var commandImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
@@ -38,8 +36,10 @@ open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDat
     open private(set) lazy var headerLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
 
-    override public func defaultAppearance() {
+    override open func setUpAppearance() {
+        super.setUpAppearance()
         backgroundColor = uiConfig.colorPalette.popoverBackground
 
         headerLabel.font = uiConfig.font.body
