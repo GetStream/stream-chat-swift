@@ -438,17 +438,21 @@ extension MessageListVC: _ChatMessageActionsVCDelegate {
         message: _ChatMessage<ExtraData>,
         didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
-        dismiss(animated: true) { [weak self] in
-            switch actionItem {
-            case is EditActionItem:
+        switch actionItem {
+        case is EditActionItem:
+            dismiss(animated: true) { [weak self] in
                 self?.messageComposerViewController.state = .edit(message)
-            case is InlineReplyActionItem:
-                self?.messageComposerViewController.state = .quote(message)
-            case is ThreadReplyActionItem:
-                self?.showThread(for: message)
-            default:
-                return
             }
+        case is InlineReplyActionItem:
+            dismiss(animated: true) { [weak self] in
+                self?.messageComposerViewController.state = .quote(message)
+            }
+        case is ThreadReplyActionItem:
+            dismiss(animated: true) { [weak self] in
+                self?.showThread(for: message)
+            }
+        default:
+            return
         }
     }
 
