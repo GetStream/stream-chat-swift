@@ -99,7 +99,12 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
         self.client = client
         self.environment = environment
     }
-    
+
+    /// Synchronize local data with remote. Waits for the client to connect but doesn’t initiate the connection itself.
+    /// This is to make sure the fetched local data is up-to-date, since the current user data is updated through WebSocket events.
+    ///
+    /// - Parameter completion: Called when the controller has finished fetching the local data
+    ///   and the client connection is established.
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
         
@@ -107,15 +112,17 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
             callback { completion?(error) }
             return
         }
-        
-        guard let currentUserId = currentUser?.id else {
-            completion?(ClientError.CurrentUserDoesNotExist())
-            return
-        }
-        
-        currentUserUpdater.fetchDevices(currentUserId: currentUserId) { error in
-            self.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: error))
-            self.callback { completion?(error) }
+
+        // Unlike the other DataControllers, this one does not make a remote call when synchronising.
+        // But we can assume that if we wait for the connection of the WebSocket, it means the local data
+        // is in sync with the remote server, so we can set the state to remoteDataFetched.
+        client.provideConnectionId { [weak self] connectionId in
+            var error: ClientError?
+            if connectionId == nil {
+                error = ClientError.ConnectionNotSuccessfull()
+            }
+            self?.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(error!)
+            self?.callback { completion?(error) }
         }
     }
     
