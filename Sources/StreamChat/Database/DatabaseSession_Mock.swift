@@ -204,6 +204,25 @@ extension DatabaseSessionMock {
         try throwErrorIfNeeded()
         return try underlyingSession.createNewAttachment(attachment: attachment, id: id)
     }
+
+    func saveChannelMute<ExtraData>(
+        payload: MutedChannelPayload<ExtraData>
+    ) throws -> ChannelMuteDTO where ExtraData: ExtraDataTypes {
+        try throwErrorIfNeeded()
+        return try underlyingSession.saveChannelMute(payload: payload)
+    }
+
+    func loadChannelMutes(for cid: ChannelId) -> [ChannelMuteDTO] {
+        underlyingSession.loadChannelMutes(for: cid)
+    }
+
+    func loadChannelMutes(for userId: UserId) -> [ChannelMuteDTO] {
+        underlyingSession.loadChannelMutes(for: userId)
+    }
+
+    func loadChannelMute(cid: ChannelId, userId: String) -> ChannelMuteDTO? {
+        underlyingSession.loadChannelMute(cid: cid, userId: userId)
+    }
 }
 
 private extension DatabaseSessionMock {

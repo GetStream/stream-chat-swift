@@ -56,3 +56,29 @@ final class ChannelMuteDTO: NSManagedObject {
         return new
     }
 }
+
+extension NSManagedObjectContext {
+    @discardableResult
+    func saveChannelMute<ExtraData: ExtraDataTypes>(payload: MutedChannelPayload<ExtraData>) throws -> ChannelMuteDTO {
+        let dto = ChannelMuteDTO.loadOrCreate(cid: payload.mutedChannel.cid, userId: payload.user.id, context: self)
+
+        dto.user = try saveUser(payload: payload.user)
+        dto.channel = try saveChannel(payload: payload.mutedChannel, query: nil)
+        dto.createdAt = payload.createdAt
+        dto.updatedAt = payload.updatedAt
+
+        return dto
+    }
+
+    func loadChannelMute(cid: ChannelId, userId: String) -> ChannelMuteDTO? {
+        ChannelMuteDTO.load(cid: cid, userId: userId, context: self)
+    }
+
+    func loadChannelMutes(for userId: UserId) -> [ChannelMuteDTO] {
+        ChannelMuteDTO.load(userId: userId, context: self)
+    }
+
+    func loadChannelMutes(for cid: ChannelId) -> [ChannelMuteDTO] {
+        ChannelMuteDTO.load(cid: cid, context: self)
+    }
+}
