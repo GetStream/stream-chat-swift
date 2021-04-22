@@ -87,7 +87,7 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, UICo
 extension _CurrentChatUserAvatarView: _CurrentChatUserControllerDelegate {
     public func currentUserController(
         _ controller: _CurrentChatUserController<ExtraData>,
-        didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData.User>>
+        didChangeCurrentUser: EntityChange<_CurrentChatUser<ExtraData>>
     ) {
         updateContentIfNeeded()
     }

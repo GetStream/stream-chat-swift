@@ -117,16 +117,16 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
 extension CurrentUserDTO {
     /// Snapshots the current state of `CurrentUserDTO` and returns an immutable model object from it.
-    func asModel<ExtraData: UserExtraData>() -> _CurrentChatUser<ExtraData> { .create(fromDTO: self) }
+    func asModel<ExtraData: ExtraDataTypes>() -> _CurrentChatUser<ExtraData> { .create(fromDTO: self) }
 }
 
 extension _CurrentChatUser {
     fileprivate static func create(fromDTO dto: CurrentUserDTO) -> _CurrentChatUser {
         let user = dto.user
         
-        let extraData: ExtraData
+        let extraData: ExtraData.User
         do {
-            extraData = try JSONDecoder.default.decode(ExtraData.self, from: user.extraData)
+            extraData = try JSONDecoder.default.decode(ExtraData.User.self, from: user.extraData)
         } catch {
             log.error(
                 "Failed to decode extra data for CurrentUser with id: <\(dto.user.id)>, using default value instead. "
@@ -135,8 +135,8 @@ extension _CurrentChatUser {
             extraData = .defaultValue
         }
         
-        let mutedUsers: [_ChatUser<ExtraData>] = dto.mutedUsers.map { $0.asModel() }
-        let flaggedUsers: [_ChatUser<ExtraData>] = dto.flaggedUsers.map { $0.asModel() }
+        let mutedUsers: [_ChatUser<ExtraData.User>] = dto.mutedUsers.map { $0.asModel() }
+        let flaggedUsers: [_ChatUser<ExtraData.User>] = dto.flaggedUsers.map { $0.asModel() }
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
 
         return _CurrentChatUser(
