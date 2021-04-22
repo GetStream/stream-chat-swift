@@ -10,6 +10,8 @@ class CurrentUserPayload<ExtraData: ExtraDataTypes>: UserPayload<ExtraData.User>
     let devices: [DevicePayload]
     /// Muted users.
     let mutedUsers: [MutedUserPayload<ExtraData.User>]
+    /// Muted channels.
+    let mutedChannels: [MutedChannelPayload<ExtraData>]
     /// Unread channel and message counts
     let unreadCount: UnreadCount?
     
@@ -28,10 +30,12 @@ class CurrentUserPayload<ExtraData: ExtraDataTypes>: UserPayload<ExtraData.User>
         extraData: ExtraData.User,
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload<ExtraData.User>] = [],
+        mutedChannels: [MutedChannelPayload<ExtraData>] = [],
         unreadCount: UnreadCount? = nil
     ) {
         self.devices = devices
         self.mutedUsers = mutedUsers
+        self.mutedChannels = mutedChannels
         self.unreadCount = unreadCount
         
         super.init(
@@ -54,6 +58,7 @@ class CurrentUserPayload<ExtraData: ExtraDataTypes>: UserPayload<ExtraData.User>
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         devices = try container.decodeIfPresent([DevicePayload].self, forKey: .devices) ?? []
         mutedUsers = try container.decodeIfPresent([MutedUserPayload<ExtraData.User>].self, forKey: .mutedUsers) ?? []
+        mutedChannels = try container.decodeIfPresent([MutedChannelPayload<ExtraData>].self, forKey: .mutedChannels) ?? []
         unreadCount = try? UnreadCount(from: decoder)
         
         try super.init(from: decoder)

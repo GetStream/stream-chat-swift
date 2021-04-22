@@ -19,6 +19,7 @@ enum UserPayloadsCodingKeys: String, CodingKey {
     case unreadChannelsCount = "unread_channels"
     case unreadMessagesCount = "total_unread_count"
     case mutedUsers = "mutes"
+    case mutedChannels = "channel_mutes"
     case isAnonymous = "anon"
     case devices
 }
