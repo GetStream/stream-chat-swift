@@ -129,6 +129,18 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
     /// You can use this information to show to your users information about what messages were read by certain users.
     ///
     public let reads: [_ChatChannelRead<ExtraData>]
+
+    /// Channel mute details. If `nil` the channel is not muted by the current user.
+    ///
+    /// - Important: The `muteDetails` property is loaded and evaluated lazily to maintain high performance.
+    public var muteDetails: MuteDetails? { _muteDetails }
+
+    /// Says whether the channel is muted by the current user.
+    ///
+    /// - Important: The `isMuted` property is loaded and evaluated lazily to maintain high performance.
+    public var isMuted: Bool { muteDetails != nil }
+
+    @CoreDataLazy private var _muteDetails: MuteDetails?
     
     /// Cooldown duration for the channel, if it's in slow mode.
     /// This value will be 0 if the channel is not in slow mode.
@@ -176,6 +188,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
 //        invitedMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
         latestMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
         pinnedMessages: @escaping (() -> [_ChatMessage<ExtraData>]) = { [] },
+        muteDetails: @escaping () -> MuteDetails?,
         underlyingContext: NSManagedObjectContext?
     ) {
         self.cid = cid
@@ -204,6 +217,7 @@ public struct _ChatChannel<ExtraData: ExtraDataTypes> {
         $_lastActiveMembers = (lastActiveMembers, underlyingContext)
         $_lastActiveWatchers = (lastActiveWatchers, underlyingContext)
         $_pinnedMessages = (pinnedMessages, underlyingContext)
+        $_muteDetails = (muteDetails, underlyingContext)
     }
 }
 
