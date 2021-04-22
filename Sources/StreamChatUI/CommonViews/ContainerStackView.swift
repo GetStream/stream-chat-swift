@@ -241,6 +241,16 @@ public class ContainerStackView: UIView {
             ])
         }
 
+        if alignment != .fill {
+            // For the containers where subview anchors are not `=` to its layout guide (but are `>=` or `<=`)
+            // we set low priority size constraint. The layout engine will try to minimise errors for those constraints.
+            // As a result, the container will be the smallest possible that fits the content.
+            customConstraints += [
+                widthAnchor.constraint(equalToConstant: 0).with(priority: .init(1)),
+                heightAnchor.constraint(equalToConstant: 0).with(priority: .init(1))
+            ]
+        }
+
         // Create spacing constraints between the arranged subviews
         zip(subviews, subviews.dropFirst()).forEach { lView, rView in
             let spacingConstraint: NSLayoutConstraint
