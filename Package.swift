@@ -50,6 +50,7 @@ var streamChatSourcesExcluded: [String] { [
     "Database/DatabaseSession_Mock.swift",
     "Database/DatabaseSession_Tests.swift",
     "Database/DTOs/UserDTO_Tests.swift",
+    "Database/DTOs/ChannelMuteDTO_Tests.swift",
     "Database/DTOs/ChannelDTO_Tests.swift",
     "Database/DTOs/CurrentUserDTO_Tests.swift",
     "Database/DTOs/MemberModelDTO_Tests.swift",
