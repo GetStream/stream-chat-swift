@@ -69,6 +69,8 @@ enum EventType: String, Codable {
     case notificationMarkRead = "notification.mark_read"
     /// When the user mutes someone.
     case notificationMutesUpdated = "notification.mutes_updated"
+    /// When someone else from channel has muted someone.
+    case notificationChannelMutesUpdated = "notification.channel_mutes_updated"
     
     /// When the user accepts an invite.
     case notificationAddedToChannel = "notification.added_to_channel"
@@ -125,6 +127,7 @@ enum EventType: String, Codable {
         case .notificationInvited: return try NotificationInvitedEvent(from: response)
         case .notificationInviteAccepted: return try NotificationInviteAcceptedEvent(from: response)
         case .notificationInviteRejected: return try NotificationInviteRejectedEvent(from: response)
+        case .notificationChannelMutesUpdated: return try NotificationChannelMutesUpdatedEvent(from: response)
         }
     }
 }
