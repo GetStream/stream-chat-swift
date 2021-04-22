@@ -143,6 +143,13 @@ public class ContainerStackView: UIView {
         }
     }
 
+    /// Replaces all of the current arranged subviews.
+    /// - Parameter subviews: The new arranged subviews.
+    public func replaceArrangedSubviews(with subviews: [UIView]) {
+        removeAllArrangedSubviews()
+        addArrangedSubviews(subviews)
+    }
+
     /// Adds a collection of subviews to the current arranged subviews.
     /// If there are already arranged subviews, this will not replace the old ones.
     /// - Parameter subviews: The collection of subviews to be added to the arranged subviews.
