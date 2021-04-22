@@ -312,6 +312,18 @@ extension _ChatChannel {
                 .loadLastActiveMembers(cid: cid, context: context)
                 .map { $0.asModel() }
         }
+
+        let fetchMuteDetails: () -> MuteDetails? = {
+            guard
+                let currentUser = context.currentUser(),
+                let mute = ChannelMuteDTO.load(cid: cid, userId: currentUser.user.id, context: context)
+            else { return nil }
+
+            return .init(
+                createdAt: mute.createdAt,
+                updatedAt: mute.updatedAt
+            )
+        }
         
         return _ChatChannel(
             cid: cid,
@@ -339,6 +351,7 @@ extension _ChatChannel {
             //            invitedMembers: [],
             latestMessages: { fetchMessages() },
             pinnedMessages: { dto.pinnedMessages.map { $0.asModel() } },
+            muteDetails: fetchMuteDetails,
             underlyingContext: dto.managedObjectContext
         )
     }
