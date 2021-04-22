@@ -7,11 +7,11 @@ import StreamChat
 import XCTest
 
 class ChatChannelListRouter_Mock<ExtraData: ExtraDataTypes>: _ChatChannelListRouter<ExtraData> {
-    var openCurrentUserProfile_currentUser: _CurrentChatUser<ExtraData.User>?
+    var openCurrentUserProfile_currentUser: _CurrentChatUser<ExtraData>?
     var openChat_channel: _ChatChannel<ExtraData>?
     var openCreateNewChannelCalled: Bool = false
     
-    override open func openCurrentUserProfile(for currentUser: _CurrentChatUser<ExtraData.User>) {
+    override open func openCurrentUserProfile(for currentUser: _CurrentChatUser<ExtraData>) {
         openCurrentUserProfile_currentUser = currentUser
     }
     
