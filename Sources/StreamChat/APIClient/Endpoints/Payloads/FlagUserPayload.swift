@@ -5,7 +5,7 @@
 import Foundation
 
 /// The type describes the incoming JSON from `moderation/(un)flag` user endpoint.
-struct FlagUserPayload<ExtraData: UserExtraData>: Decodable {
+struct FlagUserPayload<ExtraData: ExtraDataTypes>: Decodable {
     private enum CodingKeys: String, CodingKey {
         case flag
         case currentUser = "user"
@@ -15,7 +15,7 @@ struct FlagUserPayload<ExtraData: UserExtraData>: Decodable {
     /// The payload of a current user who performed flag/unflag action.
     let currentUser: CurrentUserPayload<ExtraData>
     /// The payload of a user who was flagged or unflagged.
-    let flaggedUser: UserPayload<ExtraData>
+    let flaggedUser: UserPayload<ExtraData.User>
     
     init(from decoder: Decoder) throws {
         let nestedContainer = try decoder
@@ -24,13 +24,13 @@ struct FlagUserPayload<ExtraData: UserExtraData>: Decodable {
         
         self.init(
             currentUser: try nestedContainer.decode(CurrentUserPayload<ExtraData>.self, forKey: .currentUser),
-            flaggedUser: try nestedContainer.decode(UserPayload<ExtraData>.self, forKey: .flaggedUser)
+            flaggedUser: try nestedContainer.decode(UserPayload<ExtraData.User>.self, forKey: .flaggedUser)
         )
     }
     
     init(
         currentUser: CurrentUserPayload<ExtraData>,
-        flaggedUser: UserPayload<ExtraData>
+        flaggedUser: UserPayload<ExtraData.User>
     ) {
         self.currentUser = currentUser
         self.flaggedUser = flaggedUser

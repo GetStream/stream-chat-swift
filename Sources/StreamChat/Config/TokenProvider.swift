@@ -47,9 +47,13 @@ public extension _TokenProvider {
         extraData: ExtraData.User = .defaultValue
     ) -> Self {
         .init { client, completion in
-            client.apiClient.request(
-                endpoint: .guestUserToken(userId: userId, name: name, imageURL: imageURL, extraData: extraData)
-            ) {
+            let endpoint: Endpoint<GuestUserTokenPayload<ExtraData>> = .guestUserToken(
+                userId: userId,
+                name: name,
+                imageURL: imageURL,
+                extraData: extraData
+            )
+            client.apiClient.request(endpoint: endpoint) {
                 switch $0 {
                 case let .success(payload):
                     let token = payload.token

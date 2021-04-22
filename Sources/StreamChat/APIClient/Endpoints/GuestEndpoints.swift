@@ -10,11 +10,11 @@ extension Endpoint {
     ///   - userId: The user's identifier
     ///   - extraData: The user's extra data
     /// - Returns: The endpoint that expects **GuestUserTokenPayload<ExtraData>** payload in a response
-    static func guestUserToken<ExtraData: UserExtraData>(
+    static func guestUserToken<ExtraData: ExtraDataTypes>(
         userId: UserId,
         name: String?,
         imageURL: URL?,
-        extraData: ExtraData
+        extraData: ExtraData.User
     ) -> Endpoint<GuestUserTokenPayload<ExtraData>> {
         .init(
             path: "guest",
@@ -22,7 +22,7 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             requiresToken: false,
-            body: ["user": GuestUserTokenRequestPayload(
+            body: ["user": GuestUserTokenRequestPayload<ExtraData>(
                 userId: userId,
                 name: name,
                 imageURL: imageURL,
