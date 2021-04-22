@@ -7,11 +7,11 @@ import XCTest
 
 final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     func test_guestUserTokenRequestPayload_isEncodedCorrectly_withDefaultExtraData() throws {
-        let payload = GuestUserTokenRequestPayload(
+        let payload = GuestUserTokenRequestPayload<NoExtraData>(
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: NoExtraData.defaultValue
+            extraData: .defaultValue
         )
         
         try verify(payload, isEncodedAs: ["id": payload.userId, "name": payload.name!, "image": payload.imageURL!])
@@ -19,11 +19,11 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     
     func test_guestUserTokenRequestPayload_isEncodedCorrectly_withCustomExtraData() throws {
         let company = "getstream.io"
-        let payload = GuestUserTokenRequestPayload(
+        let payload = GuestUserTokenRequestPayload<TestExtraData>(
             userId: .unique,
             name: .unique,
             imageURL: .unique(),
-            extraData: TestExtraData(company: company)
+            extraData: TestExtraData.User(company: company)
         )
         
         try verify(
@@ -34,7 +34,7 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     
     // MARK: - Private
     
-    private func verify<ExtraData: UserExtraData>(
+    private func verify<ExtraData: ExtraDataTypes>(
         _ payload: GuestUserTokenRequestPayload<ExtraData>,
         isEncodedAs expected: [String: Any]
     ) throws {
@@ -47,7 +47,9 @@ final class GuestUserTokenRequestPayload_Tests: XCTestCase {
     }
 }
 
-private struct TestExtraData: UserExtraData {
-    static var defaultValue: TestExtraData = .init(company: "Stream")
-    let company: String
+private struct TestExtraData: ExtraDataTypes {
+    struct User: UserExtraData {
+        static var defaultValue = Self(company: "Stream")
+        let company: String
+    }
 }

@@ -33,12 +33,14 @@ class CurrentUserPayload_Tests: XCTestCase {
     }
     
     func test_currentUserJSON_isSerialized_withCustomExtraData() throws {
-        struct TestExtraData: UserExtraData {
-            static var defaultValue: TestExtraData = .init(secretNote: nil)
-            
-            let secretNote: String?
-            private enum CodingKeys: String, CodingKey {
-                case secretNote = "secret_note"
+        struct TestExtraData: ExtraDataTypes {
+            struct User: UserExtraData {
+                static var defaultValue = Self(secretNote: nil)
+
+                let secretNote: String?
+                private enum CodingKeys: String, CodingKey {
+                    case secretNote = "secret_note"
+                }
             }
         }
         

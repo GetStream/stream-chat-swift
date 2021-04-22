@@ -544,11 +544,13 @@ class MessageDTO_Tests: XCTestCase {
         
         _ = try await { completion in
             database.write({ (session) in
-                try session.saveCurrentUser(payload: .dummy(
+                let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                     userId: currentUserId,
                     role: .admin,
                     extraData: NoExtraData.defaultValue
-                ))
+                )
+
+                try session.saveCurrentUser(payload: currentUserPayload)
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
                 
@@ -645,11 +647,13 @@ class MessageDTO_Tests: XCTestCase {
         
         _ = try await { completion in
             database.write({ (session) in
-                try session.saveCurrentUser(payload: .dummy(
+                let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                     userId: currentUserId,
                     role: .admin,
                     extraData: NoExtraData.defaultValue
-                ))
+                )
+
+                try session.saveCurrentUser(payload: currentUserPayload)
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
                 
@@ -742,11 +746,13 @@ class MessageDTO_Tests: XCTestCase {
         // Save current user first
         _ = try await {
             database.write({
-                try $0.saveCurrentUser(payload: .dummy(
+                let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                     userId: .unique,
                     role: .admin,
                     extraData: NoExtraData.defaultValue
-                ))
+                )
+
+                try $0.saveCurrentUser(payload: currentUserPayload)
             }, completion: $0)
         }
                 
@@ -777,11 +783,13 @@ class MessageDTO_Tests: XCTestCase {
         let currentUserId: UserId = .unique
         
         try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: .dummy(
+            let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                 userId: currentUserId,
                 role: .admin,
-                extraData: NoExtraData.defaultValue
-            ))
+                extraData: .defaultValue
+            )
+
+            try session.saveCurrentUser(payload: currentUserPayload)
             
             try session.saveChannel(payload: self.dummyPayload(with: cid))
         }

@@ -28,7 +28,7 @@ protocol CurrentUserDatabaseSession {
     /// Saves the provided payload to the DB. Return's a `CurrentUserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO
+    func saveCurrentUser<ExtraData: ExtraDataTypes>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO
 
     /// Updates the `CurrentUserDTO` with the provided unread.
     /// If there is no current user, the error will be thrown.

@@ -61,7 +61,7 @@ extension CurrentUserDTO {
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
-    func saveCurrentUser<ExtraData: UserExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO {
+    func saveCurrentUser<ExtraData: ExtraDataTypes>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload)
 

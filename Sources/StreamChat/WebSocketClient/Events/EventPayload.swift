@@ -29,7 +29,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     let eventType: EventType
     let connectionId: String?
     let cid: ChannelId?
-    let currentUser: CurrentUserPayload<ExtraData.User>?
+    let currentUser: CurrentUserPayload<ExtraData>?
     let user: UserPayload<ExtraData.User>?
     let createdBy: UserPayload<ExtraData.User>?
     let memberContainer: MemberContainerPayload<ExtraData.User>?
@@ -47,7 +47,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         eventType: EventType,
         connectionId: String? = nil,
         cid: ChannelId? = nil,
-        currentUser: CurrentUserPayload<ExtraData.User>? = nil,
+        currentUser: CurrentUserPayload<ExtraData>? = nil,
         user: UserPayload<ExtraData.User>? = nil,
         createdBy: UserPayload<ExtraData.User>? = nil,
         memberContainer: MemberContainerPayload<ExtraData.User>? = nil,
@@ -86,7 +86,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         // In healthCheck event we can receive invalid id containing "*".
         // We don't need to throw error in that case and can treat it like missing cid.
         cid = try? container.decodeIfPresent(ChannelId.self, forKey: .cid)
-        currentUser = try container.decodeIfPresent(CurrentUserPayload<ExtraData.User>.self, forKey: .currentUser)
+        currentUser = try container.decodeIfPresent(CurrentUserPayload<ExtraData>.self, forKey: .currentUser)
         user = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .user)
         createdBy = try container.decodeIfPresent(UserPayload<ExtraData.User>.self, forKey: .createdBy)
         memberContainer = try container.decodeIfPresent(MemberContainerPayload<ExtraData.User>.self, forKey: .memberContainer)

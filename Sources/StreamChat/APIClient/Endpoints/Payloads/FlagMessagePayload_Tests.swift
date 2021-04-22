@@ -37,12 +37,14 @@ final class FlagMessagePayload_Tests: XCTestCase {
     }
 }
 
-private struct TestExtraData: UserExtraData {
-    enum CodingKeys: String, CodingKey {
-        case secretNote = "secret_note"
+private struct TestExtraData: ExtraDataTypes {
+    struct User: UserExtraData {
+        enum CodingKeys: String, CodingKey {
+            case secretNote = "secret_note"
+        }
+
+        static let defaultValue = Self(secretNote: "no secrets")
+
+        let secretNote: String
     }
-    
-    static let defaultValue = TestExtraData(secretNote: "no secrets")
-    
-    let secretNote: String
 }
