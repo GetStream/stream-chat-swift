@@ -24,7 +24,8 @@ public extension _CurrentChatUser {
         mutedUsers: Set<_ChatUser<ExtraData.User>> = [],
         flaggedUsers: Set<_ChatUser<ExtraData.User>> = [],
         flaggedMessageIDs: Set<MessageId> = [],
-        unreadCount: UnreadCount = .noUnread
+        unreadCount: UnreadCount = .noUnread,
+        mutedChannels: Set<_ChatChannel<ExtraData>> = []
     ) -> _CurrentChatUser {
         .init(
             id: id,
@@ -43,7 +44,9 @@ public extension _CurrentChatUser {
             mutedUsers: mutedUsers,
             flaggedUsers: flaggedUsers,
             flaggedMessageIDs: flaggedMessageIDs,
-            unreadCount: unreadCount
+            unreadCount: unreadCount,
+            mutedChannels: { mutedChannels },
+            underlyingContext: nil
         )
     }
 }
