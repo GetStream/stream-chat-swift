@@ -588,6 +588,7 @@
 		88DA57E02631E80D00FA8C53 /* MutedChannelPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA57DF2631E80D00FA8C53 /* MutedChannelPayload.swift */; };
 		88DA57EA2631E82B00FA8C53 /* MutedChannelPayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA57E92631E82B00FA8C53 /* MutedChannelPayload_Tests.swift */; };
 		88DA58042631E8F100FA8C53 /* MutedChannelPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 88DA58032631E8F100FA8C53 /* MutedChannelPayload.json */; };
+		88DA57202631AC3100FA8C53 /* ChannelMuteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA571F2631AC3100FA8C53 /* ChannelMuteDTO.swift */; };
 		88E26D5E2580E92000F55AB5 /* AttachmentId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E26D5D2580E92000F55AB5 /* AttachmentId.swift */; };
 		88E26D6E2580F34B00F55AB5 /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E26D6D2580F34B00F55AB5 /* AttachmentUploader.swift */; };
 		88E26D7D2580F95300F55AB5 /* AttachmentEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E26D7C2580F95300F55AB5 /* AttachmentEndpoints.swift */; };
@@ -1728,6 +1729,7 @@
 		88DA57DF2631E80D00FA8C53 /* MutedChannelPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedChannelPayload.swift; sourceTree = "<group>"; };
 		88DA57E92631E82B00FA8C53 /* MutedChannelPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedChannelPayload_Tests.swift; sourceTree = "<group>"; };
 		88DA58032631E8F100FA8C53 /* MutedChannelPayload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MutedChannelPayload.json; sourceTree = "<group>"; };
+		88DA571F2631AC3100FA8C53 /* ChannelMuteDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMuteDTO.swift; sourceTree = "<group>"; };
 		88E26D5D2580E92000F55AB5 /* AttachmentId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentId.swift; sourceTree = "<group>"; };
 		88E26D6D2580F34B00F55AB5 /* AttachmentUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader.swift; sourceTree = "<group>"; };
 		88E26D7C2580F95300F55AB5 /* AttachmentEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentEndpoints.swift; sourceTree = "<group>"; };
@@ -2468,6 +2470,7 @@
 				889B00E8252CACCB007709A8 /* ChannelMemberListQueryDTO_Tests.swift */,
 				790A4C54252F25DA001F4A23 /* DeviceDTO.swift */,
 				790A4C57252F2AF2001F4A23 /* DeviceDTO_Tests.swift */,
+				88DA571F2631AC3100FA8C53 /* ChannelMuteDTO.swift */,
 			);
 			path = DTOs;
 			sourceTree = "<group>";
@@ -5138,6 +5141,7 @@
 			files = (
 				DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */,
 				DAE566E724FFD22300E39431 /* ChannelController+SwiftUI.swift in Sources */,
+				88DA57202631AC3100FA8C53 /* ChannelMuteDTO.swift in Sources */,
 				792CA62624CEE93700D70A5E /* ChannelListUpdater.swift in Sources */,
 				882C5756252C791400E60C44 /* ChannelMemberListUpdater.swift in Sources */,
 				79896D5E25065ECD00BA8F1C /* ChannelRead.swift in Sources */,
