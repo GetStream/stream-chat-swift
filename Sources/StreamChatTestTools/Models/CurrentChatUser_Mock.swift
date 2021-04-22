@@ -18,11 +18,11 @@ public extension _CurrentChatUser {
         updatedAt: Date = .init(),
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = [],
-        extraData: ExtraData = .defaultValue,
+        extraData: ExtraData.User = .defaultValue,
         devices: [Device] = [],
         currentDevice: Device? = nil,
-        mutedUsers: Set<_ChatUser<ExtraData>> = [],
-        flaggedUsers: Set<_ChatUser<ExtraData>> = [],
+        mutedUsers: Set<_ChatUser<ExtraData.User>> = [],
+        flaggedUsers: Set<_ChatUser<ExtraData.User>> = [],
         flaggedMessageIDs: Set<MessageId> = [],
         unreadCount: UnreadCount = .noUnread
     ) -> _CurrentChatUser {
