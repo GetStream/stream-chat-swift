@@ -122,6 +122,8 @@ extension CurrentUserDTO {
 
 extension _CurrentChatUser {
     fileprivate static func create(fromDTO dto: CurrentUserDTO) -> _CurrentChatUser {
+        let context = dto.managedObjectContext!
+
         let user = dto.user
         
         let extraData: ExtraData.User
@@ -138,6 +140,14 @@ extension _CurrentChatUser {
         let mutedUsers: [_ChatUser<ExtraData.User>] = dto.mutedUsers.map { $0.asModel() }
         let flaggedUsers: [_ChatUser<ExtraData.User>] = dto.flaggedUsers.map { $0.asModel() }
         let flaggedMessagesIDs: [MessageId] = dto.flaggedMessages.map(\.id)
+
+        let fetchMutedChannels: () -> Set<_ChatChannel<ExtraData>> = {
+            Set(
+                ChannelMuteDTO
+                    .load(userId: user.id, context: context)
+                    .map { $0.channel.asModel() }
+            )
+        }
 
         return _CurrentChatUser(
             id: user.id,
@@ -159,7 +169,9 @@ extension _CurrentChatUser {
             unreadCount: UnreadCount(
                 channels: Int(dto.unreadChannelsCount),
                 messages: Int(dto.unreadMessagesCount)
-            )
+            ),
+            mutedChannels: fetchMutedChannels,
+            underlyingContext: context
         )
     }
 }
