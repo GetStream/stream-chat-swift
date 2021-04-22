@@ -1436,6 +1436,7 @@
 		79A9EAC2262045DC00F2A72D /* MessageRead+MissingUnreadCount.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "MessageRead+MissingUnreadCount.json"; sourceTree = "<group>"; };
 		79A9EB4C2625793000F2A72D /* CoreDataLazy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataLazy.swift; sourceTree = "<group>"; };
 		79A9EB562625798000F2A72D /* CoreDataLazy_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataLazy_Tests.swift; sourceTree = "<group>"; };
+		79AF43922631692D00E75CDA /* StreamChat.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = StreamChat.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		79B4F0DE25D305CD0063FFB5 /* CurrentChatUserAvatarView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentChatUserAvatarView_Tests.swift; sourceTree = "<group>"; };
 		79B5517024E593C200CE9FEC /* UserPayloads_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPayloads_Tests.swift; sourceTree = "<group>"; };
 		79B5517124E593C200CE9FEC /* UserPayloads.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserPayloads.swift; sourceTree = "<group>"; };
@@ -3810,6 +3811,7 @@
 		8AD5EC8522E9A3E8005CFAC9 = {
 			isa = PBXGroup;
 			children = (
+				79AF43922631692D00E75CDA /* StreamChat.playground */,
 				792E3D6A25C97D920040B0C2 /* Package.swift */,
 				799C9415247D2F38001F1104 /* Sources */,
 				799C9452247D59B1001F1104 /* Tests */,
