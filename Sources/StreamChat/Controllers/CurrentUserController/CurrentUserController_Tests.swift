@@ -75,24 +75,6 @@ final class CurrentUserController_Tests: StressTestCase {
         XCTAssertEqual(controller.unreadCount, expectedUnreadCount)
     }
     
-    func test_synchronize_changesControllerState() {
-        // Check if controller has initialized state initially.
-        XCTAssertEqual(controller.state, .initialized)
-        
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
-        
-        // Simulate `synchronize` call.
-        controller.synchronize()
-        
-        // Simulate successful network call.
-        env.currentUserUpdater.fetchDevices_completion?(nil)
-        
-        // Check if state changed after successful network call.
-        XCTAssertEqual(controller.state, .remoteDataFetched)
-        XCTAssertNotNil(env.currentUserUpdater.fetchDevices_currentUserId)
-    }
-    
     func test_synchronize_changesState_and_propagatesObserverErrorOnCallbackQueue() {
         // Update observer to throw the error.
         let observerError = TestError()
@@ -111,63 +93,47 @@ final class CurrentUserController_Tests: StressTestCase {
         // Assert error from observer is forwarded.
         AssertAsync.willBeEqual(synchronizeError as? ClientError, ClientError(with: observerError))
     }
-    
-    func test_synchronize_whenNoCurrentUser_doesNotMakeRemoteCall() {
+
+    func test_synchronize_changesControllerState() {
         // Check if controller has initialized state initially.
         XCTAssertEqual(controller.state, .initialized)
-        
-        // Simulate no current user
-        env.currentUserObserverItem = nil
-        
-        // Simulate `synchronize` call.
-        var completionCalledError: ClientError.CurrentUserDoesNotExist?
-        controller.synchronize { error in
-            completionCalledError = error as? ClientError.CurrentUserDoesNotExist
-        }
-        
-        // Check if state changed to local data fetched
-        XCTAssertEqual(controller.state, .localDataFetched)
-        // Completion should be called with the error
-        AssertAsync.willBeTrue(completionCalledError != nil)
-    }
-    
-    func test_synchronize_changesControllerStateOnError() {
-        // Check if controller has `initialized` state initially.
-        assert(controller.state == .initialized)
-        
-        // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
-        
-        // Simulate `synchronize` call
-        controller.synchronize()
 
-        // Simulate failed network call.
-        let error = TestError()
-        env.currentUserUpdater.fetchDevices_completion?(error)
-        
-        // Check if state changed after failed network call.
-        XCTAssertEqual(controller.state, .remoteDataFetchFailed(ClientError(with: error)))
-    }
-    
-    func test_synchronize_propagesErrorFromUpdater() {
         // Simulate current user
         env.currentUserObserverItem = .mock(id: .unique)
-        
-        // Simulate `synchronize` call and catch the completion
-        var completionCalledError: Error?
-        controller.synchronize { [callbackQueueID] in
-            completionCalledError = $0
+
+        var synchronizeError: Error?
+        controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
+            synchronizeError = error
         }
-        
-        // Simulate failed update
-        let testError = TestError()
-        env.currentUserUpdater.fetchDevices_completion?(testError)
-        
-        // Completion should be called with the error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+
+        // Simulate connection successful
+        client.simulateProvidedConnectionId(connectionId: .unique)
+
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+        XCTAssertNil(synchronizeError)
     }
-    
+
+    func test_synchronize_changesControllerStateOnError() {
+        // Check if controller has initialized state initially.
+        XCTAssertEqual(controller.state, .initialized)
+
+        // Simulate current user
+        env.currentUserObserverItem = .mock(id: .unique)
+
+        var synchronizeError: Error?
+        controller.synchronize { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            synchronizeError = error
+        }
+
+        // Simulate connection not successful
+        client.simulateProvidedConnectionId(connectionId: nil)
+
+        XCTAssertEqual(controller.state, .remoteDataFetchFailed(.ConnectionNotSuccessfull()))
+        XCTAssertNotNil(synchronizeError)
+    }
+
     /// This test simulates a bug where the `currentUser` field was not updated if it wasn't
     /// touched before calling synchronize.
     func test_currentUserIsFetched_afterCallingSynchronize() throws {
