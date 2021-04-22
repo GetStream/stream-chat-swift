@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20D91" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20C69" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
@@ -67,6 +67,7 @@
         <relationship name="members" toMany="YES" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="channel" inverseEntity="MemberDTO"/>
         <relationship name="membership" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MemberDTO" inverseName="membershipChannel" inverseEntity="MemberDTO"/>
         <relationship name="messages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="channel" inverseEntity="MessageDTO"/>
+        <relationship name="mutes" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelMuteDTO" inverseName="channel" inverseEntity="ChannelMuteDTO"/>
         <relationship name="pinnedMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="pinnedChannel" inverseEntity="MessageDTO"/>
         <relationship name="queries" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelListQueryDTO" inverseName="channels" inverseEntity="ChannelListQueryDTO"/>
         <relationship name="reads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelReadDTO" inverseName="channel" inverseEntity="ChannelReadDTO"/>
@@ -113,6 +114,12 @@
                 <constraint value="queryHash"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="ChannelMuteDTO" representedClassName="ChannelMuteDTO" syncable="YES">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="updatedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="mutes" inverseEntity="ChannelDTO"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="channelMutes" inverseEntity="UserDTO"/>
     </entity>
     <entity name="ChannelReadDTO" representedClassName="ChannelReadDTO" syncable="YES">
         <attribute name="lastReadAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -228,6 +235,7 @@
         <attribute name="userCreatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="userRoleRaw" attributeType="String"/>
         <attribute name="userUpdatedAt" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="channelMutes" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelMuteDTO" inverseName="user" inverseEntity="ChannelMuteDTO"/>
         <relationship name="createdChannels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="createdBy" inverseEntity="ChannelDTO"/>
         <relationship name="currentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="user" inverseEntity="CurrentUserDTO"/>
         <relationship name="flaggedBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="CurrentUserDTO" inverseName="flaggedUsers" inverseEntity="CurrentUserDTO"/>
@@ -279,5 +287,6 @@
         <element name="TeamDTO" positionX="0" positionY="0" width="128" height="88"/>
         <element name="UserDTO" positionX="0" positionY="0" width="128" height="389"/>
         <element name="UserListQueryDTO" positionX="9" positionY="153" width="128" height="103"/>
+        <element name="ChannelMuteDTO" positionX="9" positionY="162" width="128" height="89"/>
     </elements>
 </model>
