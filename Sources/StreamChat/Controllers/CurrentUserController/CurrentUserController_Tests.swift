@@ -362,6 +362,50 @@ final class CurrentUserController_Tests: StressTestCase {
     }
 
     // MARK: - Device endpoints
+
+    // MARK: synchronizeDevices
+
+    func test_synchronizeDevices_whenRequestSuccess_completionCalledWithoutError() throws {
+        // Simulate current user
+        env.currentUserObserverItem = .mock(id: .unique)
+
+        var completionError: Error?
+        controller.synchronizeDevices() { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+
+        // Simulate successful network call.
+        env.currentUserUpdater.fetchDevices_completion?(nil)
+
+        AssertAsync.willBeNil(completionError)
+    }
+
+    func test_synchronizeDevices_whenRequestFails_propagatesError() {
+        // Simulate current user
+        env.currentUserObserverItem = .mock(id: .unique)
+
+        var completionError: Error?
+        controller.synchronizeDevices() { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+
+        // Simulate network response with the error.
+        let networkError = TestError()
+        env.currentUserUpdater.fetchDevices_completion?(networkError)
+
+        // Assert error is propogated.
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+
+    func test_synchronizeDevices__whenCurrentUserDoesNotExist_propagatesError() throws {
+        let error = try await {
+            controller.synchronizeDevices(completion: $0)
+        }
+
+        XCTAssert(error is ClientError.CurrentUserDoesNotExist)
+    }
     
     // MARK: addDevice
     

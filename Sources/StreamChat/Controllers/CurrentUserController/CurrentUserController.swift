@@ -196,6 +196,19 @@ public extension _CurrentChatUserController {
             }
         }
     }
+
+    /// Fetches the most updated devices and syncs with the local database.
+    /// - Parameter completion: Called when the devices are synced successfully, or with error.
+    func synchronizeDevices(completion: ((Error?) -> Void)? = nil) {
+        guard let currentUserId = currentUser?.id else {
+            completion?(ClientError.CurrentUserDoesNotExist())
+            return
+        }
+
+        currentUserUpdater.fetchDevices(currentUserId: currentUserId) { error in
+            self.callback { completion?(error) }
+        }
+    }
     
     /// Registers a device to the current user.
     /// `setUser` must be called before calling this.
