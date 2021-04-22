@@ -53,7 +53,7 @@ extension Endpoint {
 // MARK: - User flagging
 
 extension Endpoint {
-    static func flagUser<ExtraData: UserExtraData>(_ flag: Bool, with userId: UserId) -> Endpoint<FlagUserPayload<ExtraData>> {
+    static func flagUser<ExtraData: ExtraDataTypes>(_ flag: Bool, with userId: UserId) -> Endpoint<FlagUserPayload<ExtraData>> {
         .init(
             path: "moderation/\(flag ? "flag" : "unflag")",
             method: .post,
@@ -67,7 +67,7 @@ extension Endpoint {
 // MARK: - Message flagging
 
 extension Endpoint {
-    static func flagMessage<ExtraData: UserExtraData>(
+    static func flagMessage<ExtraData: ExtraDataTypes>(
         _ flag: Bool,
         with messageId: MessageId
     ) -> Endpoint<FlagMessagePayload<ExtraData>> {
