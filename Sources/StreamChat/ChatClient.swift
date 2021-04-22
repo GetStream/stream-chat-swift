@@ -386,9 +386,9 @@ extension ClientError {
         override public var localizedDescription: String { "The URL provided in ChatClientConfig is `nil`." }
     }
     
-    public class ConnectionNotSuccessfull: ClientError {
+    public class ConnectionNotSuccessful: ClientError {
         override public var localizedDescription: String {
-            "Connecting to the chat servers wasn't successfull. Please check the console log for additional info."
+            "Connecting to the chat servers wasn't successful. Please check the console log for additional info."
         }
     }
     
