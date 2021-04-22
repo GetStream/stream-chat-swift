@@ -119,7 +119,7 @@ public class _CurrentChatUserController<ExtraData: ExtraDataTypes>: DataControll
         client.provideConnectionId { [weak self] connectionId in
             var error: ClientError?
             if connectionId == nil {
-                error = ClientError.ConnectionNotSuccessfull()
+                error = ClientError.ConnectionNotSuccessful()
             }
             self?.state = error == nil ? .remoteDataFetched : .remoteDataFetchFailed(error!)
             self?.callback { completion?(error) }

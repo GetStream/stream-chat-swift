@@ -125,9 +125,9 @@ class ChatClientUpdater<ExtraData: ExtraDataTypes> {
             } else {
                 // Try to get a concrete error
                 if case let .disconnected(error) = client?.webSocketClient?.connectionState {
-                    completion?(ClientError.ConnectionNotSuccessfull(with: error))
+                    completion?(ClientError.ConnectionNotSuccessful(with: error))
                 } else {
-                    completion?(ClientError.ConnectionNotSuccessfull())
+                    completion?(ClientError.ConnectionNotSuccessful())
                 }
             }
         }

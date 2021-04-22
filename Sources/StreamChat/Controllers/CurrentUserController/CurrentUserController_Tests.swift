@@ -130,7 +130,7 @@ final class CurrentUserController_Tests: StressTestCase {
         // Simulate connection not successful
         client.simulateProvidedConnectionId(connectionId: nil)
 
-        XCTAssertEqual(controller.state, .remoteDataFetchFailed(.ConnectionNotSuccessfull()))
+        XCTAssertEqual(controller.state, .remoteDataFetchFailed(.ConnectionNotSuccessful()))
         XCTAssertNotNil(synchronizeError)
     }
 
