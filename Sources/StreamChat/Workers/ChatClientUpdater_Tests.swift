@@ -169,10 +169,10 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
             if connectionError == nil {
                 // Assert `ClientError.ConnectionNotSuccessful` error is propagated.
-                XCTAssertTrue(connectCompletionError is ClientError.ConnectionNotSuccessfull)
+                XCTAssertTrue(connectCompletionError is ClientError.ConnectionNotSuccessful)
             } else {
                 // Assert `ClientError.ConnectionNotSuccessful` error with underlaying error is propagated.
-                let clientError = connectCompletionError as! ClientError.ConnectionNotSuccessfull
+                let clientError = connectCompletionError as! ClientError.ConnectionNotSuccessful
                 XCTAssertTrue(clientError.underlyingError is ClientError.Unexpected)
             }
         }
@@ -468,7 +468,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         // Wait completion is called.
         AssertAsync.willBeTrue(reloadUserIfNeededCompletionCalled)
         // Assert `ClientError.ConnectionNotSuccessfull` is propagated.
-        XCTAssertTrue(reloadUserIfNeededCompletionError is ClientError.ConnectionNotSuccessfull)
+        XCTAssertTrue(reloadUserIfNeededCompletionError is ClientError.ConnectionNotSuccessful)
     }
 
     func test_reloadUserIfNeeded_keepsUpdaterAlive() {
