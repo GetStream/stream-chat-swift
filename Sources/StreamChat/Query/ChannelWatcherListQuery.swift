@@ -19,8 +19,8 @@ public struct ChannelWatcherListQuery: Encodable {
     /// `ChannelId` this query handles.
     public var cid: ChannelId
     
-    /// Query options. We watch the channel automatically.
-    var options: QueryOptions = .watch
+    /// Query options. We want to get the current state and watch the channel automatically.
+    private let options: QueryOptions = [.watch, .state]
     
     /// Creates new `ChannelWatcherListQuery` instance.
     /// - Parameters:
