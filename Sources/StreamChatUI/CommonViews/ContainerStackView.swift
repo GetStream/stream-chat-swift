@@ -185,6 +185,11 @@ public class ContainerStackView: UIView {
         invalidateConstraints()
     }
 
+    /// Removes all arranged subviews from the container.
+    public func removeAllArrangedSubviews() {
+        subviews.forEach { removeArrangedSubview($0) }
+    }
+
     /// Removes an arranged subview from the container.
     /// - Parameter subview: The subview to be removed.
     public func removeArrangedSubview(_ subview: UIView) {
