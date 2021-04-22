@@ -21,6 +21,7 @@ final class ChannelWatcherListQuery_Tests: XCTestCase {
         
         // Assert query is encoded correctly.
         AssertJSONEqual(json, [
+            "state": true,
             "watch": true,
             "watchers": ["limit": query.pagination.pageSize, "offset": query.pagination.offset]
         ])
@@ -35,6 +36,7 @@ final class ChannelWatcherListQuery_Tests: XCTestCase {
         
         // Assert query is encoded correctly.
         AssertJSONEqual(json, [
+            "state": true,
             "watch": true,
             "watchers": ["limit": Int.channelWatchersPageSize]
         ])
