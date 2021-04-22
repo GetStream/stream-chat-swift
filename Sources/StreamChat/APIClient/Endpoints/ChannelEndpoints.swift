@@ -173,7 +173,7 @@ extension Endpoint {
             path: "channels/" + query.cid.apiPath + "/query",
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: true,
             body: query
         )
     }
