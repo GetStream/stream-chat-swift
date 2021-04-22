@@ -73,6 +73,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// - Parameter cellType: The cell type to be registered.
     ///
     open func registerMessageCell(_ cellType: _СhatMessageCollectionViewCell<ExtraData>.Type) {
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage0ReuseId)
         collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage2ReuseId)
         collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage3ReuseId)
         collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage6ReuseId)
@@ -83,6 +84,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage5ReuseId)
         collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage13ReuseId)
         
+        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage0ReuseId)
         collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage2ReuseId)
         collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage3ReuseId)
         collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage6ReuseId)
