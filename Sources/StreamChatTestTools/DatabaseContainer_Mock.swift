@@ -124,11 +124,12 @@ extension DatabaseContainer {
     /// Synchronously creates a new CurrentUserDTO in the DB with the given id.
     func createCurrentUser(id: UserId = .unique) throws {
         try writeSynchronously { session in
-            try session.saveCurrentUser(payload: .dummy(
+            let payload: CurrentUserPayload<NoExtraData> = .dummy(
                 userId: id,
                 role: .admin,
                 extraData: NoExtraData.defaultValue
-            ))
+            )
+            try session.saveCurrentUser(payload: payload)
         }
     }
     

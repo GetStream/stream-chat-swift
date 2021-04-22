@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct GuestUserTokenRequestPayload<ExtraData: UserExtraData>: Encodable {
+struct GuestUserTokenRequestPayload<ExtraData: ExtraDataTypes>: Encodable {
     private enum CodingKeys: String, CodingKey {
         case userId = "id"
         case name
@@ -14,7 +14,7 @@ struct GuestUserTokenRequestPayload<ExtraData: UserExtraData>: Encodable {
     let userId: UserId
     let name: String?
     let imageURL: URL?
-    let extraData: ExtraData
+    let extraData: ExtraData.User
 
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)

@@ -205,7 +205,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                 return
             }
             
-            let endpoint: Endpoint<FlagMessagePayload<ExtraData.User>> = .flagMessage(flag, with: messageId)
+            let endpoint: Endpoint<FlagMessagePayload<ExtraData>> = .flagMessage(flag, with: messageId)
             self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
                 case let .success(payload):

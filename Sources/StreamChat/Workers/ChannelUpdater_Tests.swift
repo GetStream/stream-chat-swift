@@ -118,11 +118,13 @@ class ChannelUpdater_Tests: StressTestCase {
         
         _ = try await { completion in
             database.write({ (session) in
-                try session.saveCurrentUser(payload: .dummy(
+                let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                     userId: currentUserId,
                     role: .admin,
                     extraData: NoExtraData.defaultValue
-                ))
+                )
+
+                try session.saveCurrentUser(payload: currentUserPayload)
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
                 
@@ -188,11 +190,13 @@ class ChannelUpdater_Tests: StressTestCase {
         
         _ = try await { completion in
             database.write({ (session) in
-                try session.saveCurrentUser(payload: .dummy(
+                let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                     userId: currentUserId,
                     role: .admin,
                     extraData: NoExtraData.defaultValue
-                ))
+                )
+
+                try session.saveCurrentUser(payload: currentUserPayload)
                 
                 try session.saveChannel(payload: self.dummyPayload(with: cid))
                 

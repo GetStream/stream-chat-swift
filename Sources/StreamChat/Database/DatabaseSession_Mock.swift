@@ -54,7 +54,7 @@ extension DatabaseSessionMock {
     }
     
     func saveCurrentUser<ExtraData>(payload: CurrentUserPayload<ExtraData>) throws -> CurrentUserDTO
-        where ExtraData: UserExtraData {
+        where ExtraData: ExtraDataTypes {
         try throwErrorIfNeeded()
         return try saveCurrentUser(payload: payload)
     }
