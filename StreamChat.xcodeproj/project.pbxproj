@@ -590,6 +590,7 @@
 		88DA58042631E8F100FA8C53 /* MutedChannelPayload.json in Resources */ = {isa = PBXBuildFile; fileRef = 88DA58032631E8F100FA8C53 /* MutedChannelPayload.json */; };
 		88DA57202631AC3100FA8C53 /* ChannelMuteDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA571F2631AC3100FA8C53 /* ChannelMuteDTO.swift */; };
 		88DA577E2631D73800FA8C53 /* ChannelMuteDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA577D2631D73800FA8C53 /* ChannelMuteDTO_Tests.swift */; };
+		88DA57642631CF1F00FA8C53 /* MuteDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA57632631CF1F00FA8C53 /* MuteDetails.swift */; };
 		88E26D5E2580E92000F55AB5 /* AttachmentId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E26D5D2580E92000F55AB5 /* AttachmentId.swift */; };
 		88E26D6E2580F34B00F55AB5 /* AttachmentUploader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E26D6D2580F34B00F55AB5 /* AttachmentUploader.swift */; };
 		88E26D7D2580F95300F55AB5 /* AttachmentEndpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E26D7C2580F95300F55AB5 /* AttachmentEndpoints.swift */; };
@@ -1732,6 +1733,7 @@
 		88DA58032631E8F100FA8C53 /* MutedChannelPayload.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MutedChannelPayload.json; sourceTree = "<group>"; };
 		88DA571F2631AC3100FA8C53 /* ChannelMuteDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMuteDTO.swift; sourceTree = "<group>"; };
 		88DA577D2631D73800FA8C53 /* ChannelMuteDTO_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMuteDTO_Tests.swift; sourceTree = "<group>"; };
+		88DA57632631CF1F00FA8C53 /* MuteDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MuteDetails.swift; sourceTree = "<group>"; };
 		88E26D5D2580E92000F55AB5 /* AttachmentId.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentId.swift; sourceTree = "<group>"; };
 		88E26D6D2580F34B00F55AB5 /* AttachmentUploader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentUploader.swift; sourceTree = "<group>"; };
 		88E26D7C2580F95300F55AB5 /* AttachmentEndpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentEndpoints.swift; sourceTree = "<group>"; };
@@ -2937,6 +2939,7 @@
 				8899BC52254318CC003CB98B /* MessageReaction.swift */,
 				88EA9AED254721C0007EE76B /* MessageReactionType.swift */,
 				88EA9AFB25472269007EE76B /* MessageReactionType_Tests.swift */,
+				88DA57632631CF1F00FA8C53 /* MuteDetails.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -5243,6 +5246,7 @@
 				DA4AA3B8250271BD00FAAF6E /* CurrentUserController+Combine.swift in Sources */,
 				79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */,
 				AD7AC99B260A9572004AADA5 /* MessagePinning.swift in Sources */,
+				88DA57642631CF1F00FA8C53 /* MuteDetails.swift in Sources */,
 				797EEA4624FFAF4F00C81203 /* DataStore.swift in Sources */,
 				79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */,
 				ADF34F9E25CDD8E600AD637C /* ConnectionController+SwiftUI.swift in Sources */,
