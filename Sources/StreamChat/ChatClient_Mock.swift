@@ -29,6 +29,14 @@ extension _ChatClient {
     var mockDatabaseContainer: DatabaseContainerMock {
         databaseContainer as! DatabaseContainerMock
     }
+
+    func simulateProvidedConnectionId(connectionId: ConnectionId?) {
+        guard let connectionId = connectionId else {
+            webSocketClient(mockWebSocketClient, didUpdateConectionState: .disconnected(error: nil))
+            return
+        }
+        webSocketClient(mockWebSocketClient, didUpdateConectionState: .connected(connectionId: connectionId))
+    }
 }
 
 class ChatClientMock<ExtraData: ExtraDataTypes>: _ChatClient<ExtraData> {
