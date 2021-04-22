@@ -19,53 +19,60 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         super.tearDown()
     }
     
-    func test_currentUserPayload_isStoredAndLoadedFromDB() {
-        let userId = UUID().uuidString
-        let extraData = NoExtraData.defaultValue
+    func test_currentUserPayload_isStoredAndLoadedFromDB() throws {
+        let userPayload: UserPayload<NoExtraData> = .dummy(userId: .unique)
         
         let payload: CurrentUserPayload<NoExtraData> = .dummy(
-            userId: userId,
-            role: .admin,
-            extraData: extraData,
+            userPayload: userPayload,
             devices: [DevicePayload.dummy],
             mutedUsers: [
                 .dummy(userId: .unique),
                 .dummy(userId: .unique),
                 .dummy(userId: .unique)
             ],
-            teams: ["GREEN", "RED"]
+            mutedChannels: [
+                .init(
+                    mutedChannel: .dummy(cid: .unique),
+                    user: userPayload,
+                    createdAt: .unique,
+                    updatedAt: .unique
+                ),
+                .init(
+                    mutedChannel: .dummy(cid: .unique),
+                    user: userPayload,
+                    createdAt: .unique,
+                    updatedAt: .unique
+                )
+            ]
         )
         
         let mutedUserIDs = Set(payload.mutedUsers.map(\.mutedUser.id))
-        
+        let mutedChannelIDs = Set(payload.mutedChannels.map(\.mutedChannel.cid))
+
         // Asynchronously save the payload to the db
-        database.write { session in
-            try! session.saveCurrentUser(payload: payload)
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: payload)
         }
         
         // Load the user from the db and check the fields are correct
-        var loadedCurrentUser: CurrentUserDTO? {
-            database.viewContext.currentUser()
-        }
+        let loadedCurrentUser: CurrentChatUser = try XCTUnwrap(
+            database.viewContext.currentUser()?.asModel()
+        )
         
-        AssertAsync {
-            Assert.willBeEqual(payload.id, loadedCurrentUser?.user.id)
-            Assert.willBeEqual(payload.isOnline, loadedCurrentUser?.user.isOnline)
-            Assert.willBeEqual(payload.isBanned, loadedCurrentUser?.user.isBanned)
-            Assert.willBeEqual(payload.role.rawValue, loadedCurrentUser?.user.userRoleRaw)
-            Assert.willBeEqual(payload.createdAt, loadedCurrentUser?.user.userCreatedAt)
-            Assert.willBeEqual(payload.updatedAt, loadedCurrentUser?.user.userUpdatedAt)
-            Assert.willBeEqual(payload.lastActiveAt, loadedCurrentUser?.user.lastActivityAt)
-            Assert.willBeEqual(Int64(payload.unreadCount!.messages), loadedCurrentUser?.unreadMessagesCount)
-            Assert.willBeEqual(Int64(payload.unreadCount!.channels), loadedCurrentUser?.unreadChannelsCount)
-            Assert.willBeEqual(payload.extraData, loadedCurrentUser.map {
-                try? JSONDecoder.default.decode(NoExtraData.self, from: $0.user.extraData)
-            })
-            Assert.willBeEqual(mutedUserIDs, Set(loadedCurrentUser?.mutedUsers.map(\.id) ?? []))
-            Assert.willBeEqual(payload.devices.count, loadedCurrentUser?.devices.count)
-            Assert.willBeEqual(payload.devices.first?.id, loadedCurrentUser?.devices.first?.id)
-            Assert.willBeEqual(payload.teams, loadedCurrentUser?.user.teams?.map(\.id))
-        }
+        XCTAssertEqual(payload.id, loadedCurrentUser.id)
+        XCTAssertEqual(payload.isOnline, loadedCurrentUser.isOnline)
+        XCTAssertEqual(payload.isBanned, loadedCurrentUser.isBanned)
+        XCTAssertEqual(payload.role, loadedCurrentUser.userRole)
+        XCTAssertEqual(payload.createdAt, loadedCurrentUser.userCreatedAt)
+        XCTAssertEqual(payload.updatedAt, loadedCurrentUser.userUpdatedAt)
+        XCTAssertEqual(payload.lastActiveAt, loadedCurrentUser.lastActiveAt)
+        XCTAssertEqual(payload.unreadCount, loadedCurrentUser.unreadCount)
+        XCTAssertEqual(payload.extraData, loadedCurrentUser.extraData)
+        XCTAssertEqual(mutedUserIDs, Set(loadedCurrentUser.mutedUsers.map(\.id)))
+        XCTAssertEqual(payload.devices.count, loadedCurrentUser.devices.count)
+        XCTAssertEqual(payload.devices.first?.id, loadedCurrentUser.devices.first?.id)
+        XCTAssertEqual(Set(payload.teams), loadedCurrentUser.teams)
+        XCTAssertEqual(mutedChannelIDs, Set(loadedCurrentUser.mutedChannels.map(\.cid)))
     }
     
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
