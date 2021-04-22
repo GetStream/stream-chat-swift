@@ -149,3 +149,16 @@ public struct NotificationInviteRejectedEvent<ExtraData: ExtraDataTypes>: EventW
         payload = response
     }
 }
+
+public struct NotificationChannelMutesUpdatedEvent: EventWithUserPayload {
+    public let userId: UserId
+    let payload: Any
+    
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        guard try response.value(at: \.memberContainer?.invite?.isInvited) == true else {
+            throw ClientError.EventDecoding(missingValue: "invited:true", for: Self.self)
+        }
+        userId = try response.value(at: \.currentUser?.id)
+        payload = response
+    }
+}
