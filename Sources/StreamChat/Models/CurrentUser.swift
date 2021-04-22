@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 import Foundation
 
 extension UserId {
@@ -58,6 +59,12 @@ public class _CurrentChatUser<ExtraData: ExtraDataTypes>: _ChatUser<ExtraData.Us
     /// - Note: Please be aware that the value of this field is not persisted on the server,
     /// and is valid only locally for the current session.
     public let flaggedMessageIDs: Set<MessageId>
+
+    /// A set of channels muted by the current user.
+    ///
+    /// - Important: The `mutedChannels` property is loaded and evaluated lazily to maintain high performance.
+    public var mutedChannels: Set<_ChatChannel<ExtraData>> { _mutedChannels }
+    @CoreDataLazy private var _mutedChannels: Set<_ChatChannel<ExtraData>>
     
     /// The unread counts for the current user.
     public let unreadCount: UnreadCount
@@ -79,7 +86,9 @@ public class _CurrentChatUser<ExtraData: ExtraDataTypes>: _ChatUser<ExtraData.Us
         mutedUsers: Set<_ChatUser<ExtraData.User>>,
         flaggedUsers: Set<_ChatUser<ExtraData.User>>,
         flaggedMessageIDs: Set<MessageId>,
-        unreadCount: UnreadCount
+        unreadCount: UnreadCount,
+        mutedChannels: @escaping () -> Set<_ChatChannel<ExtraData>>,
+        underlyingContext: NSManagedObjectContext?
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
@@ -102,5 +111,7 @@ public class _CurrentChatUser<ExtraData: ExtraDataTypes>: _ChatUser<ExtraData.Us
             teams: teams,
             extraData: extraData
         )
+
+        $_mutedChannels = (mutedChannels, underlyingContext)
     }
 }
