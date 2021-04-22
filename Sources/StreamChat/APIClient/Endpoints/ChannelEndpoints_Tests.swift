@@ -350,7 +350,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
             path: "channels/\(query.cid.type.rawValue)/\(query.cid.id)/query",
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: true, // Observing watchers always requires connection id
             body: query
         )
         
