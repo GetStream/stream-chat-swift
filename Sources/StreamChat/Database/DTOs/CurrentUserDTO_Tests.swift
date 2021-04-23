@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 @testable import StreamChatTestTools
 import XCTest
@@ -73,6 +74,49 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(payload.devices.first?.id, loadedCurrentUser.devices.first?.id)
         XCTAssertEqual(Set(payload.teams), loadedCurrentUser.teams)
         XCTAssertEqual(mutedChannelIDs, Set(loadedCurrentUser.mutedChannels.map(\.cid)))
+    }
+    
+    func test_savingCurrentUser_removesPreviousChannelMutes() throws {
+        let userPayload: UserPayload<NoExtraData> = .dummy(userId: .unique)
+        let payloadWithMutes: CurrentUserPayload<NoExtraData> = .dummy(
+            userPayload: userPayload,
+            mutedChannels: [
+                .init(
+                    mutedChannel: .dummy(cid: .unique),
+                    user: userPayload,
+                    createdAt: .unique,
+                    updatedAt: .unique
+                ),
+                .init(
+                    mutedChannel: .dummy(cid: .unique),
+                    user: userPayload,
+                    createdAt: .unique,
+                    updatedAt: .unique
+                )
+            ]
+        )
+        
+        // Asynchronously save the payload to the db
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: payloadWithMutes)
+        }
+        
+        // Check the are 2 mutes in the DB
+        let allMutesRequest = NSFetchRequest<ChannelMuteDTO>(entityName: ChannelMuteDTO.entityName)
+        XCTAssertEqual(try! database.viewContext.count(for: allMutesRequest), 2)
+        
+        let payloadWithNoMutes: CurrentUserPayload<NoExtraData> = .dummy(
+            userPayload: userPayload,
+            mutedChannels: []
+        )
+
+        // Asynchronously save the payload to the db
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: payloadWithNoMutes)
+        }
+        
+        // Check the are no mutes in the DB
+        XCTAssertEqual(try! database.viewContext.count(for: allMutesRequest), 0)
     }
     
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
