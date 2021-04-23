@@ -35,7 +35,7 @@ public struct MemberUpdatedEvent: EventWithMemberPayload, EventWithChannelId, Me
     }
 }
 
-public struct MemberRemovedEvent: MemberEvent {
+public struct MemberRemovedEvent: MemberEvent, EventWithChannelId {
     public var memberUserId: UserId
     public let cid: ChannelId
     

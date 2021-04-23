@@ -72,7 +72,14 @@ final class NewChannelQueryUpdater<ExtraData: ExtraDataTypes>: Worker {
         changes.forEach { change in
             switch change {
             case let .insert(channelDTO, _):
-                updateChannelListQuery(for: channelDTO)
+                database.write {
+                    let dto = $0.channel(cid: try! ChannelId(cid: channelDTO.cid))
+                    dto?.needsRefreshQueries = false
+
+                } completion: { _ in
+                    self.updateChannelListQuery(for: channelDTO)
+                }
+
             default: return
             }
         }
