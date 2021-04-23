@@ -44,7 +44,12 @@ class ChannelDTO: NSManagedObject {
     
     @NSManaged var isFrozen: Bool
     @NSManaged var cooldownDuration: Int
-    
+
+    // MARK: - Queries
+
+    // The channel list queries the channel is a part of
+    @NSManaged var queries: Set<ChannelListQueryDTO>
+
     // MARK: - Relationships
     
     @NSManaged var createdBy: UserDTO
