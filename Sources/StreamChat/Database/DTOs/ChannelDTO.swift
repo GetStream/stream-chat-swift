@@ -29,6 +29,9 @@ class ChannelDTO: NSManagedObject {
     // visually truncate the channel that exists and have messages locally already. It should be safe to have this
     // only locally because once the DB is flushed and the channels are fetched fresh, the messages before the
     // `truncatedAt` date are not returned from the backend.
+    //
+    // This field is also used to implement the `clearHistory` option when hiding the channel.
+    //
     @NSManaged var truncatedAt: Date?
 
     // This field lives only locally and is not populated directly from the payload. It's populated only form the
