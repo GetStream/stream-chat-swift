@@ -50,22 +50,6 @@ public struct ChannelDeletedEvent<ExtraData: ExtraDataTypes>: EventWithUserPaylo
     }
 }
 
-public struct ChannelHiddenEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
-    public let userId: UserId
-    public let cid: ChannelId
-    public let hiddenAt: Date
-    public let isHistoryCleared: Bool
-    let payload: Any
-    
-    init(from response: EventPayload<ExtraData>) throws {
-        userId = try response.value(at: \.user?.id)
-        cid = try response.value(at: \.cid)
-        hiddenAt = try response.value(at: \.createdAt)
-        isHistoryCleared = try response.value(at: \.isChannelHistoryCleared)
-        payload = response
-    }
-}
-
 public struct ChannelTruncatedEvent: EventWithUserPayload, EventWithChannelId {
     public let userId: UserId
     public let cid: ChannelId
@@ -74,6 +58,30 @@ public struct ChannelTruncatedEvent: EventWithUserPayload, EventWithChannelId {
     init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
+        payload = response
+    }
+}
+
+public struct ChannelVisibleEvent: EventWithChannelId {
+    public let cid: ChannelId
+    let payload: Any
+
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        cid = try response.value(at: \.cid)
+        payload = response
+    }
+}
+
+public struct ChannelHiddenEvent: EventWithChannelId {
+    public let cid: ChannelId
+    public let hiddenAt: Date
+    public let isHistoryCleared: Bool
+    let payload: Any
+
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        cid = try response.value(at: \.cid)
+        hiddenAt = try response.value(at: \.createdAt)
+        isHistoryCleared = try response.value(at: \.isChannelHistoryCleared)
         payload = response
     }
 }
