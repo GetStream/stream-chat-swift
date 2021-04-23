@@ -166,7 +166,7 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
         
         // Simulate a health check event is received and the connection state is updated
-        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId, currentUserId: "userId"))
+        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
         
         AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
@@ -240,7 +240,7 @@ class WebSocketClient_Tests: StressTestCase {
         AssertAsync.staysTrue(reconnectionStrategy.sucessfullyConnected_calledCount == 0)
         
         // Simulate a health check event
-        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId, currentUserId: "userId"))
+        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
         
         // `sucessfullyConnected` should be called now
@@ -355,7 +355,7 @@ class WebSocketClient_Tests: StressTestCase {
         assert(pingController.pongRecievedCount == 1)
         
         // Simulate a health check (pong) event is received
-        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId, currentUserId: "userId"))
+        decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
         
         AssertAsync.willBeEqual(pingController.pongRecievedCount, 2)
@@ -679,7 +679,7 @@ final class HealthCheckMiddleware_Tests: XCTestCase {
     }
     
     func test_middleware_filtersHealthCheckEvents_ifClientIsDeallocated() throws {
-        let event = HealthCheckEvent(connectionId: .unique, currentUserId: "userId")
+        let event = HealthCheckEvent(connectionId: .unique)
         
         // Deallocate the client
         AssertAsync.canBeReleased(&webSocketClient)
@@ -692,7 +692,7 @@ final class HealthCheckMiddleware_Tests: XCTestCase {
     }
     
     func test_middleware_handlesHealthCheckEvents() throws {
-        let event = HealthCheckEvent(connectionId: .unique, currentUserId: "userId")
+        let event = HealthCheckEvent(connectionId: .unique)
         
         // Simulate `HealthCheckEvent`
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
@@ -709,7 +709,6 @@ final class HealthCheckMiddleware_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromFile: "HealthCheck")
         let event = try eventDecoder.decode(from: json) as? HealthCheckEvent
         
-        XCTAssertEqual(event?.currentUserId, "luke_skywalker")
         XCTAssertEqual(event?.connectionId, "60782eca-0a05-154b-0000-000000a85747")
     }
 }
