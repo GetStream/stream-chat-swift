@@ -530,6 +530,49 @@ class ChannelDTO_Tests: XCTestCase {
             NSSortDescriptor(key: "lastMessageAt", ascending: true)
         )
     }
+
+    func test_channelListFetchRequest_ignoresHiddenChannels() throws {
+        // Create a dummy query
+        let query = ChannelListQuery(filter: .exists(.cid))
+
+        // Create a couple of channels
+        let visibleCid1: ChannelId = .unique
+        let visibleCid2: ChannelId = .unique
+
+        try database.writeSynchronously { session in
+            // Save the non-hidden channel
+            try session.saveChannel(payload: self.dummyPayload(with: visibleCid1), query: query)
+
+            // Save a channel with `hiddenAt` < `lastMessageAt` -> should be visible
+            let visible = try session.saveChannel(
+                payload: self.dummyPayload(with: visibleCid2, numberOfMessages: 10),
+                query: query
+            )
+            visible.hiddenAt = .unique(before: visible.lastMessageAt!)
+
+            // Save a channel with `hiddenAt` > `lastMessageAt` -> should NOT be visible
+            let hidden1 = try session.saveChannel(
+                payload: self.dummyPayload(with: .unique, numberOfMessages: 10),
+                query: query
+            )
+            hidden1.hiddenAt = .unique(after: hidden1.lastMessageAt!)
+
+            // Save a channel with existing `hiddenAt` but no messages -> should NOT be visible
+            let hidden2 = try session.saveChannel(
+                payload: self.dummyPayload(with: .unique, numberOfMessages: 0),
+                query: query
+            )
+            assert(hidden2.lastMessageAt == nil)
+            hidden2.hiddenAt = .unique(after: hidden2.createdAt)
+        }
+
+        let fetchRequest = ChannelDTO.channelListFetchRequest(query: query)
+        let loadedChannels: [ChannelDTO] = try database.viewContext.fetch(fetchRequest)
+
+        XCTAssertEqual(loadedChannels.count, 2)
+        XCTAssertTrue(loadedChannels.contains { $0.cid == visibleCid1.rawValue })
+        XCTAssertTrue(loadedChannels.contains { $0.cid == visibleCid2.rawValue })
+    }
     
     func test_channelUnreadCount_calculatedCorrectly() {
         // Create and save a current user, to be used for channel unread calculations
