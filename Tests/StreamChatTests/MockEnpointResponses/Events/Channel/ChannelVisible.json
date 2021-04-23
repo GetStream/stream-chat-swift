@@ -1,0 +1,18 @@
+{
+  "channel_id" : "default-channel-6",
+  "channel_type" : "messaging",
+  "user" : {
+    "banned" : false,
+    "online" : true,
+    "id" : "luke_skywalker",
+    "role" : "admin",
+    "created_at" : "2020-12-07T11:36:47.059906Z",
+    "image" : ".\/static\/media\/photo-1541271696563-3be2f555fc4e.4e84f363.jpeg",
+    "updated_at" : "2021-04-22T18:57:47.14206Z",
+    "last_active" : "2021-04-23T07:52:54.937019Z",
+    "name" : "luke_skywalker"
+  },
+  "created_at" : "2021-04-23T07:53:00.121230568Z",
+  "type" : "channel.visible",
+  "cid" : "messaging:default-channel-6"
+}
