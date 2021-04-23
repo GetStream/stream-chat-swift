@@ -212,6 +212,156 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Assert member is updated.
         XCTAssertNotEqual(channel.members.first!.user.name, memberName)
     }
+
+    // Channel query reset
+
+    func test_NotificationAddedToChannelEvent_invalidateChannelDTOQueries() throws {
+        let cid = ChannelId.unique
+
+        // Create MemberAddedEvent payload
+        let eventPayload: EventPayload<NoExtraData> = .init(
+            eventType: .notificationAddedToChannel,
+            cid: cid
+        )
+
+        // Create event with payload.
+        let event = try NotificationAddedToChannelEvent(from: eventPayload)
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+
+        // Simulate `MemberAddedEvent` event.
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Load the channel.
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+
+        // Assert event is forwarded.
+        XCTAssertTrue(forwardedEvent is NotificationAddedToChannelEvent)
+        // Queries are invalidated
+        XCTAssertTrue(channel.queries.isEmpty)
+        XCTAssertTrue(channel.needsRefreshQueries)
+    }
+    
+    func test_NotificationRemovedFromChannelEvent_invalidateChannelDTOQueries() throws {
+        let cid = ChannelId.unique
+
+        // Create MemberAddedEvent payload
+        let eventPayload: EventPayload<NoExtraData> = .init(
+            eventType: .notificationRemovedFromChannel,
+            cid: cid
+        )
+
+        // Create event with payload.
+        let event = try NotificationRemovedFromChannelEvent(from: eventPayload)
+
+        // Create channel in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+
+        // Simulate `MemberAddedEvent` event.
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Load the channel.
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+
+        // Assert event is forwarded.
+        XCTAssertTrue(forwardedEvent is NotificationRemovedFromChannelEvent)
+        // Queries are invalidated
+        XCTAssertTrue(channel.queries.isEmpty)
+        XCTAssertTrue(channel.needsRefreshQueries)
+    }
+    
+    func test_MemberAddedEvent_invalidateChannelDTOQueries() throws {
+        let currentUserId: UserId = .unique
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create channel in the database.
+        let cid = ChannelId.unique
+        try database.createChannel(cid: cid, withQuery: true)
+        
+        // Create MemberAddedEvent payload with other than current user
+        var eventPayload: EventPayload<NoExtraData> = .init(
+            eventType: .memberAdded,
+            cid: cid,
+            memberContainer: .dummy(userId: .unique)
+        )
+
+        // Simulate `MemberAddedEvent` event.
+        var event = try MemberAddedEvent(from: eventPayload)
+        var forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Load the channel.
+        var channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        // Assert event is forwarded.
+        XCTAssertTrue(forwardedEvent is MemberAddedEvent)
+        // Queries are NOT invalidated
+        XCTAssertFalse(channel.queries.isEmpty)
+
+        // Create MemberAddedEvent payload with the current user
+        eventPayload = .init(
+            eventType: .memberAdded,
+            cid: cid,
+            memberContainer: .dummy(userId: currentUserId)
+        )
+
+        // Simulate `MemberAddedEvent` event.
+        event = try MemberAddedEvent(from: eventPayload)
+        forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Load the channel.
+        channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        // Assert event is forwarded.
+        XCTAssertTrue(forwardedEvent is MemberAddedEvent)
+        // Queries are NOT invalidated
+        XCTAssertTrue(channel.queries.isEmpty)
+        XCTAssertTrue(channel.needsRefreshQueries)
+    }
+
+    func test_MemberRemovedEvent_invalidateChannelDTOQueries() throws {
+        let currentUserId: UserId = .unique
+        try database.createCurrentUser(id: currentUserId)
+        
+        // Create channel in the database.
+        let cid = ChannelId.unique
+        try database.createChannel(cid: cid, withQuery: true)
+        
+        // Create MemberAddedEvent payload with other than current user
+        var eventPayload: EventPayload<NoExtraData> = .init(
+            eventType: .memberRemoved,
+            cid: cid,
+            user: .dummy(userId: .unique)
+        )
+
+        // Simulate `MemberRemovedEvent` event.
+        var event = try MemberRemovedEvent(from: eventPayload)
+        var forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Load the channel.
+        var channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        // Assert event is forwarded.
+        XCTAssertTrue(forwardedEvent is MemberRemovedEvent)
+        // Queries are NOT invalidated
+        XCTAssertFalse(channel.queries.isEmpty)
+
+        // Create MemberAddedEvent payload with the current user
+        eventPayload = .init(
+            eventType: .memberRemoved,
+            cid: cid,
+            user: .dummy(userId: currentUserId)
+        )
+
+        // Simulate `MemberRemovedEvent` event.
+        event = try MemberRemovedEvent(from: eventPayload)
+        forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Load the channel.
+        channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        // Assert event is forwarded.
+        XCTAssertTrue(forwardedEvent is MemberRemovedEvent)
+        // Queries are NOT invalidated
+        XCTAssertTrue(channel.queries.isEmpty)
+        XCTAssertTrue(channel.needsRefreshQueries)
+    }
 }
 
 private struct TestEvent: Event, Equatable {
