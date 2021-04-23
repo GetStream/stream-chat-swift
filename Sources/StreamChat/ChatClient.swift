@@ -99,7 +99,8 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             ChannelTruncatedEventMiddleware<ExtraData>(),
             MemberEventMiddleware<ExtraData>(),
             UserChannelBanEventsMiddleware<ExtraData>(),
-            UserWatchingEventMiddleware<ExtraData>()
+            UserWatchingEventMiddleware<ExtraData>(),
+            ChannelVisibilityEventMiddleware<ExtraData>()
         ]
 
         center.add(middlewares: middlewares)
