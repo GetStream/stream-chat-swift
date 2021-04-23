@@ -134,7 +134,7 @@ extension DatabaseContainer {
     }
     
     /// Synchronously creates a new ChannelDTO in the DB with the given cid.
-    func createChannel(cid: ChannelId = .unique, withMessages: Bool = true) throws {
+    func createChannel(cid: ChannelId = .unique, withMessages: Bool = true, withQuery: Bool = false) throws {
         try writeSynchronously { session in
             let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
             
@@ -143,6 +143,17 @@ extension DatabaseContainer {
                 let context = session as! NSManagedObjectContext
                 dto.messages.forEach { context.delete($0) }
                 dto.oldestMessageAt = .distantPast
+            }
+            
+            if withQuery {
+                let filter: Filter<ChannelListFilterScope> = .equal(.name, to: "luke:skywalker")
+                let queryDTO = NSEntityDescription.insertNewObject(
+                    forEntityName: ChannelListQueryDTO.entityName,
+                    into: session as! NSManagedObjectContext
+                ) as! ChannelListQueryDTO
+                queryDTO.filterHash = filter.filterHash
+                queryDTO.filterJSONData = try JSONEncoder.default.encode(filter)
+                dto.queries = [queryDTO]
             }
         }
     }
