@@ -817,7 +817,7 @@ class ChannelController_Tests: StressTestCase {
         controller.synchronize()
         
         // Send notification with event happened in the observed channel
-        let event = TestMemberEvent(cid: controller.channelQuery.cid!, userId: .unique)
+        let event = TestMemberEvent(cid: controller.channelQuery.cid!, memberUserId: .unique)
         let notification = Notification(newEventReceived: event, sender: self)
         client.webSocketClient!.eventNotificationCenter.post(notification)
         
@@ -833,7 +833,7 @@ class ChannelController_Tests: StressTestCase {
         controller.synchronize()
         
         // Send notification with event happened in the observed channel
-        let event = TestMemberEvent(cid: controller.cid!, userId: .unique)
+        let event = TestMemberEvent(cid: controller.cid!, memberUserId: .unique)
         let notification = Notification(newEventReceived: event, sender: self)
         client.webSocketClient!.eventNotificationCenter.post(notification)
         

@@ -42,7 +42,7 @@ protocol EventWithMessagePayload: EventWithUserPayload, EventWithChannelId {
 
 /// A protocol for member `Event` where it has a member object and user object.
 protocol EventWithMemberPayload: EventWithPayload {
-    var userId: UserId { get }
+    var memberUserId: UserId { get }
 }
 
 /// A protocol for reaction `Event` where it has reacction with message payload.

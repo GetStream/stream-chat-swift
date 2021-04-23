@@ -8,8 +8,10 @@ public protocol ConnectionEvent: Event {
     var connectionId: String { get }
 }
 
-public struct HealthCheckEvent: ConnectionEvent, EventWithPayload {
+public struct HealthCheckEvent: ConnectionEvent, EventWithPayload, EventWithCurrentUserPayload {
     public let connectionId: String
+    public let currentUserId: UserId
+    
     var payload: Any
     
     init<ExtraData: ExtraDataTypes>(from eventResponse: EventPayload<ExtraData>) throws {
@@ -18,11 +20,13 @@ public struct HealthCheckEvent: ConnectionEvent, EventWithPayload {
         }
         
         self.connectionId = connectionId
+        currentUserId = try eventResponse.value(at: \.currentUser?.id)
         payload = eventResponse as Any
     }
     
-    init(connectionId: String) {
+    init(connectionId: String, currentUserId: UserId) {
         self.connectionId = connectionId
+        self.currentUserId = currentUserId
         payload = EventPayload<NoExtraData>(
             eventType: .healthCheck,
             connectionId: connectionId,

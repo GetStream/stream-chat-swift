@@ -37,7 +37,7 @@ public struct UserUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload,
 public struct UserWatchingEvent: EventWithUserPayload, EventWithChannelId {
     public let cid: ChannelId
     public let userId: UserId
-    public let createdAt: Date?
+    public let createdAt: Date
     public let watcherCount: Int
     public let isStarted: Bool
     
@@ -46,7 +46,7 @@ public struct UserWatchingEvent: EventWithUserPayload, EventWithChannelId {
     init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
-        createdAt = response.createdAt
+        createdAt = try response.value(at: \.createdAt)
         watcherCount = try response.value(at: \.watcherCount)
         isStarted = response.eventType == .userStartWatching
         payload = response

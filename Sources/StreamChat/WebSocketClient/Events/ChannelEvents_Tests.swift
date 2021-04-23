@@ -24,10 +24,13 @@ class ChannelEvents_Tests: XCTestCase {
     
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromFile: "ChannelDeleted")
-        let event = try eventDecoder.decode(from: json) as? ChannelDeletedEvent<NoExtraData>
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_6631"))
-        XCTAssertEqual(event?.deletedAt.description, "2020-07-17 12:02:39 +0000")
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
+        let event = try eventDecoder.decode(from: json) as? ChannelDeletedEvent
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-1"))
+        XCTAssertEqual(event?.deletedAt.description, "2021-04-23 09:38:47 +0000")
+        XCTAssertEqual(
+            (event?.payload as! EventPayload<NoExtraData>).channel?.cid,
+            ChannelId(type: .messaging, id: "default-channel-1")
+        )
     }
     
     func test_ChannelHiddenEvent_decoding() throws {
@@ -45,6 +48,13 @@ class ChannelEvents_Tests: XCTestCase {
     }
     
     func test_ChannelVisibleEvent_decoding() throws {
+        let json = XCTestCase.mockData(fromFile: "ChannelVisible")
+        let event = try eventDecoder.decode(from: json) as? ChannelVisibleEvent
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-6"))
+    }
+    
+    func test_visible() throws {
+        // Channel is visible again.
         let json = XCTestCase.mockData(fromFile: "ChannelVisible")
         let event = try eventDecoder.decode(from: json) as? ChannelVisibleEvent
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-6"))
