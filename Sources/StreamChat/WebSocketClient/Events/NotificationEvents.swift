@@ -60,34 +60,23 @@ public struct NotificationMutesUpdatedEvent<ExtraData: ExtraDataTypes>: EventWit
     }
 }
 
-public struct NotificationAddedToChannelEvent<ExtraData: ExtraDataTypes>: EventWithChannelId, EventWithPayload {
+public struct NotificationAddedToChannelEvent: EventWithChannelId, EventWithPayload {
     public let cid: ChannelId
-    public let unreadCount: UnreadCount
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
-        let cid = try response.value(at: \.channel?.cid)
-        let unreadCount = try response.value(at: \.unreadCount)
-        self.init(cid: cid, unreadCount: unreadCount, eventPayload: response)
-    }
-    
-    init(cid: ChannelId, unreadCount: UnreadCount, eventPayload: EventPayload<ExtraData>) {
-        self.cid = cid
-        self.unreadCount = unreadCount
-        payload = eventPayload
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        cid = try response.value(at: \.cid)
+        payload = response
     }
 }
 
-public struct NotificationRemovedFromChannelEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
+public struct NotificationRemovedFromChannelEvent: EventWithChannelId {
     public let cid: ChannelId
-    public let userId: UserId
-    public let memberRole: MemberRole
+
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.channel?.cid)
-        userId = try response.value(at: \.user?.id)
-        memberRole = try response.value(at: \.memberContainer?.memberRole?.role)
         payload = response
     }
 }
