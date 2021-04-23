@@ -25,7 +25,7 @@ struct MemberEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
                     break
                 }
                 
-                guard let member = channel.members.first(where: { $0.user.id == memberEvent.userId }) else {
+                guard let member = channel.members.first(where: { $0.user.id == memberEvent.memberUserId }) else {
                     // No need to throw MemberNotFound error here
                     break
                 }

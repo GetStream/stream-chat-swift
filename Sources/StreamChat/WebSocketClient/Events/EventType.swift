@@ -41,6 +41,8 @@ enum EventType: String, Codable {
     /// When a channel was truncated.
     case channelTruncated = "channel.truncated"
 
+    // MARK: Message Events
+    
     /// When a new message was added on a channel.
     case messageNew = "message.new"
     /// When a message was updated.
@@ -56,6 +58,8 @@ enum EventType: String, Codable {
     case memberUpdated = "member.updated"
     /// When a member was removed from a channel.
     case memberRemoved = "member.removed"
+    
+    // MARK: Reactions
     
     /// When a message reaction was added.
     case reactionNew = "reaction.new"
@@ -96,7 +100,7 @@ enum EventType: String, Codable {
         case .userStartTyping, .userStopTyping: return try TypingEvent(from: response)
         case .userBanned: return try UserBannedEvent(from: response)
         case .userUnbanned: return try UserUnbannedEvent(from: response)
-            
+
         case .channelUpdated: return try ChannelUpdatedEvent(from: response)
         case .channelDeleted: return try ChannelDeletedEvent(from: response)
         case .channelHidden: return try ChannelHiddenEvent(from: response)
@@ -117,7 +121,7 @@ enum EventType: String, Codable {
         case .reactionDeleted: return try ReactionDeletedEvent(from: response)
             
         case .notificationMessageNew: return try NotificationMessageNewEvent(from: response)
-            
+        
         case .notificationMarkRead:
             return response.channel == nil
                 ? try NotificationMarkAllReadEvent(from: response)

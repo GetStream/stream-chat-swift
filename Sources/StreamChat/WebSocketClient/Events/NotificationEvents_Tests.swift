@@ -48,17 +48,19 @@ class NotificationsEvents_Tests: XCTestCase {
 
     func test_addToChannel() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
-        let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEvent<NoExtraData>
+        let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEvent
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_5905"))
-        XCTAssertEqual(event?.unreadCount, .init(channels: 2, messages: 2))
+        // Check if there is existing channel object in the payload.
+        XCTAssertEqual(
+            (event?.payload as? EventPayload<NoExtraData>)?.channel?.cid,
+            ChannelId(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E")
+        )
     }
     
     func test_removedFromChannel() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationRemovedFromChannel")
-        let event = try eventDecoder.decode(from: json) as? NotificationRemovedFromChannelEvent<NoExtraData>
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_5905"))
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
-        XCTAssertEqual(event?.memberRole, .member)
+        let event = try eventDecoder.decode(from: json) as? NotificationRemovedFromChannelEvent
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
     }
     
     func test_invited() throws {

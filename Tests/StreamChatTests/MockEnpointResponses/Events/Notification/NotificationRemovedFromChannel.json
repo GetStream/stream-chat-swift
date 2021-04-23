@@ -1,109 +1,149 @@
 {
-    "member" : {
-        "created_at" : "2020-07-17T11:35:24.926158Z",
-        "role" : "member",
-        "updated_at" : "2020-07-17T11:35:24.926158Z"
+  "member" : {
+    "banned" : false,
+    "shadow_banned" : false,
+    "user_id" : "anakin_skywalker",
+    "updated_at" : "2021-04-23T10:42:21.146483Z",
+    "role" : "member",
+    "created_at" : "2021-04-23T10:42:21.146483Z"
+  },
+  "channel" : {
+    "last_message_at" : "2021-04-23T10:42:32.048809Z",
+    "created_by" : {
+      "banned" : false,
+      "online" : true,
+      "id" : "leia_organa",
+      "role" : "user",
+      "created_at" : "2021-04-23T10:41:35.430918Z",
+      "image" : ".\/static\/media\/photo-1517202383675-eb0a6e27775f.1864b915.jpeg",
+      "updated_at" : "2021-04-23T10:41:38.5503Z",
+      "last_active" : "2021-04-23T10:54:09.447654705Z",
+      "name" : "leia_organa"
     },
-    "channel" : {
-        "created_by" : {
-            "id" : "steep-moon-9",
-            "banned" : false,
-            "unread_channels" : 3,
-            "totalUnreadCount" : 0,
-            "last_active" : "2020-07-21T14:52:33.671096Z",
-            "created_at" : "2019-12-12T15:34:00.762372Z",
-            "invisible" : false,
-            "unreadChannels" : 0,
-            "unread_count" : 21,
-            "image" : "https:\/\/api.adorable.io\/avatars\/285\/steep-moon-9.png",
-            "updated_at" : "2020-07-21T14:52:33.671096Z",
-            "role" : "user",
-            "total_unread_count" : 21,
-            "online" : true,
-            "name" : "steep-moon-9"
-        },
-        "frozen" : false,
-        "config" : {
-            "automod_behavior" : "flag",
-            "reactions" : true,
-            "typing_events" : true,
-            "mutes" : true,
-            "max_message_length" : 5000,
-            "created_at" : "2019-03-21T15:49:15.40182Z",
-            "automod" : "AI",
-            "read_events" : true,
-            "commands" : [
-                {
-                    "set" : "fun_set",
-                    "args" : "[text]",
-                    "name" : "giphy",
-                    "description" : "Post a random gif to the channel"
-                }
-            ],
-            "connect_events" : true,
-            "replies" : true,
-            "updated_at" : "2020-03-17T18:54:09.460881Z",
-            "url_enrichment" : true,
-            "search" : false,
-            "message_retention" : "infinite",
-            "uploads" : true,
-            "name" : "messaging"
-        },
-        "id" : "new_channel_5905",
-        "created_at" : "2020-07-17T11:34:49.420723Z",
-        "members" : [
-            {
-                "created_at" : "2020-07-17T11:34:49.423769Z",
-                "user_id" : "steep-moon-9",
-                "updated_at" : "2020-07-17T11:34:49.423769Z",
-                "user" : {
-                    "id" : "steep-moon-9",
-                    "banned" : false,
-                    "unread_channels" : 3,
-                    "totalUnreadCount" : 0,
-                    "last_active" : "2020-07-21T14:52:33.671096Z",
-                    "created_at" : "2019-12-12T15:34:00.762372Z",
-                    "invisible" : false,
-                    "unreadChannels" : 0,
-                    "unread_count" : 21,
-                    "image" : "https:\/\/api.adorable.io\/avatars\/285\/steep-moon-9.png",
-                    "updated_at" : "2020-07-21T14:52:33.671096Z",
-                    "role" : "user",
-                    "total_unread_count" : 21,
-                    "online" : true,
-                    "name" : "steep-moon-9"
-                }
-            }
-        ],
-        "member_count" : 1,
-        "type" : "messaging",
-        "updated_at" : "2020-07-17T11:55:25.940161Z",
-        "name" : "5905",
-        "cid" : "messaging:new_channel_5905"
-    },
-    "channel_type" : "messaging",
-    "channel_id" : "new_channel_5905",
-    "user" : {
-        "id" : "broken-waterfall-5",
+    "frozen" : false,
+    "id" : "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY",
+    "created_at" : "2021-04-23T10:42:21.144202Z",
+    "members" : [
+      {
         "banned" : false,
-        "unread_channels" : 0,
-        "extraData" : {
-            "name" : "Tester"
+        "shadow_banned" : false,
+        "role" : "member",
+        "created_at" : "2021-04-23T10:42:21.146483Z",
+        "user_id" : "c-3po",
+        "updated_at" : "2021-04-23T10:42:21.146483Z",
+        "user" : {
+          "banned" : false,
+          "online" : false,
+          "id" : "c-3po",
+          "role" : "user",
+          "created_at" : "2020-12-07T11:37:35.550588Z",
+          "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/3\/3f\/C-3PO_TLJ_Card_Trader_Award_Card.png",
+          "updated_at" : "2021-04-15T12:16:26.99681Z",
+          "last_active" : "2021-04-22T04:50:56.973457Z",
+          "name" : "C-3PO"
+        }
+      },
+      {
+        "banned" : false,
+        "shadow_banned" : false,
+        "role" : "member",
+        "created_at" : "2021-04-23T10:42:21.146483Z",
+        "user_id" : "count_dooku",
+        "updated_at" : "2021-04-23T10:42:21.146483Z",
+        "user" : {
+          "banned" : false,
+          "online" : false,
+          "id" : "count_dooku",
+          "role" : "user",
+          "created_at" : "2020-12-07T11:37:39.487938Z",
+          "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/b\/b8\/Dooku_Headshot.jpg",
+          "updated_at" : "2021-04-15T12:41:22.065746Z",
+          "last_active" : "2021-04-15T11:02:42.641941Z",
+          "name" : "Count Dooku"
+        }
+      },
+      {
+        "banned" : false,
+        "shadow_banned" : false,
+        "role" : "owner",
+        "created_at" : "2021-04-23T10:42:21.146484Z",
+        "user_id" : "leia_organa",
+        "updated_at" : "2021-04-23T10:42:21.146484Z",
+        "user" : {
+          "banned" : false,
+          "online" : true,
+          "id" : "leia_organa",
+          "role" : "user",
+          "created_at" : "2021-04-23T10:41:35.430918Z",
+          "image" : ".\/static\/media\/photo-1517202383675-eb0a6e27775f.1864b915.jpeg",
+          "updated_at" : "2021-04-23T10:41:38.5503Z",
+          "last_active" : "2021-04-23T10:54:09.447654705Z",
+          "name" : "leia_organa"
+        }
+      }
+    ],
+    "member_count" : 3,
+    "config" : {
+      "typing_events" : true,
+      "connect_events" : true,
+      "reactions" : true,
+      "replies" : true,
+      "uploads" : true,
+      "push_notifications" : true,
+      "updated_at" : "2021-03-01T19:26:18.406502Z",
+      "automod_behavior" : "flag",
+      "commands" : [
+        {
+          "set" : "fun_set",
+          "args" : "[text]",
+          "name" : "giphy",
+          "description" : "Post a random gif to the channel"
+        }
+      ],
+      "url_enrichment" : true,
+      "mutes" : true,
+      "custom_events" : true,
+      "message_retention" : "infinite",
+      "name" : "messaging",
+      "automod" : "AI",
+      "automod_thresholds" : {
+        "spam" : {
+          "flag" : 0.84999999999999998,
+          "block" : 0.90000000000000002
         },
-        "totalUnreadCount" : 0,
-        "last_active" : "2020-07-21T14:59:20.405102Z",
-        "created_at" : "2019-12-12T15:33:46.488935Z",
-        "invisible" : false,
-        "unreadChannels" : 0,
-        "unread_count" : 0,
-        "image" : "https:\/\/api.adorable.io\/avatars\/285\/broken-waterfall-5.png",
-        "updated_at" : "2020-07-21T14:59:20.405102Z",
-        "role" : "user",
-        "total_unread_count" : 0,
-        "online" : true,
-        "name" : "broken-waterfall-5"
+        "toxic" : {
+          "flag" : 0.84999999999999998,
+          "block" : 0.90000000000000002
+        },
+        "explicit" : {
+          "flag" : 0.84999999999999998,
+          "block" : 0.90000000000000002
+        }
+      },
+      "created_at" : "2021-03-01T19:26:18.406502Z",
+      "max_message_length" : 5000,
+      "blocklist_behavior" : "flag",
+      "read_events" : true,
+      "search" : true
     },
-    "created_at" : "2020-07-21T15:00:31.702844233Z",
-    "type" : "notification.removed_from_channel",
-    "cid" : "messaging:new_channel_5905"
+    "type" : "messaging",
+    "updated_at" : "2021-04-23T10:42:21.144202Z",
+    "cid" : "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"
+  },
+  "channel_type" : "messaging",
+  "channel_id" : "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY",
+  "user" : {
+    "banned" : false,
+    "online" : true,
+    "id" : "anakin_skywalker",
+    "role" : "user",
+    "created_at" : "2020-12-07T11:37:36.43453Z",
+    "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/6\/6f\/Anakin_Skywalker_RotS.png",
+    "updated_at" : "2021-04-15T12:25:51.702406Z",
+    "last_active" : "2021-04-23T10:54:07.572844789Z",
+    "name" : "Anakin Skywalker"
+  },
+  "created_at" : "2021-04-23T10:54:10.183275486Z",
+  "type" : "notification.removed_from_channel",
+  "cid" : "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"
 }

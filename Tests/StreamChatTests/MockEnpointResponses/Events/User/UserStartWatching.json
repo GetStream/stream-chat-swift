@@ -1,28 +1,24 @@
 {
-    "user" : {
-        "id" : "broken-waterfall-5",
-        "banned" : false,
-        "extraData" : {
-            "name" : "Tester"
-        },
-        "totalUnreadCount" : 0,
-        "unread_channels" : 0,
-        "last_active" : "2020-07-16T15:31:58.435328Z",
-        "created_at" : "2019-12-12T15:33:46.488935Z",
-        "invisible" : false,
-        "unreadChannels" : 0,
-        "unread_count" : 0,
-        "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
-        "updated_at" : "2020-07-16T15:38:10.289007Z",
-        "role" : "user",
-        "total_unread_count" : 0,
-        "online" : true,
-        "name" : "broken-waterfall-5"
-    },
-    "watcher_count" : 2,
-    "channel_type" : "messaging",
-    "channel_id" : "new_channel_7070",
-    "created_at" : "2020-07-16T15:44:08.15465717Z",
-    "type" : "user.watching.start",
-    "cid" : "messaging:new_channel_7070"
+  "type": "user.watching.start",
+  "cid": "messaging:!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE",
+  "channel_id": "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE",
+  "channel_type": "messaging",
+  "user": {
+    "id": "luke_skywalker",
+    "role": "admin",
+    "created_at": "2021-04-16T11:04:41.120633Z",
+    "updated_at": "2021-04-16T11:04:41.120636Z",
+    "last_active": "2021-04-23T07:37:53.185615413Z",
+    "banned": false,
+    "online": false,
+    "language": "en",
+    "dashboard_user": true,
+    "email": "someone@getstream.com",
+    "first_name": "Luke",
+    "last_name": "Skywalker",
+    "staff_user": true
+  },
+  "watcher_count": 1,
+  "created_at": "2021-04-23T07:38:41.679546547Z",
+  "received_at": "2021-04-23T07:38:41.703Z"
 }

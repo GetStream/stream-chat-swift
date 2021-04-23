@@ -45,7 +45,7 @@ final class MemberEventObserver_Tests: XCTestCase {
     
     func test_cidFilterIsAppliedToMemberEvents_whenSpecified() {
         let channelId: ChannelId = .unique
-        let matchingMemberEvent = TestMemberEvent(cid: channelId, userId: .unique)
+        let matchingMemberEvent = TestMemberEvent(cid: channelId, memberUserId: .unique)
         let otherMemberEvent = TestMemberEvent.unique
         
         var receivedEvents: [MemberEvent] = []
@@ -66,10 +66,10 @@ final class MemberEventObserver_Tests: XCTestCase {
 }
 
 struct TestMemberEvent: MemberEvent, Equatable {
-    static var unique: TestMemberEvent = .init(cid: .unique, userId: .unique)
+    static var unique: TestMemberEvent = .init(cid: .unique, memberUserId: .unique)
     
     let cid: ChannelId
-    let userId: UserId
+    let memberUserId: UserId
 }
 
 private struct OtherEvent: Event {}
