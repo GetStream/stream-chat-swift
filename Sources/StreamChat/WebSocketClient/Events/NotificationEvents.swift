@@ -76,7 +76,7 @@ public struct NotificationRemovedFromChannelEvent: EventWithChannelId {
     let payload: Any
     
     init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
-        cid = try response.value(at: \.channel?.cid)
+        cid = try response.value(at: \.cid)
         payload = response
     }
 }
