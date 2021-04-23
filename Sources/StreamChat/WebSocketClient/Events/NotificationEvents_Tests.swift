@@ -32,12 +32,20 @@ class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.unreadCount, .init(channels: 8, messages: 55))
     }
     
-    func test_mutesUpdated() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationMutesUpdated")
-        let event = try eventDecoder.decode(from: json) as? NotificationMutesUpdatedEvent<NoExtraData>
-        XCTAssertEqual(event?.currentUserId, "broken-waterfall-5")
+    func test_channelSomeMutedChannels() throws {
+        let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
+        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEvent
+        XCTAssertEqual(event?.userId, "luke_skywalker")
+        XCTAssertEqual((event?.payload as? EventPayload<NoExtraData>)?.currentUser?.mutedChannels.isEmpty, false)
     }
     
+    func test_channelNoMutedChannels() throws {
+        let json = XCTestCase.mockData(fromFile: "NotificationChannelMutesUpdatedWithNoMutedChannels")
+        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEvent
+        XCTAssertEqual(event?.userId, "luke_skywalker")
+        XCTAssertEqual((event?.payload as? EventPayload<NoExtraData>)?.currentUser?.mutedChannels.isEmpty, true)
+    }
+
     func test_addToChannel() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
         let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEvent<NoExtraData>
