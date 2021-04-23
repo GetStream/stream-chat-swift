@@ -13,6 +13,7 @@ _April 15, 2021_
 ### 🐞 Fixed
 - It's safe now to use `ChatChannel` and `ChatMessage` across multiple threads [#984](https://github.com/GetStream/stream-chat-swift/pull/984)
 - Web socket reconnection logic better handles the "no internet" errors [#970](https://github.com/GetStream/stream-chat-swift/pull/970)
+- `ChatChannelWatcherListController` now correctly loads initial watchers of the channel [#1012]((https://github.com/GetStream/stream-chat-swift/pull/970))
 
 ### ✅ Added
 - Expose the entire quoted message on `ChatMessage` instead of its `id` [#992](https://github.com/GetStream/stream-chat-swift/pull/992)
