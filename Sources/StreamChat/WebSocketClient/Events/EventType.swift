@@ -36,6 +36,8 @@ enum EventType: String, Codable {
     case channelDeleted = "channel.deleted"
     /// When a channel was hidden.
     case channelHidden = "channel.hidden"
+    /// When a channel is visible.
+    case channelVisible = "channel.visible"
     /// When a channel was truncated.
     case channelTruncated = "channel.truncated"
 
@@ -99,6 +101,7 @@ enum EventType: String, Codable {
         case .channelDeleted: return try ChannelDeletedEvent(from: response)
         case .channelHidden: return try ChannelHiddenEvent(from: response)
         case .channelTruncated: return try ChannelTruncatedEvent(from: response)
+        case .channelVisible: return try ChannelVisibleEvent(from: response)
             
         case .messageNew: return try MessageNewEvent(from: response)
         case .messageUpdated: return try MessageUpdatedEvent(from: response)

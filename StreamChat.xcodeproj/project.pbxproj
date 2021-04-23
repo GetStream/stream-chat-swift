@@ -631,7 +631,7 @@
 		8A0C3BCC24C1CA9900CAFD19 /* ChannelUpdated.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A0C3BCB24C1C6AB00CAFD19 /* ChannelUpdated.json */; };
 		8A0C3BCE24C1CB0500CAFD19 /* ChannelDeleted.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A0C3BCD24C1CAF000CAFD19 /* ChannelDeleted.json */; };
 		8A0C3BD124C1CD1C00CAFD19 /* ChannelHidden.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A0C3BCF24C1CCD800CAFD19 /* ChannelHidden.json */; };
-		8A0C3BD224C1CD1C00CAFD19 /* ChannelHiddenCleared.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A0C3BD024C1CCEB00CAFD19 /* ChannelHiddenCleared.json */; };
+		8A0C3BD224C1CD1C00CAFD19 /* ChannelHidden+HistoryCleared.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A0C3BD024C1CCEB00CAFD19 /* ChannelHidden+HistoryCleared.json */; };
 		8A0C3BD424C1DF2100CAFD19 /* MessageEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0C3BD324C1DF2100CAFD19 /* MessageEvents.swift */; };
 		8A0C3BDC24C1F18700CAFD19 /* MessageNew.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A0C3BD724C1E26C00CAFD19 /* MessageNew.json */; };
 		8A0C3BDD24C1F18700CAFD19 /* MessageUpdated.json in Resources */ = {isa = PBXBuildFile; fileRef = 8A0C3BD824C1E33100CAFD19 /* MessageUpdated.json */; };
@@ -827,6 +827,7 @@
 		E7A37B8425ADA66E0055458F /* ChatMessageComposerSuggestionsCommandsHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7A37B8325ADA66E0055458F /* ChatMessageComposerSuggestionsCommandsHeaderView.swift */; };
 		E7AD954F25D536AA00076DC3 /* SystemEnvironment+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AD954E25D536AA00076DC3 /* SystemEnvironment+Version.swift */; };
 		E7AD958925D7510900076DC3 /* ChatMessageComposerMentionCellView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AD958825D7510900076DC3 /* ChatMessageComposerMentionCellView_Tests.swift */; };
+		E7DB9F402632B6C40090D9C7 /* ChannelVisible.json in Resources */ = {isa = PBXBuildFile; fileRef = E7DB9F372632B6500090D9C7 /* ChannelVisible.json */; };
 		E7B20BDD2632FAB800A80502 /* NotificationChannelMutesUpdatedWithNoMutedChannels.json in Resources */ = {isa = PBXBuildFile; fileRef = E7B20BDB2632FAB700A80502 /* NotificationChannelMutesUpdatedWithNoMutedChannels.json */; };
 		E7B20BDE2632FAB800A80502 /* NotificationChannelMutesUpdatedWithSomeMutedChannels.json in Resources */ = {isa = PBXBuildFile; fileRef = E7B20BDC2632FAB800A80502 /* NotificationChannelMutesUpdatedWithSomeMutedChannels.json */; };
 		E7DD8EA825E3F7F50059A322 /* MessageWithBrokenAttachments.json in Resources */ = {isa = PBXBuildFile; fileRef = E7DD8EA725E3F7F50059A322 /* MessageWithBrokenAttachments.json */; };
@@ -1765,7 +1766,7 @@
 		8A0C3BCB24C1C6AB00CAFD19 /* ChannelUpdated.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelUpdated.json; sourceTree = "<group>"; };
 		8A0C3BCD24C1CAF000CAFD19 /* ChannelDeleted.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelDeleted.json; sourceTree = "<group>"; };
 		8A0C3BCF24C1CCD800CAFD19 /* ChannelHidden.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelHidden.json; sourceTree = "<group>"; };
-		8A0C3BD024C1CCEB00CAFD19 /* ChannelHiddenCleared.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelHiddenCleared.json; sourceTree = "<group>"; };
+		8A0C3BD024C1CCEB00CAFD19 /* ChannelHidden+HistoryCleared.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "ChannelHidden+HistoryCleared.json"; sourceTree = "<group>"; };
 		8A0C3BD324C1DF2100CAFD19 /* MessageEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageEvents.swift; sourceTree = "<group>"; };
 		8A0C3BD724C1E26C00CAFD19 /* MessageNew.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessageNew.json; sourceTree = "<group>"; };
 		8A0C3BD824C1E33100CAFD19 /* MessageUpdated.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessageUpdated.json; sourceTree = "<group>"; };
@@ -1978,6 +1979,7 @@
 		E7AD958825D7510900076DC3 /* ChatMessageComposerMentionCellView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerMentionCellView_Tests.swift; sourceTree = "<group>"; };
 		E7B20BDB2632FAB700A80502 /* NotificationChannelMutesUpdatedWithNoMutedChannels.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NotificationChannelMutesUpdatedWithNoMutedChannels.json; sourceTree = "<group>"; };
 		E7B20BDC2632FAB800A80502 /* NotificationChannelMutesUpdatedWithSomeMutedChannels.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = NotificationChannelMutesUpdatedWithSomeMutedChannels.json; sourceTree = "<group>"; };
+		E7DB9F372632B6500090D9C7 /* ChannelVisible.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelVisible.json; sourceTree = "<group>"; };
 		E7DD8EA725E3F7F50059A322 /* MessageWithBrokenAttachments.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MessageWithBrokenAttachments.json; sourceTree = "<group>"; };
 		E7DD8EC025E4083B0059A322 /* OptionalDecodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptionalDecodable.swift; sourceTree = "<group>"; };
 		E7DF7E2325C2C67E00AE9D21 /* ChatAvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatAvatarView.swift; sourceTree = "<group>"; };
@@ -3735,7 +3737,8 @@
 				79433799260E04AF0094471F /* ChannelUpdated_ServerSide.json */,
 				8A0C3BCD24C1CAF000CAFD19 /* ChannelDeleted.json */,
 				8A0C3BCF24C1CCD800CAFD19 /* ChannelHidden.json */,
-				8A0C3BD024C1CCEB00CAFD19 /* ChannelHiddenCleared.json */,
+				E7DB9F372632B6500090D9C7 /* ChannelVisible.json */,
+				8A0C3BD024C1CCEB00CAFD19 /* ChannelHidden+HistoryCleared.json */,
 				79158CE125F0E9DF00186102 /* ChannelTruncated.json */,
 			);
 			path = Channel;
@@ -4738,9 +4741,10 @@
 				8A0C3BC524C0AEDB00CAFD19 /* UserStartWatching.json in Resources */,
 				798779FC2498E47700015F8B /* Channel.json in Resources */,
 				88DA58042631E8F100FA8C53 /* MutedChannelPayload.json in Resources */,
+				E7DB9F402632B6C40090D9C7 /* ChannelVisible.json in Resources */,
 				8AC9CBE024C74DD0006E236C /* NotificationInvited.json in Resources */,
 				8A0C3BD124C1CD1C00CAFD19 /* ChannelHidden.json in Resources */,
-				8A0C3BD224C1CD1C00CAFD19 /* ChannelHiddenCleared.json in Resources */,
+				8A0C3BD224C1CD1C00CAFD19 /* ChannelHidden+HistoryCleared.json in Resources */,
 				8AC9CBDD24C74DD0006E236C /* NotificationMessageNew.json in Resources */,
 				AD7D633325AF577E0051219B /* UserUpdateResponse+MissingUser.json in Resources */,
 				8AC9CBE224C74DD0006E236C /* NotificationInviteRejected.json in Resources */,
