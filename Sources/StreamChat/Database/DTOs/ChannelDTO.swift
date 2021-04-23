@@ -261,7 +261,10 @@ extension ChannelDTO {
     static var channelWithoutQueryFetchRequest: NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
         request.sortDescriptors = [ChannelListSortingKey.defaultSortDescriptor]
-        request.predicate = NSPredicate(format: "queries.@count == 0")
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            NSPredicate(format: "queries.@count == 0"),
+            NSPredicate(format: "needsRefreshQueries == YES")
+        ])
         return request
     }
 }

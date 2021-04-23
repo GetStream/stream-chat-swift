@@ -61,7 +61,20 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
             [filter1, filter2].map(\.filterHash).sorted()
         )
     }
-    
+
+    func test_update_notCalled_whenNeedsRefreshQueries_isFalse() throws {
+        let filter: Filter<ChannelListFilterScope> = .equal(.frozen, to: true)
+        try database.createChannelListQuery(filter: filter)
+
+        try database.writeSynchronously { session in
+            let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: .unique))
+            dto.needsRefreshQueries = false
+        }
+
+        // Assert `update(channelListQuery:)` is not called
+        AssertAsync.staysTrue(env!.channelQueryUpdater?.update_queries.isEmpty == true)
+    }
+
     func test_update_called_forExistingChannel() throws {
         // Deinitialize newChannelQueryUpdater
         newChannelQueryUpdater = nil
@@ -83,7 +96,28 @@ class NewChannelQueryUpdater_Tests: StressTestCase {
         // Assert `update(channelListQuery` called for channel that was in DB before observing started
         AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_queries.first?.filter.filterHash, filter.filterHash)
     }
-    
+
+    func test_updater_setsNeedsRefreshQueries_toFalse() throws {
+        let filter: Filter<ChannelListFilterScope> = .equal(.frozen, to: true)
+        try database.createChannelListQuery(filter: filter)
+
+        let cid: ChannelId = .unique
+        try database.createChannel(cid: cid)
+
+        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_queries.count, 1)
+
+        AssertAsync.willBeEqual(database.viewContext.channel(cid: cid)?.needsRefreshQueries, false)
+
+        // Reset the flag and check if the queries are refreshed
+        try database.writeSynchronously {
+            let channelDTO = $0.channel(cid: cid)
+            channelDTO?.needsRefreshQueries = true
+        }
+
+        AssertAsync.willBeEqual(env!.channelQueryUpdater?.update_queries.count, 2)
+        AssertAsync.willBeEqual(database.viewContext.channel(cid: cid)?.needsRefreshQueries, false)
+    }
+
     func test_filter_isModified() throws {
         let cid: ChannelId = .unique
         let filter: Filter<ChannelListFilterScope> = .equal(.cid, to: .unique)
