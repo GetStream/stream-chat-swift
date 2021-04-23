@@ -18,17 +18,18 @@ class UserEvents_Tests: XCTestCase {
     func test_watchingEvent() throws {
         var json = XCTestCase.mockData(fromFile: "UserStartWatching")
         var event = try eventDecoder.decode(from: json) as? UserWatchingEvent
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE"))
+        XCTAssertEqual(event?.userId, "luke_skywalker")
+        // Not exactly isStarted field on UserStartWatching event,
+        // rather if it the event is START not STOP watching.
         XCTAssertTrue(event?.isStarted ?? false)
-        XCTAssertTrue(event?.watcherCount ?? 0 > 0)
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
-        
+       
         json = XCTestCase.mockData(fromFile: "UserStopWatching")
         event = try eventDecoder.decode(from: json) as? UserWatchingEvent
-        XCTAssertEqual(event?.userId, "steep-moon-9")
+        XCTAssertEqual(event?.userId, "luke_skywalker")
         XCTAssertFalse(event?.isStarted ?? false)
         XCTAssertTrue(event?.watcherCount ?? 0 > 0)
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE"))
     }
     
     func test_userBannedEvent() throws {

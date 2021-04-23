@@ -1,46 +1,37 @@
 {
-    "member" : {
-        "created_at" : "2020-07-20T16:42:20.040635Z",
-        "user_id" : "steep-moon-9",
-        "updated_at" : "2020-07-20T16:42:20.040635Z",
-        "user" : {
-            "id" : "steep-moon-9",
-            "banned" : false,
-            "unread_channels" : 3,
-            "totalUnreadCount" : 0,
-            "last_active" : "2020-07-20T16:39:07.169076Z",
-            "created_at" : "2019-12-12T15:34:00.762372Z",
-            "invisible" : false,
-            "unreadChannels" : 0,
-            "unread_count" : 21,
-            "image" : "https:\/\/api.adorable.io\/avatars\/285\/steep-moon-9.png",
-            "updated_at" : "2020-07-20T16:39:07.169076Z",
-            "role" : "user",
-            "total_unread_count" : 21,
-            "online" : true,
-            "name" : "steep-moon-9"
-        }
-    },
+  "member" : {
+    "banned" : false,
+    "shadow_banned" : false,
+    "created_at" : "2021-04-23T10:42:21.146483Z",
+    "is_moderator" : true,
+    "user_id" : "count_dooku",
+    "updated_at" : "2021-04-23T12:16:24.832297Z",
     "user" : {
-        "id" : "steep-moon-9",
-        "banned" : false,
-        "unread_channels" : 3,
-        "totalUnreadCount" : 0,
-        "last_active" : "2020-07-20T16:39:07.169076Z",
-        "created_at" : "2019-12-12T15:34:00.762372Z",
-        "invisible" : false,
-        "unreadChannels" : 0,
-        "unread_count" : 21,
-        "image" : "https:\/\/api.adorable.io\/avatars\/285\/steep-moon-9.png",
-        "updated_at" : "2020-07-20T16:39:07.169076Z",
-        "role" : "user",
-        "total_unread_count" : 21,
-        "online" : true,
-        "name" : "steep-moon-9"
-    },
-    "channel_type" : "messaging",
-    "channel_id" : "new_channel_9125",
-    "created_at" : "2020-07-20T16:42:20.04917036Z",
-    "type" : "member.updated",
-    "cid" : "messaging:new_channel_9125"
+      "banned" : false,
+      "online" : false,
+      "id" : "count_dooku",
+      "role" : "user",
+      "created_at" : "2020-12-07T11:37:39.487938Z",
+      "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/b\/b8\/Dooku_Headshot.jpg",
+      "updated_at" : "2021-04-15T12:41:22.065746Z",
+      "last_active" : "2021-04-23T11:59:27.130010139Z",
+      "name" : "Count Dooku"
+    }
+  },
+  "user" : {
+    "banned" : false,
+    "online" : false,
+    "id" : "count_dooku",
+    "role" : "user",
+    "created_at" : "2020-12-07T11:37:39.487938Z",
+    "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/b\/b8\/Dooku_Headshot.jpg",
+    "updated_at" : "2021-04-15T12:41:22.065746Z",
+    "last_active" : "2021-04-23T11:59:27.130010139Z",
+    "name" : "Count Dooku"
+  },
+  "channel_type" : "messaging",
+  "channel_id" : "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY",
+  "created_at" : "2021-04-23T12:16:24.839099398Z",
+  "type" : "member.updated",
+  "cid" : "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"
 }

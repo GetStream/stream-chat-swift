@@ -43,7 +43,8 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
             eventType: .userStartWatching,
             cid: .unique,
             user: .dummy(userId: .unique),
-            watcherCount: .random(in: 0...10)
+            watcherCount: .random(in: 0...10),
+            createdAt: Date.unique
         )
         
         // Set error to be thrown on write.

@@ -1,24 +1,19 @@
 {
-    "channel_id" : "general",
-    "channel_type" : "messaging",
-    "user" : {
-        "id" : "steep-moon-9",
-        "banned" : false,
-        "unread_channels" : 3,
-        "totalUnreadCount" : 0,
-        "last_active" : "2020-07-15T08:15:18.705287Z",
-        "created_at" : "2019-12-12T15:34:00.762372Z",
-        "invisible" : false,
-        "unreadChannels" : 0,
-        "unread_count" : 21,
-        "image" : "https:\/\/api.adorable.io\/avatars\/285\/steep-moon-9.png",
-        "updated_at" : "2020-07-15T08:15:18.705287Z",
-        "role" : "user",
-        "total_unread_count" : 21,
-        "online" : true,
-        "name" : "steep-moon-9"
-    },
-    "created_at" : "2020-07-15T08:19:26.25895407Z",
-    "type" : "typing.stop",
-    "cid" : "messaging:general"
+  "type": "typing.stop",
+  "cid": "messaging:general",
+  "channel_id": "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE",
+  "channel_type": "messaging",
+  "user": {
+    "id": "luke_skywalker",
+    "role": "admin",
+    "created_at": "2020-12-07T11:36:47.059906Z",
+    "updated_at": "2021-04-22T18:57:47.14206Z",
+    "last_active": "2021-04-22T22:05:47.160798495Z",
+    "banned": false,
+    "online": true,
+    "image": "./static/media/photo-1541271696563-3be2f555fc4e.4e84f363.jpeg",
+    "name": "luke_skywalker"
+  },
+  "created_at": "2021-04-22T22:05:56.984680522Z",
+  "received_at": "2021-04-22T22:05:56.929Z"
 }

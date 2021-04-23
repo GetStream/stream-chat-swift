@@ -36,16 +36,15 @@ public struct ChannelUpdatedEvent: EventWithChannelId {
     }
 }
 
-public struct ChannelDeletedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithChannelId {
-    public let userId: UserId
+public struct ChannelDeletedEvent: EventWithChannelId {
     public let cid: ChannelId
     public let deletedAt: Date
+    
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
-        cid = try response.value(at: \.channel?.cid)
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
+        cid = try response.value(at: \.cid)
         deletedAt = try response.value(at: \.channel?.deletedAt)
-        userId = try response.value(at: \.user?.id)
         payload = response
     }
 }
@@ -54,7 +53,7 @@ public struct ChannelTruncatedEvent: EventWithUserPayload, EventWithChannelId {
     public let userId: UserId
     public let cid: ChannelId
     let payload: Any
-
+    
     init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)

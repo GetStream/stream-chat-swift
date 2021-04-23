@@ -17,4 +17,24 @@ struct MutedChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     let user: UserPayload<ExtraData.User>
     let createdAt: Date
     let updatedAt: Date
+    
+    init(
+        mutedChannel: ChannelDetailPayload<ExtraData>,
+        user: UserPayload<ExtraData.User>,
+        createdAt: Date,
+        updatedAt: Date
+    ) {
+        self.mutedChannel = mutedChannel
+        self.user = user
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        mutedChannel = try container.decode(ChannelDetailPayload<ExtraData>.self, forKey: .mutedChannel)
+        user = try container.decode(UserPayload<ExtraData.User>.self, forKey: .user)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .createdAt)
+    }
 }

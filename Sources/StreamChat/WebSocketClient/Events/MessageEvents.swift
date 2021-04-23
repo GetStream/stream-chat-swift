@@ -25,7 +25,7 @@ public struct MessageNewEvent: EventWithUserPayload, EventWithMessagePayload {
     }
 }
 
-public struct MessageUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithMessagePayload {
+public struct MessageUpdatedEvent: EventWithUserPayload, EventWithMessagePayload {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -33,7 +33,7 @@ public struct MessageUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithUserPaylo
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.message?.id)
@@ -42,7 +42,7 @@ public struct MessageUpdatedEvent<ExtraData: ExtraDataTypes>: EventWithUserPaylo
     }
 }
 
-public struct MessageDeletedEvent<ExtraData: ExtraDataTypes>: EventWithUserPayload, EventWithMessagePayload {
+public struct MessageDeletedEvent: EventWithUserPayload, EventWithMessagePayload {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -50,7 +50,7 @@ public struct MessageDeletedEvent<ExtraData: ExtraDataTypes>: EventWithUserPaylo
     
     let payload: Any
     
-    init(from response: EventPayload<ExtraData>) throws {
+    init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         userId = try response.value(at: \.user?.id)
         cid = try response.value(at: \.cid)
         messageId = try response.value(at: \.message?.id)

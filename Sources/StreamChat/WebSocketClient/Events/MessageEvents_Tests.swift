@@ -33,7 +33,7 @@ class MessageEvents_Tests: XCTestCase {
     
     func test_updated() throws {
         let json = XCTestCase.mockData(fromFile: "MessageUpdated")
-        let event = try eventDecoder.decode(from: json) as? MessageUpdatedEvent<NoExtraData>
+        let event = try eventDecoder.decode(from: json) as? MessageUpdatedEvent
         XCTAssertEqual(event?.userId, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.messageId, messageId)
@@ -42,7 +42,7 @@ class MessageEvents_Tests: XCTestCase {
     
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromFile: "MessageDeleted")
-        let event = try eventDecoder.decode(from: json) as? MessageDeletedEvent<NoExtraData>
+        let event = try eventDecoder.decode(from: json) as? MessageDeletedEvent
         XCTAssertEqual(event?.userId, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.messageId, messageId)
