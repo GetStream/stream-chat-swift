@@ -4,7 +4,7 @@
 
 import UIKit
 
-@available(*, deprecated, message: "This view is deprecated and will be replaced by the new ContainerStackView.")
+// @available(*, deprecated, message: "This view is deprecated and will be replaced by the new ContainerStackView.")
 public class DeprecatedContainerStackView: UIStackView {
     // MARK: - Subviews
     

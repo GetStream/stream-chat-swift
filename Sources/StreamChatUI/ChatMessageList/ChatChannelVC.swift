@@ -67,7 +67,7 @@ public class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
         replyMessageFor message: _ChatMessage<ExtraData>,
         at index: Int
     ) -> _ChatMessage<ExtraData>? {
-        message.quotedMessageId.flatMap { channelController.dataStore.message(id: $0) }
+        message.quotedMessage.flatMap { channelController.dataStore.message(id: $0.id) }
     }
 
     override internal func chatMessageListVC(
