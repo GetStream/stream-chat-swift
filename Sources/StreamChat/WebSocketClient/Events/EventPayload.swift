@@ -7,7 +7,7 @@ import Foundation
 // MARK: - Temporary
 
 /// The DTO object mirroring the JSON representation of an event.
-struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
+public struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     enum CodingKeys: String, CodingKey {
         case eventType = "type"
         case connectionId = "connection_id"
@@ -79,7 +79,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.banExpiredAt = banExpiredAt
     }
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         eventType = try container.decode(EventType.self, forKey: .eventType)
         connectionId = try container.decodeIfPresent(String.self, forKey: .connectionId)
