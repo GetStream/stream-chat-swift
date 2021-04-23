@@ -19,6 +19,9 @@ _April 15, 2021_
 - Expose the entire quoted message on `ChatMessage` instead of its `id` [#992](https://github.com/GetStream/stream-chat-swift/pull/992)
 - Expose thread participants as a set of `ChartUser` instead of a set of `UserId`[#998](https://github.com/GetStream/stream-chat-swift/pull/998)
 
+### 🔄 Changed
+- Updating the current user devices is now done manually by calling `CurrentUserController.synchronizeDevices()` instead of being automatically called on `CurrentUserController.synchronize()`[#1010](https://github.com/GetStream/stream-chat-swift/pull/1010)
+
 ### ⛔️ Deprecated
 - `ChatMessage.quotedMessageId` is now deprecated. Use `quotedMessage?.id` instead [#992](https://github.com/GetStream/stream-chat-swift/pull/992)
 
