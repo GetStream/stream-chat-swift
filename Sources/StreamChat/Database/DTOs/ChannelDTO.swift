@@ -30,7 +30,12 @@ class ChannelDTO: NSManagedObject {
     // only locally because once the DB is flushed and the channels are fetched fresh, the messages before the
     // `truncatedAt` date are not returned from the backend.
     @NSManaged var truncatedAt: Date?
-    
+
+    // This field lives only locally and is not populated directly from the payload. It's populated only form the
+    // `ChannelVisibilityEventMiddleware` and it's main purpose is to control the visibility of hidden channels
+    // locally.
+    @NSManaged var hiddenAt: Date?
+
     @NSManaged var watcherCount: Int64
     @NSManaged var memberCount: Int64
     
@@ -224,8 +229,21 @@ extension ChannelDTO {
         
         let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
-        
-        request.predicate = NSCompoundPredicate(type: .and, subpredicates: [matchingQuery, notDeleted])
+
+        // This is not 100% correct and should be ideally solved differently. This makes it impossible
+        // to query for hidden channels from the SDK. However, it's the limitation other platforms have, too,
+        // so this feels like a good-enough solution for now.
+        let notHidden = NSCompoundPredicate(orPredicateWithSubpredicates: [
+            NSPredicate(format: "hiddenAt == nil"),
+            NSCompoundPredicate(andPredicateWithSubpredicates: [
+                NSPredicate(format: "lastMessageAt != nil"),
+                NSPredicate(format: "lastMessageAt > hiddenAt")
+            ])
+        ])
+
+        request.predicate = NSCompoundPredicate(type: .and, subpredicates: [
+            matchingQuery, notDeleted, notHidden
+        ])
         return request
     }
 
