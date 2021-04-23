@@ -72,7 +72,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     }
 }
 
-struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
+public struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     let cid: ChannelId
     
     let name: String?
@@ -115,7 +115,7 @@ struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     /// This value will be 0 if the channel is not in slow mode.
     let cooldownDuration: Int
     
-    init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ChannelCodingKeys.self)
         typeRawValue = try container.decode(String.self, forKey: .typeRawValue)
         cid = try container.decode(ChannelId.self, forKey: .cid)
@@ -257,26 +257,25 @@ public struct ChannelConfig: Codable {
     
     /// Determines if users are able to flag messages. Enabled by default.
     public var flagsEnabled: Bool { commands?.map(\.name).contains("flag") ?? false }
-    
-    // TODO: Do we need custom decoding here?
-    
-//    public init(from decoder: Decoder) throws {
-//      let container = try decoder.container(keyedBy: CodingKeys.self)
-//      reactionsEnabled = try container.decode(Bool.self, forKey: .reactionsEnabled)
-//      typingEventsEnabled = try container.decode(Bool.self, forKey: .typingEventsEnabled)
-//      readEventsEnabled = try container.decode(Bool.self, forKey: .readEventsEnabled)
-//      connectEventsEnabled = try container.decode(Bool.self, forKey: .connectEventsEnabled)
-//      uploadsEnabled = try container.decodeIfPresent(Bool.self, forKey: .uploadsEnabled) ?? false
-//      self.repliesEnabled = try container.decode(Bool.self, forKey: .repliesEnabled)
-//      self.searchEnabled = try container.decode(Bool.self, forKey: .searchEnabled)
-//      self.mutesEnabled = try container.decode(Bool.self, forKey: .mutesEnabled)
-//      self.urlEnrichmentEnabled = try container.decode(Bool.self, forKey: .urlEnrichmentEnabled)
-//      self.messageRetention = try container.decode(String.self, forKey: .messageRetention)
-//      self.maxMessageLength = try container.decode(Int.self, forKey: .maxMessageLength)
-//      self.commands = try container.decodeIfPresent([Command].self, forKey: .commands) ?? []
-//      self.created = try container.decode(Date.self, forKey: .created)
-//      self.updated = try container.decode(Date.self, forKey: .updated)
-//    }
+        
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        reactionsEnabled = try container.decode(Bool.self, forKey: .reactionsEnabled)
+        typingEventsEnabled = try container.decode(Bool.self, forKey: .typingEventsEnabled)
+        readEventsEnabled = try container.decode(Bool.self, forKey: .readEventsEnabled)
+        connectEventsEnabled = try container.decode(Bool.self, forKey: .connectEventsEnabled)
+        uploadsEnabled = try container.decodeIfPresent(Bool.self, forKey: .uploadsEnabled) ?? false
+        repliesEnabled = try container.decode(Bool.self, forKey: .repliesEnabled)
+        searchEnabled = try container.decode(Bool.self, forKey: .searchEnabled)
+        mutesEnabled = try container.decode(Bool.self, forKey: .mutesEnabled)
+        urlEnrichmentEnabled = try container.decode(Bool.self, forKey: .urlEnrichmentEnabled)
+        messageRetention = try container.decode(String.self, forKey: .messageRetention)
+        maxMessageLength = try container.decode(Int.self, forKey: .maxMessageLength)
+        commands = try container.decodeIfPresent([Command].self, forKey: .commands) ?? []
+        
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+    }
     
     internal init(
         reactionsEnabled: Bool = false,

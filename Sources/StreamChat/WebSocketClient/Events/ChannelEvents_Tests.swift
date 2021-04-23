@@ -57,7 +57,6 @@ class ChannelEvents_Tests: XCTestCase {
         // Channel is visible again.
         let json = XCTestCase.mockData(fromFile: "ChannelVisible")
         let event = try eventDecoder.decode(from: json) as? ChannelVisibleEvent
-        XCTAssertEqual(event?.userId, "luke_skywalker")
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "default-channel-6"))
     }
 
