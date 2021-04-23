@@ -27,7 +27,7 @@ enum UserPayloadsCodingKeys: String, CodingKey {
 // MARK: - GET users
 
 /// An object describing the incoming user JSON payload.
-public class UserPayload<ExtraData: UserExtraData>: Decodable {
+class UserPayload<ExtraData: UserExtraData>: Decodable {
     let id: String
     let name: String?
     let imageURL: URL?
@@ -69,7 +69,7 @@ public class UserPayload<ExtraData: UserExtraData>: Decodable {
         self.extraData = extraData
     }
     
-    public required init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: UserPayloadsCodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         // Unfortunately, the built-in URL decoder fails, if the string is empty. We need to

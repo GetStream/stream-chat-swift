@@ -72,7 +72,7 @@ struct ChannelPayload<ExtraData: ExtraDataTypes>: Decodable {
     }
 }
 
-public struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     let cid: ChannelId
     
     let name: String?
@@ -180,7 +180,7 @@ public struct ChannelDetailPayload<ExtraData: ExtraDataTypes>: Decodable {
     }
 }
 
-public struct ChannelReadPayload<ExtraData: ExtraDataTypes>: Decodable {
+struct ChannelReadPayload<ExtraData: ExtraDataTypes>: Decodable {
     private enum CodingKeys: String, CodingKey {
         case user
         case lastReadAt = "last_read"
