@@ -101,13 +101,3 @@ open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTyp
         imageView.widthAnchor.pin(equalTo: imageView.heightAnchor).isActive = true
     }
 }
-
-private extension _ChatMessageGroupPart {
-    var onlyVisibleForCurrentUser: Bool {
-        guard message.isSentByCurrentUser else {
-            return false
-        }
-
-        return message.deletedAt != nil || message.type == .ephemeral
-    }
-}
