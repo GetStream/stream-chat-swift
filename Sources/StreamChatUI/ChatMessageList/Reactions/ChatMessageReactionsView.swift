@@ -53,12 +53,12 @@ extension _ChatMessageReactionsView {
     public struct Content {
         public let useBigIcons: Bool
         public let reactions: [ChatMessageReactionData]
-        public let didTapOnReaction: (MessageReactionType) -> Void
+        public let didTapOnReaction: ((MessageReactionType) -> Void)?
 
         public init(
             useBigIcons: Bool,
             reactions: [ChatMessageReactionData],
-            didTapOnReaction: @escaping (MessageReactionType) -> Void
+            didTapOnReaction: ((MessageReactionType) -> Void)?
         ) {
             self.useBigIcons = useBigIcons
             self.reactions = reactions

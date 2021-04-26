@@ -11,6 +11,10 @@ extension _ChatMessageReactionsView {
             didSet { updateContentIfNeeded() }
         }
 
+        override open var intrinsicContentSize: CGSize {
+            image(for: .normal)?.size ?? super.intrinsicContentSize
+        }
+
         // MARK: - Overrides
 
         override open func setUp() {
@@ -19,10 +23,19 @@ extension _ChatMessageReactionsView {
             addTarget(self, action: #selector(didTap), for: .touchUpInside)
         }
 
-        override open func updateContent() {
-            setImage(reactionImage, for: .normal)
+        override open func setUpLayout() {
+            super.setUpLayout()
+
             setContentCompressionResistancePriority(.streamRequire, for: .vertical)
+            setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
+        }
+
+        override open func updateContent() {
+            super.updateContent()
+
+            setImage(reactionImage, for: .normal)
             imageView?.tintColor = reactionImageTint
+            isUserInteractionEnabled = content?.onTap != nil
         }
 
         override open func tintColorDidChange() {
@@ -36,7 +49,7 @@ extension _ChatMessageReactionsView {
         @objc open func didTap() {
             guard let content = self.content else { return }
 
-            content.onTap(content.reaction.type)
+            content.onTap?(content.reaction.type)
         }
     }
 }
@@ -47,12 +60,12 @@ extension _ChatMessageReactionsView.ItemView {
     public struct Content {
         public let useBigIcon: Bool
         public let reaction: ChatMessageReactionData
-        public var onTap: (MessageReactionType) -> Void
+        public var onTap: ((MessageReactionType) -> Void)?
 
         public init(
             useBigIcon: Bool,
             reaction: ChatMessageReactionData,
-            onTap: @escaping (MessageReactionType) -> Void
+            onTap: ((MessageReactionType) -> Void)?
         ) {
             self.useBigIcon = useBigIcon
             self.reaction = reaction
