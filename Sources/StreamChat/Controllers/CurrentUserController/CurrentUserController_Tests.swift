@@ -101,17 +101,20 @@ final class CurrentUserController_Tests: StressTestCase {
         // Simulate current user
         env.currentUserObserverItem = .mock(id: .unique)
 
-        var synchronizeError: Error?
+        var synchronizeCalled = false
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
-            synchronizeError = error
+            XCTAssertNil(error)
+            synchronizeCalled = true
         }
 
         // Simulate connection successful
         client.simulateProvidedConnectionId(connectionId: .unique)
 
-        XCTAssertEqual(controller.state, .remoteDataFetched)
-        XCTAssertNil(synchronizeError)
+        AssertAsync {
+            Assert.willBeEqual(self.controller.state, .remoteDataFetched)
+            Assert.willBeTrue(synchronizeCalled)
+        }
     }
 
     func test_synchronize_changesControllerStateOnError() {
@@ -122,16 +125,20 @@ final class CurrentUserController_Tests: StressTestCase {
         env.currentUserObserverItem = .mock(id: .unique)
 
         var synchronizeError: Error?
+        var synchronizeCalled = false
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
+            synchronizeCalled = true
         }
 
         // Simulate connection not successful
         client.simulateProvidedConnectionId(connectionId: nil)
 
-        XCTAssertEqual(controller.state, .remoteDataFetchFailed(.ConnectionNotSuccessful()))
-        XCTAssertNotNil(synchronizeError)
+        AssertAsync {
+            Assert.willBeEqual(self.controller.state, .remoteDataFetchFailed(.ConnectionNotSuccessful()))
+            Assert.willBeEqual(synchronizeError as? ClientError, ClientError.ConnectionNotSuccessful())
+        }
     }
 
     /// This test simulates a bug where the `currentUser` field was not updated if it wasn't
