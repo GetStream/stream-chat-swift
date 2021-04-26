@@ -10,13 +10,13 @@ Add this entry in your `Podfile`:
 
 ```ruby
 # Installs both StreamChat and StreamChatUI frameworks
-pod 'StreamChatUI', '~> 3.1.1'
+pod 'StreamChatUI', '~> 3.0'
 ```
 
 ```ruby
 # In case you don't need the UI framework (you're building the UI layer yourself)
 # you can specify the StreamChat framework directly.
-pod 'StreamChat', '~> 3.1.1'
+pod 'StreamChat', '~> 3.0'
 ```
 
 ### Swift Package Manager
@@ -25,7 +25,7 @@ Add the following to your `Package.swift` or in `Xcode` -> `File` -> `Swift Pack
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/GetStream/stream-chat-swift.git", .upToNextMajor(from: "3.1.1"))
+    .package(url: "https://github.com/GetStream/stream-chat-swift.git", .upToNextMajor(from: "3.0"))
 ]
 ```
 
@@ -44,10 +44,10 @@ Add this entry in your `Podfile`:
 
 ```ruby
 # Installs both StreamChat and StreamChatUI frameworks
-pod 'StreamChatUI', '~> 3.2.0-beta.2'
+pod 'StreamChatUI', '~> 3.2.0-beta.8'
 
 # In case you don't need the UI frameworks (you're building the UI layer yourself)
-pod 'StreamChat', '~> 3.2.0-beta.2'
+pod 'StreamChat', '~> 3.2.0-beta.8'
 ```
 
 ### Swift Package Manager
@@ -61,7 +61,7 @@ dependencies: [
 ]
 ```
 
- or in `Xcode` -> `File` -> `Swift Packages` -> `Add Package Dependency`, select version `3.2.0-beta.2`.
+ or in `Xcode` -> `File` -> `Swift Packages` -> `Add Package Dependency`, select version `3.2.0-beta.8`.
 
 **⚠️ Note:** Because `StreamChat` SDKs have to be distributed with its resources, the minimal Swift version requirement for this installation method is `5.3`. If you need to support older Swift version, please install it using CocoaPods.
 
