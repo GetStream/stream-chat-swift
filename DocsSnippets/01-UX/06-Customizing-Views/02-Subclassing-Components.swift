@@ -35,7 +35,7 @@ func snippets_ux_customizing_views_subclassing_components() {
             // Use base implementation.
             super.updateContent()
             // But also provide data for the new subview.
-            moodLabel.text = message?.authorWasInGoodMood == true ? "😃" : "😞"
+            moodLabel.text = content?.message.authorWasInGoodMood == true ? "😃" : "😞"
         }
     }
 }

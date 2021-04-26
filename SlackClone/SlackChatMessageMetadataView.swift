@@ -39,6 +39,6 @@ final class SlackChatMessageMetadataView: ChatMessageMetadataView {
     override func updateContent() {
         super.updateContent()
         
-        nameLabel.text = message?.author.name ?? ""
+        nameLabel.text = content?.message.author.name ?? ""
     }
 }

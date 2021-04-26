@@ -31,8 +31,6 @@ public extension _UIConfig {
         public var bubbleView: _ChatMessageBubbleView<ExtraData>.Type = _ChatMessageBubbleView<ExtraData>.self
         public var metadataView: _ChatMessageMetadataView<ExtraData>.Type = _ChatMessageMetadataView<ExtraData>.self
         public var attachmentSubviews = MessageAttachmentViewSubviews()
-        public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.Type =
-            ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.self
         public var threadArrowView: _ChatMessageThreadArrowView<ExtraData>.Type = _ChatMessageThreadArrowView<ExtraData>.self
         public var threadInfoView: _ChatMessageThreadInfoView<ExtraData>.Type = _ChatMessageThreadInfoView<ExtraData>.self
         public var threadParticipantAvatarView: ChatAvatarView.Type = ChatAvatarView.self
