@@ -25,4 +25,25 @@ extension _ChatMessage {
             return false
         }
     }
+
+    /// Says whether the message is part of message thread.
+    var isPartOfThread: Bool {
+        let isThreadStart = replyCount > 0
+        let isThreadReplyInChannel = showReplyInChannel
+
+        return isThreadStart || isThreadReplyInChannel
+    }
+
+    /// The text which should be shown in a text view inside the message bubble.
+    var textContent: String? {
+        guard type != .ephemeral else {
+            return nil
+        }
+
+        guard deletedAt == nil else {
+            return L10n.Message.deletedMessagePlaceholder
+        }
+
+        return text
+    }
 }
