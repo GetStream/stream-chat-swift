@@ -14,8 +14,9 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _V
 
     // MARK: - Subviews
 
-    public private(set) lazy var container = UIStackView().withoutAutoresizingMaskConstraints
-        
+    public private(set) lazy var container = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+
     public private(set) lazy var textView = uiConfig
         .messageComposer
         .textView.init()
@@ -46,21 +47,20 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _V
         container.preservesSuperviewLayoutMargins = true
         container.isLayoutMarginsRelativeArrangement = true
         container.alignment = .center
+        container.spacing = 4
 
         container.addArrangedSubview(slashCommandView)
-        slashCommandView.setContentHuggingPriority(.required, for: .horizontal)
-
         container.addArrangedSubview(textView)
-        textView.setContentHuggingPriority(.defaultLow, for: .horizontal)
-
         container.addArrangedSubview(rightAccessoryButton)
+
+        slashCommandView.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
+        textView.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
 
         rightAccessoryButton.heightAnchor.pin(equalToConstant: rightAccessoryButtonHeight).isActive = true
     }
 
     public func setSlashCommandViews(hidden: Bool) {
-        slashCommandView.setAnimatedly(hidden: hidden)
-        rightAccessoryButton.setAnimatedly(hidden: hidden)
-        slashCommandView.invalidateIntrinsicContentSize()
+        slashCommandView.isHidden = hidden
+        rightAccessoryButton.isHidden = hidden
     }
 }

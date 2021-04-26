@@ -14,7 +14,7 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Con
     
     // MARK: - Subviews
     
-    public private(set) lazy var container = DeprecatedContainerStackView()
+    public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var checkmark = UIImageView()
@@ -56,19 +56,13 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Con
         
         container.preservesSuperviewLayoutMargins = true
         container.isLayoutMarginsRelativeArrangement = true
-        
-        container.centerContainerStackView.spacing = UIStackView.spacingUseSystem
-        
-        container.leftStackView.isHidden = false
-        container.leftStackView.alignment = .center
-        container.leftStackView.addArrangedSubview(checkmark)
+
+        container.addArrangedSubview(checkmark)
 
         checkmark.heightAnchor.pin(equalToConstant: checkmarkHeight).isActive = true
         checkmark.widthAnchor.pin(equalToConstant: checkmarkHeight).isActive = true
         
-        container.centerStackView.isHidden = false
-        container.centerStackView.alignment = .center
-        container.centerStackView.addArrangedSubview(label)
+        container.addArrangedSubview(label)
     }
     
     override open func updateContent() {
