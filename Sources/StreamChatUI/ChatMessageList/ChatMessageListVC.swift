@@ -58,7 +58,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     public lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    public lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
+    // TODO: Will be removed soon. Swiftformat deletes everytime the explicit init.
+    public lazy var router = _ChatMessageListRouter<ExtraData>(rootViewController: self)
 
     public private(set) lazy var collectionViewLayout = uiConfig
         .messageList

@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+public class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
     static var reuseId: String { "message_cell" }
 
     class var messageContentViewClass: MessageContentView<ExtraData>.Type {
@@ -16,13 +16,13 @@ class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvi
         .init()
         .withoutAutoresizingMaskConstraints
 
-    override func setUpLayout() {
+    override public func setUpLayout() {
         super.setUpLayout()
 
         contentView.embed(messageContentView)
     }
 
-    override func prepareForReuse() {
+    override public func prepareForReuse() {
         super.prepareForReuse()
 
         messageContentView.delegate = nil

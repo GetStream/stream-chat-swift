@@ -15,7 +15,7 @@ extension MessageContentView {
     }
 }
 
-class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+public class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     var content: _ChatMessage<ExtraData>? {
         didSet {
             updateContentIfNeeded()
@@ -57,7 +57,7 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
     lazy var mainContainer = ContainerStackView(axis: .horizontal)
         .withoutAutoresizingMaskConstraints
 
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
 
         maskContainerByReactionsBubble()
@@ -304,7 +304,7 @@ class MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
         NSLayoutConstraint.activate(constraintsToActivate)
     }
 
-    override func updateContent() {
+    override public func updateContent() {
         // Text
         textView?.text = content?.text
         
