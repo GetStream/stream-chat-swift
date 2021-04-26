@@ -727,10 +727,12 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         let textView = self.textView!
         
         let font: UIFont = uiConfig.font.body
-        textView.attributedText = .init(string: message.textContent, attributes: [
-            .foregroundColor: message.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.subtitleText,
-            .font: message.deletedAt == nil ? font : font.italic
-        ])
+        textView.attributedText = message.textContent.map {
+            .init(string: $0, attributes: [
+                .foregroundColor: message.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.subtitleText,
+                .font: message.deletedAt == nil ? font : font.italic
+            ])
+        }
         
         textView.isVisible = message.layoutOptions.contains(.text)
     }
@@ -813,20 +815,6 @@ public struct ChatMessageContentViewLayoutOptions: OptionSet, Hashable {
 // MARK: - Extensions
 
 extension _ChatMessageGroupPart {
-    var textContent: String {
-        guard message.type != .ephemeral else {
-            return ""
-        }
-        
-        guard message.deletedAt == nil else {
-            return L10n.Message.deletedMessagePlaceholder
-        }
-        
-        return message.text
-    }
-}
-
-extension _ChatMessageGroupPart {
     var layoutOptions: ChatMessageContentViewLayoutOptions {
         guard message.deletedAt == nil else {
             return [.text]
@@ -834,7 +822,7 @@ extension _ChatMessageGroupPart {
         
         var options: ChatMessageContentViewLayoutOptions = []
         
-        if !textContent.isEmpty {
+        if message.textContent?.isEmpty == false {
             options.insert(.text)
         }
         
