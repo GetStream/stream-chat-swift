@@ -18,7 +18,7 @@ open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: _View, 
 
     // MARK: - Subviews
     
-    public private(set) lazy var container = DeprecatedContainerStackView()
+    public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
     
     private lazy var commandLabel = UILabel()
@@ -60,14 +60,12 @@ open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: _View, 
         
         container.preservesSuperviewLayoutMargins = true
         container.isLayoutMarginsRelativeArrangement = true
-        
-        container.centerContainerStackView.spacing = UIStackView.spacingUseSystem
-                
-        container.leftStackView.isHidden = false
-        container.leftStackView.addArrangedSubview(iconView)
-        
-        container.rightStackView.isHidden = false
-        container.rightStackView.addArrangedSubview(commandLabel)
+
+        container.addArrangedSubview(iconView)
+        iconView.isHidden = false
+
+        container.addArrangedSubview(commandLabel)
+        commandLabel.isHidden = false
         
         iconView.contentMode = .scaleAspectFit
     }
