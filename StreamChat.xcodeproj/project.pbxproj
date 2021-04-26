@@ -499,6 +499,7 @@
 		882C5763252C7F6500E60C44 /* ChannelMemberListUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882C5762252C7F6500E60C44 /* ChannelMemberListUpdater_Mock.swift */; };
 		882C5766252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882C5765252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift */; };
 		8830513E263031C40069D731 /* MessageLayoutOptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8830513D263031C40069D731 /* MessageLayoutOptions.swift */; };
+		883051622630363A0069D731 /* MessageBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883051612630363A0069D731 /* MessageBubbleView.swift */; };
 		883051742630366E0069D731 /* CACornerMask+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 883051732630366E0069D731 /* CACornerMask+Extensions.swift */; };
 		8830518E263038190069D731 /* ReactionsBubbleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8830518D263038190069D731 /* ReactionsBubbleView.swift */; };
 		8836133C25275170003CB958 /* MutedUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8836133B25275170003CB958 /* MutedUserPayload.swift */; };
@@ -1650,6 +1651,7 @@
 		882C5762252C7F6500E60C44 /* ChannelMemberListUpdater_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListUpdater_Mock.swift; sourceTree = "<group>"; };
 		882C5765252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberListUpdater_Tests.swift; sourceTree = "<group>"; };
 		8830513D263031C40069D731 /* MessageLayoutOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageLayoutOptions.swift; sourceTree = "<group>"; };
+		883051612630363A0069D731 /* MessageBubbleView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageBubbleView.swift; sourceTree = "<group>"; };
 		883051732630366E0069D731 /* CACornerMask+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CACornerMask+Extensions.swift"; sourceTree = "<group>"; };
 		8830518D263038190069D731 /* ReactionsBubbleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactionsBubbleView.swift; sourceTree = "<group>"; };
 		8836133B25275170003CB958 /* MutedUserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MutedUserPayload.swift; sourceTree = "<group>"; };
@@ -3576,6 +3578,7 @@
 			isa = PBXGroup;
 			children = (
 				8830513D263031C40069D731 /* MessageLayoutOptions.swift */,
+				883051612630363A0069D731 /* MessageBubbleView.swift */,
 				8830518D263038190069D731 /* ReactionsBubbleView.swift */,
 			);
 			path = RETHINK;
@@ -4897,6 +4900,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				883051622630363A0069D731 /* MessageBubbleView.swift in Sources */,
 				E7166CDA25BED62D00B03B07 /* UIConfig+Navigation.swift in Sources */,
 				228190EB256733420048D7C6 /* UIFont+Extensions.swift in Sources */,
 				ADB4167526208F2000E623E3 /* ImageAttachmentPreview.swift in Sources */,
