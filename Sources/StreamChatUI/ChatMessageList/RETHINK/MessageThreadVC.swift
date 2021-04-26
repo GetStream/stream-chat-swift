@@ -287,10 +287,7 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
-        collectionView.updateMessages(with: changes) {
-            completion?($0)
-            self.scrollToMostRecentMessageIfNeeded()
-        }
+        collectionView.updateMessages(with: changes, completion: completion)
     }
 
     /// Presents custom actions controller with all possible actions with the selected message.

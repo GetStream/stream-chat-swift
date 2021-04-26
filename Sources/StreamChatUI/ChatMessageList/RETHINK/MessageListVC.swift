@@ -254,10 +254,7 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
 
     /// Updates the collection view data with given `changes`.
     open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
-        collectionView.updateMessages(with: changes) {
-            completion?($0)
-            self.scrollToMostRecentMessage()
-        }
+        collectionView.updateMessages(with: changes, completion: completion)
     }
     
     open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
