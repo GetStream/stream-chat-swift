@@ -8,7 +8,13 @@ import UIKit
 // MARK: - Protocol
 
 public protocol AppearanceProvider: AnyObject {
+    /// Appearance object to change appearance of the existing views or to use default appearance of the SDK by custom components.
     var appearance: Appearance { get set }
+    
+    /// This function is called afther the appearance is registered.
+    ///
+    /// By default it's used to check that appearance is register before the view is initialized
+    /// to make sure the appearance is used correctly.
     func appearanceDidRegister()
 }
 
