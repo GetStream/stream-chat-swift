@@ -157,7 +157,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(Array(observer.items), reference1.map(\.uniqueValue))
         
         // Simulate the change aggregator callback and check the items get updated
-        observer.changeAggregator.onChange?([])
+        observer.changeAggregator.onDidChange?([])
         XCTAssertEqual(Array(observer.items), reference2.map(\.uniqueValue))
     }
     
@@ -261,7 +261,7 @@ class ListChangeAggregator_Tests: XCTestCase {
     func test_addingItems() {
         // Set up aggregator callback
         var result: [ListChange<String>]?
-        aggregator.onChange = { result = $0 }
+        aggregator.onDidChange = { result = $0 }
         
         // Simulate FRC starts updating
         aggregator.controllerWillChangeContent(fakeController)
@@ -298,7 +298,7 @@ class ListChangeAggregator_Tests: XCTestCase {
     func test_movingItems() {
         // Set up aggregator callback
         var result: [ListChange<String>]?
-        aggregator.onChange = { result = $0 }
+        aggregator.onDidChange = { result = $0 }
         
         // Simulate FRC starts updating
         aggregator.controllerWillChangeContent(fakeController)
@@ -335,7 +335,7 @@ class ListChangeAggregator_Tests: XCTestCase {
     func test_updatingItems() {
         // Set up aggregator callback
         var result: [ListChange<String>]?
-        aggregator.onChange = { result = $0 }
+        aggregator.onDidChange = { result = $0 }
         
         // Simulate FRC starts updating
         aggregator.controllerWillChangeContent(fakeController)
@@ -372,7 +372,7 @@ class ListChangeAggregator_Tests: XCTestCase {
     func test_removingItems() {
         // Set up aggregator callback
         var result: [ListChange<String>]?
-        aggregator.onChange = { result = $0 }
+        aggregator.onDidChange = { result = $0 }
         
         // Simulate FRC starts updating
         aggregator.controllerWillChangeContent(fakeController)
@@ -408,7 +408,7 @@ class ListChangeAggregator_Tests: XCTestCase {
     
     func test_complexUpdate() {
         var result: [ListChange<String>]?
-        aggregator.onChange = { result = $0 }
+        aggregator.onDidChange = { result = $0 }
         
         // Simulate FRC starts updating
         aggregator.controllerWillChangeContent(fakeController)
@@ -464,7 +464,7 @@ class ListChangeAggregator_Tests: XCTestCase {
     
     func test_controllerWillChangeContent_whenUpdatesAndMovesWithSameIndexPath_removeThoseUpdates() {
         var result: [ListChange<String>]?
-        aggregator.onChange = { result = $0 }
+        aggregator.onDidChange = { result = $0 }
         
         // Simulate FRC starts updating
         aggregator.controllerWillChangeContent(fakeController)
