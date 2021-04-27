@@ -7,7 +7,7 @@ import UIKit
 
 /// Controller responsible for displaying message thread.
 open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource,
-    UIConfigProvider {
+    ComponentsProvider {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
     
@@ -43,7 +43,7 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
     }()
     
     /// Controller that handles the composer view
-    open private(set) lazy var messageComposerViewController = uiConfig
+    open private(set) lazy var messageComposerViewController = components
         .messageComposer
         .messageComposerViewController
         .init()
@@ -57,7 +57,7 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
     open lazy var titleView = ChatMessageListTitleView<ExtraData>()
     
     /// Handles navigation actions from messages
-    open lazy var router = uiConfig
+    open lazy var router = components
         .navigation
         .messageListRouter
         .init(rootViewController: self)
@@ -164,7 +164,7 @@ open class MessageThreadVC<ExtraData: ExtraDataTypes>: _ViewController, UICollec
     ) -> MessageLayoutOptions {
         guard let channel = channelController.channel else { return [] }
         
-        var layoutOptions = uiConfig.messageList.layoutOptionsResolver(indexPath, messages, channel)
+        var layoutOptions = components.messageList.layoutOptionsResolver(indexPath, messages, channel)
         layoutOptions.remove(.threadInfo)
         return layoutOptions
     }

@@ -7,7 +7,7 @@ import UIKit
 
 /// Controller that shows list of messages and composer together in the selected channel.
 open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollectionViewDelegate, UICollectionViewDataSource,
-    UIConfigProvider {
+    ComponentsProvider {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
     
@@ -40,7 +40,7 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     }()
     
     /// Controller that handles the composer view
-    open private(set) lazy var messageComposerViewController = uiConfig
+    open private(set) lazy var messageComposerViewController = components
         .messageComposer
         .messageComposerViewController
         .init()
@@ -52,7 +52,7 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     open lazy var titleView = ChatMessageListTitleView<ExtraData>()
 
     /// Handles navigation actions from messages
-    open lazy var router = uiConfig
+    open lazy var router = components
         .navigation
         .messageListRouter
         .init(rootViewController: self)
@@ -148,7 +148,7 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     open func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> MessageLayoutOptions {
         guard let channel = channelController.channel else { return [] }
 
-        return uiConfig.messageList.layoutOptionsResolver(
+        return components.messageList.layoutOptionsResolver(
             indexPath,
             AnyRandomAccessCollection(channelController.messages),
             channel
@@ -196,7 +196,7 @@ open class MessageListVC<ExtraData: ExtraDataTypes>: _ViewController, UICollecti
     /// For group chat is called everytime the channel changes.
     open func updateNavigationTitle() {
         let title = channelController.channel
-            .flatMap { uiConfig.channelList.channelNamer($0, channelController.client.currentUserId) }
+            .flatMap { components.channelList.channelNamer($0, channelController.client.currentUserId) }
         
         let subtitle: String? = {
             if channelController.channel?.isDirectMessageChannel == true {
