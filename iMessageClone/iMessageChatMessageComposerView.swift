@@ -55,7 +55,7 @@ final class iMessageChatMessageComposerView: ChatMessageComposerView {
         super.setUpAppearance()
 
         centerContentContainer.layer.cornerRadius = 18
-        messageInputView.textView.font = .systemFont(ofSize: 15)
+        messageInputView.inputTextView.font = .systemFont(ofSize: 15)
         
         attachmentButton.setImage(
             UIImage(systemName: "camera.fill"),

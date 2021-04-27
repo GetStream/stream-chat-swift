@@ -14,7 +14,7 @@ final class iMessageChatComposerViewController: ChatMessageComposerVC {
         
         switch state {
         case .initial:
-            textView.placeholderLabel.text = "iMessage"
+            inputTextView.placeholderLabel.text = "iMessage"
         case .edit:
             break
         case .slashCommand, .quote:

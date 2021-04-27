@@ -5,18 +5,12 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageComposerInputTextView: UITextView, Customizable, AppearanceProvider {
-    // MARK: - Properties
-            
-    lazy var textViewHeightConstraint = heightAnchor.pin(equalToConstant: .zero)
-    
-    // MARK: - Subviews
-    
+/// A view for inputting text with placeholder support. Since it is a subclass
+/// of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.
+open class ChatInputTextView: UITextView, AppearanceProvider {
     public lazy var placeholderLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
-
-    // MARK: - Overrides
     
     override public var text: String! {
         didSet {
@@ -36,9 +30,7 @@ open class ChatMessageComposerInputTextView: UITextView, Customizable, Appearanc
         
         setUp()
         setUpLayout()
-        
         setUpAppearance()
-        updateContent()
     }
     
     // MARK: Public
@@ -53,15 +45,14 @@ open class ChatMessageComposerInputTextView: UITextView, Customizable, Appearanc
     }
     
     open func setUpAppearance() {
-        font = appearance.fonts.body
+        backgroundColor = .clear
         textContainer.lineFragmentPadding = 10
+        font = appearance.fonts.body
         textColor = appearance.colorPalette.text
         
         placeholderLabel.font = font
-        placeholderLabel.textColor = appearance.colorPalette.subtitleText
         placeholderLabel.textAlignment = .center
-        
-        backgroundColor = .clear
+        placeholderLabel.textColor = appearance.colorPalette.subtitleText
     }
     
     open func setUpLayout() {
@@ -77,16 +68,8 @@ open class ChatMessageComposerInputTextView: UITextView, Customizable, Appearanc
         placeholderLabel.pin(anchors: [.centerY], to: self)
         
         isScrollEnabled = false
-        
-        textViewHeightConstraint.isActive = true
     }
-    
-    open func updateContent() {}
 
-    open func updateHeightConstraint() {
-        textViewHeightConstraint.constant = calculatedTextHeight() + textContainerInset.bottom + textContainerInset.top
-    }
-    
     func textDidChangeProgrammatically() {
         delegate?.textViewDidChange?(self)
         textDidChange()
@@ -94,8 +77,5 @@ open class ChatMessageComposerInputTextView: UITextView, Customizable, Appearanc
         
     @objc func textDidChange() {
         placeholderLabel.isHidden = !text.isEmpty
-
-        updateHeightConstraint()
-        layoutIfNeeded()
     }
 }
