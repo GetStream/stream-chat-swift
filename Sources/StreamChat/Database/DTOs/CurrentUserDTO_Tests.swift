@@ -134,4 +134,59 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         let loadedUser: CurrentChatUser? = database.viewContext.currentUser?.asModel()
         XCTAssertEqual(loadedUser?.extraData, .defaultValue)
     }
+    
+    func test_currentUser_isCached() throws {
+        try database.createCurrentUser()
+        
+        let originalUser = try XCTUnwrap(database.viewContext.currentUser)
+        
+        database.writableContext.performAndWait {
+            database.writableContext.delete(database.writableContext.currentUser!)
+            try! database.writableContext.save()
+        }
+        
+        XCTAssertEqual(database.viewContext.currentUser, originalUser)
+    }
+    
+    func test_currentUser_isCleared_onRemoveAllData() throws {
+        try database.createCurrentUser()
+        
+        XCTAssertNotNil(database.viewContext.currentUser)
+        
+        try database.removeAllData()
+        
+        XCTAssertNil(database.viewContext.currentUser)
+    }
+    
+    func test_currentUser_withCustomContext() throws {
+        let uid: UserId = .unique
+        
+        try database.createCurrentUser(id: uid)
+        
+        var context: NSManagedObjectContext! = database.newBackgroundContext()
+        
+        context.performAndWait {
+            XCTAssertEqual(context.currentUser?.user.id, uid)
+        }
+        
+        AssertAsync.canBeReleased(&context)
+    }
+    
+    func test_currentUser_isCleared_onRemoveAllData_withCustomContext() throws {
+        try database.createCurrentUser()
+        
+        var context: NSManagedObjectContext! = database.newBackgroundContext()
+        
+        context.performAndWait {
+            XCTAssertNotNil(context.currentUser)
+        }
+        
+        try database.removeAllData()
+        
+        context.performAndWait {
+            XCTAssertNil(context.currentUser)
+        }
+        
+        AssertAsync.canBeReleased(&context)
+    }
 }
