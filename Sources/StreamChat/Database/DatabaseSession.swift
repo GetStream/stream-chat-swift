@@ -42,7 +42,7 @@ protocol CurrentUserDatabaseSession {
     func deleteDevice(id: DeviceId)
     
     /// Returns `CurrentUserDTO` from the DB. Returns `nil` if no `CurrentUserDTO` exists.
-    func currentUser() -> CurrentUserDTO?
+    var currentUser: CurrentUserDTO? { get }
 }
 
 extension CurrentUserDatabaseSession {
@@ -289,7 +289,7 @@ extension DatabaseSession {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
         
-        if let currentUser = currentUser(), let date = payload.createdAt {
+        if let currentUser = currentUser, let date = payload.createdAt {
             currentUser.lastReceivedEventDate = date
         }
         

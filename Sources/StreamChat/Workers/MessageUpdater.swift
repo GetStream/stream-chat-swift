@@ -214,7 +214,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
                             throw ClientError.MessageDoesNotExist(messageId: messageId)
                         }
                         
-                        let currentUserDTO = session.currentUser()
+                        let currentUserDTO = session.currentUser
                         if flag {
                             currentUserDTO?.flaggedMessages.insert(messageDTO)
                         } else {
@@ -476,7 +476,7 @@ private extension DatabaseSession {
     /// - Throws: Either `CurrentUserDoesNotExist`/`MessageDoesNotExist`/
     /// - Returns: The message entity.
     func messageEditableByCurrentUser(_ messageId: MessageId) throws -> MessageDTO {
-        guard currentUser() != nil else {
+        guard currentUser != nil else {
             throw ClientError.CurrentUserDoesNotExist()
         }
 

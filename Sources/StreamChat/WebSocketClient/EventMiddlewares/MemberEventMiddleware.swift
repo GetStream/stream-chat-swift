@@ -42,7 +42,7 @@ struct MemberEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
 
             // If we watch the channel, we don't receive notification events, but "normal" member events
             var isCurrentUserMemberEvent = false
-            if let currentUserId = session.currentUser()?.user.id {
+            if let currentUserId = session.currentUser?.user.id {
                 if event is MemberAddedEvent || event is MemberRemovedEvent,
                    (event as? MemberEvent)?.memberUserId == currentUserId {
                     isCurrentUserMemberEvent = true
