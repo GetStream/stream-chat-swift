@@ -71,8 +71,8 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         .withoutAutoresizingMaskConstraints
     
     /// Convenience getter for underlying `textView`.
-    public var textView: ChatMessageComposerInputTextView {
-        composerView.messageInputView.textView
+    public var inputTextView: ChatInputTextView {
+        composerView.messageInputView.inputTextView
     }
     
     public private(set) lazy var imagePicker: UIImagePickerController = {
@@ -101,10 +101,9 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         super.updateContent()
         switch state {
         case .initial:
-            textView.text = ""
-            textView.updateHeightConstraint()
-            textView.becomeFirstResponder()
-            textView.placeholderLabel.text = L10n.Composer.Placeholder.message
+            inputTextView.text = ""
+            inputTextView.becomeFirstResponder()
+            inputTextView.placeholderLabel.text = L10n.Composer.Placeholder.message
             imageAttachments = []
             documentAttachments = []
             composerView.messageQuoteView.content = nil
@@ -116,8 +115,8 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             }
             composerView.messageInputView.setSlashCommandViews(hidden: true)
         case let .slashCommand(command):
-            textView.text = ""
-            textView.placeholderLabel.text = command.name.firstUppercased
+            inputTextView.text = ""
+            inputTextView.placeholderLabel.text = command.name.firstUppercased
             composerView.messageInputView.setSlashCommandViews(hidden: false)
             composerView.messageInputView.slashCommandView.commandName = command.name.uppercased()
             dismissSuggestionsViewController()
@@ -143,7 +142,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 self.composerView.topContainer.isHidden = false
                 self.composerView.messageInputView.slashCommandView.isHidden = true
             }
-            textView.text = message.text
+            inputTextView.text = message.text
         }
         
         if let memberCount = controller?.channel?.memberCount,
@@ -168,7 +167,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     func setupInputView() {
         view.embed(composerView)
 
-        composerView.messageInputView.textView.delegate = self
+        composerView.messageInputView.inputTextView.delegate = self
         
         composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
@@ -196,9 +195,9 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     @objc func sendMessage() {
         switch state {
         case .initial:
-            createNewMessage(text: textView.text)
+            createNewMessage(text: inputTextView.text)
         case let .quote(messageToQuote):
-            createNewMessage(text: textView.text, quotedMessageId: messageToQuote.id)
+            createNewMessage(text: inputTextView.text, quotedMessageId: messageToQuote.id)
         case let .edit(messageToEdit):
             guard let cid = controller?.cid else { return }
             let messageController = controller?.client.messageController(
@@ -206,9 +205,9 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 messageId: messageToEdit.id
             )
             // TODO: Adjust LLC to edit attachments also
-            messageController?.editMessage(text: textView.text)
+            messageController?.editMessage(text: inputTextView.text)
         case let .slashCommand(command):
-            createNewMessage(text: "/\(command.name) " + textView.text)
+            createNewMessage(text: "/\(command.name) " + inputTextView.text)
         }
         
         state = .initial
@@ -456,7 +455,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         userSuggestionSearchController.search(term: text)
         showOrUpdateSuggestionsViewController(
             for: .mention,
-            onSelectItem: { [weak self, textView = self.textView] userIndex in
+            onSelectItem: { [weak self, textView = self.inputTextView] userIndex in
                 guard let self = self else { return }
 
                 let user = self.userSuggestionSearchController.users[userIndex]
@@ -494,7 +493,9 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     func replaceTextWithSlashCommandViewIfNeeded() {
         // Extract potential command name from input text
-        let potentialCommandNameFromInput = textView.text.trimmingCharacters(in: .whitespacesAndNewlines).dropFirst()
+        let potentialCommandNameFromInput = inputTextView.text
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .dropFirst()
 
         // Condition to check if input text matches any of the available commands
         let commandMatches: ((Command) -> Bool) = { command in command.name == potentialCommandNameFromInput }
