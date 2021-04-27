@@ -118,7 +118,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             inputTextView.text = ""
             inputTextView.placeholderLabel.text = command.name.firstUppercased
             composerView.messageInputView.setSlashCommandViews(hidden: false)
-            composerView.messageInputView.slashCommandView.commandName = command.name.uppercased()
+            composerView.messageInputView.commandLabel.content = command
             dismissSuggestionsViewController()
         case let .quote(messageToQuote):
             composerView.titleLabel.text = L10n.Composer.Title.reply
@@ -128,7 +128,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             Animate {
                 self.composerView.topContainer.isHidden = false
                 self.composerView.messageQuoteView.isHidden = false
-                self.composerView.messageInputView.slashCommandView.isHidden = true
+                self.composerView.messageInputView.commandLabel.isHidden = true
             }
             composerView.messageQuoteView.content = .init(message: messageToQuote, avatarAlignment: .left)
         case let .edit(message):
@@ -140,7 +140,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 self.composerView.editButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
                 self.composerView.topContainer.isHidden = false
-                self.composerView.messageInputView.slashCommandView.isHidden = true
+                self.composerView.messageInputView.commandLabel.isHidden = true
             }
             inputTextView.text = message.text
         }
@@ -174,7 +174,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.editButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
-        composerView.messageInputView.rightAccessoryButton.addTarget(
+        composerView.messageInputView.cleanButton.addTarget(
             self,
             action: #selector(resetState),
             for: .touchUpInside
