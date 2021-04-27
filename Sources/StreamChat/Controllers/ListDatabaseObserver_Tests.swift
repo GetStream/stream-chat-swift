@@ -127,11 +127,17 @@ class ListDatabaseObserver_Tests: XCTestCase {
         
         var onChangeCallbackCalled = false
         observer.onChange = { _ in onChangeCallbackCalled = true }
-        
+
+        var onWillChangeCallbackCalled = false
+        observer.onWillChange = { onWillChangeCallbackCalled = true }
+
         XCTAssert(observer.frc.delegate === observer.changeAggregator)
         
-        // Simulate onChange callback from the aggregator
-        observer.changeAggregator.onChange?([])
+        // Simulate callbacks from the aggregator
+        observer.changeAggregator.onWillChange?()
+        observer.changeAggregator.onDidChange?([])
+
+        XCTAssertTrue(onWillChangeCallbackCalled)
         XCTAssertTrue(onChangeCallbackCalled)
     }
     
@@ -203,7 +209,7 @@ class ListDatabaseObserver_Tests: XCTestCase {
         // Assert no new change is reported
         AssertAsync.staysEqual(receivedChanges, oldChanges)
     }
-    
+
     func test_allItemsAreRemoved_whenDatabaseContainerRemovesAllData() throws {
         // Call startObserving to set everything up
         try observer.startObserving()
@@ -257,7 +263,17 @@ class ListChangeAggregator_Tests: XCTestCase {
         // We don't have to provide real creator. Let's just simply use the value that gets in
         aggregator = ListChangeAggregator(itemCreator: { $0.uniqueValue })
     }
-    
+
+    func test_onWillChange_isCalled() {
+        // Set up aggregator callback
+        var callbackCalled = false
+        aggregator.onWillChange = { callbackCalled = true }
+
+        // Simulate FRC starts updating
+        aggregator.controllerWillChangeContent(fakeController)
+        XCTAssertTrue(callbackCalled)
+    }
+
     func test_addingItems() {
         // Set up aggregator callback
         var result: [ListChange<String>]?
