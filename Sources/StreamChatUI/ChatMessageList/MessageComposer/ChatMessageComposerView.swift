@@ -44,7 +44,6 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var messageInputView = components
-        .messageComposer
         .messageInputView.init()
         .withoutAutoresizingMaskConstraints
     

@@ -27,10 +27,14 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var typingAnimationView: TypingAnimationView.Type = TypingAnimationView.self
 
     /// A view for inputting text with placeholder support.
-    public var inputTextView: _ChatInputTextView<ExtraData>.Type = _ChatInputTextView<ExtraData>.self
+    public var inputTextView: ChatInputTextView.Type = ChatInputTextView.self
 
     /// A view that displays the command name and icon.
     public var commandLabel: _ChatCommandLabel<ExtraData>.Type = _ChatCommandLabel<ExtraData>.self
+
+    /// A view to input content of a message.
+    public var messageInputView: _ChatMessageInputView<ExtraData>.Type = _ChatMessageInputView<ExtraData>.self
+
     public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()
