@@ -47,7 +47,7 @@ public struct DataStore<ExtraData: ExtraDataTypes> {
     /// - Returns: If there's a current user object in the locally cached data, returns the matching
     /// model object. If a user object doesn't exist locally, returns `nil`.
     public func currentUser() -> _CurrentChatUser<ExtraData>? {
-        database.viewContext.currentUser()?.asModel()
+        database.viewContext.currentUser?.asModel()
     }
 
     /// Loads a channel model with a matching `cid` from the **local data store**.

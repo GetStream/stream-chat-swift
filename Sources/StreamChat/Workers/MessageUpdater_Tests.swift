@@ -574,7 +574,7 @@ final class MessageUpdater_Tests: StressTestCase {
         try database.createCurrentUser(id: currentUserId)
         
         // Load current user.
-        let currentUserDTO = try XCTUnwrap(database.viewContext.currentUser())
+        let currentUserDTO = try XCTUnwrap(database.viewContext.currentUser)
         
         // Create channel in the database.
         try database.createChannel(cid: cid)

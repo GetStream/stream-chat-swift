@@ -79,7 +79,7 @@ class UserUpdater<ExtraData: ExtraDataTypes>: Worker {
                 self.database.write({ session in
                     let userDTO = try session.saveUser(payload: payload.flaggedUser)
                     
-                    let currentUserDTO = session.currentUser()
+                    let currentUserDTO = session.currentUser
                     if flag {
                         currentUserDTO?.flaggedUsers.insert(userDTO)
                     } else {

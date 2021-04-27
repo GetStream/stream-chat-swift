@@ -31,7 +31,7 @@ class DeviceDTO_Tests: XCTestCase {
         }
         
         // Get current user from DB
-        let loadedCurrentUser: CurrentChatUser? = database.viewContext.currentUser()?.asModel()
+        let loadedCurrentUser: CurrentChatUser? = database.viewContext.currentUser?.asModel()
         
         // Check if fields are correct
         XCTAssertEqual(loadedCurrentUser?.devices.count, 2)

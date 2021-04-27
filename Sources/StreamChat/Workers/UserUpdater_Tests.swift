@@ -287,7 +287,7 @@ final class UserUpdater_Tests: StressTestCase {
         apiClient.test_simulateResponse(.success(payload))
         
         // Load current user
-        let currentUser = database.viewContext.currentUser()
+        let currentUser = database.viewContext.currentUser
         // Load flagged user
         var user: UserDTO? {
             database.viewContext.user(id: flaggedUserId)

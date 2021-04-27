@@ -297,7 +297,7 @@ extension _ChatChannel {
         let reads: [_ChatChannelRead<ExtraData>] = dto.reads.map { $0.asModel() }
         
         let unreadCount: () -> ChannelUnreadCount = {
-            guard let currentUser = context.currentUser() else { return .noUnread }
+            guard let currentUser = context.currentUser else { return .noUnread }
             
             let currentUserRead = reads.first(where: { $0.user.id == currentUser.user.id })
             
@@ -347,7 +347,7 @@ extension _ChatChannel {
 
         let fetchMuteDetails: () -> MuteDetails? = {
             guard
-                let currentUser = context.currentUser(),
+                let currentUser = context.currentUser,
                 let mute = ChannelMuteDTO.load(cid: cid, userId: currentUser.user.id, context: context)
             else { return nil }
 

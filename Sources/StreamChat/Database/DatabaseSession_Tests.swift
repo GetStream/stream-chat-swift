@@ -253,7 +253,7 @@ class DatabaseSession_Tests: StressTestCase {
         }
         
         // Load current user
-        let currentUser = database.viewContext.currentUser()
+        let currentUser = database.viewContext.currentUser
         
         // Assert unread count is taken from event payload
         XCTAssertEqual(Int64(eventPayload.unreadCount!.messages), currentUser?.unreadMessagesCount)
@@ -293,7 +293,7 @@ class DatabaseSession_Tests: StressTestCase {
         }
         
         // Load current user
-        let currentUser = database.viewContext.currentUser()
+        let currentUser = database.viewContext.currentUser
         
         // Assert `eventPayload.createdAt` is taked as last received event date
         XCTAssertEqual(currentUser?.lastReceivedEventDate, eventPayload.createdAt)
@@ -320,7 +320,7 @@ class DatabaseSession_Tests: StressTestCase {
         }
         
         // Load current user
-        let currentUser = database.viewContext.currentUser()
+        let currentUser = database.viewContext.currentUser
         
         // Assert `lastReceivedEventDate` is nil
         XCTAssertNil(currentUser?.lastReceivedEventDate)

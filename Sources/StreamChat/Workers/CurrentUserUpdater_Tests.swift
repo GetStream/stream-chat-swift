@@ -118,7 +118,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
         
         var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser()?.asModel()
+            database.viewContext.currentUser?.asModel()
         }
         
         // Check the completion is called and the current user model was updated
@@ -295,7 +295,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
 
         // Assert data is stored in the DB
         var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser()?.asModel()
+            database.viewContext.currentUser?.asModel()
         }
 
         assert(currentUser?.devices.count == 1)
@@ -404,7 +404,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
         
         // Assert data is stored in the DB
         var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser()?.asModel()
+            database.viewContext.currentUser?.asModel()
         }
         
         AssertAsync {
@@ -500,7 +500,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
 
         // Assert data is stored in the DB
         var currentUser: CurrentChatUser? {
-            database.viewContext.currentUser()?.asModel()
+            database.viewContext.currentUser?.asModel()
         }
 
         // Make sure no devices are stored in the DB
