@@ -5,42 +5,45 @@
 import StreamChat
 import UIKit
 
-open class ChatMessageInputSlashCommandView: _View, AppearanceProvider {
-    // MARK: - Properties
-    
-    public var commandName: String? {
+/// A view that display the command name and icon.
+public typealias ChatCommandLabel = _ChatCommandLabel<NoExtraData>
+
+/// A view that display the command name and icon.
+open class _ChatCommandLabel<ExtraData: ExtraDataTypes>: _View, AppearanceProvider {
+    /// The command that the label displays.
+    public var content: Command? {
         didSet {
             updateContentIfNeeded()
         }
     }
 
-    // MARK: - Subviews
-    
+    /// The container stack view that layouts the label and the icon view.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
-    
-    private lazy var commandLabel = UILabel()
+
+    /// An `UILabel` that displays the command name.
+    public private(set) lazy var commandLabel = UILabel()
+        .withAdjustingFontForContentSizeCategory
+        .withBidirectionalLanguagesSupport
         .withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var iconView = UIImageView()
+
+    /// An `UIImageView` that displays the icon of the command.
+    public private(set) lazy var iconView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
-    
-    // MARK: - Overrides
     
     override open var intrinsicContentSize: CGSize {
         container.systemLayoutSizeFitting(UIView.layoutFittingCompressedSize)
     }
-    
+
     override open func layoutSubviews() {
         super.layoutSubviews()
-        
+
         layer.cornerRadius = bounds.height / 2
     }
-    
-    // MARK: - Public
 
     override open func setUpAppearance() {
         super.setUpAppearance()
+
         layer.masksToBounds = true
         backgroundColor = appearance.colorPalette.highlightedAccentBackground
 
@@ -55,21 +58,24 @@ open class ChatMessageInputSlashCommandView: _View, AppearanceProvider {
     }
     
     override open func setUpLayout() {
+        super.setUpLayout()
+
         embed(container)
-        
         container.preservesSuperviewLayoutMargins = true
         container.isLayoutMarginsRelativeArrangement = true
 
         container.addArrangedSubview(iconView)
-        iconView.isHidden = false
-
         container.addArrangedSubview(commandLabel)
+        iconView.isHidden = false
         commandLabel.isHidden = false
         
         iconView.contentMode = .scaleAspectFit
+        layer.cornerRadius = bounds.height / 2
     }
     
     override open func updateContent() {
-        commandLabel.text = commandName
+        super.updateContent()
+        
+        commandLabel.text = content?.name.uppercased()
     }
 }

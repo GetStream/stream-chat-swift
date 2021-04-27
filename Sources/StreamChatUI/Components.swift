@@ -28,6 +28,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// A view for inputting text with placeholder support.
     public var inputTextView: _ChatInputTextView<ExtraData>.Type = _ChatInputTextView<ExtraData>.self
+
+    /// A view that displays the command name and icon.
+    public var commandLabel: _ChatCommandLabel<ExtraData>.Type = _ChatCommandLabel<ExtraData>.self
     public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()
