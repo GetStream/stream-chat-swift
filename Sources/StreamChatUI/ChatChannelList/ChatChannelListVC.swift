@@ -15,20 +15,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UIConfigProvider,
     SwipeableViewDelegate {
     /// The `ChatChannelListController` instance that provides channels data.
-    open var controller: _ChatChannelListController<ExtraData>!
-    
-    /// A helper flag to find out if the VC's view is currently layouting its subviews.
-    var isLayoutingSubviews = false
-    
-    override open func viewWillLayoutSubviews() {
-        isLayoutingSubviews = true
-        super.viewWillLayoutSubviews()
-    }
-
-    override open func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        isLayoutingSubviews = false
-    }
+    public var controller: _ChatChannelListController<ExtraData>!
 
     open private(set) lazy var loadingIndicator: UIActivityIndicatorView = {
         if #available(iOS 13.0, *) {
@@ -237,18 +224,15 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
 }
 
 extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
-    public typealias ExtraData = ExtraData
-    
+    public func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {
+        // We can't call `performBatchUpdates` unless collection view is properly laid out.
+        collectionView.layoutIfNeeded()
+    }
+
     open func controller(
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
-        // We can't call `performBatchUpdates` unless all views are properly laid out.
-        guard isLayoutingSubviews == false else {
-            collectionView.reloadData()
-            return
-        }
-        
         var movedItems: [IndexPath] = []
         
         collectionView.performBatchUpdates(
