@@ -44,8 +44,6 @@ public extension _Components {
 
         public var checkmarkControl: ChatMessageComposerCheckmarkControl.Type =
             ChatMessageComposerCheckmarkControl.self
-        public var slashCommandView: ChatMessageInputSlashCommandView
-            .Type = ChatMessageInputSlashCommandView.self
 
         /// A view controller that shows suggestions of commands or mentions.
         public var suggestionsViewController: _ChatMessageComposerSuggestionsViewController<ExtraData>.Type =
