@@ -11,7 +11,7 @@ struct UserWatchingEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
         
         do {
             guard let channelDTO = session.channel(cid: userWatchingEvent.cid) else {
-                let currentUserId = session.currentUser()?.user.id
+                let currentUserId = session.currentUser?.user.id
                 if userWatchingEvent.userId == currentUserId {
                     log.info(
                         "Ignoring watcher event for channel \(userWatchingEvent.cid) and current user"

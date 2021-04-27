@@ -43,7 +43,7 @@ class CurrentUserUpdater<ExtraData: ExtraDataTypes>: Worker {
                 case let .success(response):
                     self?.database.write({ (session) in
                         let userDTO = try session.saveUser(payload: response.user)
-                        session.currentUser()?.user = userDTO
+                        session.currentUser?.user = userDTO
                     }) { completion?($0) }
                 case let .failure(error):
                     completion?(error)

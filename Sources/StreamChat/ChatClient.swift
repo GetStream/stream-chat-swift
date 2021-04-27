@@ -302,10 +302,10 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
 
         let context = databaseContainer.viewContext
         if Thread.isMainThread {
-            currentUserId = context.currentUser()?.user.id
+            currentUserId = context.currentUser?.user.id
         } else {
             context.performAndWait {
-                currentUserId = context.currentUser()?.user.id
+                currentUserId = context.currentUser?.user.id
             }
         }
 

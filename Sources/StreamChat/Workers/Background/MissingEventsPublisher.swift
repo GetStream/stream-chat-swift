@@ -59,7 +59,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
     
     private func obtainLastSyncDate() {
         database.backgroundReadOnlyContext.perform { [weak self] in
-            self?.lastSyncedAt = self?.database.backgroundReadOnlyContext.currentUser()?.lastReceivedEventDate
+            self?.lastSyncedAt = self?.database.backgroundReadOnlyContext.currentUser?.lastReceivedEventDate
         }
     }
     

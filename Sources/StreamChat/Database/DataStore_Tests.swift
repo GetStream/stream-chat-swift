@@ -30,7 +30,7 @@ class DataStore_Tests: StressTestCase {
     func test_currentUserIsLoaded() throws {
         XCTAssertNil(dataStore.currentUser())
         try _client.databaseContainer.createCurrentUser()
-        XCTAssertNotNil(dataStore.currentUser())
+        XCTAssertNotNil(dataStore.currentUser)
     }
 
     func test_channelIsLoaded() throws {
