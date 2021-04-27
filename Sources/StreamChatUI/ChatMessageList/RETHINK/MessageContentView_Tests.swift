@@ -49,16 +49,16 @@ final class MessageContentView_Tests: XCTestCase {
             isSentByCurrentUser: true
         )
 
-        // Create custom UI config.
-        var config = UIConfig.default
+        // Create custom components.
+        var components = Components.default
         // Inject custom error indicator type.
-        config.messageList.messageContentSubviews.errorIndicator = TestErrorIndicator.self
+        components.messageList.messageContentSubviews.errorIndicator = TestErrorIndicator.self
 
         // Create message content view with the provided `message`, `layout`, and `config`
         let view = contentView(
             message: failedMessage,
             layout: layout(for: failedMessage, isLastInGroup: true),
-            uiConfig: config
+            components: components
         )
 
         // Assert message content view is rendered correctly.
@@ -76,16 +76,16 @@ final class MessageContentView_Tests: XCTestCase {
             isSentByCurrentUser: true
         )
 
-        // Create custom UI config.
-        var config = UIConfig.default
+        // Create custom Appearance.
+        var appearance = Appearance.default
         // Inject custom `alert` colour.
-        config.colorPalette.alert = .systemYellow
+        appearance.colorPalette.alert = .systemYellow
 
         // Create message content view with the provided `message`, `layout`, and `config`
         let view = contentView(
             message: failedMessage,
             layout: layout(for: failedMessage, isLastInGroup: true),
-            uiConfig: config
+            appearance: appearance
         )
 
         // Assert message content view is rendered correctly.
@@ -311,11 +311,13 @@ private extension MessageContentView_Tests {
     func contentView(
         message: ChatMessage,
         layout: MessageLayoutOptions,
-        uiConfig: UIConfig = .default
+        appearance: Appearance = .default,
+        components: Components = .default
     ) -> MessageContentView {
         let view = MessageContentView().withoutAutoresizingMaskConstraints
         view.widthAnchor.constraint(equalToConstant: contentViewWidth).isActive = true
-        view.uiConfig = uiConfig
+        view.appearance = appearance
+        view.components = components
         view.setUpLayoutIfNeeded(options: layout)
         view.content = message
         return view
