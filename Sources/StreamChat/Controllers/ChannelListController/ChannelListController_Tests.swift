@@ -283,7 +283,10 @@ class ChannelListController_Tests: StressTestCase {
 
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
         
-        AssertAsync.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
+        AssertAsync {
+            Assert.willBeTrue(delegate.willChangeChannels_called)
+            Assert.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
+        }
     }
     
     func test_genericDelegateMethodsAreCalled() throws {
@@ -298,8 +301,58 @@ class ChannelListController_Tests: StressTestCase {
         }
         
         let channel: ChatChannel = client.databaseContainer.viewContext.channel(cid: cid)!.asModel()
-        
-        AssertAsync.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
+
+        AssertAsync {
+            Assert.willBeTrue(delegate.willChangeChannels_called)
+            Assert.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
+        }
+    }
+
+    func test_willAndDidCallbacks_areCalledInCorrectOrder() throws {
+        class Delegate: ChatChannelListControllerDelegate {
+            let cid: ChannelId
+
+            var willChangeCallbackCalled = false
+            var didChangeCallbackCalled = false
+
+            init(cid: ChannelId) {
+                self.cid = cid
+            }
+
+            func controllerWillChangeChannels(_ controller: ChatChannelListController) {
+                // Check the new channel is NOT in reported channels yet
+                XCTAssertFalse(controller.channels.contains { $0.cid == cid })
+                // Assert the "did" callback hasn't been called yet
+                XCTAssertFalse(didChangeCallbackCalled)
+                willChangeCallbackCalled = true
+            }
+
+            func controller(
+                _ controller: ChatChannelListController,
+                didChangeChannels changes: [ListChange<ChatChannel>]
+            ) {
+                // Check the new channel is in reported channels
+                XCTAssertTrue(controller.channels.contains { $0.cid == cid })
+                // Assert the "will" callback has been called
+                XCTAssertTrue(willChangeCallbackCalled)
+                didChangeCallbackCalled = true
+            }
+        }
+
+        let cid: ChannelId = .unique
+        let delegate = Delegate(cid: cid)
+
+        controller.callbackQueue = .main
+        controller.delegate = delegate
+
+        client.databaseContainer.write { session in
+            try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
+        }
+
+        AssertAsync {
+            Assert.willBeTrue(delegate.willChangeCallbackCalled)
+            Assert.willBeTrue(delegate.didChangeCallbackCalled)
+        }
     }
     
     // MARK: - Channels pagination
@@ -420,13 +473,19 @@ private class TestEnvironment {
 // A concrete `ChannelListControllerDelegate` implementation allowing capturing the delegate calls
 private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegate {
     @Atomic var state: DataController.State?
+    @Atomic var willChangeChannels_called = false
     @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
-    
+
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
     }
-    
+
+    func controllerWillChangeChannels(_ controller: ChatChannelListController) {
+        willChangeChannels_called = true
+        validateQueue()
+    }
+
     func controller(
         _ controller: _ChatChannelListController<NoExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
@@ -439,13 +498,19 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelListControllerDelegat
 // A concrete `_ChatChannelListControllerDelegate` implementation allowing capturing the delegate calls.
 private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelListControllerDelegate {
     @Atomic var state: DataController.State?
+    @Atomic var willChangeChannels_called = false
     @Atomic var didChangeChannels_changes: [ListChange<ChatChannel>]?
-    
+
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
     }
-    
+
+    func controllerWillChangeChannels(_ controller: _ChatChannelListController<NoExtraData>) {
+        willChangeChannels_called = true
+        validateQueue()
+    }
+
     func controller(
         _ controller: _ChatChannelListController<NoExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
