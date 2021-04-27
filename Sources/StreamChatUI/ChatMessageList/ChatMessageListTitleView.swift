@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 // TODO: Audit
-public class ChatMessageListTitleView<ExtraData: ExtraDataTypes>: UIView, UIConfigProvider {
+public class ChatMessageListTitleView<ExtraData: ExtraDataTypes>: UIView, AppearanceProvider {
     public var title: String? {
         get { titleLabel.text }
         set { titleLabel.text = newValue }
@@ -25,13 +25,13 @@ public class ChatMessageListTitleView<ExtraData: ExtraDataTypes>: UIView, UIConf
         
         let titleLabel = UILabel()
         titleLabel.textAlignment = .center
-        titleLabel.font = uiConfig.font.headlineBold
+        titleLabel.font = appearance.fonts.headlineBold
         self.titleLabel = titleLabel
 
         let subtitleLabel = UILabel()
         subtitleLabel.textAlignment = .center
-        subtitleLabel.font = uiConfig.font.caption1
-        subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
+        subtitleLabel.font = appearance.fonts.caption1
+        subtitleLabel.textColor = appearance.colorPalette.subtitleText
         self.subtitleLabel = subtitleLabel
 
         let titleView = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])

@@ -19,7 +19,7 @@ public protocol _ChatMessageActionsVCDelegate: AnyObject {
 public typealias ChatMessageActionsVC = _ChatMessageActionsVC<NoExtraData>
 
 /// View controller to show message actions.
-open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
+open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider {
     /// `_ChatMessageController` instance used to obtain current data.
     public var messageController: _ChatMessageController<ExtraData>!
     /// `_ChatMessageActionsVC.Delegate` instance.
@@ -31,7 +31,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
     }
     
     /// The `_ChatMessageActionsRouter` instance responsible for navigation.
-    open private(set) lazy var router = uiConfig
+    open private(set) lazy var router = components
         .navigation
         .messageActionsRouter
         .init(rootViewController: self)
@@ -41,7 +41,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
         .withoutAutoresizingMaskConstraints
     
     /// Class used for buttons in `messageActionsContainerView`.
-    open var actionButtonClass: _ChatMessageActionControl<ExtraData>.Type { _ChatMessageActionControl<ExtraData>.self }
+    open var actionButtonClass: ChatMessageActionControl.Type { ChatMessageActionControl.self }
 
     override open func setUpLayout() {
         super.setUpLayout()
@@ -56,7 +56,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
         super.setUpAppearance()
         messageActionsContainerStackView.layer.cornerRadius = 16
         messageActionsContainerStackView.layer.masksToBounds = true
-        messageActionsContainerStackView.backgroundColor = uiConfig.colorPalette.border
+        messageActionsContainerStackView.backgroundColor = appearance.colorPalette.border
     }
 
     override open func updateContent() {
@@ -117,7 +117,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
     open func editActionItem() -> ChatMessageActionItem {
         EditActionItem(
             action: { [weak self] in self?.handleAction($0) },
-            uiConfig: uiConfig
+            appearance: appearance
         )
     }
     
@@ -134,7 +134,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
                     }
                 }
             },
-            uiConfig: uiConfig
+            appearance: appearance
         )
     }
     
@@ -147,7 +147,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
                     self.delegate?.didFinish(self)
                 }
             },
-            uiConfig: uiConfig
+            appearance: appearance
         )
     }
     
@@ -164,7 +164,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
                     .userController(userId: author.id)
                     .mute { _ in self.delegate?.didFinish(self) }
             },
-            uiConfig: uiConfig
+            appearance: appearance
         )
     }
     
@@ -181,7 +181,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
                     .userController(userId: author.id)
                     .unmute { _ in self.delegate?.didFinish(self) }
             },
-            uiConfig: uiConfig
+            appearance: appearance
         )
     }
     
@@ -189,7 +189,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
     open func inlineReplyActionItem() -> ChatMessageActionItem {
         InlineReplyActionItem(
             action: { [weak self] in self?.handleAction($0) },
-            uiConfig: uiConfig
+            appearance: appearance
         )
     }
     
@@ -197,7 +197,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
     open func threadReplyActionItem() -> ChatMessageActionItem {
         ThreadReplyActionItem(
             action: { [weak self] in self?.handleAction($0) },
-            uiConfig: uiConfig
+            appearance: appearance
         )
     }
     
@@ -210,7 +210,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, UI
 
                 self.delegate?.didFinish(self)
             },
-            uiConfig: uiConfig
+            appearance: appearance
         )
     }
 

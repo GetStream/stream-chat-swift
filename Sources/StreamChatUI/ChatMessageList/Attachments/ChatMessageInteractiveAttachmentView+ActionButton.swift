@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageInteractiveAttachmentView {
-    open class ActionButton: _Button, UIConfigProvider {
+    open class ActionButton: _Button, AppearanceProvider {
         public var content: Content? {
             didSet { updateContentIfNeeded() }
         }
@@ -20,7 +20,7 @@ extension _ChatMessageInteractiveAttachmentView {
 
         override open func setUpAppearance() {
             super.setUpAppearance()
-            titleLabel?.font = uiConfig.font.body
+            titleLabel?.font = appearance.fonts.body
         }
 
         override open func setUp() {
@@ -32,16 +32,16 @@ extension _ChatMessageInteractiveAttachmentView {
         override open func updateContent() {
             let titleColor = content?.action.style == .primary ?
                 tintColor :
-                uiConfig.colorPalette.subtitleText
+                appearance.colorPalette.subtitleText
 
             setTitle(content?.action.text, for: .normal)
             setTitleColor(titleColor, for: .normal)
             setTitleColor(
-                titleColor.map(uiConfig.colorPalette.highlightedColorForColor),
+                titleColor.map(appearance.colorPalette.highlightedColorForColor),
                 for: .highlighted
             )
             setTitleColor(
-                titleColor.map(uiConfig.colorPalette.highlightedColorForColor),
+                titleColor.map(appearance.colorPalette.highlightedColorForColor),
                 for: .selected
             )
         }

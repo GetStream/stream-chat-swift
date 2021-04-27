@@ -16,13 +16,10 @@ public protocol MaskProviding {
 }
 
 /// A view used to indicate the presence of a user.
-public typealias ChatOnlineIndicatorView = _ChatOnlineIndicatorView<NoExtraData>
-
-/// A view used to indicate the presence of a user.
-open class _ChatOnlineIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, MaskProviding {
+open class ChatOnlineIndicatorView: _View, AppearanceProvider, MaskProviding {
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = uiConfig.colorPalette.alternativeActiveTint
+        backgroundColor = appearance.colorPalette.alternativeActiveTint
     }
 
     override open func setUpLayout() {

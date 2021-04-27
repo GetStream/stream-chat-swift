@@ -21,7 +21,7 @@ extension _ChatChannelListItemView {
     public typealias SwiftUIView = _ChatChannelListItemViewSwiftUIView
 
     /// SwiftUI wrapper of `_ChatChannelListItemView`.
-    /// Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_UIConfig`.
+    /// Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.
     public class SwiftUIWrapper<Content: SwiftUIView>: _ChatChannelListItemView<ExtraData>, ObservableObject
         where Content.ExtraData == ExtraData
     {
@@ -35,7 +35,8 @@ extension _ChatChannelListItemView {
             super.setUp()
 
             let view = Content(dataSource: self)
-                .environmentObject(uiConfig.asObservableObject)
+                .environmentObject(components.asObservableObject)
+                .environmentObject(appearance.asObservableObject)
             hostingController = UIHostingController(rootView: view)
             hostingController!.view.backgroundColor = .clear
         }

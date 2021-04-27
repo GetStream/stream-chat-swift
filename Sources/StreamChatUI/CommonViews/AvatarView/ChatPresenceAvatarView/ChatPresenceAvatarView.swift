@@ -9,17 +9,17 @@ import UIKit
 public typealias ChatPresenceAvatarView = _ChatPresenceAvatarView<NoExtraData>
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).
-open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatPresenceAvatarView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider {
     /// A view that shows the avatar image
-    open private(set) lazy var avatarView: ChatAvatarView = uiConfig
+    open private(set) lazy var avatarView: ChatAvatarView = components
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
 
     /// A view indicating whether the user this view represents is online.
     ///
-    /// The type of `onlineIndicatorView` is UIView & MaskProviding in UIConfig.
+    /// The type of `onlineIndicatorView` is UIView & MaskProviding in Components.
     /// Xcode is failing to compile due to `Segmentation fault: 11` when used here.
-    open private(set) lazy var onlineIndicatorView: UIView = uiConfig
+    open private(set) lazy var onlineIndicatorView: UIView = components
         .onlineIndicatorView.init()
         .withoutAutoresizingMaskConstraints
     

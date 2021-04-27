@@ -5,12 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerInputTextView = _ChatMessageComposerInputTextView<NoExtraData>
-
-open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextView,
-    Customizable,
-    UIConfigProvider
-{
+open class ChatMessageComposerInputTextView: UITextView, Customizable, AppearanceProvider {
     // MARK: - Properties
             
     lazy var textViewHeightConstraint = heightAnchor.pin(equalToConstant: .zero)
@@ -58,12 +53,12 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     }
     
     open func setUpAppearance() {
-        font = uiConfig.font.body
+        font = appearance.fonts.body
         textContainer.lineFragmentPadding = 10
-        textColor = uiConfig.colorPalette.text
+        textColor = appearance.colorPalette.text
         
         placeholderLabel.font = font
-        placeholderLabel.textColor = uiConfig.colorPalette.subtitleText
+        placeholderLabel.textColor = appearance.colorPalette.subtitleText
         placeholderLabel.textAlignment = .center
         
         backgroundColor = .clear

@@ -26,7 +26,7 @@ public protocol SwipeableViewDelegate: AnyObject {
 public typealias SwipeableView = _SwipeableView<NoExtraData>
 
 /// A view with swipe functionality that is used as action buttons view for channel list item view.
-open class _SwipeableView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, UIGestureRecognizerDelegate {
+open class _SwipeableView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider, UIGestureRecognizerDelegate {
     /// Gesture recognizer which is needed to be added on the owning view which will be recognizing the swipes.
     open private(set) lazy var panGestureRecognizer: UIPanGestureRecognizer = UIPanGestureRecognizer(
         target: self,
@@ -60,7 +60,7 @@ open class _SwipeableView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, U
     public var indexPath: IndexPath?
 
     /// The `UIStackView` that arranges buttons revealed by swipe gesture.
-    open private(set) lazy var actionItemsStackView: UIStackView = uiConfig
+    open private(set) lazy var actionItemsStackView: UIStackView = components
         .channelList
         .swipeableViewStackView
         .init()

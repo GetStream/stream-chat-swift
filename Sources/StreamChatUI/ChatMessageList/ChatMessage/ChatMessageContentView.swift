@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageContentView = _ChatMessageContentView<NoExtraData>
 
-open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
@@ -36,11 +36,11 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
 
     public var reactionsBubble: _ChatMessageReactionsBubbleView<ExtraData>?
 
-    public var threadArrowView: _ChatMessageThreadArrowView<ExtraData>?
+    public var threadArrowView: ChatMessageThreadArrowView?
 
     public var threadView: _ChatMessageThreadInfoView<ExtraData>?
 
-    public var errorIndicator: _ChatMessageErrorIndicator<ExtraData>?
+    public var errorIndicator: ChatMessageErrorIndicator?
 
     var incomingMessageConstraints: [NSLayoutConstraint] = []
     var outgoingMessageConstraints: [NSLayoutConstraint] = []
@@ -58,7 +58,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     open func setupMessageBubbleView() {
         guard messageBubbleView == nil else { return }
         
-        let messageBubbleView = uiConfig
+        let messageBubbleView = components
             .messageList
             .messageContentSubviews
             .bubbleView.init()
@@ -87,7 +87,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     open func setupMetadataView() {
         guard messageMetadataView == nil else { return }
         
-        let messageMetadataView = uiConfig
+        let messageMetadataView = components
             .messageList
             .messageContentSubviews
             .metadataView
@@ -125,7 +125,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     open func setupAvatarView() {
         guard authorAvatarView == nil else { return }
         
-        let authorAvatarView = uiConfig
+        let authorAvatarView = components
             .messageList
             .messageContentSubviews
             .authorAvatarView
@@ -158,7 +158,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     open func setupReactionsView() {
         guard reactionsBubble == nil else { return }
         
-        let reactionsBubble = uiConfig
+        let reactionsBubble = components
             .messageList
             .messageReactions
             .reactionsBubbleView
@@ -211,7 +211,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setupMessageBubbleView()
         let messageBubbleView = self.messageBubbleView!
         
-        let threadArrowView = uiConfig
+        let threadArrowView = components
             .messageList
             .messageContentSubviews
             .threadArrowView
@@ -246,7 +246,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setupThreadArrowView()
         let threadArrowView = self.threadArrowView!
         
-        let threadView = uiConfig
+        let threadView = components
             .messageList
             .messageContentSubviews
             .threadInfoView
@@ -293,7 +293,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setupMessageBubbleView()
         let messageBubbleView = self.messageBubbleView!
         
-        let errorIndicator = uiConfig
+        let errorIndicator = components
             .messageList
             .messageContentSubviews
             .errorIndicator
@@ -325,7 +325,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     open func setupQuoteView() {
         guard messageQuoteView == nil else { return }
         
-        let messageQuoteView = uiConfig
+        let messageQuoteView = components
             .messageQuoteView.init()
             .withoutAutoresizingMaskConstraints
         
@@ -334,7 +334,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         addSubview(messageQuoteView)
 
         self.messageQuoteView?.containerView.isLayoutMarginsRelativeArrangement = false
-        self.messageQuoteView?.contentContainerView.backgroundColor = uiConfig.colorPalette.background1
+        self.messageQuoteView?.contentContainerView.backgroundColor = appearance.colorPalette.background1
 
         messageQuoteView.isVisible = false
     }
@@ -342,7 +342,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
     open func setupLinkPreviewView() {
         guard linkPreviewView == nil else { return }
         
-        let linkPreviewView = uiConfig
+        let linkPreviewView = components
             .messageList
             .messageContentSubviews
             .linkPreviewView
@@ -365,7 +365,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         textView.dataDetectorTypes = .link
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
-        textView.font = uiConfig.font.body
+        textView.font = appearance.fonts.body
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
@@ -381,7 +381,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setupMessageBubbleView()
         let messageBubbleView = self.messageBubbleView!
         
-        let attachmentsView = uiConfig
+        let attachmentsView = components
             .messageList
             .messageContentSubviews
             .attachmentSubviews
@@ -586,7 +586,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         
         authorAvatarView.isVisible = shouldDisplayAuthorAvatarView
         
-        let placeholder = uiConfig.images.userAvatarPlaceholder1
+        let placeholder = appearance.images.userAvatarPlaceholder1
         if let imageURL = message.author.imageURL {
             authorAvatarView.imageView.loadImage(from: imageURL, placeholder: placeholder)
         } else {
@@ -646,13 +646,13 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         }
         
         if message.type == .ephemeral {
-            messageBubbleView.backgroundColor = uiConfig.colorPalette.popoverBackground
+            messageBubbleView.backgroundColor = appearance.colorPalette.popoverBackground
         } else if message.layoutOptions.contains(.linkPreview) {
-            messageBubbleView.backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
+            messageBubbleView.backgroundColor = appearance.colorPalette.highlightedAccentBackground1
         } else {
             messageBubbleView.backgroundColor = message.isSentByCurrentUser == true ?
-                uiConfig.colorPalette.background2 :
-                uiConfig.colorPalette.popoverBackground
+                appearance.colorPalette.background2 :
+                appearance.colorPalette.popoverBackground
         }
     }
     
@@ -726,10 +726,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigPr
         setupTextView()
         let textView = self.textView!
         
-        let font: UIFont = uiConfig.font.body
+        let font: UIFont = appearance.font.body
         textView.attributedText = message.textContent.map {
             .init(string: $0, attributes: [
-                .foregroundColor: message.deletedAt == nil ? uiConfig.colorPalette.text : uiConfig.colorPalette.subtitleText,
+                .foregroundColor: message.deletedAt == nil ? appearance.colorPalette.text : appearance.colorPalette.subtitleText,
                 .font: message.deletedAt == nil ? font : font.italic
             ])
         }

@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view that displays the command name, image and arguments.
-public typealias ChatMessageComposerCommandCellView = _ChatMessageComposerCommandCellView<NoExtraData>
-
-/// A view that displays the command name, image and arguments.
-open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class ChatMessageComposerCommandCellView: _View, AppearanceProvider {
     /// The command that the view will display.
     open var content: Command? {
         didSet {
@@ -41,11 +38,11 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View
         super.setUpAppearance()
         backgroundColor = .clear
 
-        commandNameLabel.font = uiConfig.font.bodyBold
-        commandNameLabel.textColor = uiConfig.colorPalette.text
+        commandNameLabel.font = appearance.fonts.bodyBold
+        commandNameLabel.textColor = appearance.colorPalette.text
 
-        commandNameSubtitleLabel.font = uiConfig.font.body
-        commandNameSubtitleLabel.textColor = uiConfig.colorPalette.subtitleText
+        commandNameSubtitleLabel.font = appearance.fonts.body
+        commandNameSubtitleLabel.textColor = appearance.colorPalette.subtitleText
     }
 
     override open func setUpLayout() {
@@ -62,8 +59,8 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View
         commandNameSubtitleLabel.text = "/\(command.name) \(command.args)"
         commandNameLabel.text = command.name.firstUppercased
 
-        commandImageView.image = uiConfig.images.commandIcons[command.name.lowercased()]
-            ?? uiConfig.images.messageComposerCommandFallback
+        commandImageView.image = appearance.images.commandIcons[command.name.lowercased()]
+            ?? appearance.images.messageComposerCommandFallback
     }
 
     private func setupLeftImageViewConstraints() {
@@ -96,10 +93,10 @@ open class _ChatMessageComposerCommandCellView<ExtraData: ExtraDataTypes>: _View
 public typealias ChatMessageComposerCommandCollectionViewCell = _ChatMessageComposerCommandCollectionViewCell<NoExtraData>
 
 /// A view cell that displays a command.
-open class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+open class _ChatMessageComposerCommandCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, ComponentsProvider {
     open class var reuseId: String { String(describing: self) }
 
-    public private(set) lazy var commandView = uiConfig
+    public private(set) lazy var commandView = components
         .messageComposer
         .suggestionsCommandCellView.init()
         .withoutAutoresizingMaskConstraints

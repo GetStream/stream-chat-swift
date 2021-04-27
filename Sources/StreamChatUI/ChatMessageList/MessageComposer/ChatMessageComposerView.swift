@@ -7,8 +7,7 @@ import UIKit
 
 public typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
 
-open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
-    UIConfigProvider {
+open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
@@ -30,46 +29,46 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     public private(set) lazy var centerRightContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var messageQuoteView = uiConfig
+    public private(set) lazy var messageQuoteView = components
         .messageQuoteView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var imageAttachmentsView = uiConfig
+    public private(set) lazy var imageAttachmentsView = components
         .messageComposer
         .imageAttachmentsView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var documentAttachmentsView = uiConfig
+    public private(set) lazy var documentAttachmentsView = components
         .messageComposer
         .documentAttachmentsView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var messageInputView = uiConfig
+    public private(set) lazy var messageInputView = components
         .messageComposer
         .messageInputView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var sendButton = uiConfig
+    public private(set) lazy var sendButton = components
         .messageComposer
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var editButton = uiConfig
+    public private(set) lazy var editButton = components
         .messageComposer
         .editButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var attachmentButton: UIButton = uiConfig
+    public private(set) lazy var attachmentButton: UIButton = components
         .messageComposer
         .composerButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var commandsButton: UIButton = uiConfig
+    public private(set) lazy var commandsButton: UIButton = components
         .messageComposer
         .composerButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var shrinkInputButton: UIButton = uiConfig
+    public private(set) lazy var shrinkInputButton: UIButton = components
         .messageComposer
         .composerButton.init()
         .withoutAutoresizingMaskConstraints
@@ -81,7 +80,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         return imageView
     }()
     
-    public private(set) lazy var dismissButton: UIButton = uiConfig
+    public private(set) lazy var dismissButton: UIButton = components
         .messageComposer
         .composerButton.init()
         .withoutAutoresizingMaskConstraints
@@ -90,7 +89,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
     
-    public private(set) lazy var checkmarkControl: _ChatMessageComposerCheckmarkControl<ExtraData> = uiConfig
+    public private(set) lazy var checkmarkControl: ChatMessageComposerCheckmarkControl = components
         .messageComposer
         .checkmarkControl.init()
         .withoutAutoresizingMaskConstraints
@@ -113,33 +112,34 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View,
     override open func setUpAppearance() {
         super.setUpAppearance()
         
-        backgroundColor = uiConfig.colorPalette.popoverBackground
+        backgroundColor = appearance.colorPalette.popoverBackground
         
         centerContentContainer.clipsToBounds = true
         centerContentContainer.layer.cornerRadius = 25
         centerContentContainer.layer.borderWidth = 1
-        centerContentContainer.layer.borderColor = uiConfig.colorPalette.border.cgColor
+        centerContentContainer.layer.borderColor = appearance.colorPalette.border.cgColor
         
         layer.shadowColor = UIColor.systemGray.cgColor
         layer.shadowOpacity = 1
         layer.shadowOffset = .zero
         layer.shadowRadius = 0.5
         
-        let clipIcon = uiConfig.images.messageComposerFileAttachment.tinted(with: uiConfig.colorPalette.inactiveTint)
+        let clipIcon = appearance.images.messageComposerFileAttachment
+            .tinted(with: appearance.colorPalette.inactiveTint)
         attachmentButton.setImage(clipIcon, for: .normal)
         
-        let boltIcon = uiConfig.images.messageComposerCommand.tinted(with: uiConfig.colorPalette.inactiveTint)
+        let boltIcon = appearance.images.messageComposerCommand.tinted(with: appearance.colorPalette.inactiveTint)
         commandsButton.setImage(boltIcon, for: .normal)
         
-        let shrinkArrowIcon = uiConfig.images.messageComposerShrinkInput
+        let shrinkArrowIcon = appearance.images.messageComposerShrinkInput
         shrinkInputButton.setImage(shrinkArrowIcon, for: .normal)
         
-        let dismissIcon = uiConfig.images.close1.tinted(with: uiConfig.colorPalette.inactiveTint)
+        let dismissIcon = appearance.images.close1.tinted(with: appearance.colorPalette.inactiveTint)
         dismissButton.setImage(dismissIcon, for: .normal)
         
         titleLabel.textAlignment = .center
-        titleLabel.textColor = uiConfig.colorPalette.text
-        titleLabel.font = uiConfig.font.bodyBold
+        titleLabel.textColor = appearance.colorPalette.text
+        titleLabel.font = appearance.fonts.bodyBold
         titleLabel.adjustsFontForContentSizeCategory = true
     }
     

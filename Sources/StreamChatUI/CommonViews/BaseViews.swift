@@ -50,13 +50,31 @@ public extension Customizable where Self: UIViewController {
     }
 }
 
-extension UIConfigProvider where Self: _View {
-    public func uiConfigDidRegister() {
+extension ComponentsProvider where Self: _View {
+    public func componentsDidRegister() {
         if isInitialized {
             log.assertionFailure(
-                "`UIConfig` was assigned after the view has been already initialized. This is most likely caused by assigning " +
-                    "the custom `UIConfig` instance after the view has been added to the view hierarchy, or after the view's subviews " +
-                    "have been initialized already. This is undefined behavior and should be avoided."
+                """
+                `Components` was assigned after the view has been already initialized. \
+                This is most likely caused by assigning the custom `Components` instance \
+                after the view has been added to the view hierarchy, or after the view's subviews \
+                have been initialized already. This is undefined behavior and should be avoided.
+                """
+            )
+        }
+    }
+}
+
+extension AppearanceProvider where Self: _View {
+    public func appearanceDidRegister() {
+        if isInitialized {
+            log.assertionFailure(
+                """
+                `Appearance` was assigned after the view has been already initialized. \
+                This is most likely caused by assigning the custom `Appearance` instance \
+                after the view has been added to the view hierarchy, or after the view's subviews \
+                have been initialized already. This is undefined behavior and should be avoided.
+                """
             )
         }
     }

@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public extension _UIConfig {
+public extension Appearance {
     struct Images {
         // MARK: - General
 

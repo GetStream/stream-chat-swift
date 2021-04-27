@@ -11,16 +11,16 @@ public typealias ChatChannelListCollectionViewCell = _ChatChannelListCollectionV
 
 /// A `UICollectionViewCell` subclass that shows channel information.
 open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
-    UIConfigProvider {
+    ThemeProvider {
     /// The `ChatChannelListItemView` instance used as content view.
-    open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = uiConfig
+    open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = components
         .channelList
         .itemView
         .init()
         .withoutAutoresizingMaskConstraints
 
     /// The `SwipeableView` instance which is used for revealing buttons when cell is swiped.
-    open private(set) lazy var swipeableView: _SwipeableView<ExtraData> = uiConfig
+    open private(set) lazy var swipeableView: _SwipeableView<ExtraData> = components
         .channelList
         .swipeableView.init()
         .withoutAutoresizingMaskConstraints
@@ -32,8 +32,9 @@ open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _Colle
 
     override open var isHighlighted: Bool {
         didSet {
-            itemView.backgroundColor = isHighlighted ? uiConfig.colorPalette.highlightedBackground :
-                uiConfig.colorPalette.background
+            itemView.backgroundColor = isHighlighted
+                ? appearance.colorPalette.highlightedBackground
+                : appearance.colorPalette.background
         }
     }
 

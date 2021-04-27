@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageReactionsView {
-    open class ItemView: _Button, UIConfigProvider {
+    open class ItemView: _Button, AppearanceProvider {
         public var content: Content? {
             didSet { updateContentIfNeeded() }
         }
@@ -80,11 +80,11 @@ private extension _ChatMessageReactionsView.ItemView {
     var reactionImage: UIImage? {
         guard let content = content else { return nil }
 
-        let appearance = uiConfig.images.availableReactions[content.reaction.type]
+        let reactions = appearance.images.availableReactions[content.reaction.type]
 
         return content.useBigIcon ?
-            appearance?.largeIcon :
-            appearance?.smallIcon
+            reactions?.largeIcon :
+            reactions?.smallIcon
     }
 
     var reactionImageTint: UIColor? {
@@ -92,6 +92,6 @@ private extension _ChatMessageReactionsView.ItemView {
 
         return content.reaction.isChosenByCurrentUser ?
             tintColor :
-            uiConfig.colorPalette.inactiveTint
+            appearance.colorPalette.inactiveTint
     }
 }

@@ -13,7 +13,7 @@ public typealias ChatMessagePopupVC = _ChatMessagePopupVC<NoExtraData>
 /// `_ChatMessagePopupVC` is shown when user long-presses a message.
 /// By default, it has a blurred background, reactions, and actions which are shown for a given message
 /// and with which user can interact.
-open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
+open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, ComponentsProvider {
     /// `UIScrollView` for showing content and updating its position via setting its content offset.
     open private(set) lazy var scrollView = UIScrollView()
         .withoutAutoresizingMaskConstraints

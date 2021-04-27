@@ -9,7 +9,7 @@ import UIKit
 public typealias TypingIndicatorView = _TypingIndicatorView<NoExtraData>
 
 /// An `UIView` subclass indicating that user or multiple users are currently typing.
-open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     /// The string which will be shown next to animated indication that user is typing.
     var content: String? {
         didSet {
@@ -18,7 +18,7 @@ open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvi
     }
 
     /// The animated view with three dots indicating that someone is typing.
-    open private(set) lazy var typingAnimationView: _TypingAnimationView<ExtraData> = uiConfig
+    open private(set) lazy var typingAnimationView: TypingAnimationView = components
         .typingAnimationView
         .init()
         .withoutAutoresizingMaskConstraints
@@ -53,9 +53,9 @@ open class _TypingIndicatorView<ExtraData: ExtraDataTypes>: _View, UIConfigProvi
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = uiConfig.colorPalette.overlayBackground
-        informationLabel.textColor = uiConfig.colorPalette.subtitleText
-        informationLabel.font = uiConfig.font.body
+        backgroundColor = appearance.colorPalette.overlayBackground
+        informationLabel.textColor = appearance.colorPalette.subtitleText
+        informationLabel.font = appearance.fonts.body
     }
 
     override open func updateContent() {

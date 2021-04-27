@@ -27,13 +27,13 @@ class ChatMessageSendButton_Tests: XCTestCase {
         AssertSnapshot(container, variants: .onlyUserInterfaceStyles, suffix: "new-disabled")
     }
 
-    func test_appearanceCustomization_usingUIConfig() {
-        var config = UIConfig()
-        config.images.messageComposerSendMessage = TestImages.vader.image.tinted(with: .systemPink)!
-        config.colorPalette.inactiveTint = .black
+    func test_appearanceCustomization_usingAppearance() {
+        var appearance = Appearance()
+        appearance.images.messageComposerSendMessage = TestImages.vader.image.tinted(with: .systemPink)!
+        appearance.colorPalette.inactiveTint = .black
 
         let view = ChatMessageSendButton().withoutAutoresizingMaskConstraints
-        view.uiConfig = config
+        view.appearance = appearance
 
         container.embed(view)
 

@@ -6,12 +6,9 @@ import StreamChat
 import UIKit
 
 /// A Button subclass that should be used for creating new channels.
-public typealias ChatChannelCreateNewButton = _ChatChannelCreateNewButton<NoExtraData>
-
-/// A Button subclass that should be used for creating new channels.
-open class _ChatChannelCreateNewButton<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
+open class ChatChannelCreateNewButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
-        setImage(uiConfig.images.newChat, for: .normal)
+        setImage(appearance.images.newChat, for: .normal)
     }
 }

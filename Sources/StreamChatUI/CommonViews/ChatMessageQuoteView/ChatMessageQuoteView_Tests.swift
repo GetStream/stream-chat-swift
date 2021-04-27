@@ -60,7 +60,7 @@ class ChatMessageQuoteView_Tests: XCTestCase {
         AssertSnapshot(view)
     }
 
-    func test_appearanceCustomization_usingUIConfig() {
+    func test_appearanceCustomization_usingComponents() {
         class TestView: ChatAvatarView {
             override func setUpAppearance() {
                 super.setUpAppearance()
@@ -73,11 +73,11 @@ class ChatMessageQuoteView_Tests: XCTestCase {
             }
         }
 
-        var config = UIConfig()
-        config.avatarView = TestView.self
+        var components = Components()
+        components.avatarView = TestView.self
 
         view.content = makeContent(text: "Hello Vader!")
-        view.uiConfig = config
+        view.components = components
 
         AssertSnapshot(view, variants: [.defaultLight])
     }

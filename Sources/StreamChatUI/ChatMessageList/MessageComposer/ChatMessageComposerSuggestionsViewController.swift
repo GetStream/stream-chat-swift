@@ -16,7 +16,7 @@ public typealias ChatMessageComposerSuggestionsViewController = _ChatMessageComp
 
 /// A view controller that shows suggestions of commands or mentions.
 open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewController,
-    UIConfigProvider,
+    ThemeProvider,
     UICollectionViewDelegate {
     /// The data provider of the collection view. A custom `UICollectionViewDataSource` can be provided,
     /// by default `ChatMessageComposerSuggestionsCommandDataSource` is used.
@@ -46,10 +46,10 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
     }
     
     /// The collection view of the commands.
-    open private(set) lazy var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData> = uiConfig
+    open private(set) lazy var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData> = components
         .messageComposer
         .suggestionsCollectionView
-        .init(layout: uiConfig.messageComposer.suggestionsCollectionViewLayout.init())
+        .init(layout: components.messageComposer.suggestionsCollectionViewLayout.init())
         .withoutAutoresizingMaskConstraints
     
     /// The container view where collectionView is embedded.
@@ -71,7 +71,7 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
     override open func setUpAppearance() {
         super.setUpAppearance()
         view.backgroundColor = .clear
-        view.layer.addShadow(color: uiConfig.colorPalette.shadow)
+        view.layer.addShadow(color: appearance.colorPalette.shadow)
     }
 
     override open func setUpLayout() {
@@ -145,9 +145,14 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
     /// The list of commands.
     open var commands: [Command]
     
-    /// The uiConfig to override ui components.
-    open var uiConfig: _UIConfig<ExtraData> {
-        collectionView.uiConfig
+    /// The current types to override ui components.
+    open var components: _Components<ExtraData> {
+        collectionView.components
+    }
+    
+    /// The current types to override ui components.
+    open var appearance: Appearance {
+        collectionView.appearance
     }
     
     /// Data Source Initialiser
@@ -174,8 +179,8 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
 
     private func registerCollectionViewCell() {
         collectionView.register(
-            uiConfig.messageComposer.suggestionsCommandCollectionViewCell,
-            forCellWithReuseIdentifier: uiConfig.messageComposer.suggestionsCommandCollectionViewCell.reuseId
+            components.messageComposer.suggestionsCommandCollectionViewCell,
+            forCellWithReuseIdentifier: components.messageComposer.suggestionsCommandCollectionViewCell.reuseId
         )
     }
 
@@ -191,7 +196,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
         ) as! _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>
 
         headerView.suggestionsHeader.headerLabel.text = L10n.Composer.Suggestions.Commands.header
-        headerView.suggestionsHeader.commandImageView.image = uiConfig.images.messageComposerCommand
+        headerView.suggestionsHeader.commandImageView.image = appearance.images.messageComposerCommand
             .tinted(with: headerView.tintColor)
 
         return headerView
@@ -207,7 +212,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
             for: indexPath
         ) as! _ChatMessageComposerCommandCollectionViewCell<ExtraData>
 
-        cell.uiConfig = uiConfig
+        cell.components = components
         cell.commandView.content = commands[indexPath.row]
 
         return cell
@@ -225,9 +230,9 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
     /// The search controller to search for mentions.
     open var searchController: _ChatUserSearchController<ExtraData>
     
-    /// The uiConfig to override ui components.
-    var uiConfig: _UIConfig<ExtraData> {
-        collectionView.uiConfig
+    /// The types to override ui components.
+    var components: _Components<ExtraData> {
+        collectionView.components
     }
     
     /// Data Source Initialiser
@@ -249,8 +254,8 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
 
     private func registerCollectionViewCell() {
         collectionView.register(
-            uiConfig.messageComposer.suggestionsMentionCollectionViewCell,
-            forCellWithReuseIdentifier: uiConfig.messageComposer.suggestionsMentionCollectionViewCell.reuseId
+            components.messageComposer.suggestionsMentionCollectionViewCell,
+            forCellWithReuseIdentifier: components.messageComposer.suggestionsMentionCollectionViewCell.reuseId
         )
     }
 
@@ -273,9 +278,9 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
         ) as! _ChatMessageComposerMentionCollectionViewCell<ExtraData>
 
         let user = searchController.users[indexPath.row]
-        // We need to make sure we set the uiConfig before accessing the mentionView,
-        // so the mentionView is created with the most up-to-dated uiConfig.
-        cell.uiConfig = uiConfig
+        // We need to make sure we set the components before accessing the mentionView,
+        // so the mentionView is created with the most up-to-dated components.
+        cell.components = components
         cell.mentionView.content = user
         return cell
     }

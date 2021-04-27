@@ -7,7 +7,7 @@ import StreamChatUI
 import SwiftUI
 
 struct MessengerChatChannelListItem: ChatChannelListItemView.SwiftUIView {
-    @EnvironmentObject var uiConfig: UIConfig.ObservableObject
+    @EnvironmentObject var components: Components.ObservableObject
     @ObservedObject var dataSource: ChatChannelListItemView.ObservedObject<Self>
     init(dataSource: _ChatChannelListItemView<NoExtraData>.ObservedObject<MessengerChatChannelListItem>) {
         self.dataSource = dataSource
@@ -17,7 +17,7 @@ struct MessengerChatChannelListItem: ChatChannelListItemView.SwiftUIView {
     
     var body: some View {
         HStack {
-            uiConfig
+            components
                 .channelList
                 .itemSubviews
                 .avatarView

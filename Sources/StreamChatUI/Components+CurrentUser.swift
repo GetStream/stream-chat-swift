@@ -4,7 +4,7 @@
 
 import Foundation
 
-public extension _UIConfig {
+public extension _Components {
     struct CurrentUser {
         public var currentUserViewAvatarView: _CurrentChatUserAvatarView<ExtraData>.Type = _CurrentChatUserAvatarView<ExtraData>
             .self

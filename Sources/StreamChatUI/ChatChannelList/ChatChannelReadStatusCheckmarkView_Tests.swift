@@ -25,14 +25,14 @@ class ChatChannelReadStatusCheckmarkView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles, suffix: "read")
     }
     
-    func test_appearanceCustomization_usingUIConfig() {
-        var config = UIConfig()
-        config.colorPalette.inactiveTint = .green
-        config.images.channelListReadByAll = TestImages.yoda.image
+    func test_appearanceCustomization_usingAppearance() {
+        var appearance = Appearance()
+        appearance.colorPalette.inactiveTint = .green
+        appearance.images.channelListReadByAll = TestImages.yoda.image
         
         let view = ChatChannelReadStatusCheckmarkView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
-        view.uiConfig = config
+        view.appearance = appearance
         
         view.content = .unread
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles, suffix: "unread")

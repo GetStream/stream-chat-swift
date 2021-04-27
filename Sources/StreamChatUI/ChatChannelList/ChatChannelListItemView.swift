@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatChannelListItemView = _ChatChannelListItemView<NoExtraData>
 
 /// An `UIView` subclass that shows summary and preview information about a given channel.
-open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
+open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, SwiftUIRepresentable {
     /// The data this view component shows.
     public var content: _ChatChannel<ExtraData>? {
         didSet { updateContentIfNeeded() }
@@ -31,7 +31,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     open private(set) lazy var bottomContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
     
     /// The `UILabel` instance showing the channel name.
-    open private(set) lazy var titleLabel: UILabel = uiConfig
+    open private(set) lazy var titleLabel: UILabel = components
         .channelList
         .itemSubviews
         .titleLabel
@@ -41,7 +41,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .withBidirectionalLanguagesSupport
     
     /// The `UILabel` instance showing the last message or typing members if any.
-    open private(set) lazy var subtitleLabel: UILabel = uiConfig
+    open private(set) lazy var subtitleLabel: UILabel = components
         .channelList
         .itemSubviews
         .subtitleLabel
@@ -51,7 +51,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .withBidirectionalLanguagesSupport
     
     /// The `UILabel` instance showing the time of the last sent message.
-    open private(set) lazy var timestampLabel: UILabel = uiConfig
+    open private(set) lazy var timestampLabel: UILabel = components
         .channelList
         .itemSubviews
         .timestampLabel
@@ -61,7 +61,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .withBidirectionalLanguagesSupport
     
     /// The view used to show channels avatar.
-    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = uiConfig
+    open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = components
         .channelList
         .itemSubviews
         .avatarView
@@ -69,7 +69,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         .withoutAutoresizingMaskConstraints
     
     /// The view showing number of unread messages in channel if any.
-    open private(set) lazy var unreadCountView: _ChatChannelUnreadCountView<ExtraData> = uiConfig
+    open private(set) lazy var unreadCountView: ChatChannelUnreadCountView = components
         .channelList
         .itemSubviews
         .unreadCountView.init()
@@ -78,7 +78,7 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
         if let channel = content {
-            return uiConfig.channelList.channelNamer(channel, channel.membership?.id)
+            return components.channelList.channelNamer(channel, channel.membership?.id)
         } else {
             return nil
         }
@@ -115,15 +115,15 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, UIConfigP
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = uiConfig.colorPalette.background
+        backgroundColor = appearance.colorPalette.background
 
-        titleLabel.font = uiConfig.font.bodyBold
+        titleLabel.font = appearance.fonts.bodyBold
 
-        subtitleLabel.textColor = uiConfig.colorPalette.subtitleText
-        subtitleLabel.font = uiConfig.font.footnote
+        subtitleLabel.textColor = appearance.colorPalette.subtitleText
+        subtitleLabel.font = appearance.fonts.footnote
         
-        timestampLabel.textColor = uiConfig.colorPalette.subtitleText
-        timestampLabel.font = uiConfig.font.footnote
+        timestampLabel.textColor = appearance.colorPalette.subtitleText
+        timestampLabel.font = appearance.fonts.footnote
     }
 
     override open func setUpLayout() {

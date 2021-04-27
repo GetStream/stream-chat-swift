@@ -9,9 +9,9 @@ import UIKit
 public typealias ChatUserAvatarView = _ChatUserAvatarView<NoExtraData>
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).
-open class _ChatUserAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatUserAvatarView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     /// A view that shows the avatar image and online presence indicator.
-    open private(set) lazy var presenceAvatarView: _ChatPresenceAvatarView<ExtraData> = uiConfig
+    open private(set) lazy var presenceAvatarView: _ChatPresenceAvatarView<ExtraData> = components
         .presenceAvatarView.init()
         .withoutAutoresizingMaskConstraints
 
@@ -29,7 +29,7 @@ open class _ChatUserAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
         if let url = content?.imageURL {
             presenceAvatarView.avatarView.imageView.loadImage(from: url)
         } else {
-            presenceAvatarView.avatarView.imageView.image = uiConfig.images.userAvatarPlaceholder1
+            presenceAvatarView.avatarView.imageView.image = appearance.images.userAvatarPlaceholder1
         }
         presenceAvatarView.isOnlineIndicatorVisible = content?.isOnline ?? false
     }

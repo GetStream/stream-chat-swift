@@ -30,7 +30,7 @@ final class DemoAppCoordinator {
         let client = ChatClient(config: config, tokenProvider: .static(token))
         
         // Config
-        UIConfig.default.navigation.channelListRouter = DemoChatChannelListRouter.self
+        Components.default.navigation.channelListRouter = DemoChatChannelListRouter.self
         
         // Channels with the current user
         let controller = client.channelListController(query: .init(filter: .containMembers(userIds: [userCredentials.id])))

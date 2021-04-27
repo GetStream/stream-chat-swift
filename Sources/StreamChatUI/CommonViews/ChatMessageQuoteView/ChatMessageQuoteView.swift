@@ -19,7 +19,7 @@ struct ChatMessageQuoteAvatarAlignment: Equatable {
 public typealias ChatMessageQuoteView = _ChatMessageQuoteView<NoExtraData>
 
 /// A view that displays a quoted message.
-open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     /// The `ChatMessageQuoteView` content.
     public struct Content {
         /// The quoted message.
@@ -40,7 +40,7 @@ open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
         .withoutAutoresizingMaskConstraints
 
     /// The avatar view of the author's quoted message.
-    public private(set) lazy var authorAvatarView: ChatAvatarView = uiConfig
+    public private(set) lazy var authorAvatarView: ChatAvatarView = components
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
 
@@ -73,15 +73,15 @@ open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
         textView.textContainer.lineFragmentPadding = .zero
 
         textView.backgroundColor = .clear
-        textView.font = uiConfig.font.subheadline
+        textView.font = appearance.fonts.subheadline
         textView.textContainerInset = .zero
-        textView.textColor = uiConfig.colorPalette.text
+        textView.textColor = appearance.colorPalette.text
 
         authorAvatarView.contentMode = .scaleAspectFit
 
         contentContainerView.layer.cornerRadius = 16
         contentContainerView.layer.borderWidth = 1
-        contentContainerView.layer.borderColor = uiConfig.colorPalette.border.cgColor
+        contentContainerView.layer.borderColor = appearance.colorPalette.border.cgColor
         contentContainerView.layer.masksToBounds = true
     }
 
@@ -143,7 +143,7 @@ private extension _ChatMessageQuoteView {
     /// Sets the avatar image from a url or sets the placeholder image if the url is `nil`.
     /// - Parameter imageUrl: The url of the image.
     func setAvatar(imageUrl: URL?) {
-        let placeholder = uiConfig.images.userAvatarPlaceholder1
+        let placeholder = appearance.images.userAvatarPlaceholder1
         authorAvatarView.imageView.loadImage(from: imageUrl, placeholder: placeholder)
     }
 

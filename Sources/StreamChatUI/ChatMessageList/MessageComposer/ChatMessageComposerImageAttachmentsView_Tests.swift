@@ -24,7 +24,7 @@ class ChatMessageComposerImageAttachmentsView_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
-    func test_appearanceCustomization_usingUIConfig() {
+    func test_appearanceCustomization_usingComponents() {
         class TestView: ChatMessageComposerImageAttachmentView {
             override func setUpAppearance() {
                 super.setUpAppearance()
@@ -40,12 +40,12 @@ class ChatMessageComposerImageAttachmentsView_Tests: XCTestCase {
             }
         }
 
-        var config = UIConfig()
-        config.messageComposer.imageAttachmentCellView = TestView.self
+        var components = Components()
+        components.messageComposer.imageAttachmentCellView = TestView.self
 
         let view = makeView(ChatMessageComposerImageAttachmentsView.self)
         view.collectionView.layer.masksToBounds = false
-        view.uiConfig = config
+        view.components = components
         view.backgroundColor = .yellow
         AssertSnapshot(view, variants: [.defaultLight])
     }

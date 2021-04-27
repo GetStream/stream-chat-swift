@@ -31,7 +31,7 @@ final class MessengerChatChannelViewController: ChatChannelVC {
         ])
         
         titleLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
-        titleLabel.font = uiConfig.font.bodyBold
+        titleLabel.font = appearance.fonts.bodyBold
         titleStackView.addArrangedSubview(titleLabel)
         
         let spacer = UIView()

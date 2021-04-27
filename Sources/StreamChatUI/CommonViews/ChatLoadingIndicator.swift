@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias ChatLoadingIndicator = _ChatLoadingIndicator<NoExtraData>
-
-open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class ChatLoadingIndicator: _View, AppearanceProvider {
     override open var isHidden: Bool {
         didSet { updateContentIfNeeded() }
     }
@@ -23,7 +21,7 @@ open class _ChatLoadingIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProv
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        imageView.image = uiConfig.images.loadingIndicator
+        imageView.image = appearance.images.loadingIndicator
     }
 
     override open func setUpLayout() {

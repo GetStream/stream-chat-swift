@@ -37,14 +37,14 @@ class ChatChannelListItemView_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_appearanceCustomization_usingUIConfig() {
-        var config = UIConfig()
-        config.font.bodyBold = .italicSystemFont(ofSize: 20)
-        config.colorPalette.subtitleText = .cyan
+    func test_appearanceCustomization_usingAppearance() {
+        var appearance = Appearance()
+        appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
+        appearance.colorPalette.subtitleText = .cyan
         
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
         
-        view.uiConfig = config
+        view.appearance = appearance
         view.addSizeConstraints()
         
         AssertSnapshot(view)
@@ -96,18 +96,18 @@ class ChatChannelListItemView_Tests: XCTestCase {
         AssertSnapshot(view)
     }
 
-    func test_ItemView_usesCorrectUIConfigTypes_whenCustomTypesDefined() {
-        // Create default ChatChannelListVC which has everything default from `UIConfig`
+    func test_ItemView_usesCorrectComponentsTypes_whenCustomTypesDefined() {
+        // Create default ChatChannelListVC which has everything default from `Components`
         let itemView = ChatChannelListItemView()
 
         // Create new config to set custom types...
-        var customConfig = UIConfig()
+        var components = Components()
 
-        customConfig.channelList.itemSubviews.titleLabel = TestLabel.self
-        customConfig.channelList.itemSubviews.subtitleLabel = TestLabel1.self
-        customConfig.channelList.itemSubviews.timestampLabel = TestLabel2.self
+        components.channelList.itemSubviews.titleLabel = TestLabel.self
+        components.channelList.itemSubviews.subtitleLabel = TestLabel1.self
+        components.channelList.itemSubviews.timestampLabel = TestLabel2.self
 
-        itemView.uiConfig = customConfig
+        itemView.components = components
 
         XCTAssert(itemView.titleLabel is TestLabel)
         XCTAssert(itemView.subtitleLabel is TestLabel1)
@@ -143,13 +143,13 @@ class ChatChannelListItemView_Tests: XCTestCase {
         
         let itemView = ChatChannelListItemView()
 
-        var customConfig = UIConfig()
-        customConfig.channelList.channelNamer = { namerChannel, namerUserId in
+        var components = Components()
+        components.channelList.channelNamer = { namerChannel, namerUserId in
             XCTAssertEqual(namerChannel, channel)
             XCTAssertEqual(namerUserId, userId)
             return namerChannel.name
         }
-        itemView.uiConfig = customConfig
+        itemView.components = components
         
         itemView.content = channel
         

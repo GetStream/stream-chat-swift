@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 import WebKit
 
-open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: _ViewController, WKNavigationDelegate, UIConfigProvider {
+open class ChatMessageAttachmentPreviewVC: _ViewController, WKNavigationDelegate, AppearanceProvider {
     public var content: URL? {
         didSet { updateContentIfNeeded() }
     }
@@ -19,7 +19,7 @@ open class ChatMessageAttachmentPreviewVC<ExtraData: ExtraDataTypes>: _ViewContr
     public private(set) lazy var activityIndicatorView = UIActivityIndicatorView(style: .gray)
 
     private lazy var closeButton = UIBarButtonItem(
-        image: uiConfig.images.close,
+        image: appearance.images.close,
         style: .plain,
         target: self,
         action: #selector(close)

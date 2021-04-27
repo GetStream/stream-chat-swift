@@ -20,8 +20,8 @@ extension _ChatMessageImageGallery {
 
         override open func setUpAppearance() {
             super.setUpAppearance()
-            backgroundColor = uiConfig.colorPalette.background4
-            fileSizeContainer.backgroundColor = uiConfig.colorPalette.popoverBackground
+            backgroundColor = appearance.colorPalette.background4
+            fileSizeContainer.backgroundColor = appearance.colorPalette.popoverBackground
             fileSizeContainer.layer.masksToBounds = true
             fileSizeLabel.textColor = .white
         }

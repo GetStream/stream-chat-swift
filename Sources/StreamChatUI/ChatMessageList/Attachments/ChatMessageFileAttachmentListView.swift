@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageFileAttachmentListView = _ChatMessageFileAttachmentListView<NoExtraData>
 
-open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider {
     public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
@@ -33,7 +33,7 @@ open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View,
         }
 
         content?.items.forEach {
-            let item = uiConfig.messageList.messageContentSubviews.attachmentSubviews.fileAttachmentItemView.init()
+            let item = components.messageList.messageContentSubviews.attachmentSubviews.fileAttachmentItemView.init()
             item.content = $0
             stackView.addArrangedSubview(item)
         }

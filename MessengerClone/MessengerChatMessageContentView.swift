@@ -7,7 +7,8 @@ import StreamChatUI
 import SwiftUI
 
 struct MessengerChatMessageContentView: ChatMessageContentView.SwiftUIView {
-    @EnvironmentObject var uiConfig: UIConfig.ObservableObject
+    @EnvironmentObject var appearance: Appearance.ObservableObject
+    @EnvironmentObject var components: Components.ObservableObject
     @ObservedObject var dataSource: ChatMessageContentView.ObservedObject<Self>
     
     private let dateFormatter: DateFormatter = {
@@ -27,8 +28,8 @@ struct MessengerChatMessageContentView: ChatMessageContentView.SwiftUIView {
         if let message = dataSource.message {
             VStack {
                 Text(dateFormatter.string(from: message.createdAt))
-                    .font(Font(uiConfig.font.subheadline as CTFont))
-                    .foregroundColor(Color(uiConfig.colorPalette.subtitleText))
+                    .font(Font(appearance.fonts.subheadline as CTFont))
+                    .foregroundColor(Color(appearance.colorPalette.subtitleText))
                 HStack(alignment: .bottom) {
                     if message.isSentByCurrentUser {
                         Spacer()
@@ -44,18 +45,18 @@ struct MessengerChatMessageContentView: ChatMessageContentView.SwiftUIView {
                         if !message.text.isEmpty {
                             Text(message.text)
                                 .foregroundColor(
-                                    message.isSentByCurrentUser ? Color(uiConfig.colorPalette.text) : Color.white
+                                    message.isSentByCurrentUser ? Color(appearance.colorPalette.text) : Color.white
                                 )
-                                .font(Font(uiConfig.font.body as CTFont))
+                                .font(Font(appearance.fonts.body as CTFont))
                                 .padding([.bottom, .top], 8)
                                 .padding([.leading, .trailing], 12)
                                 .background(
-                                    message.isSentByCurrentUser ? Color(uiConfig.colorPalette.background2) : Color.blue
+                                    message.isSentByCurrentUser ? Color(appearance.colorPalette.background2) : Color.blue
                                 )
                                 .cornerRadius(18)
                         }
                         if message.attachments.contains(where: { $0.type == .image || $0.type == .giphy || $0.type == .file }) {
-                            uiConfig.messageList.messageContentSubviews.attachmentSubviews.attachmentsView
+                            components.messageList.messageContentSubviews.attachmentSubviews.attachmentsView
                                 .asView(
                                     .init(
                                         attachments: message.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },

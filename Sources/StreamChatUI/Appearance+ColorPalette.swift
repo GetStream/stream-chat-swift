@@ -4,7 +4,7 @@
 
 import UIKit
 
-public extension _UIConfig {
+public extension Appearance {
     struct ColorPalette {
         // MARK: - Text
 

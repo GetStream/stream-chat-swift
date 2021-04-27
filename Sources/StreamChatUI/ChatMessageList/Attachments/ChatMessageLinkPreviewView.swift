@@ -7,10 +7,10 @@ import UIKit
 
 public typealias ChatMessageLinkPreviewView = _ChatMessageLinkPreviewView<NoExtraData>
 
-open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
+open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, ThemeProvider {
     public var content: ChatMessageDefaultAttachment? { didSet { updateContentIfNeeded() } }
 
-    public private(set) lazy var imagePreview = uiConfig
+    public private(set) lazy var imagePreview = components
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -27,14 +27,14 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
 
     public private(set) lazy var authorLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = uiConfig.font.bodyBold
+        label.font = appearance.fonts.bodyBold
         label.adjustsFontForContentSizeCategory = true
         return label.withBidirectionalLanguagesSupport
     }()
 
     public private(set) lazy var headlineLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = uiConfig.font.subheadlineBold
+        label.font = appearance.fonts.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
         return label.withBidirectionalLanguagesSupport
     }()
@@ -44,7 +44,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
         textView.isEditable = false
         textView.isScrollEnabled = false
         textView.backgroundColor = .clear
-        textView.font = uiConfig.font.subheadline
+        textView.font = appearance.fonts.subheadline
         textView.adjustsFontForContentSizeCategory = true
         textView.textContainerInset = .zero
         textView.textContainer.lineFragmentPadding = 0
@@ -80,7 +80,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, UIC
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        authorBackground.backgroundColor = uiConfig.colorPalette.highlightedAccentBackground1
+        authorBackground.backgroundColor = appearance.colorPalette.highlightedAccentBackground1
         backgroundColor = .clear
         imagePreview.layer.cornerRadius = 8
         imagePreview.clipsToBounds = true

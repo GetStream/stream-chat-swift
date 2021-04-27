@@ -33,7 +33,7 @@ class ChatUserAvatarView_Tests: XCTestCase {
         AssertSnapshot(avatarViewOffline, variants: .onlyUserInterfaceStyles, suffix: "without online indicator")
     }
 
-    func test_appearanceCustomization_usingUIConfig() {
+    func test_appearanceCustomization_usingAppearanceAndComponents() {
         class RectIndicator: UIView, MaskProviding {
             override func didMoveToSuperview() {
                 super.didMoveToSuperview()
@@ -46,13 +46,15 @@ class ChatUserAvatarView_Tests: XCTestCase {
             }
         }
 
-        var config = UIConfig()
-        config.onlineIndicatorView = RectIndicator.self
-        config.colorPalette.alternativeActiveTint = .brown
+        var appearance = Appearance()
+        var components = Components()
+        appearance.colorPalette.alternativeActiveTint = .brown
+        components.onlineIndicatorView = RectIndicator.self
 
         let view = ChatUserAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
-        view.uiConfig = config
+        view.appearance = appearance
+        view.components = components
         view.content = user
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }

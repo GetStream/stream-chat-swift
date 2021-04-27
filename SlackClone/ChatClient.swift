@@ -10,19 +10,22 @@ extension ChatClient {
     /// The singleton instance of `ChatClient`
     static let shared: ChatClient = {
         // Register custom UI elements
-        var uiConfig = UIConfig()
-        uiConfig.navigation.channelListRouter = SlackChatChannelListRouter.self
-        uiConfig.avatarView = SlackChatAvatarView.self
-        uiConfig.channelList.itemView = SlackChatChannelListItemView.self
-        uiConfig.channelList.itemSubviews.unreadCountView = SlackChatChannelUnreadCountView.self
-        uiConfig.images.newChat = UIImage(named: "new_message")!
+        var appearance = Appearance()
+        var components = Components()
         
-        uiConfig.messageList.defaultMessageCell = SlackСhatMessageCollectionViewCell.self
-        uiConfig.messageList.messageContentSubviews.authorAvatarView = SlackChatAvatarView.self
-        uiConfig.messageList.messageContentSubviews.metadataView = SlackChatMessageMetadataView.self
-        uiConfig.messageList.messageContentSubviews.attachmentSubviews.imageGallery = SlackChatMessageImageGallery.self
+        components.navigation.channelListRouter = SlackChatChannelListRouter.self
+        components.avatarView = SlackChatAvatarView.self
+        components.channelList.itemView = SlackChatChannelListItemView.self
+        components.channelList.itemSubviews.unreadCountView = SlackChatChannelUnreadCountView.self
+        appearance.images.newChat = UIImage(named: "new_message")!
         
-        UIConfig.default = uiConfig
+        components.messageList.defaultMessageCell = SlackСhatMessageCollectionViewCell.self
+        components.messageList.messageContentSubviews.authorAvatarView = SlackChatAvatarView.self
+        components.messageList.messageContentSubviews.metadataView = SlackChatMessageMetadataView.self
+        components.messageList.messageContentSubviews.attachmentSubviews.imageGallery = SlackChatMessageImageGallery.self
+        
+        Appearance.default = appearance
+        Components.default = components
         
         let config = ChatClientConfig(apiKey: APIKey("q95x9hkbyd6p"))
         return ChatClient(
