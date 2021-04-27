@@ -261,7 +261,7 @@ extension EntityDatabaseObserver {
 
 private extension ListChangeAggregator {
     func onChange(do action: @escaping ([ListChange<Item>]) -> Void) -> ListChangeAggregator {
-        onChange = action
+        onDidChange = action
         return self
     }
 }
