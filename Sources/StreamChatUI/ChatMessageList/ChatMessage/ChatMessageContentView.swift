@@ -726,7 +726,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         setupTextView()
         let textView = self.textView!
         
-        let font: UIFont = appearance.font.body
+        let font: UIFont = appearance.fonts.body
         textView.attributedText = message.textContent.map {
             .init(string: $0, attributes: [
                 .foregroundColor: message.deletedAt == nil ? appearance.colorPalette.text : appearance.colorPalette.subtitleText,

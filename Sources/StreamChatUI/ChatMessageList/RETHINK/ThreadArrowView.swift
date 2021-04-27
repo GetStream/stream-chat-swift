@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias ThreadArrowView = _ThreadArrowView<NoExtraData>
-
-open class _ThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class ThreadArrowView: _View, AppearanceProvider {
     public enum Direction {
         case toTrailing
         case toLeading
@@ -37,7 +35,7 @@ open class _ThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider 
         super.setUpAppearance()
 
         shape.contentsScale = layer.contentsScale
-        shape.strokeColor = uiConfig.colorPalette.border.cgColor
+        shape.strokeColor = appearance.colorPalette.border.cgColor
         shape.fillColor = nil
         shape.lineWidth = 1
     }

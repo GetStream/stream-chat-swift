@@ -5,12 +5,10 @@
 import StreamChat
 import UIKit
 
-public typealias ReactionsBubbleView = _ReactionsBubbleView<NoExtraData>
-
-open class _ReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class ReactionsBubbleView: _View, AppearanceProvider {
     private let tailHeight: CGFloat = 6
 
-    open var tailDirection: _ChatMessageThreadArrowView<ExtraData>.Direction? {
+    open var tailDirection: ChatMessageThreadArrowView.Direction? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -48,20 +46,20 @@ open class _ReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvi
     }
 }
 
-private extension _ReactionsBubbleView {
+private extension ReactionsBubbleView {
     var fillColor: UIColor? {
         tailDirection.map {
             $0 == .toTrailing ?
-                uiConfig.colorPalette.popoverBackground :
-                uiConfig.colorPalette.background2
+                appearance.colorPalette.popoverBackground :
+                appearance.colorPalette.background2
         }
     }
 
     var strokeColor: UIColor? {
         tailDirection.map {
             $0 == .toTrailing ?
-                uiConfig.colorPalette.border :
-                uiConfig.colorPalette.background2
+                appearance.colorPalette.border :
+                appearance.colorPalette.background2
         }
     }
 

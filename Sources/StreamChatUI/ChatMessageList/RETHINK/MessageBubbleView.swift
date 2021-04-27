@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias MessageBubbleView = _MessageBubbleView<NoExtraData>
-
-open class _MessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class MessageBubbleView: _View, AppearanceProvider {
     open var roundedCorners: CACornerMask = .all {
         didSet { updateContentIfNeeded() }
     }
@@ -15,7 +13,7 @@ open class _MessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvide
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        layer.borderColor = uiConfig.colorPalette.border.cgColor
+        layer.borderColor = appearance.colorPalette.border.cgColor
         layer.cornerRadius = 16
         layer.borderWidth = 1
     }

@@ -30,7 +30,7 @@ public protocol MessageContentViewDelegate: AnyObject {
 public typealias MessageContentView = _MessageContentView<NoExtraData>
 
 /// A view that displays the message content.
-open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     /// The current layout options of the view.
     /// When this value is set the subviews are instantiated and laid out just once based on
     /// the received options.
@@ -64,7 +64,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
 
     /// Shows the bubble around message content.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.bubble`.
-    public private(set) var bubbleView: _MessageBubbleView<ExtraData>?
+    public private(set) var bubbleView: MessageBubbleView?
 
     /// Shows message author avatar.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.author`.
@@ -94,7 +94,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
 
     /// Shows error indicator.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.error`.
-    public private(set) var errorIndicatorView: _ChatMessageErrorIndicator<ExtraData>?
+    public private(set) var errorIndicatorView: ChatMessageErrorIndicator?
 
     /// Shows the message quoted by the message this view displays.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.quotedMessage`.
@@ -106,7 +106,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
 
     /// Shows the bubble around message reactions.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.reactions`.
-    public private(set) var reactionsBubbleView: _ReactionsBubbleView<ExtraData>?
+    public private(set) var reactionsBubbleView: ReactionsBubbleView?
 
     /// Shows the # of thread replies on the message.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
@@ -118,7 +118,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
 
     /// Shows the arrow from message bubble to `threadAvatarView` view.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
-    public private(set) var threadArrowView: _ThreadArrowView<ExtraData>?
+    public private(set) var threadArrowView: ThreadArrowView?
 
     // MARK: - Containers
 
@@ -342,7 +342,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
         textView?.text = content?.text
         
         // Avatar
-        let placeholder = uiConfig.images.userAvatarPlaceholder1
+        let placeholder = appearance.images.userAvatarPlaceholder1
         if let imageURL = content?.author.imageURL {
             authorAvatarView?.imageView.loadImage(from: imageURL, placeholder: placeholder)
         } else {
@@ -351,11 +351,11 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
         
         // Bubble view
         if content?.type == .ephemeral {
-            bubbleView?.backgroundColor = uiConfig.colorPalette.popoverBackground
+            bubbleView?.backgroundColor = appearance.colorPalette.popoverBackground
         } else {
             bubbleView?.backgroundColor = content?.isSentByCurrentUser == true ?
-                uiConfig.colorPalette.background2 :
-                uiConfig.colorPalette.popoverBackground
+                appearance.colorPalette.background2 :
+                appearance.colorPalette.popoverBackground
         }
 
         // Metadata
@@ -444,7 +444,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
             textView?.textContainerInset = .init(top: 0, left: 8, bottom: 0, right: 8)
             textView?.textContainer.lineFragmentPadding = 0
             textView?.translatesAutoresizingMaskIntoConstraints = false
-            textView?.font = uiConfig.font.body
+            textView?.font = appearance.fonts.body
         }
         return textView!
     }
@@ -453,7 +453,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
     /// - Returns: The `authorAvatarView` subview.
     open func createAvatarView() -> ChatAvatarView {
         if authorAvatarView == nil {
-            authorAvatarView = uiConfig
+            authorAvatarView = components
                 .messageList
                 .messageContentSubviews
                 .authorAvatarView
@@ -467,7 +467,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
     /// - Returns: The `threadAvatarView` subview.
     open func createThreadAvatarView() -> ChatAvatarView {
         if threadAvatarView == nil {
-            threadAvatarView = uiConfig
+            threadAvatarView = components
                 .messageList
                 .messageContentSubviews
                 .authorAvatarView
@@ -479,10 +479,10 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
 
     /// Instantiates, configures and assigns `threadArrowView` when called for the first time.
     /// - Returns: The `threadArrowView` subview.
-    open func createThreadArrowView() -> _ThreadArrowView<ExtraData> {
+    open func createThreadArrowView() -> ThreadArrowView {
         if threadArrowView == nil {
-            // TODO: view type should be taken from `uiConfig` once `_ThreadArrowView` is audited
-            threadArrowView = _ThreadArrowView<ExtraData>()
+            // TODO: view type should be taken from `components` once `_ThreadArrowView` is audited
+            threadArrowView = ThreadArrowView()
                 .withoutAutoresizingMaskConstraints
         }
         return threadArrowView!
@@ -493,7 +493,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
     open func createThreadReplyCountButton() -> UIButton {
         if threadReplyCountButton == nil {
             threadReplyCountButton = UIButton(type: .custom).withoutAutoresizingMaskConstraints
-            threadReplyCountButton!.titleLabel?.font = uiConfig.font.footnoteBold
+            threadReplyCountButton!.titleLabel?.font = appearance.fonts.footnoteBold
             threadReplyCountButton!.titleLabel?.adjustsFontForContentSizeCategory = true
             threadReplyCountButton!.addTarget(self, action: #selector(handleTapOnThread), for: .touchUpInside)
         }
@@ -502,9 +502,9 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
 
     /// Instantiates, configures and assigns `bubbleView` when called for the first time.
     /// - Returns: The `bubbleView` subview.
-    open func createBubbleView() -> _MessageBubbleView<ExtraData> {
+    open func createBubbleView() -> MessageBubbleView {
         if bubbleView == nil {
-            bubbleView = _MessageBubbleView<ExtraData>().withoutAutoresizingMaskConstraints
+            bubbleView = MessageBubbleView().withoutAutoresizingMaskConstraints
         }
         return bubbleView!
     }
@@ -513,7 +513,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
     /// - Returns: The `quotedMessageView` subview.
     open func createQuotedMessageView() -> _ChatMessageQuoteView<ExtraData> {
         if quotedMessageView == nil {
-            quotedMessageView = uiConfig
+            quotedMessageView = components
                 .messageQuoteView
                 .init()
                 .withoutAutoresizingMaskConstraints
@@ -528,7 +528,7 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
     /// - Returns: The `reactionsView` subview.
     open func createReactionsView() -> _ChatMessageReactionsView<ExtraData> {
         if reactionsView == nil {
-            reactionsView = uiConfig
+            reactionsView = components
                 .messageList
                 .messageReactions
                 .reactionsView
@@ -540,9 +540,9 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
 
     /// Instantiates, configures and assigns `errorIndicatorView` when called for the first time.
     /// - Returns: The `errorIndicatorView` subview.
-    open func createErrorIndicatorView() -> _ChatMessageErrorIndicator<ExtraData> {
+    open func createErrorIndicatorView() -> ChatMessageErrorIndicator {
         if errorIndicatorView == nil {
-            errorIndicatorView = uiConfig
+            errorIndicatorView = components
                 .messageList
                 .messageContentSubviews
                 .errorIndicator
@@ -556,10 +556,10 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
 
     /// Instantiates, configures and assigns `reactionsBubbleView` when called for the first time.
     /// - Returns: The `reactionsBubbleView` subview.
-    open func createReactionsBubbleView() -> _ReactionsBubbleView<ExtraData> {
+    open func createReactionsBubbleView() -> ReactionsBubbleView {
         if reactionsBubbleView == nil {
-            // TODO: view type should be taken from `uiConfig` once `_ReactionsBubbleView` is audited
-            reactionsBubbleView = _ReactionsBubbleView<ExtraData>()
+            // TODO: view type should be taken from `components` once `_ReactionsBubbleView` is audited
+            reactionsBubbleView = ReactionsBubbleView()
                 .withoutAutoresizingMaskConstraints
         }
         return reactionsBubbleView!
@@ -574,8 +574,8 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
                 .withBidirectionalLanguagesSupport
                 .withoutAutoresizingMaskConstraints
 
-            timestampLabel!.textColor = uiConfig.colorPalette.subtitleText
-            timestampLabel!.font = uiConfig.font.footnote
+            timestampLabel!.textColor = appearance.colorPalette.subtitleText
+            timestampLabel!.font = appearance.fonts.footnote
         }
         return timestampLabel!
     }
@@ -599,8 +599,8 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
             onlyVisibleForYouIconImageView = UIImageView()
                 .withoutAutoresizingMaskConstraints
 
-            onlyVisibleForYouIconImageView!.tintColor = uiConfig.colorPalette.subtitleText
-            onlyVisibleForYouIconImageView!.image = uiConfig.images.onlyVisibleToCurrentUser
+            onlyVisibleForYouIconImageView!.tintColor = appearance.colorPalette.subtitleText
+            onlyVisibleForYouIconImageView!.image = appearance.images.onlyVisibleToCurrentUser
             onlyVisibleForYouIconImageView!.contentMode = .scaleAspectFit
         }
         return onlyVisibleForYouIconImageView!
@@ -615,9 +615,9 @@ open class _MessageContentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvid
                 .withBidirectionalLanguagesSupport
                 .withoutAutoresizingMaskConstraints
 
-            onlyVisibleForYouLabel!.textColor = uiConfig.colorPalette.subtitleText
+            onlyVisibleForYouLabel!.textColor = appearance.colorPalette.subtitleText
             onlyVisibleForYouLabel!.text = L10n.Message.onlyVisibleToYou
-            onlyVisibleForYouLabel!.font = uiConfig.font.footnote
+            onlyVisibleForYouLabel!.font = appearance.fonts.footnote
         }
         return onlyVisibleForYouLabel!
     }
