@@ -63,7 +63,7 @@ struct ChannelReadUpdaterMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware 
         newMessageAt: Date,
         session: DatabaseSession
     ) {
-        guard let currentUserId = session.currentUser()?.user.id, currentUserId != userId else {
+        guard let currentUserId = session.currentUser?.user.id, currentUserId != userId else {
             // Own messages don't increase unread count
             return
         }

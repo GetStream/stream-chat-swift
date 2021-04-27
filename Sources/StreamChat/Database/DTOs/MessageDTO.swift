@@ -219,7 +219,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         quotedMessageId: MessageId?,
         extraData: ExtraData
     ) throws -> MessageDTO {
-        guard let currentUserDTO = currentUser() else {
+        guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
         
@@ -397,7 +397,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     }
 
     func pin(message: MessageDTO, pinning: MessagePinning) throws {
-        guard let currentUserDTO = currentUser() else {
+        guard let currentUserDTO = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
         let pinnedDate = Date()
@@ -493,7 +493,7 @@ private extension _ChatMessage {
             pinDetails = nil
         }
         
-        if let currentUser = context.currentUser() {
+        if let currentUser = context.currentUser {
             isSentByCurrentUser = currentUser.user.id == dto.user.id
             
             if dto.reactions.isEmpty {

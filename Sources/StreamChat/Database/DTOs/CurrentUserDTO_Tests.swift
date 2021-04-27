@@ -57,7 +57,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
         
         // Load the user from the db and check the fields are correct
         let loadedCurrentUser: CurrentChatUser = try XCTUnwrap(
-            database.viewContext.currentUser()?.asModel()
+            database.viewContext.currentUser?.asModel()
         )
         
         XCTAssertEqual(payload.id, loadedCurrentUser.id)
@@ -131,7 +131,7 @@ class CurrentUserModelDTO_Tests: XCTestCase {
             userDTO.user.extraData = #"{"invalid": json}"#.data(using: .utf8)!
         }
         
-        let loadedUser: CurrentChatUser? = database.viewContext.currentUser()?.asModel()
+        let loadedUser: CurrentChatUser? = database.viewContext.currentUser?.asModel()
         XCTAssertEqual(loadedUser?.extraData, .defaultValue)
     }
 }

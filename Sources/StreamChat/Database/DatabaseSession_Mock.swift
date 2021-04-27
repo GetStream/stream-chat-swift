@@ -68,9 +68,7 @@ extension DatabaseSessionMock {
         underlyingSession.deleteDevice(id: id)
     }
     
-    func currentUser() -> CurrentUserDTO? {
-        underlyingSession.currentUser()
-    }
+    var currentUser: CurrentUserDTO? { underlyingSession.currentUser }
     
     func createNewMessage<ExtraData>(
         in cid: ChannelId,

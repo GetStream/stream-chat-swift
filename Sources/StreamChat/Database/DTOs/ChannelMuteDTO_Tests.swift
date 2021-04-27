@@ -43,7 +43,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         XCTAssertEqual(channel.muteDetails?.createdAt, mutePayload.createdAt)
         XCTAssertEqual(channel.muteDetails?.updatedAt, mutePayload.updatedAt)
 
-        let currentUser: CurrentChatUser = try XCTUnwrap(database.viewContext.currentUser()?.asModel())
+        let currentUser: CurrentChatUser = try XCTUnwrap(database.viewContext.currentUser?.asModel())
         XCTAssertEqual(currentUser.mutedChannels, [channel])
     }
 

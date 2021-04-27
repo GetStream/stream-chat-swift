@@ -62,7 +62,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         
         // Set `lastReceivedEventDate` field
         try database.writeSynchronously {
-            let dto = try XCTUnwrap($0.currentUser())
+            let dto = try XCTUnwrap($0.currentUser)
             dto.lastReceivedEventDate = Date()
         }
         
@@ -88,7 +88,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
 
         // Set `lastReceivedEventDate`
         try database.writeSynchronously { session in
-            let currentUser = try XCTUnwrap(session.currentUser())
+            let currentUser = try XCTUnwrap(session.currentUser)
             currentUser.lastReceivedEventDate = lastReceivedEventDate
         }
         
@@ -118,7 +118,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         
         // Set `lastReceivedEventDate`
         try database.writeSynchronously { session in
-            let currentUser = try XCTUnwrap(session.currentUser())
+            let currentUser = try XCTUnwrap(session.currentUser)
             currentUser.lastReceivedEventDate = Date()
         }
         
@@ -154,7 +154,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         try database.createChannel(cid: (events.first as! EventWithChannelId).cid)
         
         try database.writeSynchronously { session in
-            let currentUser = try XCTUnwrap(session.currentUser())
+            let currentUser = try XCTUnwrap(session.currentUser)
             currentUser.lastReceivedEventDate = .unique
         }
         
@@ -184,7 +184,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         
         // Set `lastReceivedEventDate`
         try database.writeSynchronously { session in
-            let currentUser = try XCTUnwrap(session.currentUser())
+            let currentUser = try XCTUnwrap(session.currentUser)
             currentUser.lastReceivedEventDate = Date()
         }
         
