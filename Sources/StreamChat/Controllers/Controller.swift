@@ -16,11 +16,20 @@ public protocol Controller {
 extension Controller {
     /// A helper function to ensure the callback is performed on the callback queue.
     func callback(_ action: @escaping () -> Void) {
-        if callbackQueue == .main, Thread.current.isMainThread {
-            // Perform the action on the main queue synchronously
-            action()
+        if Thread.current.isMainThread {
+            if callbackQueue == .main {
+                // We perform the callback synchronously
+                action()
+            } else {
+                // We dispatch from the main queue, we must perform
+                // the callback must be performed asynchronously
+                callbackQueue.async {
+                    action()
+                }
+            }
         } else {
-            callbackQueue.async {
+            // Dispatching from a background queue, the callback can be performed synchronously
+            callbackQueue.sync {
                 action()
             }
         }
