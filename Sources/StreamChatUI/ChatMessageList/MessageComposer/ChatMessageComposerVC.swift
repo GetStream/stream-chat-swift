@@ -14,7 +14,7 @@ public protocol _ChatMessageComposerViewControllerDelegate: AnyObject {
 public typealias ChatMessageComposerVC = _ChatMessageComposerVC<NoExtraData>
 
 open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
-    UIConfigProvider,
+    ThemeProvider,
     UITextViewDelegate,
     UIImagePickerControllerDelegate,
     UIDocumentPickerDelegate,
@@ -29,7 +29,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     public var userSuggestionSearchController: _ChatUserSearchController<ExtraData>!
     public private(set) lazy var suggestionsViewController =
-        uiConfig.messageComposer.suggestionsViewController.init()
+        components.messageComposer.suggestionsViewController.init()
 
     public enum State {
         case initial
@@ -65,13 +65,13 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     // MARK: - Subviews
         
-    public private(set) lazy var composerView = uiConfig
+    public private(set) lazy var composerView = components
         .messageComposer
         .messageComposerView.init()
         .withoutAutoresizingMaskConstraints
     
     /// Convenience getter for underlying `textView`.
-    public var textView: _ChatMessageComposerInputTextView<ExtraData> {
+    public var textView: ChatMessageComposerInputTextView {
         composerView.messageInputView.textView
     }
     
@@ -123,7 +123,8 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             dismissSuggestionsViewController()
         case let .quote(messageToQuote):
             composerView.titleLabel.text = L10n.Composer.Title.reply
-            let image = uiConfig.images.messageComposerReplyButton.tinted(with: uiConfig.colorPalette.inactiveTint)
+            let image = appearance.images.messageComposerReplyButton
+                .tinted(with: appearance.colorPalette.inactiveTint)
             composerView.stateIcon.image = image
             Animate {
                 self.composerView.topContainer.isHidden = false
@@ -133,7 +134,8 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             composerView.messageQuoteView.content = .init(message: messageToQuote, avatarAlignment: .left)
         case let .edit(message):
             composerView.titleLabel.text = L10n.Composer.Title.edit
-            let image = uiConfig.images.messageComposerEditMessage.tinted(with: uiConfig.colorPalette.inactiveTint)
+            let image = appearance.images.messageComposerEditMessage
+                .tinted(with: appearance.colorPalette.inactiveTint)
             composerView.stateIcon.image = image
             Animate {
                 self.composerView.editButton.isHidden = false
@@ -548,7 +550,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         let documentsInfo: [DocumentAttachmentInfo] = urls.map {
-            let preview = uiConfig.images.documentPreviews[$0.pathExtension] ?? uiConfig.images.fileFallback
+            let preview = appearance.images.documentPreviews[$0.pathExtension] ?? appearance.images.fileFallback
             let size = (try? FileManager.default.attributesOfItem(atPath: $0.path)[.size] as? Int64) ?? 0
             return (preview, $0, size)
         }

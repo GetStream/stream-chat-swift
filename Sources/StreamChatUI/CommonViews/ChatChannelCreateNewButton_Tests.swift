@@ -25,12 +25,12 @@ class ChatChannelCreateNewButton_Tests: XCTestCase {
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
-    func test_customizationUsingUIConfig() {
-        var config = UIConfig()
-        config.images.newChat = config.images.close
+    func test_customizationUsingAppearance() {
+        var appearance = Appearance()
+        appearance.images.newChat = appearance.images.close
 
         let view = ChatChannelCreateNewButton().withoutAutoresizingMaskConstraints
-        view.uiConfig = config
+        view.appearance = appearance
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 }

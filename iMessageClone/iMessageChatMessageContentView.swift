@@ -31,7 +31,7 @@ final class iMessageChatMessageContentView: ChatMessageContentView {
 
         textView!.attributedText = .init(string: textView!.attributedText.string, attributes: [
             .foregroundColor: message.isSentByCurrentUser == true ? UIColor.white : UIColor.black,
-            .font: uiConfig.font.body
+            .font: appearance.fonts.body
         ])
     }
 }

@@ -48,7 +48,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         // TODO: https://stream-io.atlassian.net/browse/CIS-652
     }
 
-    func test_appearanceCustomization_usingUIConfig() {
+    func test_appearanceCustomization_usingAppearanceAndComponents() {
         class RectIndicator: UIView, MaskProviding {
             override func didMoveToSuperview() {
                 super.didMoveToSuperview()
@@ -60,14 +60,16 @@ class ChatChannelAvatarView_Tests: XCTestCase {
                 UIBezierPath(rect: frame.insetBy(dx: -frame.width / 4, dy: -frame.height / 4)).cgPath
             }
         }
-
-        var config = UIConfig()
-        config.onlineIndicatorView = RectIndicator.self
-        config.colorPalette.alternativeActiveTint = .brown
+        
+        var appearance = Appearance()
+        var components = Components()
+        appearance.colorPalette.alternativeActiveTint = .brown
+        components.onlineIndicatorView = RectIndicator.self
 
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
-        view.uiConfig = config
+        view.appearance = appearance
+        view.components = components
         view.content = (channel: channel, currentUserId: currentUserId)
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
@@ -99,11 +101,11 @@ class ChatChannelAvatarView_Tests: XCTestCase {
     @available(iOS 13.0, *)
     func test_wrappedChatChannelAvatarViewInSwiftUI() {
         struct CustomView: View {
-            @EnvironmentObject var uiConfig: UIConfig.ObservableObject
+            @EnvironmentObject var components: Components.ObservableObject
             let content: (channel: _ChatChannel<NoExtraData>?, currentUserId: UserId?)
             
             var body: some View {
-                uiConfig.channelList.itemSubviews.avatarView.asView(content)
+                components.channelList.itemSubviews.avatarView.asView(content)
                     .frame(width: 50, height: 50)
             }
         }
@@ -118,10 +120,10 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         
         let channel = ChatChannel.mock(cid: .unique)
         
-        var config = UIConfig()
-        config.channelList.itemSubviews.avatarView = CustomAvatarView.self
+        var components = Components()
+        components.channelList.itemSubviews.avatarView = CustomAvatarView.self
         let view = CustomView(content: (channel, .unique))
-            .environmentObject(config.asObservableObject)
+            .environmentObject(components.asObservableObject)
         
         AssertSnapshot(view)
     }

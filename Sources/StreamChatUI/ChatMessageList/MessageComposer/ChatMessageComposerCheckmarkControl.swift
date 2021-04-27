@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerCheckmarkControl = _ChatMessageComposerCheckmarkControl<NoExtraData>
-
-open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
+open class ChatMessageComposerCheckmarkControl: _Control, AppearanceProvider {
     // MARK: - Properties
     
     public var checkmarkHeight: CGFloat = 16
@@ -41,8 +39,8 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Con
     
     override open func setUpAppearance() {
         super.setUpAppearance()
-        label.font = uiConfig.font.subheadline
-        label.textColor = uiConfig.colorPalette.subtitleText
+        label.font = appearance.fonts.subheadline
+        label.textColor = appearance.colorPalette.subtitleText
         
         checkmark.layer.cornerRadius = 4
         checkmark.layer.borderWidth = 2
@@ -66,10 +64,11 @@ open class _ChatMessageComposerCheckmarkControl<ExtraData: ExtraDataTypes>: _Con
     }
     
     override open func updateContent() {
-        let isSelectedImage = uiConfig.images.messageComposerAlsoSendToChannelCheck.tinted(with: uiConfig.colorPalette.background)
+        let isSelectedImage = appearance.images.messageComposerAlsoSendToChannelCheck
+            .tinted(with: appearance.colorPalette.background)
         checkmark.image = isSelected ? isSelectedImage : nil
         checkmark.backgroundColor = isSelected ? tintColor : .clear
-        checkmark.layer.borderColor = isSelected ? tintColor.cgColor : uiConfig.colorPalette.border2.cgColor
+        checkmark.layer.borderColor = isSelected ? tintColor.cgColor : appearance.colorPalette.border2.cgColor
     }
     
     // MARK: - Actions

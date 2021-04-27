@@ -36,7 +36,7 @@ public typealias ChatMessageListVC = _ChatMessageListVC<NoExtraData>
 open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
-    UIConfigProvider,
+    ThemeProvider,
     _ChatMessageActionsVCDelegate {
     public struct DataSource {
         public var numberOfMessages: (_ChatMessageListVC) -> Int
@@ -58,9 +58,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     public lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    public lazy var router = uiConfig.navigation.messageListRouter.init(rootViewController: self)
+    public lazy var router = components.navigation.messageListRouter.init(rootViewController: self)
 
-    public private(set) lazy var collectionViewLayout = uiConfig
+    public private(set) lazy var collectionViewLayout = components
         .messageList
         .collectionLayout
         .init()
@@ -97,7 +97,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     public private(set) lazy var collectionView: UICollectionView = {
-        let collection = uiConfig.messageList.collectionView.init(layout: collectionViewLayout)
+        let collection = components.messageList.collectionView.init(layout: collectionViewLayout)
 
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
@@ -125,8 +125,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         longPress.minimumPressDuration = 0.33
         collectionView.addGestureRecognizer(longPress)
 
-        registerMessageCell(uiConfig.messageList.defaultMessageCell)
-        // registerMessageCell(uiConfig.messageList.textOnlyMessageCell)
+        registerMessageCell(components.messageList.defaultMessageCell)
+        // registerMessageCell(components.messageList.textOnlyMessageCell)
     }
 
     override open func setUpLayout() {
@@ -140,7 +140,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        view.backgroundColor = uiConfig.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.background
         collectionView.backgroundColor = .clear
     }
 
@@ -188,7 +188,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     open func cellReuseIdentifierForMessage(_ message: _ChatMessageGroupPart<ExtraData>) -> String {
-        "\(message.isSentByCurrentUser ? "outgoing" : "incoming")_\(message.layoutOptions.rawValue)_\(uiConfig.messageList.defaultMessageCell.reuseId)"
+        "\(message.isSentByCurrentUser ? "outgoing" : "incoming")_\(message.layoutOptions.rawValue)_\(components.messageList.defaultMessageCell.reuseId)"
     }
 
     // MARK: - Actions

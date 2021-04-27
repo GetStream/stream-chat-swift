@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// Button used for final sending in ComposerView.
-public typealias ChatMessageSendButton = _ChatMessageSendButton<NoExtraData>
-
-/// Button used for final sending in ComposerView.
-open class _ChatMessageSendButton<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
+open class ChatMessageSendButton: _Button, AppearanceProvider {
     /// Override this variable to enable custom behaviour upon button enabled.
     override open var isEnabled: Bool {
         didSet {
@@ -20,11 +17,11 @@ open class _ChatMessageSendButton<ExtraData: ExtraDataTypes>: _Button, UIConfigP
     }
     
     override open func setUpLayout() {
-        let normalStateImage = uiConfig.images.messageComposerSendMessage
+        let normalStateImage = appearance.images.messageComposerSendMessage
         setImage(normalStateImage, for: .normal)
         
-        let buttonColor: UIColor = uiConfig.colorPalette.inactiveTint
-        let disabledStateImage = uiConfig.images.messageComposerSendMessage.tinted(with: buttonColor)
+        let buttonColor: UIColor = appearance.colorPalette.inactiveTint
+        let disabledStateImage = appearance.images.messageComposerSendMessage.tinted(with: buttonColor)
         setImage(disabledStateImage, for: .disabled)
     }
 }

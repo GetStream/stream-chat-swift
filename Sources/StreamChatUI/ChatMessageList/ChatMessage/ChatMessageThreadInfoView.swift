@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageThreadArrowView = _ChatMessageThreadArrowView<NoExtraData>
-
-open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class ChatMessageThreadArrowView: _View, AppearanceProvider {
     public enum Direction {
         case toTrailing
         case toLeading
@@ -30,7 +28,7 @@ open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConf
     override open func setUpAppearance() {
         super.setUpAppearance()
         shape.contentsScale = layer.contentsScale
-        shape.strokeColor = uiConfig.colorPalette.border.cgColor
+        shape.strokeColor = appearance.colorPalette.border.cgColor
         shape.fillColor = nil
         shape.lineWidth = 1.0
     }
@@ -63,12 +61,12 @@ open class _ChatMessageThreadArrowView<ExtraData: ExtraDataTypes>: _View, UIConf
 
 public typealias ChatMessageThreadInfoView = _ChatMessageThreadInfoView<NoExtraData>
 
-open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
+open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, ThemeProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
 
-    public private(set) lazy var avatarView = uiConfig
+    public private(set) lazy var avatarView = components
         .messageList
         .messageContentSubviews
         .threadParticipantAvatarView.init()
@@ -76,7 +74,7 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
     
     public private(set) lazy var replyCountLabel: UILabel = {
         let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = uiConfig.font.subheadlineBold
+        label.font = appearance.fonts.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
         label.text = L10n.Message.Threads.reply
         label.textColor = tintColor
@@ -127,7 +125,7 @@ open class _ChatMessageThreadInfoView<ExtraData: ExtraDataTypes>: _Control, UICo
 
     open func updateAppearance() {
         if isHighlighted {
-            replyCountLabel.textColor = uiConfig.colorPalette.highlightedColorForColor(tintColor)
+            replyCountLabel.textColor = appearance.colorPalette.highlightedColorForColor(tintColor)
         } else {
             replyCountLabel.textColor = tintColor
         }

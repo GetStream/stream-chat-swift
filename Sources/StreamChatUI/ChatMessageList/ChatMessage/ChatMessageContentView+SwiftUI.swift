@@ -21,7 +21,7 @@ extension _ChatMessageContentView {
     public typealias SwiftUIView = _ChatMessageContentViewSwiftUIView
 
     /// SwiftUI wrapper of `_ChatMessageContentView`.
-    /// Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_UIConfig`.
+    /// Servers to wrap custom SwiftUI view as a UIKit view so it can be easily injected into `_Components`.
     public class SwiftUIWrapper<Content: SwiftUIView>: _ChatMessageContentView<ExtraData>, ObservableObject
         where Content.ExtraData == ExtraData
     {
@@ -35,7 +35,8 @@ extension _ChatMessageContentView {
             super.setUp()
 
             let view = Content(dataSource: self)
-                .environmentObject(uiConfig.asObservableObject)
+                .environmentObject(components.asObservableObject)
+                .environmentObject(appearance.asObservableObject)
             hostingController = UIHostingController(rootView: view)
             hostingController!.view.backgroundColor = .clear
         }

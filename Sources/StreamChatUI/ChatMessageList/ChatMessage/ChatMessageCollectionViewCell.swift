@@ -7,7 +7,7 @@ import UIKit
 
 public typealias СhatMessageCollectionViewCell = _СhatMessageCollectionViewCell<NoExtraData>
 
-open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+open class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, ComponentsProvider {
     // MARK: - Reuse identifiers
 
     class var reuseId: String { String(describing: self) + String(describing: Self.messageContentViewClass) }

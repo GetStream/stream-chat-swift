@@ -19,11 +19,11 @@ extension _ChatMessageFileAttachmentListView {
 
         override open func setUpAppearance() {
             super.setUpAppearance()
-            backgroundColor = uiConfig.colorPalette.popoverBackground
+            backgroundColor = appearance.colorPalette.popoverBackground
             layer.cornerRadius = 12
             layer.masksToBounds = true
             layer.borderWidth = 1
-            layer.borderColor = uiConfig.colorPalette.border.cgColor
+            layer.borderColor = appearance.colorPalette.border.cgColor
         }
 
         override open func setUpLayout() {
@@ -64,7 +64,7 @@ extension _ChatMessageFileAttachmentListView {
         private var fileIcon: UIImage? {
             guard let file = content?.attachment.file else { return nil }
 
-            return uiConfig.images.fileIcons[file.type] ?? uiConfig.images.fileFallback
+            return appearance.images.fileIcons[file.type] ?? appearance.images.fileFallback
         }
     }
 }

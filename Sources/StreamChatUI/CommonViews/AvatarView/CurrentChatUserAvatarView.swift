@@ -17,7 +17,7 @@ public typealias CurrentChatUserAvatarView = _CurrentChatUserAvatarView<NoExtraD
 /// It uses `CurrentChatUserController` for its input data and is able to update the avatar automatically based
 /// on the currently logged-in user.
 ///
-open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
+open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, ThemeProvider {
     /// `StreamChat`'s controller that observe the currently logged-in user.
     open var controller: _CurrentChatUserController<ExtraData>? {
         didSet {
@@ -28,7 +28,7 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, UICo
     }
     
     /// The view that shows the current user's avatar.
-    open private(set) lazy var avatarView: ChatAvatarView = uiConfig
+    open private(set) lazy var avatarView: ChatAvatarView = components
         .currentUser
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
@@ -36,7 +36,7 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, UICo
     override open func setUpAppearance() {
         super.setUpAppearance()
         backgroundColor = .clear
-        avatarView.imageView.backgroundColor = uiConfig.colorPalette.background
+        avatarView.imageView.backgroundColor = appearance.colorPalette.background
     }
 
     override open var isEnabled: Bool {

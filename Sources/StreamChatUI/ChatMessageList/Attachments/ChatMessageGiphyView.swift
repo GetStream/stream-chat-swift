@@ -9,7 +9,7 @@ import UIKit
 
 public typealias ChatMessageGiphyView = _ChatMessageGiphyView<NoExtraData>
 
-open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider {
     public var content: ChatMessageDefaultAttachment? {
         didSet {
             let isDifferentImage = oldValue?.imageURL != content?.imageURL
@@ -24,7 +24,7 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
 
     public private(set) lazy var imageView = UIImageView().withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var badge = uiConfig
+    public private(set) lazy var badge = components
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -32,7 +32,7 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var loadingIndicator = uiConfig
+    public private(set) lazy var loadingIndicator = components
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -91,17 +91,17 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, UIConfigProv
 }
 
 extension _ChatMessageGiphyView {
-    open class GiphyBadge: _View, UIConfigProvider {
+    open class GiphyBadge: _View, AppearanceProvider {
         public private(set) lazy var title: UILabel = {
             let label = UILabel().withoutAutoresizingMaskConstraints
             label.text = "GIPHY"
-            label.textColor = uiConfig.colorPalette.staticColorText
-            label.font = uiConfig.font.bodyBold
+            label.textColor = appearance.colorPalette.staticColorText
+            label.font = appearance.fonts.bodyBold
             return label.withBidirectionalLanguagesSupport
         }()
 
         public private(set) lazy var lightning = UIImageView(
-            image: uiConfig
+            image: appearance
                 .images
                 .messageComposerCommandButton
         )
@@ -124,7 +124,7 @@ extension _ChatMessageGiphyView {
         override open func setUpAppearance() {
             super.setUpAppearance()
             backgroundColor = UIColor.black.withAlphaComponent(0.6)
-            lightning.tintColor = uiConfig.colorPalette.staticColorText
+            lightning.tintColor = appearance.colorPalette.staticColorText
         }
 
         override open func layoutSubviews() {

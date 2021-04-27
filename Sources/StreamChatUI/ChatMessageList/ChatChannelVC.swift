@@ -10,7 +10,7 @@ public typealias ChatChannelVC = _ChatChannelVC<NoExtraData>
 open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
     // MARK: - Properties
 
-    public lazy var router = uiConfig.navigation.channelDetailRouter.init(rootViewController: self)
+    public lazy var router = components.navigation.channelDetailRouter.init(rootViewController: self)
     
     // MARK: - Life Cycle
     
@@ -28,7 +28,7 @@ open class _ChatChannelVC<ExtraData: ExtraDataTypes>: _ChatVC<ExtraData> {
         let navbarListener = ChatChannelNavigationBarListener.make(
             for: channel.cid,
             in: channelController.client,
-            using: uiConfig.channelList.channelNamer
+            using: components.channelList.channelNamer
         )
         navbarListener.onDataChange = handler
         return navbarListener

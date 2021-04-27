@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageMetadataView = _ChatMessageMetadataView<NoExtraData>
 
-open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
@@ -24,7 +24,7 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
         return stack.withoutAutoresizingMaskConstraints
     }()
 
-    public private(set) lazy var currentUserVisabilityIndicator = uiConfig
+    public private(set) lazy var currentUserVisabilityIndicator = components
         .messageList
         .messageContentSubviews
         .onlyVisibleForCurrentUserIndicator
@@ -37,11 +37,11 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        let color = uiConfig.colorPalette.subtitleText
+        let color = appearance.colorPalette.subtitleText
         currentUserVisabilityIndicator.textLabel.textColor = color
         currentUserVisabilityIndicator.imageView.tintColor = color
         
-        timestampLabel.font = uiConfig.font.subheadline
+        timestampLabel.font = appearance.fonts.subheadline
         timestampLabel.adjustsFontForContentSizeCategory = true
         timestampLabel.textColor = color
     }
@@ -62,7 +62,7 @@ open class _ChatMessageMetadataView<ExtraData: ExtraDataTypes>: _View, UIConfigP
     }
 }
 
-open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class ChatMessageOnlyVisibleForCurrentUserIndicator: _View, AppearanceProvider {
     // MARK: - Subviews
 
     public private(set) lazy var stack: UIStackView = {
@@ -80,7 +80,7 @@ open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTyp
 
     public private(set) lazy var textLabel: UILabel = {
         let label = UILabel()
-        label.font = uiConfig.font.subheadline
+        label.font = appearance.fonts.subheadline
         label.adjustsFontForContentSizeCategory = true
         return label.withoutAutoresizingMaskConstraints
     }()
@@ -89,7 +89,7 @@ open class ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData: ExtraDataTyp
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        imageView.image = uiConfig.images.onlyVisibleToCurrentUser
+        imageView.image = appearance.images.onlyVisibleToCurrentUser
         textLabel.text = L10n.Message.onlyVisibleToYou
     }
 

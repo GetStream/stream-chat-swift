@@ -10,17 +10,20 @@ extension ChatClient {
     /// The singleton instance of `ChatClient`
     static let shared: ChatClient = {
         // Register custom UI elements
-        var uiConfig = UIConfig()
-        uiConfig.channelList.itemView = iMessageChatChannelListItemView.self
-        uiConfig.channelList.cellSeparatorReusableView = iMessageCellSeparatorView.self
+        var appearance = Appearance()
+        var components = Components()
+        
+        components.channelList.itemView = iMessageChatChannelListItemView.self
+        components.channelList.cellSeparatorReusableView = iMessageCellSeparatorView.self
 
-        uiConfig.navigation.channelListRouter = iMessageChatChannelListRouter.self
-        uiConfig.images.newChat = UIImage(systemName: "square.and.pencil")!
-        uiConfig.messageComposer.messageComposerView = iMessageChatMessageComposerView.self
-        uiConfig.messageList.defaultMessageCell = iMessageСhatMessageCollectionViewCell.self
-        uiConfig.messageComposer.messageComposerViewController = iMessageChatComposerViewController.self
+        components.navigation.channelListRouter = iMessageChatChannelListRouter.self
+        appearance.images.newChat = UIImage(systemName: "square.and.pencil")!
+        components.messageComposer.messageComposerView = iMessageChatMessageComposerView.self
+        components.messageList.defaultMessageCell = iMessageСhatMessageCollectionViewCell.self
+        components.messageComposer.messageComposerViewController = iMessageChatComposerViewController.self
 
-        UIConfig.default = uiConfig
+        Appearance.default = appearance
+        Components.default = components
 
         let config = ChatClientConfig(apiKey: APIKey("q95x9hkbyd6p"))
         return ChatClient(

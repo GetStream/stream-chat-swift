@@ -69,7 +69,7 @@ class ChatMessageActionControl_Tests: XCTestCase {
         // Simulate background.
         let backgroundView = UIView()
             .withoutAutoresizingMaskConstraints
-        backgroundView.backgroundColor = view.uiConfig.colorPalette.background
+        backgroundView.backgroundColor = view.appearance.colorPalette.background
         backgroundView.embed(view)
         
         AssertSnapshot(backgroundView)
@@ -109,13 +109,13 @@ class ChatMessageActionControl_Tests: XCTestCase {
         AssertSnapshot(view)
     }
     
-    func test_appearanceCustomization_usingUIConfig() {
-        var config = UIConfig()
-        config.colorPalette.text = .blue
+    func test_appearanceCustomization_usingAppearance() {
+        var appearance = Appearance()
+        appearance.colorPalette.text = .blue
         
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = content
-        view.uiConfig = config
+        view.appearance = appearance
         
         AssertSnapshot(view)
     }

@@ -24,9 +24,9 @@ class CurrentChatUserAvatarView_Tests: XCTestCase {
     func test_emptyAppearance() {
         let view = CurrentChatUserAvatarView().withoutAutoresizingMaskConstraints
         
-        var config = UIConfig()
-        config.colorPalette.background = .yellow
-        view.uiConfig = config
+        var appearance = Appearance()
+        appearance.colorPalette.background = .yellow
+        view.appearance = appearance
         
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }

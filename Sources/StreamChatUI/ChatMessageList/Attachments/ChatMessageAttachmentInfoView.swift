@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageAttachmentInfoView = _ChatMessageAttachmentInfoView<NoExtraData>
 
-open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
         didSet { updateContentIfNeeded() }
     }
@@ -16,7 +16,7 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
 
     public private(set) lazy var fileNameLabel: UILabel = {
         let label = UILabel()
-        label.font = uiConfig.font.bodyBold
+        label.font = appearance.fonts.bodyBold
         label.adjustsFontForContentSizeCategory = true
         return label
             .withoutAutoresizingMaskConstraints
@@ -25,14 +25,14 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
 
     public private(set) lazy var fileSizeLabel: UILabel = {
         let label = UILabel()
-        label.font = uiConfig.font.subheadlineBold
+        label.font = appearance.fonts.subheadlineBold
         label.adjustsFontForContentSizeCategory = true
         return label
             .withoutAutoresizingMaskConstraints
             .withBidirectionalLanguagesSupport
     }()
 
-    public private(set) lazy var loadingIndicator = uiConfig
+    public private(set) lazy var loadingIndicator = components
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -63,7 +63,7 @@ open class _ChatMessageAttachmentInfoView<ExtraData: ExtraDataTypes>: _View, UIC
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        fileSizeLabel.textColor = uiConfig.colorPalette.subtitleText
+        fileSizeLabel.textColor = appearance.colorPalette.subtitleText
     }
 
     override open func setUp() {
@@ -120,7 +120,7 @@ private extension _ChatMessageAttachmentInfoView {
     var fileAttachmentActionIcon: UIImage? {
         guard let attachment = content?.attachment else { return nil }
 
-        return uiConfig.images.fileAttachmentActionIcons[attachment.localState]
+        return appearance.images.fileAttachmentActionIcons[attachment.localState]
     }
 
     var fileSize: String? {

@@ -59,7 +59,7 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
         AssertSnapshot(view, suffix: "user name not set")
     }
 
-    func test_appearanceCustomization_usingUIConfig() {
+    func test_appearanceCustomization_usingComponents() {
         class RectIndicator: UIView & MaskProviding {
             override func didMoveToSuperview() {
                 super.didMoveToSuperview()
@@ -80,14 +80,14 @@ class ChatMessageComposerMentionCellView_Tests: XCTestCase {
             }
         }
 
-        var config = UIConfig()
-        config.onlineIndicatorView = RectIndicator.self
-        config.messageComposer.mentionAvatarView = CustomAvatarView.self
+        var components = Components()
+        components.onlineIndicatorView = RectIndicator.self
+        components.messageComposer.mentionAvatarView = CustomAvatarView.self
 
         let view = ChatMessageComposerMentionCellView().withoutAutoresizingMaskConstraints
         view.widthAnchor.constraint(equalToConstant: Self.defaultCellWidth).isActive = true
 
-        view.uiConfig = config
+        view.components = components
         view.content = chatUserOnline
         AssertSnapshot(view, suffix: "online indicator visible")
 

@@ -7,7 +7,7 @@ import StreamChat
 import UIKit
 
 extension _ChatMessageImageGallery {
-    open class ImagePreview: _View, UIConfigProvider {
+    open class ImagePreview: _View, ThemeProvider {
         public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
             didSet { updateContentIfNeeded() }
         }
@@ -25,7 +25,7 @@ extension _ChatMessageImageGallery {
             return imageView.withoutAutoresizingMaskConstraints
         }()
 
-        public private(set) lazy var loadingIndicator = uiConfig
+        public private(set) lazy var loadingIndicator = components
             .messageList
             .messageContentSubviews
             .attachmentSubviews
@@ -33,7 +33,7 @@ extension _ChatMessageImageGallery {
             .init()
             .withoutAutoresizingMaskConstraints
 
-        public private(set) lazy var uploadingOverlay = uiConfig
+        public private(set) lazy var uploadingOverlay = components
             .messageList
             .messageContentSubviews
             .attachmentSubviews
@@ -45,7 +45,7 @@ extension _ChatMessageImageGallery {
 
         override open func setUpAppearance() {
             super.setUpAppearance()
-            imageView.backgroundColor = uiConfig.colorPalette.background1
+            imageView.backgroundColor = appearance.colorPalette.background1
         }
 
         override open func setUp() {

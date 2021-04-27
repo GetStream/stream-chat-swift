@@ -39,11 +39,11 @@ final class SlackChatChannelViewController: ChatChannelVC {
             onlineIndicator.widthAnchor.constraint(equalTo: onlineIndicator.heightAnchor)
         ])
         
-        titleLabel.font = uiConfig.font.bodyBold
+        titleLabel.font = appearance.fonts.bodyBold
         nameStackView.addArrangedSubview(titleLabel)
         
         let detailsLabel = UILabel()
-        detailsLabel.font = uiConfig.font.footnote
+        detailsLabel.font = appearance.fonts.footnote
         detailsLabel.text = "View details"
         titleStackView.addArrangedSubview(detailsLabel)
         

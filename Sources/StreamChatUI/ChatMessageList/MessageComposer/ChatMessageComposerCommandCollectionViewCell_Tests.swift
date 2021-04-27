@@ -15,35 +15,35 @@ class ChatMessageComposerCommandCollectionViewCell_Tests: XCTestCase {
     private let defaultCommand = Command(name: "Default", description: "", set: "", args: "[text]")
     
     func test_updateContent_whenCommandIsRecognized_commandIconImageIsUsed() {
-        var config = UIConfig()
-        config.images.commandIcons = [
+        var appearance = Appearance()
+        appearance.images.commandIcons = [
             "yoda": TestImages.yoda.image
         ]
-        config.images.messageComposerCommandFallback = TestImages.vader.image
+        appearance.images.messageComposerCommandFallback = TestImages.vader.image
         
         let view = ChatMessageComposerCommandCellView()
-        view.uiConfig = config
+        view.appearance = appearance
         view.content = .init(name: "yoda", description: "", set: "", args: "[text]")
         
         view.updateContent()
         
-        XCTAssertEqual(view.commandImageView.image, config.images.commandIcons["yoda"])
+        XCTAssertEqual(view.commandImageView.image, appearance.images.commandIcons["yoda"])
     }
     
     func test_updateContent_whenCommandIsNotRecognized_fallbackCommandImageIsUsed() {
-        var config = UIConfig()
-        config.images.commandIcons = [
+        var appearance = Appearance()
+        appearance.images.commandIcons = [
             "yoda": TestImages.yoda.image
         ]
-        config.images.messageComposerCommandFallback = TestImages.vader.image
+        appearance.images.messageComposerCommandFallback = TestImages.vader.image
         
         let view = ChatMessageComposerCommandCellView()
-        view.uiConfig = config
+        view.appearance = appearance
         view.content = .init(name: "R2", description: "", set: "", args: "[text]")
         
         view.updateContent()
         
-        XCTAssertEqual(view.commandImageView.image, config.images.messageComposerCommandFallback)
+        XCTAssertEqual(view.commandImageView.image, appearance.images.messageComposerCommandFallback)
     }
     
     func test_defaultAppearance() {
@@ -52,14 +52,14 @@ class ChatMessageComposerCommandCollectionViewCell_Tests: XCTestCase {
         AssertSnapshot(view)
     }
 
-    func test_appearanceCustomization_usingUIConfig() {
-        var config = UIConfig()
-        config.images.commandIcons = [
+    func test_appearanceCustomization_usingAppearance() {
+        var appearance = Appearance()
+        appearance.images.commandIcons = [
             "default": TestImages.yoda.image
         ]
         
         let view = makeView()
-        view.uiConfig = config
+        view.appearance = appearance
         view.content = defaultCommand
         
         AssertSnapshot(view, variants: [.defaultLight])

@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatMessageComposerMentionCellView = _ChatMessageComposerMentionCellView<NoExtraData>
 
 /// A View that is embed inside `UICollectionViewCell`  which shows information about user which we want to tag in suggestions
-open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     /// Content of the cell - `ChatUser` instance from which we take all information.
     open var content: _ChatUser<ExtraData.User>? {
         didSet {
@@ -18,7 +18,7 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
     }
 
     /// `_ChatChannelAvatarView` instance which holds photo of user for tagging.
-    open private(set) lazy var avatarView: _ChatUserAvatarView<ExtraData> = uiConfig
+    open private(set) lazy var avatarView: _ChatUserAvatarView<ExtraData> = components
         .messageComposer
         .mentionAvatarView
         .init()
@@ -41,15 +41,15 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = uiConfig.colorPalette.popoverBackground
-        usernameLabel.font = uiConfig.font.headlineBold
+        backgroundColor = appearance.colorPalette.popoverBackground
+        usernameLabel.font = appearance.fonts.headlineBold
 
-        usernameTagLabel.font = uiConfig.font.subheadlineBold
-        usernameTagLabel.textColor = uiConfig.colorPalette.subtitleText
+        usernameTagLabel.font = appearance.fonts.subheadlineBold
+        usernameTagLabel.textColor = appearance.colorPalette.subtitleText
 
-        usernameLabel.textColor = uiConfig.colorPalette.text
+        usernameLabel.textColor = appearance.colorPalette.text
 
-        mentionSymbolImageView.image = uiConfig.images.messageComposerCommandsMention
+        mentionSymbolImageView.image = appearance.images.messageComposerCommandsMention
     }
 
     override open func setUpLayout() {
@@ -120,12 +120,12 @@ open class _ChatMessageComposerMentionCellView<ExtraData: ExtraDataTypes>: _View
 public typealias ChatMessageComposerMentionCollectionViewCell = _ChatMessageComposerMentionCollectionViewCell<NoExtraData>
 
 /// `UICollectionView` subclass which embeds inside `ChatMessageComposerMentionCellView`
-open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+open class _ChatMessageComposerMentionCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, ComponentsProvider {
     /// Reuse identifier for the cell used in `collectionView(cellForItem:)`
     open class var reuseId: String { String(describing: self) }
 
     /// Instance of `ChatMessageComposerMentionCellView` which shows information about the mentioned user.
-    open lazy var mentionView: _ChatMessageComposerMentionCellView<ExtraData> = uiConfig
+    open lazy var mentionView: _ChatMessageComposerMentionCellView<ExtraData> = components
         .messageComposer
         .suggestionsMentionCellView.init()
         .withoutAutoresizingMaskConstraints

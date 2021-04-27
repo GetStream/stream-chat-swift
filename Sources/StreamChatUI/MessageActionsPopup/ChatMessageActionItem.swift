@@ -39,13 +39,13 @@ public struct InlineReplyActionItem: ChatMessageActionItem {
     /// Init of `InlineReplyActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `InlineReplyActionItem` is tapped.
-    ///     - uiConfig: `_UIConfig` that is used to configure UI properties.
-    public init<ExtraData: ExtraDataTypes>(
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
         action: @escaping (ChatMessageActionItem) -> Void,
-        uiConfig: _UIConfig<ExtraData> = .default
+        appearance: Appearance = .default
     ) {
         self.action = action
-        icon = uiConfig.images.messageActionInlineReply
+        icon = appearance.images.messageActionInlineReply
     }
 }
 
@@ -58,13 +58,13 @@ public struct ThreadReplyActionItem: ChatMessageActionItem {
     /// Init of `ThreadReplyActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `ThreadReplyActionItem` is tapped.
-    ///     - uiConfig: `_UIConfig` that is used to configure UI properties.
-    public init<ExtraData: ExtraDataTypes>(
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
         action: @escaping (ChatMessageActionItem) -> Void,
-        uiConfig: _UIConfig<ExtraData> = .default
+        appearance: Appearance = .default
     ) {
         self.action = action
-        icon = uiConfig.images.messageActionThreadReply
+        icon = appearance.images.messageActionThreadReply
     }
 }
 
@@ -77,13 +77,13 @@ public struct EditActionItem: ChatMessageActionItem {
     /// Init of `EditActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `EditActionItem` is tapped.
-    ///     - uiConfig: `_UIConfig` that is used to configure UI properties.
-    public init<ExtraData: ExtraDataTypes>(
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
         action: @escaping (ChatMessageActionItem) -> Void,
-        uiConfig: _UIConfig<ExtraData> = .default
+        appearance: Appearance = .default
     ) {
         self.action = action
-        icon = uiConfig.images.messageActionEdit
+        icon = appearance.images.messageActionEdit
     }
 }
 
@@ -96,13 +96,13 @@ public struct CopyActionItem: ChatMessageActionItem {
     /// Init of `CopyActionItem`
     /// - Parameters:
     ///     - action: Action to be triggered when `CopyActionItem` is tapped.
-    ///     - uiConfig: `_UIConfig` that is used to configure UI properties.
-    public init<ExtraData: ExtraDataTypes>(
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
         action: @escaping (ChatMessageActionItem) -> Void,
-        uiConfig: _UIConfig<ExtraData> = .default
+        appearance: Appearance = .default
     ) {
         self.action = action
-        icon = uiConfig.images.messageActionCopy
+        icon = appearance.images.messageActionCopy
     }
 }
 
@@ -115,13 +115,13 @@ public struct UnblockUserActionItem: ChatMessageActionItem {
     /// Init of `UnblockUserActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `UnblockUserActionItem` is tapped.
-    ///     - uiConfig: `_UIConfig` that is used to configure UI properties.
-    public init<ExtraData: ExtraDataTypes>(
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
         action: @escaping (ChatMessageActionItem) -> Void,
-        uiConfig: _UIConfig<ExtraData> = .default
+        appearance: Appearance = .default
     ) {
         self.action = action
-        icon = uiConfig.images.messageActionBlockUser
+        icon = appearance.images.messageActionBlockUser
     }
 }
 
@@ -134,13 +134,13 @@ public struct BlockUserActionItem: ChatMessageActionItem {
     /// Init of `BlockUserActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `BlockUserActionItem` is tapped.
-    ///     - uiConfig: `_UIConfig` that is used to configure UI properties.
-    public init<ExtraData: ExtraDataTypes>(
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
         action: @escaping (ChatMessageActionItem) -> Void,
-        uiConfig: _UIConfig<ExtraData> = .default
+        appearance: Appearance = .default
     ) {
         self.action = action
-        icon = uiConfig.images.messageActionBlockUser
+        icon = appearance.images.messageActionBlockUser
     }
 }
 
@@ -153,13 +153,13 @@ public struct MuteUserActionItem: ChatMessageActionItem {
     /// Init of `MuteUserActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `MuteUserActionItem` is tapped.
-    ///     - uiConfig: `_UIConfig` that is used to configure UI properties.
-    public init<ExtraData: ExtraDataTypes>(
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
         action: @escaping (ChatMessageActionItem) -> Void,
-        uiConfig: _UIConfig<ExtraData> = .default
+        appearance: Appearance = .default
     ) {
         self.action = action
-        icon = uiConfig.images.messageActionMuteUser
+        icon = appearance.images.messageActionMuteUser
     }
 }
 
@@ -172,13 +172,13 @@ public struct UnmuteUserActionItem: ChatMessageActionItem {
     /// Init of `UnmuteUserActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `UnmuteUserActionItem` is tapped.
-    ///     - uiConfig: `_UIConfig` that is used to configure UI properties.
-    public init<ExtraData: ExtraDataTypes>(
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
         action: @escaping (ChatMessageActionItem) -> Void,
-        uiConfig: _UIConfig<ExtraData> = .default
+        appearance: Appearance = .default
     ) {
         self.action = action
-        icon = uiConfig.images.messageActionMuteUser
+        icon = appearance.images.messageActionMuteUser
     }
 }
 
@@ -192,13 +192,13 @@ public struct DeleteActionItem: ChatMessageActionItem {
     /// Init of `DeleteActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `DeleteActionItem` is tapped.
-    ///     - uiConfig: `_UIConfig` that is used to configure UI properties.
-    public init<ExtraData: ExtraDataTypes>(
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
         action: @escaping (ChatMessageActionItem) -> Void,
-        uiConfig: _UIConfig<ExtraData> = .default
+        appearance: Appearance = .default
     ) {
         self.action = action
-        icon = uiConfig.images.messageActionDelete
+        icon = appearance.images.messageActionDelete
     }
 }
 
@@ -212,12 +212,12 @@ public struct ResendActionItem: ChatMessageActionItem {
     /// Init of `ResendActionItem`.
     /// - Parameters:
     ///     - action: Action to be triggered when `ResendActionItem` is tapped.
-    ///     - uiConfig: `_UIConfig` that is used to configure UI properties.
-    public init<ExtraData: ExtraDataTypes>(
+    ///     - appearance: `Appearance` that is used to configure UI properties.
+    public init(
         action: @escaping (ChatMessageActionItem) -> Void,
-        uiConfig: _UIConfig<ExtraData> = .default
+        appearance: Appearance = .default
     ) {
         self.action = action
-        icon = uiConfig.images.messageActionResend
+        icon = appearance.images.messageActionResend
     }
 }

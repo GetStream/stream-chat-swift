@@ -7,14 +7,14 @@ import UIKit
 
 public typealias ChatMessageInteractiveAttachmentView = _ChatMessageInteractiveAttachmentView<NoExtraData>
 
-open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public private(set) lazy var preview = uiConfig
+    public private(set) lazy var preview = components
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -24,7 +24,7 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
 
     public private(set) lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.font = uiConfig.font.bodyItalic
+        label.font = appearance.fonts.bodyItalic
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center
         return label
@@ -52,7 +52,7 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
         preview.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         preview.clipsToBounds = true
 
-        separator.backgroundColor = uiConfig.colorPalette.border
+        separator.backgroundColor = appearance.colorPalette.border
     }
 
     override open func setUpLayout() {
@@ -100,7 +100,7 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
     // MARK: - Private
 
     private func createActionButton(for action: AttachmentAction) -> ActionButton {
-        let button = uiConfig
+        let button = components
             .messageList
             .messageContentSubviews
             .attachmentSubviews

@@ -11,23 +11,20 @@ public typealias ChatMessageComposerSuggestionsCommandsReusableView =
 
 /// The header reusable view of the suggestion collection view.
 open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
-    UIConfigProvider {
+    ComponentsProvider {
     /// The reuse identifier of the reusable header view.
     open class var reuseId: String { String(describing: self) }
     
     /// The suggestions header view.
-    open lazy var suggestionsHeader: _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData> = {
-        let header = uiConfig.messageComposer.suggestionsHeaderView.init().withoutAutoresizingMaskConstraints
+    open lazy var suggestionsHeader: ChatMessageComposerSuggestionsCommandsHeaderView = {
+        let header = components.messageComposer.suggestionsHeaderView.init().withoutAutoresizingMaskConstraints
         embed(header)
         return header
     }()
 }
 
 /// The header view of the suggestion collection view.
-public typealias ChatMessageComposerSuggestionsCommandsHeaderView = _ChatMessageComposerSuggestionsCommandsHeaderView<NoExtraData>
-
-/// The header view of the suggestion collection view.
-open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class ChatMessageComposerSuggestionsCommandsHeaderView: _View, AppearanceProvider {
     /// The image icon of the commands header view.
     open private(set) lazy var commandImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
@@ -40,10 +37,10 @@ open class _ChatMessageComposerSuggestionsCommandsHeaderView<ExtraData: ExtraDat
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = uiConfig.colorPalette.popoverBackground
+        backgroundColor = appearance.colorPalette.popoverBackground
 
-        headerLabel.font = uiConfig.font.body
-        headerLabel.textColor = uiConfig.colorPalette.subtitleText
+        headerLabel.font = appearance.fonts.body
+        headerLabel.textColor = appearance.colorPalette.subtitleText
         commandImageView.contentMode = .scaleAspectFit
     }
 

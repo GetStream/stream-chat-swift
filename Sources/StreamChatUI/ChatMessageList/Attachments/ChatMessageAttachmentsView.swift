@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageAttachmentsView = _ChatMessageAttachmentsView<NoExtraData>
 
-open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
+open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider, SwiftUIRepresentable {
     /// All attachments with `type == .image` will be shown in a gallery
     /// All the other ones will be treated as files.
     public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
@@ -16,7 +16,7 @@ open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConf
 
     // MARK: - Subviews
 
-    public private(set) lazy var imageGallery = uiConfig
+    public private(set) lazy var imageGallery = components
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -24,7 +24,7 @@ open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConf
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var fileList = uiConfig
+    public private(set) lazy var fileList = components
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -32,7 +32,7 @@ open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConf
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var interactiveAttachmentView = uiConfig
+    public private(set) lazy var interactiveAttachmentView = components
         .messageList
         .messageContentSubviews
         .attachmentSubviews
@@ -40,7 +40,7 @@ open class _ChatMessageAttachmentsView<ExtraData: ExtraDataTypes>: _View, UIConf
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var giphyView = uiConfig
+    public private(set) lazy var giphyView = components
         .messageList
         .messageContentSubviews
         .attachmentSubviews

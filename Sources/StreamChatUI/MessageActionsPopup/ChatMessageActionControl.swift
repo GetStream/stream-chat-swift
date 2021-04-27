@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// Button for action displayed in `_ChatMessageActionsView`.
-public typealias ChatMessageActionControl = _ChatMessageActionControl<NoExtraData>
-
-/// Button for action displayed in `_ChatMessageActionsView`.
-open class _ChatMessageActionControl<ExtraData: ExtraDataTypes>: _Control, UIConfigProvider {
+open class ChatMessageActionControl: _Control, AppearanceProvider {
     /// The data this view component shows.
     public var content: ChatMessageActionItem? {
         didSet { updateContentIfNeeded() }
@@ -33,7 +30,7 @@ open class _ChatMessageActionControl<ExtraData: ExtraDataTypes>: _Control, UICon
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        titleLabel.font = uiConfig.font.body
+        titleLabel.font = appearance.fonts.body
         titleLabel.adjustsFontForContentSizeCategory = true
     }
 
@@ -63,24 +60,24 @@ open class _ChatMessageActionControl<ExtraData: ExtraDataTypes>: _Control, UICon
         let titleTextColor: UIColor
 
         if content?.isDestructive == true {
-            imageTintСolor = uiConfig.colorPalette.alert
+            imageTintСolor = appearance.colorPalette.alert
             titleTextColor = imageTintСolor
         } else {
-            imageTintСolor = content?.isPrimary == true ? tintColor : uiConfig.colorPalette.inactiveTint
-            titleTextColor = uiConfig.colorPalette.text
+            imageTintСolor = content?.isPrimary == true ? tintColor : appearance.colorPalette.inactiveTint
+            titleTextColor = appearance.colorPalette.text
         }
 
         titleLabel.text = content?.title
         if isHighlighted {
-            titleLabel.textColor = uiConfig.colorPalette.highlightedColorForColor(titleTextColor)
+            titleLabel.textColor = appearance.colorPalette.highlightedColorForColor(titleTextColor)
             imageView.image = content?.icon
-                .tinted(with: uiConfig.colorPalette.highlightedColorForColor(imageTintСolor))
-            backgroundColor = uiConfig.colorPalette.highlightedColorForColor(uiConfig.colorPalette.background)
+                .tinted(with: appearance.colorPalette.highlightedColorForColor(imageTintСolor))
+            backgroundColor = appearance.colorPalette.highlightedColorForColor(appearance.colorPalette.background)
         } else {
             titleLabel.textColor = titleTextColor
             imageView.image = content?.icon
                 .tinted(with: imageTintСolor)
-            backgroundColor = uiConfig.colorPalette.background
+            backgroundColor = appearance.colorPalette.background
         }
     }
     

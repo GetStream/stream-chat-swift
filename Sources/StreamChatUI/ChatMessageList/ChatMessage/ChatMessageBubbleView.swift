@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageBubbleView = _ChatMessageBubbleView<NoExtraData>
 
-open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, AppearanceProvider {
     public var message: _ChatMessageGroupPart<ExtraData>? {
         didSet { updateContentIfNeeded() }
     }
@@ -46,8 +46,8 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigPro
         borderLayer.isHidden = message == nil
         
         borderLayer.borderColor = message?.isSentByCurrentUser == true ?
-            uiConfig.colorPalette.border.cgColor :
-            uiConfig.colorPalette.border.cgColor
+            appearance.colorPalette.border.cgColor :
+            appearance.colorPalette.border.cgColor
         
         layer.maskedCorners = corners
     }

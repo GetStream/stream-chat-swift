@@ -73,9 +73,9 @@ private extension _ChatMessageDefaultReactionsBubbleView {
 
         switch content.style {
         case .bigIncoming, .bigOutgoing, .smallOutgoing:
-            return uiConfig.colorPalette.popoverBackground
+            return appearance.colorPalette.popoverBackground
         case .smallIncoming:
-            return uiConfig.colorPalette.background2
+            return appearance.colorPalette.background2
         }
     }
 
@@ -85,9 +85,9 @@ private extension _ChatMessageDefaultReactionsBubbleView {
         let color: UIColor
         switch content.style {
         case .smallOutgoing:
-            color = uiConfig.colorPalette.border
+            color = appearance.colorPalette.border
         case .smallIncoming:
-            color = uiConfig.colorPalette.border
+            color = appearance.colorPalette.border
         default:
             color = contentBackgroundColor
         }
@@ -109,17 +109,17 @@ private extension _ChatMessageDefaultReactionsBubbleView {
             )
         case .smallIncoming, .smallOutgoing:
             let borderColor = content.style.isIncoming ?
-                uiConfig.colorPalette.border :
-                uiConfig.colorPalette.border
+                appearance.colorPalette.border :
+                appearance.colorPalette.border
             
             let innerColor = content.style.isIncoming ?
-                uiConfig.colorPalette.background2 :
-                uiConfig.colorPalette.popoverBackground
+                appearance.colorPalette.background2 :
+                appearance.colorPalette.popoverBackground
             
             return .tail(
                 options: .small(flipped: content.style.isIncoming),
                 colors: .init(
-                    outlineColor: resolvedColor(uiConfig.colorPalette.background),
+                    outlineColor: resolvedColor(appearance.colorPalette.background),
                     borderColor: resolvedColor(borderColor),
                     innerColor: resolvedColor(innerColor)
                 )
@@ -135,8 +135,8 @@ private extension _ChatMessageDefaultReactionsBubbleView {
             return nil
         case .smallIncoming, .smallOutgoing:
             let innerColor = content.style.isIncoming ?
-                uiConfig.colorPalette.background2 :
-                uiConfig.colorPalette.popoverBackground
+                appearance.colorPalette.background2 :
+                appearance.colorPalette.popoverBackground
             return .tail(
                 options: .small(flipped: content.style.isIncoming),
                 colors: .init(

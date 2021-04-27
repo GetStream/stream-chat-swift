@@ -31,16 +31,16 @@ open class _ChatMessageComposerDocumentAttachmentView<ExtraData: ExtraDataTypes>
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = uiConfig.colorPalette.background
+        backgroundColor = appearance.colorPalette.background
         layer.cornerRadius = 15
         layer.masksToBounds = true
         layer.borderWidth = 1
-        layer.borderColor = uiConfig.colorPalette.border.cgColor
+        layer.borderColor = appearance.colorPalette.border.cgColor
         
-        fileSizeLabel.textColor = uiConfig.colorPalette.subtitleText
-        fileNameLabel.textColor = uiConfig.colorPalette.text
+        fileSizeLabel.textColor = appearance.colorPalette.subtitleText
+        fileNameLabel.textColor = appearance.colorPalette.text
         
-        actionIconImageView.image = uiConfig.images.messageComposerDiscardAttachment
+        actionIconImageView.image = appearance.images.messageComposerDiscardAttachment
     }
 
     override open func setUpLayout() {

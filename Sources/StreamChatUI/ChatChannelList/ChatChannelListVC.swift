@@ -12,7 +12,7 @@ public typealias ChatChannelListVC = _ChatChannelListVC<NoExtraData>
 open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     UICollectionViewDataSource,
     UICollectionViewDelegate,
-    UIConfigProvider,
+    ThemeProvider,
     SwipeableViewDelegate {
     /// The `ChatChannelListController` instance that provides channels data.
     public var controller: _ChatChannelListController<ExtraData>!
@@ -39,29 +39,29 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }()
     
     /// The `_ChatChannelListRouter` instance responsible for navigation.
-    open private(set) lazy var router: _ChatChannelListRouter<ExtraData> = uiConfig
+    open private(set) lazy var router: _ChatChannelListRouter<ExtraData> = components
         .navigation
         .channelListRouter.init(rootViewController: self)
     
     /// The `UICollectionViewLayout` that used by `ChatChannelListCollectionView`.
-    open private(set) lazy var collectionViewLayout: UICollectionViewLayout = uiConfig
+    open private(set) lazy var collectionViewLayout: UICollectionViewLayout = components
         .channelList
         .collectionLayout.init()
     
     /// The `UICollectionView` instance that displays channel list.
-    open private(set) lazy var collectionView: UICollectionView = uiConfig
+    open private(set) lazy var collectionView: UICollectionView = components
         .channelList
         .collectionView.init(frame: .zero, collectionViewLayout: collectionViewLayout)
         .withoutAutoresizingMaskConstraints
     
     /// The `UIButton` instance used for navigating to new channel screen creation,
-    open private(set) lazy var createNewChannelButton: UIButton = uiConfig
+    open private(set) lazy var createNewChannelButton: UIButton = components
         .channelList
         .newChannelButton.init()
         .withoutAutoresizingMaskConstraints
     
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
-    open private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = uiConfig
+    open private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = components
         .currentUser
         .currentUserViewAvatarView.init()
         .withoutAutoresizingMaskConstraints
@@ -78,12 +78,12 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         controller.synchronize()
         
         collectionView.register(
-            uiConfig.channelList.collectionViewCell.self,
+            components.channelList.collectionViewCell.self,
             forCellWithReuseIdentifier: collectionViewCellReuseIdentifier
         )
         
         collectionView.register(
-            uiConfig.channelList.cellSeparatorReusableView,
+            components.channelList.cellSeparatorReusableView,
             forSupplementaryViewOfKind: ListCollectionViewLayout.separatorKind,
             withReuseIdentifier: separatorReuseIdentifier
         )
@@ -112,7 +112,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: createNewChannelButton)
         
-        collectionView.backgroundColor = uiConfig.colorPalette.background
+        collectionView.backgroundColor = appearance.colorPalette.background
 
         if let flowLayout = collectionViewLayout as? ListCollectionViewLayout {
             flowLayout.itemSize = UICollectionViewFlowLayout.automaticSize
@@ -136,7 +136,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
             for: indexPath
         ) as! _ChatChannelListCollectionViewCell<ExtraData>
     
-        cell.uiConfig = uiConfig
+        cell.components = components
         cell.itemView.content = controller.channels[indexPath.row]
 
         cell.swipeableView.delegate = self
@@ -210,18 +210,18 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     public func swipeableViewActionViews(for indexPath: IndexPath) -> [UIView] {
         let deleteView = CellActionView().withoutAutoresizingMaskConstraints
-        deleteView.actionButton.setImage(uiConfig.images.messageActionDelete, for: .normal)
+        deleteView.actionButton.setImage(appearance.images.messageActionDelete, for: .normal)
 
-        deleteView.actionButton.backgroundColor = uiConfig.colorPalette.alert
+        deleteView.actionButton.backgroundColor = appearance.colorPalette.alert
         deleteView.actionButton.tintColor = .white
 
         deleteView.action = { self.deleteButtonPressedForCell(at: indexPath) }
 
         let moreView = CellActionView().withoutAutoresizingMaskConstraints
-        moreView.actionButton.setImage(uiConfig.images.more, for: .normal)
+        moreView.actionButton.setImage(appearance.images.more, for: .normal)
 
-        moreView.actionButton.backgroundColor = uiConfig.colorPalette.background1
-        moreView.actionButton.tintColor = uiConfig.colorPalette.text
+        moreView.actionButton.backgroundColor = appearance.colorPalette.background1
+        moreView.actionButton.tintColor = appearance.colorPalette.text
 
         moreView.action = { self.moreButtonPressedForCell(at: indexPath) }
 

@@ -7,14 +7,14 @@ import UIKit
 
 public typealias ChatMessageReactionsBubbleView = _ChatMessageReactionsBubbleView<NoExtraData>
 
-open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
     }
 
     // MARK: - Subviews
 
-    public private(set) lazy var contentView = uiConfig
+    public private(set) lazy var contentView = components
         .messageList
         .messageReactions
         .reactionsView
@@ -37,7 +37,7 @@ open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, UI
     override open func updateContent() {
         // TODO: Fix this when refactoring reactions.
         // We check if we have available images for the given type of reaction, if not, we hide the reaction.
-        guard !(content?.reactions.compactMap { uiConfig.images.availableReactions[$0.type] }.isEmpty ?? false)
+        guard !(content?.reactions.compactMap { appearance.images.availableReactions[$0.type] }.isEmpty ?? false)
         else {
             isHidden = true
             return

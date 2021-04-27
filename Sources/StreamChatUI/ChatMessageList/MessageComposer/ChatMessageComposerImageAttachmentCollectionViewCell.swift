@@ -11,11 +11,11 @@ public typealias ChatMessageComposerImageAttachmentCollectionViewCell =
 
 /// The view cell that displays the image attachment.
 open class _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
-    UIConfigProvider {
+    ComponentsProvider {
     open class var reuseId: String { String(describing: self) }
 
     /// A view that displays the image attachment preview.
-    open private(set) lazy var imageAttachmentView = uiConfig
+    open private(set) lazy var imageAttachmentView = components
         .messageComposer
         .imageAttachmentCellView.init()
         .withoutAutoresizingMaskConstraints
@@ -28,12 +28,8 @@ open class _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData: Extr
 }
 
 /// A view that displays the image attachment.
-public typealias ChatMessageComposerImageAttachmentView =
-    _ChatMessageComposerImageAttachmentView<NoExtraData>
-
-/// A view that displays the image attachment.
-open class _ChatMessageComposerImageAttachmentView<ExtraData: ExtraDataTypes>: _CollectionViewCell,
-    UIConfigProvider {
+open class ChatMessageComposerImageAttachmentView: _CollectionViewCell,
+    AppearanceProvider {
     /// A closure handler that is called when the discard button of the attachment is clicked
     open var discardButtonHandler: (() -> Void)?
 
@@ -53,7 +49,7 @@ open class _ChatMessageComposerImageAttachmentView<ExtraData: ExtraDataTypes>: _
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        discardButton.setImage(uiConfig.images.messageComposerDiscardAttachment, for: .normal)
+        discardButton.setImage(appearance.images.messageComposerDiscardAttachment, for: .normal)
 
         layer.masksToBounds = true
         layer.cornerRadius = 15

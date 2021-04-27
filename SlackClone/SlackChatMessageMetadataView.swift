@@ -32,8 +32,8 @@ final class SlackChatMessageMetadataView: ChatMessageMetadataView {
     override func setUpAppearance() {
         super.setUpAppearance()
         
-        nameLabel.font = uiConfig.font.bodyBold
-        timestampLabel.font = uiConfig.font.footnote
+        nameLabel.font = appearance.fonts.bodyBold
+        timestampLabel.font = appearance.fonts.footnote
     }
     
     override func updateContent() {

@@ -9,7 +9,7 @@ import UIKit
 public typealias ChatChannelUnreadCountView = _ChatChannelUnreadCountView<NoExtraData>
 
 /// A view that shows a number of unread messages in channel.
-open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
+open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, SwiftUIRepresentable {
     /// The `UILabel` instance that holds number of unread messages.
     open private(set) lazy var unreadCountLabel = UILabel()
         .withoutAutoresizingMaskConstraints
@@ -29,10 +29,10 @@ open class _ChatChannelUnreadCountView<ExtraData: ExtraDataTypes>: _View, UIConf
     override open func setUpAppearance() {
         super.setUpAppearance()
         layer.masksToBounds = true
-        backgroundColor = uiConfig.colorPalette.alert
+        backgroundColor = appearance.colorPalette.alert
 
-        unreadCountLabel.textColor = uiConfig.colorPalette.staticColorText
-        unreadCountLabel.font = uiConfig.font.footnoteBold
+        unreadCountLabel.textColor = appearance.colorPalette.staticColorText
+        unreadCountLabel.font = appearance.fonts.footnoteBold
         unreadCountLabel.textAlignment = .center
     }
 

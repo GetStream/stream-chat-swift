@@ -42,11 +42,11 @@ class ChatMessageActionsVC_Tests: XCTestCase {
         AssertSnapshot(vc.embedded())
     }
     
-    func test_appearanceCustomization_usingUIConfig() {
-        var config = UIConfig()
-        config.colorPalette.border = .cyan
+    func test_appearanceCustomization_usingAppearance() {
+        var appearance = Appearance()
+        appearance.colorPalette.border = .cyan
 
-        vc.uiConfig = config
+        vc.appearance = appearance
 
         AssertSnapshot(vc.embedded())
     }
@@ -63,15 +63,15 @@ class ChatMessageActionsVC_Tests: XCTestCase {
         AssertSnapshot(vc.embedded())
     }
     
-    func test_usesCorrectUIConfigTypes_whenCustomTypesDefined() {
+    func test_usesCorrectComponentsTypes_whenCustomTypesDefined() {
         // Create new config to edit types...
-        var customConfig = vc.uiConfig
+        var components = vc.components
 
         class TestChatMessageActionsRouter: ChatMessageActionsRouter {}
 
-        customConfig.navigation.messageActionsRouter = TestChatMessageActionsRouter.self
+        components.navigation.messageActionsRouter = TestChatMessageActionsRouter.self
 
-        vc.uiConfig = customConfig
+        vc.components = components
 
         XCTAssert(vc.router is TestChatMessageActionsRouter)
     }

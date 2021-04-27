@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit.UIImage
 
-public extension _UIConfig {
+public extension _Components {
     struct MessageListUI {
         public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
 
@@ -31,17 +31,17 @@ public extension _UIConfig {
         public var bubbleView: _ChatMessageBubbleView<ExtraData>.Type = _ChatMessageBubbleView<ExtraData>.self
         public var metadataView: _ChatMessageMetadataView<ExtraData>.Type = _ChatMessageMetadataView<ExtraData>.self
         public var attachmentSubviews = MessageAttachmentViewSubviews()
-        public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.Type =
-            ChatMessageOnlyVisibleForCurrentUserIndicator<ExtraData>.self
-        public var threadArrowView: _ChatMessageThreadArrowView<ExtraData>.Type = _ChatMessageThreadArrowView<ExtraData>.self
+        public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator.Type =
+            ChatMessageOnlyVisibleForCurrentUserIndicator.self
+        public var threadArrowView: ChatMessageThreadArrowView.Type = ChatMessageThreadArrowView.self
         public var threadInfoView: _ChatMessageThreadInfoView<ExtraData>.Type = _ChatMessageThreadInfoView<ExtraData>.self
         public var threadParticipantAvatarView: ChatAvatarView.Type = ChatAvatarView.self
-        public var errorIndicator: _ChatMessageErrorIndicator<ExtraData>.Type = _ChatMessageErrorIndicator<ExtraData>.self
+        public var errorIndicator: ChatMessageErrorIndicator.Type = ChatMessageErrorIndicator.self
         public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type = _ChatMessageLinkPreviewView<ExtraData>.self
     }
 
     struct MessageAttachmentViewSubviews {
-        public var loadingIndicator: _ChatLoadingIndicator<ExtraData>.Type = _ChatLoadingIndicator<ExtraData>.self
+        public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
         public var attachmentsView: _ChatMessageAttachmentsView<ExtraData>.Type = _ChatMessageAttachmentsView<ExtraData>.self
         // Files
         public var fileAttachmentListView: _ChatMessageFileAttachmentListView<ExtraData>

@@ -7,6 +7,8 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
+extension _ChatMessagePopupVC: AppearanceProvider {}
+
 final class ChatMessagePopupVC_Tests: XCTestCase {
     private var vc: ChatMessagePopupVC!
     private var message: ChatMessageGroupPart!
@@ -91,11 +93,11 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         AssertSnapshot(vc)
     }
     
-    func test_appearanceCustomization_usingUIConfig() {
-        var config = UIConfig()
+    func test_appearanceCustomization_usingAppearance() {
+        var config = Appearance()
         config.colorPalette.border = .cyan
 
-        vc.uiConfig = config
+        vc.appearance = config
 
         AssertSnapshot(vc)
     }

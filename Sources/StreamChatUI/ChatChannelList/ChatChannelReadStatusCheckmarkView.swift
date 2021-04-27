@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view that shows a read/unread status of the last message in channel.
-public typealias ChatChannelReadStatusCheckmarkView = _ChatChannelReadStatusCheckmarkView<NoExtraData>
-
-/// A view that shows a read/unread status of the last message in channel.
-open class _ChatChannelReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider, SwiftUIRepresentable {
+open class ChatChannelReadStatusCheckmarkView: _View, AppearanceProvider, SwiftUIRepresentable {
     /// An underlying type for status in the view.
     /// Right now corresponding functionality in LLC is missing and it will likely be replaced with the type from LLC.
     public enum Status {
@@ -43,11 +40,11 @@ open class _ChatChannelReadStatusCheckmarkView<ExtraData: ExtraDataTypes>: _View
         case .empty:
             imageView.image = nil
         case .read:
-            imageView.image = uiConfig.images.channelListReadByAll
+            imageView.image = appearance.images.channelListReadByAll
             imageView.tintColor = tintColor
         case .unread:
-            imageView.image = uiConfig.images.channelListSent
-            imageView.tintColor = uiConfig.colorPalette.inactiveTint
+            imageView.image = appearance.images.channelListSent
+            imageView.tintColor = appearance.colorPalette.inactiveTint
         }
     }
 }

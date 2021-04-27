@@ -9,7 +9,7 @@ import UIKit
 /// You should never instantiate this class. Instead stick to one of subclasses.
 /// When subclassing you must override without calling super all methods of `ChatMessageListVCDataSource`
 open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
-    UIConfigProvider,
+    ThemeProvider,
     _ChatMessageListVCDataSource,
     _ChatMessageListVCDelegate,
     _ChatMessageComposerViewControllerDelegate {
@@ -20,17 +20,17 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
         channelController.client.userSearchController()
     }()
 
-    public private(set) lazy var messageComposerViewController = uiConfig
+    public private(set) lazy var messageComposerViewController = components
         .messageComposer
         .messageComposerViewController
         .init()
 
-    public private(set) lazy var messageList = uiConfig
+    public private(set) lazy var messageList = components
         .messageList
         .messageListVC
         .init()
 
-    public private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = uiConfig
+    public private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = components
         .typingIndicatorView
         .init()
         .withoutAutoresizingMaskConstraints
@@ -125,7 +125,7 @@ open class _ChatVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        view.backgroundColor = uiConfig.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.background
         
         let titleView = ChatMessageListTitleView<ExtraData>()
 

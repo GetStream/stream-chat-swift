@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// A `UIView` subclass with 3 dots which can be animated with fading out effect.
-public typealias TypingAnimationView = _TypingAnimationView<NoExtraData>
-
-/// A `UIView` subclass with 3 dots which can be animated with fading out effect.
-open class _TypingAnimationView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class TypingAnimationView: _View, AppearanceProvider {
     open var dotSize: CGSize = .init(width: 5, height: 5)
 
     open var opacityFromValue: Double = 0.9
@@ -42,7 +39,7 @@ open class _TypingAnimationView<ExtraData: ExtraDataTypes>: _View, UIConfigProvi
     override open func setUpAppearance() {
         super.setUpAppearance()
         backgroundColor = .clear
-        dotLayer.backgroundColor = uiConfig.colorPalette.text.cgColor
+        dotLayer.backgroundColor = appearance.colorPalette.text.cgColor
         replicatorLayer.frame = bounds
     }
         

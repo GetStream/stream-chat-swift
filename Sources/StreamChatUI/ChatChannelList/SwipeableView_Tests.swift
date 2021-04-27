@@ -33,13 +33,13 @@ class SwipeableView_Tests: XCTestCase {
     ) -> (UIView, UIView) {
         let testButton2 = UIButton().withoutAutoresizingMaskConstraints
 
-        testButton2.backgroundColor = UIConfig.default.colorPalette.alert
+        testButton2.backgroundColor = Appearance.default.colorPalette.alert
         testButton2.tintColor = .white
 
         let testButton1 = UIButton().withoutAutoresizingMaskConstraints
 
-        testButton1.backgroundColor = UIConfig.default.colorPalette.background1
-        testButton1.tintColor = UIConfig.default.colorPalette.text
+        testButton1.backgroundColor = Appearance.default.colorPalette.background1
+        testButton1.tintColor = Appearance.default.colorPalette.text
 
         let deleteView = CellActionView().withoutAutoresizingMaskConstraints
         deleteView.actionButton = testButton2

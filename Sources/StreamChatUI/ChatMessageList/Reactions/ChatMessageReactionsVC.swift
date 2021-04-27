@@ -7,12 +7,12 @@ import UIKit
 
 public typealias ChatMessageReactionsVC = _ChatMessageReactionsVC<NoExtraData>
 
-open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, UIConfigProvider {
+open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider {
     public var messageController: _ChatMessageController<ExtraData>!
 
     // MARK: - Subviews
 
-    public private(set) lazy var reactionsBubble = uiConfig
+    public private(set) lazy var reactionsBubble = components
         .messageList
         .messageReactions
         .reactionsBubbleView
@@ -37,7 +37,7 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
 
             return .init(
                 style: message.isSentByCurrentUser ? .bigOutgoing : .bigIncoming,
-                reactions: uiConfig.images.availableReactions
+                reactions: appearance.images.availableReactions
                     .keys
                     .sorted { $0.rawValue < $1.rawValue }
                     .map { .init(type: $0, isChosenByCurrentUser: userReactionIDs.contains($0)) },

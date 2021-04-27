@@ -10,7 +10,7 @@ public typealias ChatMessageComposerImageAttachmentsView = _ChatMessageComposerI
 
 /// A view that displays a collection of image attachments
 open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: _View,
-    UIConfigProvider,
+    ComponentsProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
     /// The images data source.
@@ -24,12 +24,12 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
     open var didTapRemoveItemButton: ((Int) -> Void)?
 
     /// The collection view layout of the image attachments collection view.
-    open private(set) lazy var flowLayout: UICollectionViewFlowLayout = uiConfig
+    open private(set) lazy var flowLayout: UICollectionViewFlowLayout = components
         .messageComposer
         .imageAttachmentsCollectionViewLayout.init()
 
     /// The collection view of image attachments.
-    open private(set) lazy var collectionView: UICollectionView = uiConfig
+    open private(set) lazy var collectionView: UICollectionView = components
         .messageComposer
         .imageAttachmentsCollectionView
         .init(frame: .zero, collectionViewLayout: self.flowLayout)
@@ -48,8 +48,8 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(
-            uiConfig.messageComposer.imageAttachmentCollectionViewCell.self,
-            forCellWithReuseIdentifier: uiConfig.messageComposer.imageAttachmentCollectionViewCell.reuseId
+            components.messageComposer.imageAttachmentCollectionViewCell.self,
+            forCellWithReuseIdentifier: components.messageComposer.imageAttachmentCollectionViewCell.reuseId
         )
     }
     
@@ -70,13 +70,13 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
     }
     
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let reuseId = uiConfig.messageComposer.imageAttachmentCollectionViewCell.reuseId
+        let reuseId = components.messageComposer.imageAttachmentCollectionViewCell.reuseId
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: reuseId,
             for: indexPath
         ) as! _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>
 
-        cell.uiConfig = uiConfig
+        cell.components = components
         cell.imageAttachmentView.imageView.image = content[indexPath.row].image
         cell.imageAttachmentView.discardButtonHandler = { [weak self] in
             self?.didTapRemoveItemButton?(indexPath.row)

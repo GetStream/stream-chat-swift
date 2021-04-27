@@ -9,14 +9,14 @@ public typealias ChatMessageComposerDocumentAttachmentCollectionViewCell =
     _ChatMessageComposerDocumentAttachmentCollectionViewCell<NoExtraData>
 
 open class _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
-    UIConfigProvider {
+    ComponentsProvider {
     // MARK: - Properties
     
     class var reuseId: String { String(describing: self) }
     
     // MARK: - Subviews
     
-    public private(set) lazy var documentAttachmentView = uiConfig
+    public private(set) lazy var documentAttachmentView = components
         .messageComposer
         .documentAttachmentView.init()
         .withoutAutoresizingMaskConstraints

@@ -10,16 +10,18 @@ extension ChatClient {
     /// The singleton instance of `ChatClient`
     static let shared: ChatClient = {
         // Register custom UI elements
-        var uiConfig = UIConfig()
+        var appearance = Appearance()
+        var components = Components()
         
-        uiConfig.navigation.channelListRouter = MessengerChatChannelListRouter.self
-        uiConfig.images.newChat = UIImage(systemName: "square.and.pencil")!
+        components.navigation.channelListRouter = MessengerChatChannelListRouter.self
+        appearance.images.newChat = UIImage(systemName: "square.and.pencil")!
         
-        uiConfig.channelList.itemView = ChatChannelListItemView.SwiftUIWrapper<MessengerChatChannelListItem>.self
+        components.channelList.itemView = ChatChannelListItemView.SwiftUIWrapper<MessengerChatChannelListItem>.self
         
-        uiConfig.messageList.defaultMessageCell = MessengerСhatMessageCollectionViewCell.self
+        components.messageList.defaultMessageCell = MessengerСhatMessageCollectionViewCell.self
         
-        UIConfig.default = uiConfig
+        Appearance.default = appearance
+        Components.default = components
         
         let config = ChatClientConfig(apiKey: APIKey("q95x9hkbyd6p"))
         return ChatClient(

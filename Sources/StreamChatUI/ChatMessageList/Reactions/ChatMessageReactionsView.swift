@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageReactionsView = _ChatMessageReactionsView<NoExtraData>
 
-open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     public var content: Content? {
         didSet { updateContentIfNeeded() }
     }
@@ -36,7 +36,7 @@ open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, UIConfig
         guard let content = content else { return }
 
         content.reactions.forEach { reaction in
-            let itemView = uiConfig.messageList.messageReactions.reactionItemView.init()
+            let itemView = components.messageList.messageReactions.reactionItemView.init()
             itemView.content = .init(
                 useBigIcon: content.useBigIcons,
                 reaction: reaction,

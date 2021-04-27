@@ -42,9 +42,9 @@ class ChatChannelListVC_Tests: XCTestCase {
         vc = testVC
         vc.controller = mockedChannelListController
         
-        var uiConfig = UIConfig()
-        uiConfig.navigation.channelListRouter = ChatChannelListRouter_Mock<NoExtraData>.self
-        vc.uiConfig = uiConfig
+        var components = Components()
+        components.navigation.channelListRouter = ChatChannelListRouter_Mock<NoExtraData>.self
+        vc.components = components
 
         channels = .dummy()
     }
@@ -74,7 +74,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         AssertSnapshot(vc, isEmbeddedInNavigationController: true)
     }
 
-    func test_appearanceCustomization_usingUIConfig() {
+    func test_appearanceCustomization_usingComponents() {
         class TestView: CellSeparatorReusableView {
             override func setUpAppearance() {
                 super.setUpAppearance()
@@ -89,10 +89,10 @@ class ChatChannelListVC_Tests: XCTestCase {
             }
         }
 
-        var config = UIConfig()
-        config.channelList.cellSeparatorReusableView = TestView.self
+        var components = Components()
+        components.channelList.cellSeparatorReusableView = TestView.self
 
-        vc.uiConfig = config
+        vc.components = components
 
         mockedChannelListController.simulateInitial(
             channels: channels,
@@ -122,9 +122,9 @@ class ChatChannelListVC_Tests: XCTestCase {
         let vc = TestView()
         vc.controller = mockedChannelListController
         
-        var config = UIConfig()
-        config.channelList.cellSeparatorReusableView = TestSeparatorView.self
-        vc.uiConfig = config
+        var components = Components()
+        components.channelList.cellSeparatorReusableView = TestSeparatorView.self
+        vc.components = components
 
         mockedChannelListController.simulate(
             channels: channels,
@@ -175,20 +175,20 @@ class ChatChannelListVC_Tests: XCTestCase {
         XCTAssertTrue(mockedChannelListController.loadNextChannelsIsCalled)
     }
 
-    func test_usesCorrectUIConfigTypes_whenCustomTypesDefined() {
-        // Create default ChatChannelListVC which has everything default from `UIConfig`
+    func test_usesCorrectComponentsTypes_whenCustomTypesDefined() {
+        // Create default ChatChannelListVC which has everything default from `Components`
         let channelListVC = ChatChannelListVC()
 
         // Create new config to edit types...
-        var customConfig = channelListVC.uiConfig
+        var components = channelListVC.components
 
         class OtherCollectionLayout: UICollectionViewLayout {}
         class OtherCollectionView: UICollectionView {}
 
-        customConfig.channelList.collectionLayout = OtherCollectionLayout.self
-        customConfig.channelList.collectionView = OtherCollectionView.self
+        components.channelList.collectionLayout = OtherCollectionLayout.self
+        components.channelList.collectionView = OtherCollectionView.self
 
-        channelListVC.uiConfig = customConfig
+        channelListVC.components = components
 
         XCTAssert(channelListVC.collectionViewLayout is OtherCollectionLayout)
         XCTAssert(channelListVC.collectionView is OtherCollectionView)

@@ -4,10 +4,10 @@
 
 import UIKit.UICollectionViewLayout
 
-public extension _UIConfig {
+public extension _Components {
     struct ChannelList {
         /// A button used for creating new channels.
-        public var newChannelButton: UIButton.Type = _ChatChannelCreateNewButton<ExtraData>.self
+        public var newChannelButton: UIButton.Type = ChatChannelCreateNewButton.self
 
         /// The logic to generate a name for the given channel.
         public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()
@@ -23,7 +23,7 @@ public extension _UIConfig {
             _ChatChannelListCollectionViewCell<ExtraData>.self
 
         /// The Cell Separator View.
-        public var cellSeparatorReusableView: UICollectionReusableView.Type = _CellSeparatorReusableView<ExtraData>.self
+        public var cellSeparatorReusableView: UICollectionReusableView.Type = CellSeparatorReusableView.self
 
         /// `SwibeableView` instance wrapped in the cell to support action views on swipe in the cell.
         public var swipeableView: _SwipeableView<ExtraData>.Type =
@@ -54,11 +54,11 @@ public extension _UIConfig {
             public var avatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
 
             /// A view that shows a number of unread messages in channel.
-            public var unreadCountView: _ChatChannelUnreadCountView<ExtraData>.Type = _ChatChannelUnreadCountView<ExtraData>.self
+            public var unreadCountView: ChatChannelUnreadCountView.Type = ChatChannelUnreadCountView.self
 
             /// A view that shows a read/unread status of the last message in channel.
-            public var readStatusView: _ChatChannelReadStatusCheckmarkView<ExtraData>.Type =
-                _ChatChannelReadStatusCheckmarkView<ExtraData>.self
+            public var readStatusView: ChatChannelReadStatusCheckmarkView.Type =
+                ChatChannelReadStatusCheckmarkView.self
         }
     }
 }

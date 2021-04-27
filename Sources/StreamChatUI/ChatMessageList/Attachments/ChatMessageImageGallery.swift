@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageImageGallery = _ChatMessageImageGallery<NoExtraData>
 
-open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     open var interItemSpacing: CGFloat = 2
 
     public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
@@ -25,7 +25,7 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigP
 
     public private(set) lazy var moreImagesOverlay: UILabel = {
         let label = UILabel()
-        label.font = uiConfig.font.title
+        label.font = appearance.fonts.title
         label.adjustsFontForContentSizeCategory = true
         label.textAlignment = .center
         return label
@@ -112,7 +112,7 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigP
     override open func setUpAppearance() {
         super.setUpAppearance()
         moreImagesOverlay.textColor = .white
-        moreImagesOverlay.backgroundColor = uiConfig.colorPalette.background4
+        moreImagesOverlay.backgroundColor = appearance.colorPalette.background4
     }
 
     override open func updateContent() {
@@ -134,7 +134,7 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, UIConfigP
     // MARK: - Private
 
     private func createImagePreview() -> ImagePreview {
-        uiConfig
+        components
             .messageList
             .messageContentSubviews
             .attachmentSubviews

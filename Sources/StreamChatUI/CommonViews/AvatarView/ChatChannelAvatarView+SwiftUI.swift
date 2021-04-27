@@ -34,7 +34,8 @@ extension _ChatChannelAvatarView {
             super.setUp()
     
             let view = Content(dataSource: self)
-                .environmentObject(uiConfig.asObservableObject)
+                .environmentObject(components.asObservableObject)
+                .environmentObject(appearance.asObservableObject)
             hostingController = UIHostingController(rootView: view)
             hostingController?.view.backgroundColor = .clear
         }

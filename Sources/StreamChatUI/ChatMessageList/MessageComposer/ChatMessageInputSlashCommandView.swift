@@ -5,9 +5,7 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageInputSlashCommandView = _ChatMessageInputSlashCommandView<NoExtraData>
-
-open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class ChatMessageInputSlashCommandView: _View, AppearanceProvider {
     // MARK: - Properties
     
     public var commandName: String? {
@@ -44,15 +42,16 @@ open class _ChatMessageInputSlashCommandView<ExtraData: ExtraDataTypes>: _View, 
     override open func setUpAppearance() {
         super.setUpAppearance()
         layer.masksToBounds = true
-        backgroundColor = uiConfig.colorPalette.highlightedAccentBackground
+        backgroundColor = appearance.colorPalette.highlightedAccentBackground
 
-        commandLabel.textColor = uiConfig.colorPalette.staticColorText
-        commandLabel.font = uiConfig.font.subheadlineBold
+        commandLabel.textColor = appearance.colorPalette.staticColorText
+        commandLabel.font = appearance.fonts.subheadlineBold
 
         commandLabel.adjustsFontForContentSizeCategory = true
         commandLabel.textAlignment = .center
         
-        iconView.image = uiConfig.images.messageComposerCommand.tinted(with: uiConfig.colorPalette.staticColorText)
+        iconView.image = appearance.images.messageComposerCommand
+            .tinted(with: appearance.colorPalette.staticColorText)
     }
     
     override open func setUpLayout() {

@@ -7,7 +7,7 @@ import UIKit
 
 public typealias ChatMessageComposerInputContainerView = _ChatMessageComposerInputContainerView<NoExtraData>
 
-open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _View, UIConfigProvider {
+open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     // MARK: - Properties
     
     open var rightAccessoryButtonHeight: CGFloat = 30
@@ -17,12 +17,12 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _V
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var textView = uiConfig
+    public private(set) lazy var textView = components
         .messageComposer
         .textView.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var slashCommandView = uiConfig
+    public private(set) lazy var slashCommandView = components
         .messageComposer
         .slashCommandView.init()
         .withoutAutoresizingMaskConstraints
@@ -37,7 +37,7 @@ open class _ChatMessageComposerInputContainerView<ExtraData: ExtraDataTypes>: _V
     
     override open func setUpAppearance() {
         super.setUpAppearance()
-        let rightAccessoryImage = uiConfig.images.close1.tinted(with: uiConfig.colorPalette.inactiveTint)
+        let rightAccessoryImage = appearance.images.close1.tinted(with: appearance.colorPalette.inactiveTint)
         rightAccessoryButton.setImage(rightAccessoryImage, for: .normal)
     }
     

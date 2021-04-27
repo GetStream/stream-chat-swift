@@ -8,7 +8,7 @@ import UIKit
 public typealias ChatMessageComposerDocumentAttachmentsView = _ChatMessageComposerDocumentAttachmentsView<NoExtraData>
 
 open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes>: _View,
-    UIConfigProvider,
+    ComponentsProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
     // MARK: - Properties
@@ -36,7 +36,7 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
         )
     }
     
-    public private(set) lazy var flowLayout = uiConfig
+    public private(set) lazy var flowLayout = components
         .messageComposer
         .documentAttachmentsFlowLayout
         .init()

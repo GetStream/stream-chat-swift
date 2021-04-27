@@ -36,14 +36,15 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
     ]
     
     var vc: ChatMessageComposerSuggestionsViewController!
-    var config = UIConfig()
+    var appearance = Appearance()
+    var components = Components()
     
     override func setUp() {
         super.setUp()
         vc = ChatMessageComposerSuggestionsViewController()
-        config.images.commandIcons["yodafy"] = TestImages.yoda.image
-        config.images.messageComposerCommandFallback = TestImages.vader.image
-        vc.uiConfig = config
+        appearance.images.commandIcons["yodafy"] = TestImages.yoda.image
+        appearance.images.messageComposerCommandFallback = TestImages.vader.image
+        vc.appearance = appearance
     }
     
     override func tearDown() {
@@ -71,7 +72,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
         AssertSnapshot(vc, screenSize: defaultSuggestionsSize)
     }
 
-    func test_commands_appearanceCustomization_usingUIConfig() {
+    func test_commands_appearanceCustomization_usingComponents() {
         class TestView: ChatMessageComposerSuggestionsCommandsHeaderView {
             override func setUpAppearance() {
                 super.setUpAppearance()
@@ -91,10 +92,10 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             }
         }
         
-        var config = self.config
-        config.messageComposer.suggestionsHeaderView = TestView.self
+        var components = self.components
+        components.messageComposer.suggestionsHeaderView = TestView.self
         
-        vc.uiConfig = config
+        vc.components = components
         vc.dataSource = ChatMessageComposerSuggestionsCommandDataSource(
             with: commands,
             collectionView: vc.collectionView
@@ -121,7 +122,8 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
         }
         
         let vc = TestVC()
-        vc.uiConfig = config
+        vc.appearance = appearance
+        vc.components = components
         vc.dataSource = ChatMessageComposerSuggestionsCommandDataSource(
             with: commands,
             collectionView: vc.collectionView
@@ -154,7 +156,7 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
         AssertSnapshot(vc, screenSize: defaultSuggestionsSize)
     }
 
-    func test_mentions_appearanceCustomization_usingUIConfig() {
+    func test_mentions_appearanceCustomization_usingComponents() {
         class TestView: ChatMessageComposerMentionCellView {
             override func setUpAppearance() {
                 super.setUpAppearance()
@@ -174,10 +176,10 @@ class ChatMessageComposerSuggestionsViewController_Tests: XCTestCase {
             }
         }
         
-        var config = self.config
-        config.messageComposer.suggestionsMentionCellView = TestView.self
+        var components = self.components
+        components.messageComposer.suggestionsMentionCellView = TestView.self
 
-        vc.uiConfig = config
+        vc.components = components
         let searchController = ChatUserSearchController_Mock<NoExtraData>.mock()
         searchController.users_mock = mentions
         vc.dataSource = ChatMessageComposerSuggestionsMentionDataSource(

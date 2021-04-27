@@ -23,12 +23,12 @@ class ChatChannelUnreadCountView_Tests: XCTestCase {
         AssertSnapshot(view, suffix: "3digits")
     }
 
-    func test_appearanceCustomization_usingUIConfig() {
-        var config = UIConfig()
-        config.colorPalette.alert = .green
+    func test_appearanceCustomization_usingComponents() {
+        var appearance = Appearance()
+        appearance.colorPalette.alert = .green
 
         let view = ChatChannelUnreadCountView().withoutAutoresizingMaskConstraints
-        view.uiConfig = config
+        view.appearance = appearance
 
         view.content = .mock(messages: 10)
         AssertSnapshot(view)

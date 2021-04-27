@@ -15,7 +15,7 @@ func snippets_ux_customizing_views_injecting_custom_subclass() {
     ) -> Bool {
         // Override point for customization after application launch.
 
-        UIConfig.default
+        Components.default
             .messageList
             .messageContentSubviews
             .attachmentSubviews

@@ -14,7 +14,7 @@ final class SlackChatMessageContentView: ChatMessageContentView {
     override func setupAvatarView() {
         guard authorAvatarView == nil else { return }
         
-        let authorAvatarView = uiConfig
+        let authorAvatarView = components
             .messageList
             .messageContentSubviews
             .authorAvatarView
@@ -37,7 +37,7 @@ final class SlackChatMessageContentView: ChatMessageContentView {
 
         let authorAvatarView = self.authorAvatarView!
         
-        let messageMetadataView = uiConfig
+        let messageMetadataView = components
             .messageList
             .messageContentSubviews
             .metadataView
@@ -61,7 +61,7 @@ final class SlackChatMessageContentView: ChatMessageContentView {
         
         let messageMetadataView = self.messageMetadataView!
         
-        let messageBubbleView = uiConfig
+        let messageBubbleView = components
             .messageList
             .messageContentSubviews
             .bubbleView.init()

@@ -5,12 +5,10 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageErrorIndicator = _ChatMessageErrorIndicator<NoExtraData>
-
-open class _ChatMessageErrorIndicator<ExtraData: ExtraDataTypes>: _Button, UIConfigProvider {
+open class ChatMessageErrorIndicator: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
-        setImage(uiConfig.images.messageListErrorIndicator, for: .normal)
-        tintColor = uiConfig.colorPalette.alert
+        setImage(appearance.images.messageListErrorIndicator, for: .normal)
+        tintColor = appearance.colorPalette.alert
     }
 }

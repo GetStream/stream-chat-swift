@@ -41,9 +41,9 @@ final class BannerView: UIView {
     }
     
     private func defaultAppearance() {
-        backgroundColor = UIConfig.default.colorPalette.border2.withAlphaComponent(0.9)
+        backgroundColor = Appearance.default.colorPalette.border2.withAlphaComponent(0.9)
         label.textAlignment = .center
-        label.font = UIConfig.default.font.body
-        label.textColor = UIConfig.default.colorPalette.popoverBackground
+        label.font = Appearance.default.fonts.body
+        label.textColor = Appearance.default.colorPalette.popoverBackground
     }
 }
