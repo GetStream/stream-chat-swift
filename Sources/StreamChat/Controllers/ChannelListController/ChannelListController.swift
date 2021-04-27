@@ -88,7 +88,13 @@ public class _ChatChannelListController<ExtraData: ExtraDataTypes>: DataControll
                 $0.controller(self, didChangeChannels: changes)
             }
         }
-        
+
+        observer.onWillChange = { [unowned self] in
+            self.delegateCallback {
+                $0.controllerWillChangeChannels(self)
+            }
+        }
+
         return observer
     }()
     
@@ -220,6 +226,12 @@ extension _ChatChannelListController where ExtraData == NoExtraData {
 /// please use `_ChatChannelListControllerDelegate` instead.
 ///
 public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
+    /// The controller will update the list of observed channels.
+    ///
+    /// - Parameter controller: The controller emitting the change callback.
+    ///
+    func controllerWillChangeChannels(_ controller: ChatChannelListController)
+
     /// The controller changed the list of observed channels.
     ///
     /// - Parameters:
@@ -233,6 +245,8 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
 }
 
 public extension ChatChannelListControllerDelegate {
+    func controllerWillChangeChannels(_ controller: ChatChannelListController) {}
+
     func controller(
         _ controller: _ChatChannelListController<NoExtraData>,
         didChangeChannels changes: [ListChange<ChatChannel>]
@@ -246,7 +260,13 @@ public extension ChatChannelListControllerDelegate {
 ///
 public protocol _ChatChannelListControllerDelegate: DataControllerStateDelegate {
     associatedtype ExtraData: ExtraDataTypes
-    
+
+    /// The controller will update the list of observed channels.
+    ///
+    /// - Parameter controller: The controller emitting the change callback.
+    ///
+    func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>)
+
     /// The controller changed the list of observed channels.
     ///
     /// - Parameters:
@@ -260,6 +280,8 @@ public protocol _ChatChannelListControllerDelegate: DataControllerStateDelegate 
 }
 
 public extension _ChatChannelListControllerDelegate {
+    func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {}
+
     func controller(
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
@@ -275,6 +297,7 @@ extension ClientError {
 // MARK: - Delegate type eraser
 
 class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelListControllerDelegate {
+    private var _controllerWillChangeChannels: (_ChatChannelListController<ExtraData>) -> Void
     private var _controllerDidChangeChannels: (_ChatChannelListController<ExtraData>, [ListChange<_ChatChannel<ExtraData>>])
         -> Void
     private var _controllerDidChangeState: (DataController, DataController.State) -> Void
@@ -284,16 +307,22 @@ class AnyChannelListControllerDelegate<ExtraData: ExtraDataTypes>: _ChatChannelL
     init(
         wrappedDelegate: AnyObject?,
         controllerDidChangeState: @escaping (DataController, DataController.State) -> Void,
+        controllerWillChangeChannels: @escaping (_ChatChannelListController<ExtraData>) -> Void,
         controllerDidChangeChannels: @escaping (_ChatChannelListController<ExtraData>, [ListChange<_ChatChannel<ExtraData>>])
             -> Void
     ) {
         self.wrappedDelegate = wrappedDelegate
         _controllerDidChangeState = controllerDidChangeState
+        _controllerWillChangeChannels = controllerWillChangeChannels
         _controllerDidChangeChannels = controllerDidChangeChannels
     }
 
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         _controllerDidChangeState(controller, state)
+    }
+
+    func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {
+        _controllerWillChangeChannels(controller)
     }
 
     func controller(
@@ -309,6 +338,7 @@ extension AnyChannelListControllerDelegate {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerWillChangeChannels: { [weak delegate] in delegate?.controllerWillChangeChannels($0) },
             controllerDidChangeChannels: { [weak delegate] in delegate?.controller($0, didChangeChannels: $1) }
         )
     }
@@ -319,6 +349,7 @@ extension AnyChannelListControllerDelegate where ExtraData == NoExtraData {
         self.init(
             wrappedDelegate: delegate,
             controllerDidChangeState: { [weak delegate] in delegate?.controller($0, didChangeState: $1) },
+            controllerWillChangeChannels: { [weak delegate] in delegate?.controllerWillChangeChannels($0) },
             controllerDidChangeChannels: { [weak delegate] in delegate?.controller($0, didChangeChannels: $1) }
         )
     }
