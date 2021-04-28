@@ -72,13 +72,6 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .composerButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var stateIcon: UIImageView = {
-        let imageView = UIImageView().withoutAutoresizingMaskConstraints
-        imageView.contentMode = .center
-        imageView.widthAnchor.pin(equalTo: imageView.heightAnchor, multiplier: 1).isActive = true
-        return imageView
-    }()
-    
     public private(set) lazy var dismissButton: UIButton = components
         .messageComposer
         .composerButton.init()
@@ -147,7 +140,6 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         topContainer.addArrangedSubview(stateIcon)
         topContainer.addArrangedSubview(titleLabel)
         topContainer.addArrangedSubview(dismissButton)
-        stateIcon.heightAnchor.pin(equalToConstant: 40).isActive = true
 
         centerContainer.axis = .horizontal
         centerContainer.alignment = .fill
