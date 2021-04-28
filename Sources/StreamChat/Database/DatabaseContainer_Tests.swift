@@ -44,7 +44,11 @@ class DatabaseContainer_Tests: StressTestCase {
         }, completion: $0) }
         
         // Assert the completion was called with an error
-        XCTAssertNotNil(errorCompletion)
+        //
+        // XCTAssertNotNil should be used but it seems to touch various properties of `errorCompletion`
+        // which results in touching `TeamDTO` stored in error's `userInfo`
+        // which is managed in local context inside write function and that makes CoreData concurrency unhappy
+        XCTAssert(errorCompletion != nil)
     }
     
     func test_removingAllData() throws {
@@ -216,8 +220,14 @@ class DatabaseContainer_Tests: StressTestCase {
         let database = try DatabaseContainerMock(kind: .inMemory, localCachingSettings: cachingSettings)
         
         XCTAssertEqual(database.viewContext.localCachingSettings, cachingSettings)
-        XCTAssertEqual(database.writableContext.localCachingSettings, cachingSettings)
-        XCTAssertEqual(database.backgroundReadOnlyContext.localCachingSettings, cachingSettings)
+        
+        database.writableContext.performAndWait {
+            XCTAssertEqual(database.writableContext.localCachingSettings, cachingSettings)
+        }
+        
+        database.backgroundReadOnlyContext.performAndWait {
+            XCTAssertEqual(database.backgroundReadOnlyContext.localCachingSettings, cachingSettings)
+        }
     }
 }
 
