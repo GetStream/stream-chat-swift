@@ -12,16 +12,15 @@ extension ChatClient {
         // Register custom UI elements
         var appearance = Appearance()
         var components = Components()
-        
+
+        components.messageLayoutOptionsResolver = SlackMessageOptionsResolver()
         components.navigation.channelListRouter = SlackChatChannelListRouter.self
         components.avatarView = SlackChatAvatarView.self
         components.channelList.itemView = SlackChatChannelListItemView.self
         components.channelList.itemSubviews.unreadCountView = SlackChatChannelUnreadCountView.self
         appearance.images.newChat = UIImage(named: "new_message")!
-        
-        components.messageList.defaultMessageCell = SlackСhatMessageCollectionViewCell.self
+
         components.messageList.messageContentSubviews.authorAvatarView = SlackChatAvatarView.self
-        components.messageList.messageContentSubviews.metadataView = SlackChatMessageMetadataView.self
         components.messageList.messageContentSubviews.attachmentSubviews.imageGallery = SlackChatMessageImageGallery.self
         
         Appearance.default = appearance

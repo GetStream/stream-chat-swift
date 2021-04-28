@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class SlackChatChannelViewController: ChatChannelVC {
+final class SlackChatChannelViewController: ChatMessageListVC {
     private lazy var onlineIndicator = UIView()
     private lazy var titleLabel = UILabel()
     
@@ -63,5 +63,9 @@ final class SlackChatChannelViewController: ChatChannelVC {
             .first(where: { $0.id != channelController.client.currentUserId })
         
         onlineIndicator.isHidden = !(firstOtherMember?.isOnline ?? false)
+    }
+    
+    override func cellContentClassForMessage(at indexPath: IndexPath) -> ChatMessageContentView.Type {
+        SlackChatMessageContentView.self
     }
 }
