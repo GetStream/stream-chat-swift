@@ -148,8 +148,17 @@ class ListDatabaseObserver<Item, DTO: NSManagedObject> {
             cacheName: nil
         )
         
-        _items.computeValue = { [weak frc, itemCreator] in
-            (frc?.fetchedObjects ?? []).lazyCachedMap(itemCreator)
+        _items.computeValue = { [weak frc] in
+            var result = LazyCachedMapCollection<Item>()
+            result = (frc?.fetchedObjects ?? []).lazyCachedMap { dto in
+                // `itemCreator` returns non-optional value, so we can use implicitly uwrapped optional
+                var result: Item!
+                context.performAndWait {
+                    result = itemCreator(dto)
+                }
+                return result
+            }
+            return result
         }
 
         listenForRemoveAllDataNotifications()
