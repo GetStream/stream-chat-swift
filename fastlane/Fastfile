@@ -171,6 +171,7 @@ lane :testflight_build do
     scheme: "DemoApp",
     configuration: "Release",
     export_method: "app-store",
+    export_options: "./fastlane/testflight_export_options.plist",
     clean: true,
     include_symbols: true,
     output_directory: "archives"
