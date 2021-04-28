@@ -61,8 +61,9 @@ open class _ChatCommandLabel<ExtraData: ExtraDataTypes>: _View, AppearanceProvid
         super.setUpLayout()
 
         embed(container)
-        container.preservesSuperviewLayoutMargins = true
         container.isLayoutMarginsRelativeArrangement = true
+        container.layoutMargins.top = 4
+        container.layoutMargins.bottom = 4
 
         container.addArrangedSubview(iconView)
         container.addArrangedSubview(commandLabel)
@@ -70,7 +71,6 @@ open class _ChatCommandLabel<ExtraData: ExtraDataTypes>: _View, AppearanceProvid
         commandLabel.isHidden = false
         
         iconView.contentMode = .scaleAspectFit
-        layer.cornerRadius = bounds.height / 2
     }
     
     override open func updateContent() {

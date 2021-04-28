@@ -11,7 +11,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var topContainer = ContainerStackView()
+    public private(set) lazy var headerView = UIView()
         .withoutAutoresizingMaskConstraints
 
     public private(set) lazy var bottomContainer = ContainerStackView()
@@ -92,7 +92,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         backgroundColor = appearance.colorPalette.popoverBackground
         
         centerContentContainer.clipsToBounds = true
-        centerContentContainer.layer.cornerRadius = 25
+        centerContentContainer.layer.cornerRadius = 20
         centerContentContainer.layer.borderWidth = 1
         centerContentContainer.layer.borderColor = appearance.colorPalette.border.cgColor
         
@@ -125,21 +125,18 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         embed(container)
 
         container.isLayoutMarginsRelativeArrangement = true
-        container.spacing = 0
         container.axis = .vertical
         container.alignment = .fill
-        container.addArrangedSubview(topContainer)
+        container.addArrangedSubview(headerView)
         container.addArrangedSubview(centerContainer)
         container.addArrangedSubview(bottomContainer)
         bottomContainer.isHidden = true
-        topContainer.isHidden = true
+        headerView.isHidden = true
 
         bottomContainer.addArrangedSubview(checkmarkControl)
 
-        topContainer.alignment = .fill
-        topContainer.addArrangedSubview(stateIcon)
-        topContainer.addArrangedSubview(titleLabel)
-        topContainer.addArrangedSubview(dismissButton)
+        headerView.addSubview(titleLabel)
+        headerView.addSubview(dismissButton)
 
         centerContainer.axis = .horizontal
         centerContainer.alignment = .fill
@@ -159,7 +156,6 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         messageQuoteView.isHidden = true
         imageAttachmentsView.isHidden = true
         documentAttachmentsView.isHidden = true
-        imageAttachmentsView.heightAnchor.pin(equalToConstant: 120).isActive = true
 
         centerRightContainer.alignment = .center
         centerRightContainer.spacing = .auto
@@ -173,8 +169,16 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         centerLeftContainer.addArrangedSubview(attachmentButton)
         centerLeftContainer.addArrangedSubview(commandsButton)
         centerLeftContainer.addArrangedSubview(shrinkInputButton)
+
+        dismissButton.widthAnchor.pin(equalToConstant: 24).isActive = true
+        dismissButton.heightAnchor.pin(equalToConstant: 24).isActive = true
+        dismissButton.trailingAnchor.pin(equalTo: centerRightContainer.trailingAnchor).isActive = true
+        titleLabel.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
+        titleLabel.pin(anchors: [.top, .bottom], to: headerView)
+        imageAttachmentsView.heightAnchor.pin(equalToConstant: 120).isActive = true
+        messageInputView.inputTextView.preservesSuperviewLayoutMargins = false
         
-        [shrinkInputButton, attachmentButton, commandsButton, sendButton, editButton, dismissButton]
+        [shrinkInputButton, attachmentButton, commandsButton, sendButton, editButton]
             .forEach { button in
                 button.pin(anchors: [.width], to: 20)
                 button.pin(anchors: [.height], to: 20)
