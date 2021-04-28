@@ -17,7 +17,12 @@
           "name" : "StreamChat"
         }
       ]
-    }
+    },
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ]
   },
   "testTargets" : [
     {
