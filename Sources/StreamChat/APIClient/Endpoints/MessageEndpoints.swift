@@ -5,7 +5,7 @@
 import Foundation
 
 extension Endpoint {
-    static func getMessage<ExtraData: ExtraDataTypes>(messageId: MessageId) -> Endpoint<MessagePayload<ExtraData>> {
+    static func getMessage<ExtraData: ExtraDataTypes>(messageId: MessageId) -> Endpoint<MessagePayload<ExtraData>.Boxed> {
         .init(
             path: messageId.path,
             method: .get,

@@ -13,12 +13,12 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
     ///   - messageId: The message identifier.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
     func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Error?) -> Void)? = nil) {
-        let endpoint: Endpoint<MessagePayload<ExtraData>> = .getMessage(messageId: messageId)
+        let endpoint: Endpoint<MessagePayload<ExtraData>.Boxed> = .getMessage(messageId: messageId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
-            case let .success(message):
+            case let .success(boxed):
                 self.database.write({ session in
-                    try session.saveMessage(payload: message, for: cid)
+                    try session.saveMessage(payload: boxed.message, for: cid)
                 }, completion: { error in
                     completion?(error)
                 })

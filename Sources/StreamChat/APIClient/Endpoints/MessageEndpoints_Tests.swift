@@ -9,7 +9,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_getMessage_buildsCorrectly() {
         let messageId: MessageId = .unique
         
-        let expectedEndpoint = Endpoint<MessagePayload<NoExtraData>>(
+        let expectedEndpoint = Endpoint<MessagePayload<NoExtraData>.Boxed>(
             path: "messages/\(messageId)",
             method: .get,
             queryItems: nil,
@@ -18,7 +18,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload<NoExtraData>> = .getMessage(messageId: messageId)
+        let endpoint: Endpoint<MessagePayload<NoExtraData>.Boxed> = .getMessage(messageId: messageId)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
