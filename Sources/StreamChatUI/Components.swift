@@ -35,6 +35,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// A view to input content of a message.
     public var messageInputView: _ChatMessageInputView<ExtraData>.Type = _ChatMessageInputView<ExtraData>.self
 
+    /// An object responsible for message layout options calculations in `ChatMessageListVC/ChatThreadVC`.
+    public var messageLayoutOptionsResolver: _ChatMessageLayoutOptionsResolver<ExtraData> = .init()
+
     public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()
