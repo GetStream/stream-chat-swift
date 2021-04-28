@@ -41,7 +41,9 @@ class DatabaseContainer: NSPersistentContainer {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        context.localCachingSettings = localCachingSettings
+        context.perform { [localCachingSettings] in
+            context.localCachingSettings = localCachingSettings
+        }
         return context
     }()
     
@@ -57,7 +59,9 @@ class DatabaseContainer: NSPersistentContainer {
         let context = newBackgroundContext()
         context.automaticallyMergesChangesFromParent = true
         context.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
-        context.localCachingSettings = localCachingSettings
+        context.perform { [localCachingSettings] in
+            context.localCachingSettings = localCachingSettings
+        }
         return context
     }()
     
@@ -123,7 +127,13 @@ class DatabaseContainer: NSPersistentContainer {
         
         viewContext.mergePolicy = NSMergeByPropertyObjectTrumpMergePolicy
         viewContext.automaticallyMergesChangesFromParent = true
-        viewContext.localCachingSettings = localCachingSettings
+        if Thread.current.isMainThread {
+            viewContext.localCachingSettings = localCachingSettings
+        } else {
+            viewContext.perform { [viewContext, localCachingSettings] in
+                viewContext.localCachingSettings = localCachingSettings
+            }
+        }
         
         setupLoggerForDatabaseChanges()
         
