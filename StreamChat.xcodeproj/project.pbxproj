@@ -717,7 +717,7 @@
 		AD87D097263C7783008B466C /* CommandButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D096263C7783008B466C /* CommandButton.swift */; };
 		AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0A0263C7823008B466C /* AttachmentButton.swift */; };
 		AD87D0AB263C7A7E008B466C /* ShrinkInputButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0AA263C7A7E008B466C /* ShrinkInputButton.swift */; };
-		AD87D0BD263C7C09008B466C /* CloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0BC263C7C09008B466C /* CloseButton.swift */; };
+		AD87D0BD263C7C09008B466C /* CircularCloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0BC263C7C09008B466C /* CircularCloseButton.swift */; };
 		AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */; };
 		AD90D18D25D5619C001D03BB /* CurrentUserUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */; };
 		ADAA377125E43C3700C31528 /* ChatSuggestionsViewController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsViewController_Tests.swift */; };
@@ -1905,7 +1905,7 @@
 		AD87D096263C7783008B466C /* CommandButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandButton.swift; sourceTree = "<group>"; };
 		AD87D0A0263C7823008B466C /* AttachmentButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentButton.swift; sourceTree = "<group>"; };
 		AD87D0AA263C7A7E008B466C /* ShrinkInputButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShrinkInputButton.swift; sourceTree = "<group>"; };
-		AD87D0BC263C7C09008B466C /* CloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseButton.swift; sourceTree = "<group>"; };
+		AD87D0BC263C7C09008B466C /* CircularCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CircularCloseButton.swift; sourceTree = "<group>"; };
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
 		AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotVariant.swift; sourceTree = "<group>"; };
@@ -3703,7 +3703,7 @@
 				AD4475A8263B4DF90030E583 /* ConfirmButton */,
 				AD87D092263C747C008B466C /* CommandButton */,
 				AD87D094263C7495008B466C /* AttachmentButton */,
-				AD87D093263C7489008B466C /* CloseButton */,
+				AD87D093263C7489008B466C /* CircularCloseButton */,
 				AD87D095263C74A4008B466C /* ShrinkInputButton */,
 				AD4474B8263AFCC30030E583 /* CheckboxControl */,
 				ADB3C478261638C500A69B66 /* QuotedChatMessageView */,
@@ -4134,12 +4134,12 @@
 			path = CommandButton;
 			sourceTree = "<group>";
 		};
-		AD87D093263C7489008B466C /* CloseButton */ = {
+		AD87D093263C7489008B466C /* CircularCloseButton */ = {
 			isa = PBXGroup;
 			children = (
-				AD87D0BC263C7C09008B466C /* CloseButton.swift */,
+				AD87D0BC263C7C09008B466C /* CircularCloseButton.swift */,
 			);
-			path = CloseButton;
+			path = CircularCloseButton;
 			sourceTree = "<group>";
 		};
 		AD87D094263C7495008B466C /* AttachmentButton */ = {
@@ -5125,7 +5125,7 @@
 				888123D2255D430B00070D5A /* UIView+Extensions.swift in Sources */,
 				8825333E258CE7AC00B77352 /* ChatMessageActionsVC.swift in Sources */,
 				22ADD682256C40410098EFEB /* ChatMessageComposerView.swift in Sources */,
-                F80BCA1E26304FEE00F2107B /* CloseButton.swift in Sources */,
+				F80BCA1E26304FEE00F2107B /* CloseButton.swift in Sources */,
 				E7A37B8425ADA66E0055458F /* ChatSuggestionsHeaderView.swift in Sources */,
 				8850FE91256558B200C8D534 /* ChatRouter.swift in Sources */,
 				883051C82630579D0069D731 /* ChatThreadArrowView.swift in Sources */,
@@ -5162,7 +5162,7 @@
 				224165A825910A2C00ED7F78 /* CheckboxControl.swift in Sources */,
 				88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */,
 				796CBD1C25FF9552003299B0 /* UIStackView+Extensions.swift in Sources */,
-				AD87D0BD263C7C09008B466C /* CloseButton.swift in Sources */,
+				AD87D0BD263C7C09008B466C /* CircularCloseButton.swift in Sources */,
 				BDDD1EAA2632CE3C00BA007B /* Appearance+SwiftUI.swift in Sources */,
 				8850FE87256558A200C8D534 /* ChatChannelListRouter.swift in Sources */,
 				888ABA072594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift in Sources */,

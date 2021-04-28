@@ -322,8 +322,21 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
     // MARK: - Cell action handlers
 
-    open func didTapOnImageAttachment(_ attachment: ChatMessageImageAttachment, at indexPath: IndexPath) {
-        router.showPreview(for: attachment.payload?.imageURL)
+    public func didTapOnImageAttachment(
+        _ attachment: ChatMessageImageAttachment,
+        previews: [ImagePreviewable],
+        at indexPath: IndexPath
+    ) {
+        guard
+            let cell = collectionView.cellForItem(at: indexPath) as? _СhatMessageCollectionViewCell<ExtraData>,
+            let message = cell.messageContentView?.content
+        else { return }
+        router.showImageGallery(
+            for: message,
+            initialAttachment: attachment,
+            previews: previews,
+            from: self
+        )
     }
 
     /// Executes the provided action on the message

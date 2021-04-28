@@ -27,7 +27,7 @@ final class ChatMessageImageGallery_Tests: XCTestCase {
 
     func test_appearance_whenOneImage() {
         imageGallery.content = [
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url)
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url)
         ]
 
         AssertSnapshot(imageGallery, variants: [.defaultLight])
@@ -35,8 +35,8 @@ final class ChatMessageImageGallery_Tests: XCTestCase {
     
     func test_appearance_whenTwoImages() {
         imageGallery.content = [
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url)
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url)
         ]
 
         AssertSnapshot(imageGallery, variants: [.defaultLight])
@@ -44,9 +44,9 @@ final class ChatMessageImageGallery_Tests: XCTestCase {
     
     func test_appearance_whenThreeImages() {
         imageGallery.content = [
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url),
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url)
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url)
         ]
 
         AssertSnapshot(imageGallery, variants: [.defaultLight])
@@ -54,10 +54,10 @@ final class ChatMessageImageGallery_Tests: XCTestCase {
     
     func test_appearance_whenFourImages() {
         imageGallery.content = [
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url),
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url)
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url)
         ]
 
         AssertSnapshot(imageGallery, variants: [.defaultLight])
@@ -65,12 +65,12 @@ final class ChatMessageImageGallery_Tests: XCTestCase {
     
     func test_appearance_whenMoreThanFourImages() {
         imageGallery.content = [
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url),
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url),
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url)
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url)
         ]
 
         AssertSnapshot(imageGallery, variants: [.defaultDark, .defaultLight])
@@ -85,12 +85,12 @@ final class ChatMessageImageGallery_Tests: XCTestCase {
         imageGallery.pin(anchors: [.width, .height], to: 200)
         
         imageGallery.content = [
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url),
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url),
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url)
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url)
         ]
 
         AssertSnapshot(imageGallery, variants: [.defaultLight])
@@ -110,8 +110,8 @@ final class ChatMessageImageGallery_Tests: XCTestCase {
         imageGallery.pin(anchors: [.width, .height], to: 200)
         
         imageGallery.content = [
-            ChatMessageImageAttachment(imageURL: TestImages.yoda.url),
-            ChatMessageImageAttachment(imageURL: TestImages.vader.url)
+            ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url),
+            ChatMessageImageAttachment.mock(imageURL: TestImages.vader.url)
         ]
         
         AssertSnapshot(imageGallery, variants: [.defaultLight])

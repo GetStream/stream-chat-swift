@@ -4,13 +4,20 @@
 
 @testable import StreamChat
 
-extension ChatMessageDefaultAttachment {
+extension ChatMessageImageAttachment {
     public static func mock(
-        imageUrl: URL?,
-        title: String
+        imageURL: URL,
+        title: String = ""
     ) -> Self {
-        var attachment = Self(id: .unique, type: .image, localURL: nil, localState: nil, title: title)
-        attachment.imageURL = imageUrl
-        return attachment
+        Self(
+            id: .unique,
+            type: .image,
+            payload: AttachmentImagePayload(
+                title: nil,
+                imageURL: imageURL,
+                imagePreviewURL: imageURL
+            ),
+            uploadingState: nil
+        )
     }
 }
