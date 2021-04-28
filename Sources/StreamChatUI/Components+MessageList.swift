@@ -8,9 +8,6 @@ import UIKit.UIImage
 public extension _Components {
     struct MessageListUI {
         public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
-
-        public var defaultMessageCell: _СhatMessageCollectionViewCell<ExtraData>.Type =
-            _СhatMessageCollectionViewCell<ExtraData>.self
         public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
         public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()
