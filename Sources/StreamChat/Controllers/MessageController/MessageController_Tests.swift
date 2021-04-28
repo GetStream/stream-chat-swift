@@ -382,15 +382,15 @@ final class MessageController_Tests: StressTestCase {
             authorUserId: .unique
         )
         
-        var replyDTO: MessageDTO?
+        var replyModel: ChatMessage?
         try client.databaseContainer.writeSynchronously { session in
-            replyDTO = try session.saveMessage(payload: reply, for: self.cid)
+            replyModel = try session.saveMessage(payload: reply, for: self.cid).asModel()
         }
     
         // Assert `insert` entity change is received by the delegate
         AssertAsync.willBeEqual(
             delegate.didChangeReplies_changes,
-            [.insert((replyDTO?.asModel())!, index: [0, 0])]
+            [.insert(replyModel!, index: [0, 0])]
         )
     }
     
