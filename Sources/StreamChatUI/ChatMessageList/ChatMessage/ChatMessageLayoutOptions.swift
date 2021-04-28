@@ -5,7 +5,7 @@
 import Foundation
 
 /// Describes the layout of base message content view.
-public struct MessageLayoutOptions: OptionSet, Hashable {
+public struct ChatMessageLayoutOptions: OptionSet, Hashable {
     public let rawValue: Int
 
     public init(rawValue: Int) {
@@ -13,7 +13,7 @@ public struct MessageLayoutOptions: OptionSet, Hashable {
     }
 }
 
-public extension MessageLayoutOptions {
+public extension ChatMessageLayoutOptions {
     /// If set all the content will have trailing alignment. By default, the message sent by the current user is flipped.
     static let flipped = Self(rawValue: 1 << 0)
 
@@ -55,7 +55,7 @@ public extension MessageLayoutOptions {
     static let onlyVisibleForYouIndicator = Self(rawValue: 1 << 12)
 }
 
-extension MessageLayoutOptions: CustomStringConvertible {
+extension ChatMessageLayoutOptions: CustomStringConvertible {
     /// Returns all options the current option set consists of separated by `-` character.
     public var description: String {
         Self.singleOptions

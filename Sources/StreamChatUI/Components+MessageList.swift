@@ -28,13 +28,7 @@ public extension _Components {
 
     struct MessageContentViewSubviews {
         public var authorAvatarView: ChatAvatarView.Type = ChatAvatarView.self
-        public var bubbleView: _ChatMessageBubbleView<ExtraData>.Type = _ChatMessageBubbleView<ExtraData>.self
-        public var metadataView: _ChatMessageMetadataView<ExtraData>.Type = _ChatMessageMetadataView<ExtraData>.self
         public var attachmentSubviews = MessageAttachmentViewSubviews()
-        public var onlyVisibleForCurrentUserIndicator: ChatMessageOnlyVisibleForCurrentUserIndicator.Type =
-            ChatMessageOnlyVisibleForCurrentUserIndicator.self
-        public var threadArrowView: ChatMessageThreadArrowView.Type = ChatMessageThreadArrowView.self
-        public var threadInfoView: _ChatMessageThreadInfoView<ExtraData>.Type = _ChatMessageThreadInfoView<ExtraData>.self
         public var threadParticipantAvatarView: ChatAvatarView.Type = ChatAvatarView.self
         public var errorIndicator: ChatMessageErrorIndicator.Type = ChatMessageErrorIndicator.self
         public var linkPreviewView: _ChatMessageLinkPreviewView<ExtraData>.Type = _ChatMessageLinkPreviewView<ExtraData>.self
