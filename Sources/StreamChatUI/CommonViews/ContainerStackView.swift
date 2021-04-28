@@ -203,6 +203,14 @@ public class ContainerStackView: UIView {
         assert(subviews.contains(subview))
         subview.removeFromSuperview()
 
+        // Reset hiding state from the removed view. This important especially if the view
+        // is added to another container, since the view will have the size to 0 and the other
+        // container won't be able to hide the view because it thinks it is already hidden.
+        subview.alpha = 1.0
+        hideConstraintsByView[subview]?.isActive = false
+        hideConstraintsByView[subview] = nil
+
+        // Remove the hiding observer from the removed view
         hidingObserversByView[subview] = nil
 
         invalidateConstraints()
