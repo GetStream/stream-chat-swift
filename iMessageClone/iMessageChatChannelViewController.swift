@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class iMessageChatChannelViewController: ChatChannelVC {
+final class iMessageChatChannelViewController: ChatMessageListVC {
     override func setUpAppearance() {
         super.setUpAppearance()
         
@@ -38,5 +38,9 @@ final class iMessageChatChannelViewController: ChatChannelVC {
         navigationItem.titleView = titleStackView
         
         navigationItem.rightBarButtonItem = nil
+    }
+
+    override func cellContentClassForMessage(at indexPath: IndexPath) -> ChatMessageContentView.Type {
+        iMessageChatMessageContentView.self
     }
 }
