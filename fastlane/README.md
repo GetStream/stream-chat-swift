@@ -41,6 +41,11 @@ Register new device, regenerates profiles, updates them remotely and locally
 fastlane distribute_demo_app
 ```
 Builds the latest version of Demo app and uploads it to Firebase
+### testflight_build
+```
+fastlane testflight_build
+```
+Builds the latest version of Demo app and uploads it to Test Flight
 ### get_next_issue_number
 ```
 fastlane get_next_issue_number

@@ -101,7 +101,7 @@ lane :match_me do |options|
   # Get `:readonly` value, fallback to `true` if it's missing.
   readonly = options.fetch(:readonly) { true }
 
-  ["development", "adhoc"].each do |type|
+  ["development", "adhoc", "appstore"].each do |type|
     match(
       type: type,
       app_identifier: [
@@ -159,6 +159,80 @@ lane :distribute_demo_app do
       app: "1:674907137625:ios:9e7b1074941f8728d7f348",
       groups: "ios-stream-testers",
       release_notes: message
+  )
+end
+
+desc "Builds the latest version of Demo app and uploads it to TestFlight"
+lane :testflight_build do
+  
+  # Ask around if you're wandering where you can get this key from
+  api_key = app_store_connect_api_key(
+    key_id: "8P4J3MDAWP",
+    issuer_id: "69a6de96-0738-47e3-e053-5b8c7c11a4d1",
+    key_content: ENV["APPSTORE_API_KEY"],
+    in_house: false
+  )
+  
+  # We take the version of the latest build available on TestFlight to find out the next available build number
+  build_number = latest_testflight_build_number(
+    app_identifier: "io.getstream.iOS.ChatDemoApp",
+    api_key: api_key
+  )
+
+  # If version number is different from %d.%d.%d e.g. 3.2.1-beta-6.0 we won't be able to build a test flight build
+  # so we take the current version and strip first %d.%d.%d out of it
+  version_number = get_version_number(
+    xcodeproj: "StreamChat.xcodeproj",
+    target: "StreamChat"
+  )[/\d+\.\d+\.\d/]
+
+  ["StreamChat", "StreamChatUI"].each do |target|
+    increment_version_number_in_plist(
+      version_number: version_number,
+      xcodeproj: "StreamChat.xcodeproj",
+      target: target
+    )
+  end
+
+  increment_build_number_in_plist(
+    xcodeproj: "StreamChat.xcodeproj",
+    target: "DemoApp",
+    build_number: (build_number + 1).to_s,
+  )
+
+  ["development", "adhoc", "appstore"].each do |type|
+    match(
+      type: type,
+      # A user has to be a matched one, if it's not please run `match_me` with readOnly = false
+      username: "sacethi0@gmail.com",
+      app_identifier: [
+        "io.getstream.StreamChat",
+        "io.getstream.iOS.ChatDemoApp",
+        "io.getstream.iOS.iMessageClone",
+        "io.getstream.iOS.SlackClone",
+        "io.getstream.iOS.MessengerClone",
+      ],
+      readonly: true
+    )
+  end
+
+  gym(
+    project: "StreamChat.xcodeproj",
+    scheme: "DemoApp",
+    configuration: "Release",
+    export_method: "app-store",
+    clean: true,
+    include_symbols: true,
+    output_directory: "archives"
+  )
+  
+  pilot(
+    api_key: api_key,
+    team_id: "118902954",
+    app_identifier: "io.getstream.iOS.ChatDemoApp",
+    app_platform: "ios",
+    ipa: "archives/ChatSample.ipa",
+    skip_waiting_for_build_processing: true
   )
 end
 

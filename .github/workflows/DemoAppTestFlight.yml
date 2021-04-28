@@ -1,0 +1,46 @@
+name: Test Flight Deploy DemoApp
+
+on:
+  release:
+    types: [published]
+
+  workflow_dispatch:
+  
+env:
+  HOMEBREW_NO_INSTALL_CLEANUP=1: 1
+
+jobs:
+  deploy:
+    runs-on: macos-latest
+
+    steps:
+    - name: Install Bot SSH Key
+      uses: webfactory/ssh-agent@v0.4.1
+      with:
+        ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
+    - uses: actions/checkout@v1
+    - name: Set build image var
+      run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
+    - name: Cache RubyGems
+      uses: actions/cache@v2
+      id: rubygem-cache
+      with:
+        path: vendor/bundle
+        key: ${{ runner.os }}-${{ env.ImageVersion }}-gem-${{ hashFiles('**/Gemfile.lock') }}
+        restore-keys: ${{ runner.os }}-${{ env.ImageVersion }}-gem-
+    - name: Cache Mint
+      uses: actions/cache@v2
+      id: mint-cache
+      with:
+        path: /usr/local/lib/mint
+        key: ${{ runner.os }}-mint-${{ hashFiles('./Mintfile') }}
+        restore-keys: ${{ runner.os }}-mint-
+    - uses: ./.github/actions/bootstrap
+    - name: Deploy Demo app
+      env:
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
+      run: bundle exec fastlane testflight_build
+
+
