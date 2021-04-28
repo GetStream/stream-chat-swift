@@ -120,6 +120,8 @@ class UserListUpdater_Tests: StressTestCase {
         // Assert new user is inserted into DB
         AssertAsync.willBeTrue(newUser != nil)
         
+        let userIds = [user!, newUser!].map(\.id)
+        
         // Assert both users are linked to the same query now
         try database.writeSynchronously { session in
             do {
@@ -127,7 +129,7 @@ class UserListUpdater_Tests: StressTestCase {
                 XCTAssertEqual(dto!.users.count, 2)
                 XCTAssertEqual(
                     dto!.users.map(\.id).sorted(),
-                    [user!, newUser!].map(\.id).sorted()
+                    userIds.sorted()
                 )
             } catch {
                 XCTFail("Error trying to get query: \(error)")
