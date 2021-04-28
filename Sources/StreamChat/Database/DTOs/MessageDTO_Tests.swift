@@ -263,18 +263,25 @@ class MessageDTO_Tests: XCTestCase {
         )
 
         let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try await { completion in
+            var channelDTO: ChannelDTO!
+            var messageDTO: MessageDTO!
+            
             // Asynchronously save the payload to the db
             database.write { session in
                 // Create the channel first
-                let channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
+                channelDTO = try! session.saveChannel(payload: channelPayload, query: nil)
 
                 // Save the message
-                let messageDTO = try! session.saveMessage(payload: payload, for: channelId)
+                messageDTO = try! session.saveMessage(payload: payload, for: channelId)
+            } completion: { _ in
                 completion((channelDTO, messageDTO))
             }
         }
-
-        XCTAssertTrue(channelDTO.pinnedMessages.contains(messageDTO))
+        
+        XCTAssertTrue(
+            channelDTO.inContext(database.viewContext).pinnedMessages
+                .contains(messageDTO.inContext(database.viewContext))
+        )
     }
 
     func test_messagePayload_isNotPinned_removedFromPinnedMessages() throws {
@@ -299,7 +306,11 @@ class MessageDTO_Tests: XCTestCase {
             }
         }
 
-        XCTAssertFalse(channelDTO.pinnedMessages.contains(messageDTO))
+        let context = try XCTUnwrap(channelDTO.managedObjectContext)
+        
+        context.performAndWait {
+            XCTAssertFalse(channelDTO.pinnedMessages.contains(messageDTO))
+        }
     }
 
     func test_messagePayloadNotStored_withoutChannelInfo() throws {
