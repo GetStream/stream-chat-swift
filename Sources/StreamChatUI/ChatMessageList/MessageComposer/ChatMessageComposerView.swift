@@ -92,22 +92,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .messageComposer
         .checkmarkControl.init()
         .withoutAutoresizingMaskConstraints
-    
-    // MARK: - Overrides
-    
-    override open func didMoveToSuperview() {
-        super.didMoveToSuperview()
-        guard superview != nil else { return }
-        
-        setUp()
-        setUpLayout()
-        
-        setUpAppearance()
-        updateContent()
-    }
-    
-    // MARK: - Public
-    
+
     override open func setUpAppearance() {
         super.setUpAppearance()
         
