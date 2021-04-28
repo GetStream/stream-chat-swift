@@ -599,5 +599,15 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatChannelList/__Snapshots__/ChatChannelUnreadCountView+SwiftUI_Tests/test_injectedSwiftUIView.default-light.png",
     "ChatChannelList/__Snapshots__/ChatChannelUnreadCountView+SwiftUI_Tests/test_injectedSwiftUIView.small-dark.png",
     "Components+SwiftUI_Tests.swift",
-    "Appearance+SwiftUI_Tests.swift"
+    "Appearance+SwiftUI_Tests.swift",
+    "ImageGallery/ImageGalleryVC_Tests.swift",
+    "ImageGallery/__Snapshots__/ImageGalleryVC_Tests/test_appearanceCustomization_usingSubclassing.small-dark.png",
+    "ImageGallery/__Snapshots__/ImageGalleryVC_Tests/test_appearanceCustomization_usingUIConfig.small-dark.png",
+    "ImageGallery/__Snapshots__/ImageGalleryVC_Tests/test_defaultAppearance.default-light.png",
+    "ImageGallery/__Snapshots__/ImageGalleryVC_Tests/test_appearanceCustomization_usingUIConfig.extraExtraExtraLarge-light.png",
+    "ImageGallery/__Snapshots__/ImageGalleryVC_Tests/test_appearanceCustomization_usingSubclassing.extraExtraExtraLarge-light.png",
+    "ImageGallery/__Snapshots__/ImageGalleryVC_Tests/test_appearanceCustomization_usingUIConfig.default-light.png",
+    "ImageGallery/__Snapshots__/ImageGalleryVC_Tests/test_defaultAppearance.small-dark.png",
+    "ImageGallery/__Snapshots__/ImageGalleryVC_Tests/test_defaultAppearance.extraExtraExtraLarge-light.png",
+    "ImageGallery/__Snapshots__/ImageGalleryVC_Tests/test_appearanceCustomization_usingSubclassing.default-light.png"
 ] }

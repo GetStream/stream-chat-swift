@@ -51,3 +51,5 @@
 "message.title.see-minutes-ago" = "Seen %@ ago";
 "message.title.offline" = "Offline";
 "message.title.group" = "%d members, %d online";
+
+"current-selection" = "%d of %d";

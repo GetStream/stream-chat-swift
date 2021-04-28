@@ -6,6 +6,10 @@ import Foundation
 // MARK: - Strings
 
 internal enum L10n {
+  /// %d of %d
+  internal static func currentSelection(_ p1: Int, _ p2: Int) -> String {
+    return L10n.tr("Localizable", "current-selection", p1, p2)
+  }
 
   internal enum Alert {
     internal enum Actions {
