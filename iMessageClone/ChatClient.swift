@@ -19,7 +19,6 @@ extension ChatClient {
         components.navigation.channelListRouter = iMessageChatChannelListRouter.self
         appearance.images.newChat = UIImage(systemName: "square.and.pencil")!
         components.messageComposer.messageComposerView = iMessageChatMessageComposerView.self
-        components.messageList.defaultMessageCell = iMessageСhatMessageCollectionViewCell.self
         components.messageComposer.messageComposerViewController = iMessageChatComposerViewController.self
 
         Appearance.default = appearance
