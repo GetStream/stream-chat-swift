@@ -11,7 +11,7 @@ extension _ChatMessagePopupVC: AppearanceProvider {}
 
 final class ChatMessagePopupVC_Tests: XCTestCase {
     private var vc: ChatMessagePopupVC!
-    private var message: ChatMessageGroupPart!
+    private var message: ChatMessage!
     private var reactionsController: ChatMessageReactionsVC!
     private var actionsController: ChatMessageActionsVC!
     
@@ -33,9 +33,19 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+
+        message = .mock(
+            id: .unique,
+            text: "Message text",
+            author: .mock(id: .unique)
+        )
+
+        let messageContentView = ChatMessageContentView().withoutAutoresizingMaskConstraints
+        messageContentView.setUpLayoutIfNeeded(options: message.layout(isLastInGroup: false))
+        messageContentView.content = message
         
         vc = TestChatMessagePopupVC()
-        vc.messageContentViewClass = ChatMessageContentView.self
+        vc.messageContentView = messageContentView
         vc.messageViewFrame = CGRect(x: 50, y: 300, width: 200, height: 50)
         
         let chatMessageController = ChatMessageController_Mock<NoExtraData>.mock()
@@ -50,20 +60,6 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         actionsController = ChatMessageActionsVC()
         actionsController.messageController = chatMessageController
         vc.actionsController = actionsController
-
-        message = ChatMessageGroupPart(
-            message: .mock(
-                id: .unique,
-                text: "Message text",
-                author: .mock(id: .unique)
-            ),
-            quotedMessage: .none,
-            isFirstInGroup: false,
-            isLastInGroup: false,
-            didTapOnAttachment: { _ in },
-            didTapOnAttachmentAction: { _, _ in }
-        )
-        vc.message = message
     }
     
     override func tearDown() {
@@ -77,19 +73,11 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
     
     func test_defaultAppearance_when_largeLongMessage() {
         vc.messageViewFrame = CGRect(x: 50, y: 100, width: 200, height: 50)
-        message = ChatMessageGroupPart(
-            message: .mock(
-                id: .unique,
-                text: repeatElement("Message text", count: 8).joined(separator: "\n"),
-                author: .mock(id: .unique)
-            ),
-            quotedMessage: .none,
-            isFirstInGroup: false,
-            isLastInGroup: false,
-            didTapOnAttachment: { _ in },
-            didTapOnAttachmentAction: { _, _ in }
+        vc.messageContentView.content = .mock(
+            id: .unique,
+            text: repeatElement("Message text", count: 8).joined(separator: "\n"),
+            author: .mock(id: .unique)
         )
-        vc.message = message
         AssertSnapshot(vc)
     }
     
@@ -112,11 +100,14 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
             }
         }
 
+        let messageContentView = ChatMessageContentView().withoutAutoresizingMaskConstraints
+        messageContentView.setUpLayoutIfNeeded(options: message.layout(isLastInGroup: false))
+        messageContentView.content = message
+
         let vc = TestView()
         vc.actionsController = actionsController
-        vc.messageContentViewClass = ChatMessageContentView.self
+        vc.messageContentView = messageContentView
         vc.messageViewFrame = CGRect(x: 50, y: 300, width: 200, height: 50)
-        vc.message = message
 
         AssertSnapshot(vc)
     }

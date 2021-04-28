@@ -36,13 +36,9 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, Comp
     }()
 
     /// New instance of `messageContentViewClass` that is populated with `message` data.
-    open private(set) lazy var messageContentView = messageContentViewClass.init()
-        .withoutAutoresizingMaskConstraints
-
-    /// `messageContentView` class that is populated with `message` and shown.
-    public var messageContentViewClass: _ChatMessageContentView<ExtraData>.Type!
+    public var messageContentView: _ChatMessageContentView<ExtraData>!
     /// Message data that is shown.
-    public var message: _ChatMessageGroupPart<ExtraData>!
+    public var message: _ChatMessage<ExtraData> { messageContentView.content! }
     /// Initial frame of a message.
     public var messageViewFrame: CGRect!
     /// `_ChatMessageActionsVC` instance for showing actions.
@@ -66,7 +62,6 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, Comp
     }
 
     override open func setUpLayout() {
-        messageContentView.setupMessageBubbleView()
         scrollView.embed(scrollContentView)
         view.embed(blurView)
         view.embed(scrollView)
@@ -95,12 +90,12 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, Comp
                     reactionsController.view.leadingAnchor
                         .pin(lessThanOrEqualTo: reactionsController.reactionsBubble.tailLeadingAnchor),
                     reactionsController.reactionsBubble.tailTrailingAnchor
-                        .pin(equalTo: messageContentView.messageBubbleView!.leadingAnchor)
+                        .pin(equalTo: (messageContentView.bubbleView ?? messageContentView.bubbleContentContainer)!.leadingAnchor)
                 ]
             } else {
                 constraints += [
                     reactionsController.reactionsBubble.tailLeadingAnchor
-                        .pin(equalTo: messageContentView.messageBubbleView!.trailingAnchor)
+                        .pin(equalTo: (messageContentView.bubbleView ?? messageContentView.bubbleContentContainer)!.trailingAnchor)
                 ]
             }
         }
@@ -127,7 +122,8 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, Comp
             )
         } else {
             constraints.append(
-                actionsController.view.leadingAnchor.pin(equalTo: messageContentView.messageBubbleView!.leadingAnchor)
+                actionsController.view.leadingAnchor
+                    .pin(equalTo: (messageContentView.bubbleView ?? messageContentView.bubbleContentContainer)!.leadingAnchor)
             )
         }
         
@@ -174,9 +170,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, Comp
     }
 
     override open func updateContent() {
-        messageContentView.message = message
-        messageContentView.reactionsBubble?.isVisible = false
-        messageContentView.constraintsToActivate.removeAll(where: { $0 == messageContentView.bubbleToReactionsConstraint })
+        messageContentView.content = message
     }
 
     override open func viewWillAppear(_ animated: Bool) {
