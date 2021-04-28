@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell, UIConfigProvider {
+public class MessageCell<ExtraData: ExtraDataTypes>: _CollectionViewCell {
     static var reuseId: String { "message_cell" }
 
     class var messageContentViewClass: _MessageContentView<ExtraData>.Type {
