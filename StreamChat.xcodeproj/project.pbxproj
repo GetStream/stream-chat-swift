@@ -61,6 +61,7 @@
 		64F70D4B26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64F70D4A26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift */; };
 		6971257E260CA503003C7B47 /* NSManagedObjectContext+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6971256C260CA4CB003C7B47 /* NSManagedObjectContext+Extensions.swift */; };
 		697C6F90260CFA37000E9023 /* Deprecations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69712522260BC9B4003C7B47 /* Deprecations.swift */; };
+		698E483E2639720B00E702C6 /* NSManagedObject+ContextChange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 698E483D2639720B00E702C6 /* NSManagedObject+ContextChange.swift */; };
 		780057FF25F6353600D21095 /* ChatChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780057F625F634FC00D21095 /* ChatChannel.swift */; };
 		780DFCFC25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780DFCFB25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift */; };
 		7844B10C25EF92B600B87E89 /* ChatChannelListItemView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7844B10B25EF92B600B87E89 /* ChatChannelListItemView+SwiftUI.swift */; };
@@ -1205,6 +1206,7 @@
 		69712522260BC9B4003C7B47 /* Deprecations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecations.swift; sourceTree = "<group>"; };
 		6971256C260CA4CB003C7B47 /* NSManagedObjectContext+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Extensions.swift"; sourceTree = "<group>"; };
 		698E2A3425F7C8AF00ED9CCC /* APIPathConvertible.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIPathConvertible.swift; sourceTree = "<group>"; };
+		698E483D2639720B00E702C6 /* NSManagedObject+ContextChange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObject+ContextChange.swift"; sourceTree = "<group>"; };
 		69DE605925F39E6000DC187F /* ChatMessageListCollectionViewLayout_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListCollectionViewLayout_Tests.swift; sourceTree = "<group>"; };
 		780057F625F634FC00D21095 /* ChatChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannel.swift; sourceTree = "<group>"; };
 		780DFCFB25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelListVC+SwiftUI.swift"; sourceTree = "<group>"; };
@@ -2637,6 +2639,7 @@
 				793060E925778896005CF846 /* Info.plist */,
 				F8788EC9261D9AC8006019DD /* DatabaseContainer_Mock.swift */,
 				F8788EE4261D9BF0006019DD /* ChatClientUpdater_Mock.swift */,
+				698E483D2639720B00E702C6 /* NSManagedObject+ContextChange.swift */,
 			);
 			path = StreamChatTestTools;
 			sourceTree = "<group>";
@@ -5139,6 +5142,7 @@
 				793061602577A39D005CF846 /* ChatMessage_Mock.swift in Sources */,
 				F8788F00261D9D53006019DD /* UserPayload.swift in Sources */,
 				F8788F2D261D9FEF006019DD /* MessagePayload.swift in Sources */,
+				698E483E2639720B00E702C6 /* NSManagedObject+ContextChange.swift in Sources */,
 				F8677F0F2624466200743078 /* XCTestCase+Dummy.swift in Sources */,
 				ADFCCD5F25C9D4350024505D /* ChatUserSearchController_Mock.swift in Sources */,
 				F8788F09261D9D81006019DD /* CurrentUserPayload.swift in Sources */,
