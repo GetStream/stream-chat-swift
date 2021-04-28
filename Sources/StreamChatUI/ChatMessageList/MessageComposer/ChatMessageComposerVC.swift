@@ -128,9 +128,6 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             dismissSuggestionsViewController()
         case let .quote(messageToQuote):
             composerView.titleLabel.text = L10n.Composer.Title.reply
-            let image = appearance.images.messageComposerReplyButton
-                .tinted(with: appearance.colorPalette.inactiveTint)
-            composerView.stateIcon.image = image
             Animate {
                 self.composerView.topContainer.isHidden = false
                 self.composerView.messageQuoteView.isHidden = false
@@ -139,9 +136,6 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             composerView.messageQuoteView.content = .init(message: messageToQuote, avatarAlignment: .left)
         case let .edit(message):
             composerView.titleLabel.text = L10n.Composer.Title.edit
-            let image = appearance.images.messageComposerEditMessage
-                .tinted(with: appearance.colorPalette.inactiveTint)
-            composerView.stateIcon.image = image
             Animate {
                 self.composerView.editButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
