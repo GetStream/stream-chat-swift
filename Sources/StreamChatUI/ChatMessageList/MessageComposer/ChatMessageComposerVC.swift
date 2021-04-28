@@ -97,6 +97,12 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         setupInputView()
     }
 
+    override open func setUpLayout() {
+        super.setUpLayout()
+
+        view.embed(composerView)
+    }
+
     override open func updateContent() {
         super.updateContent()
         switch state {
@@ -165,8 +171,6 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     func setupInputView() {
-        view.embed(composerView)
-
         composerView.messageInputView.inputTextView.delegate = self
         
         composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
