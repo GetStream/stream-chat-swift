@@ -24,8 +24,8 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
         }
     }
     
-    /// Images to display (filtered `content.attachments`).
-    open var images: [ChatMessageDefaultAttachment] = []
+    /// Images to display (`content.imageAttachments`).
+    open var images: [ChatMessageImageAttachment] = []
     
     /// Currently displayed image (indexed from 0).
     open var currentPage: Int = 0 {
@@ -35,7 +35,7 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
     }
 
     /// Attachment to be displayed initially.
-    open var initialAttachment: ChatMessageDefaultAttachment!
+    open var initialAttachment: ChatMessageImageAttachment!
     
     /// Controller for handling the transition for dismissal
     open var transitionController: ZoomTransitionController!
@@ -210,10 +210,8 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
             }
         }
         
-        images = content.attachments
-            .filter { $0.type == .image }
-            .compactMap { $0 as? ChatMessageDefaultAttachment }
-        
+        images = content.imageAttachments
+
         userLabel.text = content.author.name
 
         currentPhotoLabel.text = L10n.currentSelection(currentPage + 1, images.count)
@@ -247,7 +245,7 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
     /// Called when `shareButton` is tapped.
     @objc
     open func shareButtonTapped() {
-        guard let imageURL = images[currentPage].imageURL else { return }
+        guard let imageURL = images[currentPage].payload?.imageURL else { return }
         let activityViewController = UIActivityViewController(
             activityItems: [imageURL],
             applicationActivities: nil

@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-/// A Button subclass that should be used for sharing content
+/// A Button subclass that should be used for sharing content.
 open class ShareButton: _Button, AppearanceProvider {
     override open var isHighlighted: Bool {
         didSet {

@@ -35,14 +35,14 @@ class QuotedChatMessageView_Tests: XCTestCase {
     }
 
     func test_withImageAttachmentAppearance() {
-        let attachment = ChatMessageDefaultAttachment.mock(imageUrl: TestImages.yoda.url, title: "")
+        let attachment = ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url, title: "")
         view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
 
         AssertSnapshot(view)
     }
 
     func test_withLongTextAppearance() {
-        let attachment = ChatMessageDefaultAttachment.mock(imageUrl: TestImages.yoda.url, title: "")
+        let attachment = ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url, title: "")
         view.content = makeContent(text: "Hello Darth Vader! Where is my light saber?", attachments: [attachment.asAnyAttachment])
 
         AssertSnapshot(view)
@@ -106,7 +106,7 @@ class QuotedChatMessageView_Tests: XCTestCase {
         }
 
         let view = TestView().withoutAutoresizingMaskConstraints
-        let attachment = ChatMessageDefaultAttachment.mock(imageUrl: TestImages.yoda.url, title: "")
+        let attachment = ChatMessageImageAttachment.mock(imageURL: TestImages.yoda.url, title: "")
         view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
         view.addSizeConstraints()
 

@@ -23,19 +23,17 @@ final class ImageGalleryVC_Tests: XCTestCase {
             ),
             createdAt: Date(timeIntervalSinceReferenceDate: 0),
             attachments: [
-                ChatMessageDefaultAttachment.mock(
-                    imageUrl: TestImages.yoda.url,
-                    title: ""
-                ),
-                ChatMessageDefaultAttachment.mock(
-                    imageUrl: TestImages.chewbacca.url,
-                    title: ""
-                )
+                ChatMessageImageAttachment.mock(
+                    imageURL: TestImages.yoda.url
+                ).asAnyAttachment,
+                ChatMessageImageAttachment.mock(
+                    imageURL: TestImages.chewbacca.url
+                ).asAnyAttachment
             ]
         )
         
         vc = ImageGalleryVC()
-        vc.initialAttachment = content.attachments[0] as? ChatMessageDefaultAttachment
+        vc.initialAttachment = content.imageAttachments[0]
         vc.content = content
     }
     
@@ -69,7 +67,7 @@ final class ImageGalleryVC_Tests: XCTestCase {
         }
 
         let vc = TestView()
-        vc.initialAttachment = content.attachments[0] as? ChatMessageDefaultAttachment
+        vc.initialAttachment = content.imageAttachments[0]
         vc.content = content
 
         AssertSnapshot(vc)

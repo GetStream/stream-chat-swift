@@ -11,7 +11,7 @@ open class ImageCollectionViewCell: _CollectionViewCell, UIScrollViewDelegate {
     open class var reuseId: String { String(describing: self) }
     
     /// Content of this view.
-    open var content: ChatMessageDefaultAttachment! {
+    open var content: ChatMessageImageAttachment! {
         didSet { updateContentIfNeeded() }
     }
     
@@ -67,7 +67,7 @@ open class ImageCollectionViewCell: _CollectionViewCell, UIScrollViewDelegate {
     override open func updateContent() {
         super.updateContent()
 
-        imageView.loadImage(from: content.imageURL, resizeAutomatically: false)
+        imageView.loadImage(from: content.payload?.imageURL, resizeAutomatically: false)
     }
     
     open func viewForZooming(in scrollView: UIScrollView) -> UIView? {
