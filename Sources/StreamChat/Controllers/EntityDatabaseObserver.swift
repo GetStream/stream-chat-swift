@@ -144,7 +144,13 @@ class EntityDatabaseObserver<Item, DTO: NSManagedObject> {
                 "EntityDatabaseObserver predicate must match exactly 0 or 1 entities. Matched: \(fetchedObjects)"
             )
             
-            return fetchedObjects.first.flatMap(itemCreator)
+            return fetchedObjects.first.flatMap { dto in
+                var result: Item?
+                context.performAndWait {
+                    result = itemCreator(dto)
+                }
+                return result
+            }
         }
         
         listenForRemoveAllDataNotifications()
