@@ -36,10 +36,14 @@ open class _ChatMessageInputView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
     }
     
     override open func setUpLayout() {
-        embed(container)
+        addSubview(container)
+        container.pin(to: layoutMarginsGuide)
+        directionalLayoutMargins.leading = 8
+        directionalLayoutMargins.top = 1
+        directionalLayoutMargins.trailing = 8
+        directionalLayoutMargins.bottom = 1
 
-        container.preservesSuperviewLayoutMargins = true
-        container.isLayoutMarginsRelativeArrangement = true
+        container.preservesSuperviewLayoutMargins = false
         container.alignment = .center
         container.spacing = 4
 
@@ -51,7 +55,7 @@ open class _ChatMessageInputView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         inputTextView.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
 
         NSLayoutConstraint.activate([
-            cleanButton.heightAnchor.pin(equalToConstant: 30),
+            cleanButton.heightAnchor.pin(equalToConstant: 24),
             cleanButton.widthAnchor.pin(equalTo: cleanButton.heightAnchor, multiplier: 1)
         ])
     }

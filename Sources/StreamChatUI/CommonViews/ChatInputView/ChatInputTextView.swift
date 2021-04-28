@@ -46,7 +46,7 @@ open class ChatInputTextView: UITextView, AppearanceProvider {
     
     open func setUpAppearance() {
         backgroundColor = .clear
-        textContainer.lineFragmentPadding = 10
+        textContainer.lineFragmentPadding = 8
         font = appearance.fonts.body
         textColor = appearance.colorPalette.text
         

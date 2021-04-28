@@ -117,7 +117,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 self.composerView.sendButton.isHidden = false
                 self.composerView.editButton.isHidden = true
                 self.composerView.messageQuoteView.isHidden = true
-                self.composerView.topContainer.isHidden = true
+                self.composerView.headerView.isHidden = true
             }
             composerView.messageInputView.setSlashCommandViews(hidden: true)
         case let .slashCommand(command):
@@ -129,7 +129,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         case let .quote(messageToQuote):
             composerView.titleLabel.text = L10n.Composer.Title.reply
             Animate {
-                self.composerView.topContainer.isHidden = false
+                self.composerView.headerView.isHidden = false
                 self.composerView.messageQuoteView.isHidden = false
                 self.composerView.messageInputView.commandLabel.isHidden = true
             }
@@ -139,7 +139,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             Animate {
                 self.composerView.editButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
-                self.composerView.topContainer.isHidden = false
+                self.composerView.headerView.isHidden = false
                 self.composerView.messageInputView.commandLabel.isHidden = true
             }
             inputTextView.text = message.text
