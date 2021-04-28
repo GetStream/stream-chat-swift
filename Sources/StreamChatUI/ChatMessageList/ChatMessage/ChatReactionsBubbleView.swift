@@ -5,10 +5,10 @@
 import StreamChat
 import UIKit
 
-open class ReactionsBubbleView: _View, AppearanceProvider {
+open class ChatReactionsBubbleView: _View, AppearanceProvider {
     private let tailHeight: CGFloat = 6
 
-    open var tailDirection: ChatMessageThreadArrowView.Direction? {
+    open var tailDirection: ChatThreadArrowView.Direction? {
         didSet { updateContentIfNeeded() }
     }
 
@@ -46,7 +46,7 @@ open class ReactionsBubbleView: _View, AppearanceProvider {
     }
 }
 
-private extension ReactionsBubbleView {
+private extension ChatReactionsBubbleView {
     var fillColor: UIColor? {
         tailDirection.map {
             $0 == .toTrailing ?

@@ -7,7 +7,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-final class MessageContentView_Tests: XCTestCase {
+final class ChatMessageContentView_Tests: XCTestCase {
     /// Default content view width.
     private let contentViewWidth: CGFloat = 360
     /// The current user.
@@ -57,7 +57,7 @@ final class MessageContentView_Tests: XCTestCase {
         // Create message content view with the provided `message`, `layout`, and `config`
         let view = contentView(
             message: failedMessage,
-            layout: layout(for: failedMessage, isLastInGroup: true),
+            layout: failedMessage.layout(isLastInGroup: true),
             components: components
         )
 
@@ -84,7 +84,7 @@ final class MessageContentView_Tests: XCTestCase {
         // Create message content view with the provided `message`, `layout`, and `config`
         let view = contentView(
             message: failedMessage,
-            layout: layout(for: failedMessage, isLastInGroup: true),
+            layout: failedMessage.layout(isLastInGroup: true),
             appearance: appearance
         )
 
@@ -95,12 +95,12 @@ final class MessageContentView_Tests: XCTestCase {
 
 // MARK: - Helpers
 
-private extension MessageContentView_Tests {
-    var testMessagesAndLayouts: [(ChatMessage, MessageLayoutOptions)] {
+private extension ChatMessageContentView_Tests {
+    var testMessagesAndLayouts: [(ChatMessage, ChatMessageLayoutOptions)] {
         testMessages
             .map { [
-                ($0, layout(for: $0, isLastInGroup: true)),
-                ($0, layout(for: $0, isLastInGroup: false))
+                ($0, $0.layout(isLastInGroup: true)),
+                ($0, $0.layout(isLastInGroup: false))
             ] }
             .flatMap { $0 }
     }
@@ -260,66 +260,68 @@ private extension MessageContentView_Tests {
         return outgoing + incoming
     }
 
-    func layout(for message: ChatMessage, isLastInGroup: Bool) -> MessageLayoutOptions {
-        var options: MessageLayoutOptions = [
-            .bubble
-        ]
-
-        if message.isSentByCurrentUser {
-            options.insert(.flipped)
-        }
-        if !isLastInGroup {
-            options.insert(.continuousBubble)
-        }
-        if !isLastInGroup && !message.isSentByCurrentUser {
-            options.insert(.avatarSizePadding)
-        }
-        if isLastInGroup {
-            options.insert(.metadata)
-        }
-        if isLastInGroup && message.onlyVisibleForCurrentUser {
-            options.insert(.onlyVisibleForYouIndicator)
-        }
-        if message.textContent?.isEmpty == false {
-            options.insert(.text)
-        }
-
-        guard message.deletedAt == nil else {
-            return options
-        }
-
-        if isLastInGroup && !message.isSentByCurrentUser {
-            options.insert(.avatar)
-        }
-        if message.quotedMessage != nil {
-            options.insert(.quotedMessage)
-        }
-        if message.isPartOfThread {
-            options.insert(.threadInfo)
-            options.insert(.continuousBubble)
-        }
-        if !message.reactionScores.isEmpty {
-            options.insert(.reactions)
-        }
-        if message.lastActionFailed {
-            options.insert(.errorIndicator)
-        }
-
-        return options
-    }
-
     func contentView(
         message: ChatMessage,
-        layout: MessageLayoutOptions,
+        layout: ChatMessageLayoutOptions,
         appearance: Appearance = .default,
         components: Components = .default
-    ) -> MessageContentView {
-        let view = MessageContentView().withoutAutoresizingMaskConstraints
+    ) -> ChatMessageContentView {
+        let view = ChatMessageContentView().withoutAutoresizingMaskConstraints
         view.widthAnchor.constraint(equalToConstant: contentViewWidth).isActive = true
         view.appearance = appearance
         view.components = components
         view.setUpLayoutIfNeeded(options: layout)
         view.content = message
         return view
+    }
+}
+
+extension _ChatMessage {
+    func layout(isLastInGroup: Bool) -> ChatMessageLayoutOptions {
+        var options: ChatMessageLayoutOptions = [
+            .bubble
+        ]
+
+        if isSentByCurrentUser {
+            options.insert(.flipped)
+        }
+        if !isLastInGroup {
+            options.insert(.continuousBubble)
+        }
+        if !isLastInGroup && !isSentByCurrentUser {
+            options.insert(.avatarSizePadding)
+        }
+        if isLastInGroup {
+            options.insert(.metadata)
+        }
+        if isLastInGroup && onlyVisibleForCurrentUser {
+            options.insert(.onlyVisibleForYouIndicator)
+        }
+        if textContent?.isEmpty == false {
+            options.insert(.text)
+        }
+
+        guard deletedAt == nil else {
+            return options
+        }
+
+        if isLastInGroup && !isSentByCurrentUser {
+            options.insert(.avatar)
+        }
+        if quotedMessage != nil {
+            options.insert(.quotedMessage)
+        }
+        if isPartOfThread {
+            options.insert(.threadInfo)
+            options.insert(.continuousBubble)
+        }
+        if !reactionScores.isEmpty {
+            options.insert(.reactions)
+        }
+        if lastActionFailed {
+            options.insert(.errorIndicator)
+        }
+
+        return options
     }
 }

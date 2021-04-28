@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-open class ThreadArrowView: _View, AppearanceProvider {
+open class ChatThreadArrowView: _View, AppearanceProvider {
     public enum Direction {
         case toTrailing
         case toLeading

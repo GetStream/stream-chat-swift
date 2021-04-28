@@ -55,4 +55,15 @@ extension _ChatMessage {
 
         return deletedAt != nil || type == .ephemeral
     }
+
+    /// Returns last active thread participant.
+    var lastActiveThreadParticipant: _ChatUser<ExtraData.User>? {
+        func sortingCriteriaDate(_ user: _ChatUser<ExtraData.User>) -> Date {
+            user.lastActiveAt ?? user.userUpdatedAt
+        }
+
+        return threadParticipants
+            .sorted(by: { sortingCriteriaDate($0) > sortingCriteriaDate($1) })
+            .first
+    }
 }
