@@ -79,7 +79,11 @@ class CoreDataLazy_Tests: StressTestCase {
         try database.createChannel(cid: cid, withMessages: true)
         
         // Get the DTO for the channel from the background context
-        let channelDTO = database.backgroundReadOnlyContext.channel(cid: cid)!
+        var channelDTO: ChannelDTO!
+        
+        database.backgroundReadOnlyContext.performAndWait {
+            channelDTO = database.backgroundReadOnlyContext.channel(cid: cid)!
+        }
         
         // Read and write randomly to the DB and test it doesn't crash
         let group = DispatchGroup()
