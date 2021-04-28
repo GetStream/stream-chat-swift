@@ -101,7 +101,7 @@ lane :match_me do |options|
   # Get `:readonly` value, fallback to `true` if it's missing.
   readonly = options.fetch(:readonly) { true }
 
-  ["development", "adhoc"].each do |type|
+  ["development", "adhoc", "appstore"].each do |type|
     match(
       type: type,
       app_identifier: [
@@ -163,31 +163,72 @@ lane :distribute_demo_app do
 end
 
 desc "Builds the latest version of Demo app and uploads it to Test Flight"
-lane :testflight_build do
-  match_me  
+lane :testflight_build do  
+  api_key = app_store_connect_api_key(
+    key_id: "8P4J3MDAWP",
+    issuer_id: "69a6de96-0738-47e3-e053-5b8c7c11a4d1",
+    key_content: ENV["APPSTORE_API_KEY"],
+    in_house: false
+  )
+  
+  build_num = latest_testflight_build_number(
+    app_identifier: "io.getstream.iOS.ChatDemoApp",
+    api_key: api_key
+  )
+
+  version_number = get_version_number(
+    xcodeproj: "StreamChat.xcodeproj",
+    target: "StreamChat"
+  )[/\d+\.\d+\.\d/]
+
+  increment_version_number_in_plist(
+    version_number: version_number,
+    xcodeproj: "StreamChat.xcodeproj",
+    target: "StreamChat"
+  )
+
+  increment_version_number_in_plist(
+    version_number: version_number,
+    xcodeproj: "StreamChat.xcodeproj",
+    target: "StreamChatUI"
+  )
+
+  increment_build_number_in_plist(
+    xcodeproj: "StreamChat.xcodeproj",
+    target: "DemoApp",
+    build_number: (build_num + 1).to_s,
+  )
+
+  ["development", "adhoc", "appstore"].each do |type|
+    match(
+      type: type,
+      username: "sacethi0@gmail.com",
+      app_identifier: [
+        "io.getstream.StreamChat",
+        "io.getstream.iOS.ChatDemoApp",
+        "io.getstream.iOS.iMessageClone",
+        "io.getstream.iOS.SlackClone",
+        "io.getstream.iOS.MessengerClone",
+      ],
+      readonly: true
+    )
+  end
 
   gym(
     project: "StreamChat.xcodeproj",
     scheme: "DemoApp",
     configuration: "Release",
     export_method: "app-store",
-    export_options: "./fastlane/testflight_export_options.plist",
     clean: true,
     include_symbols: true,
     output_directory: "archives"
   )
   
-  api_key = app_store_connect_api_key(
-    key_id: "8P4J3MDAWP",
-    issuer_id: "69a6de96-0738-47e3-e053-5b8c7c11a4d1",
-    key_content: ENV["APPSTORE_API_KEY"]
-  )
-  
   pilot(
     api_key: api_key,
     team_id: "118902954",
-    app_identifier: 'io.getstream.iOS.ChatDemoApp',
-    app_platform: 'ios',
+    app_identifier: "io.getstream.iOS.ChatDemoApp",
+    app_platform: "ios",
     ipa: "archives/ChatSample.ipa",
     skip_waiting_for_build_processing: true
   )
