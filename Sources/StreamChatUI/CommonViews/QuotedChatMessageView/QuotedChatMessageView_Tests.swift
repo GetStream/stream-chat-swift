@@ -35,14 +35,14 @@ class QuotedChatMessageView_Tests: XCTestCase {
     }
 
     func test_withImageAttachmentAppearance() {
-        let attachment = ChatMessageImageAttachment(imageURL: TestImages.yoda.url)
+        let attachment = ChatMessageDefaultAttachment.mock(imageUrl: TestImages.yoda.url, title: "")
         view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
 
         AssertSnapshot(view)
     }
 
     func test_withLongTextAppearance() {
-        let attachment = ChatMessageImageAttachment(imageURL: TestImages.yoda.url)
+        let attachment = ChatMessageDefaultAttachment.mock(imageUrl: TestImages.yoda.url, title: "")
         view.content = makeContent(text: "Hello Darth Vader! Where is my light saber?", attachments: [attachment.asAnyAttachment])
 
         AssertSnapshot(view)
@@ -106,7 +106,7 @@ class QuotedChatMessageView_Tests: XCTestCase {
         }
 
         let view = TestView().withoutAutoresizingMaskConstraints
-        let attachment = ChatMessageImageAttachment(imageURL: TestImages.yoda.url)
+        let attachment = ChatMessageDefaultAttachment.mock(imageUrl: TestImages.yoda.url, title: "")
         view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
         view.addSizeConstraints()
 
@@ -139,20 +139,5 @@ extension QuotedChatMessageView_Tests {
             isSentByCurrentUser: isSentByCurrentUser
         )
         return .init(message: message, avatarAlignment: avatarAlignment)
-    }
-}
-
-extension ChatMessageImageAttachment {
-    init(imageURL: URL) {
-        self.init(
-            id: .unique,
-            type: .image,
-            payload: .init(
-                title: nil,
-                imageURL: imageURL,
-                imagePreviewURL: imageURL
-            ),
-            uploadingState: nil
-        )
     }
 }

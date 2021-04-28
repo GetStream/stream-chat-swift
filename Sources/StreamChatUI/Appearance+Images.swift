@@ -10,12 +10,25 @@ public extension Appearance {
         // MARK: - General
 
         public var loadingIndicator: UIImage = UIImage(named: "loading_indicator", in: .streamChatUI)!
-        public var close: UIImage = UIImage(named: "close", in: .streamChatUI)!
+        public var close: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "xmark")!
+            } else {
+                return UIImage(named: "close", in: .streamChatUI)!
+            }
+        }()
         public var closeCircleTransparent: UIImage = UIImage(named: "close_circle_transparent", in: .streamChatUI)!
         public var discardAttachment: UIImage = UIImage(named: "close_circle_filled", in: .streamChatUI)!
         public var back: UIImage = UIImage(named: "icn_back", in: .streamChatUI)!
         public var onlyVisibleToCurrentUser = UIImage(named: "eye", in: .streamChatUI)!
         public var more = UIImage(named: "icn_more", in: .streamChatUI)!
+        public var share: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "square.and.arrow.up")!
+            } else {
+                return UIImage(named: "share", in: .streamChatUI)!
+            }
+        }()
         public var commands: UIImage = UIImage(named: "bolt", in: .streamChatUI)!
         public var smallBolt: UIImage = UIImage(named: "bolt_small", in: .streamChatUI)!
         public var openAttachments: UIImage = UIImage(named: "clip", in: .streamChatUI)!
