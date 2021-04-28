@@ -10,6 +10,11 @@
   ],
   "defaultOptions" : {
     "codeCoverage" : false,
+    "commandLineArgumentEntries" : [
+      {
+        "argument" : "-com.apple.CoreData.ConcurrencyDebug 1"
+      }
+    ],
     "environmentVariableEntries" : [
       {
         "key" : "TEST_INVOCATIONS",
