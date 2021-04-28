@@ -14,6 +14,10 @@ jobs:
     runs-on: macos-latest
 
     steps:
+    - name: Install Bot SSH Key
+      uses: webfactory/ssh-agent@v0.4.1
+      with:
+        ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
     - uses: actions/checkout@v1
     - name: Set build image var
       run: echo "ImageVersion=$ImageVersion"  >> $GITHUB_ENV
