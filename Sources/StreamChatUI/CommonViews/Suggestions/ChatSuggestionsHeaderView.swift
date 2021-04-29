@@ -5,26 +5,8 @@
 import StreamChat
 import UIKit
 
-/// The header reusable view of the suggestion collection view.
-public typealias ChatMessageComposerSuggestionsCommandsReusableView =
-    _ChatMessageComposerSuggestionsCommandsReusableView<NoExtraData>
-
-/// The header reusable view of the suggestion collection view.
-open class _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData: ExtraDataTypes>: UICollectionReusableView,
-    ComponentsProvider {
-    /// The reuse identifier of the reusable header view.
-    open class var reuseId: String { String(describing: self) }
-    
-    /// The suggestions header view.
-    open lazy var suggestionsHeader: ChatMessageComposerSuggestionsCommandsHeaderView = {
-        let header = components.messageComposer.suggestionsHeaderView.init().withoutAutoresizingMaskConstraints
-        embed(header)
-        return header
-    }()
-}
-
 /// The header view of the suggestion collection view.
-open class ChatMessageComposerSuggestionsCommandsHeaderView: _View, AppearanceProvider {
+open class ChatSuggestionsHeaderView: _View, AppearanceProvider {
     /// The image icon of the commands header view.
     open private(set) lazy var commandImageView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints

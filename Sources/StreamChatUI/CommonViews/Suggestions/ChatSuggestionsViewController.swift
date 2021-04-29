@@ -12,10 +12,10 @@ public enum SuggestionKind {
 }
 
 /// A view controller that shows suggestions of commands or mentions.
-public typealias ChatMessageComposerSuggestionsViewController = _ChatMessageComposerSuggestionsViewController<NoExtraData>
+public typealias ChatSuggestionsViewController = _ChatSuggestionsViewController<NoExtraData>
 
 /// A view controller that shows suggestions of commands or mentions.
-open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewController,
+open class _ChatSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewController,
     ThemeProvider,
     UICollectionViewDelegate {
     /// The data provider of the collection view. A custom `UICollectionViewDataSource` can be provided,
@@ -46,7 +46,7 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
     }
     
     /// The collection view of the commands.
-    open private(set) lazy var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData> = components
+    open private(set) lazy var collectionView: _ChatSuggestionsCollectionView<ExtraData> = components
         .messageComposer
         .suggestionsCollectionView
         .init(layout: components.messageComposer.suggestionsCollectionViewLayout.init())
@@ -140,7 +140,7 @@ open class _ChatMessageComposerSuggestionsViewController<ExtraData: ExtraDataTyp
 public typealias ChatMessageComposerSuggestionsCommandDataSource = _ChatMessageComposerSuggestionsCommandDataSource<NoExtraData>
 
 open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraDataTypes>: NSObject, UICollectionViewDataSource {
-    open var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
+    open var collectionView: _ChatSuggestionsCollectionView<ExtraData>
     
     /// The list of commands.
     open var commands: [Command]
@@ -160,7 +160,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
     /// - Parameters:
     ///   - commands: The list of commands.
     ///   - collectionView: The collection view of the commands.
-    public init(with commands: [Command], collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>) {
+    public init(with commands: [Command], collectionView: _ChatSuggestionsCollectionView<ExtraData>) {
         self.commands = commands
         self.collectionView = collectionView
 
@@ -169,7 +169,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
         registerCollectionViewCell()
 
         collectionView.register(
-            _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>.self,
+            _ChatSuggestionsCollectionReusableView<ExtraData>.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "CommandsHeader"
         )
@@ -193,7 +193,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
             ofKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: "CommandsHeader",
             for: indexPath
-        ) as! _ChatMessageComposerSuggestionsCommandsReusableView<ExtraData>
+        ) as! _ChatSuggestionsCollectionReusableView<ExtraData>
 
         headerView.suggestionsHeader.headerLabel.text = L10n.Composer.Suggestions.Commands.header
         headerView.suggestionsHeader.commandImageView.image = appearance.images.messageComposerCommand
@@ -208,9 +208,9 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: _ChatMessageComposerCommandCollectionViewCell<ExtraData>.reuseId,
+            withReuseIdentifier: _ChatCommandSuggestionCollectionViewCell<ExtraData>.reuseId,
             for: indexPath
-        ) as! _ChatMessageComposerCommandCollectionViewCell<ExtraData>
+        ) as! _ChatCommandSuggestionCollectionViewCell<ExtraData>
 
         cell.components = components
         cell.commandView.content = commands[indexPath.row]
@@ -225,7 +225,7 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
     UICollectionViewDataSource,
     _ChatUserSearchControllerDelegate {
     /// The collection view of the mentions.
-    open var collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>
+    open var collectionView: _ChatSuggestionsCollectionView<ExtraData>
     
     /// The search controller to search for mentions.
     open var searchController: _ChatUserSearchController<ExtraData>
@@ -240,7 +240,7 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
     ///   - collectionView: The collection view of the mentions.
     ///   - searchController: The search controller to find mentions.
     init(
-        collectionView: _ChatMessageComposerSuggestionsCollectionView<ExtraData>,
+        collectionView: _ChatSuggestionsCollectionView<ExtraData>,
         searchController: _ChatUserSearchController<ExtraData>
     ) {
         self.collectionView = collectionView
@@ -273,9 +273,9 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: _ChatMessageComposerMentionCollectionViewCell<ExtraData>.reuseId,
+            withReuseIdentifier: _ChatMentionSuggestionCollectionViewCell<ExtraData>.reuseId,
             for: indexPath
-        ) as! _ChatMessageComposerMentionCollectionViewCell<ExtraData>
+        ) as! _ChatMentionSuggestionCollectionViewCell<ExtraData>
 
         let user = searchController.users[indexPath.row]
         // We need to make sure we set the components before accessing the mentionView,
