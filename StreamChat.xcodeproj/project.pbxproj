@@ -4017,13 +4017,13 @@
 			path = ChatPresenceAvatarView;
 			sourceTree = "<group>";
 		};
-		ADB3C478261638C500A69B66 /* ChatMessageQuoteView */ = {
+		ADB3C478261638C500A69B66 /* MessageQuoteView */ = {
 			isa = PBXGroup;
 			children = (
 				AD43F90826153BAD00F2D4BB /* ChatMessageQuoteView.swift */,
 				AD540AE1260CECA10082D802 /* ChatMessageQuoteView_Tests.swift */,
 			);
-			path = ChatMessageQuoteView;
+			path = MessageQuoteView;
 			sourceTree = "<group>";
 		};
 		ADB4164F26208C6B00E623E3 /* AttachmentPreview */ = {
