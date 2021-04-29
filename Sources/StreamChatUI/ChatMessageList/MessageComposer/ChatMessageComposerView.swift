@@ -48,31 +48,22 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var sendButton = components
-        .messageComposer
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var confirmButton: UIButton = UIButton()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var attachmentButton: UIButton = components
-        .messageComposer
-        .composerButton.init()
+    public private(set) lazy var attachmentButton: UIButton = UIButton()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var commandsButton: UIButton = components
-        .messageComposer
-        .composerButton.init()
+    public private(set) lazy var commandsButton: UIButton = UIButton()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var shrinkInputButton: UIButton = components
-        .messageComposer
-        .composerButton.init()
+    public private(set) lazy var shrinkInputButton: UIButton = UIButton()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var dismissButton: UIButton = components
-        .messageComposer
-        .composerButton.init()
+    public private(set) lazy var dismissButton: UIButton = UIButton()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var titleLabel: UILabel = UILabel()

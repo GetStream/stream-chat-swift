@@ -24,9 +24,6 @@ public extension _Components {
         /// A view that displays the image attachment.
         public var imageAttachmentCellView: ChatImageAttachmentView.Type =
             ChatImageAttachmentView.self
-        /// The view cell that displays the image attachment.
-        /// Buttons used in the left side of the composer. Corresponds to attachment and actions buttons.
-        public var composerButton: UIButton.Type = UIButton.self
         public var imageAttachmentCollectionViewCell: _ChatImageAttachmentsCollectionViewCell<ExtraData>.Type =
             _ChatImageAttachmentsCollectionViewCell<ExtraData>.self
 
