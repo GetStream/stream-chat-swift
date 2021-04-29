@@ -5,12 +5,12 @@
 import StreamChat
 import UIKit
 
-final class ChatMessageListKeyboardObserver {
-    weak var containerView: UIView!
-    weak var scrollView: UIScrollView!
-    weak var composerBottomConstraint: NSLayoutConstraint?
+open class ChatMessageListKeyboardObserver {
+    public weak var containerView: UIView!
+    public weak var scrollView: UIScrollView!
+    public weak var composerBottomConstraint: NSLayoutConstraint?
     
-    init(containerView: UIView, scrollView: UIScrollView, composerBottomConstraint: NSLayoutConstraint?) {
+    public init(containerView: UIView, scrollView: UIScrollView, composerBottomConstraint: NSLayoutConstraint?) {
         self.containerView = containerView
         self.scrollView = scrollView
         self.composerBottomConstraint = composerBottomConstraint
