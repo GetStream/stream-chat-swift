@@ -8,7 +8,7 @@ import StreamChatTestTools
 import SwiftUI
 import XCTest
 
-class ChatMessageSendButton_Tests: XCTestCase {
+class ChatSendButton_Tests: XCTestCase {
     private lazy var container = UIView().withoutAutoresizingMaskConstraints
 
     override func setUp() {
@@ -17,7 +17,7 @@ class ChatMessageSendButton_Tests: XCTestCase {
     }
 
     func test_defaultAppearance() {
-        let view = ChatMessageSendButton().withoutAutoresizingMaskConstraints
+        let view = ChatSendButton().withoutAutoresizingMaskConstraints
         container.embed(view)
 
         view.isEnabled = true
@@ -32,7 +32,7 @@ class ChatMessageSendButton_Tests: XCTestCase {
         appearance.images.messageComposerSendMessage = TestImages.vader.image.tinted(with: .systemPink)!
         appearance.colorPalette.inactiveTint = .black
 
-        let view = ChatMessageSendButton().withoutAutoresizingMaskConstraints
+        let view = ChatSendButton().withoutAutoresizingMaskConstraints
         view.appearance = appearance
 
         container.embed(view)
@@ -45,8 +45,8 @@ class ChatMessageSendButton_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingSubclassing() {
-        class TestView: ChatMessageSendButton {
-            override func setUpLayout() {
+        class TestView: ChatSendButton {
+            override func setUpAppearance() {
                 setTitle("🥪", for: .normal)
                 setTitle("🤷🏻‍♂️", for: .disabled)
             }

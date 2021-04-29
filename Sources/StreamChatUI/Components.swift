@@ -38,6 +38,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// An object responsible for message layout options calculations in `ChatMessageListVC/ChatThreadVC`.
     public var messageLayoutOptionsResolver: _ChatMessageLayoutOptionsResolver<ExtraData> = .init()
 
+    /// Button used for sending a message, or any type of content.
+    public var sendButton: UIButton.Type = ChatSendButton.self
+    
     public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()

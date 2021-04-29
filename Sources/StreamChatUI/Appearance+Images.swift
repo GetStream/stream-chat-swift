@@ -169,7 +169,7 @@ public extension Appearance {
         public var messageComposerDiscardAttachment: UIImage = UIImage(named: "discardAttachment", in: .streamChatUI)!
         public var messageComposerShrinkInput: UIImage = UIImage(named: "shrinkInputArrow", in: .streamChatUI)!
         public var messageComposerSendMessage: UIImage = UIImage(named: "sendMessageArrow", in: .streamChatUI)!
-        public var messageComposerSendEditedMessage: UIImage = UIImage(named: "editMessageCheckmark", in: .streamChatUI)!
+        public var messageComposerConfirmEditedMessage: UIImage = UIImage(named: "editMessageCheckmark", in: .streamChatUI)!
         public var messageComposerDownloadAndOpen: UIImage = UIImage(named: "download_and_open", in: .streamChatUI)!
         public var messageComposerRestartUpload: UIImage = UIImage(named: "restart", in: .streamChatUI)!
         public var messageComposerFileUploaded: UIImage = UIImage(named: "uploaded", in: .streamChatUI)!

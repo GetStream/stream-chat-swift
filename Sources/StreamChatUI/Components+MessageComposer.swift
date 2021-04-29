@@ -17,8 +17,6 @@ public extension _Components {
             ChatMessageComposerDocumentAttachmentsCollectionViewLayout.self
         public var documentAttachmentsView: _ChatMessageComposerDocumentAttachmentsView<ExtraData>.Type =
             _ChatMessageComposerDocumentAttachmentsView<ExtraData>.self
-        /// Button used in Composer used for sending messages.
-        public var sendButton: UIButton.Type = ChatMessageSendButton.self
         /// Button used in Composer used for confirming editing messages.
         public var editButton: UIButton.Type = ChatMessageConfirmEditButton.self
 
