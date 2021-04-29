@@ -5,7 +5,7 @@
 import UIKit
 
 /// The collection view layout of the suggestions collection view.
-open class ChatMessageComposerSuggestionsCollectionViewLayout: UICollectionViewFlowLayout {
+open class ChatSuggestionsCollectionViewLayout: UICollectionViewFlowLayout {
     override public required init() {
         super.init()
         commonInit()
