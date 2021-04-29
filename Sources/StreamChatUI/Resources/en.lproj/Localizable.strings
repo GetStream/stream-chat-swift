@@ -25,6 +25,7 @@
 "messageList.typingIndicator.typing-unknown" = "Someone is typing";
 
 "message.threads.reply" = "Thread Reply";
+"message.threads.replyWith" = "with %@";
 
 "alert.actions.cancel" = "Cancel";
 "alert.actions.delete" = "Delete";
@@ -45,3 +46,8 @@
 
 "composer.suggestions.commands.header" = "Instant Commands";
 "message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
+
+"message.title.online" = "Online";
+"message.title.see-minutes-ago" = "Seen %@ ago";
+"message.title.offline" = "Offline";
+"message.title.group" = "%d members, %d online";

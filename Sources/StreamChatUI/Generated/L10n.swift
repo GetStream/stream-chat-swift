@@ -118,6 +118,24 @@ internal enum L10n {
       }
       /// Thread Reply
       internal static let reply = L10n.tr("Localizable", "message.threads.reply")
+      /// with %@
+      internal static func replyWith(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "message.threads.replyWith", String(describing: p1))
+      }
+    }
+    internal enum Title {
+      /// %d members, %d online
+      internal static func group(_ p1: Int, _ p2: Int) -> String {
+        return L10n.tr("Localizable", "message.title.group", p1, p2)
+      }
+      /// Offline
+      internal static let offline = L10n.tr("Localizable", "message.title.offline")
+      /// Online
+      internal static let online = L10n.tr("Localizable", "message.title.online")
+      /// Seen %@ ago
+      internal static func seeMinutesAgo(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "message.title.see-minutes-ago", String(describing: p1))
+      }
     }
   }
 

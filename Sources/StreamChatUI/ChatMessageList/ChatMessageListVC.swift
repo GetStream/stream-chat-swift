@@ -5,99 +5,42 @@
 import StreamChat
 import UIKit
 
-public protocol _ChatMessageListVCDataSource: AnyObject {
-    associatedtype ExtraData: ExtraDataTypes
-
-    func numberOfMessagesInChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>) -> Int
-    func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, messageAt index: Int) -> _ChatMessage<ExtraData>
-    func loadMoreMessagesForChatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>)
-    func chatMessageListVC(
-        _ vc: _ChatMessageListVC<ExtraData>,
-        replyMessageFor message: _ChatMessage<ExtraData>,
-        at index: Int
-    ) -> _ChatMessage<ExtraData>?
-    func chatMessageListVC(
-        _ vc: _ChatMessageListVC<ExtraData>,
-        controllerFor message: _ChatMessage<ExtraData>
-    ) -> _ChatMessageController<ExtraData>
-}
-
-public protocol _ChatMessageListVCDelegate: AnyObject {
-    associatedtype ExtraData: ExtraDataTypes
-
-    func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didSelectMessageAt index: Int)
-    func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnRepliesFor message: _ChatMessage<ExtraData>)
-    func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnInlineReplyFor message: _ChatMessage<ExtraData>)
-    func chatMessageListVC(_ vc: _ChatMessageListVC<ExtraData>, didTapOnEdit message: _ChatMessage<ExtraData>)
-}
-
+/// Controller that shows list of messages and composer together in the selected channel.
 public typealias ChatMessageListVC = _ChatMessageListVC<NoExtraData>
 
-open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
-    UICollectionViewDataSource,
-    UICollectionViewDelegate,
+/// Controller that shows list of messages and composer together in the selected channel.
+open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
+    _ViewController,
     ThemeProvider,
-    _ChatMessageActionsVCDelegate {
-    public struct DataSource {
-        public var numberOfMessages: (_ChatMessageListVC) -> Int
-        public var messageAtIndex: (_ChatMessageListVC, Int) -> _ChatMessage<ExtraData>
-        public var loadMoreMessages: (_ChatMessageListVC) -> Void
-        public var replyMessageForMessageAtIndex: (_ChatMessageListVC, _ChatMessage<ExtraData>, Int) -> _ChatMessage<ExtraData>?
-        public var controllerForMessage: (_ChatMessageListVC, _ChatMessage<ExtraData>) -> _ChatMessageController<ExtraData>
-    }
+    _ChatMessageComposerViewControllerDelegate,
+    _ChatChannelControllerDelegate,
+    _ChatMessageActionsVCDelegate,
+    ChatMessageContentViewDelegate,
+    UICollectionViewDelegate,
+    UICollectionViewDataSource {
+    /// Controller for observing data changes within the channel
+    open var channelController: _ChatChannelController<ExtraData>!
+    
+    /// Observer responsible for setting the correct offset when keyboard frame is changed
+    open lazy var keyboardObserver = ChatMessageListKeyboardObserver(
+        containerView: view,
+        scrollView: collectionView,
+        composerBottomConstraint: messageComposerBottomConstraint
+    )
 
-    public struct Delegate {
-        public var didSelectMessageAtIndex: ((_ChatMessageListVC, Int) -> Void)?
-        public var didTapOnRepliesForMessage: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
-        public var didTapOnInlineReply: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
-        public var didTapOnEdit: ((_ChatMessageListVC, _ChatMessage<ExtraData>) -> Void)?
-    }
-
-    public var dataSource: DataSource = .empty()
-    public var delegate: Delegate?
-
-    public lazy var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-
-    public lazy var router = components.navigation.messageListRouter.init(rootViewController: self)
-
-    public private(set) lazy var collectionViewLayout = components
+    /// User search controller passed directly to the composer
+    open lazy var userSuggestionSearchController: _ChatUserSearchController<ExtraData> =
+        channelController.client.userSearchController()
+    
+    /// Layout used by the collection view.
+    open lazy var messageListLayout: ChatMessageListCollectionViewLayout = components
         .messageList
         .collectionLayout
         .init()
-
-    /// Registers the provided message cell to be used in the collection view.
-    ///
-    /// - Note: For performance optimization reasons, each cell is registered using multiple reuse identifiers to reduce
-    /// cell layout changes.
-    ///
-    /// - Parameter cellType: The cell type to be registered.
-    ///
-    open func registerMessageCell(_ cellType: _СhatMessageCollectionViewCell<ExtraData>.Type) {
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage0ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage2ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage3ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage6ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage7ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage1ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage4ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage9ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage5ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.incomingMessage13ReuseId)
-        
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage0ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage2ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage3ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage6ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage7ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage1ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage4ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage9ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage5ReuseId)
-        collectionView.register(cellType, forCellWithReuseIdentifier: cellType.outgoingMessage13ReuseId)
-    }
-
-    public private(set) lazy var collectionView: UICollectionView = {
-        let collection = components.messageList.collectionView.init(layout: collectionViewLayout)
+    
+    /// View used to display the messages
+    open private(set) lazy var collectionView: ChatMessageListCollectionView = {
+        let collection = ChatMessageListCollectionView(frame: .zero, collectionViewLayout: messageListLayout)
 
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
@@ -106,156 +49,337 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         collection.dataSource = self
         collection.delegate = self
 
-        return collection
+        return collection.withoutAutoresizingMaskConstraints
     }()
+    
+    /// Controller that handles the composer view
+    open private(set) lazy var messageComposerViewController = components
+        .messageComposer
+        .messageComposerViewController
+        .init()
+    
+    /// View displaying status of the channel.
+    ///
+    /// The status differs based on the fact if the channel is direct or not.
+    open lazy var titleView = ChatMessageListTitleView<ExtraData>()
+        .withoutAutoresizingMaskConstraints
 
-    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
-    public private(set) var needsToScrollToMostRecentMessage = true
-    /// Consider to call `setNeedsScrollToMostRecentMessage(animated:)` instead
-    public private(set) var needsToScrollToMostRecentMessageAnimated = false
-
-    open var minTimeInvteralBetweenMessagesInGroup: TimeInterval = 10
-
-    // MARK: - Life Cycle
-
+    /// Handles navigation actions from messages
+    open lazy var router = components
+        .navigation
+        .messageListRouter
+        .init(rootViewController: self)
+    
+    /// Constraint connection list of messages and composer controller.
+    /// It's used to change the message list's height based on the keyboard visibility.
+    private var messageComposerBottomConstraint: NSLayoutConstraint?
+    
+    /// Timer used to update the online status of member in the chat channel
+    private var timer: Timer?
+    
     override open func setUp() {
         super.setUp()
-
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
+        
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress))
         longPress.minimumPressDuration = 0.33
         collectionView.addGestureRecognizer(longPress)
+        
+        messageComposerViewController.delegate = .wrap(self)
+        messageComposerViewController.controller = channelController
+        messageComposerViewController.userSuggestionSearchController = userSuggestionSearchController
 
-        registerMessageCell(components.messageList.defaultMessageCell)
-        // registerMessageCell(components.messageList.textOnlyMessageCell)
+        userSuggestionSearchController.search(term: nil)
+        
+        channelController.setDelegate(self)
+        channelController.synchronize()
+        
+        if channelController.channel?.isDirectMessageChannel == true {
+            timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
+                self?.updateNavigationTitle()
+            }
+        }
     }
-
+    
     override open func setUpLayout() {
         super.setUpLayout()
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-
+        
         view.addSubview(collectionView)
-        collectionView.pin(to: view.safeAreaLayoutGuide)
-        collectionView.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
+        collectionView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        
+        messageComposerViewController.view.translatesAutoresizingMaskIntoConstraints = false
+        addChildViewController(messageComposerViewController, targetView: view)
+
+        messageComposerViewController.view.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
+        messageComposerViewController.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        messageComposerViewController.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        messageComposerBottomConstraint = messageComposerViewController.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
+        messageComposerBottomConstraint?.isActive = true
     }
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        view.backgroundColor = appearance.colorPalette.background
-        collectionView.backgroundColor = .clear
+        
+        view.backgroundColor = .white
+        
+        collectionView.backgroundColor = .white
+        
+        navigationItem.titleView = titleView
     }
 
-    // MARK: - Public API
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        
+        navigationItem.largeTitleDisplayMode = .never
+    }
+    
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        keyboardObserver.register()
+    }
 
+    override open func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        resignFirstResponder()
+        
+        keyboardObserver.unregister()
+    }
+    
+    /// Returns layout options for the message on given `indexPath`.
+    ///
+    /// Layout options are used to determine the layout of the message.
+    /// By default there is one message with all possible layout and layout options
+    /// determines which parts of the message are visible for the given message.
+    open func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
+        guard let channel = channelController.channel else { return [] }
+
+        return components.messageLayoutOptionsResolver.optionsForMessage(
+            at: indexPath,
+            in: channel,
+            with: AnyRandomAccessCollection(channelController.messages)
+        )
+    }
+
+    /// Returns the content view class for the message at given `indexPath`
+    open func cellContentClassForMessage(at indexPath: IndexPath) -> _ChatMessageContentView<ExtraData>.Type {
+        _ChatMessageContentView<ExtraData>.self
+    }
+    
+    open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        channelController.messages.count
+    }
+    
+    open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let message = channelController.messages[indexPath.item]
+        
+        let cell: _СhatMessageCollectionViewCell<ExtraData> = self.collectionView.dequeueReusableCell(
+            contentViewClass: cellContentClassForMessage(at: indexPath),
+            layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
+            for: indexPath
+        )
+        cell.messageContentView?.delegate = self
+        cell.messageContentView?.content = message
+        
+        return cell
+    }
+    
     /// Will scroll to most recent message on next `updateMessages` call
-    public func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
-        needsToScrollToMostRecentMessage = true
-        needsToScrollToMostRecentMessageAnimated = animated
+    open func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
+        collectionView.setNeedsScrollToMostRecentMessage(animated: animated)
     }
 
     /// Force scroll to most recent message check without waiting for `updateMessages`
-    public func scrollToMostRecentMessageIfNeeded() {
-        if needsToScrollToMostRecentMessage {
-            scrollToMostRecentMessage(animated: needsToScrollToMostRecentMessageAnimated)
-        }
+    open func scrollToMostRecentMessageIfNeeded() {
+        collectionView.scrollToMostRecentMessageIfNeeded()
     }
 
-    public func scrollToMostRecentMessage(animated: Bool = true) {
-        needsToScrollToMostRecentMessage = false
-        needsToScrollToMostRecentMessageAnimated = false
-
-        // our collection is flipped, so (0; 0) item is most recent one
-        collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .bottom, animated: animated)
-    }
-
-    public func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
-        collectionView.performBatchUpdates {
-            for change in changes {
-                switch change {
-                case let .insert(_, index):
-                    collectionView.insertItems(at: [index])
-                case let .move(_, fromIndex, toIndex):
-                    collectionView.moveItem(at: fromIndex, to: toIndex)
-                case let .remove(_, index):
-                    collectionView.deleteItems(at: [index])
-                case let .update(_, index):
-                    collectionView.reloadItems(at: [index])
-                }
-            }
-        } completion: { flag in
-            completion?(flag)
-            self.scrollToMostRecentMessageIfNeeded()
-        }
+    /// Scrolls to most recent message
+    open func scrollToMostRecentMessage(animated: Bool = true) {
+        collectionView.scrollToMostRecentMessage(animated: animated)
     }
     
-    open func cellReuseIdentifierForMessage(_ message: _ChatMessageGroupPart<ExtraData>) -> String {
-        "\(message.isSentByCurrentUser ? "outgoing" : "incoming")_\(message.layoutOptions.rawValue)_\(components.messageList.defaultMessageCell.reuseId)"
+    /// Updates the status data in `titleView`.
+    ///
+    /// If the channel is direct between two people this method is called repeatedly every minute
+    /// to update the online status of the members.
+    /// For group chat is called every-time the channel changes.
+    open func updateNavigationTitle() {
+        let title = channelController.channel
+            .flatMap { components.channelList.channelNamer($0, channelController.client.currentUserId) }
+        
+        let subtitle: String? = {
+            if channelController.channel?.isDirectMessageChannel == true {
+                guard let member = channelController.channel?.lastActiveMembers.first else { return nil }
+                
+                if member.isOnline {
+                    // ReallyNotATODO: Missing API GroupA.m1
+                    // need to specify how long user have been online
+                    return L10n.Message.Title.online
+                } else if let minutes = member.lastActiveAt
+                    .flatMap({ DateComponentsFormatter.minutes.string(from: $0, to: Date()) }) {
+                    return L10n.Message.Title.seeMinutesAgo(minutes)
+                } else {
+                    return L10n.Message.Title.offline
+                }
+            } else {
+                return channelController.channel.map { L10n.Message.Title.group($0.memberCount, $0.watcherCount) }
+            }
+        }()
+        
+        titleView.title = title
+        titleView.subtitle = subtitle
     }
 
-    // MARK: - Actions
-
-    @objc func didLongPress(_ gesture: UILongPressGestureRecognizer) {
+    /// Handles long press action on collection view.
+    ///
+    /// Default implementation will convert the gesture location to collection view's `indexPath`
+    /// and then call selection action on the selected cell.
+    @objc open func didLongPress(_ gesture: UILongPressGestureRecognizer) {
         let location = gesture.location(in: collectionView)
 
-        guard gesture.state == .began else { return }
-        guard let ip = collectionView.indexPathForItem(at: location) else { return }
-        guard let cell = collectionView.cellForItem(at: ip) as? _СhatMessageCollectionViewCell<ExtraData> else { return }
-
-        didSelectMessageCell(cell)
+        guard
+            gesture.state == .began,
+            let ip = collectionView.indexPathForItem(at: location)
+        else { return }
+        
+        didSelectMessageCell(at: ip)
     }
 
-    // MARK: - UICollectionViewDataSource
+    /// Updates the collection view data with given `changes`.
+    open func updateMessages(with changes: [ListChange<_ChatMessage<ExtraData>>], completion: ((Bool) -> Void)? = nil) {
+        collectionView.updateMessages(with: changes, completion: completion)
+    }
+    
+    open func messageForIndexPath(_ indexPath: IndexPath) -> _ChatMessage<ExtraData> {
+        channelController.messages[indexPath.item]
+    }
+    
+    open func didSelectMessageCell(at indexPath: IndexPath) {
+        guard
+            let cell = collectionView.cellForItem(at: indexPath) as? _СhatMessageCollectionViewCell<ExtraData>,
+            let messageContentView = cell.messageContentView,
+            let message = messageContentView.content,
+            message.isInteractionEnabled == true
+        else { return }
+        
+        let messageController = channelController.client.messageController(
+            cid: channelController.cid!,
+            messageId: message.id
+        )
 
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        dataSource.numberOfMessages(self)
+        let actionsController = _ChatMessageActionsVC<ExtraData>()
+        actionsController.messageController = messageController
+        actionsController.delegate = .init(delegate: self)
+
+        let reactionsController: _ChatMessageReactionsVC<ExtraData>? = {
+            guard message.localState == nil else { return nil }
+
+            let controller = _ChatMessageReactionsVC<ExtraData>()
+            controller.messageController = messageController
+            return controller
+        }()
+
+        let messageContentViewToShow = cellContentClassForMessage(at: indexPath).init().withoutAutoresizingMaskConstraints
+        messageContentViewToShow.setUpLayoutIfNeeded(options: cellLayoutOptionsForMessage(at: indexPath).subtracting(.reactions))
+        messageContentViewToShow.content = message
+
+        router.showMessageActionsPopUp(
+            viewToAnimate: messageContentView,
+            viewToShow: messageContentViewToShow,
+            actionsController: actionsController,
+            reactionsController: reactionsController
+        )
     }
 
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
-        let message = messageGroupPart(at: indexPath)
-
-        let reuseIdentifier = cellReuseIdentifierForMessage(message)
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: reuseIdentifier,
-            for: indexPath
-        ) as! _СhatMessageCollectionViewCell<ExtraData>
-
-        cell.messageView.onThreadTap = { [weak self] in
-            guard let self = self, let message = $0?.message else { return }
-            self.delegate?.didTapOnRepliesForMessage?(self, message)
+    /// Restarts upload of given `attachment` in case of failure
+    open func restartUploading(for attachment: ChatMessageDefaultAttachment) {
+        guard let id = attachment.id else {
+            log.error("Uploading cannot be restarted for attachment without `id`")
+            return
         }
-        cell.messageView.onErrorIndicatorTap = { [weak self, weak cell] _ in
-            guard let self = self, let cell = cell else { return }
-            self.didSelectMessageCell(cell)
-        }
-        cell.messageView.onLinkTap = { [weak self] link in
-            if let link = link {
-                self?.didTapOnLink(link)
-            }
-        }
-        cell.message = message
 
-        return cell
+        channelController.client
+            .messageController(cid: id.cid, messageId: id.messageId)
+            .restartFailedAttachmentUploading(with: id)
     }
 
-    // MARK: - UICollectionViewDelegate
+    // MARK: - Cell action handlers
 
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate?.didSelectMessageAtIndex?(self, indexPath.row)
+    /// Handles the tap on an attachment.
+    ///
+    /// Default implementation tries to restart the upload in case of failure.
+    /// If the attachment is correctly uploaded and displayed
+    /// then for image or file it shows the preview.
+    /// For link it tries to open it.
+    open func handleTapOnAttachment(_ attachment: ChatMessageAttachment, forCellAt indexPath: IndexPath) {
+        guard let attachment = attachment as? ChatMessageDefaultAttachment else {
+            return
+        }
+
+        guard attachment.localState != .uploadingFailed else {
+            restartUploading(for: attachment)
+            return
+        }
+
+        switch attachment.type {
+        case .image, .file:
+            router.showPreview(for: attachment)
+        case .link:
+            router.openLink(attachment)
+        default:
+            break
+        }
     }
 
-    public func collectionView(
-        _ collectionView: UICollectionView,
-        willDisplay cell: UICollectionViewCell,
-        forItemAt indexPath: IndexPath
+    /// Executes the provided action on the message
+    open func handleTapOnAttachmentAction(
+        _ action: AttachmentAction,
+        for attachment: ChatMessageAttachment,
+        forCellAt indexPath: IndexPath
     ) {
-        if indexPath.row + 1 >= collectionView.numberOfItems(inSection: 0) {
-            dataSource.loadMoreMessages(self)
-        }
+        // Can we have a helper on `ChannelController` returning a `messageController` for the provided message id?
+        channelController.client
+            .messageController(
+                cid: channelController.cid!,
+                messageId: channelController.messages[indexPath.row].id
+            )
+            .dispatchEphemeralMessageAction(action)
+    }
+    
+    /// Opens thread detail for given `message`
+    open func showThread(for message: _ChatMessage<ExtraData>) {
+        guard let channel = channelController.channel else { log.error("Channel is not available"); return }
+        router.showThread(
+            for: message,
+            in: channel,
+            client: channelController.client
+        )
     }
 
-    // MARK: - ChatMessageActionsVCDelegate
+    // MARK: - _ChatMessageComposerViewControllerDelegate
+
+    open func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>) {
+        setNeedsScrollToMostRecentMessage()
+    }
+
+    // MARK: - _ChatChannelControllerDelegate
+
+    open func channelController(
+        _ channelController: _ChatChannelController<ExtraData>,
+        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
+    ) {
+        updateMessages(with: changes)
+    }
+    
+    open func channelController(
+        _ channelController: _ChatChannelController<ExtraData>,
+        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+    ) {
+        updateNavigationTitle()
+    }
+
+    // MARK: - _ChatMessageActionsVCDelegate
 
     open func chatMessageActionsVC(
         _ vc: _ChatMessageActionsVC<ExtraData>,
@@ -263,23 +387,20 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
         switch actionItem {
-        case is ThreadReplyActionItem:
+        case is EditActionItem:
             dismiss(animated: true) { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.didTapOnRepliesForMessage?(self, message)
+                self?.messageComposerViewController.state = .edit(message)
             }
         case is InlineReplyActionItem:
             dismiss(animated: true) { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.didTapOnInlineReply?(self, message)
+                self?.messageComposerViewController.state = .quote(message)
             }
-        case is EditActionItem:
+        case is ThreadReplyActionItem:
             dismiss(animated: true) { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.didTapOnEdit?(self, message)
+                self?.showThread(for: message)
             }
         default:
-            log.error("Unhandled action for item: \(actionItem)")
+            return
         }
     }
 
@@ -287,164 +408,20 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>: _ViewController,
         dismiss(animated: true)
     }
 
-    // MARK: - Private
+    // MARK: - ChatMessageContentViewDelegate
 
-    private func messageGroupPart(at indexPath: IndexPath) -> _ChatMessageGroupPart<ExtraData> {
-        let message = dataSource.messageAtIndex(self, indexPath.row)
-
-        var isLastInGroup: Bool {
-            guard indexPath.row > 0 else { return true }
-            let nextMessage = dataSource.messageAtIndex(self, indexPath.row - 1)
-            guard nextMessage.author == message.author else { return true }
-            let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
-            return delay > minTimeInvteralBetweenMessagesInGroup
-        }
-        
-        var isFirstInGroup: Bool {
-            guard indexPath.row < dataSource.numberOfMessages(self) - 1 else { return true }
-            let previousMessage = dataSource.messageAtIndex(self, indexPath.row + 1)
-            guard previousMessage.author == message.author else { return true }
-            let delay = previousMessage.createdAt.timeIntervalSince(message.createdAt)
-            return delay > minTimeInvteralBetweenMessagesInGroup
-        }
-
-        return .init(
-            message: message,
-            quotedMessage: dataSource.replyMessageForMessageAtIndex(self, message, indexPath.row),
-            isFirstInGroup: isFirstInGroup,
-            isLastInGroup: isLastInGroup,
-            didTapOnAttachment: { [weak self] attachment in
-                self?.didTapOnAttachment(attachment, in: message)
-            },
-            didTapOnAttachmentAction: { [weak self] _, action in
-                guard let self = self else { return }
-
-                let messageController = self.dataSource.controllerForMessage(self, message)
-                messageController.dispatchEphemeralMessageAction(action)
-            }
-        )
+    open func messageContentViewDidTapOnErrorIndicator(_ indexPath: IndexPath?) {
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        didSelectMessageCell(at: indexPath)
     }
-
-    private func presentReactionsControllerAnimated(
-        for cell: _СhatMessageCollectionViewCell<ExtraData>,
-        with messageData: _ChatMessageGroupPart<ExtraData>,
-        actionsController: _ChatMessageActionsVC<ExtraData>,
-        reactionsController: _ChatMessageReactionsVC<ExtraData>?
-    ) {
-        // TODO: for PR: This should be doable via:
-        // 1. options: [.autoreverse, .repeat] and
-        // 2. `UIView.setAnimationRepeatCount(0)` inside the animation block...
-        //
-        // and then just set completion to the animation to transform this back. aka `cell.messageView.transform = .identity`
-        // however, this doesn't work as after the animation is done, it clips back to the value set in animation block
-        // and then on completion goes back to `.identity`... This is really strange, but I was fighting it for some time
-        // and couldn't find proper solution...
-        // Also there are some limitations to the current solution ->
-        // According to my debug view hiearchy, the content inside `messageView.messageBubbleView` is not constrainted to the
-        // bubble view itself, meaning right now if we want to scale the view of incoming message, we scale the avatarView
-        // of the sender as well...
-        UIView.animate(
-            withDuration: 0.2,
-            delay: 0,
-            options: [.curveEaseIn],
-            animations: {
-                cell.messageView.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-            },
-            completion: { _ in
-                self.impactFeedbackGenerator.impactOccurred()
-
-                UIView.animate(
-                    withDuration: 0.1,
-                    delay: 0,
-                    options: [.curveEaseOut],
-                    animations: {
-                        cell.messageView.transform = .identity
-                    }
-                )
-                
-                self.router.showMessageActionsPopUp(
-                    messageContentViewClass: type(of: cell).messageContentViewClass,
-                    messageContentFrame: cell.messageView.superview!.convert(cell.messageView.frame, to: nil),
-                    messageData: messageData,
-                    messageActionsController: actionsController,
-                    messageReactionsController: reactionsController
-                )
-            }
-        )
+    
+    open func messageContentViewDidTapOnThread(_ indexPath: IndexPath?) {
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        showThread(for: channelController.messages[indexPath.item])
     }
-
-    private func didSelectMessageCell(_ cell: _СhatMessageCollectionViewCell<ExtraData>) {
-        guard let messageData = cell.message, messageData.isInteractionEnabled else { return }
-
-        let actionsController = _ChatMessageActionsVC<ExtraData>()
-        actionsController.messageController = dataSource.controllerForMessage(self, messageData.message)
-        actionsController.delegate = .init(delegate: self)
-
-        var reactionsController: _ChatMessageReactionsVC<ExtraData>? {
-            guard messageData.message.localState == nil else { return nil }
-
-            let controller = _ChatMessageReactionsVC<ExtraData>()
-            controller.messageController = dataSource.controllerForMessage(self, messageData.message)
-            return controller
-        }
-
-        presentReactionsControllerAnimated(
-            for: cell,
-            with: messageData,
-            actionsController: actionsController,
-            reactionsController: reactionsController
-        )
-    }
-
-    private func didTapOnAttachment(_ attachment: ChatMessageDefaultAttachment, in message: _ChatMessage<ExtraData>) {
-        switch attachment.localState {
-        case .uploadingFailed:
-            guard let id = attachment.id else { return }
-            let messageController = dataSource.controllerForMessage(self, message)
-            messageController.restartFailedAttachmentUploading(with: id)
-        default:
-            router.showPreview(for: attachment)
-        }
-    }
-
-    private func didTapOnLink(_ link: ChatMessageDefaultAttachment) {
-        router.openLink(link)
-    }
-}
-
-public extension _ChatMessageListVC.DataSource {
-    static func wrap<T: _ChatMessageListVCDataSource>(_ ds: T) -> _ChatMessageListVC.DataSource where T.ExtraData == ExtraData {
-        _ChatMessageListVC.DataSource(
-            numberOfMessages: { [unowned ds] in ds.numberOfMessagesInChatMessageListVC($0) },
-            messageAtIndex: { [unowned ds] in ds.chatMessageListVC($0, messageAt: $1) },
-            loadMoreMessages: { [unowned ds] in ds.loadMoreMessagesForChatMessageListVC($0) },
-            replyMessageForMessageAtIndex: { [unowned ds] in ds.chatMessageListVC($0, replyMessageFor: $1, at: $2) },
-            controllerForMessage: { [unowned ds] in ds.chatMessageListVC($0, controllerFor: $1) }
-        )
-    }
-
-    static func empty() -> _ChatMessageListVC.DataSource {
-        _ChatMessageListVC.DataSource(
-            numberOfMessages: { _ in 0 },
-            messageAtIndex: { _, _ in
-                fatalError("Method shouldn't be called on empty data source")
-            },
-            loadMoreMessages: { _ in },
-            replyMessageForMessageAtIndex: { _, _, _ in nil },
-            controllerForMessage: { _, _ in
-                fatalError("Method shouldn't be called on empty data source")
-            }
-        )
-    }
-}
-
-public extension _ChatMessageListVC.Delegate {
-    static func wrap<T: _ChatMessageListVCDelegate>(_ delegate: T) -> _ChatMessageListVC.Delegate where T.ExtraData == ExtraData {
-        _ChatMessageListVC.Delegate(
-            didSelectMessageAtIndex: { [weak delegate] in delegate?.chatMessageListVC($0, didSelectMessageAt: $1) },
-            didTapOnRepliesForMessage: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnRepliesFor: $1) },
-            didTapOnInlineReply: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnInlineReplyFor: $1) },
-            didTapOnEdit: { [weak delegate] in delegate?.chatMessageListVC($0, didTapOnEdit: $1) }
-        )
+    
+    open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {
+        guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
+        print(#function, indexPath)
     }
 }
