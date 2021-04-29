@@ -12,6 +12,7 @@ _April 23, 2021_
 
 ### 🐞 Fixed
 - All channel events are correctly propagated to the UI.
+- Crash where unavailable media types were passed to media pickers. 
 
 # [3.1.7](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.7)
 _April 23, 2021_
