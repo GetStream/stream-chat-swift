@@ -81,8 +81,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
     
-    public private(set) lazy var checkmarkControl: ChatMessageComposerCheckmarkControl = components
-        .messageComposer
+    public private(set) lazy var checkboxControl: ChatCheckboxControl = components
         .checkmarkControl.init()
         .withoutAutoresizingMaskConstraints
 
@@ -133,7 +132,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         bottomContainer.isHidden = true
         headerView.isHidden = true
 
-        bottomContainer.addArrangedSubview(checkmarkControl)
+        bottomContainer.addArrangedSubview(checkboxControl)
 
         headerView.addSubview(titleLabel)
         headerView.addSubview(dismissButton)

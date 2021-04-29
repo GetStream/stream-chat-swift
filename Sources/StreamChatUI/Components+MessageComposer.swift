@@ -38,9 +38,6 @@ public extension _Components {
         /// Buttons used in the left side of the composer. Corresponds to attachment and actions buttons.
         public var composerButton: UIButton.Type = UIButton.self
 
-        public var checkmarkControl: ChatMessageComposerCheckmarkControl.Type =
-            ChatMessageComposerCheckmarkControl.self
-
         /// A view controller that shows suggestions of commands or mentions.
         public var suggestionsViewController: _ChatSuggestionsViewController<ExtraData>.Type =
             _ChatSuggestionsViewController<ExtraData>.self

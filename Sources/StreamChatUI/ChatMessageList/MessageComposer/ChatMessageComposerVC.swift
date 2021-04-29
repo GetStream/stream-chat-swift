@@ -152,9 +152,9 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             }
             
             if memberCount > 2 {
-                composerView.checkmarkControl.label.text = L10n.Composer.Checkmark.channelReply
+                composerView.checkboxControl.label.text = L10n.Composer.Checkmark.channelReply
             } else {
-                composerView.checkmarkControl.label.text = L10n.Composer.Checkmark.directMessageReply
+                composerView.checkboxControl.label.text = L10n.Composer.Checkmark.directMessageReply
             }
         }
     }
@@ -225,7 +225,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 text: text,
                 pinning: nil,
                 attachments: attachments + attachmentSeeds,
-                showReplyInChannel: composerView.checkmarkControl.isSelected,
+                showReplyInChannel: composerView.checkboxControl.isSelected,
                 quotedMessageId: quotedMessageId
             )
         } else {
