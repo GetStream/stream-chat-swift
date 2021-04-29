@@ -3652,7 +3652,7 @@
 				AD4473F6263AC4A50030E583 /* Suggestions */,
 				ADB3C478261638C500A69B66 /* MessageQuoteView */,
 				AD7112D325F10CF300932AEE /* AvatarView */,
-				ADFB13262637610E00D321FD /* ChatInputView */,
+				ADFB13262637610E00D321FD /* MessageInputView */,
 				AD81AEEB25ED132400F17F8F /* ListCollectionViewLayout */,
 				A3BB3FFE261DA74D00365496 /* ContainerStackView.swift */,
 				A3C0D773261CA25700A8A1A2 /* ContainerStackView_Tests.swift */,
@@ -4057,14 +4057,14 @@
 			path = ConnectionController;
 			sourceTree = "<group>";
 		};
-		ADFB13262637610E00D321FD /* ChatInputView */ = {
+		ADFB13262637610E00D321FD /* MessageInputView */ = {
 			isa = PBXGroup;
 			children = (
 				22ADD67B256BF1550098EFEB /* ChatMessageInputView.swift */,
 				226C438C25802AAD008B3648 /* ChatInputTextView.swift */,
 				2210525E256FE16600A5F0DB /* ChatCommandLabel.swift */,
 			);
-			path = ChatInputView;
+			path = MessageInputView;
 			sourceTree = "<group>";
 		};
 		DA4971652549C46400AC68C2 /* Attachment */ = {
