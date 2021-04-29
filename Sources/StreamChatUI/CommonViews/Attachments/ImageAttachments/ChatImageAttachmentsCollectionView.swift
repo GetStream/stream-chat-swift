@@ -6,10 +6,10 @@ import StreamChat
 import UIKit
 
 /// A view that displays a collection of image attachments
-public typealias ChatMessageComposerImageAttachmentsView = _ChatMessageComposerImageAttachmentsView<NoExtraData>
+public typealias ChatImageAttachmentsCollectionView = _ChatImageAttachmentsCollectionView<NoExtraData>
 
 /// A view that displays a collection of image attachments
-open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: _View,
+open class _ChatImageAttachmentsCollectionView<ExtraData: ExtraDataTypes>: _View,
     ComponentsProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
@@ -24,16 +24,12 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
     open var didTapRemoveItemButton: ((Int) -> Void)?
 
     /// The collection view layout of the image attachments collection view.
-    open private(set) lazy var flowLayout: UICollectionViewFlowLayout = components
-        .messageComposer
-        .imageAttachmentsCollectionViewLayout.init()
+    open private(set) lazy var flowLayout: UICollectionViewFlowLayout = .init()
 
     /// The collection view of image attachments.
-    open private(set) lazy var collectionView: UICollectionView = components
-        .messageComposer
-        .imageAttachmentsCollectionView
-        .init(frame: .zero, collectionViewLayout: self.flowLayout)
-        .withoutAutoresizingMaskConstraints
+    open private(set) lazy var collectionView: UICollectionView =
+        UICollectionView(frame: .zero, collectionViewLayout: self.flowLayout)
+            .withoutAutoresizingMaskConstraints
 
     override open func setUpAppearance() {
         super.setUpAppearance()
@@ -74,7 +70,7 @@ open class _ChatMessageComposerImageAttachmentsView<ExtraData: ExtraDataTypes>: 
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: reuseId,
             for: indexPath
-        ) as! _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>
+        ) as! _ChatImageAttachmentsCollectionViewCell<ExtraData>
 
         cell.components = components
         cell.imageAttachmentView.imageView.image = content[indexPath.row].image

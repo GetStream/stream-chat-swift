@@ -5,10 +5,10 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerDocumentAttachmentCollectionViewCell =
-    _ChatMessageComposerDocumentAttachmentCollectionViewCell<NoExtraData>
+public typealias ChatDocumentAttachmentsCollectionViewCell =
+    _ChatDocumentAttachmentsCollectionViewCell<NoExtraData>
 
-open class _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
+open class _ChatDocumentAttachmentsCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
     ComponentsProvider {
     // MARK: - Properties
     

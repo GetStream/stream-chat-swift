@@ -35,12 +35,12 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     
     public private(set) lazy var imageAttachmentsView = components
         .messageComposer
-        .imageAttachmentsView.init()
+        .imageAttachmentsCollectionView.init()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var documentAttachmentsView = components
         .messageComposer
-        .documentAttachmentsView.init()
+        .documentAttachmentsCollectionView.init()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var messageInputView = components
