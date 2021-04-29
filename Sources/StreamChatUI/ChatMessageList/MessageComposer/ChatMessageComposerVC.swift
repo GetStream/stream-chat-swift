@@ -77,14 +77,14 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     internal private(set) lazy var imagePicker: UIImagePickerController = {
         let picker = UIImagePickerController()
-        picker.mediaTypes = ["internal.image"]
+        picker.mediaTypes = ["public.image"]
         picker.sourceType = .photoLibrary
         picker.delegate = self
         return picker
     }()
     
     internal private(set) lazy var documentPicker: UIDocumentPickerViewController = {
-        let picker = UIDocumentPickerViewController(documentTypes: ["internal.item"], in: .import)
+        let picker = UIDocumentPickerViewController(documentTypes: ["public.item"], in: .import)
         picker.delegate = self
         picker.allowsMultipleSelection = true
         return picker
