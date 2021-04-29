@@ -115,7 +115,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             composerView.messageQuoteView.content = nil
             Animate {
                 self.composerView.sendButton.isHidden = false
-                self.composerView.editButton.isHidden = true
+                self.composerView.confirmButton.isHidden = true
                 self.composerView.messageQuoteView.isHidden = true
                 self.composerView.headerView.isHidden = true
             }
@@ -137,7 +137,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         case let .edit(message):
             composerView.titleLabel.text = L10n.Composer.Title.edit
             Animate {
-                self.composerView.editButton.isHidden = false
+                self.composerView.confirmButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
                 self.composerView.headerView.isHidden = false
                 self.composerView.messageInputView.commandLabel.isHidden = true
@@ -169,7 +169,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         
         composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
-        composerView.editButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
+        composerView.confirmButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
         composerView.messageInputView.cleanButton.addTarget(
@@ -295,7 +295,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     func updateSendButton() {
         composerView.sendButton.isEnabled = !isEmpty || !imageAttachments.isEmpty || !documentAttachments.isEmpty
-        composerView.editButton.isEnabled = !isEmpty || !imageAttachments.isEmpty || !documentAttachments.isEmpty
+        composerView.confirmButton.isEnabled = !isEmpty || !imageAttachments.isEmpty || !documentAttachments.isEmpty
     }
     
     // MARK: Suggestions
