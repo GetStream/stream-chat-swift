@@ -137,7 +137,7 @@ extension LoginViewController {
 
 final class MyChatChannelListRouter: ChatChannelListRouter {
     override func openChat(for channel: _ChatChannel<NoExtraData>) {
-        let chatScreen = ChatChannelVC()
+        let chatScreen = ChatMessageListVC()
         chatScreen.channelController = rootViewController.controller.client.channelController(for: channel.cid)
         navigationController?.pushViewController(chatScreen, animated: true)
     }
