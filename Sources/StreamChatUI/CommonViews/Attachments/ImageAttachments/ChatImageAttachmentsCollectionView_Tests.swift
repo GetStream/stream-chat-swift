@@ -7,12 +7,12 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatMessageComposerImageAttachmentsView_Tests: XCTestCase {
-    var view: ChatMessageComposerImageAttachmentsView!
+class ChatImageAttachmentsCollectionView_Tests: XCTestCase {
+    var view: ChatImageAttachmentsCollectionView!
 
     override func setUp() {
         super.setUp()
-        view = makeView(ChatMessageComposerImageAttachmentsView.self)
+        view = makeView(ChatImageAttachmentsCollectionView.self)
     }
 
     override func tearDown() {
@@ -25,25 +25,25 @@ class ChatMessageComposerImageAttachmentsView_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingComponents() {
-        class TestView: ChatMessageComposerImageAttachmentView {
+        class TestView: ChatImageAttachmentView {
             override func setUpAppearance() {
                 super.setUpAppearance()
 
-                contentView.layer.addShadow(color: .black, radius: 4)
+                layer.addShadow(color: .black, radius: 4)
                 layer.masksToBounds = false
             }
 
             override func setUpLayout() {
                 super.setUpLayout()
 
-                discardButton.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor).isActive = true
+                discardButton.leadingAnchor.constraint(equalTo: layoutMarginsGuide.leadingAnchor).isActive = true
             }
         }
 
         var components = Components()
         components.messageComposer.imageAttachmentCellView = TestView.self
 
-        let view = makeView(ChatMessageComposerImageAttachmentsView.self)
+        let view = makeView(ChatImageAttachmentsCollectionView.self)
         view.collectionView.layer.masksToBounds = false
         view.components = components
         view.backgroundColor = .yellow
@@ -51,7 +51,7 @@ class ChatMessageComposerImageAttachmentsView_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingSubclassing() {
-        class TestView: ChatMessageComposerImageAttachmentsView {
+        class TestView: ChatImageAttachmentsCollectionView {
             override func setUpAppearance() {
                 super.setUpAppearance()
 
@@ -70,8 +70,8 @@ class ChatMessageComposerImageAttachmentsView_Tests: XCTestCase {
     }
 }
 
-private extension ChatMessageComposerImageAttachmentsView_Tests {
-    func makeView(_ view: ChatMessageComposerImageAttachmentsView.Type) -> ChatMessageComposerImageAttachmentsView {
+private extension ChatImageAttachmentsCollectionView_Tests {
+    func makeView(_ view: ChatImageAttachmentsCollectionView.Type) -> ChatImageAttachmentsCollectionView {
         let view = view.init().withoutAutoresizingMaskConstraints
         view.content = [
             TestImages.yoda.image,
@@ -86,7 +86,7 @@ private extension ChatMessageComposerImageAttachmentsView_Tests {
     }
 }
 
-private extension ChatMessageComposerImageAttachmentsView {
+private extension ChatImageAttachmentsCollectionView {
     func addSizeConstraints() {
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: 360),

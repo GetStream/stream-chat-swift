@@ -4,7 +4,7 @@
 
 import UIKit
 
-open class ChatMessageComposerDocumentAttachmentsCollectionViewLayout: UICollectionViewFlowLayout {
+open class ChatDocumentAttachmentsCollectionViewLayout: UICollectionViewFlowLayout {
     open var itemHeight: CGFloat = 70
     
     override public required init() {

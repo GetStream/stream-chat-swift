@@ -11,32 +11,26 @@ public extension _Components {
         public var messageComposerView: _ChatMessageComposerView<ExtraData>.Type =
             _ChatMessageComposerView<ExtraData>.self
 
-        public var documentAttachmentView: _ChatMessageComposerDocumentAttachmentView<ExtraData>.Type =
-            _ChatMessageComposerDocumentAttachmentView<ExtraData>.self
-        public var documentAttachmentsFlowLayout: ChatMessageComposerDocumentAttachmentsCollectionViewLayout.Type =
-            ChatMessageComposerDocumentAttachmentsCollectionViewLayout.self
-        public var documentAttachmentsView: _ChatMessageComposerDocumentAttachmentsView<ExtraData>.Type =
-            _ChatMessageComposerDocumentAttachmentsView<ExtraData>.self
         /// Button used in Composer used for confirming editing messages.
         public var editButton: UIButton.Type = ChatMessageConfirmEditButton.self
+        public var documentAttachmentView: _ChatDocumentAttachmentView<ExtraData>.Type =
+            _ChatDocumentAttachmentView<ExtraData>.self
+        public var documentAttachmentsFlowLayout: ChatDocumentAttachmentsCollectionViewLayout.Type =
+            ChatDocumentAttachmentsCollectionViewLayout.self
+        public var documentAttachmentsCollectionView: _ChatDocumentAttachmentsCollectionView<ExtraData>.Type =
+            _ChatDocumentAttachmentsCollectionView<ExtraData>.self
 
         /// A view that displays a collection of image attachments
-        public var imageAttachmentsView: _ChatMessageComposerImageAttachmentsView<ExtraData>.Type =
-            _ChatMessageComposerImageAttachmentsView<ExtraData>.self
-        /// The collection view of image attachments.
-        public var imageAttachmentsCollectionView: UICollectionView.Type = UICollectionView.self
-        /// The collection view layout of the image attachments collection view.
-        public var imageAttachmentsCollectionViewLayout: UICollectionViewFlowLayout.Type =
-            UICollectionViewFlowLayout.self
+        public var imageAttachmentsCollectionView: _ChatImageAttachmentsCollectionView<ExtraData>.Type =
+            _ChatImageAttachmentsCollectionView<ExtraData>.self
         /// A view that displays the image attachment.
-        public var imageAttachmentCellView: ChatMessageComposerImageAttachmentView.Type =
-            ChatMessageComposerImageAttachmentView.self
+        public var imageAttachmentCellView: ChatImageAttachmentView.Type =
+            ChatImageAttachmentView.self
         /// The view cell that displays the image attachment.
-        public var imageAttachmentCollectionViewCell: _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.Type =
-            _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData>.self
-
         /// Buttons used in the left side of the composer. Corresponds to attachment and actions buttons.
         public var composerButton: UIButton.Type = UIButton.self
+        public var imageAttachmentCollectionViewCell: _ChatImageAttachmentsCollectionViewCell<ExtraData>.Type =
+            _ChatImageAttachmentsCollectionViewCell<ExtraData>.self
 
         /// A view controller that shows suggestions of commands or mentions.
         public var suggestionsViewController: _ChatSuggestionsViewController<ExtraData>.Type =

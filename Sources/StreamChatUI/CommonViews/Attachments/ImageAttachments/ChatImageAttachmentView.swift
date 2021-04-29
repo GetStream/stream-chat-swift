@@ -5,31 +5,8 @@
 import StreamChat
 import UIKit
 
-/// The view cell that displays the image attachment.
-public typealias ChatMessageComposerImageAttachmentCollectionViewCell =
-    _ChatMessageComposerImageAttachmentCollectionViewCell<NoExtraData>
-
-/// The view cell that displays the image attachment.
-open class _ChatMessageComposerImageAttachmentCollectionViewCell<ExtraData: ExtraDataTypes>: _CollectionViewCell,
-    ComponentsProvider {
-    open class var reuseId: String { String(describing: self) }
-
-    /// A view that displays the image attachment preview.
-    open private(set) lazy var imageAttachmentView = components
-        .messageComposer
-        .imageAttachmentCellView.init()
-        .withoutAutoresizingMaskConstraints
-
-    override open func setUpLayout() {
-        super.setUpLayout()
-
-        contentView.embed(imageAttachmentView)
-    }
-}
-
 /// A view that displays the image attachment.
-open class ChatMessageComposerImageAttachmentView: _CollectionViewCell,
-    AppearanceProvider {
+open class ChatImageAttachmentView: _View, AppearanceProvider {
     /// A closure handler that is called when the discard button of the attachment is clicked
     open var discardButtonHandler: (() -> Void)?
 
@@ -58,15 +35,15 @@ open class ChatMessageComposerImageAttachmentView: _CollectionViewCell,
     }
 
     override open func setUpLayout() {
-        contentView.embed(imageView)
+        embed(imageView)
 
-        contentView.addSubview(discardButton)
+        addSubview(discardButton)
 
         NSLayoutConstraint.activate([
-            discardButton.topAnchor.pin(equalTo: contentView.layoutMarginsGuide.topAnchor),
-            discardButton.trailingAnchor.pin(equalTo: contentView.layoutMarginsGuide.trailingAnchor)
+            discardButton.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            discardButton.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor)
         ])
-        
+
         discardButton.setContentHuggingPriority(.required, for: .horizontal)
     }
 

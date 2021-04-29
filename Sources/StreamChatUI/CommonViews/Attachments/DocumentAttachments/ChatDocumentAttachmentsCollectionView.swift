@@ -5,9 +5,9 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageComposerDocumentAttachmentsView = _ChatMessageComposerDocumentAttachmentsView<NoExtraData>
+public typealias ChatDocumentAttachmentsCollectionView = _ChatDocumentAttachmentsCollectionView<NoExtraData>
 
-open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes>: _View,
+open class _ChatDocumentAttachmentsCollectionView<ExtraData: ExtraDataTypes>: _View,
     ComponentsProvider,
     UICollectionViewDelegate,
     UICollectionViewDataSource {
@@ -60,8 +60,8 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(
-            _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData>.self,
-            forCellWithReuseIdentifier: _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData>.reuseId
+            _ChatDocumentAttachmentsCollectionViewCell<ExtraData>.self,
+            forCellWithReuseIdentifier: _ChatDocumentAttachmentsCollectionViewCell<ExtraData>.reuseId
         )
     }
     
@@ -87,9 +87,9 @@ open class _ChatMessageComposerDocumentAttachmentsView<ExtraData: ExtraDataTypes
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView
             .dequeueReusableCell(
-                withReuseIdentifier: _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData>.reuseId,
+                withReuseIdentifier: _ChatDocumentAttachmentsCollectionViewCell<ExtraData>.reuseId,
                 for: indexPath
-            ) as? _ChatMessageComposerDocumentAttachmentCollectionViewCell<ExtraData>
+            ) as? _ChatDocumentAttachmentsCollectionViewCell<ExtraData>
         else { return UICollectionViewCell() }
         
         cell.documentAttachmentView.fileNameLabel.text = documents[indexPath.row].name
