@@ -40,7 +40,11 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// Button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = ChatSendButton.self
-    
+
+    /// A view to check/uncheck an option.
+    public var checkmarkControl: ChatCheckboxControl.Type =
+        ChatCheckboxControl.self
+
     public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()

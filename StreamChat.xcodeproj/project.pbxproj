@@ -17,7 +17,7 @@
 		2236D97B25CC68E400C47F30 /* TestAttachmentEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */; };
 		22411680258A91280034184D /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2241167F258A91280034184D /* String+Extensions.swift */; };
 		224116B2258BACF90034184D /* Message.json in Resources */ = {isa = PBXBuildFile; fileRef = 224116B1258BACF90034184D /* Message.json */; };
-		224165A825910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224165A725910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift */; };
+		224165A825910A2C00ED7F78 /* ChatCheckboxControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224165A725910A2C00ED7F78 /* ChatCheckboxControl.swift */; };
 		2245B2B625602465006A612D /* ChatChannelAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2245B2B525602465006A612D /* ChatChannelAvatarView.swift */; };
 		224FF67B2562F1EA00725DD1 /* ChatChannelReadStatusCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF67A2562F1EA00725DD1 /* ChatChannelReadStatusCheckmarkView.swift */; };
 		224FF6812562F2E900725DD1 /* ChatChannelUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6802562F2E900725DD1 /* ChatChannelUnreadCountView.swift */; };
@@ -1167,7 +1167,7 @@
 		2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestAttachmentEnvelope.swift; sourceTree = "<group>"; };
 		2241167F258A91280034184D /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
 		224116B1258BACF90034184D /* Message.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Message.json; sourceTree = "<group>"; };
-		224165A725910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerCheckmarkControl.swift; sourceTree = "<group>"; };
+		224165A725910A2C00ED7F78 /* ChatCheckboxControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCheckboxControl.swift; sourceTree = "<group>"; };
 		2245B2B525602465006A612D /* ChatChannelAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelAvatarView.swift; sourceTree = "<group>"; };
 		224FF67A2562F1EA00725DD1 /* ChatChannelReadStatusCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelReadStatusCheckmarkView.swift; sourceTree = "<group>"; };
 		224FF6802562F2E900725DD1 /* ChatChannelUnreadCountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelUnreadCountView.swift; sourceTree = "<group>"; };
@@ -3651,6 +3651,7 @@
 			children = (
 				AD4473F6263AC4A50030E583 /* Suggestions */,
 				AD447496263AFC4A0030E583 /* SendButton */,
+				AD4474B8263AFCC30030E583 /* CheckboxControl */,
 				ADB3C478261638C500A69B66 /* MessageQuoteView */,
 				AD7112D325F10CF300932AEE /* AvatarView */,
 				ADFB13262637610E00D321FD /* MessageInputView */,
@@ -3984,6 +3985,14 @@
 			path = SendButton;
 			sourceTree = "<group>";
 		};
+		AD4474B8263AFCC30030E583 /* CheckboxControl */ = {
+			isa = PBXGroup;
+			children = (
+				224165A725910A2C00ED7F78 /* ChatCheckboxControl.swift */,
+			);
+			path = CheckboxControl;
+			sourceTree = "<group>";
+		};
 		AD7112D325F10CF300932AEE /* AvatarView */ = {
 			isa = PBXGroup;
 			children = (
@@ -4195,7 +4204,6 @@
 				E73A8B2A2578EB2B00FBDC56 /* ChatMessageComposerVC.swift */,
 				7943382A26208D020094471F /* ChatMessageConfirmEditButton.swift */,
 				7943385D262095C50094471F /* ChatMessageConfirmEditButton_Tests.swift */,
-				224165A725910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift */,
 			);
 			path = MessageComposer;
 			sourceTree = "<group>";
@@ -4976,7 +4984,7 @@
 				88A8CF16256E7BDA004EA4C7 /* ChatMessageContentView.swift in Sources */,
 				E79AC10A25831A1500C3CE5D /* ChatMentionSuggestionCollectionViewCell.swift in Sources */,
 				226C438D25802AAD008B3648 /* ChatInputTextView.swift in Sources */,
-				224165A825910A2C00ED7F78 /* ChatMessageComposerCheckmarkControl.swift in Sources */,
+				224165A825910A2C00ED7F78 /* ChatCheckboxControl.swift in Sources */,
 				88D88F86257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift in Sources */,
 				796CBD1C25FF9552003299B0 /* UIStackView+Extensions.swift in Sources */,
 				BDDD1EAA2632CE3C00BA007B /* Appearance+SwiftUI.swift in Sources */,
