@@ -52,9 +52,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
     
-    public private(set) lazy var editButton = components
-        .messageComposer
-        .editButton.init()
+    public private(set) lazy var confirmButton: UIButton = UIButton()
         .withoutAutoresizingMaskConstraints
     
     public private(set) lazy var attachmentButton: UIButton = components
@@ -159,8 +157,8 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         centerRightContainer.alignment = .center
         centerRightContainer.spacing = .auto
         centerRightContainer.addArrangedSubview(sendButton)
-        centerRightContainer.addArrangedSubview(editButton)
-        editButton.isHidden = true
+        centerRightContainer.addArrangedSubview(confirmButton)
+        confirmButton.isHidden = true
 
         centerLeftContainer.axis = .horizontal
         centerLeftContainer.alignment = .center
@@ -177,7 +175,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         imageAttachmentsView.heightAnchor.pin(equalToConstant: 120).isActive = true
         messageInputView.inputTextView.preservesSuperviewLayoutMargins = false
         
-        [shrinkInputButton, attachmentButton, commandsButton, sendButton, editButton]
+        [shrinkInputButton, attachmentButton, commandsButton, sendButton, confirmButton]
             .forEach { button in
                 button.pin(anchors: [.width], to: 20)
                 button.pin(anchors: [.height], to: 20)

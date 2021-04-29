@@ -8,7 +8,7 @@ import StreamChatTestTools
 import SwiftUI
 import XCTest
 
-class ChatMessageConfirmEditButton_Tests: XCTestCase {
+class ChatConfirmButton_Tests: XCTestCase {
     private lazy var container = UIView().withoutAutoresizingMaskConstraints
 
     override func setUp() {
@@ -17,7 +17,7 @@ class ChatMessageConfirmEditButton_Tests: XCTestCase {
     }
 
     func test_defaultAppearance() {
-        let view = ChatMessageConfirmEditButton().withoutAutoresizingMaskConstraints
+        let view = ChatConfirmButton().withoutAutoresizingMaskConstraints
         container.embed(view)
 
         view.isEnabled = true
@@ -29,10 +29,10 @@ class ChatMessageConfirmEditButton_Tests: XCTestCase {
 
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
-        appearance.images.messageComposerSendEditedMessage = TestImages.vader.image.tinted(with: .systemPink)!
+        appearance.images.messageComposerConfirmEditedMessage = TestImages.vader.image.tinted(with: .systemPink)!
         appearance.colorPalette.inactiveTint = .black
 
-        let view = ChatMessageConfirmEditButton().withoutAutoresizingMaskConstraints
+        let view = ChatConfirmButton().withoutAutoresizingMaskConstraints
         view.appearance = appearance
 
         container.embed(view)
@@ -45,8 +45,8 @@ class ChatMessageConfirmEditButton_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingSubclassing() {
-        class TestView: ChatMessageConfirmEditButton {
-            override func setUpLayout() {
+        class TestView: ChatConfirmButton {
+            override func setUpAppearance() {
                 setTitle("🥪", for: .normal)
                 setTitle("🤷🏻‍♂️", for: .disabled)
             }

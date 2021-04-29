@@ -11,8 +11,6 @@ public extension _Components {
         public var messageComposerView: _ChatMessageComposerView<ExtraData>.Type =
             _ChatMessageComposerView<ExtraData>.self
 
-        /// Button used in Composer used for confirming editing messages.
-        public var editButton: UIButton.Type = ChatMessageConfirmEditButton.self
         public var documentAttachmentView: _ChatDocumentAttachmentView<ExtraData>.Type =
             _ChatDocumentAttachmentView<ExtraData>.self
         public var documentAttachmentsFlowLayout: ChatDocumentAttachmentsCollectionViewLayout.Type =
