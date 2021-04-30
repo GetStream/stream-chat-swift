@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct ReactionNewEvent: EventWithReactionPayload {
+public struct ReactionNewEvent: ReactionEvent {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -25,7 +25,7 @@ public struct ReactionNewEvent: EventWithReactionPayload {
     }
 }
 
-public struct ReactionUpdatedEvent: EventWithReactionPayload {
+public struct ReactionUpdatedEvent: ReactionEvent {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -46,7 +46,7 @@ public struct ReactionUpdatedEvent: EventWithReactionPayload {
     }
 }
 
-public struct ReactionDeletedEvent: EventWithReactionPayload {
+public struct ReactionDeletedEvent: ReactionEvent {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId

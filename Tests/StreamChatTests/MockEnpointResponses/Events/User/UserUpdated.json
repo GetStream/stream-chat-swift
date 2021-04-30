@@ -1,0 +1,14 @@
+{
+  "type" : "user.updated",
+  "user" : {
+    "banned" : false,
+    "online" : true,
+    "id" : "luke_skywalker",
+    "role" : "user",
+    "created_at" : "2020-12-07T11:36:47.059906Z",
+    "updated_at" : "2021-04-29T15:20:23.265724Z",
+    "last_active" : "2021-04-29T15:11:30.054706Z",
+    "name" : "Luke Skywalker"
+  },
+  "created_at" : "2021-04-29T15:20:51.693840463Z"
+}

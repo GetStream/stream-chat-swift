@@ -4,24 +4,26 @@
 
 import Foundation
 
-public struct TypingEvent: EventWithUserPayload, EventWithChannelId {
+public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent {
     public let isTyping: Bool
     public let cid: ChannelId
     public let userId: UserId
     
     let payload: Any
     
-    init(isTyping: Bool, cid: ChannelId, userId: UserId, payload: Any = 0) {
-        self.isTyping = isTyping
-        self.cid = cid
-        self.userId = userId
-        self.payload = payload
-    }
-    
     init<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws {
         cid = try response.value(at: \.cid)
         userId = try response.value(at: \.user?.id)
         isTyping = response.eventType == .userStartTyping
         payload = response
+    }
+}
+
+extension TypingEvent {
+    init(isTyping: Bool, cid: ChannelId, userId: UserId, payload: Any = 0) {
+        self.isTyping = isTyping
+        self.cid = cid
+        self.userId = userId
+        self.payload = payload
     }
 }

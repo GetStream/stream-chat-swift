@@ -90,7 +90,7 @@ extension InternetConnection {
 // MARK: - Internet Connection Monitors
 
 /// A delegate to receive Internet connection events.
-protocol InternetConnectionDelegate: class {
+protocol InternetConnectionDelegate: AnyObject {
     /// Calls when the Internet connection status did change.
     /// - Parameter status: an Internet connection status.
     func internetConnectionStatusDidChange(status: InternetConnection.Status)

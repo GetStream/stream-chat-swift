@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class NotificationsEvents_Tests: XCTestCase {
@@ -61,31 +62,5 @@ class NotificationsEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromFile: "NotificationRemovedFromChannel")
         let event = try eventDecoder.decode(from: json) as? NotificationRemovedFromChannelEvent
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"))
-    }
-    
-    func test_invited() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationInvited")
-        let event = try eventDecoder.decode(from: json) as? NotificationInvitedEvent<NoExtraData>
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_1394"))
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
-        XCTAssertEqual(event?.memberRole, .member)
-    }
-    
-    func test_inviteAccepted() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationInviteAccepted")
-        let event = try eventDecoder.decode(from: json) as? NotificationInviteAcceptedEvent<NoExtraData>
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_6293"))
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
-        XCTAssertEqual(event?.memberRole, .member)
-        XCTAssertEqual(event?.acceptedAt.description, "2020-07-21 15:51:53 +0000")
-    }
-    
-    func test_inviteRejected() throws {
-        let json = XCTestCase.mockData(fromFile: "NotificationInviteRejected")
-        let event = try eventDecoder.decode(from: json) as? NotificationInviteRejectedEvent<NoExtraData>
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_6293"))
-        XCTAssertEqual(event?.userId, "broken-waterfall-5")
-        XCTAssertEqual(event?.memberRole, .member)
-        XCTAssertEqual(event?.rejectedAt.description, "2020-07-21 15:51:53 +0000")
     }
 }

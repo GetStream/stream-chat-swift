@@ -82,14 +82,7 @@ enum EventType: String, Codable {
     case notificationAddedToChannel = "notification.added_to_channel"
     /// When a user was removed from a channel.
     case notificationRemovedFromChannel = "notification.removed_from_channel"
-    
-    /// When the user was invited to join a channel.
-    case notificationInvited = "notification.invited"
-    /// When the user accepts an invite.
-    case notificationInviteAccepted = "notification.invite_accepted"
-    /// When the user reject an invite.
-    case notificationInviteRejected = "notification.invite_rejected"
-    
+        
     func event<ExtraData: ExtraDataTypes>(from response: EventPayload<ExtraData>) throws -> Event {
         switch self {
         case .healthCheck: return try HealthCheckEvent(from: response)
@@ -130,10 +123,6 @@ enum EventType: String, Codable {
         case .notificationMutesUpdated: return try NotificationMutesUpdatedEvent(from: response)
         case .notificationAddedToChannel: return try NotificationAddedToChannelEvent(from: response)
         case .notificationRemovedFromChannel: return try NotificationRemovedFromChannelEvent(from: response)
-            
-        case .notificationInvited: return try NotificationInvitedEvent(from: response)
-        case .notificationInviteAccepted: return try NotificationInviteAcceptedEvent(from: response)
-        case .notificationInviteRejected: return try NotificationInviteRejectedEvent(from: response)
         case .notificationChannelMutesUpdated: return try NotificationChannelMutesUpdatedEvent(from: response)
         }
     }
