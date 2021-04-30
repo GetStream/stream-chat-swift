@@ -25,7 +25,7 @@ struct UserWatchingEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
                 }
                 return event
             }
-            
+
             channelDTO.watcherCount = Int64(userWatchingEvent.watcherCount)
             
             guard let userDTO = session.user(id: userWatchingEvent.userId) else {
