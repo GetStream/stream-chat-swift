@@ -8,7 +8,7 @@ import Foundation
 struct MessageReactionsMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard
-            let reactionEvent = event as? EventWithReactionPayload,
+            let reactionEvent = event as? ReactionEvent,
             let payload = reactionEvent.payload as? EventPayload<ExtraData>,
             let reaction = payload.reaction
         else {

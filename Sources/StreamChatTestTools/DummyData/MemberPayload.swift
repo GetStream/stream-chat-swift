@@ -11,13 +11,16 @@ extension MemberPayload where ExtraData == NoExtraData {
         userId: UserId = .unique,
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
-        role: MemberRole = .member
+        role: MemberRole = .member,
+        isMemberBanned: Bool = false,
+        isUserBanned: Bool = false
     ) -> MemberPayload {
         .init(
-            user: .dummy(userId: userId),
+            user: .dummy(userId: userId, isBanned: isUserBanned),
             role: role,
             createdAt: createdAt,
-            updatedAt: updatedAt
+            updatedAt: updatedAt,
+            isBanned: isMemberBanned
         )
     }
 }

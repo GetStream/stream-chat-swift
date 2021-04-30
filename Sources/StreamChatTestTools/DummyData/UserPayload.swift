@@ -12,7 +12,9 @@ extension UserPayload where ExtraData == NoExtraData {
         name: String = .unique,
         imageUrl: URL? = .unique(),
         extraData: NoExtraData = .defaultValue,
-        teams: [TeamId] = [.unique, .unique, .unique]
+        teams: [TeamId] = [.unique, .unique, .unique],
+        isBanned: Bool = false,
+        updatedAt: Date = .unique
     ) -> UserPayload {
         .init(
             id: userId,
@@ -20,11 +22,11 @@ extension UserPayload where ExtraData == NoExtraData {
             imageURL: imageUrl,
             role: .admin,
             createdAt: .unique,
-            updatedAt: .unique,
+            updatedAt: updatedAt,
             lastActiveAt: .unique,
             isOnline: true,
             isInvisible: true,
-            isBanned: true,
+            isBanned: isBanned,
             teams: teams,
             extraData: extraData
         )

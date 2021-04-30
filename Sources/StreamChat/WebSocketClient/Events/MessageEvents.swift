@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct MessageNewEvent: EventWithUserPayload, EventWithMessagePayload {
+public struct MessageNewEvent: MessageSpecificEvent {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -25,7 +25,7 @@ public struct MessageNewEvent: EventWithUserPayload, EventWithMessagePayload {
     }
 }
 
-public struct MessageUpdatedEvent: EventWithUserPayload, EventWithMessagePayload {
+public struct MessageUpdatedEvent: MessageSpecificEvent {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -42,7 +42,7 @@ public struct MessageUpdatedEvent: EventWithUserPayload, EventWithMessagePayload
     }
 }
 
-public struct MessageDeletedEvent: EventWithUserPayload, EventWithMessagePayload {
+public struct MessageDeletedEvent: MessageSpecificEvent {
     public let userId: UserId
     public let cid: ChannelId
     public let messageId: MessageId
@@ -59,7 +59,11 @@ public struct MessageDeletedEvent: EventWithUserPayload, EventWithMessagePayload
     }
 }
 
-public struct MessageReadEvent: EventWithUserPayload, EventWithChannelId {
+/// `ChannelReadEvent`, this event tells that User has mark read all messages in channel.
+public typealias ChannelReadEvent = MessageReadEvent
+
+/// `ChannelReadEvent`, this event tells that User has mark read all messages in channel.
+public struct MessageReadEvent: UserSpecificEvent, ChannelSpecificEvent {
     public let userId: UserId
     public let cid: ChannelId
     public let readAt: Date
