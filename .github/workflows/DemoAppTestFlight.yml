@@ -2,7 +2,7 @@ name: Test Flight Deploy DemoApp
 
 on:
   push:
-    branches: [ testflight-test ]
+    branches: [ main ]
 
   workflow_dispatch:
   
