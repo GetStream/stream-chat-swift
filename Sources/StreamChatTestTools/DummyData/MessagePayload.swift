@@ -27,6 +27,7 @@ extension MessagePayload {
         ownReactions: [MessageReactionPayload<T>] = [],
         createdAt: Date? = nil,
         deletedAt: Date? = nil,
+        updatedAt: Date = .unique,
         channel: ChannelDetailPayload<T>? = nil,
         pinned: Bool = false,
         pinnedByUserId: UserId? = nil,
@@ -39,7 +40,7 @@ extension MessagePayload {
             user: UserPayload.dummy(userId: authorUserId) as UserPayload<T.User>,
             createdAt: createdAt != nil ? createdAt! : XCTestCase.channelCreatedDate
                 .addingTimeInterval(TimeInterval.random(in: 100...900)),
-            updatedAt: .unique,
+            updatedAt: updatedAt,
             deletedAt: deletedAt,
             text: text,
             command: .unique,
