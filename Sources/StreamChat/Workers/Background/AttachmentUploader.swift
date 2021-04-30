@@ -124,8 +124,8 @@ class AttachmentUploader: Worker {
                                 return
                             }
                             if isAttachmentModelSeparationChangesApplied {
-                                switch attachmentDTO.type {
-                                case AttachmentType.image.rawValue:
+                                switch attachmentDTO.attachmentType {
+                                case .image:
                                     var imageAttachment = try? JSONDecoder.default.decode(
                                         ChatMessageImageAttachment.self,
                                         from: data
@@ -138,8 +138,8 @@ class AttachmentUploader: Worker {
                                     attachmentDTO.data = try? JSONEncoder.stream.encode(fileAttachment)
                                 }
                             } else {
-                                switch attachmentDTO.type {
-                                case AttachmentType.image.rawValue:
+                                switch attachmentDTO.attachmentType {
+                                case .image:
                                     var imageAttachment = try? JSONDecoder.default.decode(
                                         ChatMessageDefaultAttachment.self,
                                         from: data

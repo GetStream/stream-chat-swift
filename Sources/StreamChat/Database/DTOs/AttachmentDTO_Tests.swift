@@ -43,7 +43,7 @@ class AttachmentDTO_Tests: XCTestCase {
             XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
             XCTAssertEqual(loadedAttachment.localURL, attachmentSeed.localURL)
             XCTAssertEqual(loadedAttachment.localState, .pendingUpload)
-            XCTAssertEqual(loadedAttachment.type, attachmentSeed.type.rawValue)
+            XCTAssertEqual(loadedAttachment.attachmentType, attachmentSeed.type)
             XCTAssertEqual(loadedAttachment.message.id, messageId)
             XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
             XCTAssertEqual(loadedAttachment.title, attachmentSeed.fileName)
@@ -93,7 +93,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
         XCTAssertEqual(loadedAttachment.localURL, nil)
         XCTAssertEqual(loadedAttachment.localState, nil)
-        XCTAssertEqual(loadedAttachment.type, attachment.type.rawValue)
+        XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
         XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
         
@@ -137,7 +137,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
         XCTAssertEqual(loadedAttachment.localURL, nil)
         XCTAssertEqual(loadedAttachment.localState, .uploaded)
-        XCTAssertEqual(loadedAttachment.type, attachment.type.rawValue)
+        XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
         XCTAssertEqual(loadedAttachment.message.id, messageId)
         XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
         

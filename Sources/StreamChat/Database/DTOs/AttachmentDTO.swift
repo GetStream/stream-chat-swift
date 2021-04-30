@@ -14,6 +14,13 @@ class AttachmentDTO: NSManagedObject {
         set { id = newValue.rawValue }
     }
 
+    /// An attachment type.
+    @NSManaged private var type: String
+    var attachmentType: AttachmentType {
+        get { .init(rawValue: type) }
+        set { type = newValue.rawValue }
+    }
+
     /// An attachment local state.
     @NSManaged private var localStateRaw: String
     @NSManaged private var localProgress: Double
@@ -29,9 +36,6 @@ class AttachmentDTO: NSManagedObject {
     @NSManaged var localURL: URL?
     /// A title.
     @NSManaged var title: String?
-    
-    /// An attachement raw string type.
-    @NSManaged var type: String
     /// An attachment raw `Data`.
     @NSManaged var data: Data?
     
@@ -93,7 +97,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         
-        dto.type = payload.type.rawValue
+        dto.attachmentType = payload.type
         dto.data = try JSONEncoder.default.encode(payload.payload)
         dto.channel = channelDTO
         dto.message = messageDTO
@@ -119,7 +123,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         dto.localURL = seed.localURL
         dto.localState = .pendingUpload
-        dto.type = seed.type.rawValue
+        dto.attachmentType = seed.type
         dto.title = seed.fileName
         
         if isAttachmentModelSeparationChangesApplied {
@@ -168,7 +172,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
         
-        dto.type = attachment.type.rawValue
+        dto.attachmentType = attachment.type
         dto.localState = .uploaded
         dto.data = try JSONEncoder.stream.encode(AnyEncodable(attachment))
 
