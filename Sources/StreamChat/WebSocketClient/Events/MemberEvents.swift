@@ -4,12 +4,7 @@
 
 import Foundation
 
-public protocol MemberEvent: Event {
-    var memberUserId: UserId { get }
-    var cid: ChannelId { get }
-}
-
-public struct MemberAddedEvent: EventWithMemberPayload, EventWithChannelId, MemberEvent {
+public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayload {
     public let memberUserId: UserId
     public let cid: ChannelId
     
@@ -22,7 +17,7 @@ public struct MemberAddedEvent: EventWithMemberPayload, EventWithChannelId, Memb
     }
 }
 
-public struct MemberUpdatedEvent: EventWithMemberPayload, EventWithChannelId, MemberEvent {
+public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayload {
     public let memberUserId: UserId
     public let cid: ChannelId
     
@@ -35,7 +30,7 @@ public struct MemberUpdatedEvent: EventWithMemberPayload, EventWithChannelId, Me
     }
 }
 
-public struct MemberRemovedEvent: MemberEvent, EventWithChannelId {
+public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent, EventWithPayload {
     public var memberUserId: UserId
     public let cid: ChannelId
     

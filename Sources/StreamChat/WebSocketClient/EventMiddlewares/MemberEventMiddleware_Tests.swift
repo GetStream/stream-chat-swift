@@ -249,7 +249,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Create MemberAddedEvent payload
         let eventPayload: EventPayload<NoExtraData> = .init(
             eventType: .notificationRemovedFromChannel,
-            cid: cid
+            cid: cid,
+            user: .dummy(userId: .unique)
         )
 
         // Create event with payload.
