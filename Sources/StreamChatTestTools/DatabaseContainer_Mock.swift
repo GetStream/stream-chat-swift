@@ -115,9 +115,9 @@ extension DatabaseContainer {
     }
 
     /// Synchronously creates a new UserDTO in the DB with the given id.
-    func createUser(id: UserId = .unique, extraData: NoExtraData = .defaultValue) throws {
+    func createUser(id: UserId = .unique, updatedAt: Date = .unique, extraData: NoExtraData = .defaultValue) throws {
         try writeSynchronously { session in
-            try session.saveUser(payload: .dummy(userId: id, extraData: extraData))
+            try session.saveUser(payload: .dummy(userId: id, extraData: extraData, updatedAt: updatedAt))
         }
     }
 
@@ -134,10 +134,20 @@ extension DatabaseContainer {
     }
     
     /// Synchronously creates a new ChannelDTO in the DB with the given cid.
-    func createChannel(cid: ChannelId = .unique, withMessages: Bool = true, withQuery: Bool = false) throws {
+    func createChannel(
+        cid: ChannelId = .unique,
+        withMessages: Bool = true,
+        withQuery: Bool = false,
+        hiddenAt: Date? = nil,
+        channelReads: Set<ChannelReadDTO> = [],
+        needsRefreshQueries: Bool = true
+    ) throws {
         try writeSynchronously { session in
             let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
-            
+
+            dto.needsRefreshQueries = needsRefreshQueries
+            dto.hiddenAt = hiddenAt
+            dto.reads = channelReads
             // Delete possible messages from the payload if `withMessages` is false
             if !withMessages {
                 let context = session as! NSManagedObjectContext
@@ -200,6 +210,9 @@ extension DatabaseContainer {
         pinnedByUserId: UserId? = nil,
         pinnedAt: Date? = nil,
         pinExpires: Date? = nil,
+        updatedAt: Date = .unique,
+        latestReactions: [MessageReactionPayload<NoExtraData>] = [],
+        ownReactions: [MessageReactionPayload<NoExtraData>] = [],
         attachments: [AttachmentPayload] = [],
         localState: LocalMessageState? = nil,
         type: MessageType? = nil,
@@ -214,6 +227,9 @@ extension DatabaseContainer {
                 attachments: attachments,
                 authorUserId: authorId,
                 text: text,
+                latestReactions: latestReactions,
+                ownReactions: ownReactions,
+                updatedAt: updatedAt,
                 pinned: pinned,
                 pinnedByUserId: pinnedByUserId,
                 pinnedAt: pinnedAt,
@@ -242,11 +258,13 @@ extension DatabaseContainer {
         userId: UserId = .unique,
         role: MemberRole = .member,
         cid: ChannelId,
-        query: ChannelMemberListQuery? = nil
+        query: ChannelMemberListQuery? = nil,
+        isMemberBanned: Bool = false,
+        isGloballyBanned: Bool = false
     ) throws {
         try writeSynchronously { session in
             try session.saveMember(
-                payload: .dummy(userId: userId, role: role),
+                payload: .dummy(userId: userId, role: role, isMemberBanned: isMemberBanned, isUserBanned: isGloballyBanned),
                 channelId: query?.cid ?? cid,
                 query: query
             )

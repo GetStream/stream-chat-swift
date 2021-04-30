@@ -10,13 +10,13 @@ struct MemberEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
         do {
             switch event {
             case is MemberAddedEvent, is MemberUpdatedEvent:
-                guard let eventWithMemberPayload = event as? EventWithMemberPayload,
+                guard let eventWithMemberPayload = event as? EventWithPayload,
                       let eventPayload = eventWithMemberPayload.payload as? EventPayload<ExtraData>,
                       let memberPayload = eventPayload.memberContainer?.member
                 else {
                     break
                 }
-                try session.saveMember(payload: memberPayload, channelId: (event as! EventWithChannelId).cid)
+                try session.saveMember(payload: memberPayload, channelId: (event as! MemberEvent).cid)
 
             case let event as MemberRemovedEvent:
                 guard let channel = session.channel(cid: event.cid) else {
@@ -49,7 +49,7 @@ struct MemberEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
                 }
             }
 
-            if isMemberNotificationEvent || isCurrentUserMemberEvent, let cid = (event as? EventWithChannelId)?.cid {
+            if isMemberNotificationEvent || isCurrentUserMemberEvent, let cid = (event as? ChannelSpecificEvent)?.cid {
                 guard let channelDTO = session.channel(cid: cid) else {
                     throw ClientError.ChannelDoesNotExist(cid: cid)
                 }

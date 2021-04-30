@@ -125,11 +125,9 @@ final class CurrentUserController_Tests: StressTestCase {
         env.currentUserObserverItem = .mock(id: .unique)
 
         var synchronizeError: Error?
-        var synchronizeCalled = false
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
-            synchronizeCalled = true
         }
 
         // Simulate connection not successful

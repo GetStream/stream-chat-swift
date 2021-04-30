@@ -829,6 +829,7 @@
 		E7166CE225BEE20600B03B07 /* Appearance+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7166CE125BEE20600B03B07 /* Appearance+Images.swift */; };
 		E7296E942611D50900B1AE79 /* ChatSendButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7296E932611D50900B1AE79 /* ChatSendButton_Tests.swift */; };
 		E73262E025ED64AB008CB152 /* ChatChannelNamer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73262D725ED6432008CB152 /* ChatChannelNamer_Tests.swift */; };
+		E732A922263B1F13003BD781 /* UserUpdated.json in Resources */ = {isa = PBXBuildFile; fileRef = E732A921263B075F003BD781 /* UserUpdated.json */; };
 		E73A8B2B2578EB2B00FBDC56 /* ChatMessageComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73A8B2A2578EB2B00FBDC56 /* ChatMessageComposerVC.swift */; };
 		E768AA892625C18D00328E6E /* TypingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E768AA882625C18D00328E6E /* TypingIndicatorView.swift */; };
 		E768AAFB2627691600328E6E /* TypingAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E768AAFA2627691600328E6E /* TypingAnimationView.swift */; };
@@ -1997,6 +1998,7 @@
 		E7166CE125BEE20600B03B07 /* Appearance+Images.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Appearance+Images.swift"; sourceTree = "<group>"; };
 		E7296E932611D50900B1AE79 /* ChatSendButton_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSendButton_Tests.swift; sourceTree = "<group>"; };
 		E73262D725ED6432008CB152 /* ChatChannelNamer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelNamer_Tests.swift; sourceTree = "<group>"; };
+		E732A921263B075F003BD781 /* UserUpdated.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserUpdated.json; sourceTree = "<group>"; };
 		E73A8B2A2578EB2B00FBDC56 /* ChatMessageComposerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerVC.swift; sourceTree = "<group>"; };
 		E768AA882625C18D00328E6E /* TypingIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingIndicatorView.swift; sourceTree = "<group>"; };
 		E768AAFA2627691600328E6E /* TypingAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingAnimationView.swift; sourceTree = "<group>"; };
@@ -3773,6 +3775,7 @@
 			children = (
 				8A0C3BBD24C0AC6400CAFD19 /* UserPresence.json */,
 				8A0C3BC324C0ADD400CAFD19 /* UserStartWatching.json */,
+				E732A921263B075F003BD781 /* UserUpdated.json */,
 				8A0C3BC424C0ADEB00CAFD19 /* UserStopWatching.json */,
 				8A0C3BC224C0AD8300CAFD19 /* UserBanned.json */,
 				8A0C3BBE24C0AC7800CAFD19 /* UserUnbanned.json */,
@@ -4870,6 +4873,7 @@
 				883EB93925B070AB001858FD /* GuestUser+InvalidToken.json in Resources */,
 				8A0C3BCC24C1CA9900CAFD19 /* ChannelUpdated.json in Resources */,
 				798779FD2498E47700015F8B /* OtherUser.json in Resources */,
+				E732A922263B1F13003BD781 /* UserUpdated.json in Resources */,
 				F64F9B6225077CF600834F55 /* MessageNew+MissingFields.json in Resources */,
 				8836FFD4254082FF009FDF73 /* FlagUserPayload+DefaultExtraData.json in Resources */,
 				88F896FB2541AC0900DE517D /* FlagMessagePayload+CustomExtraData.json in Resources */,

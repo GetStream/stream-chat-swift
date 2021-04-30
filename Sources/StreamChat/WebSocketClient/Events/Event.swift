@@ -14,39 +14,34 @@ protocol EventWithPayload: Event {
     var payload: Any { get }
 }
 
-/// A protocol for user `Event` where it has a user payload.
-protocol EventWithUserPayload: EventWithPayload {
+/// A protocol for any `UserEvent` where it has a `user` payload.
+protocol UserSpecificEvent: EventWithPayload {
     var userId: UserId { get }
 }
 
-/// A protocol for a current user `Event` where it has `me` payload.
-protocol EventWithCurrentUserPayload: EventWithPayload {
-    var currentUserId: UserId { get }
-}
-
-/// A protocol for an owner `Event`. Event has 2 users where the owner of the event does something with another user, e.g. ban.
-protocol EventWithOwnerPayload: EventWithPayload {
-    var ownerId: UserId { get }
-}
-
-/// A protocol for channel `Event` where it has `cid` at least.
-/// The combination of `EventWithChannelId` and `EventWithPayload` events required a `channel` object inside payload.
-protocol EventWithChannelId: Event {
+/// A protocol for any `ChannelEvent` where it has a  `channel` payload.
+protocol ChannelSpecificEvent: EventWithPayload {
     var cid: ChannelId { get }
 }
 
-/// A protocol for message `Event` where it has a message payload.
-protocol EventWithMessagePayload: EventWithUserPayload, EventWithChannelId {
+/// A protocol for any `MemberEvent` where it has a `member`, and `channel` payload.
+public protocol MemberEvent: Event {
+    var memberUserId: UserId { get }
+    var cid: ChannelId { get }
+}
+
+/// A protocol for any `MessageEvent` where it has a `user`, `channel` and `message` payloads.
+protocol MessageSpecificEvent: ChannelSpecificEvent, UserSpecificEvent {
     var messageId: MessageId { get }
 }
 
-/// A protocol for member `Event` where it has a member object and user object.
-protocol EventWithMemberPayload: EventWithPayload {
-    var memberUserId: UserId { get }
-}
-
-/// A protocol for reaction `Event` where it has reacction with message payload.
-protocol EventWithReactionPayload: EventWithMessagePayload {
+/// A protocol for any  `ReactionEvent` where it has reaction with `message`, `channel`, `user` and `reaction` payload.
+protocol ReactionEvent: MessageSpecificEvent {
     var reactionType: MessageReactionType { get }
     var reactionScore: Int { get }
+}
+
+/// A protocol for `NotificationMutesUpdatedEvent` which contains `me` AKA `currentUser` payload.
+protocol CurrentUserEvent: EventWithPayload {
+    var currentUserId: UserId { get }
 }
