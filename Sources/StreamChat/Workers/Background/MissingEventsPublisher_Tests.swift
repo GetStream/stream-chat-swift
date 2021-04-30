@@ -151,7 +151,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         try database.createCurrentUser()
         
         // Create channel in the database
-        try database.createChannel(cid: (events.first as! EventWithChannelId).cid)
+        try database.createChannel(cid: (events.first as! ChannelSpecificEvent).cid)
         
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)

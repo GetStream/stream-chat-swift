@@ -7,10 +7,13 @@ import Foundation
 /// The middleware listens for `ChannelHidden/Visible` events and updates `ChannelDTO` accordingly.
 struct ChannelVisibilityEventMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
-        guard event is ChannelHiddenEvent || event is ChannelVisibleEvent else { return event }
+        guard event is ChannelVisibleEvent || event is ChannelHiddenEvent else { return event }
 
-        let cid = (event as! EventWithChannelId).cid
         do {
+            guard let cid = (event as? ChannelSpecificEvent)?.cid else {
+                throw ClientError.InvalidChannelId("Failed to extract `cid` from event \(event).")
+            }
+
             guard let channelDTO = session.channel(cid: cid) else {
                 throw ClientError.ChannelDoesNotExist(cid: cid)
             }
