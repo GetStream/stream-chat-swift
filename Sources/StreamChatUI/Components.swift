@@ -17,9 +17,6 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// An avatar view with an online indicator.
     public var presenceAvatarView: _ChatPresenceAvatarView<ExtraData>.Type = _ChatPresenceAvatarView<ExtraData>.self
 
-    /// A view that displays a quoted message.
-    public var messageQuoteView: _ChatMessageQuoteView<ExtraData>.Type = _ChatMessageQuoteView<ExtraData>.self
-
     /// A `UIView` subclass which serves as container for `typingIndicator` and `UILabel` describing who is currently typing
     public var typingIndicatorView: _TypingIndicatorView<ExtraData>.Type = _TypingIndicatorView<ExtraData>.self
     
@@ -35,8 +32,8 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// A view to input content of a message.
     public var messageInputView: _ChatMessageInputView<ExtraData>.Type = _ChatMessageInputView<ExtraData>.self
 
-    /// An object responsible for message layout options calculations in `ChatMessageListVC/ChatThreadVC`.
-    public var messageLayoutOptionsResolver: _ChatMessageLayoutOptionsResolver<ExtraData> = .init()
+    /// A view that displays a quoted message.
+    public var messageQuoteView: _ChatMessageQuoteView<ExtraData>.Type = _ChatMessageQuoteView<ExtraData>.self
 
     /// Button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = ChatSendButton.self
@@ -44,9 +41,23 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// Button for confirming actions.
     public var confirmButton: UIButton.Type = ChatConfirmButton.self
 
+    /// Button for opening attachments.
+    public var attachmentButton: UIButton.Type = ChatAttachmentButton.self
+
+    /// Button for opening commands.
+    public var commandsButton: UIButton.Type = ChatCommandButton.self
+
+    /// Button for shrinking the input view to allow more space for other actions.
+    public var shrinkInputButton: UIButton.Type = ChatShrinkInputButton.self
+
+    /// Button for closing, dismissing or clearing information.
+    public var closeButton: UIButton.Type = ChatShrinkInputButton.self
+
     /// A view to check/uncheck an option.
-    public var checkmarkControl: ChatCheckboxControl.Type =
-        ChatCheckboxControl.self
+    public var checkmarkControl: ChatCheckboxControl.Type = ChatCheckboxControl.self
+
+    /// An object responsible for message layout options calculations in `ChatMessageListVC/ChatThreadVC`.
+    public var messageLayoutOptionsResolver: _ChatMessageLayoutOptionsResolver<ExtraData> = .init()
 
     // MARK: - Message list components
 
