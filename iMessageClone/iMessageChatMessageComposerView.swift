@@ -11,15 +11,13 @@ final class iMessageChatMessageComposerView: ChatMessageComposerView {
         super.setUpLayout()
 
         centerLeftContainer.removeArrangedSubview(commandsButton)
-        centerRightContainer.removeArrangedSubview(sendButton)
-        centerContainer.removeArrangedSubview(centerRightContainer)
+        trailingContainer.removeArrangedSubview(sendButton)
+        centerContainer.removeArrangedSubview(trailingContainer)
 
-        centerContentContainer.axis = .horizontal
-        centerContentContainer.distribution = .natural
-        centerContentContainer.alignment = .fill
-        centerContentContainer.subviews.forEach {
-            centerContentContainer.removeArrangedSubview($0)
-        }
+        centerInputContainer.axis = .horizontal
+        centerInputContainer.distribution = .natural
+        centerInputContainer.alignment = .fill
+        centerInputContainer.removeAllArrangedSubviews()
 
         let newStack = ContainerStackView()
         newStack.translatesAutoresizingMaskIntoConstraints = false
@@ -42,8 +40,8 @@ final class iMessageChatMessageComposerView: ChatMessageComposerView {
             sendButton.bottomAnchor.constraint(equalTo: sendButtonContainer.bottomAnchor, constant: 0)
         ])
 
-        centerContentContainer.addArrangedSubview(newStack)
-        centerContentContainer.addArrangedSubview(sendButtonContainer)
+        centerInputContainer.addArrangedSubview(newStack)
+        centerInputContainer.addArrangedSubview(sendButtonContainer)
 
         NSLayoutConstraint.activate([
             sendButton.widthAnchor.constraint(equalToConstant: 30),
@@ -54,7 +52,7 @@ final class iMessageChatMessageComposerView: ChatMessageComposerView {
     override func setUpAppearance() {
         super.setUpAppearance()
 
-        centerContentContainer.layer.cornerRadius = 18
+        centerInputContainer.layer.cornerRadius = 18
         messageInputView.inputTextView.font = .systemFont(ofSize: 15)
         
         attachmentButton.setImage(

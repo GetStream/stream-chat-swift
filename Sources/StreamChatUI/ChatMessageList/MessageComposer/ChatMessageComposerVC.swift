@@ -172,7 +172,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.confirmButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
-        composerView.messageInputView.cleanButton.addTarget(
+        composerView.messageInputView.clearButton.addTarget(
             self,
             action: #selector(resetState),
             for: .touchUpInside

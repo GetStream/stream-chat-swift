@@ -42,34 +42,49 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .messageComposer
         .documentAttachmentsCollectionView.init()
         .withoutAutoresizingMaskConstraints
-    
+
+    /// A view to input content of a message.
     public private(set) lazy var messageInputView = components
         .messageInputView.init()
         .withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var sendButton = components
+
+    /// A button to send a message.
+    public private(set) lazy var sendButton: UIButton = components
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var confirmButton: UIButton = UIButton()
+
+    /// A button to confirm when editing a message.
+    public private(set) lazy var confirmButton: UIButton = components
+        .confirmButton.init()
         .withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var attachmentButton: UIButton = UIButton()
+
+    /// A button to open the user attachments.
+    public private(set) lazy var attachmentButton: UIButton = components
+        .attachmentButton.init()
         .withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var commandsButton: UIButton = UIButton()
+
+    /// A button to open the available commands.
+    public private(set) lazy var commandsButton: UIButton = components
+        .commandsButton.init()
         .withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var shrinkInputButton: UIButton = UIButton()
+
+    /// A button to show or hide the left action buttons.
+    public private(set) lazy var shrinkInputButton: UIButton = components
+        .shrinkInputButton.init()
         .withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var dismissButton: UIButton = UIButton()
+
+    /// A button to dismiss the current state (quoting, editing, etc..).
+    public private(set) lazy var dismissButton: UIButton = components
+        .closeButton.init()
         .withoutAutoresizingMaskConstraints
-    
+
+    /// A label part of the header view to display the current state (quoting, editing, etc..).
     public private(set) lazy var titleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
-    
+
+    /// A checkbox to check/uncheck if the message should also
+    /// be sent to the channel while replying in a thread.
     public private(set) lazy var checkboxControl: ChatCheckboxControl = components
         .checkmarkControl.init()
         .withoutAutoresizingMaskConstraints
@@ -78,30 +93,16 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         super.setUpAppearance()
         
         backgroundColor = appearance.colorPalette.popoverBackground
-        
-        centerContentContainer.clipsToBounds = true
-        centerContentContainer.layer.cornerRadius = 20
-        centerContentContainer.layer.borderWidth = 1
-        centerContentContainer.layer.borderColor = appearance.colorPalette.border.cgColor
-        
         layer.shadowColor = UIColor.systemGray.cgColor
         layer.shadowOpacity = 1
         layer.shadowOffset = .zero
         layer.shadowRadius = 0.5
         
-        let clipIcon = appearance.images.messageComposerFileAttachment
-            .tinted(with: appearance.colorPalette.inactiveTint)
-        attachmentButton.setImage(clipIcon, for: .normal)
-        
-        let boltIcon = appearance.images.messageComposerCommand.tinted(with: appearance.colorPalette.inactiveTint)
-        commandsButton.setImage(boltIcon, for: .normal)
-        
-        let shrinkArrowIcon = appearance.images.messageComposerShrinkInput
-        shrinkInputButton.setImage(shrinkArrowIcon, for: .normal)
-        
-        let dismissIcon = appearance.images.close1.tinted(with: appearance.colorPalette.inactiveTint)
-        dismissButton.setImage(dismissIcon, for: .normal)
-        
+        centerContentContainer.clipsToBounds = true
+        centerContentContainer.layer.cornerRadius = 20
+        centerContentContainer.layer.borderWidth = 1
+        centerContentContainer.layer.borderColor = appearance.colorPalette.border.cgColor
+
         titleLabel.textAlignment = .center
         titleLabel.textColor = appearance.colorPalette.text
         titleLabel.font = appearance.fonts.bodyBold
@@ -151,12 +152,12 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         centerRightContainer.addArrangedSubview(confirmButton)
         confirmButton.isHidden = true
 
-        centerLeftContainer.axis = .horizontal
-        centerLeftContainer.alignment = .center
-        centerLeftContainer.spacing = .auto
-        centerLeftContainer.addArrangedSubview(attachmentButton)
-        centerLeftContainer.addArrangedSubview(commandsButton)
-        centerLeftContainer.addArrangedSubview(shrinkInputButton)
+        leadingContainer.axis = .horizontal
+        leadingContainer.alignment = .center
+        leadingContainer.spacing = .auto
+        leadingContainer.addArrangedSubview(attachmentButton)
+        leadingContainer.addArrangedSubview(commandsButton)
+        leadingContainer.addArrangedSubview(shrinkInputButton)
 
         dismissButton.widthAnchor.pin(equalToConstant: 24).isActive = true
         dismissButton.heightAnchor.pin(equalToConstant: 24).isActive = true
