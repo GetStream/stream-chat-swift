@@ -17,7 +17,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     _ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
     UICollectionViewDelegate,
-    UICollectionViewDataSource {
+    UICollectionViewDataSource,
+    GalleryContentViewDelegate {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
     
@@ -317,6 +318,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
     // MARK: - Cell action handlers
 
+    open func didTapOnImageAttachment(_ attachment: ChatMessageImageAttachment, at indexPath: IndexPath) {
+        router.showPreview(for: attachment)
+    }
+
     /// Handles the tap on an attachment.
     ///
     /// Default implementation tries to restart the upload in case of failure.
@@ -334,7 +339,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         }
 
         switch attachment.type {
-        case .image, .file:
+        case .file:
             router.showPreview(for: attachment)
         case .link:
             router.openLink(attachment)
