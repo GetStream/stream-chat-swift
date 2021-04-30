@@ -177,15 +177,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromFile: "NotificationAddedToChannel")
         let event = try eventDecoder.decode(from: json) as? NotificationAddedToChannelEvent
         
-        let channelId: ChannelId = .init(type: .messaging, id: "new_channel_5905")
-        
-        // For message to be received, we need to have channel:
-        try client.databaseContainer.createChannel(
-            cid: channelId,
-            withMessages: true,
-            withQuery: true,
-            needsRefreshQueries: false
-        )
+        let channelId: ChannelId = .init(type: .messaging, id: "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E")
         
         let unwrappedEvent = try XCTUnwrap(event)
         client.eventNotificationCenter.process(unwrappedEvent)
