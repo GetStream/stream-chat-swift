@@ -65,9 +65,6 @@ class TypingEventsIntegration_Tests: XCTestCase {
             Assert.willBeFalse(
                 self.client.databaseContainer.viewContext.channel(cid: channelId)?.currentlyTypingMembers.isEmpty ?? true
             )
-            Assert.willBeTrue(
-                self.client.databaseContainer.viewContext.channel(cid: channelId)?.currentlyTypingMembers.isEmpty ?? false
-            )
         }
     }
     
