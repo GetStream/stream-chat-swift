@@ -140,7 +140,7 @@ extension DatabaseContainer {
         withQuery: Bool = false,
         hiddenAt: Date? = nil,
         channelReads: Set<ChannelReadDTO> = [],
-        needsRefreshQueries: Bool = false
+        needsRefreshQueries: Bool = true
     ) throws {
         try writeSynchronously { session in
             let dto = try session.saveChannel(payload: XCTestCase().dummyPayload(with: cid))
