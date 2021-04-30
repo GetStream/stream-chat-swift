@@ -48,6 +48,14 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var checkmarkControl: ChatCheckboxControl.Type =
         ChatCheckboxControl.self
 
+    // MARK: - Message list components
+
+    /// The view used to display content of the message, i.e. in the channel detail message list.
+    public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
+
+    /// The injector used to inject gallery attachment views
+    public var galleryAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GalleryAttachmentViewInjector<ExtraData>.self
+
     public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()

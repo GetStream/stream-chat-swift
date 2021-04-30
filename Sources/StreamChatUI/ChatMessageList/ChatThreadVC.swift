@@ -192,6 +192,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         let cell: _СhatMessageCollectionViewCell<ExtraData> = self.collectionView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
+            attachmentViewInjectorType: nil,
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
             for: indexPath
         )
@@ -243,7 +244,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
                 messages: AnyRandomAccessCollection([message])
             )
 
-            messageView.setUpLayoutIfNeeded(options: layoutOptions)
+            messageView.setUpLayoutIfNeeded(options: layoutOptions, attachmentViewInjectorType: nil)
             collectionView.addSubview(messageView)
             messageView.content = message
 
@@ -310,7 +311,10 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         }()
 
         let messageContentViewToShow = cellContentClassForMessage(at: indexPath).init().withoutAutoresizingMaskConstraints
-        messageContentViewToShow.setUpLayoutIfNeeded(options: cellLayoutOptionsForMessage(at: indexPath).subtracting(.reactions))
+        messageContentViewToShow.setUpLayoutIfNeeded(
+            options: cellLayoutOptionsForMessage(at: indexPath).subtracting(.reactions),
+            attachmentViewInjectorType: nil
+        )
         messageContentViewToShow.content = message
 
         router.showMessageActionsPopUp(

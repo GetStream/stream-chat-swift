@@ -26,6 +26,7 @@ public final class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _
 
     public func setMessageContentIfNeeded(
         contentViewClass: _ChatMessageContentView<ExtraData>.Type,
+        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
         options: ChatMessageLayoutOptions
     ) {
         guard messageContentView == nil else {
@@ -41,7 +42,7 @@ public final class _СhatMessageCollectionViewCell<ExtraData: ExtraDataTypes>: _
         // (where the subviews are instantiated and configured) to use `components` and `appearance`
         // taken from the responder chain.
         contentView.embed(messageContentView!)
-        messageContentView!.setUpLayoutIfNeeded(options: options)
+        messageContentView!.setUpLayoutIfNeeded(options: options, attachmentViewInjectorType: attachmentViewInjectorType)
     }
 
     override public func preferredLayoutAttributesFitting(

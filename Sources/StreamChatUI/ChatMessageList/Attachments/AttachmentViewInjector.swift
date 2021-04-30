@@ -5,31 +5,37 @@
 import Foundation
 import StreamChat
 
+/// An object used for injecting attachment views into `ChatMessageContentView`. The injector is also
+/// responsible for updating the content of the injected views.
+///
+/// - Important: This is an abstract superclass meant to be subclassed.
+///
 public typealias AttachmentViewInjector = _AttachmentViewInjector<NoExtraData>
 
-/// An object used for injecting attachment views into `ChatMessageContentView`.
+/// An object used for injecting attachment views into `ChatMessageContentView`. The injector is also
+/// responsible for updating the content of the injected views.
 ///
-/// This is an abstract superclass meant to be subclassed.
+/// - Important: This is an abstract superclass meant to be subclassed.
+///
 open class _AttachmentViewInjector<ExtraData: ExtraDataTypes> {
-    /// Called after `parentContentView.prepareForReuse` is called.
-    open func prepareForReuse() {}
+    /// Called after `contentView.prepareForReuse` is called.
+    open func contentViewDidPrepareForReuse() {}
 
-    /// Called after `parentContentView.setUp` is called.
-    open func setUp() {}
+    /// Called after the `contentView` finished its `layout(options:)` methods.
+    open func contentViewDidLayout(options: ChatMessageLayoutOptions) {}
 
-    /// Called after `parentContentView.setUpAppearance` is called.
-    open func setUpAppearance() {}
+    /// Called after `contentView.updateContent` is called.
+    open func contentViewDidUpdateContent() {}
 
-    /// Called after the `parentContentView` finished its `layout(options:)` methods.
-    open func layout(options: ChatMessageLayoutOptions) {}
+    /// The target view used for injecting the views of this injector.
+    public unowned let contentView: _ChatMessageContentView<ExtraData>
 
-    /// Called after `parentContentView.updateContent` is called.
-    open func updateContent() {}
-
-    unowned let parentContentView: _ChatMessageContentView<ExtraData>
-
-    public required init(_ parentContentView: _ChatMessageContentView<ExtraData>) {
-        self.parentContentView = parentContentView
+    /// Creates a new instance of the injector.
+    ///
+    /// - Parameter contentView: The target view used for injecting the views of this injector.
+    ///
+    public required init(_ contentView: _ChatMessageContentView<ExtraData>) {
+        self.contentView = contentView
     }
 
     @available(*, unavailable)

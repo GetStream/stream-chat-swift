@@ -23,10 +23,13 @@ open class ChatMessageListCollectionView: UICollectionView {
     /// provided `contentViewClass` and `layoutOptions`
     open func dequeueReusableCell<ExtraData: ExtraDataTypes>(
         contentViewClass: _ChatMessageContentView<ExtraData>.Type,
+        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
         layoutOptions: ChatMessageLayoutOptions,
         for indexPath: IndexPath
     ) -> _СhatMessageCollectionViewCell<ExtraData> {
-        let reuseIdentifier = "\(_СhatMessageCollectionViewCell<ExtraData>.reuseId)_\(layoutOptions.rawValue)_\(contentViewClass)"
+        let reuseIdentifier =
+            "\(_СhatMessageCollectionViewCell<ExtraData>.reuseId)_" + "\(layoutOptions.rawValue)_" +
+            "\(contentViewClass)_" + String(describing: attachmentViewInjectorType)
 
         // There is no public API to find out
         // if the given `identifier` is registered.
@@ -40,7 +43,11 @@ open class ChatMessageListCollectionView: UICollectionView {
             withReuseIdentifier: reuseIdentifier,
             for: indexPath
         ) as! _СhatMessageCollectionViewCell<ExtraData>
-        cell.setMessageContentIfNeeded(contentViewClass: contentViewClass, options: layoutOptions)
+        cell.setMessageContentIfNeeded(
+            contentViewClass: contentViewClass,
+            attachmentViewInjectorType: attachmentViewInjectorType,
+            options: layoutOptions
+        )
         cell.messageContentView?.indexPath = { [weak cell, weak self] in
             guard let cell = cell else { return nil }
             return self?.indexPath(for: cell)

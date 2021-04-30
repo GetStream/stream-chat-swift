@@ -120,6 +120,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
     public private(set) var threadArrowView: ChatThreadArrowView?
 
+    /// An object responsible for injecting the views needed to display the attachments content.
+    public private(set) var attachmentViewInjector: _AttachmentViewInjector<ExtraData>?
+
     // MARK: - Containers
 
     /// The root container which holds `authorAvatarView` (or the avatar padding) and `bubbleThreadMetaContainer`.
@@ -146,7 +149,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     /// Makes sure the `layout(options: ChatMessageLayoutOptions)` is called just once.
     /// - Parameter options: The options describing the layout of the content view.
-    open func setUpLayoutIfNeeded(options: ChatMessageLayoutOptions) {
+    open func setUpLayoutIfNeeded(
+        options: ChatMessageLayoutOptions,
+        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?
+    ) {
         guard layoutOptions == nil else {
             log.assert(layoutOptions == options, """
             Attempt to setup "\(options)" layout for \(self) while it has already been laid out with "\(layoutOptions!)" options.
@@ -154,6 +160,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             """)
             return
         }
+
+        attachmentViewInjector = attachmentViewInjectorType?.init(self)
+
         layout(options: options)
         layoutOptions = options
     }
@@ -161,6 +170,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     /// Instantiates the subviews and laid them out based on the received options.
     /// - Parameter options: The options describing the layout of the content view.
     open func layout(options: ChatMessageLayoutOptions) {
+        defer {
+            attachmentViewInjector?.contentViewDidLayout(options: options)
+        }
+
         var constraintsToActivate: [NSLayoutConstraint] = []
 
         // Main container
@@ -337,6 +350,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     override open func updateContent() {
         super.updateContent()
+        defer { attachmentViewInjector?.contentViewDidUpdateContent() }
 
         // Text
         textView?.text = content?.text
@@ -407,6 +421,8 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     /// Cleans up the view so it is ready to display another message.
     func prepareForReuse() {
+        defer { attachmentViewInjector?.contentViewDidPrepareForReuse() }
+
         content = nil
         delegate = nil
         indexPath = nil
