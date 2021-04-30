@@ -162,19 +162,18 @@ class MessageEventsIntegration_Tests: XCTestCase {
         
         AssertAsync {
             Assert.willNotBeNil(self.client.databaseContainer.viewContext.message(id: "1ff9f6d0-df70-4703-aef0-379f95ad7366"))
+            Assert.willBeEqual(
+                self.client.databaseContainer.viewContext.message(
+                    id: "1ff9f6d0-df70-4703-aef0-379f95ad7366"
+                )?.deletedAt?.description,
+                "2020-07-17 13:49:48 +0000"
+            )
         }
     }
     
     func test_NotificationMessageNewEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromFile: "NotificationMessageNew")
         let event = try eventDecoder.decode(from: json) as? NotificationMessageNewEvent
-        
-        // For message to be received, we need to have channel:
-        try client.databaseContainer.createChannel(
-            cid: .init(type: .messaging, id: "general"),
-            withMessages: true,
-            withQuery: false
-        )
         
         XCTAssertNil(client.databaseContainer.viewContext.message(id: "042772db-4af2-460d-beaa-1e49d1b8e3b9"))
         

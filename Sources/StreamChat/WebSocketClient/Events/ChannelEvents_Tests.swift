@@ -299,7 +299,7 @@ class ChannelEventsIntegration_Tests: XCTestCase {
         let channelId: ChannelId = .init(type: .messaging, id: "general")
         let unwrappedEvent = try XCTUnwrap(event)
         
-        // For message to be received, we need to have channel:
+        // For event to be received, we need to have channel:
         try client.databaseContainer.createChannel(
             cid: channelId,
             withMessages: true,
