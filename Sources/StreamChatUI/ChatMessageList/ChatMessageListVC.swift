@@ -163,9 +163,16 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
 
     /// Returns the content view class for the message at given `indexPath`
     open func cellContentClassForMessage(at indexPath: IndexPath) -> _ChatMessageContentView<ExtraData>.Type {
-        _ChatMessageContentView<ExtraData>.self
+        components.messageContentView
     }
-    
+
+    open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> _AttachmentViewInjector<ExtraData>.Type? {
+        if messageForIndexPath(indexPath).attachments.contains(where: { $0 is ChatMessageImageAttachment }) {
+            return components.galleryAttachmentInjector
+        }
+        return nil
+    }
+
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         channelController.messages.count
     }
@@ -175,6 +182,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         let cell: _СhatMessageCollectionViewCell<ExtraData> = self.collectionView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
+            attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath),
             layoutOptions: cellLayoutOptionsForMessage(at: indexPath),
             for: indexPath
         )
@@ -281,7 +289,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         }()
 
         let messageContentViewToShow = cellContentClassForMessage(at: indexPath).init().withoutAutoresizingMaskConstraints
-        messageContentViewToShow.setUpLayoutIfNeeded(options: cellLayoutOptionsForMessage(at: indexPath).subtracting(.reactions))
+        messageContentViewToShow.setUpLayoutIfNeeded(
+            options: cellLayoutOptionsForMessage(at: indexPath).subtracting(.reactions),
+            attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath)
+        )
         messageContentViewToShow.content = message
 
         router.showMessageActionsPopUp(
