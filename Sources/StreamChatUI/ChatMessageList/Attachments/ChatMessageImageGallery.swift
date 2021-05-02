@@ -30,7 +30,6 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProv
         label.textAlignment = .center
         return label
             .withoutAutoresizingMaskConstraints
-            .withBidirectionalLanguagesSupport
     }()
 
     private var layouts: [[NSLayoutConstraint]] = []
