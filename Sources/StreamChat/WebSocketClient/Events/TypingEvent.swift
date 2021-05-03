@@ -19,11 +19,15 @@ public struct TypingEvent: UserSpecificEvent, ChannelSpecificEvent {
     }
 }
 
-extension TypingEvent {
-    init(isTyping: Bool, cid: ChannelId, userId: UserId, payload: Any = 0) {
-        self.isTyping = isTyping
+/// A special event type which is only emitted by the SDK and never the backend.
+/// This event is emitted by `TypingStartCleanupMiddleware` to signal that a typing event
+/// must be cleaned up, due to timeout of that event.
+public struct CleanUpTypingEvent: Event {
+    public let cid: ChannelId
+    public let userId: UserId
+    
+    init(cid: ChannelId, userId: UserId) {
         self.cid = cid
         self.userId = userId
-        self.payload = payload
     }
 }

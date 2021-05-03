@@ -43,7 +43,7 @@ class TypingStartCleanupMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware {
             guard typingEvent.isTyping else { return }
 
             let stopTyping = { [emitEvent] in
-                let typingStopEvent = TypingEvent(isTyping: false, cid: typingEvent.cid, userId: typingEvent.userId)
+                let typingStopEvent = CleanUpTypingEvent(cid: typingEvent.cid, userId: typingEvent.userId)
                 emitEvent(typingStopEvent)
             }
 
