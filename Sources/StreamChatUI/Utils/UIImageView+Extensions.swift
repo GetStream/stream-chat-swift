@@ -21,7 +21,7 @@ extension UIImageView {
         // Cancel any previous loading task
         currentImageLoadingTask?.cancel()
 
-        guard let url = url else { image = nil; return }
+        guard let url = url else { image = placeholder; return }
 
         let preprocessors: [ImageProcessing] = resizeAutomatically && bounds.size != .zero
             ? [ImageProcessors.Resize(size: bounds.size, contentMode: .aspectFill, crop: true)]

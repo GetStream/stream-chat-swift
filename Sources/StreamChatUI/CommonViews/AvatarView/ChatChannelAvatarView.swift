@@ -47,7 +47,7 @@ internal class _ChatChannelAvatarView<ExtraData: ExtraDataTypes>: _View, UIConfi
             return (firstOtherMember?.imageURL, firstOtherMember?.isOnline ?? false)
         }()
 
-        presenceAvatarView.avatarView.imageView.loadImage(from: avatarURL)
+        presenceAvatarView.avatarView.imageView.loadImage(from: avatarURL, placeholder: uiConfig.images.avatarPlaceholders.first)
         presenceAvatarView.isOnlineIndicatorVisible = isOnlineIndicatorVisible
     }
 }
