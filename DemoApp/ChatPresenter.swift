@@ -3,8 +3,7 @@
 //
 
 import StreamChat
-// We use @testable import here because router motification is currently available only in beta
-@testable import StreamChatUI
+import StreamChatUI
 import UIKit
 
 class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
