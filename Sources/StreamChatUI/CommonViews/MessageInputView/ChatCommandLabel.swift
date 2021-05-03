@@ -22,7 +22,7 @@ open class _ChatCommandLabel<ExtraData: ExtraDataTypes>: _View, AppearanceProvid
         .withoutAutoresizingMaskConstraints
 
     /// An `UILabel` that displays the command name.
-    public private(set) lazy var commandLabel = UILabel()
+    public private(set) lazy var nameLabel = UILabel()
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
         .withoutAutoresizingMaskConstraints
@@ -47,11 +47,11 @@ open class _ChatCommandLabel<ExtraData: ExtraDataTypes>: _View, AppearanceProvid
         layer.masksToBounds = true
         backgroundColor = appearance.colorPalette.highlightedAccentBackground
 
-        commandLabel.textColor = appearance.colorPalette.staticColorText
-        commandLabel.font = appearance.fonts.subheadlineBold
+        nameLabel.textColor = appearance.colorPalette.staticColorText
+        nameLabel.font = appearance.fonts.subheadlineBold
 
-        commandLabel.adjustsFontForContentSizeCategory = true
-        commandLabel.textAlignment = .center
+        nameLabel.adjustsFontForContentSizeCategory = true
+        nameLabel.textAlignment = .center
         
         iconView.image = appearance.images.commands
             .tinted(with: appearance.colorPalette.staticColorText)
@@ -66,9 +66,9 @@ open class _ChatCommandLabel<ExtraData: ExtraDataTypes>: _View, AppearanceProvid
         container.layoutMargins.bottom = 4
 
         container.addArrangedSubview(iconView)
-        container.addArrangedSubview(commandLabel)
+        container.addArrangedSubview(nameLabel)
         iconView.isHidden = false
-        commandLabel.isHidden = false
+        nameLabel.isHidden = false
         
         iconView.contentMode = .scaleAspectFit
     }
@@ -76,6 +76,6 @@ open class _ChatCommandLabel<ExtraData: ExtraDataTypes>: _View, AppearanceProvid
     override open func updateContent() {
         super.updateContent()
         
-        commandLabel.text = content?.name.uppercased()
+        nameLabel.text = content?.name.uppercased()
     }
 }
