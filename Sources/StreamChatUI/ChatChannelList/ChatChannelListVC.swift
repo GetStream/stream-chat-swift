@@ -58,11 +58,15 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     /// Reuse identifier of `collectionViewCell`
     open var collectionViewCellReuseIdentifier: String { "Cell" }
+    
+    /// We use private property for channels count so we can update it inside `performBatchUpdates` as [documented](https://developer.apple.com/documentation/uikit/uicollectionview/1618045-performbatchupdates#discussion)
+    private var channelsCount = 0
 
     override open func setUp() {
         super.setUp()
         controller.setDelegate(self)
         controller.synchronize()
+        channelsCount = controller.channels.count
         
         collectionView.register(
             uiConfig.channelList.collectionViewCell.self,
@@ -110,7 +114,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        controller.channels.count
+        channelsCount
     }
     
     open func collectionView(
@@ -225,7 +229,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
 
 extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
     public func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {
-        // We can't call `performBatchUpdates` unless collection view is properly laid out.
+        channelsCount = controller.channels.count
         collectionView.layoutIfNeeded()
     }
 
@@ -233,6 +237,7 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
+        let newChannelsCount = controller.channels.count
         var movedItems: [IndexPath] = []
         
         collectionView.performBatchUpdates(
@@ -250,6 +255,8 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
                         collectionView.reloadItems(at: [index])
                     }
                 }
+                
+                channelsCount = newChannelsCount
             },
             completion: { _ in
                 // Move changes from NSFetchController also can mean an update of the content.
