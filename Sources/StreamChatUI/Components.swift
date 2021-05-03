@@ -35,22 +35,22 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// A view that displays a quoted message.
     public var messageQuoteView: _ChatMessageQuoteView<ExtraData>.Type = _ChatMessageQuoteView<ExtraData>.self
 
-    /// Button used for sending a message, or any type of content.
+    /// A button used for sending a message, or any type of content.
     public var sendButton: UIButton.Type = ChatSendButton.self
 
-    /// Button for confirming actions.
+    /// A button for confirming actions.
     public var confirmButton: UIButton.Type = ChatConfirmButton.self
 
-    /// Button for opening attachments.
+    /// A button for opening attachments.
     public var attachmentButton: UIButton.Type = ChatAttachmentButton.self
 
-    /// Button for opening commands.
+    /// A button for opening commands.
     public var commandsButton: UIButton.Type = ChatCommandButton.self
 
-    /// Button for shrinking the input view to allow more space for other actions.
+    /// A button for shrinking the input view to allow more space for other actions.
     public var shrinkInputButton: UIButton.Type = ChatShrinkInputButton.self
 
-    /// Button for closing, dismissing or clearing information.
+    /// A button for closing, dismissing or clearing information.
     public var closeButton: UIButton.Type = ChatShrinkInputButton.self
 
     /// A view to check/uncheck an option.

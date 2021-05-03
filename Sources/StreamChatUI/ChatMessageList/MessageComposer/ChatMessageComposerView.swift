@@ -5,33 +5,63 @@
 import StreamChat
 import UIKit
 
+/// /// The composer view that layouts all the components to create a new message.
+///
+/// High level overview of the composer layout:
+/// ```
+/// |---------------------------------------------------------|
+/// |                       headerView                        |
+/// |---------------------------------------------------------|--|
+/// | leadingContainer | messageInputView | trailingContainer |  | = centerContainer
+/// |---------------------------------------------------------|--|
+/// |                     bottomContainer                     |
+/// |---------------------------------------------------------|
+/// ```
 public typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
 
+/// /// The composer view that layouts all the components to create a new message.
+///
+/// High level overview of the composer layout:
+/// ```
+/// |---------------------------------------------------------|
+/// |                       headerView                        |
+/// |---------------------------------------------------------|--|
+/// | leadingContainer | messageInputView | trailingContainer |  | = centerContainer
+/// |---------------------------------------------------------|--|
+/// |                     bottomContainer                     |
+/// |---------------------------------------------------------|
+/// ```
 open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+    /// The main container of the composer that layouts all the other containers around the message input view.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
+    /// The header view that displays components above the message input view.
     public private(set) lazy var headerView = UIView()
         .withoutAutoresizingMaskConstraints
 
+    /// The container that displays the components below the message input view.
     public private(set) lazy var bottomContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
+    /// The container that layouts the message input view and the leading/trailing containers around it.
     public private(set) lazy var centerContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var centerContentContainer = ContainerStackView()
+    /// The container that displays the components in the leading side of the message input view.
+    public private(set) lazy var leadingContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var centerLeftContainer = ContainerStackView()
+    /// The container that displays the components in the trailing side of the message input view.
+    public private(set) lazy var trailingContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
-    /// A view to that holds the content of the new message.
+    /// A view to to input content of the new message.
     public private(set) lazy var messageInputView = components
         .messageInputView.init()
         .withoutAutoresizingMaskConstraints
 
-    /// A button to send a message.
+    /// A button to send the message.
     public private(set) lazy var sendButton: UIButton = components
         .sendButton.init()
         .withoutAutoresizingMaskConstraints
@@ -51,7 +81,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .commandsButton.init()
         .withoutAutoresizingMaskConstraints
 
-    /// A button to show or hide the left action buttons.
+    /// A Button for shrinking the input view to allow more space for other actions.
     public private(set) lazy var shrinkInputButton: UIButton = components
         .shrinkInputButton.init()
         .withoutAutoresizingMaskConstraints
@@ -111,6 +141,11 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         centerContainer.addArrangedSubview(leadingContainer)
         centerContainer.addArrangedSubview(messageInputView)
         centerContainer.addArrangedSubview(trailingContainer)
+
+        trailingContainer.alignment = .center
+        trailingContainer.spacing = .auto
+        trailingContainer.addArrangedSubview(sendButton)
+        trailingContainer.addArrangedSubview(confirmButton)
         confirmButton.isHidden = true
 
         leadingContainer.axis = .horizontal
@@ -122,7 +157,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
 
         dismissButton.widthAnchor.pin(equalToConstant: 24).isActive = true
         dismissButton.heightAnchor.pin(equalToConstant: 24).isActive = true
-        dismissButton.trailingAnchor.pin(equalTo: centerRightContainer.trailingAnchor).isActive = true
+        dismissButton.trailingAnchor.pin(equalTo: trailingContainer.trailingAnchor).isActive = true
         titleLabel.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
         titleLabel.pin(anchors: [.top, .bottom], to: headerView)
         

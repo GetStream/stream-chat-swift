@@ -274,7 +274,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     func setInput(shrinked: Bool) {
         Animate {
-            for button in self.composerView.centerLeftContainer.subviews where button !== self.composerView.shrinkInputButton {
+            for button in self.composerView.leadingContainer.subviews where button !== self.composerView.shrinkInputButton {
                 button.isHidden = !shrinked
             }
             self.composerView.shrinkInputButton.isHidden = shrinked
