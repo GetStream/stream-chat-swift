@@ -53,7 +53,7 @@ struct ChannelReadUpdaterMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware 
             read.lastReadAt = lastReadAt
             read.unreadMessageCount = 0
         } else {
-            log.error("Failed to update channel read for cid \(cid) and userId \(userId).")
+            log.info("Failed to update channel read for cid \(cid) and userId \(userId).")
         }
     }
     
@@ -74,7 +74,7 @@ struct ChannelReadUpdaterMiddleware<ExtraData: ExtraDataTypes>: EventMiddleware 
                 read.unreadMessageCount += 1
             }
         } else {
-            log.error(
+            log.info(
                 "Can't increase unread count for \(cid) because the `ChannelReadDTO` for " +
                     "the current user doesn't exist."
             )
