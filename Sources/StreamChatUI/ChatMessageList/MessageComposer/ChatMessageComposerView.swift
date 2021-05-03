@@ -26,24 +26,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     public private(set) lazy var centerLeftContainer = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var centerRightContainer = ContainerStackView()
-        .withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var messageQuoteView = components
-        .messageQuoteView.init()
-        .withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var imageAttachmentsView = components
-        .messageComposer
-        .imageAttachmentsCollectionView.init()
-        .withoutAutoresizingMaskConstraints
-    
-    public private(set) lazy var documentAttachmentsView = components
-        .messageComposer
-        .documentAttachmentsCollectionView.init()
-        .withoutAutoresizingMaskConstraints
-
-    /// A view to input content of a message.
+    /// A view to that holds the content of the new message.
     public private(set) lazy var messageInputView = components
         .messageInputView.init()
         .withoutAutoresizingMaskConstraints
@@ -97,11 +80,6 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         layer.shadowOpacity = 1
         layer.shadowOffset = .zero
         layer.shadowRadius = 0.5
-        
-        centerContentContainer.clipsToBounds = true
-        centerContentContainer.layer.cornerRadius = 20
-        centerContentContainer.layer.borderWidth = 1
-        centerContentContainer.layer.borderColor = appearance.colorPalette.border.cgColor
 
         titleLabel.textAlignment = .center
         titleLabel.textColor = appearance.colorPalette.text
@@ -130,26 +108,9 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         centerContainer.axis = .horizontal
         centerContainer.alignment = .fill
         centerContainer.spacing = .auto
-        centerContainer.addArrangedSubview(centerLeftContainer)
-        centerContainer.addArrangedSubview(centerContentContainer)
-        centerContainer.addArrangedSubview(centerRightContainer)
-
-        centerContentContainer.axis = .vertical
-        centerContentContainer.alignment = .fill
-        centerContentContainer.distribution = .natural
-        centerContentContainer.spacing = 0
-        centerContentContainer.addArrangedSubview(messageQuoteView)
-        centerContentContainer.addArrangedSubview(imageAttachmentsView)
-        centerContentContainer.addArrangedSubview(documentAttachmentsView)
-        centerContentContainer.addArrangedSubview(messageInputView)
-        messageQuoteView.isHidden = true
-        imageAttachmentsView.isHidden = true
-        documentAttachmentsView.isHidden = true
-
-        centerRightContainer.alignment = .center
-        centerRightContainer.spacing = .auto
-        centerRightContainer.addArrangedSubview(sendButton)
-        centerRightContainer.addArrangedSubview(confirmButton)
+        centerContainer.addArrangedSubview(leadingContainer)
+        centerContainer.addArrangedSubview(messageInputView)
+        centerContainer.addArrangedSubview(trailingContainer)
         confirmButton.isHidden = true
 
         leadingContainer.axis = .horizontal
@@ -164,8 +125,6 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         dismissButton.trailingAnchor.pin(equalTo: centerRightContainer.trailingAnchor).isActive = true
         titleLabel.centerXAnchor.pin(equalTo: centerXAnchor).isActive = true
         titleLabel.pin(anchors: [.top, .bottom], to: headerView)
-        imageAttachmentsView.heightAnchor.pin(equalToConstant: 120).isActive = true
-        messageInputView.inputTextView.preservesSuperviewLayoutMargins = false
         
         [shrinkInputButton, attachmentButton, commandsButton, sendButton, confirmButton]
             .forEach { button in
