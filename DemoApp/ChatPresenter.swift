@@ -13,7 +13,7 @@ class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
         
         let chatViewController = storyboard.instantiateViewController(withIdentifier: "CreateChatViewController")
             as! CreateChatViewController
-        chatViewController.searchController = rootViewController?.controller.client.userSearchController()
+        chatViewController.searchController = rootViewController.controller.client.userSearchController()
         
         navigationController?.pushViewController(chatViewController, animated: true)
     }
