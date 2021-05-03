@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class TypingEventObserver_Tests: XCTestCase {
@@ -45,7 +46,7 @@ final class TypingEventObserver_Tests: XCTestCase {
     
     func test_cidFilterIsAppliedToTypingEvents_whenSpecified() {
         let channelId: ChannelId = .unique
-        let matchingTypingEvent = TypingEvent(isTyping: true, cid: channelId, userId: .unique)
+        let matchingTypingEvent = TypingEvent.startTyping(cid: channelId)
         let otherTypingEvent = TypingEvent.unique
         
         var receivedEvents: [TypingEvent] = []
@@ -66,9 +67,24 @@ final class TypingEventObserver_Tests: XCTestCase {
 }
 
 extension TypingEvent: Equatable {
-    static var unique: Self = .init(isTyping: true, cid: .unique, userId: .newUniqueId)
+    static var unique: Self = try!
+        .init(from: EventPayload<NoExtraData>(eventType: .userStartTyping, cid: .unique, user: .dummy(userId: .unique)))
+    
+    static func startTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> TypingEvent {
+        try! .init(from: EventPayload<NoExtraData>(eventType: .userStartTyping, cid: cid, user: .dummy(userId: userId)))
+    }
+    
+    static func stopTyping(cid: ChannelId = .unique, userId: UserId = .unique) -> TypingEvent {
+        try! .init(from: EventPayload<NoExtraData>(eventType: .userStopTyping, cid: cid, user: .dummy(userId: userId)))
+    }
     
     public static func == (lhs: TypingEvent, rhs: TypingEvent) -> Bool {
+        lhs.isTyping == rhs.isTyping && lhs.cid == rhs.cid && lhs.userId == rhs.userId
+    }
+}
+
+extension CleanUpTypingEvent: Equatable {
+    public static func == (lhs: CleanUpTypingEvent, rhs: CleanUpTypingEvent) -> Bool {
         lhs.cid == rhs.cid && lhs.userId == rhs.userId
     }
 }
