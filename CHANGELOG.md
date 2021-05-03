@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+- Split `UIConfig` into `Appearance` and `Components` to improve clarity [#1014](https://github.com/GetStream/stream-chat-swift/pull/1014)
+
+# [3.1.9](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.9)
+_May 03, 2021_
+
 ### ✅ Added
 - `ChatChannelListControllerDelegate` now has the `controllerWillChangeChannels` method [#1024](https://github.com/GetStream/stream-chat-swift/pull/1024)
 
