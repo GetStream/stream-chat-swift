@@ -8,7 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - `ChatChannelListControllerDelegate` now has the `controllerWillChangeChannels` method [#1024](https://github.com/GetStream/stream-chat-swift/pull/1024)
 
-### 🔄 Changed
+### 🐞 Fixed
+- Fix potential issues with data access from across multiple threads [#1024](https://github.com/GetStream/stream-chat-swift/pull/1026)
+- Fix warning in `Package.swift` [#1031](https://github.com/GetStream/stream-chat-swift/pull/1031)
+- Fix incorrect payload format for `MessageController.synchronize` response [#1033](https://github.com/GetStream/stream-chat-swift/pull/1033)
+- Improve handling of incoming events [#1030](https://github.com/GetStream/stream-chat-swift/pull/1030)
 
 # [3.1.8](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.8)
 _April 23, 2021_
