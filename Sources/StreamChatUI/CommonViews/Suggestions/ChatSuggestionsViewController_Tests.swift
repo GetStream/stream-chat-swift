@@ -43,7 +43,7 @@ class ChatSuggestionsViewController_Tests: XCTestCase {
         super.setUp()
         vc = ChatSuggestionsViewController()
         appearance.images.commandIcons["yodafy"] = TestImages.yoda.image
-        appearance.images.messageComposerCommandFallback = TestImages.vader.image
+        appearance.images.commandFallback = TestImages.vader.image
         vc.appearance = appearance
     }
     

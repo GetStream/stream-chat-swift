@@ -12,7 +12,7 @@ open class ChatAttachmentButton: _Button, AppearanceProvider {
 
         let clipIcon = appearance
             .images
-            .messageComposerFileAttachment
+            .openAttachments
             .tinted(with: appearance.colorPalette.inactiveTint)
         setImage(clipIcon, for: .normal)
     }

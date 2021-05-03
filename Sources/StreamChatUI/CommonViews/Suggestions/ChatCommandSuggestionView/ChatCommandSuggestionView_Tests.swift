@@ -19,7 +19,7 @@ class ChatCommandSuggestionView_Tests: XCTestCase {
         appearance.images.commandIcons = [
             "yoda": TestImages.yoda.image
         ]
-        appearance.images.messageComposerCommandFallback = TestImages.vader.image
+        appearance.images.commandFallback = TestImages.vader.image
         
         let view = ChatCommandSuggestionView()
         view.appearance = appearance
@@ -35,7 +35,7 @@ class ChatCommandSuggestionView_Tests: XCTestCase {
         appearance.images.commandIcons = [
             "yoda": TestImages.yoda.image
         ]
-        appearance.images.messageComposerCommandFallback = TestImages.vader.image
+        appearance.images.commandFallback = TestImages.vader.image
         
         let view = ChatCommandSuggestionView()
         view.appearance = appearance
@@ -43,7 +43,7 @@ class ChatCommandSuggestionView_Tests: XCTestCase {
         
         view.updateContent()
         
-        XCTAssertEqual(view.commandImageView.image, appearance.images.messageComposerCommandFallback)
+        XCTAssertEqual(view.commandImageView.image, appearance.images.commandFallback)
     }
     
     func test_defaultAppearance() {

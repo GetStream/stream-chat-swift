@@ -65,7 +65,7 @@ open class ChatCheckboxControl: _Control, AppearanceProvider {
     }
     
     override open func updateContent() {
-        let isSelectedImage = appearance.images.messageComposerAlsoSendToChannelCheck
+        let isSelectedImage = appearance.images.whiteCheckmark
             .tinted(with: appearance.colorPalette.background)
         checkbox.image = isSelected ? isSelectedImage : nil
         checkbox.backgroundColor = isSelected ? tintColor : .clear

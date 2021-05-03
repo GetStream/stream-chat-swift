@@ -11,16 +11,24 @@ public extension Appearance {
 
         public var loadingIndicator: UIImage = UIImage(named: "loading_indicator", in: .streamChatUI)!
         public var close: UIImage = UIImage(named: "close", in: .streamChatUI)!
-        public var close1: UIImage = UIImage(named: "dismissInCircle", in: .streamChatUI)!
+        public var closeCircleTransparent: UIImage = UIImage(named: "close_circle_transparent", in: .streamChatUI)!
+        public var discardAttachment: UIImage = UIImage(named: "close_circle_filled", in: .streamChatUI)!
         public var back: UIImage = UIImage(named: "icn_back", in: .streamChatUI)!
         public var onlyVisibleToCurrentUser = UIImage(named: "eye", in: .streamChatUI)!
         public var more = UIImage(named: "icn_more", in: .streamChatUI)!
-
-        // MARK: - ChannelList
-
-        public var channelListReadByAll: UIImage = UIImage(named: "doubleCheckmark", in: .streamChatUI)!
-        public var channelListSent: UIImage = UIImage(named: "checkmark", in: .streamChatUI)!
-        public var newChat: UIImage = UIImage(named: "icn_new_chat", in: .streamChatUI)!
+        public var commands: UIImage = UIImage(named: "bolt", in: .streamChatUI)!
+        public var smallBolt: UIImage = UIImage(named: "bolt_small", in: .streamChatUI)!
+        public var openAttachments: UIImage = UIImage(named: "clip", in: .streamChatUI)!
+        public var shrinkInputArrow: UIImage = UIImage(named: "arrow_shrink_input", in: .streamChatUI)!
+        public var sendArrow: UIImage = UIImage(named: "arrow_send", in: .streamChatUI)!
+        public var messageSent: UIImage = UIImage(named: "checkmark_grey", in: .streamChatUI)!
+        public var whiteCheckmark: UIImage = UIImage(named: "checkmark_white", in: .streamChatUI)!
+        public var readByAll: UIImage = UIImage(named: "checkmark_double", in: .streamChatUI)!
+        public var confirmCheckmark: UIImage = UIImage(named: "checkmark_confirm", in: .streamChatUI)!
+        public var bigConfirmCheckmark: UIImage = UIImage(named: "checkmark_confirm_big", in: .streamChatUI)!
+        public var newChannel: UIImage = UIImage(named: "pencil", in: .streamChatUI)!
+        public var folder: UIImage = UIImage(named: "folder", in: .streamChatUI)!
+        public var restart: UIImage = UIImage(named: "restart", in: .streamChatUI)!
 
         // MARK: - Reactions
 
@@ -161,58 +169,44 @@ public extension Appearance {
             ]
         }
 
-        // MARK: - Message Composer
-
-        public var messageComposerCommand: UIImage = UIImage(named: "bolt", in: .streamChatUI)!
-        public var messageComposerFileAttachment: UIImage = UIImage(named: "clip", in: .streamChatUI)!
-        public var messageComposerAlsoSendToChannelCheck: UIImage = UIImage(named: "threadCheckmark", in: .streamChatUI)!
-        public var messageComposerDiscardAttachment: UIImage = UIImage(named: "discardAttachment", in: .streamChatUI)!
-        public var messageComposerShrinkInput: UIImage = UIImage(named: "shrinkInputArrow", in: .streamChatUI)!
-        public var messageComposerSendMessage: UIImage = UIImage(named: "sendMessageArrow", in: .streamChatUI)!
-        public var messageComposerConfirmEditedMessage: UIImage = UIImage(named: "editMessageCheckmark", in: .streamChatUI)!
-        public var messageComposerDownloadAndOpen: UIImage = UIImage(named: "download_and_open", in: .streamChatUI)!
-        public var messageComposerRestartUpload: UIImage = UIImage(named: "restart", in: .streamChatUI)!
-        public var messageComposerFileUploaded: UIImage = UIImage(named: "uploaded", in: .streamChatUI)!
+        // MARK: - FileAttachmentIcons
 
         private var _fileAttachmentActionIcons: [LocalAttachmentState?: UIImage]?
         public var fileAttachmentActionIcons: [LocalAttachmentState?: UIImage] {
             get { _fileAttachmentActionIcons ??
                 [
-                    .uploaded: messageComposerRestartUpload,
-                    .uploadingFailed: messageComposerRestartUpload,
-                    nil: messageComposerDownloadAndOpen
+                    .uploaded: restart,
+                    .uploadingFailed: restart,
+                    nil: folder
                 ]
             }
             set { _fileAttachmentActionIcons = newValue }
         }
 
-        // MARK: - Message Composer Suggestions
+        // MARK: - CommandIcons
 
-        public var messageComposerCommandsBan: UIImage = UIImage(named: "command_ban", in: .streamChatUI)!
-        public var messageComposerCommandsFlag: UIImage = UIImage(named: "command_flag", in: .streamChatUI)!
-        public var messageComposerCommandsGiphy: UIImage = UIImage(named: "command_giphy", in: .streamChatUI)!
-        public var messageComposerCommandsImgur: UIImage = UIImage(named: "command_imgur", in: .streamChatUI)!
-        public var messageComposerCommandsMention: UIImage = UIImage(named: "command_mention", in: .streamChatUI)!
-        public var messageComposerCommandsMute: UIImage = UIImage(named: "command_mute", in: .streamChatUI)!
-        public var messageComposerCommandsUnban: UIImage = UIImage(named: "command_unban", in: .streamChatUI)!
-        public var messageComposerCommandsUnmute: UIImage = UIImage(named: "command_unmute", in: .streamChatUI)!
-        public var messageComposerCommandFallback: UIImage = UIImage(named: "command_fallback", in: .streamChatUI)!
-        public var messageComposerSuggestionsMention: UIImage = UIImage(named: "command_mention", in: .streamChatUI)!
-        public var messageComposerCommandButton: UIImage? = UIImage(named: "icon_giphy", in: .streamChatUI)
+        public var commandBan: UIImage = UIImage(named: "command_ban", in: .streamChatUI)!
+        public var commandFlag: UIImage = UIImage(named: "command_flag", in: .streamChatUI)!
+        public var commandGiphy: UIImage = UIImage(named: "command_giphy", in: .streamChatUI)!
+        public var commandImgur: UIImage = UIImage(named: "command_imgur", in: .streamChatUI)!
+        public var commandMention: UIImage = UIImage(named: "command_mention", in: .streamChatUI)!
+        public var commandMute: UIImage = UIImage(named: "command_mute", in: .streamChatUI)!
+        public var commandUnban: UIImage = UIImage(named: "command_unban", in: .streamChatUI)!
+        public var commandUnmute: UIImage = UIImage(named: "command_unmute", in: .streamChatUI)!
+        public var commandFallback: UIImage = UIImage(named: "command_fallback", in: .streamChatUI)!
 
         private var _commandIcons: [String: UIImage]?
-
         public var commandIcons: [String: UIImage] {
             get { _commandIcons ??
                 [
-                    "ban": messageComposerCommandsBan,
-                    "flag": messageComposerCommandsFlag,
-                    "giphy": messageComposerCommandsGiphy,
-                    "imgur": messageComposerCommandsImgur,
-                    "mention": messageComposerCommandsMention,
-                    "mute": messageComposerCommandsMute,
-                    "unban": messageComposerCommandsUnban,
-                    "unmute": messageComposerCommandsUnmute
+                    "ban": commandBan,
+                    "flag": commandFlag,
+                    "giphy": commandGiphy,
+                    "imgur": commandImgur,
+                    "mention": commandMention,
+                    "mute": commandMute,
+                    "unban": commandUnban,
+                    "unmute": commandUnmute
                 ]
             }
             set { _commandIcons = newValue }

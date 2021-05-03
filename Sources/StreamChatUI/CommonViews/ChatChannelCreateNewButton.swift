@@ -9,6 +9,6 @@ import UIKit
 open class ChatChannelCreateNewButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
-        setImage(appearance.images.newChat, for: .normal)
+        setImage(appearance.images.newChannel, for: .normal)
     }
 }

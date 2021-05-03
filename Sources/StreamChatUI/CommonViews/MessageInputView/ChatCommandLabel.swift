@@ -53,7 +53,7 @@ open class _ChatCommandLabel<ExtraData: ExtraDataTypes>: _View, AppearanceProvid
         commandLabel.adjustsFontForContentSizeCategory = true
         commandLabel.textAlignment = .center
         
-        iconView.image = appearance.images.messageComposerCommand
+        iconView.image = appearance.images.commands
             .tinted(with: appearance.colorPalette.staticColorText)
     }
     

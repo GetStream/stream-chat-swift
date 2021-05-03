@@ -10,7 +10,7 @@ open class ChatShrinkInputButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        let rightArrowIcon = appearance.images.messageComposerShrinkInput
+        let rightArrowIcon = appearance.images.shrinkInputArrow
         setImage(rightArrowIcon, for: .normal)
     }
 }

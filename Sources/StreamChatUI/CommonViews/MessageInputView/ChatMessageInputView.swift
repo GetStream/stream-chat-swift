@@ -31,7 +31,7 @@ open class _ChatMessageInputView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        let cleanButtonImage = appearance.images.close1.tinted(with: appearance.colorPalette.inactiveTint)
+        let cleanButtonImage = appearance.images.closeCircleTransparent.tinted(with: appearance.colorPalette.inactiveTint)
         cleanButton.setImage(cleanButtonImage, for: .normal)
     }
     
