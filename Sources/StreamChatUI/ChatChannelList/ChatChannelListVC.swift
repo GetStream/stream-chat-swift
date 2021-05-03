@@ -224,6 +224,8 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
 }
 
 extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
+    public typealias ExtraData = ExtraData
+
     public func controllerWillChangeChannels(_ controller: _ChatChannelListController<ExtraData>) {
         // We can't call `performBatchUpdates` unless collection view is properly laid out.
         collectionView.layoutIfNeeded()

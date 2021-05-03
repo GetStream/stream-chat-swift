@@ -3,7 +3,8 @@
 //
 
 import StreamChat
-import StreamChatUI
+// We use @testable import here because router motification is currently available only in beta
+@testable import StreamChatUI
 import UIKit
 
 final class DemoAppCoordinator {
