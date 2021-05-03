@@ -196,7 +196,7 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
         ) as! _ChatSuggestionsCollectionReusableView<ExtraData>
 
         headerView.suggestionsHeader.headerLabel.text = L10n.Composer.Suggestions.Commands.header
-        headerView.suggestionsHeader.commandImageView.image = appearance.images.messageComposerCommand
+        headerView.suggestionsHeader.commandImageView.image = appearance.images.commands
             .tinted(with: headerView.tintColor)
 
         return headerView

@@ -63,7 +63,7 @@ open class _ChatDocumentAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeP
         fileNameLabel.textColor = appearance.colorPalette.text
         fileNameLabel.font = appearance.fonts.bodyBold
         
-        actionIconImageView.image = appearance.images.messageComposerDiscardAttachment
+        actionIconImageView.image = appearance.images.discardAttachment
     }
 
     override open func setUpLayout() {

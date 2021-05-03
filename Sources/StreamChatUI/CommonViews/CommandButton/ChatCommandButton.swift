@@ -12,7 +12,7 @@ open class ChatCommandButton: _Button, AppearanceProvider {
 
         let boltIcon = appearance
             .images
-            .messageComposerCommand
+            .commands
             .tinted(with: appearance.colorPalette.inactiveTint)
         setImage(boltIcon, for: .normal)
     }

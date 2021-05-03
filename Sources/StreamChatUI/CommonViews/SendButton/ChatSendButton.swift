@@ -21,11 +21,11 @@ open class ChatSendButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        let normalStateImage = appearance.images.messageComposerSendMessage
+        let normalStateImage = appearance.images.sendArrow
         setImage(normalStateImage, for: .normal)
 
         let buttonColor: UIColor = appearance.colorPalette.inactiveTint
-        let disabledStateImage = appearance.images.messageComposerSendMessage.tinted(with: buttonColor)
+        let disabledStateImage = appearance.images.sendArrow.tinted(with: buttonColor)
         setImage(disabledStateImage, for: .disabled)
     }
 }

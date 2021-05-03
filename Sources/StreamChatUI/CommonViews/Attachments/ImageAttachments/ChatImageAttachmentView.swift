@@ -26,7 +26,7 @@ open class ChatImageAttachmentView: _View, AppearanceProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        discardButton.setImage(appearance.images.messageComposerDiscardAttachment, for: .normal)
+        discardButton.setImage(appearance.images.discardAttachment, for: .normal)
 
         layer.masksToBounds = true
         layer.cornerRadius = 15

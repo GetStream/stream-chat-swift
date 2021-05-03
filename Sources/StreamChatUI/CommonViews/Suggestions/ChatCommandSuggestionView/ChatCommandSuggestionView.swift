@@ -60,7 +60,7 @@ open class ChatCommandSuggestionView: _View, AppearanceProvider {
         commandNameLabel.text = command.name.firstUppercased
 
         commandImageView.image = appearance.images.commandIcons[command.name.lowercased()]
-            ?? appearance.images.messageComposerCommandFallback
+            ?? appearance.images.commandFallback
     }
 
     private func setupLeftImageViewConstraints() {

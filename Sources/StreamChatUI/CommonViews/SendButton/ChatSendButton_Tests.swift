@@ -29,7 +29,7 @@ class ChatSendButton_Tests: XCTestCase {
 
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
-        appearance.images.messageComposerSendMessage = TestImages.vader.image.tinted(with: .systemPink)!
+        appearance.images.sendArrow = TestImages.vader.image.tinted(with: .systemPink)!
         appearance.colorPalette.inactiveTint = .black
 
         let view = ChatSendButton().withoutAutoresizingMaskConstraints

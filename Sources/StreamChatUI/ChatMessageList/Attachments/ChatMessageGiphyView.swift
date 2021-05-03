@@ -103,7 +103,7 @@ extension _ChatMessageGiphyView {
         public private(set) lazy var lightning = UIImageView(
             image: appearance
                 .images
-                .messageComposerCommandButton
+                .commandGiphy
         )
         public private(set) lazy var contentStack: UIStackView = {
             let stack = UIStackView(arrangedSubviews: [lightning, title]).withoutAutoresizingMaskConstraints

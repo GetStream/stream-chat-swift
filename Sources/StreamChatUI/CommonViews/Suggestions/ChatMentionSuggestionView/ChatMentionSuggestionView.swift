@@ -49,7 +49,7 @@ open class _ChatMentionSuggestionView<ExtraData: ExtraDataTypes>: _View, ThemePr
 
         usernameLabel.textColor = appearance.colorPalette.text
 
-        mentionSymbolImageView.image = appearance.images.messageComposerCommandsMention
+        mentionSymbolImageView.image = appearance.images.commandMention
     }
 
     override open func setUpLayout() {

@@ -10,7 +10,7 @@ open class ChatCloseButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        let closeIcon = appearance.images.close1.tinted(with: appearance.colorPalette.inactiveTint)
+        let closeIcon = appearance.images.closeCircleTransparent.tinted(with: appearance.colorPalette.inactiveTint)
         setImage(closeIcon, for: .normal)
     }
 }
