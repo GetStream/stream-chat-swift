@@ -29,11 +29,6 @@ extension AttachmentPayload {
         return try! JSONDecoder.default.decode(AttachmentPayload.self, from: data)
     }
     
-    var decodedDefaultAttachment: ChatMessageDefaultAttachment? {
-        let data = try! JSONEncoder.stream.encode(payload)
-        return try? JSONDecoder.stream.decode(ChatMessageDefaultAttachment.self, from: data)
-    }
-    
     var decodedImageAttachment: ChatMessageImageAttachment? {
         let data = try! JSONEncoder.stream.encode(payload)
         return try? JSONDecoder.stream.decode(ChatMessageImageAttachment.self, from: data)

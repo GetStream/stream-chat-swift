@@ -481,17 +481,10 @@ class MessageSender_Tests: StressTestCase {
         callback(.success(.init(message: messagePayload)))
         
         // Check the changes are reflected in DB
-        if isAttachmentModelSeparationChangesApplied {
-            AssertAsync.willBeEqual(
-                (database.viewContext.message(id: messageId)?.attachments.first?.asModel() as? ChatMessageGiphyAttachment)?.title,
-                attachment.decodedGiphyAttachment?.title
-            )
-        } else {
-            AssertAsync.willBeEqual(
-                (database.viewContext.message(id: messageId)?.attachments.first?.asModel() as? ChatMessageDefaultAttachment)?.title,
-                attachment.decodedDefaultAttachment?.title
-            )
-        }
+        AssertAsync.willBeEqual(
+            (database.viewContext.message(id: messageId)?.attachments.first?.asModel() as? ChatMessageGiphyAttachment)?.title,
+            attachment.decodedGiphyAttachment?.title
+        )
     }
     
     // MARK: - Life cycle tests

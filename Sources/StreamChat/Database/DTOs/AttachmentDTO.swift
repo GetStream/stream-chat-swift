@@ -126,31 +126,18 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
         dto.attachmentType = seed.type
         dto.title = seed.fileName
         
-        if isAttachmentModelSeparationChangesApplied {
-            var attachment: Encodable
-            
-            switch seed.type {
-            case .image:
-                attachment = ChatMessageImageAttachment(title: seed.fileName)
-            case .file:
-                attachment = ChatMessageFileAttachment(title: seed.fileName, file: seed.file)
-            default:
-                throw ClientError.AttachmentSeedUploading(id: id)
-            }
-            
-            dto.data = try JSONEncoder.stream.encode(AnyEncodable(attachment))
-        } else {
-            let attachment = ChatMessageDefaultAttachment(
-                id: id,
-                type: seed.type,
-                localURL: seed.localURL,
-                localState: dto.localState,
-                title: seed.fileName,
-                file: seed.file
-            )
-            
-            dto.data = try JSONEncoder.stream.encode(attachment)
+        var attachment: Encodable
+
+        switch seed.type {
+        case .image:
+            attachment = ChatMessageImageAttachment(title: seed.fileName)
+        case .file:
+            attachment = ChatMessageFileAttachment(title: seed.fileName, file: seed.file)
+        default:
+            throw ClientError.AttachmentSeedUploading(id: id)
         }
+
+        dto.data = try JSONEncoder.stream.encode(AnyEncodable(attachment))
 
         dto.channel = channelDTO
         dto.message = messageDTO
@@ -188,54 +175,32 @@ extension AttachmentDTO {
     func asModel() -> ChatMessageAttachment {
         let type = AttachmentType(rawValue: self.type)
         
-        if isAttachmentModelSeparationChangesApplied {
-            var chatMessageAttachment: ChatMessageAttachment?
-            
-            switch type {
-            case .image:
-                var attachment = decoded(ChatMessageImageAttachment.self, from: data)
-                attachment?.localState = localState
-                attachment?.localURL = localURL
-                chatMessageAttachment = attachment
-            case .file:
-                var attachment = decoded(ChatMessageFileAttachment.self, from: data)
-                attachment?.localState = localState
-                attachment?.localURL = localURL
-                chatMessageAttachment = attachment
-            case .giphy:
-                chatMessageAttachment = decoded(ChatMessageGiphyAttachment.self, from: data)
-            case .link:
-                chatMessageAttachment = decoded(ChatMessageLinkAttachment.self, from: data)
-            default:
-                chatMessageAttachment = ChatMessageRawAttachment(id: attachmentID, type: type, data: data)
-            }
-            
-            if var attachment = chatMessageAttachment {
-                attachment.id = attachmentID
-                return attachment
-            } else {
-                return ChatMessageRawAttachment(id: attachmentID, type: type, data: data)
-            }
+        var chatMessageAttachment: ChatMessageAttachment?
+        
+        switch type {
+        case .image:
+            var attachment = decoded(ChatMessageImageAttachment.self, from: data)
+            attachment?.localState = localState
+            attachment?.localURL = localURL
+            chatMessageAttachment = attachment
+        case .file:
+            var attachment = decoded(ChatMessageFileAttachment.self, from: data)
+            attachment?.localState = localState
+            attachment?.localURL = localURL
+            chatMessageAttachment = attachment
+        case .giphy:
+            chatMessageAttachment = decoded(ChatMessageGiphyAttachment.self, from: data)
+        case .link:
+            chatMessageAttachment = decoded(ChatMessageLinkAttachment.self, from: data)
+        default:
+            chatMessageAttachment = ChatMessageRawAttachment(id: attachmentID, type: type, data: data)
+        }
+        
+        if var attachment = chatMessageAttachment {
+            attachment.id = attachmentID
+            return attachment
         } else {
-            switch type {
-            case .custom:
-                return ChatMessageRawAttachment(id: attachmentID, type: type, data: data)
-            default:
-                guard
-                    let data = data,
-                    var defaultAttachment = try? JSONDecoder.default.decode(ChatMessageDefaultAttachment.self, from: data)
-                else {
-                    log.error(
-                        "Unable to decode `ChatMessageDefaultAttachment` for built-in type." +
-                            "Falling back to ChatMessageCustomAttachment"
-                    )
-                    return ChatMessageRawAttachment(id: attachmentID, type: type, data: self.data)
-                }
-                defaultAttachment.id = attachmentID
-                defaultAttachment.localURL = localURL
-                defaultAttachment.localState = localState
-                return defaultAttachment
-            }
+            return ChatMessageRawAttachment(id: attachmentID, type: type, data: data)
         }
     }
     

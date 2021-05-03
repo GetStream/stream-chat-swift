@@ -429,9 +429,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(pin.pinnedAt, messagePayload.pinnedAt)
         XCTAssertEqual(pin.pinnedBy.id, messagePayload.pinnedBy?.id)
         XCTAssertEqual(
-            isAttachmentModelSeparationChangesApplied ?
-                loadedMessage.attachments.map { ($0 as? ChatMessageImageAttachment)?.id } :
-                loadedMessage.attachments.map { ($0 as? ChatMessageDefaultAttachment)?.id },
+            loadedMessage.attachments.map { ($0 as? ChatMessageImageAttachment)?.id },
             messagePayload.attachmentIDs(cid: channelId)
         )
         // Quoted message
@@ -721,9 +719,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.locallyCreatedAt)
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.updatedAt)
         XCTAssertEqual(
-            isAttachmentModelSeparationChangesApplied ?
-                loadedMessage.attachments.compactMap { ($0 as? ChatMessageImageAttachment)?.title } :
-                loadedMessage.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
+            loadedMessage.attachments.compactMap { ($0 as? ChatMessageImageAttachment)?.title },
             newMessageAttachmentSeeds.map(\.fileName)
         )
         XCTAssertEqual(

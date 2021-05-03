@@ -123,37 +123,18 @@ class AttachmentUploader: Worker {
                                 )
                                 return
                             }
-                            if isAttachmentModelSeparationChangesApplied {
-                                switch attachmentDTO.attachmentType {
-                                case .image:
-                                    var imageAttachment = try? JSONDecoder.default.decode(
-                                        ChatMessageImageAttachment.self,
-                                        from: data
-                                    )
-                                    imageAttachment?.imageURL = payload.file
-                                    attachmentDTO.data = try? JSONEncoder.stream.encode(imageAttachment)
-                                default:
-                                    var fileAttachment = try? JSONDecoder.default.decode(ChatMessageFileAttachment.self, from: data)
-                                    fileAttachment?.assetURL = payload.file
-                                    attachmentDTO.data = try? JSONEncoder.stream.encode(fileAttachment)
-                                }
-                            } else {
-                                switch attachmentDTO.attachmentType {
-                                case .image:
-                                    var imageAttachment = try? JSONDecoder.default.decode(
-                                        ChatMessageDefaultAttachment.self,
-                                        from: data
-                                    )
-                                    imageAttachment?.imageURL = payload.file
-                                    attachmentDTO.data = try? JSONEncoder.stream.encode(imageAttachment)
-                                default:
-                                    var fileAttachment = try? JSONDecoder.default.decode(
-                                        ChatMessageDefaultAttachment.self,
-                                        from: data
-                                    )
-                                    fileAttachment?.url = payload.file
-                                    attachmentDTO.data = try? JSONEncoder.stream.encode(fileAttachment)
-                                }
+                            switch attachmentDTO.attachmentType {
+                            case .image:
+                                var imageAttachment = try? JSONDecoder.default.decode(
+                                    ChatMessageImageAttachment.self,
+                                    from: data
+                                )
+                                imageAttachment?.imageURL = payload.file
+                                attachmentDTO.data = try? JSONEncoder.stream.encode(imageAttachment)
+                            default:
+                                var fileAttachment = try? JSONDecoder.default.decode(ChatMessageFileAttachment.self, from: data)
+                                fileAttachment?.assetURL = payload.file
+                                attachmentDTO.data = try? JSONEncoder.stream.encode(fileAttachment)
                             }
                         },
                         completion: {
