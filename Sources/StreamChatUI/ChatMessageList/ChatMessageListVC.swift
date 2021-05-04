@@ -17,7 +17,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     _ChatMessageActionsVCDelegate,
     ChatMessageContentViewDelegate,
     UICollectionViewDelegate,
-    UICollectionViewDataSource,
+    ChatMessageListCollectionViewDataSource,
     GalleryContentViewDelegate {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
@@ -40,8 +40,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         .init()
     
     /// View used to display the messages
-    open private(set) lazy var collectionView: ChatMessageListCollectionView = {
-        let collection = ChatMessageListCollectionView(frame: .zero, collectionViewLayout: messageListLayout)
+    open private(set) lazy var collectionView: ChatMessageListCollectionView<ExtraData> = {
+        let collection = ChatMessageListCollectionView<ExtraData>(frame: .zero, collectionViewLayout: messageListLayout)
 
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
@@ -202,7 +202,14 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             channelController.loadPreviousMessages()
         }
     }
-
+    
+    public func collectionView(
+        _ collectionView: UICollectionView,
+        scrollOverlayTextForItemAt indexPath: IndexPath
+    ) -> String? {
+        overlayDateFormatter.string(from: channelController.messages[indexPath.item].createdAt)
+    }
+    
     /// Will scroll to most recent message on next `updateMessages` call
     open func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
         collectionView.setNeedsScrollToMostRecentMessage(animated: animated)
@@ -450,4 +457,13 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
         print(#function, indexPath)
     }
+    
+    /// Formatter that is used to format date for scrolling overlay that should display day when message below were sent
+    open var overlayDateFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.dateStyle = .short
+        df.timeStyle = .none
+        df.locale = .autoupdatingCurrent
+        return df
+    }()
 }
