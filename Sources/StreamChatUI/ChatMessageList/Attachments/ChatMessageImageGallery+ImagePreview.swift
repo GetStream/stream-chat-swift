@@ -8,9 +8,11 @@ import UIKit
 
 extension _ChatMessageImageGallery {
     open class ImagePreview: _View, ThemeProvider {
-        public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
+        public var content: ChatMessageImageAttachment? {
             didSet { updateContentIfNeeded() }
         }
+
+        public var didTapOnAttachment: ((ChatMessageImageAttachment) -> Void)?
         
         private var imageTask: ImageTask? {
             didSet { oldValue?.cancel() }
@@ -65,9 +67,9 @@ extension _ChatMessageImageGallery {
         }
 
         override open func updateContent() {
-            let attachment = content?.attachment
+            let attachment = content
 
-            if let url = attachment?.localURL ?? attachment?.imagePreviewURL ?? attachment?.imageURL {
+            if let url = attachment?.payload?.imagePreviewURL {
                 loadingIndicator.isVisible = true
                 imageTask = loadImage(with: url, options: .shared, into: imageView, completion: { [weak self] _ in
                     self?.loadingIndicator.isVisible = false
@@ -80,13 +82,14 @@ extension _ChatMessageImageGallery {
             }
 
             uploadingOverlay.content = content
-            uploadingOverlay.isVisible = attachment?.localState != nil
+            uploadingOverlay.isVisible = attachment?.uploadingState != nil
         }
 
         // MARK: - Actions
 
         @objc open func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
-            content?.didTapOnAttachment()
+            guard let attachment = content else { return }
+            didTapOnAttachment?(attachment)
         }
 
         // MARK: - Init & Deinit

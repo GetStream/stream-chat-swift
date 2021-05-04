@@ -33,7 +33,6 @@ public extension _Components {
 
     struct MessageAttachmentViewSubviews {
         public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
-        public var attachmentsView: _ChatMessageAttachmentsView<ExtraData>.Type = _ChatMessageAttachmentsView<ExtraData>.self
         // Files
         public var fileAttachmentListView: _ChatMessageFileAttachmentListView<ExtraData>
             .Type = _ChatMessageFileAttachmentListView<ExtraData>.self

@@ -10,9 +10,9 @@ import UIKit
 public typealias ChatMessageGiphyView = _ChatMessageGiphyView<NoExtraData>
 
 open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider {
-    public var content: ChatMessageDefaultAttachment? {
+    public var content: ChatMessageGiphyAttachment? {
         didSet {
-            let isDifferentImage = oldValue?.imageURL != content?.imageURL
+            let isDifferentImage = oldValue?.payload?.previewURL != content?.payload?.previewURL
             guard hasFailed || isDifferentImage else { return }
             updateContentIfNeeded()
         }
@@ -75,7 +75,7 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         imageTask = nil
         imageView.clear()
 
-        if let url = content?.imageURL {
+        if let url = content?.payload?.previewURL {
             imageTask = ImagePipeline.shared.loadData(with: url) { [weak self] result in
                 guard case let .success((rawGif, _)) = result else {
                     self?.hasFailed = true

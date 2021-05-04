@@ -7,9 +7,11 @@ import UIKit
 
 extension _ChatMessageInteractiveAttachmentView {
     open class ActionButton: _Button, AppearanceProvider {
-        public var content: Content? {
+        public var content: AttachmentAction? {
             didSet { updateContentIfNeeded() }
         }
+
+        public var didTap: (() -> Void)?
 
         // MARK: - Overrides
 
@@ -30,11 +32,11 @@ extension _ChatMessageInteractiveAttachmentView {
         }
 
         override open func updateContent() {
-            let titleColor = content?.action.style == .primary ?
+            let titleColor = content?.style == .primary ?
                 tintColor :
                 appearance.colorPalette.subtitleText
 
-            setTitle(content?.action.text, for: .normal)
+            setTitle(content?.text, for: .normal)
             setTitleColor(titleColor, for: .normal)
             setTitleColor(
                 titleColor.map(appearance.colorPalette.highlightedColorForColor),
@@ -55,7 +57,7 @@ extension _ChatMessageInteractiveAttachmentView {
         // MARK: - Actions
 
         @objc open func didTouchUpInside() {
-            content?.didTap()
+            didTap?()
         }
     }
 }

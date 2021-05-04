@@ -184,36 +184,29 @@ private extension _ChatMessageQuoteView {
     /// Sets the attachment view or hides it if no attachment found in the message.
     /// - Parameter message: The message owner of the attachment.
     func setAttachmentPreview(for message: _ChatMessage<ExtraData>) {
-        // TODO: Take last attachment when they'll be ordered.
-        guard let attachment = message.attachments.first else {
-            attachmentPreviewView.image = nil
-            hideAttachmentPreview()
-            return
-        }
-
-        switch attachment.type {
-        case .file:
+        if let filePayload = message.fileAttachments.first?.payload {
             // TODO: Question for designers.
             // I'm not sure if it will be possible to provide specific icon for all file formats
             // so probably we should stick to some generic like other apps do.
-            print("set file icon")
-            showAttachmentPreview()
             attachmentPreviewView.contentMode = .scaleAspectFit
-        default:
-            let attachment = attachment as? ChatMessageDefaultAttachment
-            if let previewURL = attachment?.imagePreviewURL ?? attachment?.imageURL {
-                attachmentPreviewView.loadImage(from: previewURL)
-                showAttachmentPreview()
-                attachmentPreviewView.contentMode = .scaleAspectFill
-                // TODO: When we will have attachment examples we will set smth
-                // different for different types.
-                if message.text.isEmpty, attachment?.type == .image {
-                    textView.text = "Photo"
-                }
-            } else {
-                attachmentPreviewView.image = nil
-                hideAttachmentPreview()
+            attachmentPreviewView.image = appearance.images.fileIcons[filePayload.file.type] ?? appearance.images.fileFallback
+            showAttachmentPreview()
+        } else if let imagePayload = message.imageAttachments.first?.payload {
+            attachmentPreviewView.contentMode = .scaleAspectFill
+            attachmentPreviewView.loadImage(from: imagePayload.imageURL)
+            showAttachmentPreview()
+            // TODO: When we will have attachment examples we will set smth
+            // different for different types.
+            if message.text.isEmpty {
+                textView.text = "Photo"
             }
+        } else if let linkPayload = message.linkAttachments.first?.payload {
+            attachmentPreviewView.contentMode = .scaleAspectFill
+            attachmentPreviewView.loadImage(from: linkPayload.previewURL)
+            showAttachmentPreview()
+        } else {
+            attachmentPreviewView.image = nil
+            hideAttachmentPreview()
         }
     }
 

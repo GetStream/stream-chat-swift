@@ -8,9 +8,11 @@ import UIKit
 public typealias ChatMessageFileAttachmentListView = _ChatMessageFileAttachmentListView<NoExtraData>
 
 open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider {
-    public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
+    public var content: [ChatMessageFileAttachment] = [] {
         didSet { updateContentIfNeeded() }
     }
+
+    public var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
 
     // MARK: - Subviews
 
@@ -32,9 +34,10 @@ open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View,
             $0.removeFromSuperview()
         }
 
-        content?.items.forEach {
+        content.forEach { attachment in
             let item = components.messageList.messageContentSubviews.attachmentSubviews.fileAttachmentItemView.init()
-            item.content = $0
+            item.didTapOnAttachment = { [weak self] in self?.didTapOnAttachment?($0) }
+            item.content = attachment
             stackView.addArrangedSubview(item)
         }
     }

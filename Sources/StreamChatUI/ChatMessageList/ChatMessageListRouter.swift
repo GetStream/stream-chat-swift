@@ -62,27 +62,11 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<UIViewC
             }
         )
     }
-
-    open func showPreview(for attachment: ChatMessageImageAttachment) {
+    
+    open func showPreview(for url: URL?) {
         let preview = ChatMessageAttachmentPreviewVC()
-        preview.content = attachment.imageURL
-
-        let navigation = UINavigationController(rootViewController: preview)
-        rootViewController.present(navigation, animated: true)
-    }
-
-    open func showPreview(for attachment: ChatMessageDefaultAttachment) {
-        let preview = ChatMessageAttachmentPreviewVC()
-        preview.content = attachment.type == .file ? attachment.url : attachment.imageURL
+        preview.content = url
         
-        let navigation = UINavigationController(rootViewController: preview)
-        rootViewController.present(navigation, animated: true)
-    }
-
-    open func openLink(_ link: ChatMessageDefaultAttachment) {
-        let preview = ChatMessageAttachmentPreviewVC()
-        preview.content = link.url
-
         let navigation = UINavigationController(rootViewController: preview)
         rootViewController.present(navigation, animated: true)
     }

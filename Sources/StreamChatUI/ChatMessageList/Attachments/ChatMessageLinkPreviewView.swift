@@ -8,14 +8,9 @@ import UIKit
 public typealias ChatMessageLinkPreviewView = _ChatMessageLinkPreviewView<NoExtraData>
 
 open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, ThemeProvider {
-    public var content: ChatMessageDefaultAttachment? { didSet { updateContentIfNeeded() } }
+    public var content: ChatMessageLinkAttachment? { didSet { updateContentIfNeeded() } }
 
-    public private(set) lazy var imagePreview = components
-        .messageList
-        .messageContentSubviews
-        .attachmentSubviews
-        .imageGalleryItem
-        .init()
+    public private(set) lazy var imagePreview = UIImageView()
         .withoutAutoresizingMaskConstraints
 
     public private(set) lazy var authorBackground: UIView = {
@@ -82,6 +77,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
         super.setUpAppearance()
         authorBackground.backgroundColor = appearance.colorPalette.highlightedAccentBackground1
         backgroundColor = .clear
+        imagePreview.contentMode = .scaleAspectFill
         imagePreview.layer.cornerRadius = 8
         imagePreview.clipsToBounds = true
     }
@@ -126,31 +122,26 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
     override open func updateContent() {
         super.updateContent()
 
-        let isImageHidden = content?.imagePreviewURL == nil
-        let isAuthorHidden = content?.author == nil
+        let payload = content?.payload
+
+        let isImageHidden = payload?.previewURL == nil
+        let isAuthorHidden = payload?.author == nil
 
         authorLabel.textColor = tintColor
         outlineView.backgroundColor = tintColor
 
-        imagePreview.content = content.map {
-            .init(
-                attachment: $0,
-                didTapOnAttachment: {},
-                didTapOnAttachmentAction: { _ in }
-            )
-        }
-
+        imagePreview.loadImage(from: payload?.previewURL)
         imagePreview.isHidden = isImageHidden
 
-        authorLabel.text = content?.author
+        authorLabel.text = payload?.author
         authorLabel.isHidden = isAuthorHidden
         authorBackground.isHidden = isAuthorHidden
 
-        headlineLabel.text = content?.title
-        headlineLabel.isHidden = content?.title == nil
+        headlineLabel.text = payload?.title
+        headlineLabel.isHidden = payload?.title == nil
 
-        bodyTextView.text = content?.text
-        bodyTextView.isHidden = content?.text == nil
+        bodyTextView.text = payload?.text
+        bodyTextView.isHidden = payload?.text == nil
 
         outlineView.isVisible = isImageHidden
 
