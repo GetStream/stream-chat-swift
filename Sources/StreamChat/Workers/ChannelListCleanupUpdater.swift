@@ -2,12 +2,12 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
+import CoreData
 
 class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
     // MARK: - Properties
     
-    private let channelUpdater: ChannelListUpdater<ExtraData>
+    private let channelListUpdater: ChannelListUpdater<ExtraData>
     
     // MARK: - Init
     
@@ -15,7 +15,7 @@ class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
         database: DatabaseContainer,
         apiClient: APIClient
     ) {
-        channelUpdater = ChannelListUpdater(database: database, apiClient: apiClient)
+        channelListUpdater = ChannelListUpdater(database: database, apiClient: apiClient)
         super.init(
             database: database,
             apiClient: apiClient
@@ -27,7 +27,7 @@ class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
         apiClient: APIClient,
         channelListUpdater: ChannelListUpdater<ExtraData>
     ) {
-        channelUpdater = channelListUpdater
+        self.channelListUpdater = channelListUpdater
         super.init(
             database: database,
             apiClient: apiClient
@@ -48,22 +48,29 @@ class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
     // MARK: - Private
     
     private func updateChannels() {
-        let channelIds: [ChannelId] = allChannels.map(\.cid).compactMap {
-            do {
-                return try ChannelId(cid: $0)
-            } catch {
-                log.error("Failed to decode `ChannelId` from \($0).")
-                return nil
+        database.backgroundReadOnlyContext.perform {
+            self.queries.forEach {
+                self.channelListUpdater.update(channelListQuery: $0) { error in
+                    if let error = error {
+                        log
+                            .error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
+                    }
+                }
             }
         }
-        let channelListQuery = _ChannelListQuery<ExtraData.Channel>(
-            filter: .in(.cid, values: channelIds),
-            pageSize: allChannels.count
-        )
-
-        channelUpdater.update(channelListQuery: channelListQuery)
     }
 
+    private var queries: [_ChannelListQuery<ExtraData.Channel>] {
+        do {
+            let queries = try database.backgroundReadOnlyContext
+                .fetch(NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName))
+            return try queries.map { try $0.asChannelListQuery() }
+        } catch {
+            log.error("Internal error: Failed to fetch [ChannelListQueryDTO]: \(error)")
+        }
+        return []
+    }
+    
     private var allChannels: [ChannelDTO] {
         do {
             return try database.writableContext.fetch(ChannelDTO.allChannelsFetchRequest)
@@ -74,10 +81,8 @@ class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
     }
 }
 
-extension ChannelDTO {
+private extension ChannelDTO {
     func syncFailedCleanUp() {
-        // We should not clear `queries` here because in that case NewChannelQueryUpdater
-        // triggers, which leads to `Too many requests for user` backend error
         messages = []
         pinnedMessages = []
         watchers = []
@@ -86,8 +91,21 @@ extension ChannelDTO {
         oldestMessageAt = nil
         hiddenAt = nil
         truncatedAt = nil
-        needsRefreshQueries = true
+        // We should not set `needsRefreshQueries` to `true` because in that case NewChannelQueryUpdater
+        // triggers, which leads to `Too many requests for user` backend error
+        needsRefreshQueries = false
         currentlyTypingMembers = []
         reads = []
+        queries = []
+    }
+}
+
+private extension ChannelListQueryDTO {
+    func asChannelListQuery<ExtraData: ChannelExtraData>() throws -> _ChannelListQuery<ExtraData> {
+        let encodedFilter = try JSONDecoder.default
+            .decode(Filter<_ChannelListFilterScope<ExtraData>>.self, from: filterJSONData)
+        var updatedFilter: Filter<_ChannelListFilterScope> = encodedFilter
+        updatedFilter.explicitHash = filterHash
+        return _ChannelListQuery(filter: updatedFilter)
     }
 }
