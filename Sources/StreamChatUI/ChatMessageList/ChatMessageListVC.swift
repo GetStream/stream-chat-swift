@@ -306,18 +306,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             return controller
         }()
 
-        let messageContentViewToShow = cellContentClassForMessage(at: indexPath).init().withoutAutoresizingMaskConstraints
-        messageContentViewToShow.setUpLayoutIfNeeded(
-            options: cellLayoutOptionsForMessage(at: indexPath).subtracting(.reactions),
-            attachmentViewInjectorType: attachmentViewInjectorClassForMessage(at: indexPath)
-        )
-        messageContentViewToShow.content = message
-
         router.showMessageActionsPopUp(
-            viewToAnimate: messageContentView,
-            viewToShow: messageContentViewToShow,
-            actionsController: actionsController,
-            reactionsController: reactionsController
+            messageContentView: messageContentView,
+            messageActionsController: actionsController,
+            messageReactionsController: reactionsController
         )
     }
 

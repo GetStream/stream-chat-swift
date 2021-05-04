@@ -7,60 +7,34 @@ import UIKit
 
 public typealias ChatMessageListRouter = _ChatMessageListRouter<NoExtraData>
 
-open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<UIViewController> {
-    /// Feedback generator used when presenting actions controller on selected message
-    open var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
-
+open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
+    ChatRouter<UIViewController>,
+    UIViewControllerTransitioningDelegate {
+    public private(set) lazy var transitionController = MessageActionsTransitionController<ExtraData>()
+    
     open func showMessageActionsPopUp(
-        viewToAnimate: _ChatMessageContentView<ExtraData>,
-        viewToShow: _ChatMessageContentView<ExtraData>,
-        actionsController: _ChatMessageActionsVC<ExtraData>,
-        reactionsController: _ChatMessageReactionsVC<ExtraData>?
+        messageContentView: _ChatMessageContentView<ExtraData>,
+        messageActionsController: _ChatMessageActionsVC<ExtraData>,
+        messageReactionsController: _ChatMessageReactionsVC<ExtraData>?
     ) {
-        // TODO: for PR: This should be doable via:
-        // 1. options: [.autoreverse, .repeat] and
-        // 2. `UIView.setAnimationRepeatCount(0)` inside the animation block...
-        //
-        // and then just set completion to the animation to transform this back. aka `cell.messageView.transform = .identity`
-        // however, this doesn't work as after the animation is done, it clips back to the value set in animation block
-        // and then on completion goes back to `.identity`... This is really strange, but I was fighting it for some time
-        // and couldn't find proper solution...
-        // Also there are some limitations to the current solution ->
-        // According to my debug view hiearchy, the content inside `messageView.messageBubbleView` is not constrainted to the
-        // bubble view itself, meaning right now if we want to scale the view of incoming message, we scale the avatarView
-        // of the sender as well...
-        UIView.animate(
-            withDuration: 0.2,
-            delay: 0,
-            options: [.curveEaseIn],
-            animations: {
-                viewToAnimate.transform = CGAffineTransform(scaleX: 0.95, y: 0.95)
-            },
-            completion: { _ in
-                self.impactFeedbackGenerator.impactOccurred()
-
-                UIView.animate(
-                    withDuration: 0.1,
-                    delay: 0,
-                    options: [.curveEaseOut],
-                    animations: {
-                        viewToAnimate.transform = .identity
-                    }
-                )
-
-                let popup = _ChatMessagePopupVC<ExtraData>()
-                // only `message` is used but I don't want to break current implementation
-                popup.messageContentView = viewToShow
-                // TODO: Whole PopupVC has to be updated for the new MessageCell
-                popup.messageViewFrame = viewToAnimate.superview!.convert(viewToAnimate.frame, to: nil)
-                popup.actionsController = actionsController
-                popup.reactionsController = reactionsController
-                popup.modalPresentationStyle = .overFullScreen
-                popup.modalTransitionStyle = .crossDissolve
-
-                self.rootViewController.present(popup, animated: false)
-            }
+        let popup = _ChatMessagePopupVC<ExtraData>()
+        popup.messageContentView = messageContentView
+        popup.actionsController = messageActionsController
+        popup.reactionsController = messageReactionsController
+        let bubbleView = messageContentView.bubbleView ?? messageContentView.bubbleContentContainer
+        let bubbleViewFrame = bubbleView.superview!.convert(bubbleView.frame, to: nil)
+        popup.messageBubbleViewInsets = UIEdgeInsets(
+            top: bubbleViewFrame.origin.y,
+            left: bubbleViewFrame.origin.x,
+            bottom: messageContentView.frame.height - bubbleViewFrame.height,
+            right: messageContentView.frame.width - bubbleViewFrame.origin.x - bubbleViewFrame.width
         )
+        popup.modalPresentationStyle = .overFullScreen
+        popup.transitioningDelegate = transitionController
+
+        transitionController.messageContentView = messageContentView
+        
+        rootViewController.present(popup, animated: true)
     }
     
     open func showPreview(for url: URL?) {
