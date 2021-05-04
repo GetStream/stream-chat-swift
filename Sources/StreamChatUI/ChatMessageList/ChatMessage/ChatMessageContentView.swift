@@ -604,6 +604,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
                 .withAdjustingFontForContentSizeCategory
                 .withBidirectionalLanguagesSupport
                 .withoutAutoresizingMaskConstraints
+
+            authorNameLabel!.textColor = appearance.colorPalette.subtitleText
+            authorNameLabel!.font = appearance.fonts.footnote
         }
         return authorNameLabel!
     }
