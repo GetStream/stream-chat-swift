@@ -11,10 +11,7 @@ public protocol ChatMessageListCollectionViewDataSource: UICollectionViewDataSou
     /// - Parameters:
     ///   - collectionView: CollectionView requesting date
     ///   - indexPath: IndexPath that should be used to get date
-    func collectionView<ExtraData: ExtraDataTypes>(
-        _ collectionView: ChatMessageListCollectionView<ExtraData>,
-        scrollOverlayTextForItemAt indexPath: IndexPath
-    ) -> String?
+    func collectionView(_ collectionView: UICollectionView, scrollOverlayTextForItemAt indexPath: IndexPath) -> String?
 }
 
 /// The collection view that provides convenient API for dequeuing `_СhatMessageCollectionViewCell` instances
@@ -233,10 +230,8 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
     }
     
     open func setOverlayViewAlpha(_ alpha: CGFloat, animated: Bool = true) {
-        let animations = { [scrollOverlayView] in
+        Animate(isAnimated: animated) { [scrollOverlayView] in
             scrollOverlayView.alpha = alpha
         }
-        
-        animated ? Animate(animations) : animations()
     }
 }
