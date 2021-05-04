@@ -24,7 +24,7 @@ class APIClient_Tests: StressTestCase {
         baseURL = .unique()
         
         // Prepare the URL protocol test environment
-        sessionConfiguration = URLSessionConfiguration.default
+        sessionConfiguration = .ephemeral
         RequestRecorderURLProtocol.startTestSession(with: &sessionConfiguration)
         MockNetworkURLProtocol.startTestSession(with: &sessionConfiguration)
         sessionConfiguration.httpMaximumConnectionsPerHost = Int.max

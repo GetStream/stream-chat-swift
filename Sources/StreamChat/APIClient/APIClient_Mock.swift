@@ -70,7 +70,7 @@ class APIClientMock: APIClient {
 extension APIClientMock {
     convenience init() {
         self.init(
-            sessionConfiguration: .default,
+            sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder()
         )

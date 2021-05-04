@@ -59,7 +59,7 @@ class WebSocketClientMock: WebSocketClient {
 extension WebSocketClientMock {
     convenience init() {
         self.init(
-            sessionConfiguration: .default,
+            sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             eventDecoder: EventDecoder<NoExtraData>(),
             eventNotificationCenter: EventNotificationCenterMock(database: DatabaseContainerMock()),
