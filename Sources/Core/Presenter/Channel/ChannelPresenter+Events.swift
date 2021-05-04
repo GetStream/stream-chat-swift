@@ -26,6 +26,10 @@ extension ChannelPresenter {
         lastParsedEvent = event
         lastWebSocketEventViewChanges = nil
         
+        if let channel = event.channel {
+            channelAtomic.set(channel)
+        }
+        
         switch event {
         case .typingStart(let user, _, _):
             guard isTypingEventsEnabled else {
@@ -159,9 +163,6 @@ extension ChannelPresenter {
             }
             
             return .itemsUpdated(rows, messages, items)
-            
-        case .channelUpdated(let response, _, _):
-            channelAtomic.set(response.channel)
             
         default:
             break

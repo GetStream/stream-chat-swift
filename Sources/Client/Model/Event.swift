@@ -170,6 +170,26 @@ public enum Event: Decodable, Equatable {
         }
     }
     
+    /// A channel from the event.
+    public var channel: Channel? {
+        switch self {
+        case .channelUpdated(let response, _, _):
+            return response.channel
+        case .channelDeleted(let channel, _),
+             .notificationMessageNew(_, let channel, _, _, _),
+             .notificationMarkRead(_, let channel, _, _),
+             .notificationAddedToChannel(let channel, _, _),
+             .notificationRemovedFromChannel(let channel, _),
+             .notificationInvited(let channel, _),
+             .notificationInviteAccepted(let channel, _),
+             .notificationInviteRejected(let channel, _),
+             .notificationChannelDeleted(let channel, _):
+            return channel
+        default:
+            return nil
+        }
+    }
+    
     /// A cid from the event.
     public var cid: ChannelId? {
         switch self {
