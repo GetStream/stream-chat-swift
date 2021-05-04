@@ -192,7 +192,17 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         return cell
     }
-    
+
+    open func collectionView(
+        _ collectionView: UICollectionView,
+        willDisplay cell: UICollectionViewCell,
+        forItemAt indexPath: IndexPath
+    ) {
+        if indexPath.row + 1 >= collectionView.numberOfItems(inSection: 0) {
+            channelController.loadPreviousMessages()
+        }
+    }
+
     /// Will scroll to most recent message on next `updateMessages` call
     open func setNeedsScrollToMostRecentMessage(animated: Bool = true) {
         collectionView.setNeedsScrollToMostRecentMessage(animated: animated)
