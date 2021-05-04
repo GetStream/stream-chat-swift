@@ -43,8 +43,8 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         .init()
 
     /// View used to display the messages
-    open private(set) lazy var collectionView: ChatMessageListCollectionView = {
-        let collection = ChatMessageListCollectionView(frame: .zero, collectionViewLayout: messageListLayout)
+    open private(set) lazy var collectionView: ChatMessageListCollectionView<ExtraData> = {
+        let collection = ChatMessageListCollectionView<ExtraData>(frame: .zero, collectionViewLayout: messageListLayout)
 
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
