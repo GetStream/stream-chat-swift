@@ -53,6 +53,7 @@
 		648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */; };
 		64B75B002631700500A466D1 /* ChatMessage_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64B75AFF2631700500A466D1 /* ChatMessage_Tests.swift */; };
 		64C80615262EDA9600B1F7AD /* ChatMessage_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64C80614262EDA9600B1F7AD /* ChatMessage_Tests.swift */; };
+		64DA56BB26412EED00DCBF82 /* ChannelListCleanupUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64DA56BA26412EED00DCBF82 /* ChannelListCleanupUpdater.swift */; };
 		64F70D4B26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64F70D4A26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift */; };
 		6971257E260CA503003C7B47 /* NSManagedObjectContext+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6971256C260CA4CB003C7B47 /* NSManagedObjectContext+Extensions.swift */; };
 		69736BF226413E5D00090B67 /* ChatMessageListScrollOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69736BF126413E5D00090B67 /* ChatMessageListScrollOverlayView.swift */; };
@@ -1210,6 +1211,7 @@
 		648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAppCoordinator.swift; sourceTree = "<group>"; };
 		64B75AFF2631700500A466D1 /* ChatMessage_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage_Tests.swift; sourceTree = "<group>"; };
 		64C80614262EDA9600B1F7AD /* ChatMessage_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage_Tests.swift; sourceTree = "<group>"; };
+		64DA56BA26412EED00DCBF82 /* ChannelListCleanupUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListCleanupUpdater.swift; sourceTree = "<group>"; };
 		64F70D4A26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Error+InternetNotAvailable_Tests.swift"; sourceTree = "<group>"; };
 		69712522260BC9B4003C7B47 /* Deprecations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deprecations.swift; sourceTree = "<group>"; };
 		6971256C260CA4CB003C7B47 /* NSManagedObjectContext+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Extensions.swift"; sourceTree = "<group>"; };
@@ -2934,6 +2936,7 @@
 				88F6DF93252C8866009A8AF0 /* ChannelMemberUpdater_Tests.swift */,
 				88206FC325B18C88009D086A /* ChatClientUpdater.swift */,
 				88206FE525B1AB34009D086A /* ChatClientUpdater_Tests.swift */,
+				64DA56BA26412EED00DCBF82 /* ChannelListCleanupUpdater.swift */,
 				F63CC36D24E591690052844D /* EventObservers */,
 				79280F4524850ECC00CDEB89 /* Background */,
 			);
@@ -5452,6 +5455,7 @@
 				8A0CC9F124C606EF00705CF9 /* ReactionEvents.swift in Sources */,
 				79877A0F2498E4BC00015F8B /* ChannelId.swift in Sources */,
 				882C5760252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift in Sources */,
+				64DA56BB26412EED00DCBF82 /* ChannelListCleanupUpdater.swift in Sources */,
 				88DA57E02631E80D00FA8C53 /* MutedChannelPayload.swift in Sources */,
 				792A4F492480107A00EAF71D /* Sorting.swift in Sources */,
 				7937282A2498FFD300E13FE5 /* MemberPayload.swift in Sources */,

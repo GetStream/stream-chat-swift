@@ -21,6 +21,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
     // MARK: - Properties
     
     private var connectionObserver: EventObserver?
+    private let channelListCleanupUpdater: ChannelListCleanupUpdater<ExtraData>
     @Atomic private var lastSyncedAt: Date?
     
     // MARK: - Init
@@ -30,6 +31,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient
     ) {
+        channelListCleanupUpdater = ChannelListCleanupUpdater(database: database, apiClient: apiClient)
         super.init(
             database: database,
             eventNotificationCenter: eventNotificationCenter,
@@ -86,6 +88,10 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
                     self?.eventNotificationCenter.process(payload.eventPayloads)
                 case let .failure(error):
                     log.error("Internal error: Failed to fetch and reply missing events: \(error)")
+                    if let error = (error as? ClientError)?.underlyingError as? ErrorPayload,
+                       error.statusCode == 400 {
+                        self?.channelListCleanupUpdater.cleanupChannelList()
+                    }
                 }
             }
         }
