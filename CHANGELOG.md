@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
+### 🔄 Changed
+
+# [2.6.6](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.6)
+_May 04, 2021_
+
 ### 🐞 Fixed
 - Various events did not trigger channel update callback
 - Using expired tokens caused messages to disappear when token expired in background
