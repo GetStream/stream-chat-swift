@@ -350,7 +350,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     override open func updateContent() {
         super.updateContent()
-        defer { attachmentViewInjector?.contentViewDidUpdateContent() }
+        defer {
+            attachmentViewInjector?.contentViewDidUpdateContent()
+            setNeedsLayout()
+        }
 
         // Text
         textView?.text = content?.text
