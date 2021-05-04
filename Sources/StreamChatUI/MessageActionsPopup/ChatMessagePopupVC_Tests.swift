@@ -41,7 +41,10 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         )
 
         let messageContentView = ChatMessageContentView().withoutAutoresizingMaskConstraints
-        messageContentView.setUpLayoutIfNeeded(options: message.layout(isLastInGroup: false))
+        messageContentView.setUpLayoutIfNeeded(
+            options: message.layout(isLastInGroup: false),
+            attachmentViewInjectorType: nil
+        )
         messageContentView.content = message
         
         vc = TestChatMessagePopupVC()
@@ -101,7 +104,10 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         }
 
         let messageContentView = ChatMessageContentView().withoutAutoresizingMaskConstraints
-        messageContentView.setUpLayoutIfNeeded(options: message.layout(isLastInGroup: false))
+        messageContentView.setUpLayoutIfNeeded(
+            options: message.layout(isLastInGroup: false),
+            attachmentViewInjectorType: nil
+        )
         messageContentView.content = message
 
         let vc = TestView()
