@@ -22,7 +22,7 @@ class WebSocketEngineMock: WebSocketEngine {
     @Atomic var sendPing_calledCount = 0
     
     convenience init() {
-        self.init(request: .init(url: URL(string: "test_url")!), sessionConfiguration: .default, callbackQueue: .main)
+        self.init(request: .init(url: URL(string: "test_url")!), sessionConfiguration: .ephemeral, callbackQueue: .main)
     }
     
     required init(request: URLRequest, sessionConfiguration: URLSessionConfiguration, callbackQueue: DispatchQueue) {

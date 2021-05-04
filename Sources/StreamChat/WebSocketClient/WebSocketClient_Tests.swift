@@ -65,7 +65,7 @@ class WebSocketClient_Tests: StressTestCase {
         environment.backgroundTaskScheduler = backgroundTaskScheduler
         
         webSocketClient = WebSocketClient(
-            sessionConfiguration: .default,
+            sessionConfiguration: .ephemeral,
             requestEncoder: requestEncoder,
             eventDecoder: decoder,
             eventNotificationCenter: eventNotificationCenter,
