@@ -174,7 +174,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     // MARK: - Animation updates
 
-    override open func prepare(forCollectionViewUpdates updateItems: [UICollectionViewUpdateItem]) {
+    open func _prepare(forCollectionViewUpdates updateItems: [UICollectionViewUpdateItem]) {
         previousItems = currentItems
         
         // used to determine what contentOffset should be restored after batch updates
@@ -237,6 +237,14 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         }
 
         preBatchUpdatesCall = false
+    }
+    
+    /// Only public by design, if you need to override this method override `_prepare(forCollectionViewUpdates:)`
+    override public func prepare(forCollectionViewUpdates updateItems: [UICollectionViewUpdateItem]) {
+        // In Xcode 12.5 it is impossible to use own `updateItems` - our solution with `UICollectionViewUpdateItem` subclass stopped working
+        // (Apple is probably checking some private API and our customized getters are not called),
+        // so instead of testing `prepare(forCollectionViewUpdates:)` we will test our custom function
+        _prepare(forCollectionViewUpdates: updateItems)
         super.prepare(forCollectionViewUpdates: updateItems)
     }
 
