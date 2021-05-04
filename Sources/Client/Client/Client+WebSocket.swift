@@ -80,6 +80,7 @@ extension Client: WebSocketEventDelegate {
                 recoverConnection()
                 
                 if isExpiredTokenInProgress {
+                    isExpiredTokenInProgress = false
                     performInCallbackQueue { [unowned self] in self.sendWaitingRequests() }
                 }
             } else if case .reconnecting = connectionState {

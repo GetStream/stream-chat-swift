@@ -237,7 +237,6 @@ extension Client {
     }
     
     func sendWaitingRequests() {
-        isExpiredTokenInProgress = false
         waitingRequests.forEach { $0.perform() }
         
         performInCallbackQueue { [unowned self] in
