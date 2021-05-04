@@ -5,9 +5,21 @@
 import StreamChat
 import UIKit
 
+/// Protocol that adds delegate methods specific for `ChatMessageListCollectionView`
+public protocol ChatMessageListCollectionViewDataSource: UICollectionViewDataSource {
+    /// Get date for item at given indexPath
+    /// - Parameters:
+    ///   - collectionView: CollectionView requesting date
+    ///   - indexPath: IndexPath that should be used to get date
+    func collectionView<ExtraData: ExtraDataTypes>(
+        _ collectionView: ChatMessageListCollectionView<ExtraData>,
+        scrollOverlayTextForItemAt indexPath: IndexPath
+    ) -> String?
+}
+
 /// The collection view that provides convenient API for dequeuing `_СhatMessageCollectionViewCell` instances
 /// with the provided content view type and layout options.
-open class ChatMessageListCollectionView: UICollectionView {
+open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectionView, Customizable, ComponentsProvider {
     private var identifiers: Set<String> = .init()
     
     open var needsToScrollToMostRecentMessage = false
@@ -205,5 +217,26 @@ open class ChatMessageListCollectionView: UICollectionView {
 
         // our collection is flipped, so (0; 0) item is most recent one
         scrollToItem(at: IndexPath(item: 0, section: 0), at: .bottom, animated: animated)
+    }
+    
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        
+        setUpAppearance()
+        updateContent()
+        
+        if traitCollection.preferredContentSizeCategory == previousTraitCollection?.preferredContentSizeCategory {
+            return
+        }
+        
+        collectionViewLayout.invalidateLayout()
+    }
+    
+    open func setOverlayViewAlpha(_ alpha: CGFloat, animated: Bool = true) {
+        let animations = { [scrollOverlayView] in
+            scrollOverlayView.alpha = alpha
+        }
+        
+        animated ? Animate(animations) : animations()
     }
 }
