@@ -12,6 +12,113 @@ open class ChatMessageListCollectionView: UICollectionView {
     
     open var needsToScrollToMostRecentMessage = false
     open var needsToScrollToMostRecentMessageAnimated = false
+    
+    /// View used to display date of currently displayed messages
+    open lazy var scrollOverlayView: ChatMessageListScrollOverlayView = {
+        let scrollOverlayView = components.messageList.scrollOverlayView.init()
+        scrollOverlayView.isHidden = true
+        return scrollOverlayView.withoutAutoresizingMaskConstraints
+    }()
+    
+    private var isInitialized = false
+    
+    /// Usual `dataSource` method cast to `ChatMessageListCollectionViewDataSource`
+    private var chatDataSource: ChatMessageListCollectionViewDataSource? {
+        dataSource as? ChatMessageListCollectionViewDataSource
+    }
+    
+    private var contentOffsetObservation: NSKeyValueObservation?
+    
+    override open func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        
+        guard !isInitialized, superview != nil else { return }
+        
+        isInitialized = true
+        
+        setUp()
+        setUpLayout()
+        setUpAppearance()
+        updateContent()
+    }
+    
+    open func setUp() {
+        // Setup `contentOffset` observation so `delegate` is free for anyone that wants to use it
+        contentOffsetObservation = observe(\.contentOffset) { cv, _ in
+            /// To display correct date we use bottom edge of `dateView` (we use `cv.layoutMargins.top` for both vertical offsets of `dateView`
+            let dateViewRefPoint = CGPoint(
+                x: cv.scrollOverlayView.center.x,
+                y: cv.scrollOverlayView.frame.maxY + cv.layoutMargins.top
+            )
+            let refPoint = cv.convert(dateViewRefPoint, to: cv)
+            // To get correct indexPath, we cannot use `cv.indexPathForItem(at:)` as it breaks collectionView layout
+            // and all cells have fix 72pt width, so we search which visible cell contains our `refPoint`
+            // and then search for its indexPath
+            /// Cell that contains our `refPoint` if any
+            let cell = cv.visibleCells.first(where: { $0.frame.contains(refPoint) })
+
+            // If we cannot find any indexPath for `cell` we try to use max visible indexPath (we have bottom to top) layout
+            guard let indexPath = cell.flatMap(cv.indexPath) ?? cv.indexPathsForVisibleItems.max() else { return }
+            
+            let overlayText = cv.chatDataSource?.collectionView(cv, scrollOverlayTextForItemAt: indexPath)
+            
+            // As cells can overlay our `dateView` we need to keep it above them
+            cv.bringSubviewToFront(cv.scrollOverlayView)
+            
+            // If we have no date we have no reason to display `dateView`
+            cv.scrollOverlayView.isHidden = (overlayText ?? "").isEmpty
+            cv.scrollOverlayView.content = overlayText
+            
+            // Apple's naming is quite weird as actually this property should rather be named `isScrolling`
+            // as it stays true when user stops dragging and scrollView is decelerating and becomes false
+            // when scrollView stops decelerating
+            //
+            // But this case doesn't cover situation when user drags scrollView to a certain `contentOffset`
+            // leaves the finger there for a while and then just lifts it, it doesn't change `contentOffset`
+            // so this handler is not called, this is handled by `scrollStateChanged`
+            // that reacts on `panGestureRecognizer` states and can handle this case properly
+            if !cv.isDragging {
+                cv.setOverlayViewAlpha(0)
+            }
+        }
+        
+        panGestureRecognizer.addTarget(self, action: #selector(scrollStateChanged))
+    }
+    
+    @objc
+    open func scrollStateChanged(_ sender: UIPanGestureRecognizer) {
+        switch sender.state {
+        case .began:
+            setOverlayViewAlpha(1)
+        case .ended, .cancelled, .failed:
+            // This case handles situation when user pans to certain `contentOffset`, leaves the finger there
+            // and then lifts it without `contentOffset` change, so `scrollView` will not decelerate, if it does,
+            // it is handled by `contentOffset` observation
+            if !isDecelerating {
+                setOverlayViewAlpha(0)
+            }
+        default: break
+        }
+    }
+    
+    open func setUpLayout() {
+        addSubview(scrollOverlayView)
+        
+        NSLayoutConstraint.activate([
+            scrollOverlayView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            scrollOverlayView.centerXAnchor.pin(equalTo: layoutMarginsGuide.centerXAnchor),
+            scrollOverlayView.leadingAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.leadingAnchor),
+            scrollOverlayView.trailingAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.trailingAnchor)
+        ])
+    }
+    
+    open func setUpAppearance() {
+        // Nothing to do
+    }
+    
+    open func updateContent() {
+        // Nothing to do
+    }
 
     /// Dequeues the message cell. Registers the cell for received combination of `contentViewClass + layoutOptions`
     /// if needed.
