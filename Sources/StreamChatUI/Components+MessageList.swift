@@ -7,9 +7,10 @@ import UIKit.UIImage
 
 public extension _Components {
     struct MessageListUI {
-        public var collectionView: ChatMessageListCollectionView.Type = ChatMessageListCollectionView.self
+        public var collectionView: ChatMessageListCollectionView<ExtraData>.Type = ChatMessageListCollectionView<ExtraData>.self
         public var collectionLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
         public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()
+        public var scrollOverlayView: ChatMessageListScrollOverlayView.Type = ChatMessageListScrollOverlayView.self
         public var messageContentSubviews = MessageContentViewSubviews()
         public var messageReactions = MessageReactions()
     }
