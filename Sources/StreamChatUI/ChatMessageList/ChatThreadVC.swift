@@ -210,9 +210,6 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         if indexPath.row + 1 >= collectionView.numberOfItems(inSection: 0) {
             messageController.loadPreviousReplies()
         }
-
-        // Force cell layout to prevent animation glitches
-        cell.layoutIfNeeded()
     }
 
     /// Will scroll to most recent message on next `updateMessages` call
