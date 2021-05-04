@@ -68,13 +68,13 @@ final class ChatMessageListCollectionViewLayout_Tests: XCTestCase {
         
         let updateItems = indices.map(TestUpdateItem.init(deleteIndex:))
         
-        subject.prepare(forCollectionViewUpdates: updateItems)
+        subject._prepare(forCollectionViewUpdates: updateItems)
         
         XCTAssertTrue(subject.currentItems.isEmpty)
     }
     
     func testLayoutInsertions() throws {
-        subject.prepare(forCollectionViewUpdates: [TestUpdateItem(insertIndex: 0)])
+        subject._prepare(forCollectionViewUpdates: [TestUpdateItem(insertIndex: 0)])
         
         // As `UUID` in `LayoutItem.id` is "random" adding `Equatable` conformance and direct comparison
         // wouldn't make sense as we have one "random" property
