@@ -147,6 +147,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     /// The container which holds `onlyVisibleForYouIconImageView` and `onlyVisibleForYouLabel`
     public private(set) var onlyVisibleForYouContainer: ContainerStackView?
 
+    /// Constraint between bubble and reactions.
+    public private(set) var bubbleToReactionsConstraint: NSLayoutConstraint?
+    
     /// Makes sure the `layout(options: ChatMessageLayoutOptions)` is called just once.
     /// - Parameter options: The options describing the layout of the content view.
     open func setUpLayoutIfNeeded(
@@ -330,15 +333,18 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             reactionsBubbleView.addSubview(reactionsView)
             reactionsView.pin(to: reactionsBubbleView.layoutMarginsGuide)
 
+            bubbleToReactionsConstraint = (bubbleView ?? bubbleContentContainer).topAnchor
+                .pin(equalTo: reactionsBubbleView.centerYAnchor)
             constraintsToActivate += [
                 reactionsBubbleView.topAnchor.pin(equalTo: topAnchor),
-                (bubbleView ?? bubbleContentContainer).topAnchor.pin(equalTo: reactionsBubbleView.centerYAnchor),
+                bubbleToReactionsConstraint,
                 reactionsBubbleView.centerXAnchor.pin(
                     equalTo: options.contains(.flipped) ?
                         mainContainer.leadingAnchor :
                         mainContainer.trailingAnchor
                 )
             ]
+            .compactMap { $0 }
         } else {
             constraintsToActivate += [
                 mainContainer.topAnchor.pin(equalTo: topAnchor)

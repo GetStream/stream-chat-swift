@@ -4,7 +4,7 @@
 
 import UIKit
 
-open class ChatRouter<Controller: UIViewController> {
+open class ChatRouter<Controller: UIViewController>: NSObject {
     public unowned var rootViewController: Controller
     
     public var navigationController: UINavigationController? {
