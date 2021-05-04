@@ -270,7 +270,7 @@ private extension ChatMessageContentView_Tests {
         view.widthAnchor.constraint(equalToConstant: contentViewWidth).isActive = true
         view.appearance = appearance
         view.components = components
-        view.setUpLayoutIfNeeded(options: layout)
+        view.setUpLayoutIfNeeded(options: layout, attachmentViewInjectorType: nil)
         view.content = message
         return view
     }
