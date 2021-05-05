@@ -52,8 +52,7 @@ class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
             self.queries.forEach {
                 self.channelListUpdater.update(channelListQuery: $0) { error in
                     if let error = error {
-                        log
-                            .error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
+                        log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
                     }
                 }
             }

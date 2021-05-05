@@ -40,6 +40,21 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
         startObserving()
     }
     
+    init(
+        database: DatabaseContainer,
+        eventNotificationCenter: EventNotificationCenter,
+        apiClient: APIClient,
+        channelListCleanupUpdater: ChannelListCleanupUpdater<ExtraData>
+    ) {
+        self.channelListCleanupUpdater = channelListCleanupUpdater
+        super.init(
+            database: database,
+            eventNotificationCenter: eventNotificationCenter,
+            apiClient: apiClient
+        )
+        startObserving()
+    }
+    
     // MARK: - Private
     
     private func startObserving() {

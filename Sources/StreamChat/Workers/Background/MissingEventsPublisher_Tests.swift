@@ -13,6 +13,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var publisher: MissingEventsPublisher<ExtraData>?
+    var channelListCleanupUpdater: ChannelListCleanupUpdaterMock<ExtraData>!
     
     // MARK: - Setup
     
@@ -22,16 +23,19 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         database = DatabaseContainerMock()
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
+        channelListCleanupUpdater = ChannelListCleanupUpdaterMock(database: database, apiClient: apiClient)
         
         publisher = MissingEventsPublisher(
             database: database,
             eventNotificationCenter: webSocketClient.eventNotificationCenter,
-            apiClient: apiClient
+            apiClient: apiClient,
+            channelListCleanupUpdater: channelListCleanupUpdater
         )
     }
     
     override func tearDown() {
         apiClient.cleanUp()
+        channelListCleanupUpdater.cleanUp()
         
         AssertAsync {
             Assert.canBeReleased(&publisher)
@@ -140,6 +144,31 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         
         // Assert no events are published
         AssertAsync.staysTrue(eventCenter.process_loggedEvents.isEmpty)
+    }
+    
+    func test_whenBackendRespondsWith400_callsChannelListCleanUp() throws {
+        let cid: ChannelId = .unique
+
+        try database.createCurrentUser()
+        try database.createChannel(cid: cid)
+
+        try database.writeSynchronously { session in
+            let currentUser = try XCTUnwrap(session.currentUser)
+            currentUser.lastReceivedEventDate = Date()
+        }
+        
+        webSocketClient.simulateConnectionStatus(.connecting)
+        webSocketClient.simulateConnectionStatus(.connected(connectionId: .unique))
+
+        AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
+
+        XCTAssertFalse(channelListCleanupUpdater.cleanupChannelList_called)
+        apiClient.test_simulateResponse(
+            Result<MissingEventsPayload<ExtraData>, Error>.failure(
+                ClientError(with: ErrorPayload(code: 0, message: "", statusCode: 400))
+            )
+        )
+        AssertAsync.willBeTrue(channelListCleanupUpdater.cleanupChannelList_called)
     }
     
     func test_eventsFromPayloadArePublished_ifSuccessfulResponseComes() throws {
