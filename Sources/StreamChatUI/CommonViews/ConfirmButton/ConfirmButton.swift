@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// Button for confirming actions.
-open class ChatConfirmButton: _Button, AppearanceProvider {
+open class ConfirmButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
