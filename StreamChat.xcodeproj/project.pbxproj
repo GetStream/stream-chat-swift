@@ -64,7 +64,6 @@
 		7849AE7C25F22FA8007817D4 /* ChatChannelListVC+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 780DFD0B25EF80AB00A39A6E /* ChatChannelListVC+SwiftUI_Tests.swift */; };
 		7849AF6725F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7849AF6625F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift */; };
 		7849AFEA25F258B9007817D4 /* TestsEnvironmentSetup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7849AFE925F258B9007817D4 /* TestsEnvironmentSetup.swift */; };
-		7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */; };
 		78C8473825FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C8473725FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift */; };
 		78C8474125FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C8474025FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift */; };
 		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
@@ -730,6 +729,7 @@
 		ADEA7F35261D302100CA2289 /* r2.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ADEA7F22261D2F8C00CA2289 /* r2.jpg */; };
 		ADEA7F3E261D302300CA2289 /* chewbacca.jpg in Resources */ = {isa = PBXBuildFile; fileRef = ADEA7F21261D2F8C00CA2289 /* chewbacca.jpg */; };
 		ADEB2F8025CC0B8A00EAAEB6 /* XCTestCase+TestImages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792E3DDE25CACFA80040B0C2 /* XCTestCase+TestImages.swift */; };
+		ADED4BD9264339E600F4E2C8 /* UIViewController+Extensions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */; };
 		ADF34F8A25CDC58900AD637C /* ConnectionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34F6A25CD6A1D00AD637C /* ConnectionController.swift */; };
 		ADF34F9E25CDD8E600AD637C /* ConnectionController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34F9D25CDD8E600AD637C /* ConnectionController+SwiftUI.swift */; };
 		ADF34FA625CDD8F600AD637C /* ConnectionController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADF34FA525CDD8F600AD637C /* ConnectionController+Combine.swift */; };
@@ -2297,7 +2297,9 @@
 				BDDD1E962632C4C900BA007B /* Components+Navigation.swift */,
 				BDDD1E982632C4C900BA007B /* Components+SwiftUI.swift */,
 				BDDD1E952632C4C900BA007B /* Components+SwiftUI_Tests.swift */,
+				79F691B12604C10A000AE89B /* SystemEnvironment.swift */,
 				BD4016352638411D00F09774 /* Deprecations.swift */,
+				ADED4BFC26433AFC00F4E2C8 /* Extensions */,
 				888123D0255D42F000070D5A /* Utils */,
 				888123E5255D51BD00070D5A /* CommonViews */,
 				7908830C2548707B00896F03 /* ChatMessageList */,
@@ -3630,31 +3632,10 @@
 				BDDD1EAB2632E32000BA007B /* AppearanceProvider_Tests.swift */,
 				792DD9FA256E67C6001DB91B /* ComponentsProvider.swift */,
 				795296C02582494000435B2E /* ComponentsProvider_Tests.swift */,
-				888123D1255D430B00070D5A /* UIView+Extensions.swift */,
-				E7073A6225DD67B3003896B9 /* UILabel+Extensions.swift */,
-				E70120152583EBC90036DACD /* CALayer+Extensions.swift */,
-				888123DF255D4D2100070D5A /* UIImageView+Extensions.swift */,
 				8850FE90256558B200C8D534 /* ChatRouter.swift */,
-				224FF6902562F58F00725DD1 /* UIColor+Extensions.swift */,
-				224FF6962562F5AE00725DD1 /* Bundle+Extensions.swift */,
-				AD7702F225EFE1D2004E2F10 /* DateFormatter+Extensions.swift */,
-				224FF69C2562F5D100725DD1 /* UIImage+Extensions.swift */,
-				228190EA256733420048D7C6 /* UIFont+Extensions.swift */,
-				88EF29FE2571288600B06EF1 /* Array+Extensions.swift */,
-				882AE123257A7FFE004095B3 /* UIViewController+Extensions.swift */,
-				7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */,
-				88D88F85257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift */,
-				228C7EE42583AF4800AAE9E3 /* UITextView+Extensions.swift */,
-				2241167F258A91280034184D /* String+Extensions.swift */,
-				88A11B092590AFBB0000AC24 /* ChatMessage+Extensions.swift */,
 				22C23599259CA87B00DC805A /* Animation.swift */,
 				79CCB66D259CBC4F0082F172 /* ChatChannelNamer.swift */,
 				E73262D725ED6432008CB152 /* ChatChannelNamer_Tests.swift */,
-				796CBD1B25FF9552003299B0 /* UIStackView+Extensions.swift */,
-				79F691B12604C10A000AE89B /* SystemEnvironment.swift */,
-				883051732630366E0069D731 /* CACornerMask+Extensions.swift */,
-				F6E5E3462627A372007FA51F /* CGRect+Extensions.swift */,
-				F64DFA8B26282F8B00F7F6F9 /* CGPoint+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -4180,6 +4161,57 @@
 				226C438C25802AAD008B3648 /* InputTextView.swift */,
 			);
 			path = InputTextView;
+			sourceTree = "<group>";
+		};
+		ADED4BD8264339BC00F4E2C8 /* UIKit */ = {
+			isa = PBXGroup;
+			children = (
+				796CBD1B25FF9552003299B0 /* UIStackView+Extensions.swift */,
+				888123D1255D430B00070D5A /* UIView+Extensions.swift */,
+				224FF6902562F58F00725DD1 /* UIColor+Extensions.swift */,
+				E7073A6225DD67B3003896B9 /* UILabel+Extensions.swift */,
+				224FF69C2562F5D100725DD1 /* UIImage+Extensions.swift */,
+				888123DF255D4D2100070D5A /* UIImageView+Extensions.swift */,
+				228190EA256733420048D7C6 /* UIFont+Extensions.swift */,
+				882AE123257A7FFE004095B3 /* UIViewController+Extensions.swift */,
+				7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */,
+				228C7EE42583AF4800AAE9E3 /* UITextView+Extensions.swift */,
+				88D88F85257F9AA700AFE2A2 /* NSLayoutConstraint+Extensions.swift */,
+				E70120152583EBC90036DACD /* CALayer+Extensions.swift */,
+				883051732630366E0069D731 /* CACornerMask+Extensions.swift */,
+				F6E5E3462627A372007FA51F /* CGRect+Extensions.swift */,
+				F64DFA8B26282F8B00F7F6F9 /* CGPoint+Extensions.swift */,
+			);
+			path = UIKit;
+			sourceTree = "<group>";
+		};
+		ADED4BFA26433A8500F4E2C8 /* Foundation */ = {
+			isa = PBXGroup;
+			children = (
+				224FF6962562F5AE00725DD1 /* Bundle+Extensions.swift */,
+				88EF29FE2571288600B06EF1 /* Array+Extensions.swift */,
+				2241167F258A91280034184D /* String+Extensions.swift */,
+				AD7702F225EFE1D2004E2F10 /* DateFormatter+Extensions.swift */,
+			);
+			path = Foundation;
+			sourceTree = "<group>";
+		};
+		ADED4BFB26433A9100F4E2C8 /* StreamChat */ = {
+			isa = PBXGroup;
+			children = (
+				88A11B092590AFBB0000AC24 /* ChatMessage+Extensions.swift */,
+			);
+			path = StreamChat;
+			sourceTree = "<group>";
+		};
+		ADED4BFC26433AFC00F4E2C8 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				ADED4BFB26433A9100F4E2C8 /* StreamChat */,
+				ADED4BD8264339BC00F4E2C8 /* UIKit */,
+				ADED4BFA26433A8500F4E2C8 /* Foundation */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 		ADF34F6925CD6A0100AD637C /* ConnectionController */ = {
@@ -5159,6 +5191,7 @@
 				AD4473B3263ABFA20030E583 /* ChatSuggestionsCollectionReusableView.swift in Sources */,
 				88CABC1525933DD80061BB67 /* ChatMessageReactionsView+ItemView.swift in Sources */,
 				224FF6812562F2E900725DD1 /* ChatChannelUnreadCountView.swift in Sources */,
+				ADED4BD9264339E600F4E2C8 /* UIViewController+Extensions_Tests.swift in Sources */,
 				F6E5E3472627A372007FA51F /* CGRect+Extensions.swift in Sources */,
 				E7DF7E2425C2C67E00AE9D21 /* ChatAvatarView.swift in Sources */,
 				79FA4A7A263BFCE200EC33DA /* AttachmentViewInjector.swift in Sources */,
@@ -5263,7 +5296,6 @@
 				E76B2F0425F23EE200E57112 /* CustomUIViewSubclasses.swift in Sources */,
 				795296C12582494000435B2E /* ComponentsProvider_Tests.swift in Sources */,
 				225503B825DC59FD00A5A65A /* Helpers.swift in Sources */,
-				7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */,
 				792057AC264168A6002B145B /* UITestsEnvironmentSetup.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
