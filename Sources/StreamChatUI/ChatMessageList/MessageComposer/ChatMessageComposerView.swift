@@ -12,7 +12,7 @@ import UIKit
 /// |---------------------------------------------------------|
 /// |                       headerView                        |
 /// |---------------------------------------------------------|--|
-/// | leadingContainer | messageInputView | trailingContainer |  | = centerContainer
+/// | leadingContainer | inputMessageView | trailingContainer |  | = centerContainer
 /// |---------------------------------------------------------|--|
 /// |                     bottomContainer                     |
 /// |---------------------------------------------------------|
@@ -26,7 +26,7 @@ public typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
 /// |---------------------------------------------------------|
 /// |                       headerView                        |
 /// |---------------------------------------------------------|--|
-/// | leadingContainer | messageInputView | trailingContainer |  | = centerContainer
+/// | leadingContainer | inputMessageView | trailingContainer |  | = centerContainer
 /// |---------------------------------------------------------|--|
 /// |                     bottomContainer                     |
 /// |---------------------------------------------------------|
@@ -57,8 +57,8 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         .withoutAutoresizingMaskConstraints
 
     /// A view to to input content of the new message.
-    public private(set) lazy var messageInputView = components
-        .messageInputView.init()
+    public private(set) lazy var inputMessageView: _InputChatMessageView<ExtraData> = components
+        .inputMessageView.init()
         .withoutAutoresizingMaskConstraints
 
     /// A button to send the message.
@@ -140,7 +140,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         centerContainer.alignment = .fill
         centerContainer.spacing = .auto
         centerContainer.addArrangedSubview(leadingContainer)
-        centerContainer.addArrangedSubview(messageInputView)
+        centerContainer.addArrangedSubview(inputMessageView)
         centerContainer.addArrangedSubview(trailingContainer)
 
         trailingContainer.alignment = .center
