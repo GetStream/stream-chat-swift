@@ -193,11 +193,6 @@ extension DatabaseSessionMock {
         return try underlyingSession.saveAttachment(payload: payload, id: id)
     }
     
-    func createNewAttachment(seed: ChatMessageAttachmentSeed, id: AttachmentId) throws -> AttachmentDTO {
-        try throwErrorIfNeeded()
-        return try underlyingSession.createNewAttachment(seed: seed, id: id)
-    }
-    
     func createNewAttachment(attachment: AttachmentEnvelope, id: AttachmentId) throws -> AttachmentDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.createNewAttachment(attachment: attachment, id: id)

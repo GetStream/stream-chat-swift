@@ -7,18 +7,36 @@ import UIKit
 
 public typealias ChatDocumentAttachmentView = _ChatDocumentAttachmentView<NoExtraData>
 
-open class _ChatDocumentAttachmentView<ExtraData: ExtraDataTypes>: _ChatMessageAttachmentInfoView<ExtraData> {
+open class _ChatDocumentAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     // MARK: - Properties
     
     public var discardButtonHandler: (() -> Void)?
     
     // MARK: - Subviews
 
-    public private(set) lazy var fileIconImageView: UIImageView = {
-        let imageView = UIImageView().withoutAutoresizingMaskConstraints
-        imageView.contentMode = .center
-        return imageView
+    public private(set) lazy var fileNameLabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withBidirectionalLanguagesSupport
+        .withAdjustingFontForContentSizeCategory
+
+    public private(set) lazy var fileSizeLabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withBidirectionalLanguagesSupport
+        .withAdjustingFontForContentSizeCategory
+
+    public private(set) lazy var actionIconImageView = UIImageView()
+        .withoutAutoresizingMaskConstraints
+
+    public private(set) lazy var fileNameAndSizeStack: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [fileNameLabel, fileSizeLabel])
+        stack.axis = .vertical
+        stack.alignment = .leading
+        stack.spacing = 3
+        return stack.withoutAutoresizingMaskConstraints
     }()
+
+    public private(set) lazy var fileIconImageView = UIImageView()
+        .withoutAutoresizingMaskConstraints
 
     // MARK: - Overrides
     
@@ -36,9 +54,14 @@ open class _ChatDocumentAttachmentView<ExtraData: ExtraDataTypes>: _ChatMessageA
         layer.masksToBounds = true
         layer.borderWidth = 1
         layer.borderColor = appearance.colorPalette.border.cgColor
-        
+
+        fileIconImageView.contentMode = .center
+
         fileSizeLabel.textColor = appearance.colorPalette.subtitleText
+        fileSizeLabel.font = appearance.fonts.subheadlineBold
+
         fileNameLabel.textColor = appearance.colorPalette.text
+        fileNameLabel.font = appearance.fonts.bodyBold
         
         actionIconImageView.image = appearance.images.messageComposerDiscardAttachment
     }
@@ -68,10 +91,6 @@ open class _ChatDocumentAttachmentView<ExtraData: ExtraDataTypes>: _ChatMessageA
             fileNameAndSizeStack.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
             fileNameAndSizeStack.bottomAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor)
         ])
-    }
-    
-    override open func updateContent() {
-        loadingIndicator.isVisible = false
     }
     
     @objc func discard() {

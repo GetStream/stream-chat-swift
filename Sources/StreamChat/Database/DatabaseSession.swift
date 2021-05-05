@@ -117,7 +117,6 @@ extension MessageDatabaseSession {
         pinning: MessagePinning?,
         quotedMessageId: MessageId?,
         attachments: [AttachmentEnvelope] = [],
-        attachmentSeeds: [ChatMessageAttachmentSeed] = [],
         extraData: ExtraData = .defaultValue
     ) throws -> MessageDTO {
         try createNewMessage(
@@ -217,14 +216,6 @@ protocol AttachmentDatabaseSession {
     @discardableResult
     func saveAttachment(
         payload: AttachmentPayload,
-        id: AttachmentId
-    ) throws -> AttachmentDTO
-    
-    /// Creates a new `AttachmentDTO` object in the database from the given model for the message
-    /// with the given `messageId` in the channel with the given `cid`.
-    @discardableResult
-    func createNewAttachment(
-        seed: ChatMessageAttachmentSeed,
         id: AttachmentId
     ) throws -> AttachmentDTO
     

@@ -29,18 +29,13 @@ extension AttachmentPayload {
         return try! JSONDecoder.default.decode(AttachmentPayload.self, from: data)
     }
     
-    var decodedDefaultAttachment: ChatMessageDefaultAttachment? {
+    var decodedImagePayload: AttachmentImagePayload? {
         let data = try! JSONEncoder.stream.encode(payload)
-        return try? JSONDecoder.stream.decode(ChatMessageDefaultAttachment.self, from: data)
+        return try? JSONDecoder.stream.decode(AttachmentImagePayload.self, from: data)
     }
     
-    var decodedImageAttachment: ChatMessageImageAttachment? {
+    var decodedGiphyPayload: AttachmentGiphyPayload? {
         let data = try! JSONEncoder.stream.encode(payload)
-        return try? JSONDecoder.stream.decode(ChatMessageImageAttachment.self, from: data)
-    }
-    
-    var decodedGiphyAttachment: ChatMessageGiphyAttachment? {
-        let data = try! JSONEncoder.stream.encode(payload)
-        return try? JSONDecoder.stream.decode(ChatMessageGiphyAttachment.self, from: data)
+        return try? JSONDecoder.stream.decode(AttachmentGiphyPayload.self, from: data)
     }
 }

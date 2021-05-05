@@ -44,7 +44,6 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var createNewMessage_command: String?
     @Atomic var createNewMessage_arguments: String?
     @Atomic var createNewMessage_attachments: [AttachmentEnvelope]?
-    @Atomic var createNewMessage_attachmentSeeds: [ChatMessageAttachmentSeed]?
     @Atomic var createNewMessage_quotedMessageId: MessageId?
     @Atomic var createNewMessage_pinning: MessagePinning?
     @Atomic var createNewMessage_extraData: ExtraData.Message?
@@ -105,7 +104,6 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         createNewMessage_command = nil
         createNewMessage_arguments = nil
         createNewMessage_attachments = nil
-        createNewMessage_attachmentSeeds = nil
         createNewMessage_extraData = nil
         createNewMessage_completion = nil
         

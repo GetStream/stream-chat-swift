@@ -645,12 +645,7 @@ final class MessageController_Tests: StressTestCase {
         let showReplyInChannel = true
         let quotedMessageId: MessageId = .unique
         let extraData: NoExtraData = .defaultValue
-        let attachments: [TestAttachmentEnvelope] = [.init(), .init(), .init()]
-        let attachmentSeeds: [ChatMessageAttachmentSeed] = [
-            .dummy(),
-            .dummy(),
-            .dummy()
-        ]
+        let attachments: [AttachmentEnvelope] = [.mockFile, .mockImage, .init(payload: TestAttachmentPayload.unique)]
         let pin = MessagePinning(expirationDate: .unique)
 
         // Simulate `createNewReply` calls and catch the completion
@@ -660,7 +655,7 @@ final class MessageController_Tests: StressTestCase {
             pinning: pin,
 //            command: command,
 //            arguments: arguments,
-            attachments: attachments + attachmentSeeds,
+            attachments: attachments,
             showReplyInChannel: showReplyInChannel,
             quotedMessageId: quotedMessageId,
             extraData: extraData
@@ -686,14 +681,7 @@ final class MessageController_Tests: StressTestCase {
         XCTAssertEqual(env.messageUpdater.createNewReply_parentMessageId, messageId)
         XCTAssertEqual(env.messageUpdater.createNewReply_showReplyInChannel, showReplyInChannel)
         XCTAssertEqual(env.messageUpdater.createNewReply_extraData, extraData)
-        XCTAssertEqual(
-            env.messageUpdater.createNewReply_attachments?.compactMap { $0 as? TestAttachmentEnvelope },
-            attachments
-        )
-        XCTAssertEqual(
-            env.messageUpdater.createNewReply_attachments?.compactMap { $0 as? ChatMessageAttachmentSeed },
-            attachmentSeeds
-        )
+        XCTAssertEqual(env.messageUpdater.createNewReply_attachments, attachments)
         XCTAssertEqual(env.messageUpdater.createNewReply_quotedMessageId, quotedMessageId)
         
         // Simulate successful update

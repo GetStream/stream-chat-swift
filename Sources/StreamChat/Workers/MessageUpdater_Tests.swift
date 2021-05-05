@@ -395,14 +395,17 @@ final class MessageUpdater_Tests: StressTestCase {
         let showReplyInChannel = true
         let command: String = .unique
         let arguments: String = .unique
-        let attachments: [TestAttachmentEnvelope] = [.init(), .init(), .init()]
-        let attachmentSeeds: [ChatMessageAttachmentSeed] = [
-            .dummy(),
-            .dummy(),
-            .dummy()
-        ]
         let extraData: NoExtraData = .defaultValue
-        
+
+        let imageAttachmentEnvelope = AttachmentEnvelope.mockImage
+        let fileAttachmentEnvelope = AttachmentEnvelope.mockFile
+        let customAttachmentEnvelope = AttachmentEnvelope(payload: TestAttachmentPayload.unique)
+        let attachmentEnvelopes: [AttachmentEnvelope] = [
+            imageAttachmentEnvelope,
+            fileAttachmentEnvelope,
+            customAttachmentEnvelope
+        ]
+
         // Create new reply message
         let newMessageId: MessageId = try await { completion in
             messageUpdater.createNewReply(
@@ -412,7 +415,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 command: command,
                 arguments: arguments,
                 parentMessageId: parentMessageId,
-                attachments: attachments + attachmentSeeds,
+                attachments: attachmentEnvelopes,
                 showReplyInChannel: showReplyInChannel,
                 quotedMessageId: nil,
                 extraData: extraData
@@ -424,31 +427,28 @@ final class MessageUpdater_Tests: StressTestCase {
                 }
             }
         }
-        
-        var message: ChatMessage? {
-            database.viewContext.message(id: newMessageId)?.asModel()
+
+        func id(for envelope: AttachmentEnvelope) -> AttachmentId {
+            .init(cid: cid, messageId: newMessageId, index: attachmentEnvelopes.firstIndex(of: envelope)!)
         }
         
-        AssertAsync {
-            Assert.willBeEqual(message?.text, text)
-            Assert.willBeEqual(message?.command, command)
-            Assert.willBeEqual(message?.arguments, arguments)
-            Assert.willBeEqual(message?.parentMessageId, parentMessageId)
-            Assert.willBeEqual(message?.showReplyInChannel, showReplyInChannel)
-            Assert.willBeEqual(
-                isAttachmentModelSeparationChangesApplied ?
-                    message?.attachments.compactMap { ($0 as? ChatMessageImageAttachment)?.title } :
-                    message?.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
-                attachmentSeeds.map(\.fileName)
-            )
-            Assert.willBeEqual(
-                message?.attachments.compactMap { ($0 as? ChatMessageRawAttachment)?.data },
-                attachments.map { try? JSONEncoder.stream.encode($0) }
-            )
-            Assert.willBeEqual(message?.extraData, extraData)
-            Assert.willBeEqual(message?.localState, .pendingSend)
-            Assert.willBeTrue(message!.isPinned)
-        }
+        let message: ChatMessage = try XCTUnwrap(database.viewContext.message(id: newMessageId)?.asModel())
+        
+        XCTAssertEqual(message.text, text)
+        XCTAssertEqual(message.command, command)
+        XCTAssertEqual(message.arguments, arguments)
+        XCTAssertEqual(message.parentMessageId, parentMessageId)
+        XCTAssertEqual(message.showReplyInChannel, showReplyInChannel)
+        XCTAssertEqual(message.attachments.count, 3)
+        XCTAssertEqual(message.imageAttachments, [imageAttachmentEnvelope.attachment(id: id(for: imageAttachmentEnvelope))])
+        XCTAssertEqual(message.fileAttachments, [fileAttachmentEnvelope.attachment(id: id(for: fileAttachmentEnvelope))])
+        XCTAssertEqual(
+            message.attachments(payloadType: TestAttachmentPayload.self),
+            [customAttachmentEnvelope.attachment(id: id(for: customAttachmentEnvelope))]
+        )
+        XCTAssertEqual(message.extraData, extraData)
+        XCTAssertEqual(message.localState, .pendingSend)
+        XCTAssertTrue(message.isPinned)
     }
     
     func test_createNewMessage_propagatesErrorWhenSavingFails() throws {
@@ -1127,7 +1127,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Create attachment in database.
         try database.writeSynchronously {
             try $0.createNewAttachment(
-                seed: ChatMessageAttachmentSeed.dummy(),
+                attachment: .mockFile,
                 id: attachmentId
             )
         }
@@ -1168,7 +1168,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
             let attachmentDTO = try $0.createNewAttachment(
-                seed: ChatMessageAttachmentSeed.dummy(),
+                attachment: .mockFile,
                 id: attachmentId
             )
             attachmentDTO.localState = .uploadingFailed
@@ -1199,7 +1199,7 @@ final class MessageUpdater_Tests: StressTestCase {
         // Create attachment in database in `.uploadingFailed` state.
         try database.writeSynchronously {
             let attachmentDTO = try $0.createNewAttachment(
-                seed: ChatMessageAttachmentSeed.dummy(),
+                attachment: .mockFile,
                 id: attachmentId
             )
             attachmentDTO.localState = .uploadingFailed

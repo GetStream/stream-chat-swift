@@ -168,7 +168,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> _AttachmentViewInjector<ExtraData>.Type? {
-        if messageForIndexPath(indexPath).attachments.contains(where: { $0 is ChatMessageImageAttachment }) {
+        if messageForIndexPath(indexPath).imageAttachments.isEmpty == false {
             return components.galleryAttachmentInjector
         }
         return nil
@@ -322,47 +322,16 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     /// Restarts upload of given `attachment` in case of failure
-    open func restartUploading(for attachment: ChatMessageDefaultAttachment) {
-        guard let id = attachment.id else {
-            log.error("Uploading cannot be restarted for attachment without `id`")
-            return
-        }
-
+    open func restartUploading(for attachmentId: AttachmentId) {
         channelController.client
-            .messageController(cid: id.cid, messageId: id.messageId)
-            .restartFailedAttachmentUploading(with: id)
+            .messageController(cid: attachmentId.cid, messageId: attachmentId.messageId)
+            .restartFailedAttachmentUploading(with: attachmentId)
     }
 
     // MARK: - Cell action handlers
 
     open func didTapOnImageAttachment(_ attachment: ChatMessageImageAttachment, at indexPath: IndexPath) {
-        router.showPreview(for: attachment)
-    }
-
-    /// Handles the tap on an attachment.
-    ///
-    /// Default implementation tries to restart the upload in case of failure.
-    /// If the attachment is correctly uploaded and displayed
-    /// then for image or file it shows the preview.
-    /// For link it tries to open it.
-    open func handleTapOnAttachment(_ attachment: ChatMessageAttachment, forCellAt indexPath: IndexPath) {
-        guard let attachment = attachment as? ChatMessageDefaultAttachment else {
-            return
-        }
-
-        guard attachment.localState != .uploadingFailed else {
-            restartUploading(for: attachment)
-            return
-        }
-
-        switch attachment.type {
-        case .file:
-            router.showPreview(for: attachment)
-        case .link:
-            router.openLink(attachment)
-        default:
-            break
-        }
+        router.showPreview(for: attachment.payload?.imageURL)
     }
 
     /// Executes the provided action on the message

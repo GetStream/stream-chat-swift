@@ -60,7 +60,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send without attachments",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -71,10 +70,10 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send with attachments",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [
-                    ChatMessageAttachmentSeed.dummy(),
-                    ChatMessageAttachmentSeed.dummy(),
-                    ChatMessageAttachmentSeed.dummy()
+                attachments: [
+                    .mockFile,
+                    .mockImage,
+                    .mockFile
                 ],
                 extraData: ExtraData.Message.defaultValue
             )
@@ -86,7 +85,7 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message without local state",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
+                attachments: [],
                 extraData: ExtraData.Message.defaultValue
             )
             message3Id = message3.id
@@ -151,7 +150,10 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachments: [TestAttachmentEnvelope(), TestAttachmentEnvelope()],
+                attachments: [
+                    .init(payload: TestAttachmentPayload.unique),
+                    .init(payload: TestAttachmentPayload.unique)
+                ],
                 extraData: ExtraData.Message.defaultValue
             )
             message.localMessageState = .pendingSend
@@ -167,7 +169,7 @@ class MessageSender_Tests: StressTestCase {
         }))
     }
     
-    func test_sender_sendsMessage_withBothAttachmentSeedsAndUploadedAttachments() throws {
+    func test_sender_sendsMessage_withBothNotUploadableAttachmentAndUploadedAttachments() throws {
         var messageId: MessageId!
         
         try database.writeSynchronously { session in
@@ -176,8 +178,10 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachments: [TestAttachmentEnvelope(), TestAttachmentEnvelope()],
-                attachmentSeeds: [.dummy()],
+                attachments: [
+                    .mockImage,
+                    .init(payload: TestAttachmentPayload.unique)
+                ],
                 extraData: ExtraData.Message.defaultValue
             )
             message.localMessageState = .pendingSend
@@ -191,7 +195,10 @@ class MessageSender_Tests: StressTestCase {
         // Simulate attachment seed uploaded
         try database.writeSynchronously { session in
             let message = try XCTUnwrap(session.message(id: messageId))
-            message.attachments.forEach { $0.localState = .uploaded }
+            message.attachments.forEach {
+                guard $0.localURL != nil else { return }
+                $0.localState = .uploaded
+            }
         }
         
         AssertAsync {
@@ -211,7 +218,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -242,7 +248,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -272,7 +277,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send 1",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message1.localMessageState = .pendingSend
@@ -283,7 +287,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send 2",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message2.localMessageState = .pendingSend
@@ -294,7 +297,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send 3",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message3.localMessageState = .pendingSend
@@ -362,7 +364,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Channel A message 1",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageA1.localMessageState = .pendingSend
@@ -373,7 +374,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Channel A message 2",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageA2.localMessageState = .pendingSend
@@ -384,7 +384,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Channel B message 1",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageB1.localMessageState = .pendingSend
@@ -395,7 +394,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Channel B message 2",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             messageB2.localMessageState = .pendingSend
@@ -459,7 +457,6 @@ class MessageSender_Tests: StressTestCase {
                 text: "Message pending send",
                 pinning: nil,
                 quotedMessageId: nil,
-                attachmentSeeds: [ChatMessageAttachmentSeed](),
                 extraData: ExtraData.Message.defaultValue
             )
             message.localMessageState = .pendingSend
@@ -479,19 +476,15 @@ class MessageSender_Tests: StressTestCase {
         )
         
         callback(.success(.init(message: messagePayload)))
-        
-        // Check the changes are reflected in DB
-        if isAttachmentModelSeparationChangesApplied {
-            AssertAsync.willBeEqual(
-                (database.viewContext.message(id: messageId)?.attachments.first?.asModel() as? ChatMessageGiphyAttachment)?.title,
-                attachment.decodedGiphyAttachment?.title
-            )
-        } else {
-            AssertAsync.willBeEqual(
-                (database.viewContext.message(id: messageId)?.attachments.first?.asModel() as? ChatMessageDefaultAttachment)?.title,
-                attachment.decodedDefaultAttachment?.title
-            )
+
+        var message: _ChatMessage<ExtraData>? {
+            database.viewContext.message(id: messageId)?.asModel()
         }
+
+        AssertAsync.willBeEqual(
+            message?.giphyAttachments.first?.payload,
+            attachment.decodedGiphyPayload
+        )
     }
     
     // MARK: - Life cycle tests

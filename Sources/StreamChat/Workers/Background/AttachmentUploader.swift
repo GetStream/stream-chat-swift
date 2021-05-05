@@ -71,15 +71,15 @@ class AttachmentUploader: Worker {
             else { return }
 
             guard
-                let attachment = session.attachment(id: attachmentID)?.asAttachmentSeed(),
-                attachment.localState == .pendingUpload
+                let attachment = session.attachment(id: attachmentID)?.asAnyModel(),
+                let uploadingState = attachment.uploadingState
             else {
                 self?.removeAttachmentIDAndContinue(attachmentID)
                 return
             }
 
             guard
-                let fileData = try? Data(contentsOf: attachment.localURL)
+                let fileData = try? Data(contentsOf: uploadingState.localFileURL)
             else {
                 self?.updateAttachmentIfNeeded(
                     attachmentID,
@@ -91,12 +91,10 @@ class AttachmentUploader: Worker {
                 return
             }
 
-            let fileType = AttachmentFileType(ext: attachment.localURL.pathExtension)
-
             let multipartFormData = MultipartFormData(
                 fileData,
-                fileName: attachment.fileName,
-                mimeType: fileType.mimeType
+                fileName: uploadingState.localFileURL.lastPathComponent,
+                mimeType: uploadingState.localFileURL.attachmentFile?.type.mimeType
             )
 
             self?.apiClient.uploadFile(
@@ -114,47 +112,7 @@ class AttachmentUploader: Worker {
                         newState: result.error == nil ? .uploaded : .uploadingFailed,
                         attachmentUpdates: { attachmentDTO in
                             guard case let .success(payload) = result else { return }
-                            guard
-                                let data = attachmentDTO.data
-                            else {
-                                log.error(
-                                    "Error modifying existing attachment with id: \(attachmentDTO.attachmentID)" +
-                                        "after successful upload."
-                                )
-                                return
-                            }
-                            if isAttachmentModelSeparationChangesApplied {
-                                switch attachmentDTO.type {
-                                case AttachmentType.image.rawValue:
-                                    var imageAttachment = try? JSONDecoder.default.decode(
-                                        ChatMessageImageAttachment.self,
-                                        from: data
-                                    )
-                                    imageAttachment?.imageURL = payload.file
-                                    attachmentDTO.data = try? JSONEncoder.stream.encode(imageAttachment)
-                                default:
-                                    var fileAttachment = try? JSONDecoder.default.decode(ChatMessageFileAttachment.self, from: data)
-                                    fileAttachment?.assetURL = payload.file
-                                    attachmentDTO.data = try? JSONEncoder.stream.encode(fileAttachment)
-                                }
-                            } else {
-                                switch attachmentDTO.type {
-                                case AttachmentType.image.rawValue:
-                                    var imageAttachment = try? JSONDecoder.default.decode(
-                                        ChatMessageDefaultAttachment.self,
-                                        from: data
-                                    )
-                                    imageAttachment?.imageURL = payload.file
-                                    attachmentDTO.data = try? JSONEncoder.stream.encode(imageAttachment)
-                                default:
-                                    var fileAttachment = try? JSONDecoder.default.decode(
-                                        ChatMessageDefaultAttachment.self,
-                                        from: data
-                                    )
-                                    fileAttachment?.url = payload.file
-                                    attachmentDTO.data = try? JSONEncoder.stream.encode(fileAttachment)
-                                }
-                            }
+                            attachmentDTO.update(uploadedFileURL: payload.file)
                         },
                         completion: {
                             self?.removeAttachmentIDAndContinue(attachmentID)

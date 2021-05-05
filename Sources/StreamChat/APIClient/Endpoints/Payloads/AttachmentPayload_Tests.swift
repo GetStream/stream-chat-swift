@@ -11,9 +11,10 @@ final class AttachmentPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(AttachmentPayload.self, from: json)
                 
         let expectedRawJSON = try JSONDecoder.default.decode(RawJSON.self, from: json)
+            .dictionary(with: nil, forKey: "type")
         
         // Assert `AttachmentPayload` is deserialized correctly.
-        XCTAssertTrue(payload.type.isLink)
+        XCTAssertEqual(payload.type, .linkPreview)
         XCTAssertEqual(payload.payload, expectedRawJSON)
     }
     
@@ -21,7 +22,9 @@ final class AttachmentPayload_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromFile: "AttachmentPayloadImage", extension: "json")
         let payload = try JSONDecoder.default.decode(AttachmentPayload.self, from: json)
                 
-        let expectedRawJSON = try JSONDecoder.default.decode(RawJSON.self, from: json)
+        let expectedRawJSON = try JSONDecoder.default
+            .decode(RawJSON.self, from: json)
+            .dictionary(with: nil, forKey: "type")
         
         // Assert `AttachmentPayload` is deserialized correctly.
         XCTAssertEqual(payload.type, .image)
@@ -32,10 +35,12 @@ final class AttachmentPayload_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromFile: "AttachmentPayloadCustom", extension: "json")
         let payload = try JSONDecoder.default.decode(AttachmentPayload.self, from: json)
                 
-        let expectedRawJSON = try JSONDecoder.default.decode(RawJSON.self, from: json)
+        let expectedRawJSON = try JSONDecoder.default
+            .decode(RawJSON.self, from: json)
+            .dictionary(with: nil, forKey: "type")
         
         // Assert `AttachmentPayload` is deserialized correctly.
-        XCTAssertEqual(payload.type, .custom("party_invite"))
+        XCTAssertEqual(payload.type, "party_invite")
         XCTAssertEqual(payload.payload, expectedRawJSON)
     }
 }

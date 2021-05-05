@@ -10,9 +10,11 @@ public typealias ChatMessageImageGallery = _ChatMessageImageGallery<NoExtraData>
 open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     open var interItemSpacing: CGFloat = 2
 
-    public var content: _ChatMessageAttachmentListViewData<ExtraData>? {
+    public var content: [ChatMessageImageAttachment] = [] {
         didSet { updateContentIfNeeded() }
     }
+
+    public var didTapOnAttachment: ((ChatMessageImageAttachment) -> Void)?
 
     // MARK: - Subviews
 
@@ -116,9 +118,8 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProv
     }
 
     override open func updateContent() {
-        let items = content?.items
         for (index, itemPreview) in previews.enumerated() {
-            itemPreview.content = items?[safe: index]
+            itemPreview.content = content[safe: index]
             itemPreview.isHidden = itemPreview.content == nil
         }
 
@@ -126,7 +127,7 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProv
         layouts.flatMap { $0 }.forEach { $0.isActive = false }
         layouts[max(visiblePreviewsCount - 1, 0)].forEach { $0.isActive = true }
 
-        let otherImagesCount = (content?.attachments.count ?? 0) - previews.count
+        let otherImagesCount = content.count - previews.count
         moreImagesOverlay.isHidden = otherImagesCount <= 0
         moreImagesOverlay.text = "+\(otherImagesCount)"
     }
@@ -134,12 +135,18 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProv
     // MARK: - Private
 
     private func createImagePreview() -> ImagePreview {
-        components
+        let preview = components
             .messageList
             .messageContentSubviews
             .attachmentSubviews
             .imageGalleryItem
             .init()
             .withoutAutoresizingMaskConstraints
+
+        preview.didTapOnAttachment = { [weak self] in
+            self?.didTapOnAttachment?($0)
+        }
+
+        return preview
     }
 }

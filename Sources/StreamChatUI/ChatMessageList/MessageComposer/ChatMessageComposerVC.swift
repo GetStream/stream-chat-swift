@@ -224,7 +224,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             messageController?.createNewReply(
                 text: text,
                 pinning: nil,
-                attachments: attachments + attachmentSeeds,
+                attachments: attachments + attachments,
                 showReplyInChannel: composerView.checkboxControl.isSelected,
                 quotedMessageId: quotedMessageId
             )
@@ -232,7 +232,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             controller?.createNewMessage(
                 text: text,
                 pinning: nil,
-                attachments: attachments + attachmentSeeds,
+                attachments: attachments + self.attachments,
                 quotedMessageId: quotedMessageId
             )
         }
@@ -341,10 +341,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     // MARK: Attachments
-    
-    public typealias MediaAttachmentInfo = (preview: UIImage, localURL: URL)
-    public typealias DocumentAttachmentInfo = (preview: UIImage, localURL: URL, size: Int64)
-    
+
     public enum SelectedAttachments {
         case media, documents
     }
@@ -357,44 +354,34 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
     
-    open var imageAttachments: [MediaAttachmentInfo] = [] {
+    open var imageAttachments: [URL] = [] {
         didSet {
             didUpdateImageAttachments()
         }
     }
     
-    open var documentAttachments: [DocumentAttachmentInfo] = [] {
+    open var documentAttachments: [URL] = [] {
         didSet {
             didUpdateDocumentAttachments()
         }
     }
     
-    open var attachmentSeeds: [ChatMessageAttachmentSeed] {
+    open var attachments: [AttachmentEnvelope] {
         switch selectedAttachments {
         case .media:
-            return imageAttachments.map {
-                .init(
-                    localURL: $0.localURL,
-                    type: .image
-                )
-            }
+            return imageAttachments.compactMap(AttachmentEnvelope.init)
         case .documents:
-            return documentAttachments.map {
-                .init(
-                    localURL: $0.localURL,
-                    type: .file
-                )
-            }
+            return documentAttachments.compactMap(AttachmentEnvelope.init)
         case .none:
             return []
         }
     }
-    
+
     func didUpdateImageAttachments() {
-        composerView.imageAttachmentsView.content = imageAttachments
-            .map {
-                ImageAttachmentPreview(image: $0.preview)
-            }
+        composerView.imageAttachmentsView.content = imageAttachments.compactMap {
+            guard let preview = UIImage(contentsOfFile: $0.path) else { return nil }
+            return ImageAttachmentPreview(image: preview)
+        }
         Animate {
             self.composerView.imageAttachmentsView.isHidden = self.imageAttachments.isEmpty
         }
@@ -403,7 +390,12 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     func didUpdateDocumentAttachments() {
         composerView.documentAttachmentsView.documents = documentAttachments.map {
-            ($0.preview, $0.localURL.lastPathComponent, $0.size)
+            let filePreview = appearance.images.documentPreviews[$0.pathExtension]
+            return (
+                filePreview ?? appearance.images.fileFallback,
+                $0.lastPathComponent,
+                $0.attachmentFile?.size ?? 0
+            )
         }
         Animate {
             self.composerView.documentAttachmentsView.isHidden = self.documentAttachments.isEmpty
@@ -537,24 +529,17 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
         guard
-            let preview = info[.originalImage] as? UIImage,
             let url = info[UIImagePickerController.InfoKey.imageURL] as? URL
         else { return }
-        
-        imageAttachments.append((preview, url))
+
+        imageAttachments.append(url)
         picker.dismiss(animated: true, completion: nil)
     }
     
     // MARK: - UIDocumentPickerViewControllerDelegate
     
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let documentsInfo: [DocumentAttachmentInfo] = urls.map {
-            let preview = appearance.images.documentPreviews[$0.pathExtension] ?? appearance.images.fileFallback
-            let size = (try? FileManager.default.attributesOfItem(atPath: $0.path)[.size] as? Int64) ?? 0
-            return (preview, $0, size)
-        }
-        
-        documentAttachments.append(contentsOf: documentsInfo)
+        documentAttachments.append(contentsOf: urls)
     }
 }
 

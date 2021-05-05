@@ -8,9 +8,11 @@ import UIKit
 public typealias ChatMessageInteractiveAttachmentView = _ChatMessageInteractiveAttachmentView<NoExtraData>
 
 open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
-    public var content: _ChatMessageAttachmentListViewData<ExtraData>.ItemData? {
+    public var content: ChatMessageGiphyAttachment? {
         didSet { updateContentIfNeeded() }
     }
+
+    public var didTapOnAction: ((AttachmentAction) -> Void)?
 
     // MARK: - Subviews
 
@@ -84,15 +86,13 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
     }
 
     override open func updateContent() {
-        preview.content = content?.attachment
+        preview.content = content
 
-        titleLabel.text = "\"" + (content?.attachment.title ?? "") + "\""
+        titleLabel.text = "\"" + (content?.payload?.title ?? "") + "\""
 
-        actionsStackView.arrangedSubviews.forEach {
-            $0.removeFromSuperview()
-        }
-
-        content?.attachment.actions
+        actionsStackView.removeAllArrangedSubviews()
+        
+        (content?.payload?.actions ?? [])
             .map(createActionButton)
             .forEach(actionsStackView.addArrangedSubview)
     }
@@ -107,9 +107,11 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
             .interactiveAttachmentActionButton
             .init()
 
-        button.content = .init(action: action) { [weak self] in
-            self?.content?.didTapOnAttachmentAction(action)
+        button.didTap = { [weak self] in
+            self?.didTapOnAction?(action)
         }
+
+        button.content = action
 
         return button
     }

@@ -49,14 +49,16 @@ final class AttachmentUploader_Tests: StressTestCase {
         // Create message in the database.
         try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
 
-        for (index, attachmentType) in [AttachmentType.image, .file].enumerated() {
-            let localURL = Bundle(for: MockNetworkURLProtocol.self).url(forResource: "FileUploadPayload", withExtension: "json")!
-            let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: index)
-            let attachmentSeed = ChatMessageAttachmentSeed.dummy(localURL: localURL, type: attachmentType)
+        let attachmentEnvelopes: [AttachmentEnvelope] = [
+            .mockFile,
+            .mockImage
+        ]
 
+        for (index, envelope) in attachmentEnvelopes.enumerated() {
+            let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: index)
             // Seed attachment in `.pendingUpload` state to the database.
             try database.writeSynchronously { session in
-                try session.createNewAttachment(seed: attachmentSeed, id: attachmentId)
+                try session.createNewAttachment(attachment: envelope, id: attachmentId)
             }
 
             // Load attachment from the database.
@@ -68,7 +70,7 @@ final class AttachmentUploader_Tests: StressTestCase {
             // Wait attachment uploading begins.
             AssertAsync.willBeEqual(
                 apiClient.uploadFile_endpoint.flatMap(AnyEndpoint.init),
-                AnyEndpoint(.uploadAttachment(with: attachmentId, type: attachmentSeed.type))
+                AnyEndpoint(.uploadAttachment(with: attachmentId, type: attachment.attachmentType))
             )
 
             for progress in stride(from: 0, through: 1, by: 5 * uploader.minSignificantUploadingProgressChange) {
@@ -81,47 +83,31 @@ final class AttachmentUploader_Tests: StressTestCase {
             // Simulate successful backend response with remote file URL.
             let payload = FileUploadPayload(file: .unique())
             apiClient.uploadFile_completion?(.success(payload))
-            
-            if isAttachmentModelSeparationChangesApplied {
-                switch attachmentType {
-                case .image:
-                    var imageModel: ChatMessageImageAttachment? { attachment.asModel() as? ChatMessageImageAttachment }
-                    AssertAsync {
-                        // Assert attachment state eventually becomes `.uploaded`.
-                        Assert.willBeEqual(imageModel?.localState, .uploaded)
-                        // Assert `attachment.imageURL` is set.
-                        Assert.willBeEqual(originalURLString(imageModel?.imageURL), payload.file.absoluteString)
-                    }
-                case .file:
-                    var fileModel: ChatMessageFileAttachment? { attachment.asModel() as? ChatMessageFileAttachment }
-                    AssertAsync {
-                        // Assert attachment state eventually becomes `.uploaded`.
-                        Assert.willBeEqual(fileModel?.localState, .uploaded)
-                        // Assert `attachment.assetURL` is set.
-                        Assert.willBeEqual(originalURLString(fileModel?.assetURL), payload.file.absoluteString)
-                    }
-                default: throw TestError()
+
+            switch envelope.type {
+            case .image:
+                var imageModel: ChatMessageImageAttachment? {
+                    attachment.asAnyModel()?.attachment(payloadType: AttachmentImagePayload.self)
                 }
-            } else {
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.
-                    Assert.willBeEqual(
-                        (attachment.asModel() as? ChatMessageDefaultAttachment)?.localState,
-                        .uploaded
-                    )
-                    // Assert `attachment.imageURL` is set if attachment type is `.image`.
-                    Assert.willBeEqual(
-                        originalURLString((attachment.asModel() as? ChatMessageDefaultAttachment)?.imageURL),
-                        attachmentType == .image ? payload.file.absoluteString : nil
-                    )
-                    // Assert `attachment.url` is set if attachment type is not `.image`.
-                    Assert.willBeEqual(
-                        originalURLString((attachment.asModel() as? ChatMessageDefaultAttachment)?.url),
-                        attachmentType == .image ? nil : payload.file.absoluteString
-                    )
+                    Assert.willBeEqual(imageModel?.uploadingState?.state, .uploaded)
+                    // Assert `attachment.imageURL` is set.
+                    Assert.willBeEqual(originalURLString(imageModel?.payload?.imageURL), payload.file.absoluteString)
                 }
+            case .file:
+                var fileModel: ChatMessageFileAttachment? {
+                    attachment.asAnyModel()?.attachment(payloadType: AttachmentFilePayload.self)
+                }
+                AssertAsync {
+                    // Assert attachment state eventually becomes `.uploaded`.
+                    Assert.willBeEqual(fileModel?.uploadingState?.state, .uploaded)
+                    // Assert `attachment.assetURL` is set.
+                    Assert.willBeEqual(originalURLString(fileModel?.payload?.assetURL), payload.file.absoluteString)
+                }
+            default: throw TestError()
             }
-            
+
             // In ChatMessageDefaultAttachment we have private func `fixedURL` that modifies `http` part of the URL
             func originalURLString(_ url: URL?) -> String? {
                 url?.absoluteString.replacingOccurrences(of: "https://", with: "")
@@ -150,11 +136,7 @@ final class AttachmentUploader_Tests: StressTestCase {
         try database.writeSynchronously { session in
             for index in (0..<localStates.count) {
                 let id = AttachmentId(cid: cid, messageId: messageId, index: index)
-                let seed = ChatMessageAttachmentSeed.dummy(
-                    localURL: Bundle(for: MockNetworkURLProtocol.self).url(forResource: "FileUploadPayload", withExtension: "json")!
-                )
-
-                let attachment = try session.createNewAttachment(seed: seed, id: id)
+                let attachment = try session.createNewAttachment(attachment: .mockFile, id: id)
                 attachment.localState = localStates[index]
             }
         }
@@ -166,7 +148,7 @@ final class AttachmentUploader_Tests: StressTestCase {
     func test_uploader_changesAttachmentState_whenLocalURLIsInvalid() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let attachmentSeed = ChatMessageAttachmentSeed.dummy(localURL: .unique())
+        let attachmentEnvelope = AttachmentEnvelope(localFileURL: .fakeFile)!
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
         // Create channel in the database.
@@ -177,7 +159,7 @@ final class AttachmentUploader_Tests: StressTestCase {
 
         // Seed attachment with invalid `localURL` to the database.
         try database.writeSynchronously { session in
-            try session.createNewAttachment(seed: attachmentSeed, id: attachmentId)
+            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId)
         }
 
         // Load attachment from the database.
@@ -195,9 +177,7 @@ final class AttachmentUploader_Tests: StressTestCase {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
-        let attachmentSeed = ChatMessageAttachmentSeed.dummy(
-            localURL: Bundle(for: MockNetworkURLProtocol.self).url(forResource: "FileUploadPayload", withExtension: "json")!
-        )
+        let attachmentEnvelope: AttachmentEnvelope = .mockImage
 
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
@@ -205,16 +185,20 @@ final class AttachmentUploader_Tests: StressTestCase {
         try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
         // Seed attachment in `.pendingUpload` state to the database.
         try database.writeSynchronously { session in
-            try session.createNewAttachment(seed: attachmentSeed, id: attachmentId)
+            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId)
         }
 
         // Wait attachment uploading begins.
         AssertAsync.willBeEqual(
             apiClient.uploadFile_endpoint.flatMap(AnyEndpoint.init),
-            AnyEndpoint(.uploadAttachment(with: attachmentId, type: attachmentSeed.type))
+            AnyEndpoint(.uploadAttachment(with: attachmentId, type: attachmentEnvelope.type))
         )
 
         // Assert uploader can be released even though uploading is in progress.
         AssertAsync.canBeReleased(&uploader)
     }
+}
+
+private extension URL {
+    static let fakeFile = Self(string: "file://fake/path/to/file.txt")!
 }

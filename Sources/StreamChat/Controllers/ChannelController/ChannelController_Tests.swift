@@ -108,10 +108,10 @@ class ChannelController_Tests: StressTestCase {
             text: "Message",
             pinning: nil,
             quotedMessageId: nil,
-            attachmentSeeds: [
-                ChatMessageAttachmentSeed.dummy(),
-                ChatMessageAttachmentSeed.dummy(),
-                ChatMessageAttachmentSeed.dummy()
+            attachments: [
+                .mockImage,
+                .mockFile,
+                .init(payload: TestAttachmentPayload.unique)
             ],
             extraData: NoExtraData.defaultValue
         )
@@ -1966,11 +1966,10 @@ class ChannelController_Tests: StressTestCase {
 //        let command: String = .unique
 //        let arguments: String = .unique
         let extraData: NoExtraData = .defaultValue
-        let attachments: [TestAttachmentEnvelope] = [.init(), .init(), .init()]
-        let attachmentSeeds: [ChatMessageAttachmentSeed] = [
-            .dummy(),
-            .dummy(),
-            .dummy()
+        let attachments: [AttachmentEnvelope] = [
+            .init(payload: TestAttachmentPayload.unique),
+            .mockImage,
+            .mockFile
         ]
         let quotedMessageId: MessageId = .unique
         let pin = MessagePinning(expirationDate: .unique)
@@ -1982,7 +1981,7 @@ class ChannelController_Tests: StressTestCase {
             pinning: pin,
 //            command: command,
 //            arguments: arguments,
-            attachments: attachments + attachmentSeeds,
+            attachments: attachments,
             quotedMessageId: quotedMessageId,
             extraData: extraData
         ) { [callbackQueueID] result in
@@ -2005,14 +2004,7 @@ class ChannelController_Tests: StressTestCase {
         //        XCTAssertEqual(env.channelUpdater?.createNewMessage_command, command)
         //        XCTAssertEqual(env.channelUpdater?.createNewMessage_arguments, arguments)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_extraData, extraData)
-        XCTAssertEqual(
-            env.channelUpdater?.createNewMessage_attachments?.compactMap { $0 as? TestAttachmentEnvelope },
-            attachments
-        )
-        XCTAssertEqual(
-            env.channelUpdater?.createNewMessage_attachments?.compactMap { $0 as? ChatMessageAttachmentSeed },
-            attachmentSeeds
-        )
+        XCTAssertEqual(env.channelUpdater?.createNewMessage_attachments, attachments)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_quotedMessageId, quotedMessageId)
         XCTAssertEqual(env.channelUpdater?.createNewMessage_pinning?.expirationDate, pin.expirationDate!)
         
@@ -2751,5 +2743,29 @@ extension _TokenProvider {
         .closure {
             $1(.failure(error))
         }
+    }
+}
+
+extension AttachmentEnvelope {
+    func attachment<T: AttachmentPayloadType>(id: AttachmentId) -> _ChatMessageAttachment<T>? {
+        guard let payload = payload as? T else { return nil }
+
+        return .init(
+            id: id,
+            type: type,
+            payload: payload,
+            uploadingState: localFileURL.map { .init(localFileURL: $0, state: .pendingUpload) }
+        )
+    }
+}
+
+extension AttachmentEnvelope: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        let lhsData = try? JSONEncoder.default.encode(lhs.payload?.asAnyEncodable)
+        let rhsData = try? JSONEncoder.default.encode(rhs.payload?.asAnyEncodable)
+
+        return lhs.type == rhs.type &&
+            lhs.localFileURL == rhs.localFileURL &&
+            lhsData == rhsData
     }
 }

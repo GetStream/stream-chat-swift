@@ -38,7 +38,7 @@ public class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachm
     }
 
     override open func contentViewDidUpdateContent() {
-        galleryView.loadImage(from: imageAttachments.first?.imageURL)
+        galleryView.loadImage(from: imageAttachments.first?.payload?.imagePreviewURL)
     }
 
     @objc open func handleTapOnImage() {
@@ -51,6 +51,6 @@ public class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachm
 
 private extension _GalleryAttachmentViewInjector {
     var imageAttachments: [ChatMessageImageAttachment] {
-        contentView.content?.attachments.compactMap { $0 as? ChatMessageImageAttachment } ?? []
+        contentView.content?.imageAttachments ?? []
     }
 }

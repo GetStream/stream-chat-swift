@@ -4,43 +4,49 @@
 
 import Foundation
 
-/// A type representing an attachment of type `giphy`.
-public struct ChatMessageGiphyAttachment: ChatMessageAttachment, AttachmentEnvelope, Decodable {
-    public var type: AttachmentType { .giphy }
-    /// A unique identifier of the attachment.
-    public var id: AttachmentId?
+public typealias ChatMessageGiphyAttachment = _ChatMessageAttachment<AttachmentGiphyPayload>
+
+public struct AttachmentGiphyPayload: AttachmentPayloadType {
+    public static let type: AttachmentType = .giphy
+    
     /// A  title, usually the search request used to find the gif.
-    public let title: String?
-    /// A link to `giphy` page of the gif.
-    public let titleLink: URL?
+    public let title: String
     /// A link to gif file.
-    public let thumbURL: URL?
+    public let previewURL: URL
     /// Actions when gif is not sent yet. (e.g. `Shuffle`)
     public let actions: [AttachmentAction]
-    
-    public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
-        
-        guard (try? container.decode(String.self, forKey: .type)) == AttachmentType.giphy.rawValue else {
-            throw DecodingError.dataCorruptedError(
-                forKey: AttachmentCodingKeys.type,
-                in: container,
-                debugDescription: "Error decoding \(Self.self). Type doesn't match"
-            )
-        }
-        
-        title = try container.decodeIfPresent(String.self, forKey: .title)
-        titleLink = try container.decodeIfPresent(String.self, forKey: .titleLink)?.attachmentFixedURL
-        thumbURL = try container.decodeIfPresent(String.self, forKey: .thumbURL)?.attachmentFixedURL
-        actions = try container.decodeIfPresent([AttachmentAction].self, forKey: .actions) ?? []
-    }
-    
+}
+
+extension AttachmentGiphyPayload: Equatable {}
+
+// MARK: - Encodable
+
+extension AttachmentGiphyPayload: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: AttachmentCodingKeys.self)
-        
-        try container.encode(type, forKey: .type)
-        try container.encodeIfPresent(title, forKey: .title)
-        try container.encodeIfPresent(titleLink, forKey: .titleLink)
-        try container.encodeIfPresent(thumbURL, forKey: .thumbURL)
+
+        try container.encode(title, forKey: .title)
+        try container.encode(previewURL, forKey: .thumbURL)
+        try container.encode(actions, forKey: .actions)
+    }
+}
+
+// MARK: - Decodable
+
+extension AttachmentGiphyPayload: Decodable {
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
+
+        guard
+            let previewURL = try container
+            .decodeIfPresent(String.self, forKey: .thumbURL)?
+            .attachmentFixedURL
+        else { throw ClientError.AttachmentDecoding() }
+
+        self.init(
+            title: try container.decode(String.self, forKey: .title),
+            previewURL: previewURL,
+            actions: try container.decode([AttachmentAction].self, forKey: .actions)
+        )
     }
 }

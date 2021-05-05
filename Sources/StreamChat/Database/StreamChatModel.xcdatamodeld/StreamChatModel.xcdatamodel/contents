@@ -6,7 +6,6 @@
         <attribute name="localProgress" optional="YES" attributeType="Double" minValueString="0" maxValueString="1" defaultValueString="0.0" usesScalarValueType="YES"/>
         <attribute name="localStateRaw" optional="YES" attributeType="String" defaultValueString=""/>
         <attribute name="localURL" optional="YES" attributeType="URI"/>
-        <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="String"/>
         <relationship name="channel" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="attachments" inverseEntity="ChannelDTO"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="MessageDTO" inverseName="attachments" inverseEntity="MessageDTO"/>

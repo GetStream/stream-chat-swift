@@ -2,15 +2,18 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import Foundation
 @testable import StreamChat
 
-struct TestAttachmentEnvelope: AttachmentEnvelope, Equatable, Decodable {
-    var type: AttachmentType = .custom(.unique)
+struct TestAttachmentPayload: AttachmentPayloadType, Hashable {
+    static let type = AttachmentType(rawValue: .unique)
+
     let name: String
     let number: Int
-    
-    init(name: String = .unique, number: Int = .random(in: 1...100)) {
-        self.name = name
-        self.number = number
+}
+
+extension TestAttachmentPayload {
+    static var unique: Self {
+        .init(name: .unique, number: .random(in: 1...100))
     }
 }

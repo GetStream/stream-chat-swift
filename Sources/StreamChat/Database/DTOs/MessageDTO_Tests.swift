@@ -429,9 +429,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(pin.pinnedAt, messagePayload.pinnedAt)
         XCTAssertEqual(pin.pinnedBy.id, messagePayload.pinnedBy?.id)
         XCTAssertEqual(
-            isAttachmentModelSeparationChangesApplied ?
-                loadedMessage.attachments.map { ($0 as? ChatMessageImageAttachment)?.id } :
-                loadedMessage.attachments.map { ($0 as? ChatMessageDefaultAttachment)?.id },
+            loadedMessage.attachments.map(\.id),
             messagePayload.attachmentIDs(cid: channelId)
         )
         // Quoted message
@@ -459,8 +457,11 @@ class MessageDTO_Tests: XCTestCase {
         let messagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
         let messageCommand: String = .unique
         let messageArguments: String = .unique
-        let messageAttachments: [TestAttachmentEnvelope] = [.init(), .init()]
-        let messageAttachmentSeeds: [ChatMessageAttachmentSeed] = [.dummy(), .dummy(), .dummy()]
+        let attachments: [AttachmentEnvelope] = [
+            .init(payload: TestAttachmentPayload.unique),
+            .mockFile,
+            .mockImage
+        ]
         let messageShowReplyInChannel = true
         let messageExtraData: NoExtraData = .defaultValue
 
@@ -473,7 +474,7 @@ class MessageDTO_Tests: XCTestCase {
                 command: messageCommand,
                 arguments: messageArguments,
                 parentMessageId: parentMessageId,
-                attachments: messageAttachments + messageAttachmentSeeds,
+                attachments: attachments,
                 showReplyInChannel: true,
                 quotedMessageId: nil,
                 extraData: messageExtraData
@@ -496,13 +497,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.extraData, messageExtraData)
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
-
-        // Assert attachments are in correct order.
-        let attachmentsTitles: [String] = requestBody.attachments.compactMap { rawJSON -> String? in
-            (rawJSON as? RawJSON)?.dictionary?["fallback"]?.string
-        }
-        
-        XCTAssertEqual(attachmentsTitles, messageAttachmentSeeds.map(\.fileName))
+        XCTAssertEqual(requestBody.attachments.map(\.type), attachments.map(\.type))
     }
     
     func test_additionalLocalState_isStored() {
@@ -582,7 +577,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
-                    attachments: [TestAttachmentEnvelope](),
+                    attachments: [],
                     showReplyInChannel: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -598,7 +593,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: nil,
                     arguments: nil,
                     parentMessageId: nil,
-                    attachments: [TestAttachmentEnvelope](),
+                    attachments: [],
                     showReplyInChannel: false,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -678,10 +673,10 @@ class MessageDTO_Tests: XCTestCase {
         let newMessageCommand: String = .unique
         let newMessageArguments: String = .unique
         let newMessageParentMessageId: String = .unique
-        let newMessageAttachments: [TestAttachmentEnvelope] = [.init(), .init()]
-        let newMessageAttachmentSeeds: [ChatMessageAttachmentSeed] = [
-            .dummy(),
-            .dummy()
+        let newMessageAttachments: [AttachmentEnvelope] = [
+            .init(payload: TestAttachmentPayload.unique),
+            .mockFile,
+            .mockImage
         ]
         let newMessagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
                 
@@ -694,7 +689,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: newMessageCommand,
                     arguments: newMessageArguments,
                     parentMessageId: newMessageParentMessageId,
-                    attachments: newMessageAttachments + newMessageAttachmentSeeds,
+                    attachments: newMessageAttachments,
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -721,14 +716,8 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.locallyCreatedAt)
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.updatedAt)
         XCTAssertEqual(
-            isAttachmentModelSeparationChangesApplied ?
-                loadedMessage.attachments.compactMap { ($0 as? ChatMessageImageAttachment)?.title } :
-                loadedMessage.attachments.compactMap { ($0 as? ChatMessageDefaultAttachment)?.title },
-            newMessageAttachmentSeeds.map(\.fileName)
-        )
-        XCTAssertEqual(
-            loadedMessage.attachments.compactMap { ($0 as? ChatMessageRawAttachment)?.data },
-            newMessageAttachments.map { try? JSONEncoder.stream.encode($0) }
+            loadedMessage.attachments.map { $0.uploadingState?.localFileURL },
+            newMessageAttachments.map(\.localFileURL)
         )
     }
     
@@ -742,7 +731,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
-                    attachments: [TestAttachmentEnvelope](),
+                    attachments: [],
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -777,7 +766,7 @@ class MessageDTO_Tests: XCTestCase {
                     command: .unique,
                     arguments: .unique,
                     parentMessageId: .unique,
-                    attachments: [TestAttachmentEnvelope](),
+                    attachments: [],
                     showReplyInChannel: true,
                     quotedMessageId: nil,
                     extraData: NoExtraData.defaultValue
@@ -808,15 +797,13 @@ class MessageDTO_Tests: XCTestCase {
         // Create a new message
         var newMessageId: MessageId!
         let newMessageText: String = .unique
-        let newMessageAttachmentSeeds: [ChatMessageAttachmentSeed] = []
-                
+
         try database.writeSynchronously { session in
             let messageDTO = try session.createNewMessage(
                 in: cid,
                 text: newMessageText,
                 pinning: MessagePinning(expirationDate: .unique),
                 quotedMessageId: nil,
-                attachmentSeeds: newMessageAttachmentSeeds,
                 extraData: NoExtraData.defaultValue
             )
             newMessageId = messageDTO.id
@@ -852,7 +839,7 @@ class MessageDTO_Tests: XCTestCase {
                 command: nil,
                 arguments: nil,
                 parentMessageId: messageId,
-                attachments: [TestAttachmentEnvelope](),
+                attachments: [],
                 showReplyInChannel: false,
                 quotedMessageId: nil,
                 extraData: NoExtraData.defaultValue
@@ -920,7 +907,7 @@ class MessageDTO_Tests: XCTestCase {
         try database.writeSynchronously { session in
             for id in attachmentIDs {
                 try session.createNewAttachment(
-                    seed: ChatMessageAttachmentSeed.dummy(),
+                    attachment: [.mockFile, .mockImage, .init(payload: TestAttachmentPayload.unique)].randomElement()!,
                     id: id
                 )
             }
