@@ -27,7 +27,7 @@ class DatabaseContainer_Tests: StressTestCase {
         let container = try DatabaseContainer(kind: .inMemory)
         
         // Write a valid entity to DB and wait for the completion block to be called
-        let successCompletion = try await { container.write({ session in
+        let successCompletion = try waitFor { container.write({ session in
             let context = session as! NSManagedObjectContext
             let teamDTO = NSEntityDescription.insertNewObject(forEntityName: "TeamDTO", into: context) as! TeamDTO
             teamDTO.id = .unique
@@ -37,7 +37,7 @@ class DatabaseContainer_Tests: StressTestCase {
         XCTAssertNil(successCompletion)
         
         // Write an invalid entity to DB and wait for the completion block to be called with error
-        let errorCompletion = try await { container.write({ session in
+        let errorCompletion = try waitFor { container.write({ session in
             let context = session as! NSManagedObjectContext
             NSEntityDescription.insertNewObject(forEntityName: "TeamDTO", into: context)
             // Team id is not set, this should produce an error

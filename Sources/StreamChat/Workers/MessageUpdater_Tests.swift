@@ -43,7 +43,7 @@ final class MessageUpdater_Tests: StressTestCase {
     
     func test_editMessage_propogates_CurrentUserDoesNotExist_Error() throws {
         // Simulate `editMessage(messageId:, text:)` call
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.editMessage(messageId: .unique, text: .unique, completion: $0)
         }
         
@@ -56,7 +56,7 @@ final class MessageUpdater_Tests: StressTestCase {
         try database.createCurrentUser()
         
         // Simulate `editMessage(messageId:, text:)` call
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.editMessage(messageId: .unique, text: .unique, completion: $0)
         }
         
@@ -86,7 +86,7 @@ final class MessageUpdater_Tests: StressTestCase {
             try database.createMessage(id: messageId, authorId: currentUserId, localState: initialState)
             
             // Edit created message with new text
-            let completionError = try await {
+            let completionError = try waitFor {
                 messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
             }
             
@@ -125,7 +125,7 @@ final class MessageUpdater_Tests: StressTestCase {
             try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
             
             // Edit created message with new text
-            let completionError = try await {
+            let completionError = try waitFor {
                 messageUpdater.editMessage(messageId: messageId, text: updatedText, completion: $0)
             }
             
@@ -187,7 +187,7 @@ final class MessageUpdater_Tests: StressTestCase {
         database.write_errorResponse = databaseError
         
         // Simulate `deleteMessage(messageId:)` call
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.deleteMessage(messageId: .unique, completion: $0)
         }
         
@@ -407,7 +407,7 @@ final class MessageUpdater_Tests: StressTestCase {
         ]
 
         // Create new reply message
-        let newMessageId: MessageId = try await { completion in
+        let newMessageId: MessageId = try waitFor { completion in
             messageUpdater.createNewReply(
                 in: cid,
                 text: text,
@@ -463,7 +463,7 @@ final class MessageUpdater_Tests: StressTestCase {
         let testError = TestError()
         database.write_errorResponse = testError
         
-        let result: Result<MessageId, Error> = try await { completion in
+        let result: Result<MessageId, Error> = try waitFor { completion in
             messageUpdater.createNewReply(
                 in: .unique,
                 text: .unique,
@@ -923,7 +923,7 @@ final class MessageUpdater_Tests: StressTestCase {
     func test_pinMessage_propogates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.pinMessage(messageId: .unique, pinning: .expirationDate(.unique), completion: $0)
         }
 
@@ -951,7 +951,7 @@ final class MessageUpdater_Tests: StressTestCase {
             // Create a new message in the database
             try database.createMessage(id: messageId, authorId: currentUserId, localState: initialState)
 
-            let completionError = try await {
+            let completionError = try waitFor {
                 messageUpdater.pinMessage(messageId: messageId, pinning: pin, completion: $0)
             }
 
@@ -988,7 +988,7 @@ final class MessageUpdater_Tests: StressTestCase {
             // Create a new message in the database
             try database.createMessage(id: messageId, authorId: currentUserId, text: initialText, localState: state)
 
-            let completionError = try await {
+            let completionError = try waitFor {
                 messageUpdater.pinMessage(messageId: messageId, pinning: MessagePinning(expirationDate: .unique), completion: $0)
             }
 
@@ -1008,7 +1008,7 @@ final class MessageUpdater_Tests: StressTestCase {
     func test_unpinMessage_propogates_MessageDoesNotExist_Error() throws {
         try database.createCurrentUser()
 
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.unpinMessage(messageId: .unique, completion: $0)
         }
 
@@ -1043,7 +1043,7 @@ final class MessageUpdater_Tests: StressTestCase {
                 localState: initialState
             )
 
-            let completionError = try await {
+            let completionError = try waitFor {
                 messageUpdater.unpinMessage(messageId: messageId, completion: $0)
             }
 
@@ -1088,7 +1088,7 @@ final class MessageUpdater_Tests: StressTestCase {
             )
 
             // Edit created message with new text
-            let completionError = try await {
+            let completionError = try waitFor {
                 messageUpdater.unpinMessage(messageId: messageId, completion: $0)
             }
 
@@ -1107,7 +1107,7 @@ final class MessageUpdater_Tests: StressTestCase {
     // MARK: - Restart failed attachment uploading
     
     func test_restartFailedAttachmentUploading_propagatesAttachmentDoesNotExistError() throws {
-        let error = try await {
+        let error = try waitFor {
             messageUpdater.restartFailedAttachmentUploading(with: .unique, completion: $0)
         }
 
@@ -1147,7 +1147,7 @@ final class MessageUpdater_Tests: StressTestCase {
             }
 
             // Try to restart uploading and catch the error.
-            let error = try await {
+            let error = try waitFor {
                 messageUpdater.restartFailedAttachmentUploading(with: attachmentId, completion: $0)
             }
 
@@ -1179,7 +1179,7 @@ final class MessageUpdater_Tests: StressTestCase {
         database.write_errorResponse = databaseError
 
         // Try to restart uploading and catch the error.
-        let error = try await {
+        let error = try waitFor {
             messageUpdater.restartFailedAttachmentUploading(with: attachmentId, completion: $0)
         }
 
@@ -1206,7 +1206,7 @@ final class MessageUpdater_Tests: StressTestCase {
         }
 
         // Try to restart uploading and catch the error.
-        let error = try await {
+        let error = try waitFor {
             messageUpdater.restartFailedAttachmentUploading(with: attachmentId, completion: $0)
         }
 
@@ -1218,7 +1218,7 @@ final class MessageUpdater_Tests: StressTestCase {
 
     func test_resendMessage_propagatesCurrentUserDoesNotExist_Error() throws {
         // Simulate `resendMessage` call
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.resendMessage(with: .unique, completion: $0)
         }
 
@@ -1231,7 +1231,7 @@ final class MessageUpdater_Tests: StressTestCase {
         try database.createCurrentUser()
 
         // Simulate `resendMessage` call
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.resendMessage(with: .unique, completion: $0)
         }
 
@@ -1262,7 +1262,7 @@ final class MessageUpdater_Tests: StressTestCase {
             try database.createMessage(id: messageId, authorId: currentUserId, localState: state)
             
             // Try to resend the message
-            let completionError = try await {
+            let completionError = try waitFor {
                 messageUpdater.resendMessage(with: messageId, completion: $0)
             }
             
@@ -1285,7 +1285,7 @@ final class MessageUpdater_Tests: StressTestCase {
         database.write_errorResponse = databaseError
 
         // Try to resend the message
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.resendMessage(with: messageId, completion: $0)
         }
 
@@ -1304,7 +1304,7 @@ final class MessageUpdater_Tests: StressTestCase {
         try database.createMessage(id: messageId, authorId: currentUserId, localState: .sendingFailed)
 
         // Resend failed message
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.resendMessage(with: messageId, completion: $0)
         }
 
@@ -1340,7 +1340,7 @@ final class MessageUpdater_Tests: StressTestCase {
         )
 
         // Simulate `dispatchEphemeralMessageAction`
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.dispatchEphemeralMessageAction(
                 cid: cid,
                 messageId: messageId,
@@ -1479,7 +1479,7 @@ final class MessageUpdater_Tests: StressTestCase {
 
     func test_dispatchEphemeralMessageAction_propagatesCurrentUserDoesNotExist_Error() throws {
         // Simulate `dispatchEphemeralMessageAction` call
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.dispatchEphemeralMessageAction(
                 cid: .unique,
                 messageId: .unique,
@@ -1497,7 +1497,7 @@ final class MessageUpdater_Tests: StressTestCase {
         try database.createCurrentUser()
 
         // Simulate `dispatchEphemeralMessageAction` call
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.dispatchEphemeralMessageAction(
                 cid: .unique,
                 messageId: .unique,
@@ -1535,7 +1535,7 @@ final class MessageUpdater_Tests: StressTestCase {
             try database.createMessage(id: messageId, authorId: currentUserId, type: type)
 
             // Simulate `dispatchEphemeralMessageAction` call
-            let completionError = try await {
+            let completionError = try waitFor {
                 messageUpdater.dispatchEphemeralMessageAction(
                     cid: cid,
                     messageId: messageId,
@@ -1555,7 +1555,7 @@ final class MessageUpdater_Tests: StressTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate `dispatchEphemeralMessageAction` call
-        let completionError = try await {
+        let completionError = try waitFor {
             messageUpdater.dispatchEphemeralMessageAction(
                 cid: .unique,
                 messageId: .unique,

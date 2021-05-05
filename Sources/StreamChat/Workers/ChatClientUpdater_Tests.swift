@@ -74,7 +74,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let updater = ChatClientUpdater<ExtraData>(client: client)
 
         // Simulate `connect` call.
-        let error = try await(updater.connect)
+        let error = try waitFor(updater.connect)
 
         // Assert `ClientError.ClientIsNotInActiveMode` is propagated
         XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
@@ -88,7 +88,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let updater = ChatClientUpdater<ExtraData>(client: client)
 
         // Simulate `connect` call.
-        let error = try await(updater.connect)
+        let error = try waitFor(updater.connect)
 
         // Assert `connect` completion is called without any error.
         XCTAssertNil(error)
@@ -228,7 +228,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
 
         // Call `reloadUserIfNeeded` without changing a token provider
         // and synchronously get the result since no job should be done.
-        let error = try await(updater.reloadUserIfNeeded)
+        let error = try waitFor(updater.reloadUserIfNeeded)
 
         // Assert error is nil.
         XCTAssertNil(error)
@@ -387,7 +387,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let updater = ChatClientUpdater<ExtraData>(client: client)
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
-        let error = try await(updater.reloadUserIfNeeded)
+        let error = try waitFor(updater.reloadUserIfNeeded)
 
         // Assert error from token provider is propagated.
         XCTAssertEqual(error as? TestError, tokenProviderError)
@@ -411,7 +411,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         let updater = ChatClientUpdater<ExtraData>(client: client)
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
-        let error = try await(updater.reloadUserIfNeeded)
+        let error = try waitFor(updater.reloadUserIfNeeded)
 
         // Assert `ClientError.ClientIsNotInActiveMode` is propagated.
         XCTAssertTrue(error is ClientError.ClientIsNotInActiveMode)
@@ -435,7 +435,7 @@ final class ChatClientUpdater_Tests_Tests: StressTestCase {
         client.mockDatabaseContainer.removeAllData_errorResponse = databaseFlushError
 
         // Simulate `reloadUserIfNeeded` call and catch the result.
-        let error = try await(updater.reloadUserIfNeeded)
+        let error = try waitFor(updater.reloadUserIfNeeded)
 
         // Assert database error is propagated.
         XCTAssertEqual(error as? TestError, databaseFlushError)

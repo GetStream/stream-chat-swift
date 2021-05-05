@@ -142,7 +142,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let payload: AttachmentPayload = .dummy()
         
         // Try to save an attachment and catch an error
-        let error = try await {
+        let error = try waitFor {
             database.write({ session in
                 let id = AttachmentId(cid: .unique, messageId: messageId, index: 0)
                 try session.saveAttachment(payload: payload, id: id)
@@ -161,7 +161,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let payload: AttachmentPayload = .dummy()
         
         // Try to save an attachment and catch an error
-        let error = try await {
+        let error = try waitFor {
             database.write({ session in
                 let id = AttachmentId(cid: cid, messageId: .unique, index: 0)
                 try session.saveAttachment(payload: payload, id: id)

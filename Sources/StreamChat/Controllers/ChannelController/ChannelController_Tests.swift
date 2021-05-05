@@ -526,7 +526,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_channelChanges_arePropagated() throws {
         // Simulate changes in the DB:
-        _ = try await {
+        _ = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
             }, completion: $0)
@@ -537,7 +537,7 @@ class ChannelController_Tests: StressTestCase {
         AssertAsync.willBeTrue(controller.channel?.isFrozen)
         
         // Simulate channel changes
-        _ = try await {
+        _ = try waitFor {
             client.databaseContainer.write({ session in
                 let context = (session as! NSManagedObjectContext)
                 let channelDTO = try! context.fetch(ChannelDTO.fetchRequest(for: self.channelId)).first!
@@ -552,7 +552,7 @@ class ChannelController_Tests: StressTestCase {
         let payload = dummyPayload(with: channelId)
         
         // Simulate changes in the DB:
-        _ = try await {
+        _ = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveChannel(payload: payload)
             }, completion: $0)
@@ -568,7 +568,7 @@ class ChannelController_Tests: StressTestCase {
             authorUserId: .unique,
             createdAt: Date()
         )
-        _ = try await {
+        _ = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveMessage(payload: newMessagePayload, for: self.channelId)
             }, completion: $0)
@@ -770,7 +770,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback!(channelId)
 
         // Simulate DB update
-        var error = try await {
+        var error = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
             }, completion: $0)
@@ -792,7 +792,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(newCid)
 
         // Simulate DB update
-        error = try await {
+        error = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveChannel(payload: self.dummyPayload(with: newCid), query: nil)
             }, completion: $0)
@@ -913,7 +913,7 @@ class ChannelController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate DB update
-        let error = try await {
+        let error = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
             }, completion: $0)
@@ -989,7 +989,7 @@ class ChannelController_Tests: StressTestCase {
         )
         
         // Simulate DB update
-        var error = try await {
+        var error = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveChannel(payload: payload, query: nil)
             }, completion: $0)
@@ -1005,7 +1005,7 @@ class ChannelController_Tests: StressTestCase {
         
         // Simulate DB update with the same payload
         // except `extraData` is changed now
-        error = try await {
+        error = try waitFor {
             client.databaseContainer.write({ session in
                 let newPayload: ChannelPayload<CustomExtraData> = .init(
                     channel: .init(
@@ -1051,7 +1051,7 @@ class ChannelController_Tests: StressTestCase {
         controller.synchronize()
         
         // Simulate DB update
-        _ = try await {
+        _ = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveChannel(payload: self.dummyPayload(with: self.channelId), query: nil)
             }, completion: $0)
@@ -1262,7 +1262,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
 
         // Simulate `updateChannel` call and assert the error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.updateChannel(name: .unique, imageURL: .unique(), team: nil, extraData: .init()) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1274,7 +1274,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `updateChannel` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.updateChannel(name: .unique, imageURL: .unique(), team: nil, extraData: .init()) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1338,7 +1338,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
 
         // Simulate `muteChannel` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.muteChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1350,7 +1350,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `muteChannel` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.muteChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1417,7 +1417,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
 
         // Simulate `unmuteChannel` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.muteChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1429,7 +1429,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `unmuteChannel` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.unmuteChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1496,7 +1496,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
 
         // Simulate `deleteChannel` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.deleteChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1508,7 +1508,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `deleteChannel` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.deleteChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1574,7 +1574,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
 
         // Simulate `truncateChannel` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.truncateChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1586,7 +1586,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `truncateChannel` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.truncateChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1652,7 +1652,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
 
         // Simulate `hideChannel` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.hideChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1664,7 +1664,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `hideChannel` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.hideChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1731,7 +1731,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
 
         // Simulate `showChannel` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.showChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1743,7 +1743,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `showChannel` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.showChannel { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1808,7 +1808,7 @@ class ChannelController_Tests: StressTestCase {
         var messageId: MessageId?
         
         // Create new channel with message in DB
-        error = try await {
+        error = try waitFor {
             client.databaseContainer.write({ session in
                 messageId = try self.setupChannelWithMessage(session)
             }, completion: $0)
@@ -1851,7 +1851,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_loadPreviousMessages_throwsError_on_emptyMessages() throws {
         // Simulate `loadPreviousMessages` call and assert error is returned
-        let error: Error? = try await { [callbackQueueID] completion in
+        let error: Error? = try waitFor { [callbackQueueID] completion in
             controller.loadPreviousMessages { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1865,7 +1865,7 @@ class ChannelController_Tests: StressTestCase {
         var messageId: MessageId?
         
         // Create new channel with message in DB
-        error = try await {
+        error = try waitFor {
             client.databaseContainer.write({ session in
                 messageId = try self.setupChannelWithMessage(session)
             }, completion: $0)
@@ -1895,7 +1895,7 @@ class ChannelController_Tests: StressTestCase {
         var messageId: MessageId?
         
         // Create new channel with message in DB
-        error = try await {
+        error = try waitFor {
             client.databaseContainer.write({ session in
                 messageId = try self.setupChannelWithMessage(session)
             }, completion: $0)
@@ -1938,7 +1938,7 @@ class ChannelController_Tests: StressTestCase {
     
     func test_loadNextMessages_throwsError_on_emptyMessages() throws {
         // Simulate `loadNextMessages` call and assert error is returned
-        let error: Error? = try await { [callbackQueueID] completion in
+        let error: Error? = try waitFor { [callbackQueueID] completion in
             controller.loadNextMessages { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -1952,7 +1952,7 @@ class ChannelController_Tests: StressTestCase {
         var messageId: MessageId?
         
         // Create new channel with message in DB
-        error = try await {
+        error = try waitFor {
             client.databaseContainer.write({ session in
                 messageId = try self.setupChannelWithMessage(session)
             }, completion: $0)
@@ -2139,7 +2139,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
         
         // Simulate `createNewMessage` call and assert error is returned
-        let result: Result<MessageId, Error> = try await { [callbackQueueID] completion in
+        let result: Result<MessageId, Error> = try waitFor { [callbackQueueID] completion in
             controller.createNewMessage(
                 text: .unique,
 //                command: .unique,
@@ -2167,7 +2167,7 @@ class ChannelController_Tests: StressTestCase {
         let members: Set<UserId> = [.unique]
 
         // Simulate `addMembers` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.addMembers(userIds: members) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2179,7 +2179,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `addMembers` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.addMembers(userIds: members) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2251,7 +2251,7 @@ class ChannelController_Tests: StressTestCase {
         let members: Set<UserId> = [.unique]
 
         // Simulate `removeMembers` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.removeMembers(userIds: members) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2263,7 +2263,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
 
         // Simulate `removeMembers` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.removeMembers(userIds: members) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2334,7 +2334,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
         
         // Simulate `markRead` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.markRead { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2346,7 +2346,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
         
         // Simulate `markRead` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.markRead { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2412,7 +2412,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
         
         // Simulate `enableSlowMode` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.enableSlowMode(cooldownDuration: .random(in: 1...120)) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2424,7 +2424,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
         
         // Simulate `enableSlowMode` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.enableSlowMode(cooldownDuration: .random(in: 1...120)) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2444,7 +2444,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
         
         // Simulate `enableSlowMode` call with invalid cooldown and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.enableSlowMode(cooldownDuration: .random(in: 130...250)) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2453,7 +2453,7 @@ class ChannelController_Tests: StressTestCase {
         XCTAssert(error is ClientError.InvalidCooldownDuration)
         
         // Simulate `enableSlowMode` call with another invalid cooldown and assert error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.enableSlowMode(cooldownDuration: .random(in: -100...0)) { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2517,7 +2517,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
         
         // Simulate `disableSlowMode` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.disableSlowMode { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2529,7 +2529,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
         
         // Simulate `disableSlowMode` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.disableSlowMode { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2597,7 +2597,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
         
         // Simulate `startWatching` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.startWatching { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2609,7 +2609,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
         
         // Simulate `startWatching` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.startWatching { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2677,7 +2677,7 @@ class ChannelController_Tests: StressTestCase {
         setupControllerForNewChannel(query: query)
         
         // Simulate `stopWatching` call and assert error is returned
-        var error: Error? = try await { [callbackQueueID] completion in
+        var error: Error? = try waitFor { [callbackQueueID] completion in
             controller.stopWatching { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
@@ -2689,7 +2689,7 @@ class ChannelController_Tests: StressTestCase {
         env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
         
         // Simulate `stopWatching` call and assert no error is returned
-        error = try await { [callbackQueueID] completion in
+        error = try waitFor { [callbackQueueID] completion in
             controller.stopWatching { error in
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)

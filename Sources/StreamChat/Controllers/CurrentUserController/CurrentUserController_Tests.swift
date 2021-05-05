@@ -354,7 +354,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_updateUser_whenCurrentUserDoesNotExist_shouldError() throws {
-        let error = try await {
+        let error = try waitFor {
             controller.updateUserData(
                 name: .unique,
                 imageURL: nil,
@@ -405,7 +405,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
 
     func test_synchronizeDevices__whenCurrentUserDoesNotExist_propagatesError() throws {
-        let error = try await {
+        let error = try waitFor {
             controller.synchronizeDevices(completion: $0)
         }
 
@@ -477,7 +477,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_addDevice_whenCurrentUserDoesNotExist_shouldError() throws {
-        let error = try await {
+        let error = try waitFor {
             controller.addDevice(token: "test".data(using: .utf8)!, completion: $0)
         }
         
@@ -553,7 +553,7 @@ final class CurrentUserController_Tests: StressTestCase {
     }
     
     func test_removeDevice_whenCurrentUserDoesNotExist_shouldError() throws {
-        let error = try await {
+        let error = try waitFor {
             controller.removeDevice(id: .unique, completion: $0)
         }
         

@@ -757,7 +757,7 @@ final class MessageController_Tests: StressTestCase {
     
     func test_loadNextReplies_failsOnEmptyReplies() throws {
         // Simulate `loadNextReplies` call and catch the completion error.
-        let completionError = try await {
+        let completionError = try waitFor {
             controller.loadNextReplies(completion: $0)
         }
         

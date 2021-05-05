@@ -169,7 +169,7 @@ final class CurrentUserUpdater_Tests: StressTestCase {
             try $0.saveCurrentUser(payload: userPayload)
         }
         
-        let error = try await {
+        let error = try waitFor {
             currentUserUpdater.updateUserData(
                 currentUserId: .unique,
                 name: nil,

@@ -206,7 +206,7 @@ class ChannelListController_Tests: StressTestCase {
         // Simulate changes in the DB:
         // 1. Add the channel to the DB
         let cid: ChannelId = .unique
-        _ = try await {
+        _ = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveChannel(payload: self.dummyPayload(with: cid), query: self.query)
             }, completion: $0)
