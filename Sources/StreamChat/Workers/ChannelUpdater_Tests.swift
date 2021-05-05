@@ -116,7 +116,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let cid: ChannelId = .unique
         let currentUserId: UserId = .unique
         
-        _ = try await { completion in
+        _ = try waitFor { completion in
             database.write({ (session) in
                 let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                     userId: currentUserId,
@@ -148,7 +148,7 @@ class ChannelUpdater_Tests: StressTestCase {
         ]
 
         // Create new message
-        let newMessageId: MessageId = try await { completion in
+        let newMessageId: MessageId = try waitFor { completion in
             channelUpdater.createNewMessage(
                 in: cid,
                 text: text,
@@ -195,7 +195,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let cid: ChannelId = .unique
         let currentUserId: UserId = .unique
         
-        _ = try await { completion in
+        _ = try waitFor { completion in
             database.write({ (session) in
                 let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                     userId: currentUserId,
@@ -214,7 +214,7 @@ class ChannelUpdater_Tests: StressTestCase {
         let testError = TestError()
         database.write_errorResponse = testError
         
-        let result: Result<MessageId, Error> = try await { completion in
+        let result: Result<MessageId, Error> = try waitFor { completion in
             channelUpdater.createNewMessage(
                 in: .unique,
                 text: .unique,

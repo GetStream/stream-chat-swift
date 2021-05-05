@@ -276,7 +276,7 @@
 		799C945C247D59D8001F1104 /* ChatClient_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C942F247D2FB9001F1104 /* ChatClient_Tests.swift */; };
 		799C945E247D7283001F1104 /* DatabaseContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C945D247D7283001F1104 /* DatabaseContainer.swift */; };
 		799C9460247D77D6001F1104 /* DatabaseContainer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C945F247D77D6001F1104 /* DatabaseContainer_Tests.swift */; };
-		799C9462247D78E2001F1104 /* Await.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9461247D78E2001F1104 /* Await.swift */; };
+		799C9462247D78E2001F1104 /* WaitFor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9461247D78E2001F1104 /* WaitFor.swift */; };
 		799C9468247D791A001F1104 /* AssertJSONEqual.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9464247D7919001F1104 /* AssertJSONEqual.swift */; };
 		799C9469247D791A001F1104 /* AssertResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9465247D7919001F1104 /* AssertResult.swift */; };
 		799C946A247D791A001F1104 /* AssertAsync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9466247D7919001F1104 /* AssertAsync.swift */; };
@@ -918,7 +918,7 @@
 		F8788EDB261D9B99006019DD /* TemporaryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9474247D7D41001F1104 /* TemporaryData.swift */; };
 		F8788EE5261D9BF0006019DD /* ChatClientUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8788EE4261D9BF0006019DD /* ChatClientUpdater_Mock.swift */; };
 		F8788EEE261D9CC2006019DD /* ChannelId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 792A71E22578EF650082498D /* ChannelId.swift */; };
-		F8788EF7261D9D18006019DD /* Await.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9461247D78E2001F1104 /* Await.swift */; };
+		F8788EF7261D9D18006019DD /* WaitFor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9461247D78E2001F1104 /* WaitFor.swift */; };
 		F8788F00261D9D53006019DD /* UserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 790B9E3124DC221A005455AA /* UserPayload.swift */; };
 		F8788F09261D9D81006019DD /* CurrentUserPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0D649224E5794C0017A3C0 /* CurrentUserPayload.swift */; };
 		F8788F12261D9D92006019DD /* UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = F67415BF24F0129800C3222F /* UnreadCount.swift */; };
@@ -1442,7 +1442,7 @@
 		799C9451247D59B1001F1104 /* StreamChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		799C945D247D7283001F1104 /* DatabaseContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseContainer.swift; sourceTree = "<group>"; };
 		799C945F247D77D6001F1104 /* DatabaseContainer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseContainer_Tests.swift; sourceTree = "<group>"; };
-		799C9461247D78E2001F1104 /* Await.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Await.swift; sourceTree = "<group>"; };
+		799C9461247D78E2001F1104 /* WaitFor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitFor.swift; sourceTree = "<group>"; };
 		799C9464247D7919001F1104 /* AssertJSONEqual.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertJSONEqual.swift; sourceTree = "<group>"; };
 		799C9465247D7919001F1104 /* AssertResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertResult.swift; sourceTree = "<group>"; };
 		799C9466247D7919001F1104 /* AssertAsync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssertAsync.swift; sourceTree = "<group>"; };
@@ -2598,7 +2598,7 @@
 			children = (
 				799C9463247D7919001F1104 /* CustomAssertions */,
 				792A71E22578EF650082498D /* ChannelId.swift */,
-				799C9461247D78E2001F1104 /* Await.swift */,
+				799C9461247D78E2001F1104 /* WaitFor.swift */,
 				791C0B6424EFBD260013CA2F /* UnwrapAsync.swift */,
 				7988F6B624D15F100004219B /* StressTestCase.swift */,
 				799C9474247D7D41001F1104 /* TemporaryData.swift */,
@@ -5334,7 +5334,7 @@
 				F8788F36261DA083006019DD /* AttachmentPayload.swift in Sources */,
 				793061722577BB48005CF846 /* ChatMessageController_Mock.swift in Sources */,
 				7930614E2577A1AF005CF846 /* ChatUser_Mock.swift in Sources */,
-				F8788EF7261D9D18006019DD /* Await.swift in Sources */,
+				F8788EF7261D9D18006019DD /* WaitFor.swift in Sources */,
 				AD0169E625CAF235009EBAD2 /* CurrentChatUserController_Mock.swift in Sources */,
 				F8788F12261D9D92006019DD /* UnreadCount.swift in Sources */,
 				ADFCCD0825C9B8D70024505D /* ChannelUnreadCount_Mock.swift in Sources */,
@@ -5702,7 +5702,7 @@
 				796CBC6525FBAD12003299B0 /* Member_Tests.swift in Sources */,
 				79DDF812249CD5AC002F4412 /* APIClient_Tests.swift in Sources */,
 				DA7229E424E140600074503A /* ChannelEditDetailPayload_Tests.swift in Sources */,
-				799C9462247D78E2001F1104 /* Await.swift in Sources */,
+				799C9462247D78E2001F1104 /* WaitFor.swift in Sources */,
 				88DA57EA2631E82B00FA8C53 /* MutedChannelPayload_Tests.swift in Sources */,
 				88AA92882547332000BFA0C3 /* MessageReactionPayload.swift in Sources */,
 				8A0D64A924E57A560017A3C0 /* GuestUserTokenRequestPayload_Tests.swift in Sources */,

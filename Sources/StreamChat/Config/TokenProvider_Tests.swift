@@ -9,7 +9,7 @@ import XCTest
 final class TokenProvider_Tests: StressTestCase {
     func test_anonymousProvider_propagatesToken() throws {
         // Get token from `anonymous` provider.
-        let token = try await { TokenProvider.anonymous.getToken(.mock, $0) }.get()
+        let token = try waitFor { TokenProvider.anonymous.getToken(.mock, $0) }.get()
 
         // Assert token is correct.
         XCTAssertEqual(token.rawValue, "")
@@ -21,7 +21,7 @@ final class TokenProvider_Tests: StressTestCase {
         let userId: UserId = .unique
 
         // Get a token from `development` token provider.
-        let token = try await {
+        let token = try waitFor {
             TokenProvider.development(userId: userId).getToken(.mock, $0)
         }.get()
 
@@ -37,7 +37,7 @@ final class TokenProvider_Tests: StressTestCase {
         let token = Token.unique(userId: .unique)
 
         // Get a token from `static` token provider.
-        let receivedToken = try await {
+        let receivedToken = try waitFor {
             TokenProvider.static(token).getToken(.mock, $0)
         }.get()
 
@@ -50,7 +50,7 @@ final class TokenProvider_Tests: StressTestCase {
         let token = Token.unique()
 
         // Get a token from `closure` token provider.
-        let receivedToken = try await {
+        let receivedToken = try waitFor {
             TokenProvider
                 .closure { $1(.success(token)) }
                 .getToken(.mock, $0)
@@ -65,7 +65,7 @@ final class TokenProvider_Tests: StressTestCase {
         let error = TestError()
 
         // Get a token from `closure` token provider.
-        let receivedError = try await {
+        let receivedError = try waitFor {
             TokenProvider
                 .closure { $1(.failure(error)) }
                 .getToken(.mock, $0)

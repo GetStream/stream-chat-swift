@@ -262,7 +262,7 @@ class MessageDTO_Tests: XCTestCase {
             pinned: true
         )
 
-        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try await { completion in
+        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try waitFor { completion in
             var channelDTO: ChannelDTO!
             var messageDTO: MessageDTO!
             
@@ -294,7 +294,7 @@ class MessageDTO_Tests: XCTestCase {
             pinned: false
         )
 
-        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try await { completion in
+        let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try waitFor { completion in
             // Asynchronously save the payload to the db
             database.write { session in
                 // Create the channel first
@@ -548,7 +548,7 @@ class MessageDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let currentUserId: UserId = .unique
         
-        _ = try await { completion in
+        _ = try waitFor { completion in
             database.write({ (session) in
                 let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                     userId: currentUserId,
@@ -568,7 +568,7 @@ class MessageDTO_Tests: XCTestCase {
         var message1Id: MessageId!
         var message2Id: MessageId!
 
-        _ = try await { completion in
+        _ = try waitFor { completion in
             database.write({ session in
                 let message1DTO = try session.createNewMessage(
                     in: cid,
@@ -651,7 +651,7 @@ class MessageDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let currentUserId: UserId = .unique
         
-        _ = try await { completion in
+        _ = try waitFor { completion in
             database.write({ (session) in
                 let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                     userId: currentUserId,
@@ -680,7 +680,7 @@ class MessageDTO_Tests: XCTestCase {
         ]
         let newMessagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
                 
-        _ = try await { completion in
+        _ = try waitFor { completion in
             database.write({
                 let messageDTO = try $0.createNewMessage(
                     in: cid,
@@ -722,7 +722,7 @@ class MessageDTO_Tests: XCTestCase {
     }
     
     func test_creatingNewMessage_withoutExistingCurrentUser_throwsError() throws {
-        let result = try await { completion in
+        let result = try waitFor { completion in
             database.write({ (session) in
                 try session.createNewMessage(
                     in: .unique,
@@ -744,7 +744,7 @@ class MessageDTO_Tests: XCTestCase {
     
     func test_creatingNewMessage_withoutExistingChannel_throwsError() throws {
         // Save current user first
-        _ = try await {
+        _ = try waitFor {
             database.write({
                 let currentUserPayload: CurrentUserPayload<NoExtraData> = .dummy(
                     userId: .unique,
@@ -757,7 +757,7 @@ class MessageDTO_Tests: XCTestCase {
         }
                 
         // Try to create a new message
-        let result = try await { completion in
+        let result = try waitFor { completion in
             database.write({ (session) in
                 try session.createNewMessage(
                     in: .unique,

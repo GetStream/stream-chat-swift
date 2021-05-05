@@ -344,7 +344,7 @@ class ChatClient_Tests: StressTestCase {
             .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
         
         AssertAsync.willBeEqual(providedConnectionId, connectionId)
-        XCTAssertEqual(try await { client.provideConnectionId(completion: $0) }, connectionId)
+        XCTAssertEqual(try waitFor { client.provideConnectionId(completion: $0) }, connectionId)
         
         // Simulate WebSocketConnection disconnecting and assert connectionId is reset
         testEnv.webSocketClient?.connectionStateDelegate?
@@ -483,7 +483,7 @@ class ChatClient_Tests: StressTestCase {
         
         // Take main then background queue.
         for queue in [DispatchQueue.main, DispatchQueue.global()] {
-            let error: Error? = try await { completion in
+            let error: Error? = try waitFor { completion in
                 // Dispatch creating a chat-client to specific queue.
                 queue.async {
                     // Create a `ChatClient` instance with the same config

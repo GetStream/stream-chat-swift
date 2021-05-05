@@ -34,7 +34,7 @@ class RequestEncoder_Tests: XCTestCase {
         )
         
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
         
         // Check the required query item values are present
         let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
@@ -55,7 +55,7 @@ class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.token = token
 
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
 
         // Check the auth headers are present
         XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "jwt")
@@ -75,7 +75,7 @@ class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.token = .anonymous
 
         // Encode the request and wait for the result.
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
 
         // Check the anonymous auth header is set.
         XCTAssertEqual(request.allHTTPHeaderFields?["Stream-Auth-Type"], "anonymous")
@@ -120,7 +120,7 @@ class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.connectionId = connectionId
         
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
         
         // Check the connection id is set
         let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
@@ -172,7 +172,7 @@ class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.token = token
 
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
 
         // Check the connection id is set
         let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
@@ -196,7 +196,7 @@ class RequestEncoder_Tests: XCTestCase {
         )
         
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
         
         // Check the URL is set up correctly
         XCTAssertEqual(request.httpMethod, endpoint.method.rawValue)
@@ -221,7 +221,7 @@ class RequestEncoder_Tests: XCTestCase {
         )
         
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
         
         // Check the body is present
         let body = try XCTUnwrap(request.httpBody)
@@ -245,7 +245,7 @@ class RequestEncoder_Tests: XCTestCase {
         )
         
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
         
         // Check the body is present (and empty)
         let body = try XCTUnwrap(request.httpBody)
@@ -266,7 +266,7 @@ class RequestEncoder_Tests: XCTestCase {
         )
         
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
         
         // Check the body is present
         let body = try XCTUnwrap(request.httpBody)
@@ -287,7 +287,7 @@ class RequestEncoder_Tests: XCTestCase {
         )
         
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
         
         // Check the body is present (and empty)
         let body = try XCTUnwrap(request.httpBody)
@@ -312,7 +312,7 @@ class RequestEncoder_Tests: XCTestCase {
         )
         
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
         
         // Check both JSONs are present in the query items
         let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
@@ -342,7 +342,7 @@ class RequestEncoder_Tests: XCTestCase {
         )
         
         // Encode the request and wait for the result
-        let request = try await { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
+        let request = try waitFor { encoder.encodeRequest(for: endpoint, completion: $0) }.get()
         
         let urlComponents = try XCTUnwrap(URLComponents(url: request.url!, resolvingAgainstBaseURL: false))
         

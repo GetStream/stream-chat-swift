@@ -78,7 +78,7 @@ class APIClient_Tests: StressTestCase {
         let testEndpoint = Endpoint<Data>.mock()
         
         // Create a request and assert the result is failure
-        let result = try await { apiClient.request(endpoint: testEndpoint, completion: $0) }
+        let result = try waitFor { apiClient.request(endpoint: testEndpoint, completion: $0) }
         AssertResultFailure(result, testError)
     }
 
@@ -110,7 +110,7 @@ class APIClient_Tests: StressTestCase {
         let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(with: .unique, type: .image)
 
         // Create a request and assert the result is failure
-        let result = try await {
+        let result = try waitFor {
             apiClient.uploadFile(
                 endpoint: testEndpoint,
                 multipartFormData: .init(Data(), fileName: .unique),
@@ -206,7 +206,7 @@ class APIClient_Tests: StressTestCase {
         let testEndpoint = Endpoint<TestUser>.mock()
         
         // Create a request and wait for the completion block
-        let result = try await { apiClient.request(endpoint: testEndpoint, completion: $0) }
+        let result = try waitFor { apiClient.request(endpoint: testEndpoint, completion: $0) }
         
         // Check the incoming data to the encoder is the URLResponse and data from the network
         XCTAssertEqual(decoder.decodeRequestResponse_data, try! JSONEncoder.stream.encode(TestUser(name: "Leia!")))
@@ -235,7 +235,7 @@ class APIClient_Tests: StressTestCase {
         let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(with: .unique, type: .image)
 
         // Create a request and wait for the completion block
-        let result = try await {
+        let result = try waitFor {
             apiClient.uploadFile(
                 endpoint: testEndpoint,
                 multipartFormData: .init(Data(), fileName: .unique),
@@ -270,7 +270,7 @@ class APIClient_Tests: StressTestCase {
         let testEndpoint = Endpoint<TestUser>.mock()
         
         // Create a request and wait for the completion block
-        let result = try await { apiClient.request(endpoint: testEndpoint, completion: $0) }
+        let result = try waitFor { apiClient.request(endpoint: testEndpoint, completion: $0) }
         
         // Check the incoming error to the encoder is the error from the response
         assert(decoder.decodeRequestResponse_error != nil)
@@ -302,7 +302,7 @@ class APIClient_Tests: StressTestCase {
         let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(with: .unique, type: .image)
 
         // Create a request and wait for the completion block
-        let result = try await {
+        let result = try waitFor {
             apiClient.uploadFile(
                 endpoint: testEndpoint,
                 multipartFormData: .init(Data(), fileName: .unique),

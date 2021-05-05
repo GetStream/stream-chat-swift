@@ -202,7 +202,7 @@ class UserListController_Tests: StressTestCase {
         // Simulate changes in the DB:
         // 1. Add the user to the DB
         let id: UserId = .unique
-        _ = try await {
+        _ = try waitFor {
             client.databaseContainer.write({ session in
                 try session.saveUser(payload: self.dummyUser(id: id), query: self.query)
             }, completion: $0)
