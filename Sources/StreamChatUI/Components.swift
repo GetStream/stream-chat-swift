@@ -45,7 +45,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var attachmentButton: UIButton.Type = AttachmentButton.self
 
     /// A button for opening commands.
-    public var commandsButton: UIButton.Type = ChatCommandButton.self
+    public var commandsButton: UIButton.Type = CommandButton.self
 
     /// A button for shrinking the input view to allow more space for other actions.
     public var shrinkInputButton: UIButton.Type = ChatShrinkInputButton.self

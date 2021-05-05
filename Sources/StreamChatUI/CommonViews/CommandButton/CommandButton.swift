@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// Button for opening commands.
-open class ChatCommandButton: _Button, AppearanceProvider {
+open class CommandButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
