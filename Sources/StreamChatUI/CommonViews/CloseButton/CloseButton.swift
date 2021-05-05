@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// Button for closing, dismissing or clearing information.
-open class ChatCloseButton: _Button, AppearanceProvider {
+open class CloseButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
