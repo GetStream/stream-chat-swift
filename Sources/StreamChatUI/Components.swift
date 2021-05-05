@@ -24,7 +24,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var typingAnimationView: TypingAnimationView.Type = TypingAnimationView.self
 
     /// A view for inputting text with placeholder support.
-    public var inputTextView: ChatInputTextView.Type = ChatInputTextView.self
+    public var inputTextView: InputTextView.Type = InputTextView.self
 
     /// A view that displays the command name and icon.
     public var commandLabelView: _CommandLabelView<ExtraData>.Type = _CommandLabelView<ExtraData>.self
