@@ -221,6 +221,32 @@ extension _ChatMessage {
     }
 }
 
+public extension _ChatMessage {
+    func attachments<Payload: AttachmentPayloadType>(
+        payloadType: Payload.Type
+    ) -> [_ChatMessageAttachment<Payload>] {
+        attachments.compactMap {
+            $0.attachment(payloadType: payloadType)
+        }
+    }
+
+    var imageAttachments: [ChatMessageImageAttachment] {
+        attachments(payloadType: AttachmentImagePayload.self)
+    }
+
+    var fileAttachments: [ChatMessageFileAttachment] {
+        attachments(payloadType: AttachmentFilePayload.self)
+    }
+
+    var giphyAttachments: [ChatMessageGiphyAttachment] {
+        attachments(payloadType: AttachmentGiphyPayload.self)
+    }
+
+    var linkAttachments: [ChatMessageLinkAttachment] {
+        attachments(payloadType: AttachmentLinkPayload.self)
+    }
+}
+
 extension _ChatMessage: Hashable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id

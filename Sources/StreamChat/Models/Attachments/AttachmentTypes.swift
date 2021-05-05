@@ -4,15 +4,19 @@
 
 import Foundation
 
-/// A protocol for attachment model objects that are created from database `AttachmentDTO` objects and exposed.
-public protocol ChatMessageAttachment {
-    var type: AttachmentType { get }
-    var id: AttachmentId? { get set }
-}
+public extension URL {
+    var attachmentFile: AttachmentFile? {
+        guard isFileURL else { return nil }
+        
+        let fileType = AttachmentFileType(ext: pathExtension)
+        let attributes = try? FileManager.default.attributesOfItem(atPath: path)
 
-/// A protocol for attachment objects being manipulated outside the SDK and can be sent to backend without prior uploading.
-public protocol AttachmentEnvelope: Encodable {
-    var type: AttachmentType { get }
+        return .init(
+            type: fileType,
+            size: attributes?[.size] as? Int64 ?? 0,
+            mimeType: fileType.mimeType
+        )
+    }
 }
 
 enum AttachmentCodingKeys: String, CodingKey {
@@ -95,87 +99,28 @@ public struct AttachmentAction: Codable, Hashable {
 
 /// An attachment type.
 /// There are some predefined types on backend but any type can be introduced and sent to backend.
-public enum AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
-    /// Backend specified types.
-    case image
-    case file
-    case giphy
-    
-    /// Backend specified types that are not used at the moment.
-    /// Can be obtained when some link is enriched. (e.g. `YouTube`)
-    /// Right now all links will be treated like `.link` types.
-    case video
-    case audio
+public struct AttachmentType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+    public let rawValue: String
 
-    /// Application custom types.
-    /// `.link` type is used for all enriched `URLs`, associated value is the main asset of the enriched `URL`.
-    /// Could be `audio`, `video`, `image`.
-    case link(String?)
-    /// `.custom` type is used for any unrecognised type.
-    case custom(String)
-    
-    public var rawValue: String {
-        switch self {
-        case let .custom(raw):
-            return raw
-        case let .link(raw):
-            return "link-\(raw ?? "")"
-        case .image:
-            return "image"
-        case .giphy:
-            return "giphy"
-        case .video:
-            return "video"
-        case .audio:
-            return "audio"
-        case .file:
-            return "file"
-        }
-    }
-        
     public init(rawValue: String) {
-        if rawValue.prefix(4) == "link" {
-            self = .link(rawValue.replacingOccurrences(of: "link-", with: ""))
-            return
-        }
-        
-        switch rawValue {
-        case "image":
-            self = .image
-        case "giphy":
-            self = .giphy
-        case "video":
-            self = .video
-        case "audio":
-            self = .audio
-        case "file":
-            self = .file
-        default:
-            self = .custom(rawValue)
-        }
+        self.rawValue = rawValue
     }
-    
-    public var isLink: Bool {
-        if case .link = self {
-            return true
-        } else {
-            return false
-        }
-    }
-    
-    public init(from decoder: Decoder) throws {
-        let rawValue = try decoder.singleValueContainer().decode(String.self)
-        self = AttachmentType(rawValue: rawValue)
-    }
-    
+
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
-    
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(rawValue)
-    }
+}
+
+public extension AttachmentType {
+    /// Backend specified types.
+    static let image = Self(rawValue: "image")
+    static let file = Self(rawValue: "file")
+    static let giphy = Self(rawValue: "giphy")
+    static let video = Self(rawValue: "video")
+    static let audio = Self(rawValue: "audio")
+
+    /// Application custom types.
+    static let linkPreview = Self(rawValue: "linkPreview")
 }
 
 /// An attachment file description.
@@ -288,6 +233,10 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
 
 extension String {
     var attachmentFixedURL: URL? {
+        if let url = URL(string: self), url.isFileURL {
+            return url
+        }
+
         var urlString = self
         
         if urlString.hasPrefix("//") {

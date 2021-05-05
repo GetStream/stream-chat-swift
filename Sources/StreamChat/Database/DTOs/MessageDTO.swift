@@ -246,26 +246,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         message.extraData = try JSONEncoder.default.encode(extraData)
         message.isSilent = false
         message.reactionScores = [:]
-            
-        let attachmentDTOsFromSeeds: [AttachmentDTO] = try attachments
-            .compactMap { $0 as? ChatMessageAttachmentSeed }
-            .enumerated()
-            .map { index, seed in
+
+        message.attachments = Set(
+            try attachments.enumerated().map { index, attachment in
                 let id = AttachmentId(cid: cid, messageId: message.id, index: index)
-                let dto = try createNewAttachment(seed: seed, id: id)
-                return dto
+                return try createNewAttachment(attachment: attachment, id: id)
             }
-        
-        let attachmentDTOsFromAttachments: [AttachmentDTO] = try attachments
-            .filter { !($0 is ChatMessageAttachmentSeed) }
-            .enumerated()
-            .map { index, attachment in
-                let id = AttachmentId(cid: cid, messageId: message.id, index: index + attachmentDTOsFromSeeds.count)
-                let dto = try createNewAttachment(attachment: attachment, id: id)
-                return dto
-            }
-        
-        message.attachments = Set(attachmentDTOsFromSeeds + attachmentDTOsFromAttachments)
+        )
                 
         message.showReplyInChannel = showReplyInChannel
         message.quotedMessage = quotedMessageId.flatMap { MessageDTO.load(id: $0, context: self) }
@@ -442,7 +429,7 @@ extension MessageDTO {
             quotedMessageId: quotedMessage?.id,
             attachments: attachments
                 .sorted { $0.attachmentID.index < $1.attachmentID.index }
-                .map { $0.asRequestPayload() },
+                .compactMap { $0.asRequestPayload() },
             pinned: pinned,
             pinExpires: pinExpires,
             extraData: extraData ?? .defaultValue
@@ -525,12 +512,8 @@ private extension _ChatMessage {
         $_author = ({ dto.user.asModel() }, dto.managedObjectContext)
         $_attachments = ({
             dto.attachments
-                .map { $0.asModel() }
-                .sorted {
-                    let index1 = $0.id?.index ?? Int.max
-                    let index2 = $1.id?.index ?? Int.max
-                    return index1 < index2
-                }
+                .compactMap { $0.asAnyModel() }
+                .sorted { $0.id.index < $1.id.index }
         }, dto.managedObjectContext)
         
         if dto.replies.isEmpty {
