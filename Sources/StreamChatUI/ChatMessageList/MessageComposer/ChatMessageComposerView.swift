@@ -99,7 +99,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
 
     /// A checkbox to check/uncheck if the message should also
     /// be sent to the channel while replying in a thread.
-    public private(set) lazy var checkboxControl: ChatCheckboxControl = components
+    public private(set) lazy var checkboxControl: CheckboxControl = components
         .checkmarkControl.init()
         .withoutAutoresizingMaskConstraints
 
