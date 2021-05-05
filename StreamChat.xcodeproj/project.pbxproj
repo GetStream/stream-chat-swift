@@ -712,9 +712,9 @@
 		AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */; };
 		AD81AF0D25ED141A00F17F8F /* ListCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD81AEF525ED13D900F17F8F /* ListCollectionViewLayout.swift */; };
 		AD87D097263C7783008B466C /* ChatCommandButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D096263C7783008B466C /* ChatCommandButton.swift */; };
-		AD87D0A1263C7823008B466C /* ChatAttachmentButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0A0263C7823008B466C /* ChatAttachmentButton.swift */; };
 		AD87D0AB263C7A7E008B466C /* ChatShrinkInputButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0AA263C7A7E008B466C /* ChatShrinkInputButton.swift */; };
 		AD87D0BD263C7C09008B466C /* ChatCloseButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0BC263C7C09008B466C /* ChatCloseButton.swift */; };
+		AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD87D0A0263C7823008B466C /* AttachmentButton.swift */; };
 		AD90D18525D56196001D03BB /* CurrentUserUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */; };
 		AD90D18D25D5619C001D03BB /* CurrentUserUpdater_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */; };
 		ADAA377125E43C3700C31528 /* ChatSuggestionsViewController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsViewController_Tests.swift */; };
@@ -1886,9 +1886,9 @@
 		AD81AEEC25ED135100F17F8F /* CellSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellSeparatorView.swift; sourceTree = "<group>"; };
 		AD81AEF525ED13D900F17F8F /* ListCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListCollectionViewLayout.swift; sourceTree = "<group>"; };
 		AD87D096263C7783008B466C /* ChatCommandButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCommandButton.swift; sourceTree = "<group>"; };
-		AD87D0A0263C7823008B466C /* ChatAttachmentButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAttachmentButton.swift; sourceTree = "<group>"; };
 		AD87D0AA263C7A7E008B466C /* ChatShrinkInputButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatShrinkInputButton.swift; sourceTree = "<group>"; };
 		AD87D0BC263C7C09008B466C /* ChatCloseButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatCloseButton.swift; sourceTree = "<group>"; };
+		AD87D0A0263C7823008B466C /* AttachmentButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentButton.swift; sourceTree = "<group>"; };
 		AD90D18425D56196001D03BB /* CurrentUserUpdater_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Tests.swift; sourceTree = "<group>"; };
 		AD90D18C25D5619C001D03BB /* CurrentUserUpdater_Mock.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrentUserUpdater_Mock.swift; sourceTree = "<group>"; };
 		AD9F7B7C25C8215400DF8CD2 /* SnapshotVariant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotVariant.swift; sourceTree = "<group>"; };
@@ -4107,7 +4107,7 @@
 		AD87D094263C7495008B466C /* AttachmentButton */ = {
 			isa = PBXGroup;
 			children = (
-				AD87D0A0263C7823008B466C /* ChatAttachmentButton.swift */,
+				AD87D0A0263C7823008B466C /* AttachmentButton.swift */,
 			);
 			path = AttachmentButton;
 			sourceTree = "<group>";
@@ -5068,8 +5068,8 @@
 				8803E9E726398F4E002B2A7B /* ChatMessageBubbleView.swift in Sources */,
 				22FF4365256E943F00133910 /* ChatSuggestionsViewController.swift in Sources */,
 				22A0921725682880001FE9F0 /* ChatNavigationBar.swift in Sources */,
-				AD87D0A1263C7823008B466C /* ChatAttachmentButton.swift in Sources */,
 				22753599257C442300D1FDB6 /* ChatSendButton.swift in Sources */,
+				AD87D0A1263C7823008B466C /* AttachmentButton.swift in Sources */,
 				88F836502578D16D0039AEC8 /* ChatMessageActionControl.swift in Sources */,
 				88BA7F5D258B6953006CE0C5 /* ChatLoadingIndicator.swift in Sources */,
 				22086B48259509AC0007F8C0 /* ChatDocumentAttachmentsCollectionViewLayout.swift in Sources */,

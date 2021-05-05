@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// Button for opening attachments.
-open class ChatAttachmentButton: _Button, AppearanceProvider {
+open class AttachmentButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
