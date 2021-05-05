@@ -4,6 +4,7 @@
 
 import CoreData
 
+/// Cleans up local channels data and refetches it from backend
 class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
     // MARK: - Properties
     
@@ -35,8 +36,11 @@ class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
     }
     
     func cleanupChannelList() {
-        database.write { _ in
-            self.allChannels.forEach { $0.syncFailedCleanUp() }
+        database.write { session in
+            if let channels = try? (session as? NSManagedObjectContext)?
+                .fetch(ChannelDTO.allChannelsFetchRequest) {
+                channels.forEach { $0.syncFailedCleanUp() }
+            }
         } completion: { error in
             if let error = error {
                 log.error("Failed cleaning up channels data: \(error).")
@@ -48,34 +52,28 @@ class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
     // MARK: - Private
     
     private func updateChannels() {
-        database.backgroundReadOnlyContext.perform {
-            self.queries.forEach {
-                self.channelListUpdater.update(channelListQuery: $0) { error in
-                    if let error = error {
-                        log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
+        let context = database.backgroundReadOnlyContext
+        context.perform {
+            do {
+                let queriesDTOs = try context.fetch(
+                    NSFetchRequest<ChannelListQueryDTO>(
+                        entityName: ChannelListQueryDTO.entityName
+                    )
+                )
+                let queries: [_ChannelListQuery<ExtraData.Channel>] = try queriesDTOs.map {
+                    try $0.asChannelListQuery()
+                }
+                
+                queries.forEach {
+                    self.channelListUpdater.update(channelListQuery: $0) { error in
+                        if let error = error {
+                            log.error("Internal error. Failed to update ChannelListQueries for the new channel: \(error)")
+                        }
                     }
                 }
+            } catch {
+                log.error("Internal error: Failed to fetch [ChannelListQueryDTO]: \(error)")
             }
-        }
-    }
-
-    private var queries: [_ChannelListQuery<ExtraData.Channel>] {
-        do {
-            let queries = try database.backgroundReadOnlyContext
-                .fetch(NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName))
-            return try queries.map { try $0.asChannelListQuery() }
-        } catch {
-            log.error("Internal error: Failed to fetch [ChannelListQueryDTO]: \(error)")
-        }
-        return []
-    }
-    
-    private var allChannels: [ChannelDTO] {
-        do {
-            return try database.writableContext.fetch(ChannelDTO.allChannelsFetchRequest)
-        } catch {
-            log.error("Internal error: Failed to fetch [ChannelDTO]: \(error)")
-            return []
         }
     }
 }

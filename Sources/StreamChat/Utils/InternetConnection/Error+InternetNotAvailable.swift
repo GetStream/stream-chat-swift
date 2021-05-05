@@ -24,4 +24,12 @@ extension Error {
         let error = self as NSError
         return error.domain == parameters.domain && error.code == parameters.errorCode
     }
+    
+    var isBackendErrorWith400StatusCode: Bool {
+        if let error = (self as? ClientError)?.underlyingError as? ErrorPayload,
+           error.statusCode == 400 {
+            return true
+        }
+        return false
+    }
 }

@@ -103,8 +103,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
                     self?.eventNotificationCenter.process(payload.eventPayloads)
                 case let .failure(error):
                     log.error("Internal error: Failed to fetch and reply missing events: \(error)")
-                    if let error = (error as? ClientError)?.underlyingError as? ErrorPayload,
-                       error.statusCode == 400 {
+                    if error.isBackendErrorWith400StatusCode {
                         self?.channelListCleanupUpdater.cleanupChannelList()
                     }
                 }

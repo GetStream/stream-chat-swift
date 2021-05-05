@@ -66,26 +66,13 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
         
         channelListCleanupUpdater?.cleanupChannelList()
         
-        let channel1 = database.viewContext.channel(cid: cid1)!
-        let channel2 = database.viewContext.channel(cid: cid2)!
+        let channel1 = try XCTUnwrap(database.viewContext.channel(cid: cid1))
+        let channel2 = try XCTUnwrap(database.viewContext.channel(cid: cid2))
         
-        func checkChannelClearedOutProperly(channel: ChannelDTO) {
-            AssertAsync.willBeTrue(channel.messages.isEmpty)
-            AssertAsync.willBeTrue(channel.currentlyTypingMembers.isEmpty)
-            AssertAsync.willBeTrue(channel.watchers.isEmpty)
-            AssertAsync.willBeTrue(channel.members.isEmpty)
-            AssertAsync.willBeTrue(channel.attachments.isEmpty)
-            AssertAsync.willBeTrue(channel.pinnedMessages.isEmpty)
-            AssertAsync.willBeTrue(channel.reads.isEmpty)
-            AssertAsync.willBeTrue(channel.queries.isEmpty)
-            AssertAsync.willBeNil(channel.oldestMessageAt)
-            AssertAsync.willBeNil(channel.hiddenAt)
-            AssertAsync.willBeNil(channel.truncatedAt)
-            AssertAsync.willBeFalse(channel.needsRefreshQueries)
+        AssertAsync {
+            Assert.willBeTrue(channel1.isClearedOutProperly)
+            Assert.willBeTrue(channel2.isClearedOutProperly)
         }
-        
-        checkChannelClearedOutProperly(channel: channel1)
-        checkChannelClearedOutProperly(channel: channel2)
     }
     
     func test_cleanupChannelList_updatesChannels() throws {
@@ -112,5 +99,22 @@ extension _ChannelListQuery: Equatable {
             lhs.messagesLimit == rhs.messagesLimit &&
             lhs.options == rhs.options &&
             lhs.pagination == rhs.pagination
+    }
+}
+
+extension ChannelDTO {
+    var isClearedOutProperly: Bool {
+        messages.isEmpty &&
+            currentlyTypingMembers.isEmpty &&
+            watchers.isEmpty &&
+            members.isEmpty &&
+            attachments.isEmpty &&
+            pinnedMessages.isEmpty &&
+            reads.isEmpty &&
+            queries.isEmpty &&
+            oldestMessageAt == nil &&
+            hiddenAt == nil &&
+            truncatedAt == nil &&
+            !needsRefreshQueries
     }
 }

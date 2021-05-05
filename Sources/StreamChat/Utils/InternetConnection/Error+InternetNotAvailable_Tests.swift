@@ -5,7 +5,7 @@
 @testable import StreamChat
 import XCTest
 
-final class ErrorInternetNotAvailable_Tests: XCTestCase {
+final class Error_Tests: XCTestCase {
     func test_errorIsNSURLErrorNotConnectedToInternet() throws {
         let error = NSError(
             domain: NSURLErrorDomain,
@@ -86,5 +86,28 @@ final class ErrorInternetNotAvailable_Tests: XCTestCase {
         )
         
         XCTAssertFalse(error.isInternetOfflineError)
+    }
+    
+    func test_isBackendErrorWith400StatusCode_errorIsNotClientError() {
+        let error = WebSocketEngineError(error: nil)
+        XCTAssertFalse(error.isBackendErrorWith400StatusCode)
+    }
+    
+    func test_isBackendErrorWith400StatusCode_errorIsClientError() {
+        // When error is a ClientError, but it doesn't have unerdlying backend error
+        let error = ClientError(with: nil)
+        XCTAssertFalse(error.isBackendErrorWith400StatusCode)
+    }
+    
+    func test_isBackendErrorWith400StatusCode_errorIsClientErrorWithErrorPayload() {
+        // When error is a ClientError, it's unerdlying error is a backend error,
+        // but it's status code is not 400
+        let error = ClientError(with: ErrorPayload(code: 0, message: "", statusCode: 503))
+        XCTAssertFalse(error.isBackendErrorWith400StatusCode)
+    }
+    
+    func test_isBackendErrorWith400StatusCode() {
+        let error = ClientError(with: ErrorPayload(code: 0, message: "", statusCode: 400))
+        XCTAssertTrue(error.isBackendErrorWith400StatusCode)
     }
 }
