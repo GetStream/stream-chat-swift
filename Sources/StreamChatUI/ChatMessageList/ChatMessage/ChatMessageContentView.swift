@@ -98,7 +98,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     /// Shows the message quoted by the message this view displays.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.quotedMessage`.
-    public private(set) var quotedMessageView: _ChatMessageQuoteView<ExtraData>?
+    public private(set) var quotedMessageView: _QuotedChatMessageView<ExtraData>?
 
     /// Shows message reactions.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.reactions`.
@@ -530,10 +530,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     /// Instantiates, configures and assigns `quotedMessageView` when called for the first time.
     /// - Returns: The `quotedMessageView` subview.
-    open func createQuotedMessageView() -> _ChatMessageQuoteView<ExtraData> {
+    open func createQuotedMessageView() -> _QuotedChatMessageView<ExtraData> {
         if quotedMessageView == nil {
             quotedMessageView = components
-                .messageQuoteView
+                .quotedMessageView
                 .init()
                 .withoutAutoresizingMaskConstraints
 
