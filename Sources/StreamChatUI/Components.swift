@@ -33,7 +33,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var commandLabelView: _CommandLabelView<ExtraData>.Type = _CommandLabelView<ExtraData>.self
 
     /// A view to input content of a message.
-    public var messageInputView: _ChatMessageInputView<ExtraData>.Type = _ChatMessageInputView<ExtraData>.self
+    public var inputMessageView: _InputChatMessageView<ExtraData>.Type = _InputChatMessageView<ExtraData>.self
 
     /// A view that displays a quoted message.
     public var quotedMessageView: _QuotedChatMessageView<ExtraData>.Type = _QuotedChatMessageView<ExtraData>.self

@@ -72,7 +72,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     /// Convenience getter for underlying `textView`.
     public var inputTextView: InputTextView {
-        composerView.messageInputView.inputTextView
+        composerView.inputMessageView.inputTextView
     }
     
     public private(set) lazy var imagePicker: UIImagePickerController = {
@@ -112,35 +112,35 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             inputTextView.placeholderLabel.text = L10n.Composer.Placeholder.message
             imageAttachments = []
             documentAttachments = []
-            composerView.messageInputView.quotedMessageView.content = nil
+            composerView.inputMessageView.quotedMessageView.content = nil
             Animate {
                 self.composerView.sendButton.isHidden = false
                 self.composerView.confirmButton.isHidden = true
-                self.composerView.messageInputView.quotedMessageView.isHidden = true
+                self.composerView.inputMessageView.quotedMessageView.isHidden = true
                 self.composerView.headerView.isHidden = true
             }
-            composerView.messageInputView.setSlashCommandViews(hidden: true)
+            composerView.inputMessageView.setSlashCommandViews(hidden: true)
         case let .slashCommand(command):
             inputTextView.text = ""
             inputTextView.placeholderLabel.text = command.name.firstUppercased
-            composerView.messageInputView.setSlashCommandViews(hidden: false)
-            composerView.messageInputView.commandLabelView.content = command
+            composerView.inputMessageView.setSlashCommandViews(hidden: false)
+            composerView.inputMessageView.commandLabelView.content = command
             dismissSuggestionsViewController()
         case let .quote(messageToQuote):
             composerView.titleLabel.text = L10n.Composer.Title.reply
             Animate {
                 self.composerView.headerView.isHidden = false
-                self.composerView.messageInputView.quotedMessageView.isHidden = false
-                self.composerView.messageInputView.commandLabelView.isHidden = true
+                self.composerView.inputMessageView.quotedMessageView.isHidden = false
+                self.composerView.inputMessageView.commandLabelView.isHidden = true
             }
-            composerView.messageInputView.quotedMessageView.content = .init(message: messageToQuote, avatarAlignment: .left)
+            composerView.inputMessageView.quotedMessageView.content = .init(message: messageToQuote, avatarAlignment: .left)
         case let .edit(message):
             composerView.titleLabel.text = L10n.Composer.Title.edit
             Animate {
                 self.composerView.confirmButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
                 self.composerView.headerView.isHidden = false
-                self.composerView.messageInputView.commandLabelView.isHidden = true
+                self.composerView.inputMessageView.commandLabelView.isHidden = true
             }
             inputTextView.text = message.text
         }
@@ -165,25 +165,25 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     func setupInputView() {
-        composerView.messageInputView.inputTextView.delegate = self
+        composerView.inputMessageView.inputTextView.delegate = self
         
         composerView.attachmentButton.addTarget(self, action: #selector(showAttachmentsPicker), for: .touchUpInside)
         composerView.sendButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         composerView.confirmButton.addTarget(self, action: #selector(sendMessage), for: .touchUpInside)
         composerView.shrinkInputButton.addTarget(self, action: #selector(shrinkInput), for: .touchUpInside)
         composerView.commandsButton.addTarget(self, action: #selector(showAvailableCommands), for: .touchUpInside)
-        composerView.messageInputView.clearButton.addTarget(
+        composerView.inputMessageView.clearButton.addTarget(
             self,
             action: #selector(resetState),
             for: .touchUpInside
         )
         composerView.dismissButton.addTarget(self, action: #selector(resetState), for: .touchUpInside)
         
-        composerView.messageInputView.imageAttachmentsView.didTapRemoveItemButton = { [weak self] index in
+        composerView.inputMessageView.imageAttachmentsView.didTapRemoveItemButton = { [weak self] index in
             self?.imageAttachments.remove(at: index)
         }
         
-        composerView.messageInputView.documentAttachmentsView.didTapRemoveItemButton = { [weak self] index in
+        composerView.inputMessageView.documentAttachmentsView.didTapRemoveItemButton = { [weak self] index in
             self?.documentAttachments.remove(at: index)
         }
     }
@@ -378,18 +378,18 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     func didUpdateImageAttachments() {
-        composerView.messageInputView.imageAttachmentsView.content = imageAttachments.compactMap {
+        composerView.inputMessageView.imageAttachmentsView.content = imageAttachments.compactMap {
             guard let preview = UIImage(contentsOfFile: $0.path) else { return nil }
             return ImageAttachmentPreview(image: preview)
         }
         Animate {
-            self.composerView.messageInputView.imageAttachmentsView.isHidden = self.imageAttachments.isEmpty
+            self.composerView.inputMessageView.imageAttachmentsView.isHidden = self.imageAttachments.isEmpty
         }
         updateSendButton()
     }
     
     func didUpdateDocumentAttachments() {
-        composerView.messageInputView.documentAttachmentsView.documents = documentAttachments.map {
+        composerView.inputMessageView.documentAttachmentsView.documents = documentAttachments.map {
             let filePreview = appearance.images.documentPreviews[$0.pathExtension]
             return (
                 filePreview ?? appearance.images.fileFallback,
@@ -398,7 +398,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             )
         }
         Animate {
-            self.composerView.messageInputView.documentAttachmentsView.isHidden = self.documentAttachments.isEmpty
+            self.composerView.inputMessageView.documentAttachmentsView.isHidden = self.documentAttachments.isEmpty
         }
         updateSendButton()
     }

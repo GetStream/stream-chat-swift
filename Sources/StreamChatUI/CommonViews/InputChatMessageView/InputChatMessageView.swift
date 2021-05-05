@@ -6,10 +6,10 @@ import StreamChat
 import UIKit
 
 /// A view to input content of a message.
-public typealias ChatMessageInputView = _ChatMessageInputView<NoExtraData>
+public typealias InputChatMessageView = _InputChatMessageView<NoExtraData>
 
 /// A view to input content of a message.
-open class _ChatMessageInputView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider, AppearanceProvider {
+open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider, AppearanceProvider {
     /// The main container stack view that layouts all the message input content views.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
@@ -36,13 +36,13 @@ open class _ChatMessageInputView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         .withoutAutoresizingMaskConstraints
 
     /// The input text view to type a new message or command.
-    public private(set) lazy var inputTextView: ChatInputTextView = components
+    public private(set) lazy var inputTextView: InputTextView = components
         .inputTextView.init()
         .withoutAutoresizingMaskConstraints
 
     /// The command label that display the command info if a new command is being typed.
-    public private(set) lazy var commandLabel: _ChatCommandLabel<ExtraData> = components
-        .commandLabel.init()
+    public private(set) lazy var commandLabelView: _CommandLabelView<ExtraData> = components
+        .commandLabelView.init()
         .withoutAutoresizingMaskConstraints
 
     /// A button to clear the current typing information.
@@ -85,11 +85,11 @@ open class _ChatMessageInputView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         inputTextContainer.preservesSuperviewLayoutMargins = true
         inputTextContainer.alignment = .center
         inputTextContainer.spacing = 4
-        inputTextContainer.addArrangedSubview(commandLabel)
+        inputTextContainer.addArrangedSubview(commandLabelView)
         inputTextContainer.addArrangedSubview(inputTextView)
         inputTextContainer.addArrangedSubview(clearButton)
 
-        commandLabel.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
+        commandLabelView.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
         inputTextView.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
         inputTextView.preservesSuperviewLayoutMargins = false
 
@@ -101,7 +101,7 @@ open class _ChatMessageInputView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
     }
 
     public func setSlashCommandViews(hidden: Bool) {
-        commandLabel.isHidden = hidden
+        commandLabelView.isHidden = hidden
         clearButton.isHidden = hidden
     }
 }
