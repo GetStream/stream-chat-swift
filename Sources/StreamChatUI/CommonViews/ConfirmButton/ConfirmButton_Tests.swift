@@ -8,7 +8,7 @@ import StreamChatTestTools
 import SwiftUI
 import XCTest
 
-class ChatConfirmButton_Tests: XCTestCase {
+class ConfirmButton_Tests: XCTestCase {
     private lazy var container = UIView().withoutAutoresizingMaskConstraints
 
     override func setUp() {
@@ -17,7 +17,7 @@ class ChatConfirmButton_Tests: XCTestCase {
     }
 
     func test_defaultAppearance() {
-        let view = ChatConfirmButton().withoutAutoresizingMaskConstraints
+        let view = ConfirmButton().withoutAutoresizingMaskConstraints
         container.embed(view)
 
         view.isEnabled = true
@@ -32,7 +32,7 @@ class ChatConfirmButton_Tests: XCTestCase {
         appearance.images.confirmCheckmark = TestImages.vader.image.tinted(with: .systemPink)!
         appearance.colorPalette.inactiveTint = .black
 
-        let view = ChatConfirmButton().withoutAutoresizingMaskConstraints
+        let view = ConfirmButton().withoutAutoresizingMaskConstraints
         view.appearance = appearance
 
         container.embed(view)
@@ -45,7 +45,7 @@ class ChatConfirmButton_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingSubclassing() {
-        class TestView: ChatConfirmButton {
+        class TestView: ConfirmButton {
             override func setUpAppearance() {
                 setTitle("🥪", for: .normal)
                 setTitle("🤷🏻‍♂️", for: .disabled)

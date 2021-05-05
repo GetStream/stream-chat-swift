@@ -39,7 +39,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var sendButton: UIButton.Type = ChatSendButton.self
 
     /// A button for confirming actions.
-    public var confirmButton: UIButton.Type = ChatConfirmButton.self
+    public var confirmButton: UIButton.Type = ConfirmButton.self
 
     /// A button for opening attachments.
     public var attachmentButton: UIButton.Type = AttachmentButton.self

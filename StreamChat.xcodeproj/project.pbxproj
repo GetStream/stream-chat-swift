@@ -694,8 +694,8 @@
 		AD447443263AC6A10030E583 /* ChatMentionSuggestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD447407263AC5B70030E583 /* ChatMentionSuggestionView.swift */; };
 		AD447455263AC6A60030E583 /* ChatMentionSuggestionView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AD958825D7510900076DC3 /* ChatMentionSuggestionView_Tests.swift */; };
 		AD4474FD263B19F90030E583 /* ChatImageAttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4474FC263B19F90030E583 /* ChatImageAttachmentView.swift */; };
-		AD447586263B463D0030E583 /* ChatConfirmButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943382A26208D020094471F /* ChatConfirmButton.swift */; };
-		AD44758F263B46430030E583 /* ChatConfirmButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943385D262095C50094471F /* ChatConfirmButton_Tests.swift */; };
+		AD447586263B463D0030E583 /* ConfirmButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943382A26208D020094471F /* ConfirmButton.swift */; };
+		AD44758F263B46430030E583 /* ConfirmButton_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7943385D262095C50094471F /* ConfirmButton_Tests.swift */; };
 		AD45333225D153A500CD9D47 /* ConnectionController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD45333125D153A500CD9D47 /* ConnectionController_Tests.swift */; };
 		AD45333A25D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD45333925D153CF00CD9D47 /* ConnectionController+SwiftUI_Tests.swift */; };
 		AD45334E25D153E500CD9D47 /* ConnectionController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD45334D25D153E500CD9D47 /* ConnectionController+Combine_Tests.swift */; };
@@ -1350,8 +1350,8 @@
 		7937282B249900CB00E13FE5 /* MemberPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberPayload_Tests.swift; sourceTree = "<group>"; };
 		793C14DB24BF2A0800B8BFB7 /* ListDatabaseObserver_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListDatabaseObserver_Tests.swift; sourceTree = "<group>"; };
 		79433799260E04AF0094471F /* ChannelUpdated_ServerSide.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ChannelUpdated_ServerSide.json; sourceTree = "<group>"; };
-		7943382A26208D020094471F /* ChatConfirmButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConfirmButton.swift; sourceTree = "<group>"; };
-		7943385D262095C50094471F /* ChatConfirmButton_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatConfirmButton_Tests.swift; sourceTree = "<group>"; };
+		7943382A26208D020094471F /* ConfirmButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmButton.swift; sourceTree = "<group>"; };
+		7943385D262095C50094471F /* ConfirmButton_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfirmButton_Tests.swift; sourceTree = "<group>"; };
 		794927EC249E0BE2009D7EB7 /* ExtraData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtraData.swift; sourceTree = "<group>"; };
 		794927EE249E3D37009D7EB7 /* NotificationAddedToChannel.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = NotificationAddedToChannel.json; sourceTree = "<group>"; };
 		794927F0249E3DE6009D7EB7 /* EventPayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventPayload_Tests.swift; sourceTree = "<group>"; };
@@ -4048,8 +4048,8 @@
 		AD4475A8263B4DF90030E583 /* ConfirmButton */ = {
 			isa = PBXGroup;
 			children = (
-				7943382A26208D020094471F /* ChatConfirmButton.swift */,
-				7943385D262095C50094471F /* ChatConfirmButton_Tests.swift */,
+				7943382A26208D020094471F /* ConfirmButton.swift */,
+				7943385D262095C50094471F /* ConfirmButton_Tests.swift */,
 			);
 			path = ConfirmButton;
 			sourceTree = "<group>";
@@ -5176,7 +5176,7 @@
 				F64DFA8C26282F8B00F7F6F9 /* CGPoint+Extensions.swift in Sources */,
 				2210525F256FE16600A5F0DB /* ChatCommandLabel.swift in Sources */,
 				ADB22F7C25F1626200853C92 /* ChatOnlineIndicatorView.swift in Sources */,
-				AD447586263B463D0030E583 /* ChatConfirmButton.swift in Sources */,
+				AD447586263B463D0030E583 /* ConfirmButton.swift in Sources */,
 				AD7112F325F12AA800932AEE /* ChatUserAvatarView.swift in Sources */,
 				882AE124257A7FFE004095B3 /* UIViewController+Extensions.swift in Sources */,
 				E768AA892625C18D00328E6E /* TypingIndicatorView.swift in Sources */,
@@ -5205,7 +5205,7 @@
 				F86C887725FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift in Sources */,
 				BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */,
 				ADEB2F8025CC0B8A00EAAEB6 /* XCTestCase+TestImages.swift in Sources */,
-				AD44758F263B46430030E583 /* ChatConfirmButton_Tests.swift in Sources */,
+				AD44758F263B46430030E583 /* ConfirmButton_Tests.swift in Sources */,
 				E798D6F125FF6BF70002C3B9 /* SwipeableView_Tests.swift in Sources */,
 				E7296E942611D50900B1AE79 /* ChatSendButton_Tests.swift in Sources */,
 				227299AA25DAA505005EAFCF /* ChatChannelReadStatusCheckmarkView_Tests.swift in Sources */,
