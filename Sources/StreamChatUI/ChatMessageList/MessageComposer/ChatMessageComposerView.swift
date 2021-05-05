@@ -95,6 +95,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     public private(set) lazy var titleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
+        .withAdjustingFontForContentSizeCategory
 
     /// A checkbox to check/uncheck if the message should also
     /// be sent to the channel while replying in a thread.

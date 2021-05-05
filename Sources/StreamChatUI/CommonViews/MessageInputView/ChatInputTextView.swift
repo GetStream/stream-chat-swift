@@ -49,6 +49,7 @@ open class ChatInputTextView: UITextView, AppearanceProvider {
         textContainer.lineFragmentPadding = 8
         font = appearance.fonts.body
         textColor = appearance.colorPalette.text
+        textAlignment = .natural
         
         placeholderLabel.font = font
         placeholderLabel.textAlignment = .center
