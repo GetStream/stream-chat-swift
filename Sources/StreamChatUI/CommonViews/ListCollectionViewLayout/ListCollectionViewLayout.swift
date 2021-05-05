@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The `ListCollectionViewLayout` delegate to control how to display the list.
-public protocol ListCollectionViewLayoutDelegate: class, UICollectionViewDelegate {
+public protocol ListCollectionViewLayoutDelegate: UICollectionViewDelegate {
     /// Implement this method to have detailed control over the visibility of the cell separators.
     func collectionView(
         _ collectionView: UICollectionView,
