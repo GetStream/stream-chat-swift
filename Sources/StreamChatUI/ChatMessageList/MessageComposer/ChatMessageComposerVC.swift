@@ -71,7 +71,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         .withoutAutoresizingMaskConstraints
     
     /// Convenience getter for underlying `textView`.
-    public var inputTextView: ChatInputTextView {
+    public var inputTextView: InputTextView {
         composerView.messageInputView.inputTextView
     }
     

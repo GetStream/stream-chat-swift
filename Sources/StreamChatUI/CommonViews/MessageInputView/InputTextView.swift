@@ -7,7 +7,7 @@ import UIKit
 
 /// A view for inputting text with placeholder support. Since it is a subclass
 /// of `UITextView`, the `UITextViewDelegate` can be used to observe text changes.
-open class ChatInputTextView: UITextView, AppearanceProvider {
+open class InputTextView: UITextView, AppearanceProvider {
     public lazy var placeholderLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withBidirectionalLanguagesSupport
