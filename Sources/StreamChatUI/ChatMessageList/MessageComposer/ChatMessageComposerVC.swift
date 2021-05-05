@@ -124,14 +124,14 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             inputTextView.text = ""
             inputTextView.placeholderLabel.text = command.name.firstUppercased
             composerView.messageInputView.setSlashCommandViews(hidden: false)
-            composerView.messageInputView.commandLabel.content = command
+            composerView.messageInputView.commandLabelView.content = command
             dismissSuggestionsViewController()
         case let .quote(messageToQuote):
             composerView.titleLabel.text = L10n.Composer.Title.reply
             Animate {
                 self.composerView.headerView.isHidden = false
                 self.composerView.messageInputView.messageQuoteView.isHidden = false
-                self.composerView.messageInputView.commandLabel.isHidden = true
+                self.composerView.messageInputView.commandLabelView.isHidden = true
             }
             composerView.messageInputView.messageQuoteView.content = .init(message: messageToQuote, avatarAlignment: .left)
         case let .edit(message):
@@ -140,7 +140,7 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 self.composerView.confirmButton.isHidden = false
                 self.composerView.sendButton.isHidden = true
                 self.composerView.headerView.isHidden = false
-                self.composerView.messageInputView.commandLabel.isHidden = true
+                self.composerView.messageInputView.commandLabelView.isHidden = true
             }
             inputTextView.text = message.text
         }
