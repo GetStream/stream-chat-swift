@@ -8,6 +8,9 @@ import UIKit
 public typealias Components = _Components<NoExtraData>
 
 public struct _Components<ExtraData: ExtraDataTypes> {
+    /// A button used for creating new channels.
+    public var createChannelButton: UIButton.Type = CreateChatChannelButton.self
+
     /// A view used as an online activity indicator (online/offline).
     public var onlineIndicatorView: (UIView & MaskProviding).Type = ChatOnlineIndicatorView.self
 

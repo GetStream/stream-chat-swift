@@ -112,7 +112,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         class TestView: TestChatChannelListVC {
             override func setUpAppearance() {
                 super.setUpAppearance()
-                createNewChannelButton.tintColor = UIColor.orange
+                createChannelButton.tintColor = UIColor.orange
                 if let listLayout = collectionViewLayout as? ListCollectionViewLayout {
                     listLayout.separatorHeight = 4
                 }
@@ -136,7 +136,7 @@ class ChatChannelListVC_Tests: XCTestCase {
     func test_router_openCreateNewChannel() {
         vc.executeLifecycleMethods()
         
-        vc.createNewChannelButton.simulateEvent(.touchUpInside)
+        vc.createChannelButton.simulateEvent(.touchUpInside)
         XCTAssertTrue(mockedRouter.openCreateNewChannelCalled)
     }
     
@@ -192,6 +192,6 @@ class ChatChannelListVC_Tests: XCTestCase {
 
         XCTAssert(channelListVC.collectionViewLayout is OtherCollectionLayout)
         XCTAssert(channelListVC.collectionView is OtherCollectionView)
-        XCTAssert(channelListVC.createNewChannelButton is ChatChannelCreateNewButton)
+        XCTAssert(channelListVC.createChannelButton is CreateChatChannelButton)
     }
 }

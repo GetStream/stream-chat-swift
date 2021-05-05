@@ -6,9 +6,6 @@ import UIKit.UICollectionViewLayout
 
 public extension _Components {
     struct ChannelList {
-        /// A button used for creating new channels.
-        public var newChannelButton: UIButton.Type = ChatChannelCreateNewButton.self
-
         /// The logic to generate a name for the given channel.
         public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()
 
