@@ -8,7 +8,7 @@ import CoreData
 import XCTest
 
 class ChannelController_Tests: StressTestCase {
-    fileprivate var env: TestEnvironment!
+    fileprivate var env: TestEnvironment<NoExtraData>!
     
     var client: ChatClient!
     
@@ -732,7 +732,7 @@ class ChannelController_Tests: StressTestCase {
 
     func test_genericDelegate_isNotifiedAboutStateChanges() throws {
         // Set the generic delegate
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestDelegateGeneric<NoExtraData>(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         
         // Assert delegate is notified about state changes
@@ -826,7 +826,7 @@ class ChannelController_Tests: StressTestCase {
     }
     
     func test_channelMemberEvents_areForwardedToGenericDelegate() throws {
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestDelegateGeneric<NoExtraData>(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         
         // Simulate `synchronize()` call
@@ -879,7 +879,7 @@ class ChannelController_Tests: StressTestCase {
         try client.databaseContainer.createMember(userId: memberId, cid: channelId)
         
         // Set the queue for delegate calls
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestDelegateGeneric<NoExtraData>(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         
         // Simulate `synchronize()` call
@@ -929,8 +929,122 @@ class ChannelController_Tests: StressTestCase {
         }
     }
     
+    func test_delegateMethodsAreCalled_onExtraDataUpdates() throws {
+        // Define custom ChannelExtraData
+        struct ColorExtraData: ChannelExtraData {
+            static var defaultValue: ColorExtraData = .init(color: "MISSING")
+            
+            let color: String
+        }
+        
+        // Define Custom ExtraDataTypes
+        struct CustomExtraData: ExtraDataTypes {
+            typealias Channel = ColorExtraData
+        }
+        
+        // Create necessary properties with CustomExtraData
+        let env = TestEnvironment<CustomExtraData>()
+        let client: _ChatClient<CustomExtraData> = _ChatClient.mock()
+        let controller = _ChatChannelController<CustomExtraData>(
+            channelQuery: .init(cid: channelId),
+            client: client,
+            environment: env.environment
+        )
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+        
+        // Create and assign delegate
+        let delegate = TestDelegateGeneric<CustomExtraData>(expectedQueueId: controllerCallbackQueueID)
+        controller.setDelegate(delegate)
+        
+        // Simulate `synchronize()` call
+        controller.synchronize()
+        
+        // Create the payload with CustomExtraData
+        let payload: ChannelPayload<CustomExtraData> = .init(
+            channel: .init(
+                cid: channelId,
+                name: .unique,
+                imageURL: .unique(),
+                extraData: .defaultValue,
+                typeRawValue: .unique,
+                lastMessageAt: .unique,
+                createdAt: .unique,
+                deletedAt: nil,
+                updatedAt: .unique,
+                createdBy: .dummy(userId: .unique),
+                config: .init(),
+                isFrozen: false,
+                memberCount: 1,
+                team: nil,
+                members: nil,
+                cooldownDuration: 0
+            ),
+            watcherCount: 0,
+            watchers: nil,
+            members: [],
+            membership: nil,
+            messages: [],
+            pinnedMessages: [],
+            channelReads: []
+        )
+        
+        // Simulate DB update
+        var error = try await {
+            client.databaseContainer.write({ session in
+                try session.saveChannel(payload: payload, query: nil)
+            }, completion: $0)
+        }
+        XCTAssertNil(error)
+        
+        // Fetch channel from DB
+        var channel: _ChatChannel<CustomExtraData> { client.databaseContainer.viewContext.channel(cid: channelId)!.asModel() }
+        XCTAssertEqual(channel.cid, channelId)
+        
+        // Assert that `.create` callback is called
+        AssertAsync.willBeEqual(delegate.didUpdateChannel_channel, .create(channel))
+        
+        // Simulate DB update with the same payload
+        // except `extraData` is changed now
+        error = try await {
+            client.databaseContainer.write({ session in
+                let newPayload: ChannelPayload<CustomExtraData> = .init(
+                    channel: .init(
+                        cid: self.channelId,
+                        name: payload.channel.name,
+                        imageURL: payload.channel.imageURL,
+                        extraData: .init(color: "NEW_VALUE"),
+                        typeRawValue: payload.channel.typeRawValue,
+                        lastMessageAt: payload.channel.lastMessageAt,
+                        createdAt: payload.channel.createdAt,
+                        deletedAt: nil,
+                        updatedAt: payload.channel.updatedAt,
+                        createdBy: payload.channel.createdBy,
+                        config: payload.channel.config,
+                        isFrozen: payload.channel.isFrozen,
+                        memberCount: payload.channel.memberCount,
+                        team: payload.channel.team,
+                        members: payload.channel.members,
+                        cooldownDuration: payload.channel.cooldownDuration
+                    ),
+                    watcherCount: payload.watcherCount!,
+                    watchers: payload.watchers,
+                    members: payload.members,
+                    membership: payload.membership,
+                    messages: payload.messages,
+                    pinnedMessages: payload.pinnedMessages,
+                    channelReads: payload.channelReads
+                )
+                try session.saveChannel(payload: newPayload, query: nil)
+            }, completion: $0)
+        }
+        XCTAssertNil(error)
+        
+        // Check if we get `.update` callback
+        AssertAsync.willBeEqual(delegate.didUpdateChannel_channel, .update(channel))
+    }
+    
     func test_genericDelegateMethodsAreCalled() throws {
-        let delegate = TestDelegateGeneric(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestDelegateGeneric<NoExtraData>(expectedQueueId: controllerCallbackQueueID)
         controller.setDelegate(delegate)
         
         // Simulate `synchronize()` call
@@ -2636,11 +2750,11 @@ class ChannelController_Tests: StressTestCase {
     }
 }
 
-private class TestEnvironment {
-    var channelUpdater: ChannelUpdaterMock<NoExtraData>?
-    var eventSender: EventSenderMock<NoExtraData>?
+private class TestEnvironment<ExtraData: ExtraDataTypes> {
+    var channelUpdater: ChannelUpdaterMock<ExtraData>?
+    var eventSender: EventSenderMock<ExtraData>?
     
-    lazy var environment: ChatChannelController.Environment = .init(
+    lazy var environment: _ChatChannelController<ExtraData>.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
             self.channelUpdater = ChannelUpdaterMock(database: $0, apiClient: $1)
             return self.channelUpdater!
@@ -2702,36 +2816,42 @@ private class TestDelegate: QueueAwareDelegate, ChatChannelControllerDelegate {
 }
 
 /// A concrete `ChannelControllerDelegateGeneric` implementation allowing capturing the delegate calls.
-private class TestDelegateGeneric: QueueAwareDelegate, _ChatChannelControllerDelegate {
+private class TestDelegateGeneric<ExtraData: ExtraDataTypes>: QueueAwareDelegate, _ChatChannelControllerDelegate {
     @Atomic var state: DataController.State?
-    @Atomic var didUpdateChannel_channel: EntityChange<ChatChannel>?
-    @Atomic var didUpdateMessages_messages: [ListChange<ChatMessage>]?
+    @Atomic var didUpdateChannel_channel: EntityChange<_ChatChannel<ExtraData>>?
+    @Atomic var didUpdateMessages_messages: [ListChange<_ChatMessage<ExtraData>>]?
     @Atomic var didReceiveMemberEvent_event: MemberEvent?
-    @Atomic var didChangeTypingMembers_typingMembers: Set<ChatChannelMember>?
+    @Atomic var didChangeTypingMembers_typingMembers: Set<_ChatChannelMember<ExtraData.User>>?
     
     func controller(_ controller: DataController, didChangeState state: DataController.State) {
         self.state = state
         validateQueue()
     }
     
-    func channelController(_ channelController: ChatChannelController, didUpdateMessages changes: [ListChange<ChatMessage>]) {
+    func channelController(
+        _ channelController: _ChatChannelController<ExtraData>,
+        didUpdateMessages changes: [ListChange<_ChatMessage<ExtraData>>]
+    ) {
         didUpdateMessages_messages = changes
         validateQueue()
     }
     
-    func channelController(_ channelController: ChatChannelController, didUpdateChannel channel: EntityChange<ChatChannel>) {
+    func channelController(
+        _ channelController: _ChatChannelController<ExtraData>,
+        didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
+    ) {
         didUpdateChannel_channel = channel
         validateQueue()
     }
     
-    func channelController(_ channelController: ChatChannelController, didReceiveMemberEvent event: MemberEvent) {
+    func channelController(_ channelController: _ChatChannelController<ExtraData>, didReceiveMemberEvent event: MemberEvent) {
         didReceiveMemberEvent_event = event
         validateQueue()
     }
     
     func channelController(
-        _ channelController: ChatChannelController,
-        didChangeTypingMembers typingMembers: Set<ChatChannelMember>
+        _ channelController: _ChatChannelController<ExtraData>,
+        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
     ) {
         didChangeTypingMembers_typingMembers = typingMembers
         validateQueue()
