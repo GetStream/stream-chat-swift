@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view to check/uncheck an option.
-open class ChatCheckboxControl: _Control, AppearanceProvider {
+open class CheckboxControl: _Control, AppearanceProvider {
     // MARK: - Properties
     
     public var checkmarkHeight: CGFloat = 16

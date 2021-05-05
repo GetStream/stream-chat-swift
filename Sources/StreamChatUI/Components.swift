@@ -54,7 +54,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var closeButton: UIButton.Type = ChatShrinkInputButton.self
 
     /// A view to check/uncheck an option.
-    public var checkmarkControl: ChatCheckboxControl.Type = ChatCheckboxControl.self
+    public var checkmarkControl: CheckboxControl.Type = CheckboxControl.self
 
     /// An object responsible for message layout options calculations in `ChatMessageListVC/ChatThreadVC`.
     public var messageLayoutOptionsResolver: _ChatMessageLayoutOptionsResolver<ExtraData> = .init()
