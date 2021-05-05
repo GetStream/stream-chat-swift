@@ -9,6 +9,7 @@ import SwiftUI
 /// A `UIViewControllerRepresentable` subclass which wraps `ChatChannelListVC` and shows list of channels.
 public typealias ChatChannelList = _ChatChannelListVC<NoExtraData>.View
 
+@available(iOS 13.0, *)
 extension _ChatChannelListVC {
     /// A `UIViewControllerRepresentable` subclass which wraps `ChatChannelListVC` and shows list of channels.
     public struct View: UIViewControllerRepresentable {
