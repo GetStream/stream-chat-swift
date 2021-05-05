@@ -51,7 +51,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var shrinkInputButton: UIButton.Type = ChatShrinkInputButton.self
 
     /// A button for closing, dismissing or clearing information.
-    public var closeButton: UIButton.Type = ChatShrinkInputButton.self
+    public var closeButton: UIButton.Type = ShrinkInputButton.self
 
     /// A view to check/uncheck an option.
     public var checkmarkControl: CheckboxControl.Type = CheckboxControl.self
