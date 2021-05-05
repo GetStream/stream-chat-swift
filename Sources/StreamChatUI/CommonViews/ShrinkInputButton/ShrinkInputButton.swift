@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// Button for shrinking the input view to allow more space for other actions.
-open class ChatShrinkInputButton: _Button, AppearanceProvider {
+open class ShrinkInputButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 

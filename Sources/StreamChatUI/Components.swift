@@ -48,7 +48,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var commandsButton: UIButton.Type = CommandButton.self
 
     /// A button for shrinking the input view to allow more space for other actions.
-    public var shrinkInputButton: UIButton.Type = ChatShrinkInputButton.self
+    public var shrinkInputButton: UIButton.Type = ShrinkInputButton.self
 
     /// A button for closing, dismissing or clearing information.
     public var closeButton: UIButton.Type = ShrinkInputButton.self
