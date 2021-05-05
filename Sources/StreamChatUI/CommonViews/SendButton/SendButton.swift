@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// Button used for sending a message, or any type of content.
-open class ChatSendButton: _Button, AppearanceProvider {
+open class SendButton: _Button, AppearanceProvider {
     /// Override this variable to enable custom behaviour upon button enabled.
     override open var isEnabled: Bool {
         didSet {

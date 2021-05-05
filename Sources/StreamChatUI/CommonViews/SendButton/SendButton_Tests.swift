@@ -8,7 +8,7 @@ import StreamChatTestTools
 import SwiftUI
 import XCTest
 
-class ChatSendButton_Tests: XCTestCase {
+class SendButton_Tests: XCTestCase {
     private lazy var container = UIView().withoutAutoresizingMaskConstraints
 
     override func setUp() {
@@ -17,7 +17,7 @@ class ChatSendButton_Tests: XCTestCase {
     }
 
     func test_defaultAppearance() {
-        let view = ChatSendButton().withoutAutoresizingMaskConstraints
+        let view = SendButton().withoutAutoresizingMaskConstraints
         container.embed(view)
 
         view.isEnabled = true
@@ -32,7 +32,7 @@ class ChatSendButton_Tests: XCTestCase {
         appearance.images.sendArrow = TestImages.vader.image.tinted(with: .systemPink)!
         appearance.colorPalette.inactiveTint = .black
 
-        let view = ChatSendButton().withoutAutoresizingMaskConstraints
+        let view = SendButton().withoutAutoresizingMaskConstraints
         view.appearance = appearance
 
         container.embed(view)
@@ -45,7 +45,7 @@ class ChatSendButton_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingSubclassing() {
-        class TestView: ChatSendButton {
+        class TestView: SendButton {
             override func setUpAppearance() {
                 setTitle("🥪", for: .normal)
                 setTitle("🤷🏻‍♂️", for: .disabled)
