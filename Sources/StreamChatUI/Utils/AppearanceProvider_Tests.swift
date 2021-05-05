@@ -92,4 +92,3 @@ private class TestAppearanceViewController: UIViewController, AppearanceProvider
 }
 
 private var testColor = UIColor(r: 1, g: 2, b: 3)
-private class TestCreateChannelButton: ChatChannelCreateNewButton {}

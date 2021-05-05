@@ -29,7 +29,7 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
     override func setUp() {
         super.setUp()
         
-        createNewChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
+        createChannelButton.addTarget(self, action: #selector(didTapCreateNewChannel), for: .touchUpInside)
     }
     
     override func setUpAppearance() {
@@ -82,26 +82,26 @@ final class SlackChatChannelListViewController: ChatChannelListVC {
             jumpView.topAnchor.constraint(equalTo: titleView.bottomAnchor, constant: 10)
         ])
         
-        let createNewChannelView = UIView()
-        createNewChannelView.backgroundColor = Colors.primary
-        createNewChannelView.layer.masksToBounds = true
-        createNewChannelView.layer.cornerRadius = 30
-        createNewChannelView.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(createNewChannelView)
+        let createChannelView = UIView()
+        createChannelView.backgroundColor = Colors.primary
+        createChannelView.layer.masksToBounds = true
+        createChannelView.layer.cornerRadius = 30
+        createChannelView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(createChannelView)
         NSLayoutConstraint.activate([
-            createNewChannelView.heightAnchor.constraint(equalToConstant: 60),
-            createNewChannelView.widthAnchor.constraint(equalTo: createNewChannelView.heightAnchor),
-            createNewChannelView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-            createNewChannelView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)
+            createChannelView.heightAnchor.constraint(equalToConstant: 60),
+            createChannelView.widthAnchor.constraint(equalTo: createChannelView.heightAnchor),
+            createChannelView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            createChannelView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -10)
         ])
 
-        createNewChannelButton.translatesAutoresizingMaskIntoConstraints = false
-        createNewChannelView.addSubview(createNewChannelButton)
+        createChannelButton.translatesAutoresizingMaskIntoConstraints = false
+        createChannelView.addSubview(createChannelButton)
         NSLayoutConstraint.activate([
-            createNewChannelButton.topAnchor.constraint(equalTo: createNewChannelView.topAnchor, constant: 5),
-            createNewChannelButton.bottomAnchor.constraint(equalTo: createNewChannelView.bottomAnchor, constant: -5),
-            createNewChannelButton.leadingAnchor.constraint(equalTo: createNewChannelView.leadingAnchor, constant: 5),
-            createNewChannelButton.trailingAnchor.constraint(equalTo: createNewChannelView.trailingAnchor, constant: -5)
+            createChannelButton.topAnchor.constraint(equalTo: createChannelView.topAnchor, constant: 5),
+            createChannelButton.bottomAnchor.constraint(equalTo: createChannelView.bottomAnchor, constant: -5),
+            createChannelButton.leadingAnchor.constraint(equalTo: createChannelView.leadingAnchor, constant: 5),
+            createChannelButton.trailingAnchor.constraint(equalTo: createChannelView.trailingAnchor, constant: -5)
         ])
     }
     

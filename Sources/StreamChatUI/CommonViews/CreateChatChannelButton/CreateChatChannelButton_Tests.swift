@@ -7,20 +7,20 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatChannelCreateNewButton_Tests: XCTestCase {
+class CreateChatChannelButton_Tests: XCTestCase {
     func test_defaultAppearance() {
-        let view = ChatChannelCreateNewButton().withoutAutoresizingMaskConstraints
+        let view = CreateChatChannelButton().withoutAutoresizingMaskConstraints
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
     
     func test_isHighlighted() {
-        let view = ChatChannelCreateNewButton().withoutAutoresizingMaskConstraints
+        let view = CreateChatChannelButton().withoutAutoresizingMaskConstraints
         view.isHighlighted = true
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
     
     func test_isDisabled() {
-        let view = ChatChannelCreateNewButton().withoutAutoresizingMaskConstraints
+        let view = CreateChatChannelButton().withoutAutoresizingMaskConstraints
         view.isEnabled = false
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
@@ -29,7 +29,7 @@ class ChatChannelCreateNewButton_Tests: XCTestCase {
         var appearance = Appearance()
         appearance.images.newChannel = appearance.images.close
 
-        let view = ChatChannelCreateNewButton().withoutAutoresizingMaskConstraints
+        let view = CreateChatChannelButton().withoutAutoresizingMaskConstraints
         view.appearance = appearance
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
