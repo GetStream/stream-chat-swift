@@ -15,8 +15,8 @@ open class _ChatMessageInputView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         .withoutAutoresizingMaskConstraints
 
     /// A view that displays the quoted message that the new message is replying.
-    public private(set) lazy var messageQuoteView = components
-        .messageQuoteView.init()
+    public private(set) lazy var quotedMessageView = components
+        .quotedMessageView.init()
         .withoutAutoresizingMaskConstraints
 
     /// A view that displays the image attachments of the new message.
@@ -74,11 +74,11 @@ open class _ChatMessageInputView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         container.alignment = .fill
         container.distribution = .natural
         container.spacing = 0
-        container.addArrangedSubview(messageQuoteView)
+        container.addArrangedSubview(quotedMessageView)
         container.addArrangedSubview(imageAttachmentsView)
         container.addArrangedSubview(documentAttachmentsView)
         container.addArrangedSubview(inputTextContainer)
-        messageQuoteView.isHidden = true
+        quotedMessageView.isHidden = true
         imageAttachmentsView.isHidden = true
         documentAttachmentsView.isHidden = true
 

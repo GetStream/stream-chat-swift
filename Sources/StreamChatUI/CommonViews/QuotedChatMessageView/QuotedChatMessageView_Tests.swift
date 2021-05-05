@@ -7,12 +7,12 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-class ChatMessageQuoteView_Tests: XCTestCase {
-    var view: ChatMessageQuoteView!
+class QuotedChatMessageView_Tests: XCTestCase {
+    var view: QuotedChatMessageView!
 
     override func setUp() {
         super.setUp()
-        view = ChatMessageQuoteView().withoutAutoresizingMaskConstraints
+        view = QuotedChatMessageView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.backgroundColor = .gray
     }
@@ -83,7 +83,7 @@ class ChatMessageQuoteView_Tests: XCTestCase {
     }
 
     func test_appearanceCustomization_usingSubclassing() {
-        class TestView: ChatMessageQuoteView {
+        class TestView: QuotedChatMessageView {
             override func setUpAppearance() {
                 super.setUpAppearance()
 
@@ -114,7 +114,7 @@ class ChatMessageQuoteView_Tests: XCTestCase {
     }
 }
 
-private extension ChatMessageQuoteView {
+private extension QuotedChatMessageView {
     func addSizeConstraints() {
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: 360)
@@ -124,13 +124,13 @@ private extension ChatMessageQuoteView {
 
 // MARK: - Factory Helper
 
-extension ChatMessageQuoteView_Tests {
+extension QuotedChatMessageView_Tests {
     func makeContent(
         text: String,
         isSentByCurrentUser: Bool = false,
-        avatarAlignment: ChatMessageQuoteAvatarAlignment = .left,
+        avatarAlignment: QuotedAvatarAlignment = .left,
         attachments: [ChatMessageAttachment] = []
-    ) -> ChatMessageQuoteView.Content {
+    ) -> QuotedChatMessageView.Content {
         let message = ChatMessage.mock(
             id: .unique,
             text: text,

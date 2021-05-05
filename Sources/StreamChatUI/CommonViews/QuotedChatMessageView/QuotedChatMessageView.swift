@@ -6,26 +6,26 @@ import StreamChat
 import UIKit
 
 /// The avatar position in relation with the text message.
-struct ChatMessageQuoteAvatarAlignment: Equatable {
+struct QuotedAvatarAlignment: Equatable {
     /// The avatar will be aligned to the left, and the message content on the right.
-    static let left = ChatMessageQuoteAvatarAlignment(rawValue: 0)
+    static let left = QuotedAvatarAlignment(rawValue: 0)
     /// The avatar will be aligned to the right, and the message content on the left.
-    static let right = ChatMessageQuoteAvatarAlignment(rawValue: 1)
+    static let right = QuotedAvatarAlignment(rawValue: 1)
 
     private let rawValue: Int
 }
 
 /// A view that displays a quoted message.
-public typealias ChatMessageQuoteView = _ChatMessageQuoteView<NoExtraData>
+public typealias QuotedChatMessageView = _QuotedChatMessageView<NoExtraData>
 
 /// A view that displays a quoted message.
-open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
-    /// The `ChatMessageQuoteView` content.
+open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+    /// The content of the view.
     public struct Content {
         /// The quoted message.
         let message: _ChatMessage<ExtraData>?
         /// The avatar position in relation with the text message.
-        let avatarAlignment: ChatMessageQuoteAvatarAlignment
+        let avatarAlignment: QuotedAvatarAlignment
     }
 
     /// The content of this view, composed by the quoted message and the desired avatar alignment.
@@ -139,7 +139,7 @@ open class _ChatMessageQuoteView<ExtraData: ExtraDataTypes>: _View, ThemeProvide
     }
 }
 
-private extension _ChatMessageQuoteView {
+private extension _QuotedChatMessageView {
     /// Sets the avatar image from a url or sets the placeholder image if the url is `nil`.
     /// - Parameter imageUrl: The url of the image.
     func setAvatar(imageUrl: URL?) {

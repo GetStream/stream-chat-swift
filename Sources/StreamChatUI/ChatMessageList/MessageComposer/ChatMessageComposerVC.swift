@@ -112,11 +112,11 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             inputTextView.placeholderLabel.text = L10n.Composer.Placeholder.message
             imageAttachments = []
             documentAttachments = []
-            composerView.messageInputView.messageQuoteView.content = nil
+            composerView.messageInputView.quotedMessageView.content = nil
             Animate {
                 self.composerView.sendButton.isHidden = false
                 self.composerView.confirmButton.isHidden = true
-                self.composerView.messageInputView.messageQuoteView.isHidden = true
+                self.composerView.messageInputView.quotedMessageView.isHidden = true
                 self.composerView.headerView.isHidden = true
             }
             composerView.messageInputView.setSlashCommandViews(hidden: true)
@@ -130,10 +130,10 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             composerView.titleLabel.text = L10n.Composer.Title.reply
             Animate {
                 self.composerView.headerView.isHidden = false
-                self.composerView.messageInputView.messageQuoteView.isHidden = false
+                self.composerView.messageInputView.quotedMessageView.isHidden = false
                 self.composerView.messageInputView.commandLabelView.isHidden = true
             }
-            composerView.messageInputView.messageQuoteView.content = .init(message: messageToQuote, avatarAlignment: .left)
+            composerView.messageInputView.quotedMessageView.content = .init(message: messageToQuote, avatarAlignment: .left)
         case let .edit(message):
             composerView.titleLabel.text = L10n.Composer.Title.edit
             Animate {
