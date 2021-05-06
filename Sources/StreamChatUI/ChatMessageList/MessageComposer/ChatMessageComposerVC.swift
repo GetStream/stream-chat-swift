@@ -238,9 +238,10 @@ open class _ChatMessageComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
     
-    @objc func showAttachmentsPicker() {
+    @objc func showAttachmentsPicker(sender: UIButton) {
         var actionSheet: UIAlertController {
             let actionSheet = UIAlertController(title: nil, message: L10n.Composer.Picker.title, preferredStyle: .actionSheet)
+            actionSheet.popoverPresentationController?.sourceView = sender
             
             actionSheet.addAction(UIAlertAction(title: L10n.Composer.Picker.file, style: .default, handler: { [weak self] _ in
                 guard let self = self else { return }
