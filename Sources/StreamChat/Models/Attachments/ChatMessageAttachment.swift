@@ -11,11 +11,16 @@ public struct AttachmentUploadingState: Equatable {
     public let state: LocalAttachmentState
 }
 
+@dynamicMemberLookup
 public struct _ChatMessageAttachment<Payload> {
     public let id: AttachmentId
     public let type: AttachmentType
     public let payload: Payload
     public let uploadingState: AttachmentUploadingState?
+
+    public subscript<T>(dynamicMember keyPath: KeyPath<Payload, T>) -> T {
+        payload[keyPath: keyPath]
+    }
 }
 
 extension _ChatMessageAttachment: Equatable where Payload: Equatable {}

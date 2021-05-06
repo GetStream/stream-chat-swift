@@ -144,7 +144,7 @@ extension _ChatMessageFileAttachmentListView {
         // MARK: - Private
 
         private var fileIcon: UIImage? {
-            guard let file = content?.payload?.file else { return nil }
+            guard let file = content?.file else { return nil }
 
             return appearance.images.fileIcons[file.type] ?? appearance.images.fileFallback
         }
