@@ -8,13 +8,13 @@ public protocol AttachmentPayloadType: Codable {
     static var type: AttachmentType { get }
 }
 
-public struct AttachmentEnvelope {
+public struct ChatMessageAttachmentEnvelope {
     public let type: AttachmentType
     public let payload: Encodable?
     public let localFileURL: URL?
 }
 
-public extension AttachmentEnvelope {
+public extension ChatMessageAttachmentEnvelope {
     init<Payload: AttachmentPayloadType>(payload: Payload) {
         self.init(
             type: Payload.type,

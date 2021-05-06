@@ -137,11 +137,11 @@ class ChannelUpdater_Tests: StressTestCase {
         let arguments: String = .unique
         let extraData: NoExtraData = .defaultValue
 
-        let imageAttachmentEnvelope = AttachmentEnvelope.mockImage
-        let fileAttachmentEnvelope = AttachmentEnvelope.mockFile
-        let customAttachmentEnvelope = AttachmentEnvelope(payload: TestAttachmentPayload.unique)
+        let imageAttachmentEnvelope = ChatMessageAttachmentEnvelope.mockImage
+        let fileAttachmentEnvelope = ChatMessageAttachmentEnvelope.mockFile
+        let customAttachmentEnvelope = ChatMessageAttachmentEnvelope(payload: TestAttachmentPayload.unique)
 
-        let attachmentEnvelopes: [AttachmentEnvelope] = [
+        let attachmentEnvelopes: [ChatMessageAttachmentEnvelope] = [
             imageAttachmentEnvelope,
             fileAttachmentEnvelope,
             customAttachmentEnvelope
@@ -167,7 +167,7 @@ class ChannelUpdater_Tests: StressTestCase {
             }
         }
 
-        func id(for envelope: AttachmentEnvelope) -> AttachmentId {
+        func id(for envelope: ChatMessageAttachmentEnvelope) -> AttachmentId {
             .init(cid: cid, messageId: newMessageId, index: attachmentEnvelopes.firstIndex(of: envelope)!)
         }
         

@@ -49,7 +49,7 @@ final class AttachmentUploader_Tests: StressTestCase {
         // Create message in the database.
         try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
 
-        let attachmentEnvelopes: [AttachmentEnvelope] = [
+        let attachmentEnvelopes: [ChatMessageAttachmentEnvelope] = [
             .mockFile,
             .mockImage
         ]
@@ -148,7 +148,7 @@ final class AttachmentUploader_Tests: StressTestCase {
     func test_uploader_changesAttachmentState_whenLocalURLIsInvalid() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let attachmentEnvelope = AttachmentEnvelope(localFileURL: .fakeFile)!
+        let attachmentEnvelope = ChatMessageAttachmentEnvelope(localFileURL: .fakeFile)!
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
         // Create channel in the database.
@@ -177,7 +177,7 @@ final class AttachmentUploader_Tests: StressTestCase {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
-        let attachmentEnvelope: AttachmentEnvelope = .mockImage
+        let attachmentEnvelope: ChatMessageAttachmentEnvelope = .mockImage
 
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)

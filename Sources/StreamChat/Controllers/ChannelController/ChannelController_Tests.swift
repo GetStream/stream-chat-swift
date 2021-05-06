@@ -2080,7 +2080,7 @@ class ChannelController_Tests: StressTestCase {
 //        let command: String = .unique
 //        let arguments: String = .unique
         let extraData: NoExtraData = .defaultValue
-        let attachments: [AttachmentEnvelope] = [
+        let attachments: [ChatMessageAttachmentEnvelope] = [
             .init(payload: TestAttachmentPayload.unique),
             .mockImage,
             .mockFile
@@ -2866,7 +2866,7 @@ extension _TokenProvider {
     }
 }
 
-extension AttachmentEnvelope {
+extension ChatMessageAttachmentEnvelope {
     func attachment<T: AttachmentPayloadType>(id: AttachmentId) -> _ChatMessageAttachment<T>? {
         guard let payload = payload as? T else { return nil }
 
@@ -2879,7 +2879,7 @@ extension AttachmentEnvelope {
     }
 }
 
-extension AttachmentEnvelope: Equatable {
+extension ChatMessageAttachmentEnvelope: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         let lhsData = try? JSONEncoder.default.encode(lhs.payload?.asAnyEncodable)
         let rhsData = try? JSONEncoder.default.encode(rhs.payload?.asAnyEncodable)

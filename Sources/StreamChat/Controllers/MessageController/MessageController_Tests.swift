@@ -645,7 +645,7 @@ final class MessageController_Tests: StressTestCase {
         let showReplyInChannel = true
         let quotedMessageId: MessageId = .unique
         let extraData: NoExtraData = .defaultValue
-        let attachments: [AttachmentEnvelope] = [.mockFile, .mockImage, .init(payload: TestAttachmentPayload.unique)]
+        let attachments: [ChatMessageAttachmentEnvelope] = [.mockFile, .mockImage, .init(payload: TestAttachmentPayload.unique)]
         let pin = MessagePinning(expirationDate: .unique)
 
         // Simulate `createNewReply` calls and catch the completion

@@ -61,7 +61,7 @@ protocol MessageDatabaseSession {
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
-        attachments: [AttachmentEnvelope],
+        attachments: [ChatMessageAttachmentEnvelope],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData
@@ -116,7 +116,7 @@ extension MessageDatabaseSession {
         text: String,
         pinning: MessagePinning?,
         quotedMessageId: MessageId?,
-        attachments: [AttachmentEnvelope] = [],
+        attachments: [ChatMessageAttachmentEnvelope] = [],
         extraData: ExtraData = .defaultValue
     ) throws -> MessageDTO {
         try createNewMessage(
@@ -231,7 +231,7 @@ protocol AttachmentDatabaseSession {
     /// with the given `messageId` in the channel with the given `cid`.
     @discardableResult
     func createNewAttachment(
-        attachment: AttachmentEnvelope,
+        attachment: ChatMessageAttachmentEnvelope,
         id: AttachmentId
     ) throws -> AttachmentDTO
 }

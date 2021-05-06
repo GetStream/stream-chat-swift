@@ -891,7 +891,7 @@
 		F6A9E16D264177EB0016BBAA /* yoda.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F6A9E16B264177EA0016BBAA /* yoda.jpg */; };
 		F6A9E16E264177EB0016BBAA /* yoda.txt in Resources */ = {isa = PBXBuildFile; fileRef = F6A9E16C264177EB0016BBAA /* yoda.txt */; };
 		F6A9E178264178170016BBAA /* AttachmentEnvelope_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6A9E177264178170016BBAA /* AttachmentEnvelope_Mock.swift */; };
-		F6C0020A26414E4D0055D110 /* AttachmentEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C0020926414E4D0055D110 /* AttachmentEnvelope.swift */; };
+		F6C0020A26414E4D0055D110 /* ChatMessageAttachmentEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C0020926414E4D0055D110 /* ChatMessageAttachmentEnvelope.swift */; };
 		F6C56D1424F7B89D0012BB1F /* EventMiddleware_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6C56D1324F7B89D0012BB1F /* EventMiddleware_Mock.swift */; };
 		F6CA70932513A1450024ED5D /* Channel+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CA70912513A1400024ED5D /* Channel+Extensions.swift */; };
 		F6CCA24D251235F7004C1859 /* ChannelMemberTypingStateUpdaterMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CCA24C251235F7004C1859 /* ChannelMemberTypingStateUpdaterMiddleware.swift */; };
@@ -2085,7 +2085,7 @@
 		F6A9E16B264177EA0016BBAA /* yoda.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = yoda.jpg; sourceTree = "<group>"; };
 		F6A9E16C264177EB0016BBAA /* yoda.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = yoda.txt; sourceTree = "<group>"; };
 		F6A9E177264178170016BBAA /* AttachmentEnvelope_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentEnvelope_Mock.swift; sourceTree = "<group>"; };
-		F6C0020926414E4D0055D110 /* AttachmentEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentEnvelope.swift; sourceTree = "<group>"; };
+		F6C0020926414E4D0055D110 /* ChatMessageAttachmentEnvelope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachmentEnvelope.swift; sourceTree = "<group>"; };
 		F6C56D1324F7B89D0012BB1F /* EventMiddleware_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventMiddleware_Mock.swift; sourceTree = "<group>"; };
 		F6CA70912513A1400024ED5D /* Channel+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Channel+Extensions.swift"; sourceTree = "<group>"; };
 		F6CCA24C251235F7004C1859 /* ChannelMemberTypingStateUpdaterMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelMemberTypingStateUpdaterMiddleware.swift; sourceTree = "<group>"; };
@@ -2293,7 +2293,7 @@
 				22692C8E25D18097007C41D0 /* ChatMessageGiphyAttachment.swift */,
 				22692C9625D1841E007C41D0 /* ChatMessageFileAttachment.swift */,
 				225D7FE125D191400094E555 /* ChatMessageImageAttachment.swift */,
-				F6C0020926414E4D0055D110 /* AttachmentEnvelope.swift */,
+				F6C0020926414E4D0055D110 /* ChatMessageAttachmentEnvelope.swift */,
 				88BDCA892642B02D0099AD74 /* ChatMessageAttachment.swift */,
 			);
 			path = Attachments;
@@ -5566,7 +5566,7 @@
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				8802F9EF25AF3D4200475159 /* HTTPHeader.swift in Sources */,
 				8A0C3BD424C1DF2100CAFD19 /* MessageEvents.swift in Sources */,
-				F6C0020A26414E4D0055D110 /* AttachmentEnvelope.swift in Sources */,
+				F6C0020A26414E4D0055D110 /* ChatMessageAttachmentEnvelope.swift in Sources */,
 				F8933D2125FFAB400054BBFF /* APIPathConvertible.swift in Sources */,
 				795296FC258264A100435B2E /* UserSearchController.swift in Sources */,
 				79CD959224F9380B00E87377 /* MulticastDelegate.swift in Sources */,
