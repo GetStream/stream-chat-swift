@@ -61,7 +61,7 @@ final class ChatMessageListCollectionViewLayout_Tests: XCTestCase {
     
     // MARK: - Tests
     
-    func testLayoutDeletions() {
+    func test_messageListLayout_handlesDeletions() {
         let indices = 0..<20
         
         subject.currentItems = indices.map { LayoutItem(offset: CGFloat($0 * 200), height: 200) }
@@ -73,7 +73,7 @@ final class ChatMessageListCollectionViewLayout_Tests: XCTestCase {
         XCTAssertTrue(subject.currentItems.isEmpty)
     }
     
-    func testLayoutInsertions() throws {
+    func test_messageListLayout_handlesInsertions() throws {
         subject._prepare(forCollectionViewUpdates: [TestUpdateItem(insertIndex: 0)])
         
         // As `UUID` in `LayoutItem.id` is "random" adding `Equatable` conformance and direct comparison
@@ -84,5 +84,33 @@ final class ChatMessageListCollectionViewLayout_Tests: XCTestCase {
         
         XCTAssertEqual(firstItem.offset, 0)
         XCTAssertEqual(firstItem.height, subject.estimatedItemHeight)
+    }
+    
+    func test_messageListLayout_hasCorrectStickyHeaderAttributes() {
+        subject.hasStickyTopItem = true
+        subject.spacing = 10
+        subject.currentItems = [LayoutItem(offset: 0, height: 100)]
+        
+        let receivedAttrs = subject.stickyHeaderDecorationAttributes
+        
+        XCTAssertEqual(1, receivedAttrs?.zIndex)
+        XCTAssertEqual(IndexPath(item: 0, section: 0), receivedAttrs?.indexPath)
+        XCTAssertEqual(CGRect(x: 0, y: 0, width: 0, height: 110), receivedAttrs?.frame)
+        XCTAssertEqual(subject.stickyHeaderBackground, receivedAttrs?.representedElementKind)
+        XCTAssertEqual(.decorationView, receivedAttrs?.representedElementCategory)
+    }
+    
+    func test_messageListLayout_hasNoStickyHeaderAttributes_withoutStickyHeader() {
+        subject.hasStickyTopItem = false
+        subject.currentItems = [LayoutItem(offset: 0, height: 100)]
+        
+        XCTAssertNil(subject.stickyHeaderDecorationAttributes)
+    }
+    
+    func test_messageListLayout_hasNoStickyHeaderAttributes_whenEmpty() {
+        subject.hasStickyTopItem = true
+        subject.currentItems = []
+        
+        XCTAssertNil(subject.stickyHeaderDecorationAttributes)
     }
 }

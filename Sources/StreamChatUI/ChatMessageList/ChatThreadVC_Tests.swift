@@ -33,4 +33,8 @@ final class ChatThreadVC_Tests: XCTestCase {
         
         XCTAssertTrue(messageController.loadNextReplies_called)
     }
+    
+    func test_threadVC_hasStickyHeader() {
+        XCTAssertTrue(subject.messageListLayout.hasStickyTopItem)
+    }
 }
