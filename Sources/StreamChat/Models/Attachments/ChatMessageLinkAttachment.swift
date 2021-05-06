@@ -4,9 +4,9 @@
 
 import Foundation
 
-public typealias ChatMessageLinkAttachment = _ChatMessageAttachment<AttachmentLinkPayload>
+public typealias ChatMessageLinkAttachment = _ChatMessageAttachment<LinkAttachmentPayload>
 
-public struct AttachmentLinkPayload: AttachmentPayload {
+public struct LinkAttachmentPayload: AttachmentPayload {
     public static let type: AttachmentType = .linkPreview
 
     /// An original `URL` that was enriched.
@@ -26,11 +26,11 @@ public struct AttachmentLinkPayload: AttachmentPayload {
     public let previewURL: URL
 }
 
-extension AttachmentLinkPayload: Equatable {}
+extension LinkAttachmentPayload: Equatable {}
 
 // MARK: - Encodable
 
-extension AttachmentLinkPayload: Encodable {
+extension LinkAttachmentPayload: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: AttachmentCodingKeys.self)
 
@@ -46,7 +46,7 @@ extension AttachmentLinkPayload: Encodable {
 
 // MARK: - Decodable
 
-extension AttachmentLinkPayload: Decodable {
+extension LinkAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
 

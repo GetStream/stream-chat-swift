@@ -243,7 +243,7 @@ public extension _ChatMessage {
     }
 
     var linkAttachments: [ChatMessageLinkAttachment] {
-        attachments(payloadType: AttachmentLinkPayload.self)
+        attachments(payloadType: LinkAttachmentPayload.self)
     }
 }
 
