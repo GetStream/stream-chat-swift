@@ -4,7 +4,7 @@
 
 import Foundation
 
-public protocol AttachmentPayloadType: Codable {
+public protocol AttachmentPayload: Codable {
     static var type: AttachmentType { get }
 }
 
@@ -15,7 +15,7 @@ public struct ChatMessageAttachmentEnvelope {
 }
 
 public extension ChatMessageAttachmentEnvelope {
-    init<Payload: AttachmentPayloadType>(payload: Payload) {
+    init<Payload: AttachmentPayload>(payload: Payload) {
         self.init(
             type: Payload.type,
             payload: payload,
@@ -26,7 +26,7 @@ public extension ChatMessageAttachmentEnvelope {
     init?(localFileURL: URL) {
         guard let file = localFileURL.attachmentFile else { return nil }
 
-        let payload: AttachmentPayloadType
+        let payload: AttachmentPayload
         switch file.type {
         case .jpeg, .png:
             payload = AttachmentImagePayload(

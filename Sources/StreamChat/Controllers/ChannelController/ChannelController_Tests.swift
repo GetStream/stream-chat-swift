@@ -2867,7 +2867,7 @@ extension _TokenProvider {
 }
 
 extension ChatMessageAttachmentEnvelope {
-    func attachment<T: AttachmentPayloadType>(id: AttachmentId) -> _ChatMessageAttachment<T>? {
+    func attachment<T: AttachmentPayload>(id: AttachmentId) -> _ChatMessageAttachment<T>? {
         guard let payload = payload as? T else { return nil }
 
         return .init(

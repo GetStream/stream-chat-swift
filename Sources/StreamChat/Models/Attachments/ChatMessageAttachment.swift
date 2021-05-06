@@ -26,7 +26,7 @@ public struct _ChatMessageAttachment<Payload> {
 extension _ChatMessageAttachment: Equatable where Payload: Equatable {}
 
 extension _ChatMessageAttachment {
-    func attachment<Payload: AttachmentPayloadType>(
+    func attachment<Payload: AttachmentPayload>(
         payloadType: Payload.Type
     ) -> _ChatMessageAttachment<Payload>? {
         guard Payload.type == type else { return nil }
