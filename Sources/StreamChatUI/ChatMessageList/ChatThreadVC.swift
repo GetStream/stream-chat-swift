@@ -97,6 +97,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         messageController.setDelegate(self)
         messageController.synchronize()
+        messageController.loadNextReplies()
     }
 
     override open func setUpLayout() {

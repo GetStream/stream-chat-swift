@@ -252,6 +252,7 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-continuousBubble-avatarSizePadding-text-quotedMessage-threadInfo-reactions.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-bubble-avatar-metadata-text-reactions.png",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
+    "ChatMessageList/ChatThreadVC_Tests.swift",
     "CommonViews/AvatarView/CurrentChatUserAvatarView_Tests.swift",
     "CommonViews/AvatarView/ChatChannelAvatarView_Tests.swift",
     "CommonViews/AvatarView/ChatUserAvatarView_Tests.swift",

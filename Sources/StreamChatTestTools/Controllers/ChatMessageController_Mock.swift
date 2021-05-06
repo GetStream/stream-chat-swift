@@ -6,9 +6,19 @@ import Foundation
 @testable import StreamChat
 
 public class ChatMessageController_Mock<ExtraData: ExtraDataTypes>: _ChatMessageController<ExtraData> {
+    public private(set) var loadNextReplies_called = false
+    override public func loadNextReplies(
+        after messageId: MessageId? = nil,
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        loadNextReplies_called = true
+        super.loadNextReplies(after: messageId, limit: limit, completion: completion)
+    }
+    
     /// Creates a new mock instance of `ChatMessageController`.
     public static func mock() -> ChatMessageController_Mock<ExtraData> {
-        .init(client: .mock(), cid: try! .init(cid: "Mock:Channel"), messageId: "MockMessage")
+        .init(client: .mock(), cid: try! .init(cid: "mock:channel"), messageId: "MockMessage")
     }
     
     public private(set) var message_mock: _ChatMessage<ExtraData>?
