@@ -144,10 +144,14 @@ private extension AttachmentDTO {
     }
 
     func asModel<T: Decodable>(payloadType: T.Type = T.self) -> _ChatMessageAttachment<T>? {
-        .init(
+        guard
+            let payload = payload(ofType: payloadType)
+        else { return nil }
+
+        return .init(
             id: attachmentID,
             type: attachmentType,
-            payload: payload(),
+            payload: payload,
             uploadingState: uploadingState
         )
     }
@@ -173,40 +177,30 @@ private extension AttachmentDTO {
 extension AttachmentDTO {
     /// Snapshots the current state of `AttachmentDTO` and returns an immutable model object from it.
     func asAnyModel() -> ChatMessageAttachment? {
-        var attachment: ChatMessageAttachment?
+        let attachment: ChatMessageAttachment?
 
         switch attachmentType {
         case .image:
-            guard let image = asModel(payloadType: AttachmentImagePayload.self) else {
-                log.assertionFailure("Failed to decode `.image` attachment")
-                break
-            }
-            attachment = image.asAnyAttachment
+            attachment = asModel(payloadType: AttachmentImagePayload.self)?.asAnyAttachment
         case .file:
-            guard let file = asModel(payloadType: AttachmentFilePayload.self) else {
-                log.assertionFailure("Failed to decode `.file` attachment")
-                break
-            }
-            attachment = file.asAnyAttachment
+            attachment = asModel(payloadType: AttachmentFilePayload.self)?.asAnyAttachment
         case .giphy:
-            guard let giphy = asModel(payloadType: AttachmentGiphyPayload.self) else {
-                log.assertionFailure("Failed to decode `.giphy` attachment")
-                break
-            }
-            attachment = giphy.asAnyAttachment
+            attachment = asModel(payloadType: AttachmentGiphyPayload.self)?.asAnyAttachment
         case .linkPreview:
-            guard let link = asModel(payloadType: AttachmentLinkPayload.self) else {
-                log.assertionFailure("Failed to decode `.link` attachment")
-                break
-            }
-            attachment = link.asAnyAttachment
+            attachment = asModel(payloadType: AttachmentLinkPayload.self)?.asAnyAttachment
         default:
-            attachment = .init(
-                id: attachmentID,
-                type: attachmentType,
-                payload: data,
-                uploadingState: uploadingState
-            )
+            attachment = data.map {
+                .init(
+                    id: attachmentID,
+                    type: attachmentType,
+                    payload: $0 as Any,
+                    uploadingState: uploadingState
+                )
+            }
+        }
+
+        if attachment == nil {
+            log.error("Failed to decode attachment of type: \(attachmentType)")
         }
 
         return attachment
