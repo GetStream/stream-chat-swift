@@ -4,9 +4,9 @@
 
 import Foundation
 
-public typealias ChatMessageImageAttachment = _ChatMessageAttachment<AttachmentImagePayload>
+public typealias ChatMessageImageAttachment = _ChatMessageAttachment<ImageAttachmentPayload>
 
-public struct AttachmentImagePayload: AttachmentPayload {
+public struct ImageAttachmentPayload: AttachmentPayload {
     public static let type: AttachmentType = .image
 
     /// A title, usually the name of the image.
@@ -17,11 +17,11 @@ public struct AttachmentImagePayload: AttachmentPayload {
     public let imagePreviewURL: URL
 }
 
-extension AttachmentImagePayload: Equatable {}
+extension ImageAttachmentPayload: Equatable {}
 
 // MARK: - Encodable
 
-extension AttachmentImagePayload: Encodable {
+extension ImageAttachmentPayload: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: AttachmentCodingKeys.self)
 
@@ -32,7 +32,7 @@ extension AttachmentImagePayload: Encodable {
 
 // MARK: - Decodable
 
-extension AttachmentImagePayload: Decodable {
+extension ImageAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
 

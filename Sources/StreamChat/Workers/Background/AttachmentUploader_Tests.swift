@@ -87,7 +87,7 @@ final class AttachmentUploader_Tests: StressTestCase {
             switch envelope.type {
             case .image:
                 var imageModel: ChatMessageImageAttachment? {
-                    attachment.asAnyModel()?.attachment(payloadType: AttachmentImagePayload.self)
+                    attachment.asAnyModel()?.attachment(payloadType: ImageAttachmentPayload.self)
                 }
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.

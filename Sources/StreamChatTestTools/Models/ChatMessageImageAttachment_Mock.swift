@@ -12,8 +12,8 @@ extension ChatMessageImageAttachment {
         Self(
             id: .unique,
             type: .image,
-            payload: AttachmentImagePayload(
-                title: nil,
+            payload: ImageAttachmentPayload(
+                title: title,
                 imageURL: imageURL,
                 imagePreviewURL: imageURL
             ),
