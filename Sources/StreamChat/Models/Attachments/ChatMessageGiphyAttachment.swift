@@ -4,9 +4,9 @@
 
 import Foundation
 
-public typealias ChatMessageGiphyAttachment = _ChatMessageAttachment<AttachmentGiphyPayload>
+public typealias ChatMessageGiphyAttachment = _ChatMessageAttachment<GiphyAttachmentPayload>
 
-public struct AttachmentGiphyPayload: AttachmentPayload {
+public struct GiphyAttachmentPayload: AttachmentPayload {
     public static let type: AttachmentType = .giphy
     
     /// A  title, usually the search request used to find the gif.
@@ -17,11 +17,11 @@ public struct AttachmentGiphyPayload: AttachmentPayload {
     public let actions: [AttachmentAction]
 }
 
-extension AttachmentGiphyPayload: Equatable {}
+extension GiphyAttachmentPayload: Equatable {}
 
 // MARK: - Encodable
 
-extension AttachmentGiphyPayload: Encodable {
+extension GiphyAttachmentPayload: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: AttachmentCodingKeys.self)
 
@@ -33,7 +33,7 @@ extension AttachmentGiphyPayload: Encodable {
 
 // MARK: - Decodable
 
-extension AttachmentGiphyPayload: Decodable {
+extension GiphyAttachmentPayload: Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
 

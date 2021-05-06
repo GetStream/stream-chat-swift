@@ -239,7 +239,7 @@ public extension _ChatMessage {
     }
 
     var giphyAttachments: [ChatMessageGiphyAttachment] {
-        attachments(payloadType: AttachmentGiphyPayload.self)
+        attachments(payloadType: GiphyAttachmentPayload.self)
     }
 
     var linkAttachments: [ChatMessageLinkAttachment] {
