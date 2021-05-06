@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension AttachmentPayload {
+extension MessageAttachmentPayload {
     static func dummy(
         type: AttachmentType = .image,
         title: String = .unique,
@@ -13,7 +13,7 @@ extension AttachmentPayload {
         imageURL: URL = URL(string: "https://getstream.io/some.jpg")!,
         imagePreviewURL: URL = URL(string: "https://getstream.io/some_preview.jpg")!,
         file: AttachmentFile = .init(type: .gif, size: 1024, mimeType: "image/gif")
-    ) -> AttachmentPayload {
+    ) -> MessageAttachmentPayload {
         let data: Data = """
         {
             "type": "\(type.rawValue)",
@@ -26,7 +26,7 @@ extension AttachmentPayload {
         }
         """.data(using: .utf8)!
         
-        return try! JSONDecoder.default.decode(AttachmentPayload.self, from: data)
+        return try! JSONDecoder.default.decode(MessageAttachmentPayload.self, from: data)
     }
     
     var decodedImagePayload: AttachmentImagePayload? {

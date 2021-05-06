@@ -213,7 +213,7 @@ extension DatabaseContainer {
         updatedAt: Date = .unique,
         latestReactions: [MessageReactionPayload<NoExtraData>] = [],
         ownReactions: [MessageReactionPayload<NoExtraData>] = [],
-        attachments: [AttachmentPayload] = [],
+        attachments: [MessageAttachmentPayload] = [],
         localState: LocalMessageState? = nil,
         type: MessageType? = nil,
         numberOfReplies: Int = 0

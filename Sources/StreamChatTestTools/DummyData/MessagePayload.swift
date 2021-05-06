@@ -15,7 +15,7 @@ extension MessagePayload {
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
         quotedMessage: MessagePayload<T>? = nil,
-        attachments: [AttachmentPayload] = [
+        attachments: [MessageAttachmentPayload] = [
             .dummy(),
             .dummy(),
             .dummy()

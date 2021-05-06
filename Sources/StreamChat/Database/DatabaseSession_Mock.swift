@@ -203,7 +203,7 @@ extension DatabaseSessionMock {
         underlyingSession.attachment(id: id)
     }
     
-    func saveAttachment(payload: AttachmentPayload, id: AttachmentId) throws -> AttachmentDTO {
+    func saveAttachment(payload: MessageAttachmentPayload, id: AttachmentId) throws -> AttachmentDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveAttachment(payload: payload, id: id)
     }
