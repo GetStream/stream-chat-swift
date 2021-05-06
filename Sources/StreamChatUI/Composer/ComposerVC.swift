@@ -210,16 +210,16 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
 
-    open var attachments: [AttachmentEnvelope] {
+    open var attachments: [ChatMessageAttachmentEnvelope] {
         switch selectedAttachments {
         case .media:
             return content.imageAttachments
                 .map(\.localURL)
-                .compactMap(AttachmentEnvelope.init)
+                .compactMap(ChatMessageAttachmentEnvelope.init)
         case .documents:
             return content.documentAttachments
                 .map(\.localURL)
-                .compactMap(AttachmentEnvelope.init)
+                .compactMap(ChatMessageAttachmentEnvelope.init)
         case .none:
             return []
         }

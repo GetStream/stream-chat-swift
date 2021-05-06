@@ -214,7 +214,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         command: String?,
         arguments: String?,
         parentMessageId: MessageId?,
-        attachments: [AttachmentEnvelope],
+        attachments: [ChatMessageAttachmentEnvelope],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData

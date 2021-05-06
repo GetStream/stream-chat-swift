@@ -5,7 +5,7 @@
 import Foundation
 import StreamChat
 
-public extension AttachmentEnvelope {
+public extension ChatMessageAttachmentEnvelope {
     static let mockFile = Self(localFileURL: .quote)!
     static let mockImage = Self(localFileURL: .image)!
 }

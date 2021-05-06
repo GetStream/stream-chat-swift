@@ -107,7 +107,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
     }
     
     func createNewAttachment(
-        attachment: AttachmentEnvelope,
+        attachment: ChatMessageAttachmentEnvelope,
         id: AttachmentId
     ) throws -> AttachmentDTO {
         guard let messageDTO = message(id: id.messageId) else {
