@@ -185,7 +185,7 @@ extension AttachmentDTO {
         case .file:
             attachment = asModel(payloadType: AttachmentFilePayload.self)?.asAnyAttachment
         case .giphy:
-            attachment = asModel(payloadType: AttachmentGiphyPayload.self)?.asAnyAttachment
+            attachment = asModel(payloadType: GiphyAttachmentPayload.self)?.asAnyAttachment
         case .linkPreview:
             attachment = asModel(payloadType: LinkAttachmentPayload.self)?.asAnyAttachment
         default:

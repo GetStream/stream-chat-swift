@@ -81,7 +81,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let giphyAttachmentWithActionsPayload = try XCTUnwrap(
             loadedAttachment
                 .asAnyModel()?
-                .attachment(payloadType: AttachmentGiphyPayload.self)
+                .attachment(payloadType: GiphyAttachmentPayload.self)
         )
 
         XCTAssertEqual(giphyAttachmentWithActionsPayload.payload, giphyPayload)
@@ -116,7 +116,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let giphyAttachmentWithoutActionsPayload = try XCTUnwrap(
             loadedAttachment
                 .asAnyModel()?
-                .attachment(payloadType: AttachmentGiphyPayload.self)
+                .attachment(payloadType: GiphyAttachmentPayload.self)
         )
 
         XCTAssertEqual(giphyAttachmentWithoutActionsPayload.payload, giphyPayload)
