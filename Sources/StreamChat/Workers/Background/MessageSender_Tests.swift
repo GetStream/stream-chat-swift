@@ -468,7 +468,7 @@ class MessageSender_Tests: StressTestCase {
         
         // Simulate successful API response with assigned attachment
         let callback = apiClient.request_completion as! (Result<MessagePayload<ExtraData>.Boxed, Error>) -> Void
-        let attachment: AttachmentPayload = .dummy(type: .giphy, title: .unique)
+        let attachment: MessageAttachmentPayload = .dummy(type: .giphy, title: .unique)
         let messagePayload: MessagePayload<ExtraData> = .dummy(
             messageId: messageId,
             attachments: [attachment],

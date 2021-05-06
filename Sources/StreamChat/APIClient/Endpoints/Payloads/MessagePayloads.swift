@@ -65,7 +65,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
     let latestReactions: [MessageReactionPayload<ExtraData>]
     let ownReactions: [MessageReactionPayload<ExtraData>]
     let reactionScores: [MessageReactionType: Int]
-    let attachments: [AttachmentPayload]
+    let attachments: [MessageAttachmentPayload]
     let isSilent: Bool
 
     var pinned: Bool
@@ -103,7 +103,8 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
             .mapKeys { MessageReactionType(rawValue: $0) } ?? [:]
         // Because attachment objects can be malformed, we wrap those into `OptionalDecodable`
         // and if decoding of those fail, it assignes `nil` instead of throwing whole MessagePayload away.
-        attachments = try container.decode([OptionalDecodable<AttachmentPayload>].self, forKey: .attachments).compactMap(\.base)
+        attachments = try container.decode([OptionalDecodable<MessageAttachmentPayload>].self, forKey: .attachments)
+            .compactMap(\.base)
         extraData = try ExtraData.Message(from: decoder)
         
         // Some endpoints return also channel payload data for convenience
@@ -137,7 +138,7 @@ class MessagePayload<ExtraData: ExtraDataTypes>: Decodable {
         ownReactions: [MessageReactionPayload<ExtraData>] = [],
         reactionScores: [MessageReactionType: Int],
         isSilent: Bool,
-        attachments: [AttachmentPayload],
+        attachments: [MessageAttachmentPayload],
         channel: ChannelDetailPayload<ExtraData>? = nil,
         pinned: Bool = false,
         pinnedBy: UserPayload<ExtraData.User>? = nil,
@@ -183,7 +184,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
     let parentId: String?
     let showReplyInChannel: Bool
     let quotedMessageId: String?
-    let attachments: [AttachmentPayload]
+    let attachments: [MessageAttachmentPayload]
     var pinned: Bool
     var pinExpires: Date?
     let extraData: ExtraData.Message
@@ -197,7 +198,7 @@ struct MessageRequestBody<ExtraData: ExtraDataTypes>: Encodable {
         parentId: String? = nil,
         showReplyInChannel: Bool = false,
         quotedMessageId: String? = nil,
-        attachments: [AttachmentPayload] = [],
+        attachments: [MessageAttachmentPayload] = [],
         pinned: Bool = false,
         pinExpires: Date? = nil,
         extraData: ExtraData.Message

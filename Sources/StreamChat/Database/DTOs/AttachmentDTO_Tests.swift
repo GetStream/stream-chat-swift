@@ -22,7 +22,7 @@ class AttachmentDTO_Tests: XCTestCase {
     func test_attachmentPayload_isStoredAndLoadedFromDB() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let attachment: AttachmentPayload = .dummy()
+        let attachment: MessageAttachmentPayload = .dummy()
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
         // Create channel, message and attachment in the database.
@@ -57,9 +57,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         
         let giphyWithActionsJSON = XCTestCase.mockData(fromFile: "AttachmentPayloadGiphyWithActions", extension: "json")
-        let attachmentData = try JSONDecoder.default.decode(AttachmentPayload.self, from: giphyWithActionsJSON)
-        
-        let attachment: AttachmentPayload = attachmentData
+        let attachment = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: giphyWithActionsJSON)
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
         // Create channel, message and attachment in the database.
@@ -94,9 +92,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         
         let giphyWithoutActionsJSON = XCTestCase.mockData(fromFile: "AttachmentPayloadGiphyWithoutActions", extension: "json")
-        let attachmentData = try JSONDecoder.default.decode(AttachmentPayload.self, from: giphyWithoutActionsJSON)
-        
-        let attachment: AttachmentPayload = attachmentData
+        let attachment = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: giphyWithoutActionsJSON)
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
         // Create channel, message and attachment in the database.
@@ -213,7 +209,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let messageId: MessageId = .unique
         try database.createMessage(id: messageId)
         
-        let payload: AttachmentPayload = .dummy()
+        let payload: MessageAttachmentPayload = .dummy()
         
         // Try to save an attachment and catch an error
         let error = try waitFor {
@@ -232,7 +228,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         try database.createChannel(cid: cid, withMessages: false)
         
-        let payload: AttachmentPayload = .dummy()
+        let payload: MessageAttachmentPayload = .dummy()
         
         // Try to save an attachment and catch an error
         let error = try waitFor {
@@ -272,7 +268,7 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedAttachment?.localURL, attachmentEnvelope.localFileURL)
 
         // Save attachment payload with the same id.
-        let attachmentPayload: AttachmentPayload = .dummy()
+        let attachmentPayload: MessageAttachmentPayload = .dummy()
         try database.writeSynchronously { session in
             try session.saveAttachment(payload: attachmentPayload, id: attachmentId)
         }

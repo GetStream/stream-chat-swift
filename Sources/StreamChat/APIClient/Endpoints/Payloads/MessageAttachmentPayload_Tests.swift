@@ -5,41 +5,41 @@
 @testable import StreamChat
 import XCTest
 
-final class AttachmentPayload_Tests: XCTestCase {
+final class MessageAttachmentPayload_Tests: XCTestCase {
     func test_json_isDeserialized_forLinkAttachmentType() throws {
         let json = XCTestCase.mockData(fromFile: "AttachmentPayloadLink", extension: "json")
-        let payload = try JSONDecoder.default.decode(AttachmentPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
                 
         let expectedRawJSON = try JSONDecoder.default.decode(RawJSON.self, from: json)
             .dictionary(with: nil, forKey: "type")
         
-        // Assert `AttachmentPayload` is deserialized correctly.
+        // Assert `MessageAttachmentPayload` is deserialized correctly.
         XCTAssertEqual(payload.type, .linkPreview)
         XCTAssertEqual(payload.payload, expectedRawJSON)
     }
     
     func test_json_isDeserialized_forImageAttachmentType() throws {
         let json = XCTestCase.mockData(fromFile: "AttachmentPayloadImage", extension: "json")
-        let payload = try JSONDecoder.default.decode(AttachmentPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
                 
         let expectedRawJSON = try JSONDecoder.default
             .decode(RawJSON.self, from: json)
             .dictionary(with: nil, forKey: "type")
         
-        // Assert `AttachmentPayload` is deserialized correctly.
+        // Assert `MessageAttachmentPayload` is deserialized correctly.
         XCTAssertEqual(payload.type, .image)
         XCTAssertEqual(payload.payload, expectedRawJSON)
     }
     
     func test_json_isDeserialized_forCustomAttachmentType() throws {
         let json = XCTestCase.mockData(fromFile: "AttachmentPayloadCustom", extension: "json")
-        let payload = try JSONDecoder.default.decode(AttachmentPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
                 
         let expectedRawJSON = try JSONDecoder.default
             .decode(RawJSON.self, from: json)
             .dictionary(with: nil, forKey: "type")
         
-        // Assert `AttachmentPayload` is deserialized correctly.
+        // Assert `MessageAttachmentPayload` is deserialized correctly.
         XCTAssertEqual(payload.type, "party_invite")
         XCTAssertEqual(payload.payload, expectedRawJSON)
     }
