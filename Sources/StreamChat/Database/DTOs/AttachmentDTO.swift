@@ -181,7 +181,7 @@ extension AttachmentDTO {
 
         switch attachmentType {
         case .image:
-            attachment = asModel(payloadType: AttachmentImagePayload.self)?.asAnyAttachment
+            attachment = asModel(payloadType: ImageAttachmentPayload.self)?.asAnyAttachment
         case .file:
             attachment = asModel(payloadType: FileAttachmentPayload.self)?.asAnyAttachment
         case .giphy:
@@ -224,7 +224,7 @@ extension AttachmentDTO {
     func update(uploadedFileURL: URL) {
         switch attachmentType {
         case .image:
-            guard var image: AttachmentImagePayload = payload() else {
+            guard var image: ImageAttachmentPayload = payload() else {
                 log.assertionFailure(
                     "Image payload must be decoded to provide the `imageURL` before sending"
                 )

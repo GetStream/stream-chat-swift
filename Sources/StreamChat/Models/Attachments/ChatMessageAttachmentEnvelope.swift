@@ -29,7 +29,7 @@ public extension ChatMessageAttachmentEnvelope {
         let payload: AttachmentPayload
         switch file.type {
         case .jpeg, .png:
-            payload = AttachmentImagePayload(
+            payload = ImageAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 imageURL: localFileURL,
                 imagePreviewURL: localFileURL

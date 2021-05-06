@@ -29,9 +29,9 @@ extension MessageAttachmentPayload {
         return try! JSONDecoder.default.decode(MessageAttachmentPayload.self, from: data)
     }
     
-    var decodedImagePayload: AttachmentImagePayload? {
+    var decodedImagePayload: ImageAttachmentPayload? {
         let data = try! JSONEncoder.stream.encode(payload)
-        return try? JSONDecoder.stream.decode(AttachmentImagePayload.self, from: data)
+        return try? JSONDecoder.stream.decode(ImageAttachmentPayload.self, from: data)
     }
     
     var decodedGiphyPayload: GiphyAttachmentPayload? {
