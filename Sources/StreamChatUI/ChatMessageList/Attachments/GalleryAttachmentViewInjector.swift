@@ -14,19 +14,8 @@ public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate {
 public typealias GalleryAttachmentViewInjector = _GalleryAttachmentViewInjector<NoExtraData>
 
 public class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
-    /// A custom `UIImageView` view that always returns max. `intrinsicContentSize`.
-    private class EagerImageView: UIImageView {
-        override var intrinsicContentSize: CGSize { .init(width: .max, height: .max) }
-    }
-
-    open lazy var galleryView: UIImageView = {
-        let imageView = EagerImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.isUserInteractionEnabled = true
-        imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTapOnImage)))
-        imageView.clipsToBounds = true
-        return imageView.withoutAutoresizingMaskConstraints
-    }()
+    public private(set) lazy var galleryView = _ChatMessageImageGallery<ExtraData>()
+        .withoutAutoresizingMaskConstraints
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
         contentView.bubbleView?.clipsToBounds = true
@@ -36,14 +25,17 @@ public class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachm
             galleryView.widthAnchor.pin(equalTo: galleryView.heightAnchor)
         ])
     }
-
+    
     override open func contentViewDidUpdateContent() {
-        galleryView.loadImage(from: imageAttachments.first?.payload?.imagePreviewURL)
+        galleryView.content = imageAttachments
+        galleryView.didTapOnAttachment = { [weak self] attachment in
+            self?.handleTapOnAttachment(attachment)
+        }
     }
 
-    @objc open func handleTapOnImage() {
-        guard let attachment = imageAttachments.first,
-              let indexPath = contentView.indexPath?()
+    open func handleTapOnAttachment(_ attachment: _ChatMessageAttachment<AttachmentImagePayload>) {
+        guard
+            let indexPath = contentView.indexPath?()
         else { return }
         (contentView.delegate as? GalleryContentViewDelegate)?.didTapOnImageAttachment(attachment, at: indexPath)
     }

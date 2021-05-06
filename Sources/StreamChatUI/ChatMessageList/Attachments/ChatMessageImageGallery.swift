@@ -13,6 +13,8 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProv
     public var content: [ChatMessageImageAttachment] = [] {
         didSet { updateContentIfNeeded() }
     }
+    
+    override open var intrinsicContentSize: CGSize { .init(width: .max, height: .max) }
 
     public var didTapOnAttachment: ((ChatMessageImageAttachment) -> Void)?
 
