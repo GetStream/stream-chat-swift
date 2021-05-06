@@ -187,7 +187,7 @@ extension AttachmentDTO {
         case .giphy:
             attachment = asModel(payloadType: AttachmentGiphyPayload.self)?.asAnyAttachment
         case .linkPreview:
-            attachment = asModel(payloadType: AttachmentLinkPayload.self)?.asAnyAttachment
+            attachment = asModel(payloadType: LinkAttachmentPayload.self)?.asAnyAttachment
         default:
             attachment = data.map {
                 .init(

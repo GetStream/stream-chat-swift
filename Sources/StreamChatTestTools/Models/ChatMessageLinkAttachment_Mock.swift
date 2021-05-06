@@ -17,7 +17,7 @@ extension ChatMessageLinkAttachment {
         Self(
             id: .unique,
             type: .linkPreview,
-            payload: AttachmentLinkPayload(
+            payload: LinkAttachmentPayload(
                 ogURL: ogURL,
                 title: title,
                 text: text,
