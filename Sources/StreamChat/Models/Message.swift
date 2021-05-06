@@ -235,7 +235,7 @@ public extension _ChatMessage {
     }
 
     var fileAttachments: [ChatMessageFileAttachment] {
-        attachments(payloadType: AttachmentFilePayload.self)
+        attachments(payloadType: FileAttachmentPayload.self)
     }
 
     var giphyAttachments: [ChatMessageGiphyAttachment] {
