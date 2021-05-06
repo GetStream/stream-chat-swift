@@ -14,7 +14,7 @@ public struct AttachmentUploadingState: Equatable {
 public struct _ChatMessageAttachment<Payload> {
     public let id: AttachmentId
     public let type: AttachmentType
-    public let payload: Payload?
+    public let payload: Payload
     public let uploadingState: AttachmentUploadingState?
 }
 
@@ -26,14 +26,18 @@ extension _ChatMessageAttachment {
     ) -> _ChatMessageAttachment<Payload>? {
         guard Payload.type == type else { return nil }
 
-        let concretePayload: Payload?
+        let concretePayload: Payload
         switch payload {
         case let payload as Payload:
             concretePayload = payload
         case let data as Data:
-            concretePayload = try? JSONDecoder.stream.decode(Payload.self, from: data)
+            guard
+                let decodedPayload = try? JSONDecoder.stream.decode(Payload.self, from: data)
+            else { return nil }
+
+            concretePayload = decodedPayload
         default:
-            concretePayload = nil
+            return nil
         }
 
         return .init(

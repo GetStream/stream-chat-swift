@@ -67,7 +67,7 @@ open class ImageCollectionViewCell: _CollectionViewCell, UIScrollViewDelegate {
     override open func updateContent() {
         super.updateContent()
 
-        imageView.loadImage(from: content.payload?.imageURL, resizeAutomatically: false)
+        imageView.loadImage(from: content.payload.imageURL, resizeAutomatically: false)
     }
     
     open func viewForZooming(in scrollView: UIScrollView) -> UIView? {

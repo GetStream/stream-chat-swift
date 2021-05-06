@@ -245,7 +245,7 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
     /// Called when `shareButton` is tapped.
     @objc
     open func shareButtonTapped() {
-        guard let imageURL = images[currentPage].payload?.imageURL else { return }
+        let imageURL = images[currentPage].payload.imageURL
         let activityViewController = UIActivityViewController(
             activityItems: [imageURL],
             applicationActivities: nil

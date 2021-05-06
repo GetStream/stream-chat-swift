@@ -80,7 +80,7 @@ extension _ChatMessageImageGallery {
             loadingIndicator.isVisible = true
             imageView.layoutIfNeeded()
             imageTask = imageView
-                .loadImage(from: attachment?.payload?.imagePreviewURL, resizeAutomatically: false) { [weak self] _ in
+                .loadImage(from: attachment?.payload.imagePreviewURL, resizeAutomatically: false) { [weak self] _ in
                     self?.loadingIndicator.isVisible = false
                     self?.imageTask = nil
                 }
