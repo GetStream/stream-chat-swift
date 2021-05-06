@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-struct TestAttachmentPayload: AttachmentPayloadType, Hashable {
+struct TestAttachmentPayload: AttachmentPayload, Hashable {
     static let type = AttachmentType(rawValue: .unique)
 
     let name: String

@@ -6,7 +6,7 @@ import Foundation
 
 public typealias ChatMessageImageAttachment = _ChatMessageAttachment<AttachmentImagePayload>
 
-public struct AttachmentImagePayload: AttachmentPayloadType {
+public struct AttachmentImagePayload: AttachmentPayload {
     public static let type: AttachmentType = .image
 
     /// A title, usually the name of the image.

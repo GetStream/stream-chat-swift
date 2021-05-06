@@ -6,7 +6,7 @@ import Foundation
 
 public typealias ChatMessageLinkAttachment = _ChatMessageAttachment<AttachmentLinkPayload>
 
-public struct AttachmentLinkPayload: AttachmentPayloadType {
+public struct AttachmentLinkPayload: AttachmentPayload {
     public static let type: AttachmentType = .linkPreview
 
     /// An original `URL` that was enriched.

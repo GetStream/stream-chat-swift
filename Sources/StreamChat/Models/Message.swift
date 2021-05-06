@@ -222,7 +222,7 @@ extension _ChatMessage {
 }
 
 public extension _ChatMessage {
-    func attachments<Payload: AttachmentPayloadType>(
+    func attachments<Payload: AttachmentPayload>(
         payloadType: Payload.Type
     ) -> [_ChatMessageAttachment<Payload>] {
         attachments.compactMap {

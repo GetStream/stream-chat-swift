@@ -6,7 +6,7 @@ import Foundation
 
 public typealias ChatMessageGiphyAttachment = _ChatMessageAttachment<AttachmentGiphyPayload>
 
-public struct AttachmentGiphyPayload: AttachmentPayloadType {
+public struct AttachmentGiphyPayload: AttachmentPayload {
     public static let type: AttachmentType = .giphy
     
     /// A  title, usually the search request used to find the gif.
