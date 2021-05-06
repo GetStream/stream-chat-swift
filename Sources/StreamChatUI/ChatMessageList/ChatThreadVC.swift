@@ -37,10 +37,14 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         channelController.client.userSearchController()
 
     /// Layout used by the collection view.
-    open lazy var messageListLayout: ChatMessageListCollectionViewLayout = components
-        .messageList
-        .collectionLayout
-        .init()
+    open lazy var messageListLayout: ChatMessageListCollectionViewLayout = {
+        let layout = components
+            .messageList
+            .collectionLayout
+            .init()
+        layout.hasStickyTopItem = true
+        return layout
+    }()
 
     /// View used to display the messages
     open private(set) lazy var collectionView: ChatMessageListCollectionView<ExtraData> = {
@@ -109,8 +113,6 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         messageComposerViewController.view.translatesAutoresizingMaskIntoConstraints = false
         addChildViewController(messageComposerViewController, targetView: view)
 
-        addHeaderMessage()
-
         messageComposerViewController.view.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
         messageComposerViewController.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
         messageComposerViewController.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
@@ -141,7 +143,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         // Scroll to newest message when there are no replies
         // breaks the `contentOffset` set by parent message
-        if !messageController.replies.isEmpty {
+        if messageController.threadMessages.count > 1 {
             scrollToMostRecentMessageIfNeeded()
         }
     }
@@ -167,7 +169,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     open func cellLayoutOptionsForMessage(at indexPath: IndexPath) -> ChatMessageLayoutOptions {
         cellLayoutOptionsForMessage(
             at: indexPath,
-            messages: AnyRandomAccessCollection(messageController.replies)
+            messages: AnyRandomAccessCollection(messageController.threadMessages)
         )
     }
     
@@ -185,11 +187,11 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        messageController.replies.count
+        messageController.threadMessages.count
     }
 
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let message = messageController.replies[indexPath.item]
+        let message = messageController.threadMessages[indexPath.item]
 
         let cell: _СhatMessageCollectionViewCell<ExtraData> = self.collectionView.dequeueReusableCell(
             contentViewClass: cellContentClassForMessage(at: indexPath),
@@ -234,35 +236,6 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     open func updateNavigationTitle() {
         titleView.title = L10n.Message.Threads.reply
         titleView.subtitle = channelController.channel?.name.map { L10n.Message.Threads.replyWith($0) }
-    }
-
-    /// Adds thread parent message on top of collection view.
-    open func addHeaderMessage() {
-        if let message = messageController.message {
-            let messageView = _ChatMessageContentView<ExtraData>().withoutAutoresizingMaskConstraints
-            let layoutOptions = cellLayoutOptionsForMessage(
-                at: IndexPath(item: 0, section: 0),
-                messages: AnyRandomAccessCollection([message])
-            )
-
-            messageView.setUpLayoutIfNeeded(options: layoutOptions, attachmentViewInjectorType: nil)
-            collectionView.addSubview(messageView)
-            messageView.content = message
-
-            let messageViewSize = messageView.systemLayoutSizeFitting(
-                CGSize(
-                    width: UIScreen.main.bounds.size.width,
-                    height: UIView.layoutFittingCompressedSize.height
-                ),
-                withHorizontalFittingPriority: .required,
-                verticalFittingPriority: .defaultLow
-            )
-            let topInset = messageViewSize.height + messageListLayout.spacing
-            collectionView.contentInset = UIEdgeInsets(top: topInset, left: 0, bottom: 0, right: 0)
-
-            messageView.topAnchor.pin(equalTo: collectionView.topAnchor, constant: -topInset).isActive = true
-            messageView.pin(anchors: [.leading, .trailing], to: collectionView.safeAreaLayoutGuide)
-        }
     }
 
     /// Handles long press action on collection view.
@@ -346,7 +319,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         channelController.client
             .messageController(
                 cid: channelController.cid!,
-                messageId: messageController.replies[indexPath.item].id
+                messageId: messageController.threadMessages[indexPath.item].id
             )
             .dispatchEphemeralMessageAction(action)
     }
@@ -417,7 +390,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         controller.channelController = channelController
         controller.messageController = channelController.client.messageController(
             cid: channel.cid,
-            messageId: messageController.replies[indexPath.item].id
+            messageId: messageController.threadMessages[indexPath.item].id
         )
         navigationController?.show(controller, sender: self)
     }
