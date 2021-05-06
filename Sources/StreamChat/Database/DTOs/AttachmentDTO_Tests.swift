@@ -151,7 +151,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let fileAttachment = try XCTUnwrap(
             loadedAttachment
                 .asAnyModel()?
-                .attachment(payloadType: AttachmentFilePayload.self)
+                .attachment(payloadType: FileAttachmentPayload.self)
         )
 
         XCTAssertEqual(fileAttachment.id, attachmentId)

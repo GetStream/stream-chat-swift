@@ -35,7 +35,7 @@ public extension ChatMessageAttachmentEnvelope {
                 imagePreviewURL: localFileURL
             )
         default:
-            payload = AttachmentFilePayload(
+            payload = FileAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 assetURL: localFileURL,
                 file: file

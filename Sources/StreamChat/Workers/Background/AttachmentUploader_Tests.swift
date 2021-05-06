@@ -97,7 +97,7 @@ final class AttachmentUploader_Tests: StressTestCase {
                 }
             case .file:
                 var fileModel: ChatMessageFileAttachment? {
-                    attachment.asAnyModel()?.attachment(payloadType: AttachmentFilePayload.self)
+                    attachment.asAnyModel()?.attachment(payloadType: FileAttachmentPayload.self)
                 }
                 AssertAsync {
                     // Assert attachment state eventually becomes `.uploaded`.
