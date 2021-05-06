@@ -88,11 +88,11 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
     override open func updateContent() {
         preview.content = content
 
-        titleLabel.text = "\"" + (content?.payload?.title ?? "") + "\""
+        titleLabel.text = "\"" + (content?.title ?? "") + "\""
 
         actionsStackView.removeAllArrangedSubviews()
         
-        (content?.payload?.actions ?? [])
+        (content?.actions ?? [])
             .map(createActionButton)
             .forEach(actionsStackView.addArrangedSubview)
     }

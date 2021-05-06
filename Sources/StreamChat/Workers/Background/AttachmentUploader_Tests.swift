@@ -93,7 +93,7 @@ final class AttachmentUploader_Tests: StressTestCase {
                     // Assert attachment state eventually becomes `.uploaded`.
                     Assert.willBeEqual(imageModel?.uploadingState?.state, .uploaded)
                     // Assert `attachment.imageURL` is set.
-                    Assert.willBeEqual(originalURLString(imageModel?.payload.imageURL), payload.file.absoluteString)
+                    Assert.willBeEqual(originalURLString(imageModel?.imageURL), payload.file.absoluteString)
                 }
             case .file:
                 var fileModel: ChatMessageFileAttachment? {
@@ -103,7 +103,7 @@ final class AttachmentUploader_Tests: StressTestCase {
                     // Assert attachment state eventually becomes `.uploaded`.
                     Assert.willBeEqual(fileModel?.uploadingState?.state, .uploaded)
                     // Assert `attachment.assetURL` is set.
-                    Assert.willBeEqual(originalURLString(fileModel?.payload.assetURL), payload.file.absoluteString)
+                    Assert.willBeEqual(originalURLString(fileModel?.assetURL), payload.file.absoluteString)
                 }
             default: throw TestError()
             }
