@@ -24,17 +24,27 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             self.height = height
         }
 
-        public func attribute(for index: Int, width: CGFloat) -> UICollectionViewLayoutAttributes {
-            let attribute = UICollectionViewLayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
+        public func attribute(for index: Int, width: CGFloat, hasStickyItem: Bool) -> LayoutAttributes {
+            let attribute = LayoutAttributes(forCellWith: IndexPath(item: index, section: 0))
             attribute.frame = CGRect(x: 0, y: offset, width: width, height: height)
             // default `zIndex` value is 0, but for some undocumented reason self-sizing
             // (concretely `contentView.systemLayoutFitting(...)`) doesn't work correctly,
             // so we need to make sure we do not use it, we need to add 1 so indexPath 0-0 doesn't have
             // problematic 0 zIndex
             attribute.zIndex = index + 1
+            if hasStickyItem {
+                attribute.zIndex += 1
+            }
             return attribute
         }
     }
+    
+    /// Customized layout attributes class that allow us to add custom data
+    open class LayoutAttributes: UICollectionViewLayoutAttributes {
+        var stickyHeaderBackground: UIColor?
+    }
+    
+    override open class var layoutAttributesClass: AnyClass { LayoutAttributes.self }
 
     /// Layout items before currently running batch update
     open var previousItems: [LayoutItem] = []
@@ -52,7 +62,32 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     open var disappearingItems: Set<IndexPath> = []
     /// We need to cache attributes used for initial/final state of added/removed items to update them after AutoLayout pass.
     /// This will prevent items to appear with `estimatedItemHeight` and animating to real size
-    open var animatingAttributes: [IndexPath: UICollectionViewLayoutAttributes] = [:]
+    open var animatingAttributes: [IndexPath: LayoutAttributes] = [:]
+    
+    /// Kind used to identify background of sticky header cell
+    public let stickyHeaderBackground = "StickyHeaderBackground"
+    
+    /// If `true` then the item with max indexPath (we have bottom-top layout) will stick with the top edge so it will look as it doesn't scroll
+    open var hasStickyTopItem = false
+    
+    /// Color that will be used as background for decoration view, that mimics sticky header cell background
+    open var stickyHeaderBackgroundColor: UIColor?
+    
+    /// Layout attributes that represent decoration view that mimics sticky header cell background
+    open var stickyHeaderDecorationAttributes: LayoutAttributes? {
+        guard hasStickyTopItem, !currentItems.isEmpty else { return nil }
+        
+        let index = currentItems.count - 1
+        let item = currentItems[index]
+        let attributes = LayoutAttributes(
+            forDecorationViewOfKind: stickyHeaderBackground,
+            with: IndexPath(item: index, section: 0)
+        )
+        attributes.stickyHeaderBackground = stickyHeaderBackgroundColor
+        attributes.frame = CGRect(x: 0, y: item.offset, width: currentCollectionViewWidth, height: item.height + spacing)
+        attributes.zIndex = currentItems.count
+        return attributes
+    }
 
     override open var collectionViewContentSize: CGSize {
         // This is a workaround for `layoutAttributesForElementsInRect:` not getting invoked enough
@@ -94,6 +129,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     override public required init() {
         super.init()
+        register(StickyHeaderBackground.self, forDecorationViewOfKind: stickyHeaderBackground)
     }
 
     public required init?(coder: NSCoder) {
@@ -151,7 +187,11 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     }
     
     override open func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
-        collectionView.map { $0.bounds.size != newBounds.size } ?? true
+        if hasStickyTopItem {
+            return true
+        }
+        
+        return collectionView.map { $0.bounds.size != newBounds.size } ?? true
     }
     
     override open func invalidationContext(forBoundsChange newBounds: CGRect) -> UICollectionViewLayoutInvalidationContext {
@@ -167,6 +207,14 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
            collectionView.indexPathsForVisibleItems.contains(IndexPath(item: 0, section: 0)),
            collectionView.contentOffset.y > -collectionView.contentInset.top {
             context.contentOffsetAdjustment = CGPoint(x: 0, y: -delta)
+        }
+        
+        if hasStickyTopItem, !currentItems.isEmpty {
+            let index = currentItems.count - 1
+            let indexPath = IndexPath(item: index, section: 0)
+            currentItems[index].offset = newBounds.minY
+            context.invalidateItems(at: [indexPath])
+            context.invalidateDecorationElements(ofKind: stickyHeaderBackground, at: [indexPath])
         }
 
         return context
@@ -304,8 +352,12 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
                 return !(isBeforeRect || isAfterRect)
             }
             .map {
-                $1.attribute(for: $0, width: currentCollectionViewWidth)
-            }
+                $1.attribute(
+                    for: $0,
+                    width: currentCollectionViewWidth,
+                    hasStickyItem: hasStickyTopItem && $0 == currentItems.count - 1
+                )
+            } + [stickyHeaderDecorationAttributes].compactMap { $0 }
     }
 
     // MARK: - Layout for collection view items
@@ -315,14 +367,35 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
         guard indexPath.item < currentItems.count else { return nil }
         let idx = indexPath.item
-        return currentItems[idx].attribute(for: idx, width: currentCollectionViewWidth)
+        return currentItems[idx]
+            .attribute(
+                for: idx,
+                width: currentCollectionViewWidth,
+                hasStickyItem: hasStickyTopItem && idx == currentItems.count - 1
+            )
+    }
+    
+    override open func layoutAttributesForDecorationView(
+        ofKind elementKind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionViewLayoutAttributes? {
+        if elementKind == stickyHeaderBackground {
+            return stickyHeaderDecorationAttributes
+        }
+        
+        return nil
     }
 
     override open func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let idx = itemIndexPath.item
         if appearingItems.contains(itemIndexPath) {
             // this is item that have been inserted into collection view in current batch update
-            let attribute = currentItems[idx].attribute(for: idx, width: currentCollectionViewWidth)
+            let attribute = currentItems[idx]
+                .attribute(
+                    for: idx,
+                    width: currentCollectionViewWidth,
+                    hasStickyItem: hasStickyTopItem && idx == currentItems.count - 1
+                )
             animatingAttributes[itemIndexPath] = attribute
             return attribute
         } else {
@@ -331,7 +404,11 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             // to properly animate possible change of such item, we need to return its attributes BEFORE batch update
             guard let id = idForItem(at: idx) else { return nil }
             return oldIdxForItem(with: id).map { oldIdx in
-                previousItems[oldIdx].attribute(for: oldIdx, width: currentCollectionViewWidth)
+                previousItems[oldIdx].attribute(
+                    for: oldIdx,
+                    width: currentCollectionViewWidth,
+                    hasStickyItem: hasStickyTopItem && oldIdx == currentItems.count - 1
+                )
             }
         }
     }
@@ -342,14 +419,24 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         if disappearingItems.contains(itemIndexPath) {
             // item gets removed from collection view, we don't do any special delete animations for now, so just return
             // item attributes BEFORE batch update and let it fade away
-            let attribute = previousItems[idx].attribute(for: idx, width: currentCollectionViewWidth)
+            let attribute = previousItems[idx]
+                .attribute(
+                    for: idx,
+                    width: currentCollectionViewWidth,
+                    hasStickyItem: hasStickyTopItem && idx == currentItems.count - 1
+                )
             attribute.alpha = 0
             return attribute
         } else if let newIdx = idxForItem(with: id) {
             // this is item that will stay in collection view, but collection view decided to reload it
             // by removing and inserting it back (4head)
             // to properly animate possible change of such item, we need to return its attributes AFTER batch update
-            let attribute = currentItems[newIdx].attribute(for: newIdx, width: currentCollectionViewWidth)
+            let attribute = currentItems[newIdx]
+                .attribute(
+                    for: newIdx,
+                    width: currentCollectionViewWidth,
+                    hasStickyItem: hasStickyTopItem && idx == currentItems.count - 1
+                )
             animatingAttributes[attribute.indexPath] = attribute
             return attribute
         }
@@ -375,5 +462,13 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     open func oldIdxForItem(with id: UUID) -> Int? {
         previousItems.firstIndex { $0.id == id }
+    }
+    
+    open class StickyHeaderBackground: UICollectionReusableView, AppearanceProvider {
+        override open func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
+            super.apply(layoutAttributes)
+            
+            backgroundColor = (layoutAttributes as? LayoutAttributes)?.stickyHeaderBackground ?? appearance.colorPalette.background
+        }
     }
 }
