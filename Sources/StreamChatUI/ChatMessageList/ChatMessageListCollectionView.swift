@@ -180,6 +180,55 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
         return cell
     }
     
+    /// Dequeues the message cell. Registers the cell for received combination of `contentViewClass + layoutOptions`
+    /// if needed.
+    /// - Parameters:
+    ///   - contentViewClass: The type of content view the cell will be displaying.
+    ///   - layoutOptions: The option set describing content view layout.
+    ///   - indexPath: The cell index path.
+    /// - Returns: The instance of `_СhatMessageCollectionViewCell<ExtraData>` set up with the
+    /// provided `contentViewClass` and `layoutOptions`
+    open func dequeueReusableSupplementaryView<ExtraData: ExtraDataTypes>(
+        contentViewClass: _ChatMessageContentView<ExtraData>.Type,
+        attachmentViewInjectorType: _AttachmentViewInjector<ExtraData>.Type?,
+        layoutOptions: ChatMessageLayoutOptions,
+        kind: String,
+        for indexPath: IndexPath
+    ) -> _СhatMessageCollectionViewCell<ExtraData> {
+        let reuseIdentifier =
+            "supplementary_\(_СhatMessageCollectionViewCell<ExtraData>.reuseId)_" + "\(layoutOptions.rawValue)_" +
+            "\(contentViewClass)_" + String(describing: attachmentViewInjectorType)
+
+        // There is no public API to find out
+        // if the given `identifier` is registered.
+        if !identifiers.contains(reuseIdentifier) {
+            identifiers.insert(reuseIdentifier)
+            
+            register(
+                _СhatMessageCollectionViewCell<ExtraData>.self,
+                forSupplementaryViewOfKind: kind,
+                withReuseIdentifier: reuseIdentifier
+            )
+        }
+            
+        let cell = dequeueReusableSupplementaryView(
+            ofKind: kind,
+            withReuseIdentifier: reuseIdentifier,
+            for: indexPath
+        ) as! _СhatMessageCollectionViewCell<ExtraData>
+        cell.setMessageContentIfNeeded(
+            contentViewClass: contentViewClass,
+            attachmentViewInjectorType: attachmentViewInjectorType,
+            options: layoutOptions
+        )
+        cell.messageContentView?.indexPath = { [weak cell, weak self] in
+            guard let cell = cell else { return nil }
+            return self?.indexPath(for: cell)
+        }
+
+        return cell
+    }
+    
     /// Updates the collection view data with given `changes`.
     open func updateMessages<ExtraData: ExtraDataTypes>(
         with changes: [ListChange<_ChatMessage<ExtraData>>],
