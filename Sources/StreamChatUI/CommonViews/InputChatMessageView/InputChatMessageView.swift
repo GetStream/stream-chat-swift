@@ -36,7 +36,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         .withoutAutoresizingMaskConstraints
 
     /// The input text view to type a new message or command.
-    public private(set) lazy var inputTextView: InputTextView = components
+    public private(set) lazy var textView: InputTextView = components
         .inputTextView.init()
         .withoutAutoresizingMaskConstraints
 
@@ -86,12 +86,12 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         inputTextContainer.alignment = .center
         inputTextContainer.spacing = 4
         inputTextContainer.addArrangedSubview(commandLabelView)
-        inputTextContainer.addArrangedSubview(inputTextView)
+        inputTextContainer.addArrangedSubview(textView)
         inputTextContainer.addArrangedSubview(clearButton)
 
         commandLabelView.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
-        inputTextView.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
-        inputTextView.preservesSuperviewLayoutMargins = false
+        textView.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
+        textView.preservesSuperviewLayoutMargins = false
 
         NSLayoutConstraint.activate([
             clearButton.heightAnchor.pin(equalToConstant: 24),
