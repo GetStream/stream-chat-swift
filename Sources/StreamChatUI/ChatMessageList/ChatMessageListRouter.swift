@@ -27,6 +27,7 @@ internal class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_Ch
         popup.modalPresentationStyle = .overFullScreen
         popup.modalTransitionStyle = .crossDissolve
 
+        navigationController?.view.endEditing(true)
         root.present(popup, animated: false)
     }
     
