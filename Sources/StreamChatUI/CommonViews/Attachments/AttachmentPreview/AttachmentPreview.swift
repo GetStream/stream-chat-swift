@@ -12,4 +12,6 @@ public protocol AttachmentPreview {
     var size: Int64 { get }
     /// The image preview of the attachment.
     var image: UIImage { get }
+    /// The local url of the attachment.
+    var localURL: URL { get }
 }

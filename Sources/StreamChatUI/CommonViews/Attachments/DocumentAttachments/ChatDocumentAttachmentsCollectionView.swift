@@ -16,7 +16,7 @@ open class _ChatDocumentAttachmentsCollectionView<ExtraData: ExtraDataTypes>: _V
     open var documentPreviewItemHeight: CGFloat = 70
     open var maxNumberOfVisibleDocuments: Int = 3
     
-    public var documents: [(preview: UIImage, name: String, size: Int64)] = [] {
+    public var documents: [AttachmentPreview] = [] {
         didSet {
             updateContentIfNeeded()
         }
@@ -93,7 +93,7 @@ open class _ChatDocumentAttachmentsCollectionView<ExtraData: ExtraDataTypes>: _V
         else { return UICollectionViewCell() }
         
         cell.documentAttachmentView.fileNameLabel.text = documents[indexPath.row].name
-        cell.documentAttachmentView.fileIconImageView.image = documents[indexPath.row].preview
+        cell.documentAttachmentView.fileIconImageView.image = documents[indexPath.row].image
         cell.documentAttachmentView.fileSizeLabel.text =
             AttachmentFile.sizeFormatter.string(fromByteCount: documents[indexPath.row].size)
         

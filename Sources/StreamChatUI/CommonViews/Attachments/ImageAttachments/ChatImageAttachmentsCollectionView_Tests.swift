@@ -79,7 +79,7 @@ private extension ChatImageAttachmentsCollectionView_Tests {
             TestImages.chewbacca.image,
             TestImages.r2.image
         ].map {
-            ImageAttachmentPreview(image: $0)
+            ImageAttachmentPreview(image: $0, localURL: URL(string: "fake")!)
         }
         view.addSizeConstraints()
         return view
