@@ -13,7 +13,7 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     
-    var channelListCleanupUpdater: ChannelListCleanupUpdater<ExtraData>?
+    var channelListCleanupUpdater: ChannelDatabaseCleanupUpdater<ExtraData>?
     var channelListUpdater: ChannelListUpdaterMock<NoExtraData>!
     
     override func setUp() {
@@ -24,7 +24,7 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
         apiClient = APIClientMock()
         channelListUpdater = ChannelListUpdaterMock(database: database, apiClient: apiClient)
         
-        channelListCleanupUpdater = ChannelListCleanupUpdater(
+        channelListCleanupUpdater = ChannelDatabaseCleanupUpdater(
             database: database,
             apiClient: apiClient,
             channelListUpdater: channelListUpdater
@@ -52,7 +52,7 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
             cid: cid1,
             withMessages: true,
             withQuery: true,
-            hiddenAt: Date(timeIntervalSince1970: 56789),
+            hiddenAt: .unique,
             needsRefreshQueries: false
         )
         
@@ -60,11 +60,11 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
             cid: cid2,
             withMessages: true,
             withQuery: true,
-            hiddenAt: Date(timeIntervalSince1970: 56789),
+            hiddenAt: .unique,
             needsRefreshQueries: false
         )
         
-        channelListCleanupUpdater?.cleanupChannelList()
+        channelListCleanupUpdater?.cleanupChannelsData()
         
         let channel1 = try XCTUnwrap(database.viewContext.channel(cid: cid1))
         let channel2 = try XCTUnwrap(database.viewContext.channel(cid: cid2))
@@ -84,7 +84,7 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
         let query2 = _ChannelListQuery<ExtraData>(filter: filter2)
         try database.createChannelListQuery(filter: filter2)
         
-        channelListCleanupUpdater?.cleanupChannelList()
+        channelListCleanupUpdater?.cleanupChannelsData()
         
         AssertAsync.willBeEqual(
             channelListUpdater.update_queries,

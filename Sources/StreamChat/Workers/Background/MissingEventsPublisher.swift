@@ -21,7 +21,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
     // MARK: - Properties
     
     private var connectionObserver: EventObserver?
-    private let channelListCleanupUpdater: ChannelListCleanupUpdater<ExtraData>
+    private let channelDatabaseCleanupUpdater: ChannelDatabaseCleanupUpdater<ExtraData>
     @Atomic private var lastSyncedAt: Date?
     
     // MARK: - Init
@@ -31,7 +31,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient
     ) {
-        channelListCleanupUpdater = ChannelListCleanupUpdater(database: database, apiClient: apiClient)
+        channelDatabaseCleanupUpdater = ChannelDatabaseCleanupUpdater(database: database, apiClient: apiClient)
         super.init(
             database: database,
             eventNotificationCenter: eventNotificationCenter,
@@ -44,9 +44,9 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient,
-        channelListCleanupUpdater: ChannelListCleanupUpdater<ExtraData>
+        channelListCleanupUpdater: ChannelDatabaseCleanupUpdater<ExtraData>
     ) {
-        self.channelListCleanupUpdater = channelListCleanupUpdater
+        channelDatabaseCleanupUpdater = channelListCleanupUpdater
         super.init(
             database: database,
             eventNotificationCenter: eventNotificationCenter,
@@ -102,9 +102,12 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
                 case let .success(payload):
                     self?.eventNotificationCenter.process(payload.eventPayloads)
                 case let .failure(error):
-                    log.error("Internal error: Failed to fetch and reply missing events: \(error)")
-                    if error.isBackendErrorWith400StatusCode {
-                        self?.channelListCleanupUpdater.cleanupChannelList()
+                    log
+                        .info(
+                            "Backend couldn't handle replaying missing events - there was too many (>1000) events to replay. Cleaning local channels data and refetching it from scratch"
+                        )
+                    if error.isTooManyMissingEventsToSyncError {
+                        self?.channelDatabaseCleanupUpdater.cleanupChannelsData()
                     }
                 }
             }
@@ -136,5 +139,12 @@ private extension EventNotificationCenter {
                 log.error("Failed to transform a payload into an event: \($0)")
             }
         }
+    }
+}
+
+private extension Error {
+    /// Backend responds with 400 if there was more than 1000 events to replay
+    var isTooManyMissingEventsToSyncError: Bool {
+        isBackendErrorWith400StatusCode
     }
 }

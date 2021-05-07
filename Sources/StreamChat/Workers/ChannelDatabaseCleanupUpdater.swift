@@ -4,13 +4,9 @@
 
 import CoreData
 
-/// Cleans up local channels data and refetches it from backend
-class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
-    // MARK: - Properties
-    
+/// Cleans up local data for all the existing channels and refetches it from backend
+class ChannelDatabaseCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
     private let channelListUpdater: ChannelListUpdater<ExtraData>
-    
-    // MARK: - Init
     
     override init(
         database: DatabaseContainer,
@@ -35,12 +31,10 @@ class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
         )
     }
     
-    func cleanupChannelList() {
+    /// Cleans up local data for all the existing channels and refetches it from backend
+    func cleanupChannelsData() {
         database.write { session in
-            if let channels = try? (session as? NSManagedObjectContext)?
-                .fetch(ChannelDTO.allChannelsFetchRequest) {
-                channels.forEach { $0.syncFailedCleanUp() }
-            }
+            try self.resetAllExistingChannelsData(session: session)
         } completion: { error in
             if let error = error {
                 log.error("Failed cleaning up channels data: \(error).")
@@ -48,9 +42,17 @@ class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
             self.updateChannels()
         }
     }
+        
+    /// Resets all existing channels data
+    /// - Parameter session: session for writing into the databse
+    private func resetAllExistingChannelsData(session: DatabaseSession) throws {
+        if let channels = try (session as? NSManagedObjectContext)?
+            .fetch(ChannelDTO.allChannelsFetchRequest) {
+            channels.forEach { $0.resetLocalData() }
+        }
+    }
     
-    // MARK: - Private
-    
+    /// Update channels data for all the existing channel queries
     private func updateChannels() {
         let context = database.backgroundReadOnlyContext
         context.perform {
@@ -79,7 +81,8 @@ class ChannelListCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
 }
 
 private extension ChannelDTO {
-    func syncFailedCleanUp() {
+    /// Resets local channel data
+    func resetLocalData() {
         messages = []
         pinnedMessages = []
         watchers = []
@@ -98,6 +101,9 @@ private extension ChannelDTO {
 }
 
 private extension ChannelListQueryDTO {
+    /// Converts ChannelListQueryDTO to _ChannelListQuery
+    /// - Throws: Decoding error
+    /// - Returns: Domain model for _ChannelListQuery
     func asChannelListQuery<ExtraData: ChannelExtraData>() throws -> _ChannelListQuery<ExtraData> {
         let encodedFilter = try JSONDecoder.default
             .decode(Filter<_ChannelListFilterScope<ExtraData>>.self, from: filterJSONData)
