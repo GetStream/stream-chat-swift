@@ -5,6 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [3.1.10](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.10)
+_May 07, 2021_
+
 ### 🐞 Fixed
 - Fix issue when opening attachments on iPad [#1060](https://github.com/GetStream/stream-chat-swift/pull/1060) [#997](https://github.com/GetStream/stream-chat-swift/pull/977)
 - Fix long tapping a message while keyboard is open causes a layout feedback loop [#1063](https://github.com/GetStream/stream-chat-swift/pull/1063)
