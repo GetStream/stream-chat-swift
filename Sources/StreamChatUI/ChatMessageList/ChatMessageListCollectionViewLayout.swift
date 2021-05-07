@@ -10,6 +10,8 @@ import UIKit
 /// This resolves problem when on item reload layout would change content offset and user ends up on completely different item.
 /// Layout intended for batch updates and right now I have no idea how it will react to `collectionView.reloadData()`.
 open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
+    public let collectionViewHeaderKind = "collectionView_header_kind"
+    
     public struct LayoutItem {
         let id = UUID()
         public var offset: CGFloat
@@ -40,6 +42,14 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     open var previousItems: [LayoutItem] = []
     /// Actual layout
     open var currentItems: [LayoutItem] = []
+    /// Layout item for collectionView header if any
+    open var headerAttributes: UICollectionViewLayoutAttributes?
+    private let headerIndexPath = IndexPath(item: 0, section: 0)
+    
+    /// With better approximation you are getting better performance
+    ///
+    /// If zero then header is not displayed
+    open var estimatedHeaderHeight: CGFloat = 0
 
     /// With better approximation you are getting better performance
     open var estimatedItemHeight: CGFloat = 200
@@ -123,16 +133,23 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             forPreferredLayoutAttributes: preferredAttributes,
             withOriginalAttributes: originalAttributes
         )
-        let idx = originalAttributes.indexPath.item
-
-        let delta = preferredAttributes.frame.height - currentItems[idx].height
-        currentItems[idx].height = preferredAttributes.frame.height
-        // if item have been inserted recently or deleted, we need to update its attributes to prevent weird flickering
-        animatingAttributes[preferredAttributes.indexPath]?.frame.size.height = preferredAttributes.frame.height
-
-        for i in 0..<idx {
-            currentItems[i].offset += delta
+        
+        switch preferredAttributes.representedElementCategory {
+        case .cell:
+            updateCellAttributes(
+                preferredAttributes: preferredAttributes,
+                originalAttributes: originalAttributes
+            )
+        case .supplementaryView:
+            updateSupplementaryViewAttributes(
+                preferredAttributes: preferredAttributes,
+                originalAttributes: originalAttributes
+            )
+        case .decorationView: break
+        @unknown default: break
         }
+
+        let delta = preferredAttributes.frame.height - originalAttributes.frame.height
         invalidationContext.contentSizeAdjustment = CGSize(width: 0, height: delta)
 
         // when we scrolling up and item above screens top edge changes its attributes it will push all items below it to bottom
@@ -146,7 +163,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         if isSizingElementAboveTopEdge || !isScrolling {
             invalidationContext.contentOffsetAdjustment = CGPoint(x: 0, y: delta)
         }
-
+        
         return invalidationContext
     }
     
@@ -208,7 +225,8 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             let idx = ip.item
             let item: LayoutItem
             if idx == self.currentItems.count {
-                item = LayoutItem(offset: 0, height: self.estimatedItemHeight)
+                let offset = self.headerAttributes.map { $0.frame.height + self.spacing } ?? 0
+                item = LayoutItem(offset: offset, height: self.estimatedItemHeight)
             } else {
                 item = LayoutItem(
                     offset: self.currentItems[idx].maxY + self.spacing,
@@ -269,18 +287,34 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
 
     override open func prepare() {
         super.prepare()
-
-        guard !didPerformInitialLayout else { return }
-        didPerformInitialLayout = true
-
-        guard currentItems.isEmpty else { return }
+        
         guard let cv = collectionView else { return }
         currentCollectionViewWidth = cv.bounds.width
 
-        let count = cv.numberOfItems(inSection: 0)
-        guard count > 0 else { return }
+        guard !didPerformInitialLayout else { return }
+        didPerformInitialLayout = true
+        
+        if estimatedHeaderHeight > 0, headerAttributes == nil {
+            headerAttributes = UICollectionViewLayoutAttributes(
+                forSupplementaryViewOfKind: collectionViewHeaderKind,
+                with: headerIndexPath
+            )
+            headerAttributes?.frame.size = CGSize(
+                width: currentCollectionViewWidth,
+                height: estimatedHeaderHeight
+            )
+            headerAttributes?.zIndex = 1
+        }
 
-        let height = estimatedItemHeight * CGFloat(count) + spacing * CGFloat(count - 1)
+        guard currentItems.isEmpty else { return }
+
+        let count = cv.numberOfItems(inSection: 0)
+        
+        guard count > 0 else { return }
+        
+        let headerHeight = estimatedHeaderHeight > 0 ? estimatedHeaderHeight + spacing : 0
+
+        let height = estimatedItemHeight * CGFloat(count) + spacing * CGFloat(count - 1) + headerHeight
         var offset: CGFloat = height
         for _ in 0..<count {
             offset -= estimatedItemHeight
@@ -288,7 +322,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
             currentItems.append(item)
             offset -= spacing
         }
-
+        
         // scroll to make first item visible
         cv.contentOffset.y = currentItems[0].maxY - cv.bounds.height + cv.contentInset.bottom
     }
@@ -296,16 +330,16 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     override open func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard !preBatchUpdatesCall else { return nil }
 
-        return currentItems
+        let cellAttributes = currentItems
             .enumerated()
             .filter { _, item in
                 let isBeforeRect = item.offset < rect.minY && item.maxY < rect.minY
                 let isAfterRect = rect.minY < item.offset && rect.maxY < item.offset
                 return !(isBeforeRect || isAfterRect)
             }
-            .map {
-                $1.attribute(for: $0, width: currentCollectionViewWidth)
-            }
+            .map { $1.attribute(for: $0, width: currentCollectionViewWidth) }
+        
+        return cellAttributes + (headerAttributes.map { [$0] } ?? [])
     }
 
     // MARK: - Layout for collection view items
@@ -316,6 +350,15 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         guard indexPath.item < currentItems.count else { return nil }
         let idx = indexPath.item
         return currentItems[idx].attribute(for: idx, width: currentCollectionViewWidth)
+    }
+    
+    override open func layoutAttributesForSupplementaryView(
+        ofKind elementKind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionViewLayoutAttributes? {
+        guard !preBatchUpdatesCall, elementKind == collectionViewHeaderKind else { return nil }
+        
+        return headerAttributes
     }
 
     override open func initialLayoutAttributesForAppearingItem(at itemIndexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
@@ -355,6 +398,41 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
         }
 
         return super.finalLayoutAttributesForDisappearingItem(at: itemIndexPath)
+    }
+    
+    // MARK: - Helpers
+    
+    /// Handle updates that are necessary when self-sizing on cells occur
+    open func updateCellAttributes(
+        preferredAttributes: UICollectionViewLayoutAttributes,
+        originalAttributes: UICollectionViewLayoutAttributes
+    ) {
+        let idx = originalAttributes.indexPath.item
+
+        let delta = preferredAttributes.frame.height - currentItems[idx].height
+        currentItems[idx].height = preferredAttributes.frame.height
+        // if item have been inserted recently or deleted, we need to update its attributes to prevent weird flickering
+        animatingAttributes[preferredAttributes.indexPath]?.frame.size.height = preferredAttributes.frame.height
+
+        for i in 0..<idx {
+            currentItems[i].offset += delta
+        }
+    }
+    
+    /// Handle updates that are necessary when self-sizing on supplementary views occur
+    open func updateSupplementaryViewAttributes(
+        preferredAttributes: UICollectionViewLayoutAttributes,
+        originalAttributes: UICollectionViewLayoutAttributes
+    ) {
+        guard preferredAttributes.representedElementKind == collectionViewHeaderKind
+        else { return }
+
+        let delta = preferredAttributes.frame.height - originalAttributes.frame.height
+        headerAttributes?.frame.size.height = preferredAttributes.frame.height
+        
+        for i in 0..<currentItems.count {
+            currentItems[i].offset += delta
+        }
     }
 
     // MARK: - Access Layout Item
