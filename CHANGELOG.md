@@ -6,9 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🐞 Fixed
-- Fix crash when opening attachments on iPad [#1060](https://github.com/GetStream/stream-chat-swift/pull/1060) [#997](https://github.com/GetStream/stream-chat-swift/pull/977)
-
-### 🔄 Changed
+- Fix issue when opening attachments on iPad [#1060](https://github.com/GetStream/stream-chat-swift/pull/1060) [#997](https://github.com/GetStream/stream-chat-swift/pull/977)
+- Fix long tapping a message while keyboard is open causes a layout feedback loop [#1063](https://github.com/GetStream/stream-chat-swift/pull/1063)
+- Fix potentially inconsistent database state for channels for cases when /sync endpoint fails to respond because a user missed to many events (>1000) [#1049](https://github.com/GetStream/stream-chat-swift/pull/1049)
 
 # [3.1.9](https://github.com/GetStream/stream-chat-swift/releases/tag/3.1.9)
 _May 03, 2021_
