@@ -152,6 +152,59 @@ public class _ChatMessageController<ExtraData: ExtraDataTypes>: DataController, 
         }
     }
     
+    /// Loads new messages from backend.
+    ///
+    /// - Parameters:
+    ///   - messageId: ID of the current first message. You will get messages `newer` then the provided ID.
+    ///   - limit: Limit for page size.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    open func loadNextReplies(
+        after messageId: MessageId? = nil,
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        guard let messageId = messageId ?? replies.first?.id else {
+            log.error(ClientError.MessageEmptyReplies().localizedDescription)
+            callback { completion?(ClientError.MessageEmptyReplies()) }
+            return
+        }
+    
+        messageUpdater.loadReplies(
+            cid: cid,
+            messageId: self.messageId,
+            pagination: MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
+        ) { error in
+            self.callback { completion?(error) }
+        }
+    }
+    
+    /// Loads previous messages from backend.
+    ///
+    /// - Parameters:
+    ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
+    ///     In case no replies are fetched you will get the first `limit` number of replies.
+    ///   - limit: Limit for page size.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                 If request fails, the completion will be called with an error.
+    ///
+    open func loadPreviousReplies(
+        before messageId: MessageId? = nil,
+        limit: Int = 25,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        let lastMessageId = messageId ?? replies.last?.id
+    
+        messageUpdater.loadReplies(
+            cid: cid,
+            messageId: self.messageId,
+            pagination: MessagesPagination(pageSize: limit, parameter: lastMessageId.map { PaginationParameter.lessThan($0) })
+        ) { error in
+            self.callback { completion?(error) }
+        }
+    }
+    
     /// If the `state` of the controller is `initialized`, this method calls `startObserving` on
     /// `messageObserver` and `repliesObserver` to fetch the local data and start observing the changes.
     /// It also changes `state` based on the result.
@@ -244,59 +297,6 @@ public extension _ChatMessageController {
             self.callback {
                 completion?(result)
             }
-        }
-    }
-    
-    /// Loads previous messages from backend.
-    ///
-    /// - Parameters:
-    ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
-    ///     In case no replies are fetched you will get the first `limit` number of replies.
-    ///   - limit: Limit for page size.
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    ///                 If request fails, the completion will be called with an error.
-    ///
-    func loadPreviousReplies(
-        before messageId: MessageId? = nil,
-        limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        let lastMessageId = messageId ?? replies.last?.id
-    
-        messageUpdater.loadReplies(
-            cid: cid,
-            messageId: self.messageId,
-            pagination: MessagesPagination(pageSize: limit, parameter: lastMessageId.map { PaginationParameter.lessThan($0) })
-        ) { error in
-            self.callback { completion?(error) }
-        }
-    }
-    
-    /// Loads new messages from backend.
-    ///
-    /// - Parameters:
-    ///   - messageId: ID of the current first message. You will get messages `newer` then the provided ID.
-    ///   - limit: Limit for page size.
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
-    ///                 If request fails, the completion will be called with an error.
-    ///
-    func loadNextReplies(
-        after messageId: MessageId? = nil,
-        limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
-    ) {
-        guard let messageId = messageId ?? replies.first?.id else {
-            log.error(ClientError.MessageEmptyReplies().localizedDescription)
-            callback { completion?(ClientError.MessageEmptyReplies()) }
-            return
-        }
-    
-        messageUpdater.loadReplies(
-            cid: cid,
-            messageId: self.messageId,
-            pagination: MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
-        ) { error in
-            self.callback { completion?(error) }
         }
     }
     
