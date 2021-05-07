@@ -22,6 +22,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMe
         popup.modalPresentationStyle = .overFullScreen
         popup.modalTransitionStyle = .crossDissolve
 
+        navigationController?.view.endEditing(true)
         rootViewController.present(popup, animated: false)
     }
     
