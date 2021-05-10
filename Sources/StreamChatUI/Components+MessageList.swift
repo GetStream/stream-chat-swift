@@ -39,9 +39,6 @@ public extension _Components {
         public var fileAttachmentItemView: _ChatMessageFileAttachmentListView<ExtraData>.ItemView.Type =
             _ChatMessageFileAttachmentListView<ExtraData>.ItemView.self
         // Images
-        public var imageGallery: _ChatMessageImageGallery<ExtraData>.Type = _ChatMessageImageGallery<ExtraData>.self
-        public var imageGalleryItem: _ChatMessageImageGallery<ExtraData>.ImagePreview.Type =
-            _ChatMessageImageGallery<ExtraData>.ImagePreview.self
         public var imageGalleryItemUploadingOverlay: _ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
             _ChatMessageImageGallery<ExtraData>.UploadingOverlay.self
         // Interactive attachments

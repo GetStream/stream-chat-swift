@@ -6,22 +6,40 @@ import Nuke
 import UIKit
 
 extension UIImageView {
-    func loadImage(from url: URL?, placeholder: UIImage? = nil, resizeAutomatically: Bool = true) {
+    @discardableResult
+    func loadImage(
+        from url: URL?,
+        placeholder: UIImage? = nil,
+        resizeAutomatically: Bool = true,
+        completion: ImageTask.Completion? = nil
+    ) -> ImageTask? {
         guard !SystemEnvironment.isTests else {
             // When running tests, we load the images synchronously
             if let url = url {
                 image = UIImage(data: try! Data(contentsOf: url))
-                return
+                completion?(
+                    .success(
+                        ImageResponse(
+                            container: ImageContainer(image: image!)
+                        )
+                    )
+                )
+                return nil
             }
 
             image = placeholder
-            return
+            return nil
         }
 
         // Cancel any previous loading task
         currentImageLoadingTask?.cancel()
 
-        guard let url = url else { image = nil; return }
+        guard
+            let url = url
+        else {
+            image = nil
+            return nil
+        }
 
         let preprocessors: [ImageProcessing] = resizeAutomatically && bounds.size != .zero
             ? [ImageProcessors.Resize(size: bounds.size, contentMode: .aspectFill, crop: true)]
@@ -30,7 +48,8 @@ extension UIImageView {
         let request = ImageRequest(url: url, processors: preprocessors)
         let options = ImageLoadingOptions(placeholder: placeholder)
 
-        currentImageLoadingTask = Nuke.loadImage(with: request, options: options, into: self)
+        currentImageLoadingTask = Nuke.loadImage(with: request, options: options, into: self, completion: completion)
+        return currentImageLoadingTask
     }
 }
 

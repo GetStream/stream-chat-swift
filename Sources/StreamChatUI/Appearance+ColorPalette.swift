@@ -30,6 +30,7 @@ public extension Appearance {
         public var background2: UIColor = .streamGrayGainsboro
         public var background3: UIColor = .streamOverlay
         public var background4: UIColor = .streamOverlayDark
+        public var background5: UIColor = .streamOverlayDarkStatic
 
         public var overlayBackground: UIColor = .streamOverlayLight
         public var popoverBackground: UIColor = .streamWhite
@@ -82,6 +83,7 @@ private extension UIColor {
     static let streamBGGradientTo = mode(0xfcfcfc, 0x070a0d)
     static let streamOverlay = mode(0x000000, lightAlpha: 0.2, 0x000000, darkAlpha: 0.4)
     static let streamOverlayDark = mode(0x000000, lightAlpha: 0.6, 0xffffff, darkAlpha: 0.8)
+    static let streamOverlayDarkStatic = mode(0x000000, lightAlpha: 0.6, 0x000000, darkAlpha: 0.6)
 
     static func mode(_ light: Int, lightAlpha: CGFloat = 1.0, _ dark: Int, darkAlpha: CGFloat = 1.0) -> UIColor {
         if #available(iOS 13.0, *) {

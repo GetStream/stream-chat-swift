@@ -13,8 +13,8 @@ public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate {
 
 public typealias GalleryAttachmentViewInjector = _GalleryAttachmentViewInjector<NoExtraData>
 
-public class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
-    public private(set) lazy var galleryView = _ChatMessageImageGallery<ExtraData>()
+open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
+    open private(set) lazy var galleryView = _ChatMessageImageGallery<ExtraData>()
         .withoutAutoresizingMaskConstraints
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
@@ -33,7 +33,7 @@ public class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _Attachm
         }
     }
 
-    open func handleTapOnAttachment(_ attachment: _ChatMessageAttachment<AttachmentImagePayload>) {
+    open func handleTapOnAttachment(_ attachment: ChatMessageImageAttachment) {
         guard
             let indexPath = contentView.indexPath?()
         else { return }
