@@ -387,3 +387,25 @@ extension UIImage {
         return newImage!
     }
 }
+
+extension UIViewController {
+    func presentAlert(title: String?, message: String? = nil, okHandler: (() -> Void)? = nil, cancelHandler: (() -> Void)? = nil) {
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(.init(title: "OK", style: .default, handler: { _ in
+            okHandler?()
+        }))
+        
+        if let cancelHandler = cancelHandler {
+            alert.addAction(.init(title: "Cancel", style: .destructive, handler: { _ in
+                cancelHandler()
+            }))
+        }
+        
+        present(alert, animated: true, completion: nil)
+    }
+}

@@ -12,6 +12,10 @@ final class DemoAppCoordinator {
     private let connectionDelegate: BannerShowingConnectionDelegate
     
     init(navigationController: UINavigationController) {
+        // Since log is first touched in `BannerShowingConnectionDelegate`,
+        // we need to set log level here
+        LogConfig.level = .warning
+        
         self.navigationController = navigationController
         connectionDelegate = BannerShowingConnectionDelegate(
             showUnder: navigationController.navigationBar
@@ -20,8 +24,6 @@ final class DemoAppCoordinator {
     }
     
     func presentChat(userCredentials: UserCredentials) {
-        LogConfig.level = .error
-        
         // Create a token
         let token = try! Token(rawValue: userCredentials.token)
         

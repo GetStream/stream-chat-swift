@@ -132,6 +132,7 @@ class CreateGroupViewController: UIViewController {
     @objc func nextTapped() {
         let nameGroupController = NameGroupViewController(nibName: nil, bundle: nil)
         nameGroupController.selectedUsers = selectedUsers
+        nameGroupController.client = searchController.client
         
         navigationController?.pushViewController(nameGroupController, animated: true)
     }

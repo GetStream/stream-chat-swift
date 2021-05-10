@@ -56,6 +56,8 @@ class NameGroupViewController: UIViewController {
         }
     }
     
+    var client: ChatClient?
+    
     let mainStackView = UIStackView()
     
     let searchStackView = UIStackView()
@@ -118,8 +120,26 @@ class NameGroupViewController: UIViewController {
     }
     
     @objc func doneTapped() {
-        // Create group? Callback?
-        // Shake name field if empty?
+        guard let name = nameField.text, !name.isEmpty else {
+            presentAlert(title: "Name cannot be empty")
+            return
+        }
+        do {
+            let channelController = try client?.channelController(
+                createChannelWithId: .init(type: .messaging, id: String(UUID().uuidString.prefix(10))),
+                name: name,
+                members: Set(selectedUsers.map(\.id))
+            )
+            channelController?.synchronize { error in
+                if let error = error {
+                    self.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
+                } else {
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
+            }
+        } catch {
+            presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
+        }
     }
 }
 
