@@ -65,6 +65,22 @@ class ChannelReadDTO: NSManagedObject {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
+    func saveChannelRead(
+        cid: ChannelId,
+        userId: UserId,
+        lastReadAt: Date,
+        unreadMessageCount: Int
+    ) -> ChannelReadDTO {
+        let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self)
+        
+        dto.user = UserDTO.loadOrCreate(id: userId, context: self)
+        
+        dto.lastReadAt = lastReadAt
+        dto.unreadMessageCount = Int32(unreadMessageCount)
+        
+        return dto
+    }
+    
     func saveChannelRead<ExtraData: ExtraDataTypes>(
         payload: ChannelReadPayload<ExtraData>,
         for cid: ChannelId
