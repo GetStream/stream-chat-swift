@@ -59,6 +59,87 @@ class ContainerStackView_Tests: XCTestCase {
         AssertSnapshot(containerV, variants: [.defaultLight], suffix: "vertical")
     }
     
+    func testAppearance_withTwoImageViews() {
+        let containerH = ContainerStackView(
+            axis: .horizontal,
+            arrangedSubviews: [
+                UIImageView(
+                    image: TestImages.yoda.image
+                ),
+                UIImageView(
+                    image: TestImages.vader.image
+                )
+            ]
+        )
+        .withoutAutoresizingMaskConstraints
+        containerH.spacing = 0
+        containerH.alignment = .fill
+        containerH.distribution = .equal
+        
+        AssertSnapshot(containerH, variants: [.defaultLight])
+    }
+    
+    func testAppearance_withTwoImageViewsWhereOneIsHidden() {
+        let yodaImageView = UIImageView(
+            image: TestImages.yoda.image
+        )
+        let containerH = ContainerStackView(
+            axis: .horizontal,
+            arrangedSubviews: [
+                yodaImageView,
+                UIImageView(
+                    image: TestImages.vader.image
+                )
+            ]
+        )
+        .withoutAutoresizingMaskConstraints
+        containerH.spacing = 0
+        containerH.alignment = .fill
+        containerH.distribution = .equal
+        
+        yodaImageView.isHidden = true
+        
+        AssertSnapshot(containerH, variants: [.defaultLight])
+    }
+    
+    func testAppearance_withTwoContainerStackViews() {
+        let leftContainer = ContainerStackView(
+            axis: .vertical,
+            arrangedSubviews: [
+                UIImageView(
+                    image: TestImages.yoda.image
+                )
+            ]
+        )
+        leftContainer.spacing = 0
+        leftContainer.alignment = .fill
+        leftContainer.distribution = .equal
+        let rightContainer = ContainerStackView(
+            axis: .vertical,
+            arrangedSubviews: [
+                UIImageView(
+                    image: TestImages.vader.image
+                )
+            ]
+        )
+        rightContainer.spacing = 0
+        rightContainer.alignment = .fill
+        rightContainer.distribution = .equal
+        let containerH = ContainerStackView(
+            axis: .horizontal,
+            arrangedSubviews: [
+                leftContainer,
+                rightContainer
+            ]
+        )
+        .withoutAutoresizingMaskConstraints
+        containerH.spacing = 0
+        containerH.alignment = .fill
+        containerH.distribution = .equal
+        
+        AssertSnapshot(containerH, variants: [.defaultLight])
+    }
+    
     func testAppearance() {
         let container = ContainerStackView(
             axis: .vertical,
