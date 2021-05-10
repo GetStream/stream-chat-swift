@@ -5,21 +5,55 @@
 import StreamChat
 import UIKit
 
+/// Gallery view that displays images.
 public typealias ChatMessageImageGallery = _ChatMessageImageGallery<NoExtraData>
 
+/// Gallery view that displays images.
 open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
-    open var interItemSpacing: CGFloat = 2
-
+    /// Content the image gallery should display.
     public var content: [ChatMessageImageAttachment] = [] {
         didSet { updateContentIfNeeded() }
     }
     
     override open var intrinsicContentSize: CGSize { .init(width: .max, height: .max) }
 
+    /// Triggered when an attachment is tapped.
     public var didTapOnAttachment: ((ChatMessageImageAttachment) -> Void)?
 
-    // MARK: - Subviews
-
+    // Previews indices locations:
+    // When one image available:
+    // -------
+    // |     |
+    // |  0  |
+    // |     |
+    // -------
+    // When two images available:
+    // -------------
+    // |     |     |
+    // |  0  |  1  |
+    // |     |     |
+    // -------------
+    // When three images available:
+    // -------------
+    // |     |     |
+    // |  0  |     |
+    // |     |     |
+    // ------|  1  |
+    // |     |     |
+    // |  2  |     |
+    // |     |     |
+    // -------------
+    // When four and more images available:
+    // -------------
+    // |     |     |
+    // |  0  |  1  |
+    // |     |     |
+    // -------------
+    // |     |     |
+    // |  2  |  3  |
+    // |     |     |
+    // -------------
+    /// Previews for images.
     public private(set) lazy var previews = [
         createImagePreview(),
         createImagePreview(),
@@ -27,96 +61,58 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProv
         createImagePreview()
     ]
 
-    public private(set) lazy var moreImagesOverlay: UILabel = {
-        let label = UILabel()
-        label.font = appearance.fonts.title
-        label.adjustsFontForContentSizeCategory = true
-        label.textAlignment = .center
-        return label
-            .withoutAutoresizingMaskConstraints
-            .withBidirectionalLanguagesSupport
-    }()
-
-    private var layouts: [[NSLayoutConstraint]] = []
+    /// Overlay to be displayed when `content` contains more images than the gallery can display.
+    public private(set) lazy var moreImagesOverlay = UILabel()
+        .withoutAutoresizingMaskConstraints
+    
+    /// Container holding all previews.
+    public private(set) lazy var previewsContainerView = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
+    
+    /// Left container for previews.
+    public private(set) lazy var leftPreviewsContainerView = ContainerStackView()
+    
+    /// Right container for previews.
+    public private(set) lazy var rightPreviewsContainerView = ContainerStackView()
 
     // MARK: - Overrides
 
     override open func setUpLayout() {
-        previews.forEach(addSubview)
+        previewsContainerView.axis = .horizontal
+        previewsContainerView.distribution = .equal
+        previewsContainerView.alignment = .fill
+        previewsContainerView.spacing = 0
+        embed(previewsContainerView)
+        
+        leftPreviewsContainerView.spacing = 0
+        leftPreviewsContainerView.axis = .vertical
+        leftPreviewsContainerView.distribution = .equal
+        leftPreviewsContainerView.alignment = .fill
+        previewsContainerView.addArrangedSubview(leftPreviewsContainerView)
+        
+        leftPreviewsContainerView.addArrangedSubview(previews[0])
+        leftPreviewsContainerView.addArrangedSubview(previews[2])
+        
+        rightPreviewsContainerView.spacing = 0
+        rightPreviewsContainerView.axis = .vertical
+        rightPreviewsContainerView.distribution = .equal
+        rightPreviewsContainerView.alignment = .fill
+        previewsContainerView.addArrangedSubview(rightPreviewsContainerView)
+        
+        rightPreviewsContainerView.addArrangedSubview(previews[1])
+        rightPreviewsContainerView.addArrangedSubview(previews[3])
+        
         addSubview(moreImagesOverlay)
-
-        let anchorSpacing = interItemSpacing / 2
-
-        layouts = [
-            [
-                previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
-                previews[0].topAnchor.pin(equalTo: topAnchor),
-                previews[0].bottomAnchor.pin(equalTo: bottomAnchor),
-                previews[0].trailingAnchor.pin(equalTo: trailingAnchor)
-            ],
-            [
-                previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
-                previews[0].topAnchor.pin(equalTo: topAnchor),
-                previews[0].bottomAnchor.pin(equalTo: bottomAnchor),
-                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
-                
-                previews[1].trailingAnchor.pin(equalTo: trailingAnchor),
-                previews[1].topAnchor.pin(equalTo: topAnchor),
-                previews[1].bottomAnchor.pin(equalTo: bottomAnchor),
-                previews[1].widthAnchor.pin(equalTo: previews[0].widthAnchor)
-            ],
-            [
-                previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
-                previews[0].topAnchor.pin(equalTo: topAnchor),
-                previews[0].bottomAnchor.pin(equalTo: bottomAnchor),
-                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
-                
-                previews[1].topAnchor.pin(equalTo: topAnchor),
-                previews[1].trailingAnchor.pin(equalTo: trailingAnchor),
-                previews[1].heightAnchor.pin(equalTo: heightAnchor, multiplier: 0.5, constant: anchorSpacing),
-                previews[1].widthAnchor.pin(equalTo: previews[0].widthAnchor),
-                
-                previews[2].trailingAnchor.pin(equalTo: previews[1].trailingAnchor),
-                previews[2].heightAnchor.pin(equalTo: previews[1].heightAnchor),
-                previews[2].widthAnchor.pin(equalTo: previews[1].widthAnchor),
-                previews[2].bottomAnchor.pin(equalTo: bottomAnchor)
-            ],
-            [
-                previews[0].leadingAnchor.pin(equalTo: leadingAnchor),
-                previews[0].topAnchor.pin(equalTo: topAnchor),
-                previews[0].widthAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
-                previews[0].heightAnchor.pin(equalTo: widthAnchor, multiplier: 0.5, constant: anchorSpacing),
-                
-                previews[1].topAnchor.pin(equalTo: topAnchor),
-                previews[1].trailingAnchor.pin(equalTo: trailingAnchor),
-                previews[1].heightAnchor.pin(equalTo: previews[0].heightAnchor),
-                previews[1].widthAnchor.pin(equalTo: previews[0].widthAnchor),
-                
-                previews[2].leadingAnchor.pin(equalTo: leadingAnchor),
-                previews[2].heightAnchor.pin(equalTo: previews[0].heightAnchor),
-                previews[2].widthAnchor.pin(equalTo: previews[0].widthAnchor),
-                previews[2].bottomAnchor.pin(equalTo: bottomAnchor),
-                
-                previews[3].trailingAnchor.pin(equalTo: trailingAnchor),
-                previews[3].heightAnchor.pin(equalTo: previews[0].heightAnchor),
-                previews[3].widthAnchor.pin(equalTo: previews[0].widthAnchor),
-                previews[3].bottomAnchor.pin(equalTo: bottomAnchor)
-            ]
-        ]
-
-        NSLayoutConstraint.activate([
-            moreImagesOverlay.leadingAnchor.pin(equalTo: previews[3].leadingAnchor),
-            moreImagesOverlay.trailingAnchor.pin(equalTo: previews[3].trailingAnchor),
-            moreImagesOverlay.topAnchor.pin(equalTo: previews[3].topAnchor),
-            moreImagesOverlay.bottomAnchor.pin(equalTo: previews[3].bottomAnchor),
-            widthAnchor.pin(equalTo: heightAnchor)
-        ])
+        moreImagesOverlay.pin(to: previews[3])
     }
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        moreImagesOverlay.textColor = .white
-        moreImagesOverlay.backgroundColor = appearance.colorPalette.background4
+        moreImagesOverlay.font = appearance.fonts.title
+        moreImagesOverlay.adjustsFontForContentSizeCategory = true
+        moreImagesOverlay.textAlignment = .center
+        moreImagesOverlay.textColor = appearance.colorPalette.staticColorText
+        moreImagesOverlay.backgroundColor = appearance.colorPalette.background5
     }
 
     override open func updateContent() {
@@ -125,24 +121,19 @@ open class _ChatMessageImageGallery<ExtraData: ExtraDataTypes>: _View, ThemeProv
             itemPreview.isHidden = itemPreview.content == nil
         }
 
-        let visiblePreviewsCount = previews.filter { !$0.isHidden }.count
-        layouts.flatMap { $0 }.forEach { $0.isActive = false }
-        layouts[max(visiblePreviewsCount - 1, 0)].forEach { $0.isActive = true }
+        // Left and right have the same size if a view is not specified as `isHidden`.
+        // Without this, both container views would be forced to be of size zero.
+        rightPreviewsContainerView.isHidden = rightPreviewsContainerView.subviews
+            .allSatisfy(\.isHidden)
 
         let otherImagesCount = content.count - previews.count
         moreImagesOverlay.isHidden = otherImagesCount <= 0
         moreImagesOverlay.text = "+\(otherImagesCount)"
     }
 
-    // MARK: - Private
-
-    private func createImagePreview() -> ImagePreview {
-        let preview = components
-            .messageList
-            .messageContentSubviews
-            .attachmentSubviews
-            .imageGalleryItem
-            .init()
+    /// Factory method for image previews.
+    open func createImagePreview() -> ImagePreview {
+        let preview = ImagePreview()
             .withoutAutoresizingMaskConstraints
 
         preview.didTapOnAttachment = { [weak self] in

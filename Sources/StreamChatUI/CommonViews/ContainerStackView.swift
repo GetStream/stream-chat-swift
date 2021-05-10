@@ -114,10 +114,19 @@ public class ContainerStackView: UIView {
         self.alignment = alignment
         self.spacing = spacing
         self.distribution = distribution
-        addLayoutGuide(sizeLayoutGuide)
         addArrangedSubviews(arrangedSubviews)
     }
-
+    
+    override public init(frame: CGRect) {
+        super.init(frame: frame)
+        addLayoutGuide(sizeLayoutGuide)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     /// The distribution of the arranged subviews along the container’s axis.
     public var distribution: Distribution = .natural {
         didSet {

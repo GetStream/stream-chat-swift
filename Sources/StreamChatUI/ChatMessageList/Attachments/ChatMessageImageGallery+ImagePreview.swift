@@ -69,17 +69,13 @@ extension _ChatMessageImageGallery {
         override open func updateContent() {
             let attachment = content
 
-            if let url = attachment?.payload?.imagePreviewURL {
-                loadingIndicator.isVisible = true
-                imageTask = loadImage(with: url, options: .shared, into: imageView, completion: { [weak self] _ in
+            loadingIndicator.isVisible = true
+            imageView.layoutIfNeeded()
+            imageTask = imageView
+                .loadImage(from: attachment?.payload?.imagePreviewURL, resizeAutomatically: false) { [weak self] _ in
                     self?.loadingIndicator.isVisible = false
                     self?.imageTask = nil
-                })
-            } else {
-                loadingIndicator.isVisible = false
-                imageView.image = nil
-                imageTask = nil
-            }
+                }
 
             uploadingOverlay.content = content
             uploadingOverlay.isVisible = attachment?.uploadingState != nil
