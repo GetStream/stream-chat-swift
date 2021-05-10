@@ -161,6 +161,14 @@ protocol ChannelReadDatabaseSession {
         for cid: ChannelId
     ) throws -> ChannelReadDTO
     
+    /// Creates a new `ChannelReadDTO` object in the database.
+    func saveChannelRead(
+        cid: ChannelId,
+        userId: UserId,
+        lastReadAt: Date,
+        unreadMessageCount: Int
+    ) throws -> ChannelReadDTO
+    
     /// Fetches `ChannelReadDTO` with the given `cid` and `userId` from the DB.
     /// Returns `nil` if no `ChannelReadDTO` matching the `cid` and `userId`  exists.
     func loadChannelRead(cid: ChannelId, userId: UserId) -> ChannelReadDTO?
