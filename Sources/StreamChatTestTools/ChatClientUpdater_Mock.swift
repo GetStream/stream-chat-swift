@@ -9,7 +9,13 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
     @Atomic var prepareEnvironment_newToken: Token?
     var prepareEnvironment_called: Bool { prepareEnvironment_newToken != nil }
 
-    @Atomic var reloadUserIfNeeded_called = false
+    @Atomic var reloadUserIfNeeded_called = false {
+        didSet {
+            reloadUserIfNeeded_callsCount += 1
+        }
+    }
+
+    var reloadUserIfNeeded_callsCount = 0
     @Atomic var reloadUserIfNeeded_completion: ((Error?) -> Void)?
     @Atomic var reloadUserIfNeeded_callSuper: (() -> Void)?
 
@@ -47,6 +53,7 @@ class ChatClientUpdaterMock<ExtraData: ExtraDataTypes>: ChatClientUpdater<ExtraD
         prepareEnvironment_newToken = nil
 
         reloadUserIfNeeded_called = false
+        reloadUserIfNeeded_callsCount = 0
         reloadUserIfNeeded_completion = nil
         reloadUserIfNeeded_callSuper = nil
 
