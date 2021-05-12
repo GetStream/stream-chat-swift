@@ -65,7 +65,8 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     /// View displaying status of the channel.
     ///
     /// The status differs based on the fact if the channel is direct or not.
-    open lazy var titleView = ChatMessageListTitleView<ExtraData>()
+    open lazy var titleView: TitleContainerView = components
+        .navigationTitleView.init()
         .withoutAutoresizingMaskConstraints
 
     /// Handles navigation actions from messages
@@ -231,8 +232,10 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     ///
     /// For group chat is called every-time the channel changes.
     open func updateNavigationTitle() {
-        titleView.title = L10n.Message.Threads.reply
-        titleView.subtitle = channelController.channel?.name.map { L10n.Message.Threads.replyWith($0) }
+        titleView.content = (
+            title: L10n.Message.Threads.reply,
+            subtitle: channelController.channel?.name.map { L10n.Message.Threads.replyWith($0) }
+        )
     }
 
     /// Adds thread parent message on top of collection view.
