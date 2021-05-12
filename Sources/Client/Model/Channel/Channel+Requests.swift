@@ -99,12 +99,23 @@ public extension Channel {
     ///   - imageURL: an image URL.
     ///   - extraData: a custom extra data.
     ///   - completion: a completion block with `ChannelResponse`.
+    @available(*, deprecated, message: "Please use `update(extraData:_)` instead")
     @discardableResult
     func update(name: String? = nil,
                 imageURL: URL? = nil,
                 extraData: ChannelExtraDataCodable? = nil,
                 _ completion: @escaping Client.Completion<ChannelResponse>) -> Cancellable {
-        Client.shared.update(channel: self, name: name, imageURL: imageURL, extraData: extraData, completion)
+        Client.shared.update(channel: self, extraData: extraData, completion)
+    }
+    
+    /// Update channel data.
+    /// - Parameters:
+    ///   - extraData: a custom extra data.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func update(extraData: ChannelExtraDataCodable? = nil,
+                _ completion: @escaping Client.Completion<ChannelResponse>) -> Cancellable {
+        Client.shared.update(channel: self, extraData: extraData, completion)
     }
     
     /// Delete the channel.

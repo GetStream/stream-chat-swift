@@ -207,6 +207,7 @@ public extension Client {
     ///   - imageURL: an image URL.
     ///   - extraData: a custom extra data.
     ///   - completion: a completion block with `ChannelResponse`.
+    @available(*, deprecated, message: "Please use `update(channel:extraData:_)` instead")
     @discardableResult
     func update(channel: Channel,
                 name: String? = nil,
@@ -215,15 +216,32 @@ public extension Client {
                 _ completion: @escaping Client.Completion<ChannelResponse>) -> Cancellable {
         var changed = false
         
-        if let name = name, !name.isEmpty {
+        // `name` and `image` shouldn't be set here
+        // since they're included in the `extraData` anyway
+        
+        if let extraData = extraData {
             changed = true
-            channel.name = name
+            channel.extraData = extraData
         }
         
-        if let imageURL = imageURL {
-            changed = true
-            channel.imageURL = imageURL
+        guard changed else {
+            completion(.success(.init(channel: channel)))
+            return Subscription.empty
         }
+        
+        return request(endpoint: .updateChannel(.init(data: .init(channel))), completion)
+    }
+    
+    /// Update channel data.
+    /// - Parameters:
+    ///   - channel: a channel.
+    ///   - extraData: a custom extra data.
+    ///   - completion: a completion block with `ChannelResponse`.
+    @discardableResult
+    func update(channel: Channel,
+                extraData: ChannelExtraDataCodable? = nil,
+                _ completion: @escaping Client.Completion<ChannelResponse>) -> Cancellable {
+        var changed = false
         
         if let extraData = extraData {
             changed = true

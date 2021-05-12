@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 # Upcoming
 
-### 🔄 Changed
+### ⚠️ Deprecated
+- `Client.shared.update(channel:name:imageURL:extraData:_:)` and `channel.update(name:imageURL:extraData:_:)` is deprecated. Please use versions without `name:imageURL:`
+
+### 🐞 Fixed
+- `Channel.update` unnecessarily causing an actual name and imageURL update on 1-1 channels [#973](https://github.com/GetStream/stream-chat-swift/issues/973)
 
 # [2.6.6](https://github.com/GetStream/stream-chat-swift/releases/tag/2.6.6)
 _May 04, 2021_
