@@ -196,6 +196,9 @@ public final class Channel: Codable {
         cid = try container.decode(ChannelId.self, forKey: .cid)
         let members = try container.decodeIfPresent([Member].self, forKey: .members) ?? []
         self.members = Set<Member>(members)
+        if let membership = members.first(where: { $0.user.id == Client.shared.user.id }) {
+            self.membership = membership
+        }
         invitedMembers = Set<Member>()
         // Fallback because config doesn't come in message search and to avoid breaking API by making it optional
         let config = (try? container.decode(Config.self, forKey: .config)) ?? Config()
