@@ -64,9 +64,9 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
         addSubview(actionsStackView)
 
         NSLayoutConstraint.activate([
-            preview.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-            preview.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-            preview.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
+            preview.leadingAnchor.pin(equalTo: leadingAnchor),
+            preview.trailingAnchor.pin(equalTo: trailingAnchor),
+            preview.topAnchor.pin(equalTo: topAnchor),
             preview.heightAnchor.pin(equalTo: preview.widthAnchor),
             
             titleLabel.topAnchor.pin(equalToSystemSpacingBelow: preview.bottomAnchor, multiplier: 1),
