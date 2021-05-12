@@ -18,7 +18,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     ChatMessageContentViewDelegate,
     UICollectionViewDelegate,
     ChatMessageListCollectionViewDataSource,
-    GalleryContentViewDelegate {
+    GalleryContentViewDelegate,
+    GiphyActionContentViewDelegate {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
     
@@ -171,6 +172,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> _AttachmentViewInjector<ExtraData>.Type? {
         if messageForIndexPath(indexPath).imageAttachments.isEmpty == false {
             return components.galleryAttachmentInjector
+        } else if messageForIndexPath(indexPath).giphyAttachments.isEmpty == false {
+            return components.giphyAttachmentInjector
         }
         return nil
     }
@@ -340,10 +343,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     /// Executes the provided action on the message
-    open func handleTapOnAttachmentAction(
+    open func didTapOnAttachmentAction(
         _ action: AttachmentAction,
-        for attachment: ChatMessageAttachment,
-        forCellAt indexPath: IndexPath
+        at indexPath: IndexPath
     ) {
         // Can we have a helper on `ChannelController` returning a `messageController` for the provided message id?
         channelController.client

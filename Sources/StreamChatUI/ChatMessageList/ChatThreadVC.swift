@@ -332,11 +332,9 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     // MARK: - Cell action handlers
 
     /// Executes the provided action on the message
-    // TODO: Not implemented
-    open func handleTapOnAttachmentAction(
+    open func didTapOnAttachmentAction(
         _ action: AttachmentAction,
-        for attachment: ChatMessageAttachment,
-        forCellAt indexPath: IndexPath
+        at indexPath: IndexPath
     ) {
         // Can we have a helper on `ChannelController` returning a `messageController` for the provided message id?
         channelController.client
