@@ -837,6 +837,9 @@
 		E73262E025ED64AB008CB152 /* ChatChannelNamer_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73262D725ED6432008CB152 /* ChatChannelNamer_Tests.swift */; };
 		E732A922263B1F13003BD781 /* UserUpdated.json in Resources */ = {isa = PBXBuildFile; fileRef = E732A921263B075F003BD781 /* UserUpdated.json */; };
 		E73A8B2B2578EB2B00FBDC56 /* ChatMessageComposerVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73A8B2A2578EB2B00FBDC56 /* ChatMessageComposerVC.swift */; };
+		E73BD9E9264C04AD00E208B7 /* AttachmentPayloadGiphyWithActions.json in Resources */ = {isa = PBXBuildFile; fileRef = E73BD9E7264C015200E208B7 /* AttachmentPayloadGiphyWithActions.json */; };
+		E73BD9EA264C04AD00E208B7 /* AttachmentPayloadGiphyWithoutActions.json in Resources */ = {isa = PBXBuildFile; fileRef = E73BD9E8264C016400E208B7 /* AttachmentPayloadGiphyWithoutActions.json */; };
+		E7516B162642E11A00DE778C /* GiphyAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7516B152642E11A00DE778C /* GiphyAttachmentViewInjector.swift */; };
 		E768AA892625C18D00328E6E /* TypingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E768AA882625C18D00328E6E /* TypingIndicatorView.swift */; };
 		E768AAFB2627691600328E6E /* TypingAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E768AAFA2627691600328E6E /* TypingAnimationView.swift */; };
 		E76B2F0425F23EE200E57112 /* CustomUIViewSubclasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70A09E925F230EE00C55BBE /* CustomUIViewSubclasses.swift */; };
@@ -2025,6 +2028,9 @@
 		E73262D725ED6432008CB152 /* ChatChannelNamer_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelNamer_Tests.swift; sourceTree = "<group>"; };
 		E732A921263B075F003BD781 /* UserUpdated.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = UserUpdated.json; sourceTree = "<group>"; };
 		E73A8B2A2578EB2B00FBDC56 /* ChatMessageComposerVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageComposerVC.swift; sourceTree = "<group>"; };
+		E73BD9E7264C015200E208B7 /* AttachmentPayloadGiphyWithActions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AttachmentPayloadGiphyWithActions.json; sourceTree = "<group>"; };
+		E73BD9E8264C016400E208B7 /* AttachmentPayloadGiphyWithoutActions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AttachmentPayloadGiphyWithoutActions.json; sourceTree = "<group>"; };
+		E7516B152642E11A00DE778C /* GiphyAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		E768AA882625C18D00328E6E /* TypingIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingIndicatorView.swift; sourceTree = "<group>"; };
 		E768AAFA2627691600328E6E /* TypingAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingAnimationView.swift; sourceTree = "<group>"; };
 		E7734D0C25F946FF004F76B0 /* CellActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellActionView.swift; sourceTree = "<group>"; };
@@ -3656,6 +3662,7 @@
 				DB8230F1259B8DBF00E7D7FE /* ChatMessageGiphyView.swift */,
 				79FA4A79263BFCE200EC33DA /* AttachmentViewInjector.swift */,
 				79FA4A83263BFD1100EC33DA /* GalleryAttachmentViewInjector.swift */,
+				E7516B152642E11A00DE778C /* GiphyAttachmentViewInjector.swift */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -4247,6 +4254,8 @@
 			isa = PBXGroup;
 			children = (
 				2289852625CC0331007F2C26 /* AttachmentPayloadCustom.json */,
+				E73BD9E7264C015200E208B7 /* AttachmentPayloadGiphyWithActions.json */,
+				E73BD9E8264C016400E208B7 /* AttachmentPayloadGiphyWithoutActions.json */,
 				2289852725CC0332007F2C26 /* AttachmentPayloadImage.json */,
 				2289852525CC0331007F2C26 /* AttachmentPayloadLink.json */,
 			);
@@ -5045,6 +5054,7 @@
 				E7DB9F2E26329F440090D9C7 /* HealthCheck.json in Resources */,
 				E7DB9F402632B6C40090D9C7 /* ChannelVisible.json in Resources */,
 				8AC9CBE024C74DD0006E236C /* NotificationInvited.json in Resources */,
+				E73BD9EA264C04AD00E208B7 /* AttachmentPayloadGiphyWithoutActions.json in Resources */,
 				E7B20C8B26331AA400A80502 /* NotificationChannelMutesUpdatedWithNoMutedChannels.json in Resources */,
 				8A0C3BD124C1CD1C00CAFD19 /* ChannelHidden.json in Resources */,
 				8AC9CBDD24C74DD0006E236C /* NotificationMessageNew.json in Resources */,
@@ -5056,6 +5066,7 @@
 				2289852825CC0332007F2C26 /* AttachmentPayloadLink.json in Resources */,
 				F62BE7902506620000D13B86 /* MissingEventsPayload.json in Resources */,
 				8A0CC9F624C608C500705CF9 /* ReactionNew.json in Resources */,
+				E73BD9E9264C04AD00E208B7 /* AttachmentPayloadGiphyWithActions.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5246,6 +5257,7 @@
 				F880DEA32628528B0025AD64 /* ImageGalleryVC.swift in Sources */,
 				78C8473825FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift in Sources */,
 				DB3CCF3F258CF7ED009D5E99 /* ChatMessageLinkPreviewView.swift in Sources */,
+				E7516B162642E11A00DE778C /* GiphyAttachmentViewInjector.swift in Sources */,
 				E79AC10D25831A1500C3CE5D /* ChatSuggestionsCollectionViewLayout.swift in Sources */,
 				E73A8B2B2578EB2B00FBDC56 /* ChatMessageComposerVC.swift in Sources */,
 				8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */,
