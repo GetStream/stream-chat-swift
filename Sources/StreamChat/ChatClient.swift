@@ -186,6 +186,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
     }()
     
     private(set) lazy var internetConnection = environment.internetConnection()
+    private(set) lazy var clientUpdater = environment.clientUpdaterBuilder(self)
     
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
@@ -288,8 +289,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
 
         currentUserId = fetchCurrentUserIdFromDatabase()
 
-        let updater = environment.clientUpdaterBuilder(self)
-        updater.reloadUserIfNeeded(completion: completion)
+        clientUpdater.reloadUserIfNeeded(completion: completion)
     }
     
     deinit {
@@ -410,26 +410,65 @@ extension ClientError {
 extension _ChatClient: ConnectionStateDelegate {
     func webSocketClient(_ client: WebSocketClient, didUpdateConectionState state: WebSocketConnectionState) {
         connectionStatus = .init(webSocketConnectionState: state)
-
+        
+        // We should notify waiters if connectionId was obtained (i.e. state is .connected)
+        // or for .disconnected state except for disconnect caused by an expired token
+        let shouldNotifyConnectionIdWaiters: Bool
+        let connectionId: String?
+        switch state {
+        case let .connected(connectionId: id):
+            shouldNotifyConnectionIdWaiters = true
+            connectionId = id
+        case let .disconnected(error: error):
+            if let error = error,
+               error.isTokenExpiredError {
+                clientUpdater.reloadUserIfNeeded()
+                shouldNotifyConnectionIdWaiters = false
+            } else {
+                shouldNotifyConnectionIdWaiters = true
+            }
+            connectionId = nil
+        case .connecting,
+             .disconnecting,
+             .waitingForConnectionId,
+             .waitingForReconnect:
+            shouldNotifyConnectionIdWaiters = false
+            connectionId = nil
+        }
+        
+        updateConnectionId(
+            connectionId: connectionId,
+            shouldNotifyWaiters: shouldNotifyConnectionIdWaiters
+        )
+    }
+    
+    /// Update connectionId and notify waiters if needed
+    /// - Parameters:
+    ///   - connectionId: new connectionId (if present)
+    ///   - shouldFailWaiters: Whether it's necessary to notify waiters or not
+    private func updateConnectionId(
+        connectionId: String?,
+        shouldNotifyWaiters: Bool
+    ) {
         _connectionId.mutate { mutableConnectionId in
             _connectionIdWaiters.mutate { connectionIdWaiters in
-                
-                if case let .connected(connectionId) = state {
-                    mutableConnectionId = connectionId
+                mutableConnectionId = connectionId
+                if shouldNotifyWaiters {
                     connectionIdWaiters.forEach { $0(connectionId) }
                     connectionIdWaiters.removeAll()
-                    
-                } else {
-                    mutableConnectionId = nil
-                    
-                    if case .disconnected = state {
-                        // No reconnection attempt schedule, we should fail all existing connectionId waiters.
-                        connectionIdWaiters.forEach { $0(nil) }
-                        connectionIdWaiters.removeAll()
-                    }
                 }
             }
         }
+    }
+}
+
+private extension ClientError {
+    var isTokenExpiredError: Bool {
+        if let error = underlyingError as? ErrorPayload,
+           ErrorPayload.tokenInvadlidErrorCodes ~= error.code {
+            return true
+        }
+        return false
     }
 }
 

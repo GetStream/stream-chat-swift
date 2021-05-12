@@ -392,6 +392,45 @@ class ChatClient_Tests: StressTestCase {
         XCTAssertNil(providedConnectionId)
     }
     
+    func test_client_webSocketIsDisconnected_becauseTokenExpired_callsReloadUserIfNeeded() throws {
+        // Create a new chat client
+        let client = ChatClient(
+            config: inMemoryStorageConfig,
+            tokenProvider: .anonymous,
+            workerBuilders: workerBuilders,
+            eventWorkerBuilders: [],
+            environment: testEnv.environment
+        )
+
+        // Simulate access to `webSocketClient` so it is initialized
+        _ = client.webSocketClient
+        
+        // Simulate .connected state to obtain connection id
+        let connectionId: ConnectionId = .unique
+        testEnv.webSocketClient?.connectionStateDelegate?
+            .webSocketClient(testEnv.webSocketClient!, didUpdateConectionState: .connected(connectionId: connectionId))
+        
+        XCTAssertEqual(client.connectionId, connectionId)
+        
+        // Was called on ChatClient init
+        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 1)
+
+        // Simulate WebSocketConnection change to "disconnected"
+        let error = ClientError(with: ErrorPayload(code: 40, message: "", statusCode: 200))
+        testEnv.webSocketClient?
+            .connectionStateDelegate?
+            .webSocketClient(
+                testEnv.webSocketClient!,
+                didUpdateConectionState: .disconnected(error: error)
+            )
+        
+        // Was called one more time on receiving token expired error
+        XCTAssertEqual(testEnv.clientUpdater!.reloadUserIfNeeded_callsCount, 2)
+        
+        // We set connectionId to nil after token expiration disconnect
+        XCTAssertNil(client.connectionId)
+    }
+    
     // MARK: - APIClient tests
     
     func test_apiClientConfiguration() throws {
