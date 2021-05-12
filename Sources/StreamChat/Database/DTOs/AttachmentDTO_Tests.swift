@@ -52,6 +52,80 @@ class AttachmentDTO_Tests: XCTestCase {
         XCTAssertEqual(imageAttachmentModel.payload, imagePayload)
     }
     
+    func test_giphyAttachmentWithActionsPayload_isStoredAndLoadedFromDB() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        
+        let giphyWithActionsJSON = XCTestCase.mockData(fromFile: "AttachmentPayloadGiphyWithActions", extension: "json")
+        let attachmentData = try JSONDecoder.default.decode(AttachmentPayload.self, from: giphyWithActionsJSON)
+        
+        let attachment: AttachmentPayload = attachmentData
+        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
+
+        // Create channel, message and attachment in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createMessage(id: messageId, cid: cid)
+        try database.writeSynchronously { session in
+            try session.saveAttachment(payload: attachment, id: attachmentId)
+        }
+        
+        // Load the attachment from the database.
+        let loadedAttachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
+
+        // Assert attachment has correct values.
+        XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
+        XCTAssertEqual(loadedAttachment.localState, nil)
+        XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
+        XCTAssertEqual(loadedAttachment.message.id, messageId)
+        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
+
+        let giphyPayload = attachment.decodedGiphyPayload
+        let giphyAttachmentWithActionsPayload = try XCTUnwrap(
+            loadedAttachment
+                .asAnyModel()?
+                .attachment(payloadType: AttachmentGiphyPayload.self)
+        )
+
+        XCTAssertEqual(giphyAttachmentWithActionsPayload.payload, giphyPayload)
+    }
+    
+    func test_giphyAttachmentWithoutActionsPayload_isStoredAndLoadedFromDB() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+        
+        let giphyWithoutActionsJSON = XCTestCase.mockData(fromFile: "AttachmentPayloadGiphyWithoutActions", extension: "json")
+        let attachmentData = try JSONDecoder.default.decode(AttachmentPayload.self, from: giphyWithoutActionsJSON)
+        
+        let attachment: AttachmentPayload = attachmentData
+        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
+
+        // Create channel, message and attachment in the database.
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createMessage(id: messageId, cid: cid)
+        try database.writeSynchronously { session in
+            try session.saveAttachment(payload: attachment, id: attachmentId)
+        }
+        
+        // Load the attachment from the database.
+        let loadedAttachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
+
+        // Assert attachment has correct values.
+        XCTAssertEqual(loadedAttachment.attachmentID, attachmentId)
+        XCTAssertEqual(loadedAttachment.localState, nil)
+        XCTAssertEqual(loadedAttachment.attachmentType, attachment.type)
+        XCTAssertEqual(loadedAttachment.message.id, messageId)
+        XCTAssertEqual(loadedAttachment.channel.cid, cid.rawValue)
+
+        let giphyPayload = attachment.decodedGiphyPayload
+        let giphyAttachmentWithoutActionsPayload = try XCTUnwrap(
+            loadedAttachment
+                .asAnyModel()?
+                .attachment(payloadType: AttachmentGiphyPayload.self)
+        )
+
+        XCTAssertEqual(giphyAttachmentWithoutActionsPayload.payload, giphyPayload)
+    }
+    
     func test_uploadableAttachmentEnvelope_isStoredAndLoadedFromDB() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
