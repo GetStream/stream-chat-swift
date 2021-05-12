@@ -62,7 +62,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// View displaying status of the channel.
     ///
     /// The status differs based on the fact if the channel is direct or not.
-    open lazy var titleView = ChatMessageListTitleView<ExtraData>()
+    open lazy var titleView: TitleContainerView = components.navigationTitleView.init()
         .withoutAutoresizingMaskConstraints
 
     /// Handles navigation actions from messages
@@ -252,9 +252,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
                 return channelController.channel.map { L10n.Message.Title.group($0.memberCount, $0.watcherCount) }
             }
         }()
-        
-        titleView.title = title
-        titleView.subtitle = subtitle
+
+        titleView.content = (title: title, subtitle: subtitle)
     }
 
     /// Handles long press action on collection view.
