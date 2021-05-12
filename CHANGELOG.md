@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### 🐞 Fixed
 - `Channel.update` unnecessarily causing an actual name and imageURL update on 1-1 channels [#973](https://github.com/GetStream/stream-chat-swift/issues/973)
 - `Channel.membership` is `nil` for when channel is obtained from `presenter.rx.channelDidUpdate` observable
+- Fix when both an image and a file were sent, only the images were actually sent
 
 ### 🔄 Changed
 - HTTP requests were incorrectly logged with `error` log level, changed to `debug`

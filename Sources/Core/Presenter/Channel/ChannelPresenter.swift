@@ -178,9 +178,7 @@ extension ChannelPresenter {
     func createMessage(with text: String, showReplyInChannel: Bool) -> Message {
         let messageId = editMessage?.id ?? ""
         
-        var attachments = uploadManager.images.isEmpty
-            ? uploadManager.files.compactMap({ $0.attachment })
-            : uploadManager.images.compactMap({ $0.attachment })
+        var attachments = uploadManager.files.compactMap({ $0.attachment }) + uploadManager.images.compactMap({ $0.attachment })
         
         var extraData: Codable?
         
