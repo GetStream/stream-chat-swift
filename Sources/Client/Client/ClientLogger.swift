@@ -382,14 +382,14 @@ public final class ClientLogger {
         }
         
         guard let data = data, !data.isEmpty else {
-            log("📦 \(message) Data is empty", level: (forceToShowData ? .error : .info))
+            log("📦 \(message) Data is empty", level: .debug)
             return
         }
         
         do {
-            log("📦 \(message) " + (try data.prettyPrintedJSONString()), level: (forceToShowData ? .error : .info))
+            log("📦 \(message) " + (try data.prettyPrintedJSONString()), level: .debug)
         } catch {
-            log("📦 \(message) \(error)", level: (forceToShowData ? .error : .info))
+            log("📦 \(message) \(error)", level: .debug)
         }
     }
     
