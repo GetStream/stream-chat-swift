@@ -46,7 +46,7 @@ extension AttachmentGiphyPayload: Decodable {
         self.init(
             title: try container.decode(String.self, forKey: .title),
             previewURL: previewURL,
-            actions: try container.decode([AttachmentAction].self, forKey: .actions)
+            actions: try container.decodeIfPresent([AttachmentAction].self, forKey: .actions) ?? []
         )
     }
 }
