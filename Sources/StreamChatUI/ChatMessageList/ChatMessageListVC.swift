@@ -99,6 +99,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
                 self?.updateNavigationTitle()
             }
         }
+        updateNavigationTitle()
     }
     
     override open func setUpLayout() {

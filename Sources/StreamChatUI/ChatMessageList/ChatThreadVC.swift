@@ -98,6 +98,8 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         messageController.setDelegate(self)
         messageController.synchronize()
+
+        updateNavigationTitle()
     }
 
     override open func setUpLayout() {
