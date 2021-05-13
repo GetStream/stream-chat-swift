@@ -98,6 +98,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         messageController.setDelegate(self)
         messageController.synchronize()
+        messageController.loadPreviousReplies()
 
         updateNavigationTitle()
     }
