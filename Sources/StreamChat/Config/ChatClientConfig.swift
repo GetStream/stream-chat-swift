@@ -16,7 +16,7 @@ import Foundation
 public struct ChatClientConfig {
     /// The `APIKey` unique for your chat app.
     ///
-    /// The API key can be obtained by registering on [our website](https://getstream.io/chat/trial/).
+    /// The API key can be obtained by registering on [our website](https://getstream.io/chat/\).
     ///
     public let apiKey: APIKey
     
@@ -27,7 +27,7 @@ public struct ChatClientConfig {
     }()
     
     /// The datacenter `ChatClient` uses for connecting.
-    public var baseURL: BaseURL = .dublin
+    public var baseURL: BaseURL = .usEast
     
     /// Determines whether `ChatClient` caches the data locally. This makes it possible to browse the existing chat data also
     /// when the internet connection is not available.
@@ -103,7 +103,7 @@ extension ChatClientConfig {
 
 /// A struct representing an API key of the chat app.
 ///
-/// An API key can be obtained by registering on [our website](https://getstream.io/chat/trial/).
+/// An API key can be obtained by registering on [our website](https://getstream.io/chat/trial/\).
 ///
 public struct APIKey: Equatable {
     /// The string representation of the API key
