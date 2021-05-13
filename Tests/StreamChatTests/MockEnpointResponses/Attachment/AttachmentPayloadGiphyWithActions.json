@@ -1,0 +1,29 @@
+{
+  "title": "Hello",
+  "title_link": "https://giphy.com/gifs/hello-hi-hola-l4hLTU9vannBNUQy4",
+  "type": "giphy",
+  "thumb_url": "https://media0.giphy.com/media/l4hLTU9vannBNUQy4/giphy.gif?cid=c4b03675t1jev2y6g5rk29znrxmmbhit5ybvrvi297g970ax&rid=giphy.gif&ct=g",
+  "actions": [
+    {
+      "value": "send",
+      "style": "primary",
+      "name": "image_action",
+      "type": "button",
+      "text": "Send"
+    },
+    {
+      "value": "shuffle",
+      "style": "default",
+      "name": "image_action",
+      "type": "button",
+      "text": "Shuffle"
+    },
+    {
+      "value": "cancel",
+      "style": "default",
+      "name": "image_action",
+      "type": "button",
+      "text": "Cancel"
+    }
+  ]
+}
