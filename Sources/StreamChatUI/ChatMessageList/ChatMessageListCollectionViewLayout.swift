@@ -44,7 +44,7 @@ open class ChatMessageListCollectionViewLayout: UICollectionViewLayout {
     /// With better approximation you are getting better performance
     open var estimatedItemHeight: CGFloat = 200
     /// Vertical spacing between items
-    open var spacing: CGFloat = 4
+    open var spacing: CGFloat = 2
 
     /// Items that have been added to collectionview during currently running batch updates
     open var appearingItems: Set<IndexPath> = []
