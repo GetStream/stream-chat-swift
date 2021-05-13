@@ -20,6 +20,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     ChatMessageListCollectionViewDataSource,
     GalleryContentViewDelegate,
     GiphyActionContentViewDelegate,
+    LinkPreviewViewDelegate,
     FileActionContentViewDelegate {
     /// Controller for observing data changes within the channel
     open var channelController: _ChatChannelController<ExtraData>!
@@ -177,8 +178,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             return components.giphyAttachmentInjector
         } else if messageForIndexPath(indexPath).fileAttachments.isEmpty == false {
             return components.filesAttachmentInjector
+        } else if messageForIndexPath(indexPath).linkAttachments.isEmpty == false {
+            return components.linkAttachmentInjector
+        } else {
+            return nil
         }
-        return nil
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -343,6 +347,13 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             previews: previews,
             from: self
         )
+    }
+    
+    open func didTapOnLinkAttachment(
+        _ attachment: ChatMessageLinkAttachment,
+        at indexPath: IndexPath
+    ) {
+        router.showPreview(for: attachment.payload.ogURL)
     }
 
     public func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath) {
