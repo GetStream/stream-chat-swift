@@ -10,113 +10,115 @@ public typealias ChatMessageLinkPreviewView = _ChatMessageLinkPreviewView<NoExtr
 open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, ThemeProvider {
     public var content: ChatMessageLinkAttachment? { didSet { updateContentIfNeeded() } }
 
+    /// Image view showing link's preview image.
     public private(set) lazy var imagePreview = UIImageView()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var authorBackground: UIView = {
-        let view = ShapeView().withoutAutoresizingMaskConstraints
-        view.shapeLayer.maskedCorners = .layerMaxXMinYCorner
-        view.layer.cornerRadius = 16
-        return view
-    }()
+    /// Background for `authorLabel`.
+    public private(set) lazy var authorBackground = UIView()
+        .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var authorLabel: UILabel = {
-        let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = appearance.fonts.bodyBold
-        label.adjustsFontForContentSizeCategory = true
-        return label.withBidirectionalLanguagesSupport
-    }()
+    /// Label showing author of the link.
+    public private(set) lazy var authorLabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withBidirectionalLanguagesSupport
+    
+    /// Label showing `title`.
+    public private(set) lazy var titleLabel = UILabel()
+        .withoutAutoresizingMaskConstraints
+        .withBidirectionalLanguagesSupport
 
-    public private(set) lazy var headlineLabel: UILabel = {
-        let label = UILabel().withoutAutoresizingMaskConstraints
-        label.font = appearance.fonts.subheadlineBold
-        label.adjustsFontForContentSizeCategory = true
-        return label.withBidirectionalLanguagesSupport
-    }()
+    /// Text view for showing `content`'s `text`.
+    public private(set) lazy var bodyTextView = UITextView()
+        .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var bodyTextView: UITextView = {
-        let textView = UITextView().withoutAutoresizingMaskConstraints
-        textView.isEditable = false
-        textView.isScrollEnabled = false
-        textView.backgroundColor = .clear
-        textView.font = appearance.fonts.subheadline
-        textView.adjustsFontForContentSizeCategory = true
-        textView.textContainerInset = .zero
-        textView.textContainer.lineFragmentPadding = 0
-        textView.textContainer.maximumNumberOfLines = 3
-        textView.textContainer.lineBreakMode = .byTruncatingTail
-        return textView
-    }()
+    /// `ContainerStackView` for labels with text metadata.
+    public private(set) lazy var textStack = ContainerStackView()
+        .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var outlineView: UIView = {
-        let view = UIView().withoutAutoresizingMaskConstraints
-        view.widthAnchor.pin(equalToConstant: 2).isActive = true
-        return view
-    }()
-
-    public private(set) lazy var textStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [authorLabel, headlineLabel, bodyTextView])
-        stack.axis = .vertical
-        stack.alignment = .leading
-        stack.spacing = 3
-        stack.setCustomSpacing(8, after: authorLabel)
-        return stack.withoutAutoresizingMaskConstraints
-    }()
-
-    public private(set) lazy var outlineStack: UIStackView = {
-        let stack = UIStackView(arrangedSubviews: [outlineView, textStack])
-        stack.axis = .horizontal
-        stack.spacing = 6
-        return stack.withoutAutoresizingMaskConstraints
-    }()
-
-    var authorOnImageConstraint: NSLayoutConstraint?
-    var noAuthorWithImageConstraint: NSLayoutConstraint?
+    /// Constraint for `authorLabel`.
+    open var authorOnImageConstraint: NSLayoutConstraint?
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        authorBackground.backgroundColor = appearance.colorPalette.highlightedAccentBackground1
         backgroundColor = .clear
         imagePreview.contentMode = .scaleAspectFill
         imagePreview.layer.cornerRadius = 8
         imagePreview.clipsToBounds = true
+        
+        authorBackground.layer.cornerRadius = 16
+        authorBackground.layer.maskedCorners = [.layerMaxXMinYCorner]
+        authorBackground.clipsToBounds = true
+        authorBackground.backgroundColor = appearance.colorPalette.highlightedAccentBackground1
+        
+        authorLabel.font = appearance.fonts.bodyBold
+        authorLabel.adjustsFontForContentSizeCategory = true
+        
+        titleLabel.font = appearance.fonts.subheadlineBold
+        titleLabel.adjustsFontForContentSizeCategory = true
+        
+        bodyTextView.backgroundColor = .clear
+        bodyTextView.font = appearance.fonts.subheadline
+        bodyTextView.adjustsFontForContentSizeCategory = true
+        bodyTextView.textContainerInset = .zero
+        bodyTextView.textContainer.lineFragmentPadding = 0
+        bodyTextView.textContainer.maximumNumberOfLines = 3
+        bodyTextView.textContainer.lineBreakMode = .byTruncatingTail
     }
-
+    
     override open func setUp() {
         super.setUp()
 
         imagePreview.isUserInteractionEnabled = false
         authorBackground.isUserInteractionEnabled = false
-        outlineStack.isUserInteractionEnabled = false
+        textStack.isUserInteractionEnabled = false
+        
+        bodyTextView.isEditable = false
+        bodyTextView.isScrollEnabled = false
     }
 
     override open func setUpLayout() {
         super.setUpLayout()
-        directionalLayoutMargins = NSDirectionalEdgeInsets(top: 0, leading: 8, bottom: 0, trailing: 8)
 
         addSubview(imagePreview)
         addSubview(authorBackground)
-        addSubview(outlineStack)
+        addSubview(textStack)
+        
+        var constraints: [NSLayoutConstraint] = []
 
-        imagePreview.pin(anchors: [.leading, .top, .trailing], to: self)
-        imagePreview.widthAnchor.pin(equalTo: imagePreview.heightAnchor).isActive = true
+        imagePreview.pin(anchors: [.leading, .top, .trailing], to: layoutMarginsGuide)
+        constraints.append(
+            imagePreview.widthAnchor.pin(equalTo: imagePreview.heightAnchor)
+        )
 
-        outlineStack.pin(anchors: [.leading, .bottom, .trailing], to: layoutMarginsGuide)
-        outlineStack.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor).almostRequired.isActive = true
+        textStack.addArrangedSubviews([
+            authorLabel,
+            titleLabel,
+            bodyTextView
+        ])
+        textStack.axis = .vertical
+        textStack.alignment = .leading
+        textStack.spacing = 3
+        textStack.pin(anchors: [.leading, .bottom, .trailing], to: layoutMarginsGuide)
+        
+        bodyTextView.setContentHuggingPriority(.streamLow, for: .horizontal)
 
-        authorBackground.leadingAnchor.pin(equalTo: leadingAnchor).isActive = true
-        authorBackground.bottomAnchor.pin(equalTo: authorLabel.bottomAnchor).isActive = true
-        authorBackground.layoutMarginsGuide.topAnchor.pin(equalTo: authorLabel.topAnchor).isActive = true
-        authorBackground.layoutMarginsGuide.trailingAnchor.pin(equalTo: authorLabel.trailingAnchor).isActive = true
+        constraints += [
+            authorBackground.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
+            authorBackground.bottomAnchor.pin(equalTo: authorLabel.bottomAnchor),
+            authorBackground.layoutMarginsGuide.topAnchor.pin(equalTo: authorLabel.topAnchor),
+            authorBackground.layoutMarginsGuide.trailingAnchor.pin(equalTo: authorLabel.trailingAnchor)
+        ]
 
-        authorLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-        headlineLabel.setContentCompressionResistancePriority(.required, for: .vertical)
-
-        noAuthorWithImageConstraint = headlineLabel.topAnchor.pin(
-            equalToSystemSpacingBelow: imagePreview.bottomAnchor,
-            multiplier: 1
+        titleLabel.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
+        authorLabel.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
+        constraints.append(
+            titleLabel.topAnchor.pin(equalToSystemSpacingBelow: imagePreview.bottomAnchor)
+                .almostRequired
         )
         authorOnImageConstraint = authorLabel.firstBaselineAnchor.pin(equalTo: imagePreview.bottomAnchor)
+        
+        NSLayoutConstraint.activate(constraints)
     }
 
     override open func updateContent() {
@@ -128,7 +130,6 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
         let isAuthorHidden = payload?.author == nil
 
         authorLabel.textColor = tintColor
-        outlineView.backgroundColor = tintColor
 
         imagePreview.loadImage(from: payload?.previewURL)
         imagePreview.isHidden = isImageHidden
@@ -137,15 +138,12 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
         authorLabel.isHidden = isAuthorHidden
         authorBackground.isHidden = isAuthorHidden
 
-        headlineLabel.text = payload?.title
-        headlineLabel.isHidden = payload?.title == nil
+        titleLabel.text = payload?.title
+        titleLabel.isHidden = payload?.title == nil
 
         bodyTextView.text = payload?.text
         bodyTextView.isHidden = payload?.text == nil
 
-        outlineView.isVisible = isImageHidden
-
-        noAuthorWithImageConstraint?.isActive = !isImageHidden && isAuthorHidden
         authorOnImageConstraint?.isActive = !isImageHidden && !isAuthorHidden
     }
 
@@ -153,9 +151,4 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
         super.tintColorDidChange()
         updateContentIfNeeded()
     }
-}
-
-private class ShapeView: UIView {
-    override class var layerClass: AnyClass { CAShapeLayer.self }
-    var shapeLayer: CAShapeLayer { layer as! CAShapeLayer }
 }

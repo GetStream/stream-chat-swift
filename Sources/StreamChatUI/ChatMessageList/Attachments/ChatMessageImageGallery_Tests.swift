@@ -9,7 +9,6 @@ import XCTest
 
 final class ChatMessageImageGallery_Tests: XCTestCase {
     private var imageGallery: ChatMessageImageGallery!
-    private var vc: UIViewController!
     
     override func setUp() {
         super.setUp()

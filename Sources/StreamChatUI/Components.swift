@@ -70,8 +70,10 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view used to display content of the message, i.e. in the channel detail message list.
     public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
 
-    /// The injector used to inject gallery attachment views
+    /// The injector used to inject gallery attachment views.
     public var galleryAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GalleryAttachmentViewInjector<ExtraData>.self
+    /// The injector used to inject link attachment views.
+    public var linkAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _LinkAttachmentViewInjector<ExtraData>.self
     /// The injector used for injecting giphy attachment views
     public var giphyAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GiphyAttachmentViewInjector<ExtraData>.self
     /// The injector used for injecting file attachment views
