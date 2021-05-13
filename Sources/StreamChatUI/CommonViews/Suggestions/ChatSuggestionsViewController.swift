@@ -5,12 +5,6 @@
 import StreamChat
 import UIKit
 
-/// The type of a suggestion when typing in the composer view. It can be a command or a mention.
-public enum SuggestionKind {
-    case command(hints: [Command])
-    case mention
-}
-
 /// A view controller that shows suggestions of commands or mentions.
 public typealias ChatSuggestionsViewController = _ChatSuggestionsViewController<NoExtraData>
 

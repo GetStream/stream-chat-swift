@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class iMessageChatComposerViewController: ChatMessageComposerVC {
+final class iMessageChatComposerViewController: ComposerVC {
     override func promptSuggestionIfNeeded(for text: String) {}
     
     override func updateContent() {

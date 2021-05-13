@@ -17,7 +17,7 @@ import UIKit
 /// |                     bottomContainer                     |
 /// |---------------------------------------------------------|
 /// ```
-public typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
+public typealias ComposerView = _ComposerView<NoExtraData>
 
 /// /// The composer view that layouts all the components to create a new message.
 ///
@@ -31,7 +31,7 @@ public typealias ChatMessageComposerView = _ChatMessageComposerView<NoExtraData>
 /// |                     bottomContainer                     |
 /// |---------------------------------------------------------|
 /// ```
-open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _ComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     /// The main container of the composer that layouts all the other containers around the message input view.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
@@ -132,7 +132,6 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         headerView.isHidden = true
 
         bottomContainer.addArrangedSubview(checkboxControl)
-
         headerView.addSubview(titleLabel)
         headerView.addSubview(dismissButton)
 
@@ -155,6 +154,7 @@ open class _ChatMessageComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProv
         leadingContainer.addArrangedSubview(attachmentButton)
         leadingContainer.addArrangedSubview(commandsButton)
         leadingContainer.addArrangedSubview(shrinkInputButton)
+        shrinkInputButton.isHidden = true
 
         dismissButton.widthAnchor.pin(equalToConstant: 24).isActive = true
         dismissButton.heightAnchor.pin(equalToConstant: 24).isActive = true

@@ -6,10 +6,10 @@ import UIKit.UIImage
 
 public extension _Components {
     struct MessageComposer {
-        public var messageComposerViewController: _ChatMessageComposerVC<ExtraData>.Type =
-            _ChatMessageComposerVC<ExtraData>.self
-        public var messageComposerView: _ChatMessageComposerView<ExtraData>.Type =
-            _ChatMessageComposerView<ExtraData>.self
+        public var messageComposerViewController: _ComposerVC<ExtraData>.Type =
+            _ComposerVC<ExtraData>.self
+        public var messageComposerView: _ComposerView<ExtraData>.Type =
+            _ComposerView<ExtraData>.self
 
         public var documentAttachmentView: _ChatDocumentAttachmentView<ExtraData>.Type =
             _ChatDocumentAttachmentView<ExtraData>.self

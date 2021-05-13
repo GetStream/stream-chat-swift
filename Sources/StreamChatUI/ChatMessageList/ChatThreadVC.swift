@@ -12,7 +12,7 @@ public typealias ChatThreadVC = _ChatThreadVC<NoExtraData>
 open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     _ViewController,
     ThemeProvider,
-    _ChatMessageComposerViewControllerDelegate,
+    ComposerVCDelegate,
     _ChatChannelControllerDelegate,
     _ChatMessageControllerDelegate,
     _ChatMessageActionsVCDelegate,
@@ -57,7 +57,7 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
     }()
 
     /// Controller that handles the composer view
-    open private(set) lazy var messageComposerViewController = components
+    open private(set) lazy var messageComposerVC = components
         .messageComposer
         .messageComposerViewController
         .init()
@@ -86,10 +86,12 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         longPress.minimumPressDuration = 0.33
         collectionView.addGestureRecognizer(longPress)
 
-        messageComposerViewController.delegate = .wrap(self)
-        messageComposerViewController.controller = channelController
-        messageComposerViewController.userSuggestionSearchController = userSuggestionSearchController
-        messageComposerViewController.threadParentMessage = messageController.message
+        messageComposerVC.setDelegate(self)
+        messageComposerVC.channelController = channelController
+        messageComposerVC.userSearchController = userSuggestionSearchController
+        if let message = messageController.message {
+            messageComposerVC.content.threadMessage(message)
+        }
 
         userSuggestionSearchController.search(term: nil)
 
@@ -109,15 +111,15 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         view.addSubview(collectionView)
         collectionView.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
 
-        messageComposerViewController.view.translatesAutoresizingMaskIntoConstraints = false
-        addChildViewController(messageComposerViewController, targetView: view)
+        messageComposerVC.view.translatesAutoresizingMaskIntoConstraints = false
+        addChildViewController(messageComposerVC, targetView: view)
 
         addHeaderMessage()
 
-        messageComposerViewController.view.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
-        messageComposerViewController.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
-        messageComposerViewController.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
-        messageComposerBottomConstraint = messageComposerViewController.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
+        messageComposerVC.view.topAnchor.pin(equalTo: collectionView.bottomAnchor).isActive = true
+        messageComposerVC.view.leadingAnchor.pin(equalTo: view.safeAreaLayoutGuide.leadingAnchor).isActive = true
+        messageComposerVC.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
+        messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
     }
 
@@ -346,9 +348,9 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
             .dispatchEphemeralMessageAction(action)
     }
 
-    // MARK: - _ChatMessageComposerViewControllerDelegate
+    // MARK: - _ComposerVCDelegate
 
-    open func messageComposerViewControllerDidSendMessage(_ vc: _ChatMessageComposerVC<ExtraData>) {
+    open func composerDidCreateNewMessage() {
         setNeedsScrollToMostRecentMessage()
     }
 
@@ -380,11 +382,11 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
         switch actionItem {
         case is EditActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.messageComposerViewController.state = .edit(message)
+                self?.messageComposerVC.content.editMessage(message)
             }
         case is InlineReplyActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.messageComposerViewController.state = .quote(message)
+                self?.messageComposerVC.content.quoteMessage(message)
             }
         default:
             return
