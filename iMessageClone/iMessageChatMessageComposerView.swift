@@ -6,21 +6,21 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class iMessageChatMessageComposerView: ChatMessageComposerView {
+final class iMessageChatMessageComposerView: ComposerView {
     override func setUpLayout() {
         super.setUpLayout()
 
         leadingContainer.removeArrangedSubview(commandsButton)
         trailingContainer.removeArrangedSubview(sendButton)
         centerContainer.removeArrangedSubview(trailingContainer)
-        messageInputView.inputTextContainer.addArrangedSubview(sendButton)
+        inputMessageView.inputTextContainer.addArrangedSubview(sendButton)
     }
     
     override func setUpAppearance() {
         super.setUpAppearance()
 
-        messageInputView.layer.cornerRadius = 16
-        messageInputView.inputTextView.font = .systemFont(ofSize: 15)
+        inputMessageView.layer.cornerRadius = 16
+        inputMessageView.textView.font = .systemFont(ofSize: 15)
         
         attachmentButton.setImage(
             UIImage(systemName: "camera.fill"),
