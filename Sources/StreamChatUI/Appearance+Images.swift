@@ -44,6 +44,13 @@ public extension Appearance {
         public var newChannel: UIImage = UIImage(named: "pencil", in: .streamChatUI)!
         public var folder: UIImage = UIImage(named: "folder", in: .streamChatUI)!
         public var restart: UIImage = UIImage(named: "restart", in: .streamChatUI)!
+        public var download: UIImage = {
+            if #available(iOS 13.0, *) {
+                return UIImage(systemName: "icloud.and.arrow.down")!
+            } else {
+                return UIImage(named: "download", in: .streamChatUI)!
+            }
+        }()
 
         // MARK: - Reactions
 
@@ -190,7 +197,7 @@ public extension Appearance {
         public var fileAttachmentActionIcons: [LocalAttachmentState?: UIImage] {
             get { _fileAttachmentActionIcons ??
                 [
-                    .uploaded: restart,
+                    .uploaded: download,
                     .uploadingFailed: restart,
                     nil: folder
                 ]
