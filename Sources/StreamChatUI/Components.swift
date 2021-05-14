@@ -72,10 +72,11 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// The injector used to inject gallery attachment views
     public var galleryAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GalleryAttachmentViewInjector<ExtraData>.self
-    
     /// The injector used for injecting giphy attachment views
     public var giphyAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GiphyAttachmentViewInjector<ExtraData>.self
-    
+    /// The injector used for injecting file attachment views
+    public var filesAttachmentInjector: _FilesAttachmentViewInjector<ExtraData>.Type = _FilesAttachmentViewInjector<ExtraData>.self
+
     public var channelList = ChannelList()
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()

@@ -7,55 +7,50 @@ import UIKit
 
 extension _ChatMessageFileAttachmentListView {
     open class ItemView: _View, ThemeProvider {
+        /// Content of the attachment `ChatMessageFileAttachment`
         public var content: ChatMessageFileAttachment? {
             didSet { updateContentIfNeeded() }
         }
-
-        public var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
-
-        // MARK: - Subviews
-
-        public private(set) lazy var fileNameLabel = UILabel()
+        
+        /// Closure what should happen on tapping the given attachment.
+        open var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
+        
+        /// Label which shows name of the file, usually with extension (file.pdf)
+        open private(set) lazy var fileNameLabel = UILabel()
             .withoutAutoresizingMaskConstraints
             .withBidirectionalLanguagesSupport
             .withAdjustingFontForContentSizeCategory
-
-        public private(set) lazy var fileSizeLabel = UILabel()
+        
+        /// Label indicating size of the file.
+        open private(set) lazy var fileSizeLabel = UILabel()
             .withoutAutoresizingMaskConstraints
             .withBidirectionalLanguagesSupport
             .withAdjustingFontForContentSizeCategory
-
-        public private(set) lazy var loadingIndicator = components
+        
+        /// Animated indicator showing progress of uploading of a file.
+        open private(set) lazy var loadingIndicator = components
             .messageList
             .messageContentSubviews
             .attachmentSubviews
             .loadingIndicator
             .init()
             .withoutAutoresizingMaskConstraints
+        
+        /// imageView indicating action for the file attachment. (Download / Retry upload...)
+        open private(set) lazy var actionIconImageView = UIImageView().withoutAutoresizingMaskConstraints
 
-        public private(set) lazy var actionIconImageView = UIImageView()
+        open private(set) lazy var mainContainerStackView: ContainerStackView = ContainerStackView()
+            .withoutAutoresizingMaskConstraints
+        
+        /// Stack containing loading indicator and label with fileSize.
+        open private(set) lazy var spinnerAndSizeStack: ContainerStackView = ContainerStackView()
             .withoutAutoresizingMaskConstraints
 
-        public private(set) lazy var spinnerAndSizeStack: UIStackView = {
-            let stack = UIStackView(arrangedSubviews: [loadingIndicator, fileSizeLabel])
-            stack.axis = .horizontal
-            stack.spacing = UIStackView.spacingUseSystem
-            stack.alignment = .center
-            return stack.withoutAutoresizingMaskConstraints
-        }()
-
-        public private(set) lazy var fileNameAndSizeStack: UIStackView = {
-            let stack = UIStackView(arrangedSubviews: [fileNameLabel, spinnerAndSizeStack])
-            stack.axis = .vertical
-            stack.alignment = .leading
-            stack.spacing = 3
-            return stack.withoutAutoresizingMaskConstraints
-        }()
-
-        public private(set) lazy var fileIconImageView = UIImageView()
+        /// Stack containing file name and and the size of the file.
+        open private(set) lazy var fileNameAndSizeStack: ContainerStackView = ContainerStackView()
             .withoutAutoresizingMaskConstraints
 
-        // MARK: - Overrides
+        open private(set) lazy var fileIconImageView = UIImageView().withoutAutoresizingMaskConstraints
 
         override open func setUp() {
             super.setUp()
@@ -80,45 +75,40 @@ extension _ChatMessageFileAttachmentListView {
 
         override open func setUpLayout() {
             super.setUpLayout()
-
-            addSubview(fileIconImageView)
-            addSubview(actionIconImageView)
-            addSubview(fileNameAndSizeStack)
-
-            NSLayoutConstraint.activate([
-                fileIconImageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
-                fileIconImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
-                fileIconImageView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),
-                
-                actionIconImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
-                actionIconImageView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                actionIconImageView.leadingAnchor.pin(
-                    equalToSystemSpacingAfter: fileNameAndSizeStack.trailingAnchor,
-                    multiplier: 1
-                ),
-                
-                fileNameAndSizeStack.leadingAnchor.pin(
-                    equalToSystemSpacingAfter: fileIconImageView.trailingAnchor,
-                    multiplier: 2
-                ),
-                fileNameAndSizeStack.centerYAnchor.pin(equalTo: centerYAnchor),
-                fileNameAndSizeStack.topAnchor.pin(greaterThanOrEqualTo: layoutMarginsGuide.topAnchor),
-                fileNameAndSizeStack.bottomAnchor.pin(lessThanOrEqualTo: layoutMarginsGuide.bottomAnchor)
-            ])
+            addSubview(mainContainerStackView)
+            mainContainerStackView.pin(to: layoutMarginsGuide)
+            
+            spinnerAndSizeStack.addArrangedSubviews([loadingIndicator, fileSizeLabel])
+            fileNameAndSizeStack.addArrangedSubviews([fileNameLabel, spinnerAndSizeStack])
+            mainContainerStackView.addArrangedSubviews([fileIconImageView, fileNameAndSizeStack, actionIconImageView])
+            
+            spinnerAndSizeStack.axis = .horizontal
+            spinnerAndSizeStack.alignment = .leading
+            
+            fileNameAndSizeStack.axis = .vertical
+            fileNameAndSizeStack.alignment = .leading
+            fileNameAndSizeStack.spacing = 3
+            
+            mainContainerStackView.axis = .horizontal
+            mainContainerStackView.alignment = .center
         }
 
         override open func updateContent() {
             super.updateContent()
 
             fileIconImageView.image = fileIcon
-            fileNameLabel.text = content?.type.rawValue
+            // If we cannot fetch filename, let's use only content type.
+            fileNameLabel.text = content?.payload.title ?? content?.type.rawValue
 
-            if case .uploadingFailed = content?.uploadingState?.state {
+            switch content?.uploadingState?.state {
+            case .uploaded:
+                fileSizeLabel.text = content?.payload.file.sizeString
+            case .uploadingFailed:
                 fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed
-            } else {
+            default:
                 fileSizeLabel.text = content?.uploadingState?.fileUploadingProgress
             }
-
+        
             if let state = content?.uploadingState?.state {
                 actionIconImageView.image = appearance.fileAttachmentActionIcon(for: state)
             } else {
@@ -133,19 +123,13 @@ extension _ChatMessageFileAttachmentListView {
             }
         }
 
-        // MARK: - Actions
-
         @objc open func didTapOnAttachment(_ recognizer: UITapGestureRecognizer) {
             guard let attachment = content else { return }
-
             didTapOnAttachment?(attachment)
         }
 
-        // MARK: - Private
-
         private var fileIcon: UIImage? {
-            guard let file = content?.file else { return nil }
-
+            guard let file = content?.payload.file else { return nil }
             return appearance.images.fileIcons[file.type] ?? appearance.images.fileFallback
         }
     }
