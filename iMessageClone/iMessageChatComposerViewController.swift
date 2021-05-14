@@ -6,18 +6,22 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class iMessageChatComposerViewController: ChatMessageComposerVC {
-    override func promptSuggestionIfNeeded(for text: String) {}
+final class iMessageChatComposerViewController: ComposerVC {
+    override func showCommandSuggestions(for typingCommand: String) {
+        // Don't show suggestions
+    }
+
+    override func showMentionSuggestions(for typingMention: String, mentionRange: NSRange) {
+        // Don't show suggestions
+    }
     
     override func updateContent() {
         super.updateContent()
-        
-        switch state {
-        case .initial:
-            inputTextView.placeholderLabel.text = "iMessage"
-        case .edit:
-            break
-        case .slashCommand, .quote:
+
+        switch content.state {
+        case .new:
+            composerView.inputMessageView.textView.placeholderLabel.text = "iMessage"
+        default:
             break
         }
     }

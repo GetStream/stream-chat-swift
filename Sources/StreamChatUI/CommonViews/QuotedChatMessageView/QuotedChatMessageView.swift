@@ -23,7 +23,7 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
     /// The content of the view.
     public struct Content {
         /// The quoted message.
-        let message: _ChatMessage<ExtraData>?
+        let message: _ChatMessage<ExtraData>
         /// The avatar position in relation with the text message.
         let avatarAlignment: QuotedAvatarAlignment
     }

@@ -12,10 +12,13 @@ public struct ImageAttachmentPreview: AttachmentPreview {
     public let name: String?
     /// The size of the attachment.
     public let size: Int64
+    /// The local url of the image attachment.
+    public let localURL: URL
 
-    public init(image: UIImage, name: String? = nil) {
+    public init(image: UIImage, localURL: URL, name: String? = nil) {
         self.image = image
         self.name = name
+        self.localURL = localURL
         if let imageData = image.imageData, !imageData.isEmpty {
             size = Int64(imageData.count) / 1000
         } else {

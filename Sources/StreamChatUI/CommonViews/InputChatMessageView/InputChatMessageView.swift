@@ -10,6 +10,25 @@ public typealias InputChatMessageView = _InputChatMessageView<NoExtraData>
 
 /// A view to input content of a message.
 open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider, AppearanceProvider {
+    /// The content of the view
+    public struct Content {
+        /// The message that is being quoted.
+        var quotingMessage: _ChatMessage<ExtraData>?
+        /// The command that the message produces.
+        var command: Command?
+        /// The document attachments that are part of the message.
+        var documentAttachments: [AttachmentPreview]
+        /// The image attachments that are part of the message.
+        var imageAttachments: [AttachmentPreview]
+    }
+
+    /// The content of the view
+    public var content: Content? {
+        didSet {
+            updateContentIfNeeded()
+        }
+    }
+
     /// The main container stack view that layouts all the message input content views.
     public private(set) lazy var container = ContainerStackView()
         .withoutAutoresizingMaskConstraints
@@ -20,13 +39,13 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         .withoutAutoresizingMaskConstraints
 
     /// A view that displays the image attachments of the new message.
-    public private(set) lazy var imageAttachmentsView = components
+    public private(set) lazy var imageAttachmentsCollectionView: _ChatImageAttachmentsCollectionView<ExtraData> = components
         .messageComposer
         .imageAttachmentsCollectionView.init()
         .withoutAutoresizingMaskConstraints
 
     /// A view that displays the document attachments of the new message.
-    public private(set) lazy var documentAttachmentsView = components
+    public private(set) lazy var documentAttachmentsCollectionView: _ChatDocumentAttachmentsCollectionView<ExtraData> = components
         .messageComposer
         .documentAttachmentsCollectionView.init()
         .withoutAutoresizingMaskConstraints
@@ -36,7 +55,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         .withoutAutoresizingMaskConstraints
 
     /// The input text view to type a new message or command.
-    public private(set) lazy var inputTextView: InputTextView = components
+    public private(set) lazy var textView: InputTextView = components
         .inputTextView.init()
         .withoutAutoresizingMaskConstraints
 
@@ -75,33 +94,56 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         container.distribution = .natural
         container.spacing = 0
         container.addArrangedSubview(quotedMessageView)
-        container.addArrangedSubview(imageAttachmentsView)
-        container.addArrangedSubview(documentAttachmentsView)
+        container.addArrangedSubview(imageAttachmentsCollectionView)
+        container.addArrangedSubview(documentAttachmentsCollectionView)
         container.addArrangedSubview(inputTextContainer)
         quotedMessageView.isHidden = true
-        imageAttachmentsView.isHidden = true
-        documentAttachmentsView.isHidden = true
+        imageAttachmentsCollectionView.isHidden = true
+        documentAttachmentsCollectionView.isHidden = true
 
         inputTextContainer.preservesSuperviewLayoutMargins = true
         inputTextContainer.alignment = .center
         inputTextContainer.spacing = 4
         inputTextContainer.addArrangedSubview(commandLabelView)
-        inputTextContainer.addArrangedSubview(inputTextView)
+        inputTextContainer.addArrangedSubview(textView)
         inputTextContainer.addArrangedSubview(clearButton)
 
         commandLabelView.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
-        inputTextView.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
-        inputTextView.preservesSuperviewLayoutMargins = false
+        textView.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
+        textView.preservesSuperviewLayoutMargins = false
 
         NSLayoutConstraint.activate([
             clearButton.heightAnchor.pin(equalToConstant: 24),
             clearButton.widthAnchor.pin(equalTo: clearButton.heightAnchor, multiplier: 1),
-            imageAttachmentsView.heightAnchor.pin(equalToConstant: 120)
+            imageAttachmentsCollectionView.heightAnchor.pin(equalToConstant: 120)
         ])
     }
 
-    public func setSlashCommandViews(hidden: Bool) {
-        commandLabelView.isHidden = hidden
-        clearButton.isHidden = hidden
+    override open func updateContent() {
+        super.updateContent()
+
+        guard let content = self.content else { return }
+
+        if let quotingMessage = content.quotingMessage {
+            quotedMessageView.content = .init(
+                message: quotingMessage,
+                avatarAlignment: .left
+            )
+        }
+
+        if let command = content.command {
+            commandLabelView.content = command
+        }
+
+        documentAttachmentsCollectionView.content = content.documentAttachments
+        imageAttachmentsCollectionView.content = content.imageAttachments
+        documentAttachmentsCollectionView.isHidden = content.documentAttachments.isEmpty
+        imageAttachmentsCollectionView.isHidden = content.imageAttachments.isEmpty
+
+        Animate {
+            self.quotedMessageView.isHidden = content.quotingMessage == nil
+            self.commandLabelView.isHidden = content.command == nil
+            self.clearButton.isHidden = content.command == nil
+        }
     }
 }

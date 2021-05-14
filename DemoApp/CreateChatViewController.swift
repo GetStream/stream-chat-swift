@@ -14,10 +14,10 @@ class CreateChatViewController: UIViewController {
     }
     
     // Composer subclass intended to be only used in this VC
-    class DemoComposerVC: _ChatMessageComposerVC<NoExtraData> {
-        override func createNewMessage(text: String, quotedMessageId: MessageId? = nil, attachments: [AttachmentEnvelope] = []) {
+    class DemoComposerVC: _ComposerVC<NoExtraData> {
+        override func createNewMessage(text: String) {
             guard let navController = parent?.parent as? UINavigationController,
-                  let controller = controller else { return }
+                  let controller = channelController else { return }
             // Create the Channel on backend
             controller.synchronize { error in
                 // TODO: handle error
@@ -343,7 +343,7 @@ extension CreateChatViewController: UITableViewDelegate, UITableViewDataSource {
         update(for: .selected)
         let client = searchController.client
         do {
-            composerView.controller = try client
+            composerView.channelController = try client
                 .channelController(
                     createDirectMessageChannelWith: selectedUserIds,
                     name: nil,
