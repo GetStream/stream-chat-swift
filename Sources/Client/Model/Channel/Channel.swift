@@ -128,7 +128,16 @@ public final class Channel: Codable {
     /// Unread message state for the current user.
     public var unreadMessageRead: MessageRead? { unreadMessageReadAtomic.get() }
     /// Checks if the current status of the channel is unread.
-    public var isUnread: Bool { unreadCount.messages > 0 }
+    public var isUnread: Bool {
+        // Backend doesn't send unreadCount for pending invites so
+        // it's safer to compare `lastMessageDate` and `lastReadDate`
+        if let lastMessageDate = lastMessageDate, let lastReadDate = unreadMessageRead?.lastReadDate {
+            return lastMessageDate > lastReadDate
+        }
+        
+        // We don't have these info, so we use unreadCount
+        return unreadCount.messages > 0
+    }
     /// An option to enable ban users.
     public var banEnabling = BanEnabling.disabled
     var bannedUsers = [User]()
