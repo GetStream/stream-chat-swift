@@ -5,40 +5,39 @@
 import StreamChat
 import UIKit
 
+/// View which holds one or more file attachment views in a message or composer attachment view
 public typealias ChatMessageFileAttachmentListView = _ChatMessageFileAttachmentListView<NoExtraData>
 
+/// View which holds one or more file attachment views in a message or composer attachment view
 open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider {
-    public var content: [ChatMessageFileAttachment] = [] {
+    /// Content of the attachment llist - Array of `ChatMessageFileAttachment`
+    open var content: [ChatMessageFileAttachment] = [] {
         didSet { updateContentIfNeeded() }
     }
-
-    public var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
-
-    // MARK: - Subviews
-
-    public private(set) lazy var stackView: UIStackView = {
-        let stack = UIStackView()
-        stack.axis = .vertical
-        stack.spacing = 4
-        return stack.withoutAutoresizingMaskConstraints
-    }()
-
-    // MARK: - Overrides
+    
+    /// Closure what should happen on tapping the given attachment.
+    open var didTapOnAttachment: ((ChatMessageFileAttachment) -> Void)?
+    
+    /// Container which holds one or multiple attachment views in self.
+    open private(set) lazy var containerStackView: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
 
     override open func setUpLayout() {
-        embed(stackView, insets: .init(top: 4, leading: 4, bottom: 4, trailing: 4))
+        directionalLayoutMargins = .init(top: 4, leading: 4, bottom: 4, trailing: 4)
+        addSubview(containerStackView)
+        containerStackView.pin(to: layoutMarginsGuide)
+        
+        containerStackView.axis = .vertical
+        containerStackView.spacing = 4
     }
 
     override open func updateContent() {
-        stackView.arrangedSubviews.forEach {
-            $0.removeFromSuperview()
-        }
+        containerStackView.subviews.forEach { $0.removeFromSuperview() }
 
         content.forEach { attachment in
             let item = components.messageList.messageContentSubviews.attachmentSubviews.fileAttachmentItemView.init()
             item.didTapOnAttachment = { [weak self] in self?.didTapOnAttachment?($0) }
             item.content = attachment
-            stackView.addArrangedSubview(item)
+            containerStackView.addArrangedSubview(item)
         }
     }
 }
