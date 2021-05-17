@@ -23,8 +23,8 @@ public extension ChatMessageAttachmentEnvelope {
         )
     }
 
-    init?(localFileURL: URL) {
-        guard let file = localFileURL.attachmentFile else { return nil }
+    init(localFileURL: URL) throws {
+        let file = try AttachmentFile(url: localFileURL)
 
         let payload: AttachmentPayload
         switch file.type {
