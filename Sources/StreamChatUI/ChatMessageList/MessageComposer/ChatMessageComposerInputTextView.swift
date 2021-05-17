@@ -12,10 +12,6 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
     Customizable,
     UIConfigProvider
 {
-    // MARK: - Properties
-            
-    lazy var textViewHeightConstraint = heightAnchor.pin(equalToConstant: .zero)
-    
     // MARK: - Subviews
     
     public lazy var placeholderLabel: UILabel = UILabel()
@@ -85,8 +81,6 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         placeholderLabel.pin(anchors: [.centerY], to: self)
         
         isScrollEnabled = false
-        
-        textViewHeightConstraint.isActive = true
     }
     
     open func updateContent() {}
@@ -98,7 +92,5 @@ open class _ChatMessageComposerInputTextView<ExtraData: ExtraDataTypes>: UITextV
         
     @objc func textDidChange() {
         placeholderLabel.isHidden = !text.isEmpty
-        textViewHeightConstraint.constant = calculatedTextHeight() + textContainerInset.bottom + textContainerInset.top
-        layoutIfNeeded()
     }
 }
