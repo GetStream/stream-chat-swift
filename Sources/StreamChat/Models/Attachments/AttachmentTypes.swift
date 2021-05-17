@@ -4,21 +4,6 @@
 
 import Foundation
 
-public extension URL {
-    var attachmentFile: AttachmentFile? {
-        guard isFileURL else { return nil }
-        
-        let fileType = AttachmentFileType(ext: pathExtension)
-        let attributes = try? FileManager.default.attributesOfItem(atPath: path)
-
-        return .init(
-            type: fileType,
-            size: attributes?[.size] as? Int64 ?? 0,
-            mimeType: fileType.mimeType
-        )
-    }
-}
-
 enum AttachmentCodingKeys: String, CodingKey {
     case title
     case type
@@ -152,6 +137,21 @@ public struct AttachmentFile: Codable, Hashable {
         self.size = size
         self.mimeType = mimeType
     }
+
+    public init(url: URL) throws {
+        guard url.isFileURL else {
+            throw ClientError.InvalidAttachmentFileURL(url)
+        }
+
+        let fileType = AttachmentFileType(ext: url.pathExtension)
+        let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
+
+        self.init(
+            type: fileType,
+            size: attributes[.size] as? Int64 ?? 0,
+            mimeType: fileType.mimeType
+        )
+    }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -248,5 +248,13 @@ extension String {
         }
         
         return URL(string: urlString)
+    }
+}
+
+extension ClientError {
+    class InvalidAttachmentFileURL: ClientError {
+        init(_ url: URL) {
+            super.init("The \(url) is invalid since it is not a file URL.")
+        }
     }
 }

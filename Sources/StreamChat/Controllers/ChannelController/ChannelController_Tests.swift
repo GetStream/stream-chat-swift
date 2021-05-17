@@ -2874,7 +2874,13 @@ extension ChatMessageAttachmentEnvelope {
             id: id,
             type: type,
             payload: payload,
-            uploadingState: localFileURL.map { .init(localFileURL: $0, state: .pendingUpload) }
+            uploadingState: localFileURL.map {
+                .init(
+                    localFileURL: $0,
+                    state: .pendingUpload,
+                    file: try! AttachmentFile(url: $0)
+                )
+            }
         )
     }
 }

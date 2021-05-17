@@ -211,17 +211,23 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     open var attachments: [ChatMessageAttachmentEnvelope] {
+        let urls: [URL]
         switch selectedAttachments {
         case .media:
-            return content.imageAttachments
-                .map(\.localURL)
-                .compactMap(ChatMessageAttachmentEnvelope.init)
+            urls = content.imageAttachments.map(\.localURL)
         case .documents:
-            return content.documentAttachments
-                .map(\.localURL)
-                .compactMap(ChatMessageAttachmentEnvelope.init)
+            urls = content.documentAttachments.map(\.localURL)
         case .none:
-            return []
+            urls = []
+        }
+
+        return urls.compactMap {
+            do {
+                return try ChatMessageAttachmentEnvelope(localFileURL: $0)
+            } catch {
+                log.assertionFailure(error.localizedDescription)
+                return nil
+            }
         }
     }
 
@@ -625,13 +631,13 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     // MARK: - UIDocumentPickerViewControllerDelegate
     
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let attachmentPreviews: [DocumentAttachmentPreview] = urls.map {
+        let attachmentPreviews: [DocumentAttachmentPreview] = urls.compactMap {
             let filePreview = appearance.images.documentPreviews[$0.pathExtension]
             return DocumentAttachmentPreview(
                 image: filePreview ?? appearance.images.fileFallback,
                 localURL: $0,
                 name: $0.lastPathComponent,
-                size: $0.attachmentFile?.size ?? 0
+                size: (try? AttachmentFile(url: $0))?.size ?? 0
             )
         }
         content.documentAttachments += attachmentPreviews

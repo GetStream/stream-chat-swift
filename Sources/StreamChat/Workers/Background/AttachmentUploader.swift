@@ -94,7 +94,7 @@ class AttachmentUploader: Worker {
             let multipartFormData = MultipartFormData(
                 fileData,
                 fileName: uploadingState.localFileURL.lastPathComponent,
-                mimeType: uploadingState.localFileURL.attachmentFile?.type.mimeType
+                mimeType: uploadingState.file.type.mimeType
             )
 
             self?.apiClient.uploadFile(

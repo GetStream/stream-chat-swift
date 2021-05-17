@@ -9,6 +9,7 @@ public typealias AnyChatMessageAttachment = _ChatMessageAttachment<Any>
 public struct AttachmentUploadingState: Equatable {
     public let localFileURL: URL
     public let state: LocalAttachmentState
+    public let file: AttachmentFile
 }
 
 @dynamicMemberLookup

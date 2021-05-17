@@ -140,7 +140,19 @@ private extension AttachmentDTO {
             let localState = localState
         else { return nil }
 
-        return .init(localFileURL: localURL, state: localState)
+        do {
+            return .init(
+                localFileURL: localURL,
+                state: localState,
+                file: try AttachmentFile(url: localURL)
+            )
+        } catch {
+            log.error("""
+                Failed to build uploading state for attachment with id: \(attachmentID).
+                Error: \(error.localizedDescription)
+            """)
+            return nil
+        }
     }
 
     func asModel<T: Decodable>(payloadType: T.Type = T.self) -> _ChatMessageAttachment<T>? {

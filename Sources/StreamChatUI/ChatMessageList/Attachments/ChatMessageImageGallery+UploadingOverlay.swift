@@ -150,8 +150,7 @@ extension Appearance {
 }
 
 extension AttachmentUploadingState {
-    var fileUploadingProgress: String? {
-        guard let file = localFileURL.attachmentFile else { return nil }
+    var fileUploadingProgress: String {
         switch state {
         case let .uploading(progress):
             let uploadedByteCount = Int64(Double(file.size) * progress)

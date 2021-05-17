@@ -154,15 +154,10 @@ class AttachmentDTO_Tests: XCTestCase {
                 .attachment(payloadType: FileAttachmentPayload.self)
         )
 
-        XCTAssertEqual(fileAttachment.id, attachmentId)
-        XCTAssertEqual(fileAttachment.type, .file)
         XCTAssertEqual(
-            fileAttachment.uploadingState,
-            attachmentEnvelope.localFileURL.map { .init(localFileURL: $0, state: .pendingUpload) }
+            fileAttachment,
+            attachmentEnvelope.attachment(id: attachmentId)
         )
-        XCTAssertEqual(fileAttachment.title, attachmentEnvelope.localFileURL?.lastPathComponent)
-        XCTAssertEqual(fileAttachment.file, attachmentEnvelope.localFileURL?.attachmentFile)
-        XCTAssertEqual(fileAttachment.assetURL, attachmentEnvelope.localFileURL)
     }
 
     func test_attachmentEnvelope_isStoredAndLoadedFromDB() throws {
