@@ -106,6 +106,8 @@ public extension AttachmentType {
 
     /// Application custom types.
     static let linkPreview = Self(rawValue: "linkPreview")
+    /// Is used when attachment with missing `type` comes.
+    static let unknown = Self(rawValue: "unknown")
 }
 
 /// An attachment file description.

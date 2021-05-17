@@ -33,20 +33,20 @@ extension MessageAttachmentPayload: Decodable {
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
-        let attachmentType: AttachmentType
-        if container.contains(.ogURL) {
-            attachmentType = .linkPreview
-        } else if let type = try container.decodeIfPresent(AttachmentType.self, forKey: .type) {
-            attachmentType = type
-        } else {
-            throw DecodingError.dataCorruptedError(
-                forKey: CodingKeys.ogURL,
-                in: container,
-                debugDescription: """
-                Failed to indentify attachment type. Both `type` and `ogURL` are missing
-                """
-            )
-        }
+        let attachmentType: AttachmentType = try {
+            if container.contains(.ogURL) {
+                // Existence of `ogURL` means the attachment was obtained from the link sent within the message text.
+                // We treat such attachment as of `.linkPreview` type.
+                return .linkPreview
+            } else if let type = try container.decodeIfPresent(AttachmentType.self, forKey: .type) {
+                // If payload contains explicit type - take it!
+                return type
+            } else {
+                // The `type` field will become a mandatory one time. We use `.unknown` type
+                // to avoid having `type` optional until it is fixed on the backend side.
+                return .unknown
+            }
+        }()
 
         guard
             let payload = try decoder
