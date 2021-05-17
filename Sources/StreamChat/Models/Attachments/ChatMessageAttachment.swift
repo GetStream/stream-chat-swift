@@ -4,7 +4,7 @@
 
 import Foundation
 
-public typealias ChatMessageAttachment = _ChatMessageAttachment<Any>
+public typealias AnyChatMessageAttachment = _ChatMessageAttachment<Any>
 
 public struct AttachmentUploadingState: Equatable {
     public let localFileURL: URL

@@ -129,7 +129,7 @@ extension QuotedChatMessageView_Tests {
         text: String,
         isSentByCurrentUser: Bool = false,
         avatarAlignment: QuotedAvatarAlignment = .left,
-        attachments: [ChatMessageAttachment] = []
+        attachments: [AnyChatMessageAttachment] = []
     ) -> QuotedChatMessageView.Content {
         let message = ChatMessage.mock(
             id: .unique,
