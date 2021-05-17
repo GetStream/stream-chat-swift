@@ -328,14 +328,3 @@ extension ClientError {
 
     class AttachmentDecoding: ClientError {}
 }
-
-extension _ChatMessageAttachment {
-    var asAnyAttachment: AnyChatMessageAttachment {
-        .init(
-            id: id,
-            type: type,
-            payload: payload as Any,
-            uploadingState: uploadingState
-        )
-    }
-}
