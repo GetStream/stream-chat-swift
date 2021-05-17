@@ -359,13 +359,33 @@ class MessageDTO_Tests: XCTestCase {
 
         try database.createCurrentUser(id: currentUserId)
         try database.createChannel(cid: channelId, withMessages: false)
-        
+
+        let imageAttachmentPayload: MessageAttachmentPayload = .image()
+        let fileAttachmentPayload: MessageAttachmentPayload = .file()
+        let giphyAttachmentPayload: MessageAttachmentPayload = .giphy()
+        let linkAttachmentPayload: MessageAttachmentPayload = .link()
+        let testPayload = TestAttachmentPayload.unique
+        let testAttachmentPayload: MessageAttachmentPayload = .init(
+            type: TestAttachmentPayload.type,
+            payload: .dictionary([
+                "name": .string(testPayload.name),
+                "number": .integer(testPayload.number)
+            ])
+        )
+
         let messagePayload: MessagePayload<NoExtraData> = .dummy(
             messageId: messageId,
             quotedMessage: .dummy(
                 messageId: quotedMessageId,
                 authorUserId: quotedMessageAuthorId
             ),
+            attachments: [
+                imageAttachmentPayload,
+                fileAttachmentPayload,
+                giphyAttachmentPayload,
+                linkAttachmentPayload,
+                testAttachmentPayload
+            ],
             authorUserId: messageAuthorId,
             latestReactions: (0..<3).map { _ in
                 .dummy(messageId: messageId, user: .dummy(userId: .unique))
@@ -428,14 +448,28 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(pin.expiresAt, messagePayload.pinExpires)
         XCTAssertEqual(pin.pinnedAt, messagePayload.pinnedAt)
         XCTAssertEqual(pin.pinnedBy.id, messagePayload.pinnedBy?.id)
-        XCTAssertEqual(
-            loadedMessage.attachments.map(\.id),
-            messagePayload.attachmentIDs(cid: channelId)
-        )
         // Quoted message
         XCTAssertEqual(loadedMessage.quotedMessage?.id, messagePayload.quotedMessage?.id)
         XCTAssertEqual(loadedMessage.quotedMessage?.author.id, messagePayload.quotedMessage?.user.id)
         XCTAssertEqual(loadedMessage.quotedMessage?.extraData, messagePayload.quotedMessage?.extraData)
+
+        // Attachments
+        XCTAssertEqual(
+            loadedMessage.attachments.map(\.id),
+            messagePayload.attachmentIDs(cid: channelId)
+        )
+        XCTAssertEqual(
+            loadedMessage.attachments.map(\.type),
+            messagePayload.attachments.map(\.type)
+        )
+        XCTAssertEqual(loadedMessage.imageAttachments.map(\.payload), [imageAttachmentPayload.decodedImagePayload])
+        XCTAssertEqual(loadedMessage.fileAttachments.map(\.payload), [fileAttachmentPayload.decodedFilePayload])
+        XCTAssertEqual(loadedMessage.giphyAttachments.map(\.payload), [giphyAttachmentPayload.decodedGiphyPayload])
+        XCTAssertEqual(loadedMessage.linkAttachments.map(\.payload), [linkAttachmentPayload.decodedLinkPayload])
+        XCTAssertEqual(
+            loadedMessage.attachments(payloadType: TestAttachmentPayload.self).map(\.payload),
+            [testPayload]
+        )
     }
     
     func test_newMessage_asRequestBody() throws {
