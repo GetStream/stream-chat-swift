@@ -26,11 +26,13 @@ public struct _ChatMessageAttachment<Payload> {
 
 extension _ChatMessageAttachment: Equatable where Payload: Equatable {}
 
-extension _ChatMessageAttachment {
+// MARK: - Type erasure/recovery
+
+extension AnyChatMessageAttachment {
     func attachment<Payload: AttachmentPayload>(
         payloadType: Payload.Type
     ) -> _ChatMessageAttachment<Payload>? {
-        guard Payload.type == type else { return nil }
+        guard Payload.type == type || type == .unknown else { return nil }
 
         let concretePayload: Payload
         switch payload {
@@ -50,6 +52,17 @@ extension _ChatMessageAttachment {
             id: id,
             type: type,
             payload: concretePayload,
+            uploadingState: uploadingState
+        )
+    }
+}
+
+extension _ChatMessageAttachment {
+    var asAnyAttachment: AnyChatMessageAttachment {
+        .init(
+            id: id,
+            type: type,
+            payload: payload as Any,
             uploadingState: uploadingState
         )
     }
