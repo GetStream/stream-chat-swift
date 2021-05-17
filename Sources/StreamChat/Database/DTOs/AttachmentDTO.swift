@@ -176,8 +176,8 @@ private extension AttachmentDTO {
 
 extension AttachmentDTO {
     /// Snapshots the current state of `AttachmentDTO` and returns an immutable model object from it.
-    func asAnyModel() -> ChatMessageAttachment? {
-        let attachment: ChatMessageAttachment?
+    func asAnyModel() -> AnyChatMessageAttachment? {
+        let attachment: AnyChatMessageAttachment?
 
         switch attachmentType {
         case .image:
@@ -318,7 +318,7 @@ extension ClientError {
 }
 
 extension _ChatMessageAttachment {
-    var asAnyAttachment: ChatMessageAttachment {
+    var asAnyAttachment: AnyChatMessageAttachment {
         .init(
             id: id,
             type: type,

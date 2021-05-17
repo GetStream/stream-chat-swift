@@ -108,9 +108,9 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     /// A list of attachments in this message.
     ///
     /// - Important: The `attachments` property is loaded and evaluated lazily to maintain high performance.
-    public var attachments: [ChatMessageAttachment] { _attachments }
+    public var attachments: [AnyChatMessageAttachment] { _attachments }
     
-    @CoreDataLazy internal var _attachments: [ChatMessageAttachment]
+    @CoreDataLazy internal var _attachments: [AnyChatMessageAttachment]
         
     /// A list of latest 25 replies to this message.
     ///
@@ -173,7 +173,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         author: @escaping () -> _ChatUser<ExtraData.User>,
         mentionedUsers: @escaping () -> Set<_ChatUser<ExtraData.User>>,
         threadParticipants: @escaping () -> Set<_ChatUser<ExtraData.User>>,
-        attachments: @escaping () -> [ChatMessageAttachment],
+        attachments: @escaping () -> [AnyChatMessageAttachment],
         latestReplies: @escaping () -> [_ChatMessage<ExtraData>],
         localState: LocalMessageState?,
         isFlaggedByCurrentUser: Bool,
