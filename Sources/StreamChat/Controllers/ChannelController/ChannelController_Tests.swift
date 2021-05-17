@@ -2865,33 +2865,3 @@ extension _TokenProvider {
         }
     }
 }
-
-extension ChatMessageAttachmentEnvelope {
-    func attachment<T: AttachmentPayload>(id: AttachmentId) -> _ChatMessageAttachment<T>? {
-        guard let payload = payload as? T else { return nil }
-
-        return .init(
-            id: id,
-            type: type,
-            payload: payload,
-            uploadingState: localFileURL.map {
-                .init(
-                    localFileURL: $0,
-                    state: .pendingUpload,
-                    file: try! AttachmentFile(url: $0)
-                )
-            }
-        )
-    }
-}
-
-extension ChatMessageAttachmentEnvelope: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        let lhsData = try? JSONEncoder.default.encode(lhs.payload?.asAnyEncodable)
-        let rhsData = try? JSONEncoder.default.encode(rhs.payload?.asAnyEncodable)
-
-        return lhs.type == rhs.type &&
-            lhs.localFileURL == rhs.localFileURL &&
-            lhsData == rhsData
-    }
-}

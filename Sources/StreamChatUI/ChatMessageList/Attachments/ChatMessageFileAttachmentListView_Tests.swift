@@ -23,18 +23,20 @@ final class ChatFileAttachmentListView_Tests: XCTestCase {
     }
 
     func test_appearance_one_attachment() {
-        fileAttachmentListView.content = [ChatMessageFileAttachment.mock()]
+        fileAttachmentListView.content = [.mock(id: .unique)]
         AssertSnapshot(fileAttachmentListView, variants: [.defaultLight])
     }
 
     func test_appearance_two_attachments() {
         fileAttachmentListView.content = [
-            ChatMessageFileAttachment.mock(),
-            ChatMessageFileAttachment.mock(
+            .mock(
+                id: .unique
+            ),
+            .mock(
                 id: .unique,
                 title: "Sample2",
                 file: .init(type: .csv, size: 180, mimeType: nil),
-                uploadingState: .mock(localFileURL: .unique(), state: .uploaded)
+                localState: .uploaded
             )
         ]
         AssertSnapshot(fileAttachmentListView, variants: [.defaultLight])
@@ -42,30 +44,32 @@ final class ChatFileAttachmentListView_Tests: XCTestCase {
     
     func test_appearance_five_attachments() {
         fileAttachmentListView.content = [
-            ChatMessageFileAttachment.mock(),
-            ChatMessageFileAttachment.mock(
+            .mock(
+                id: .unique
+            ),
+            .mock(
                 id: .unique,
                 title: "Sample2",
                 file: .init(type: .csv, size: 400, mimeType: nil),
-                uploadingState: .mock(localFileURL: .unique(), state: .uploaded)
+                localState: .uploaded
             ),
-            ChatMessageFileAttachment.mock(
+            .mock(
                 id: .unique,
                 title: "Sample3",
                 file: .init(type: .tar, size: 3600, mimeType: nil),
-                uploadingState: .mock(localFileURL: .unique(), state: .uploaded)
+                localState: .uploaded
             ),
-            ChatMessageFileAttachment.mock(
+            .mock(
                 id: .unique,
                 title: "Sample4",
                 file: .init(type: .mp3, size: 18320, mimeType: nil),
-                uploadingState: .mock(localFileURL: .unique(), state: .uploaded)
+                localState: .uploaded
             ),
-            ChatMessageFileAttachment.mock(
+            .mock(
                 id: .unique,
                 title: "Sample5",
                 file: .init(type: .xls, size: 500_000, mimeType: nil),
-                uploadingState: .mock(localFileURL: .unique(), state: .uploaded)
+                localState: .uploaded
             )
         ]
         AssertSnapshot(fileAttachmentListView, variants: [.defaultLight])
@@ -84,30 +88,32 @@ final class ChatFileAttachmentListView_Tests: XCTestCase {
         let fileAttachmentListView = TestView().withoutAutoresizingMaskConstraints
         
         fileAttachmentListView.content = [
-            ChatMessageFileAttachment.mock(),
-            ChatMessageFileAttachment.mock(
+            .mock(
+                id: .unique
+            ),
+            .mock(
                 id: .unique,
                 title: "Sample2",
                 file: .init(type: .csv, size: 400, mimeType: nil),
-                uploadingState: .mock(localFileURL: .unique(), state: .uploaded)
+                localState: .uploaded
             ),
-            ChatMessageFileAttachment.mock(
+            .mock(
                 id: .unique,
                 title: "Sample3",
                 file: .init(type: .tar, size: 3600, mimeType: nil),
-                uploadingState: .mock(localFileURL: .unique(), state: .uploaded)
+                localState: .uploaded
             ),
-            ChatMessageFileAttachment.mock(
+            .mock(
                 id: .unique,
                 title: "Sample4",
                 file: .init(type: .mp3, size: 18320, mimeType: nil),
-                uploadingState: .mock(localFileURL: .unique(), state: .uploaded)
+                localState: .uploaded
             ),
-            ChatMessageFileAttachment.mock(
+            .mock(
                 id: .unique,
                 title: "Sample5",
                 file: .init(type: .xls, size: 500_000, mimeType: nil),
-                uploadingState: .mock(localFileURL: .unique(), state: .uploaded)
+                localState: .uploaded
             )
         ]
 

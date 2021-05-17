@@ -16,7 +16,8 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
         linkPreviewView = ChatMessageLinkPreviewView()
             .withoutAutoresizingMaskConstraints
         linkPreviewView.pin(anchors: [.width], to: 200)
-        linkPreviewView.content = ChatMessageLinkAttachment.mock(
+        linkPreviewView.content = .mock(
+            id: .unique,
             title: "Title",
             text: "Text",
             author: "Youtube",
@@ -36,7 +37,8 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
     }
     
     func test_appearance_whenNoAuthor() {
-        linkPreviewView.content = ChatMessageLinkAttachment.mock(
+        linkPreviewView.content = .mock(
+            id: .unique,
             title: "Title",
             text: "Text",
             assetURL: TestImages.yoda.url,
@@ -47,7 +49,8 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
     }
     
     func test_appearance_whenNoTitle() {
-        linkPreviewView.content = ChatMessageLinkAttachment.mock(
+        linkPreviewView.content = .mock(
+            id: .unique,
             text: "Text",
             author: "Youtube",
             assetURL: TestImages.yoda.url,
@@ -58,7 +61,8 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
     }
     
     func test_appearance_whenNoTitleAndText() {
-        linkPreviewView.content = ChatMessageLinkAttachment.mock(
+        linkPreviewView.content = .mock(
+            id: .unique,
             author: "Youtube",
             assetURL: TestImages.yoda.url,
             previewURL: TestImages.yoda.url
@@ -70,7 +74,8 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
     func test_appearance_whenLongTexts() {
         let mockContent = repeatElement("Text", count: 5)
             .joined(separator: "\n")
-        linkPreviewView.content = ChatMessageLinkAttachment.mock(
+        linkPreviewView.content = .mock(
+            id: .unique,
             title: mockContent,
             text: mockContent,
             author: mockContent,
@@ -101,7 +106,8 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
         let linkPreviewView = TestView()
             .withoutAutoresizingMaskConstraints
         linkPreviewView.pin(anchors: [.width], to: 200)
-        linkPreviewView.content = ChatMessageLinkAttachment.mock(
+        linkPreviewView.content = .mock(
+            id: .unique,
             title: "Title",
             text: "Text",
             author: "Youtube",
