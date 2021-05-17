@@ -65,7 +65,7 @@ class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.isSilent, true)
         XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:channel-ex7-63")
         XCTAssertEqual(payload.quotedMessage?.id, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
-        XCTAssertEqual(payload.attachments.count, 1)
+        XCTAssertEqual(payload.attachments.count, 2)
         XCTAssertEqual(payload.pinned, true)
         XCTAssertEqual(payload.pinnedAt, "2021-04-15T06:43:08.776911Z".toDate())
         XCTAssertEqual(payload.pinExpires, "2021-05-15T06:43:08.776911Z".toDate())
