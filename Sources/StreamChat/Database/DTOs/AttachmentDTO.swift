@@ -299,12 +299,6 @@ extension LocalAttachmentState {
 }
 
 extension ClientError {
-    class MissingAttachmentType: ClientError {
-        init(id: AttachmentId) {
-            super.init("Attachment type is missing for attachment with id: \(id).")
-        }
-    }
-    
     class AttachmentDoesNotExist: ClientError {
         init(id: AttachmentId) {
             super.init("There is no `AttachmentDTO` instance in the DB matching id: \(id).")
@@ -314,15 +308,6 @@ extension ClientError {
     class AttachmentEditing: ClientError {
         init(id: AttachmentId, reason: String) {
             super.init("`AttachmentDTO` with id: \(id) can't be edited (\(reason))")
-        }
-    }
-    
-    class AttachmentSeedUploading: ClientError {
-        init(id: AttachmentId) {
-            super.init(
-                "Uploading only supported for attachments of type `.image` and `.file`."
-                    + "Failed to upload attachment with id: \(id)"
-            )
         }
     }
 
