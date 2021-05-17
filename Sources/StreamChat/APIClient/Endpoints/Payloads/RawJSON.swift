@@ -10,6 +10,7 @@ import Foundation
 indirect enum RawJSON: Codable, Hashable {
     case double(Double)
     case string(String)
+    case integer(Int)
     case bool(Bool)
     case dictionary([String: RawJSON])
     case array([RawJSON])
@@ -22,6 +23,9 @@ indirect enum RawJSON: Codable, Hashable {
             return
         } else if let value = try? singleValueContainer.decode(String.self) {
             self = .string(value)
+            return
+        } else if let value = try? singleValueContainer.decode(Int.self) {
+            self = .integer(value)
             return
         } else if let value = try? singleValueContainer.decode(Double.self) {
             self = .double(value)
@@ -47,6 +51,7 @@ indirect enum RawJSON: Codable, Hashable {
         var container = encoder.singleValueContainer()
         
         switch self {
+        case let .integer(value): try container.encode(value)
         case let .double(value): try container.encode(value)
         case let .bool(value): try container.encode(value)
         case let .string(value): try container.encode(value)
