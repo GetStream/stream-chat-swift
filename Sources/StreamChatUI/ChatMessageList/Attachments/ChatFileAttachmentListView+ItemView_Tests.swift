@@ -23,7 +23,7 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
     }
 
     func test_appearance_pdf() {
-        fileAttachmentView.content = ChatMessageFileAttachment.mock()
+        fileAttachmentView.content = .mock(id: .unique)
         AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
     }
 
@@ -36,7 +36,7 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
             .withoutAutoresizingMaskConstraints
         fileAttachmentView.appearance = appearance
 
-        fileAttachmentView.content = ChatMessageFileAttachment.mock()
+        fileAttachmentView.content = .mock(id: .unique)
 
         AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
     }
@@ -55,7 +55,7 @@ final class ChatFileAttachmentListViewItemView_Tests: XCTestCase {
         }
 
         let fileAttachmentView = TestView().withoutAutoresizingMaskConstraints
-        fileAttachmentView.content = ChatMessageFileAttachment.mock()
+        fileAttachmentView.content = .mock(id: .unique)
 
         AssertSnapshot(fileAttachmentView, variants: [.defaultLight])
     }

@@ -24,9 +24,11 @@ final class ImageGalleryVC_Tests: XCTestCase {
             createdAt: Date(timeIntervalSinceReferenceDate: 0),
             attachments: [
                 ChatMessageImageAttachment.mock(
+                    id: .unique,
                     imageURL: TestImages.yoda.url
                 ).asAnyAttachment,
                 ChatMessageImageAttachment.mock(
+                    id: .unique,
                     imageURL: TestImages.chewbacca.url
                 ).asAnyAttachment
             ]

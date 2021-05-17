@@ -5,7 +5,9 @@
 @testable import StreamChat
 
 extension ChatMessageLinkAttachment {
+    /// Creates a new `ChatMessageLinkAttachment` object from the provided data.
     public static func mock(
+        id: AttachmentId,
         ogURL: URL? = nil,
         title: String? = nil,
         text: String? = nil,
@@ -15,9 +17,9 @@ extension ChatMessageLinkAttachment {
         previewURL: URL
     ) -> Self {
         Self(
-            id: .unique,
+            id: id,
             type: .linkPreview,
-            payload: LinkAttachmentPayload(
+            payload: .init(
                 ogURL: ogURL,
                 title: title,
                 text: text,
