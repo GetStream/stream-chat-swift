@@ -129,7 +129,7 @@ class MessageUpdater<ExtraData: ExtraDataTypes>: Worker {
         command: String?,
         arguments: String?,
         parentMessageId: MessageId,
-        attachments: [ChatMessageAttachmentEnvelope],
+        attachments: [AnyAttachmentPayload],
         showReplyInChannel: Bool,
         quotedMessageId: MessageId?,
         extraData: ExtraData.Message,

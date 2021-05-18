@@ -223,7 +223,7 @@ public extension _ChatMessageController {
         pinning: MessagePinning? = nil,
 //        command: String? = nil,
 //        arguments: String? = nil,
-        attachments: [ChatMessageAttachmentEnvelope] = [],
+        attachments: [AnyAttachmentPayload] = [],
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,

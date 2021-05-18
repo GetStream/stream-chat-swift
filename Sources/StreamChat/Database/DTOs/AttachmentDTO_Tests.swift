@@ -125,7 +125,7 @@ class AttachmentDTO_Tests: XCTestCase {
     func test_uploadableAttachmentEnvelope_isStoredAndLoadedFromDB() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let attachmentEnvelope: ChatMessageAttachmentEnvelope = .mockFile
+        let attachmentEnvelope: AnyAttachmentPayload = .mockFile
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
         // Create channel and message in the database.
@@ -164,7 +164,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let attachmentPayload: TestAttachmentPayload = .unique
-        let attachmentEnvelope = ChatMessageAttachmentEnvelope(payload: attachmentPayload)
+        let attachmentEnvelope = AnyAttachmentPayload(payload: attachmentPayload)
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
 
         // Create channel and message in the database.
@@ -241,7 +241,7 @@ class AttachmentDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
-        let attachmentEnvelope = ChatMessageAttachmentEnvelope.mockFile
+        let attachmentEnvelope = AnyAttachmentPayload.mockFile
 
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)

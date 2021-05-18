@@ -113,7 +113,7 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
         pinning: MessagePinning? = nil,
         command: String?,
         arguments: String?,
-        attachments: [ChatMessageAttachmentEnvelope] = [],
+        attachments: [AnyAttachmentPayload] = [],
         quotedMessageId: MessageId?,
         extraData: ExtraData.Message,
         completion: ((Result<MessageId, Error>) -> Void)? = nil

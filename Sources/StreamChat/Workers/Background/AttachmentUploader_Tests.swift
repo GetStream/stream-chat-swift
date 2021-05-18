@@ -49,7 +49,7 @@ final class AttachmentUploader_Tests: StressTestCase {
         // Create message in the database.
         try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
 
-        let attachmentEnvelopes: [ChatMessageAttachmentEnvelope] = [
+        let attachmentEnvelopes: [AnyAttachmentPayload] = [
             .mockFile,
             .mockImage
         ]
@@ -149,7 +149,7 @@ final class AttachmentUploader_Tests: StressTestCase {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
         let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
-        let attachmentEnvelope: ChatMessageAttachmentEnvelope = .mockImage
+        let attachmentEnvelope: AnyAttachmentPayload = .mockImage
 
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
