@@ -271,10 +271,14 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         composerView.sendButton.isEnabled = !content.isEmpty
         composerView.confirmButton.isEnabled = !content.isEmpty
+
+        let isAttachmentButtonHidden = !content.isEmpty || channelConfig?.uploadsEnabled == false
+        let isCommandsButtonHidden = !content.isEmpty
+        let isShrinkInputButtonHidden = content.isEmpty
         Animate {
-            self.composerView.attachmentButton.isHidden = !self.content.isEmpty
-            self.composerView.commandsButton.isHidden = !self.content.isEmpty
-            self.composerView.shrinkInputButton.isHidden = self.content.isEmpty
+            self.composerView.attachmentButton.isHidden = isAttachmentButtonHidden
+            self.composerView.commandsButton.isHidden = isCommandsButtonHidden
+            self.composerView.shrinkInputButton.isHidden = isShrinkInputButtonHidden
         }
 
         composerView.inputMessageView.content = .init(
@@ -403,11 +407,17 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     @objc open func shrinkInput(sender: UIButton) {
         Animate {
-            let leadingContainerSubviews = self.composerView.leadingContainer.subviews
-            for subview in leadingContainerSubviews where subview !== self.composerView.shrinkInputButton {
-                subview.isHidden = false
-            }
             self.composerView.shrinkInputButton.isHidden = true
+            self.composerView.leadingContainer.subviews
+                .filter { $0 !== self.composerView.shrinkInputButton }
+                .forEach {
+                    $0.isHidden = false
+                }
+
+            // If attachment uploads is disabled, don't ever show the attachments button
+            if self.channelController.channel?.config.uploadsEnabled == false {
+                self.composerView.attachmentButton.isHidden = true
+            }
         }
     }
     
