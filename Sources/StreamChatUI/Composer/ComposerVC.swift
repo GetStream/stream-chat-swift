@@ -234,9 +234,11 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     override open func updateContent() {
         super.updateContent()
 
+        let channelConfig = channelController.channel?.config
+
         composerView.inputMessageView.textView.text = content.text
 
-        if !content.isEmpty {
+        if !content.isEmpty && channelConfig?.typingEventsEnabled == true {
             channelController.sendKeystrokeEvent()
         }
 
