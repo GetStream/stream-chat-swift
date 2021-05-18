@@ -9,11 +9,11 @@ public typealias ChatMessageFileAttachment = _ChatMessageAttachment<FileAttachme
 public struct FileAttachmentPayload: AttachmentPayload {
     public static let type: AttachmentType = .file
 
-    /// A title, usually the name of the image.
+    /// A title, usually the name of the file.
     public let title: String?
-    /// A link to the image.
+    /// A link to the file.
     public internal(set) var assetURL: URL
-    /// A link to the image preview.
+    /// The file itself.
     public let file: AttachmentFile
 }
 
