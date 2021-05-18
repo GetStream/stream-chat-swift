@@ -50,6 +50,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// A button for opening attachments.
     public var attachmentButton: UIButton.Type = AttachmentButton.self
 
+    /// A view used as a fallback preview view for attachments that don't confirm to `AttachmentPreviewProvider`
+    public var attachmentPreviewViewPlaceholder: UIView.Type = AttachmentPlaceholderView.self
+
     /// A button for opening commands.
     public var commandsButton: UIButton.Type = CommandButton.self
 

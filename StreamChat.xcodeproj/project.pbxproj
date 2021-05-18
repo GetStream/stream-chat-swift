@@ -219,6 +219,7 @@
 		796CBC6525FBAD12003299B0 /* Member_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBC6425FBAD12003299B0 /* Member_Tests.swift */; };
 		796CBD1C25FF9552003299B0 /* UIStackView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBD1B25FF9552003299B0 /* UIStackView+Extensions.swift */; };
 		796CBD3C2600A321003299B0 /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796CBD3B2600A321003299B0 /* ChatClient.swift */; };
+		7973CD2F2653AE18004C7CE5 /* DefaultAttachmentPreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7973CD2E2653AE18004C7CE5 /* DefaultAttachmentPreviewProvider.swift */; };
 		797A756424814E7A003CF16D /* WebSocketConnectPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */; };
 		797A756624814EF8003CF16D /* SystemEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756524814EF8003CF16D /* SystemEnvironment.swift */; };
 		797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797A756724814F0D003CF16D /* Bundle+Extensions.swift */; };
@@ -1409,6 +1410,7 @@
 		796CBD1B25FF9552003299B0 /* UIStackView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIStackView+Extensions.swift"; sourceTree = "<group>"; };
 		796CBD3B2600A321003299B0 /* ChatClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClient.swift; sourceTree = "<group>"; };
 		796FD215250654940076C99B /* ChannelReadDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelReadDTO.swift; sourceTree = "<group>"; };
+		7973CD2E2653AE18004C7CE5 /* DefaultAttachmentPreviewProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAttachmentPreviewProvider.swift; sourceTree = "<group>"; };
 		797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebSocketConnectPayload.swift; sourceTree = "<group>"; };
 		797A756524814EF8003CF16D /* SystemEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemEnvironment.swift; sourceTree = "<group>"; };
 		797A756724814F0D003CF16D /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
@@ -4084,9 +4086,9 @@
 			children = (
 				BD8EBC3926442E090052199F /* AttachmentsPreviewVC.swift */,
 				BD837AEF2652D23600A99AB5 /* AttachmentPreviewContainer.swift */,
-				7973CD2E2653AE18004C7CE5 /* AttachmentPlaceholder.swift */,
-				BD3EA7F4264AD954003AFA09 /* AttachmentViews */,
 				ADB4165026208C7900E623E3 /* AttachmentPreviewProvider.swift */,
+				7973CD2E2653AE18004C7CE5 /* DefaultAttachmentPreviewProvider.swift */,
+				BD3EA7F4264AD954003AFA09 /* AttachmentViews */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -5237,6 +5239,7 @@
 				790882DF25486B6800896F03 /* ChatChannelListVC.swift in Sources */,
 				69736BF226413E5D00090B67 /* ChatMessageListScrollOverlayView.swift in Sources */,
 				DBC8A564258113F700B20A82 /* ChatThreadVC.swift in Sources */,
+				7973CD2F2653AE18004C7CE5 /* DefaultAttachmentPreviewProvider.swift in Sources */,
 				DB8230F2259B8DBF00E7D7FE /* ChatMessageGiphyView.swift in Sources */,
 				22086B38259509350007F8C0 /* ChatDocumentAttachmentsCollectionViewCell.swift in Sources */,
 				22086B40259509450007F8C0 /* ChatDocumentAttachmentView.swift in Sources */,
