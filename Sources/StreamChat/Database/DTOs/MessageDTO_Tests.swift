@@ -470,6 +470,12 @@ class MessageDTO_Tests: XCTestCase {
             loadedMessage.attachments(payloadType: TestAttachmentPayload.self).map(\.payload),
             [testPayload]
         )
+        XCTAssertEqual(
+            loadedMessage.attachmentCounts,
+            messagePayload.attachments.reduce(into: [:]) { scores, attachment in
+                scores[attachment.type, default: 0] += 1
+            }
+        )
     }
     
     func test_newMessage_asRequestBody() throws {

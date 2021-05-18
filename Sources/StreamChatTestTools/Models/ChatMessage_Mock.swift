@@ -34,7 +34,8 @@ public extension _ChatMessage {
         latestReactions: Set<_ChatMessageReaction<ExtraData>> = [],
         currentUserReactions: Set<_ChatMessageReaction<ExtraData>> = [],
         isSentByCurrentUser: Bool = false,
-        pinDetails: _MessagePinDetails<ExtraData>? = nil
+        pinDetails: _MessagePinDetails<ExtraData>? = nil,
+        attachmentCounts: [AttachmentType: Int] = [:]
     ) -> Self {
         .init(
             id: id,
@@ -64,6 +65,7 @@ public extension _ChatMessage {
             currentUserReactions: { currentUserReactions },
             isSentByCurrentUser: isSentByCurrentUser,
             pinDetails: pinDetails,
+            attachmentCounts: { attachmentCounts },
             underlyingContext: nil
         )
     }

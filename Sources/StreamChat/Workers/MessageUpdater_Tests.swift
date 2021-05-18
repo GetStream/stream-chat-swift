@@ -439,7 +439,7 @@ final class MessageUpdater_Tests: StressTestCase {
         XCTAssertEqual(message.arguments, arguments)
         XCTAssertEqual(message.parentMessageId, parentMessageId)
         XCTAssertEqual(message.showReplyInChannel, showReplyInChannel)
-        XCTAssertEqual(message.attachments.count, 3)
+        XCTAssertEqual(message.attachmentCounts.count, 3)
         XCTAssertEqual(message.imageAttachments, [imageAttachmentEnvelope.attachment(id: id(for: imageAttachmentEnvelope))])
         XCTAssertEqual(message.fileAttachments, [fileAttachmentEnvelope.attachment(id: id(for: fileAttachmentEnvelope))])
         XCTAssertEqual(

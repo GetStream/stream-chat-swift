@@ -172,13 +172,15 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
 
     open func attachmentViewInjectorClassForMessage(at indexPath: IndexPath) -> _AttachmentViewInjector<ExtraData>.Type? {
-        if messageForIndexPath(indexPath).imageAttachments.isEmpty == false {
+        let attachmentCounts = messageForIndexPath(indexPath).attachmentCounts
+
+        if attachmentCounts.keys.contains(.image) {
             return components.galleryAttachmentInjector
-        } else if messageForIndexPath(indexPath).giphyAttachments.isEmpty == false {
+        } else if attachmentCounts.keys.contains(.giphy) {
             return components.giphyAttachmentInjector
-        } else if messageForIndexPath(indexPath).fileAttachments.isEmpty == false {
+        } else if attachmentCounts.keys.contains(.file) {
             return components.filesAttachmentInjector
-        } else if messageForIndexPath(indexPath).linkAttachments.isEmpty == false {
+        } else if attachmentCounts.keys.contains(.linkPreview) {
             return components.linkAttachmentInjector
         } else {
             return nil

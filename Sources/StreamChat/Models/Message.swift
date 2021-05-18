@@ -111,6 +111,11 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     public var attachments: [AnyChatMessageAttachment] { _attachments }
     
     @CoreDataLazy internal var _attachments: [AnyChatMessageAttachment]
+
+    /// The overall attachment count by attachment type.
+    public var attachmentCounts: [AttachmentType: Int] { _attachmentCounts }
+
+    @CoreDataLazy internal var _attachmentCounts: [AttachmentType: Int]
         
     /// A list of latest 25 replies to this message.
     ///
@@ -181,6 +186,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         currentUserReactions: @escaping () -> Set<_ChatMessageReaction<ExtraData>>,
         isSentByCurrentUser: Bool,
         pinDetails: _MessagePinDetails<ExtraData>?,
+        attachmentCounts: @escaping () -> [AttachmentType: Int],
         underlyingContext: NSManagedObjectContext?
     ) {
         self.id = id
@@ -211,6 +217,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
         self.$_latestReactions = (latestReactions, underlyingContext)
         self.$_currentUserReactions = (currentUserReactions, underlyingContext)
         self.$_quotedMessage = (quotedMessage, underlyingContext)
+        self.$_attachmentCounts = (attachmentCounts, underlyingContext)
     }
 }
 
