@@ -312,6 +312,9 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
         let reactionsController: _ChatMessageReactionsVC<ExtraData>? = {
             guard message.localState == nil else { return nil }
+            guard channelController.channel?.config.reactionsEnabled == true else {
+                return nil
+            }
 
             let controller = _ChatMessageReactionsVC<ExtraData>()
             controller.messageController = messageController
