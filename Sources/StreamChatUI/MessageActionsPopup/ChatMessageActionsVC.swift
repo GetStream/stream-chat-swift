@@ -20,10 +20,14 @@ public typealias ChatMessageActionsVC = _ChatMessageActionsVC<NoExtraData>
 
 /// View controller to show message actions.
 open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, ThemeProvider {
-    /// `_ChatMessageController` instance used to obtain current data.
-    public var messageController: _ChatMessageController<ExtraData>!
     /// `_ChatMessageActionsVC.Delegate` instance.
     public var delegate: Delegate?
+
+    /// `_ChatMessageController` instance used to obtain the message data.
+    public var messageController: _ChatMessageController<ExtraData>!
+
+    /// `ChannelConfig` that contains the feature flags of the channel.
+    public var channelConfig: ChannelConfig!
 
     /// Message that should be shown in this view controller.
     open var message: _ChatMessage<ExtraData>? {
@@ -82,10 +86,14 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
         switch message.localState {
         case nil:
             var actions: [ChatMessageActionItem] = [
-                inlineReplyActionItem(),
-                threadReplyActionItem(),
-                copyActionItem()
+                inlineReplyActionItem()
             ]
+
+            if channelConfig.repliesEnabled {
+                actions.append(threadReplyActionItem())
+            }
+
+            actions.append(copyActionItem())
 
             if message.isSentByCurrentUser {
                 actions += [editActionItem(), deleteActionItem()]

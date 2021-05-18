@@ -236,7 +236,7 @@ public struct ChannelConfig: Codable {
     public let connectEventsEnabled: Bool
     /// Enables uploads.
     public let uploadsEnabled: Bool
-    /// Enables message threads and replies. Enabled by default.
+    /// Enables message thread replies. Enabled by default.
     public let repliesEnabled: Bool
     /// Controls if messages should be searchable (this is a premium feature). Disabled by default.
     public let searchEnabled: Bool

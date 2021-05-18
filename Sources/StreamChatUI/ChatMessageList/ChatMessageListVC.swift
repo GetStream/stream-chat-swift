@@ -323,9 +323,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             cid: channelController.cid!,
             messageId: message.id
         )
-
+        
         let actionsController = _ChatMessageActionsVC<ExtraData>()
         actionsController.messageController = messageController
+        actionsController.channelConfig = channelController.channel?.config
         actionsController.delegate = .init(delegate: self)
 
         let reactionsController: _ChatMessageReactionsVC<ExtraData>? = {

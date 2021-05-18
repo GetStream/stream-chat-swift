@@ -71,6 +71,7 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         vc.reactionsController = reactionsController
         actionsController = ChatMessageActionsVC()
         actionsController.messageController = chatMessageController
+        actionsController.channelConfig = .mock()
         vc.actionsController = actionsController
     }
     
