@@ -178,7 +178,7 @@ class ChannelUpdater_Tests: StressTestCase {
         XCTAssertEqual(message.text, text)
         XCTAssertEqual(message.command, command)
         XCTAssertEqual(message.arguments, arguments)
-        XCTAssertEqual(message.attachments.count, 3)
+        XCTAssertEqual(message.attachmentCounts.count, 3)
         XCTAssertEqual(message.imageAttachments, [imageAttachmentEnvelope.attachment(id: id(for: imageAttachmentEnvelope))])
         XCTAssertEqual(message.fileAttachments, [fileAttachmentEnvelope.attachment(id: id(for: fileAttachmentEnvelope))])
         XCTAssertEqual(
