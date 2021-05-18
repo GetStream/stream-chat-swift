@@ -86,7 +86,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
             // The bubbles with thread look like continuous bubbles
             options.insert(.continuousBubble)
         }
-        if !message.reactionScores.isEmpty {
+        if !message.reactionScores.isEmpty && channel.config.reactionsEnabled {
             options.insert(.reactions)
         }
         if message.lastActionFailed {
