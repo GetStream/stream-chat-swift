@@ -104,12 +104,7 @@ public struct _ChatMessage<ExtraData: ExtraDataTypes> {
     public var threadParticipants: Set<_ChatUser<ExtraData.User>> { _threadParticipants }
     
     @CoreDataLazy internal var _threadParticipants: Set<_ChatUser<ExtraData.User>>
-    
-    /// A list of attachments in this message.
-    ///
-    /// - Important: The `attachments` property is loaded and evaluated lazily to maintain high performance.
-    public var attachments: [AnyChatMessageAttachment] { _attachments }
-    
+
     @CoreDataLazy internal var _attachments: [AnyChatMessageAttachment]
 
     /// The overall attachment count by attachment type.
@@ -229,26 +224,41 @@ extension _ChatMessage {
 }
 
 public extension _ChatMessage {
+    /// Returns all the attachments with the payload of the provided type.
+    ///
+    /// - Important: Attachments are loaded lazily and cached to maintain high performance.
     func attachments<Payload: AttachmentPayload>(
         payloadType: Payload.Type
     ) -> [_ChatMessageAttachment<Payload>] {
-        attachments.compactMap {
+        _attachments.compactMap {
             $0.attachment(payloadType: payloadType)
         }
     }
 
+    /// Returns the attachments of `.image` type.
+    ///
+    /// - Important: The `imageAttachments` are loaded lazily and cached to maintain high performance.
     var imageAttachments: [ChatMessageImageAttachment] {
         attachments(payloadType: ImageAttachmentPayload.self)
     }
 
+    /// Returns the attachments of `.file` type.
+    ///
+    /// - Important: The `fileAttachments` are loaded lazily and cached to maintain high performance.
     var fileAttachments: [ChatMessageFileAttachment] {
         attachments(payloadType: FileAttachmentPayload.self)
     }
 
+    /// Returns the attachments of `.giphy` type.
+    ///
+    /// - Important: The `giphyAttachments` are loaded lazily and cached to maintain high performance.
     var giphyAttachments: [ChatMessageGiphyAttachment] {
         attachments(payloadType: GiphyAttachmentPayload.self)
     }
 
+    /// Returns the attachments of `.linkPreview` type.
+    ///
+    /// - Important: The `linkAttachments` are loaded lazily and cached to maintain high performance.
     var linkAttachments: [ChatMessageLinkAttachment] {
         attachments(payloadType: LinkAttachmentPayload.self)
     }

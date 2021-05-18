@@ -455,11 +455,11 @@ class MessageDTO_Tests: XCTestCase {
 
         // Attachments
         XCTAssertEqual(
-            loadedMessage.attachments.map(\.id),
+            loadedMessage._attachments.map(\.id),
             messagePayload.attachmentIDs(cid: channelId)
         )
         XCTAssertEqual(
-            loadedMessage.attachments.map(\.type),
+            loadedMessage._attachments.map(\.type),
             messagePayload.attachments.map(\.type)
         )
         XCTAssertEqual(loadedMessage.imageAttachments.map(\.payload), [imageAttachmentPayload.decodedImagePayload])
@@ -756,7 +756,7 @@ class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.locallyCreatedAt)
         XCTAssertEqual(loadedMessage.createdAt, loadedMessage.updatedAt)
         XCTAssertEqual(
-            loadedMessage.attachments.map { $0.uploadingState?.localFileURL },
+            loadedMessage._attachments.map { $0.uploadingState?.localFileURL },
             newMessageAttachments.map(\.localFileURL)
         )
     }
