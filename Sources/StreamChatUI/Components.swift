@@ -33,7 +33,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var inputTextView: InputTextView.Type = InputTextView.self
 
     /// A view that displays the command name and icon.
-    public var commandLabelView: _CommandLabelView<ExtraData>.Type = _CommandLabelView<ExtraData>.self
+    public var commandLabelView: CommandLabelView.Type = CommandLabelView.self
 
     /// A view to input content of a message.
     public var inputMessageView: _InputChatMessageView<ExtraData>.Type = _InputChatMessageView<ExtraData>.self

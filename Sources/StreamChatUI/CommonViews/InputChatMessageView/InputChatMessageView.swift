@@ -49,7 +49,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         .withoutAutoresizingMaskConstraints
 
     /// The command label that display the command info if a new command is being typed.
-    public private(set) lazy var commandLabelView: _CommandLabelView<ExtraData> = components
+    public private(set) lazy var commandLabelView: CommandLabelView = components
         .commandLabelView.init()
         .withoutAutoresizingMaskConstraints
 
