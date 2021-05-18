@@ -50,7 +50,7 @@ open class _ChatDocumentAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeP
     override open func setUpAppearance() {
         super.setUpAppearance()
         backgroundColor = appearance.colorPalette.background
-        layer.cornerRadius = 15
+        layer.cornerRadius = 16
         layer.masksToBounds = true
         layer.borderWidth = 1
         layer.borderColor = appearance.colorPalette.border.cgColor

@@ -9,8 +9,8 @@ public protocol AttachmentPreviewProvider {
     /// The view representing the attachment.
     func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView
     
-    /// The preffered axis to be used for attachment previews in attachments view.
-    static var prefferedAxis: NSLayoutConstraint.Axis { get }
+    /// The preferred axis to be used for attachment previews in attachments view.
+    static var preferredAxis: NSLayoutConstraint.Axis { get }
 }
 
 extension ImageAttachmentPayload: AttachmentPreviewProvider {
