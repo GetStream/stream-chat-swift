@@ -19,6 +19,14 @@ extension UIViewController {
         superview.addArrangedSubview(child.view)
         child.didMove(toParent: self)
     }
+    
+    func addChildViewController(_ child: UIViewController, embedIn superview: UIView) {
+        child.willMove(toParent: self)
+        addChild(child)
+        child.view.translatesAutoresizingMaskIntoConstraints = false
+        superview.embed(child.view)
+        child.didMove(toParent: self)
+    }
 
     func removeFromParentViewController() {
         guard parent != nil else { return }
