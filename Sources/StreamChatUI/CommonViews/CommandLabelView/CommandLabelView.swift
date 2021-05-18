@@ -6,10 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view that display the command name and icon.
-public typealias CommandLabelView = _CommandLabelView<NoExtraData>
-
-/// A view that display the command name and icon.
-open class _CommandLabelView<ExtraData: ExtraDataTypes>: _View, AppearanceProvider {
+open class CommandLabelView: _View, AppearanceProvider {
     /// The command that the label displays.
     public var content: Command? {
         didSet {
