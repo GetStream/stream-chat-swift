@@ -16,10 +16,6 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         var quotingMessage: _ChatMessage<ExtraData>?
         /// The command that the message produces.
         var command: Command?
-        /// The document attachments that are part of the message.
-        var documentAttachments: [AttachmentPreview]
-        /// The image attachments that are part of the message.
-        var imageAttachments: [AttachmentPreview]
     }
 
     /// The content of the view
@@ -38,16 +34,9 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         .quotedMessageView.init()
         .withoutAutoresizingMaskConstraints
 
-    /// A view that displays the image attachments of the new message.
-    public private(set) lazy var imageAttachmentsCollectionView: _ChatImageAttachmentsCollectionView<ExtraData> = components
-        .messageComposer
-        .imageAttachmentsCollectionView.init()
-        .withoutAutoresizingMaskConstraints
-
-    /// A view that displays the document attachments of the new message.
-    public private(set) lazy var documentAttachmentsCollectionView: _ChatDocumentAttachmentsCollectionView<ExtraData> = components
-        .messageComposer
-        .documentAttachmentsCollectionView.init()
+    /// A view that displays the attachments of the new message.
+    /// This is view from separate AttachmentsVC and will be injected by the ComposerVC.
+    public private(set) lazy var attachmentsViewContainer = UIView()
         .withoutAutoresizingMaskConstraints
 
     /// The container stack view that layouts the command label, text view and the clean button.
@@ -94,12 +83,10 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         container.distribution = .natural
         container.spacing = 0
         container.addArrangedSubview(quotedMessageView)
-        container.addArrangedSubview(imageAttachmentsCollectionView)
-        container.addArrangedSubview(documentAttachmentsCollectionView)
+        container.addArrangedSubview(attachmentsViewContainer)
         container.addArrangedSubview(inputTextContainer)
         quotedMessageView.isHidden = true
-        imageAttachmentsCollectionView.isHidden = true
-        documentAttachmentsCollectionView.isHidden = true
+        attachmentsViewContainer.isHidden = true
 
         inputTextContainer.preservesSuperviewLayoutMargins = true
         inputTextContainer.alignment = .center
@@ -114,8 +101,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
 
         NSLayoutConstraint.activate([
             clearButton.heightAnchor.pin(equalToConstant: 24),
-            clearButton.widthAnchor.pin(equalTo: clearButton.heightAnchor, multiplier: 1),
-            imageAttachmentsCollectionView.heightAnchor.pin(equalToConstant: 120)
+            clearButton.widthAnchor.pin(equalTo: clearButton.heightAnchor, multiplier: 1)
         ])
     }
 
@@ -134,11 +120,6 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         if let command = content.command {
             commandLabelView.content = command
         }
-
-        documentAttachmentsCollectionView.content = content.documentAttachments
-        imageAttachmentsCollectionView.content = content.imageAttachments
-        documentAttachmentsCollectionView.isHidden = content.documentAttachments.isEmpty
-        imageAttachmentsCollectionView.isHidden = content.imageAttachments.isEmpty
 
         Animate {
             self.quotedMessageView.isHidden = content.quotingMessage == nil
