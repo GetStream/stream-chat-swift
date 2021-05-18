@@ -319,6 +319,11 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             documentAttachments: content.documentAttachments,
             imageAttachments: content.imageAttachments
         )
+        
+        attachmentsVC.content = content.attachments.map {
+            ($0.payload as? AttachmentPreviewProvider) ?? DefaultAttachmentPreviewProvider()
+        }
+        composerView.inputMessageView.attachmentsViewContainer.isHidden = content.attachments.isEmpty
 
         if content.isInsideThread {
             if channelController.channel?.isDirectMessageChannel == true {
