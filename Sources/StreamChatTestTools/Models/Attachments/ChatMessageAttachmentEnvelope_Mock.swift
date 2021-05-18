@@ -6,8 +6,8 @@ import Foundation
 @testable import StreamChat
 
 public extension ChatMessageAttachmentEnvelope {
-    static let mockFile = try! Self(localFileURL: .localYodaQuote)
-    static let mockImage = try! Self(localFileURL: .localYodaImage)
+    static let mockFile = try! Self(localFileURL: .localYodaQuote, attachmentType: .file)
+    static let mockImage = try! Self(localFileURL: .localYodaImage, attachmentType: .image)
 }
 
 public extension URL {

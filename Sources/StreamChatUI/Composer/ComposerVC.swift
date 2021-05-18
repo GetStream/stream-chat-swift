@@ -621,26 +621,27 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
         guard let url = info[UIImagePickerController.InfoKey.imageURL] as? URL else { return }
-        guard let preview = UIImage(contentsOfFile: url.path) else { return }
-
-        let attachmentPreview = ImageAttachmentPreview(image: preview, localURL: url)
-        content.imageAttachments.append(attachmentPreview)
+        
+        do {
+            let attachment = try ChatMessageAttachmentEnvelope(localFileURL: url, attachmentType: .image)
+            content.attachments.append(attachment)
+        } catch {
+            log.assertionFailure(error.localizedDescription)
+        }
         picker.dismiss(animated: true, completion: nil)
     }
     
     // MARK: - UIDocumentPickerViewControllerDelegate
     
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
-        let attachmentPreviews: [DocumentAttachmentPreview] = urls.compactMap {
-            let filePreview = appearance.images.documentPreviews[$0.pathExtension]
-            return DocumentAttachmentPreview(
-                image: filePreview ?? appearance.images.fileFallback,
-                localURL: $0,
-                name: $0.lastPathComponent,
-                size: (try? AttachmentFile(url: $0))?.size ?? 0
-            )
-        }
-        content.documentAttachments += attachmentPreviews
+        content.attachments.append(contentsOf: urls.compactMap {
+            do {
+                return try ChatMessageAttachmentEnvelope(localFileURL: $0, attachmentType: .file)
+            } catch {
+                log.assertionFailure(error.localizedDescription)
+                return nil
+            }
+        })
     }
 }
 

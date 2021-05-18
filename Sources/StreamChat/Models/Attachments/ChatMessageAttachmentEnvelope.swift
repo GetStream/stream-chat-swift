@@ -23,12 +23,12 @@ public extension ChatMessageAttachmentEnvelope {
         )
     }
 
-    init(localFileURL: URL) throws {
+    init(localFileURL: URL, attachmentType: AttachmentType) throws {
         let file = try AttachmentFile(url: localFileURL)
 
         let payload: AttachmentPayload
-        switch file.type {
-        case .jpeg, .png:
+        switch attachmentType {
+        case .image:
             payload = ImageAttachmentPayload(
                 title: localFileURL.lastPathComponent,
                 imageURL: localFileURL,
@@ -43,7 +43,7 @@ public extension ChatMessageAttachmentEnvelope {
         }
 
         self.init(
-            type: Swift.type(of: payload).type,
+            type: attachmentType,
             payload: payload,
             localFileURL: localFileURL
         )
