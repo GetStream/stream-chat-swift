@@ -47,16 +47,14 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         public let quotingMessage: _ChatMessage<ExtraData>?
         /// The thread parent message if the composer is currently replying in a thread.
         public let threadMessage: _ChatMessage<ExtraData>?
-        /// The file attachments part of the message.
-        public var documentAttachments: [AttachmentPreview]
-        /// The image attachments part of the message.
-        public var imageAttachments: [AttachmentPreview]
+        /// The attachments of the message.
+        public var attachments: [ChatMessageAttachmentEnvelope]
         /// The command of the message.
         public var command: Command?
 
         /// A boolean that checks if the message contains any content.
         public var isEmpty: Bool {
-            text.isEmpty && documentAttachments.isEmpty && imageAttachments.isEmpty
+            text.isEmpty && attachments.isEmpty
         }
 
         /// A boolean that check if the composer is replying in a thread
@@ -70,8 +68,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             editingMessage: _ChatMessage<ExtraData>?,
             quotingMessage: _ChatMessage<ExtraData>?,
             threadMessage: _ChatMessage<ExtraData>?,
-            documentAttachments: [AttachmentPreview],
-            imageAttachments: [AttachmentPreview],
+            attachments: [ChatMessageAttachmentEnvelope],
             command: Command?
         ) {
             self.text = text
@@ -79,8 +76,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             self.editingMessage = editingMessage
             self.quotingMessage = quotingMessage
             self.threadMessage = threadMessage
-            self.documentAttachments = documentAttachments
-            self.imageAttachments = imageAttachments
+            self.attachments = attachments
             self.command = command
         }
 
@@ -92,8 +88,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 editingMessage: nil,
                 quotingMessage: nil,
                 threadMessage: nil,
-                documentAttachments: [],
-                imageAttachments: [],
+                attachments: [],
                 command: nil
             )
         }
@@ -108,8 +103,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 editingMessage: message,
                 quotingMessage: nil,
                 threadMessage: threadMessage,
-                documentAttachments: documentAttachments,
-                imageAttachments: imageAttachments,
+                attachments: attachments,
                 command: command
             )
         }
@@ -124,8 +118,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 editingMessage: nil,
                 quotingMessage: message,
                 threadMessage: threadMessage,
-                documentAttachments: documentAttachments,
-                imageAttachments: imageAttachments,
+                attachments: attachments,
                 command: command
             )
         }
@@ -140,8 +133,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 editingMessage: editingMessage,
                 quotingMessage: quotingMessage,
                 threadMessage: message,
-                documentAttachments: documentAttachments,
-                imageAttachments: imageAttachments,
+                attachments: attachments,
                 command: command
             )
         }
@@ -180,6 +172,12 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         .messageComposer
         .suggestionsViewController
         .init()
+    
+    /// The view controller that shows the suggestions when the user is typing.
+    open private(set) lazy var attachmentsVC: _AttachmentsPreviewVC<ExtraData> = components
+        .messageComposer
+        .attachmentsViewController
+        .init()
 
     /// The view controller for selecting image attachments.
     open private(set) lazy var imagePickerVC: UIViewController = {
@@ -197,39 +195,8 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         picker.allowsMultipleSelection = true
         return picker
     }()
-
-    public enum SelectedAttachments {
-        case media, documents
-    }
-
-    open var selectedAttachments: SelectedAttachments? {
-        if content.imageAttachments.isEmpty, content.documentAttachments.isEmpty {
-            return .none
-        } else {
-            return content.imageAttachments.isEmpty ? .documents : .media
-        }
-    }
-
-    open var attachments: [ChatMessageAttachmentEnvelope] {
-        let urls: [URL]
-        switch selectedAttachments {
-        case .media:
-            urls = content.imageAttachments.map(\.localURL)
-        case .documents:
-            urls = content.documentAttachments.map(\.localURL)
-        case .none:
-            urls = []
-        }
-
-        return urls.compactMap {
-            do {
-                return try ChatMessageAttachmentEnvelope(localFileURL: $0)
-            } catch {
-                log.assertionFailure(error.localizedDescription)
-                return nil
-            }
-        }
-    }
+    
+    open var selectedAttachmentType: AttachmentType?
 
     public func setDelegate(_ delegate: ComposerVCDelegate) {
         self.delegate = delegate
@@ -251,13 +218,8 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             action: #selector(clearContent(sender:)),
             for: .touchUpInside
         )
-
-        composerView.inputMessageView.imageAttachmentsCollectionView.didTapRemoveItemButton = { [weak self] index in
-            self?.content.imageAttachments.remove(at: index)
-        }
-        composerView.inputMessageView.documentAttachmentsCollectionView.didTapRemoveItemButton = { [weak self] index in
-            self?.content.documentAttachments.remove(at: index)
-        }
+        
+        setupAttachmentsView()
     }
 
     override open func setUpLayout() {
@@ -315,13 +277,19 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
         composerView.inputMessageView.content = .init(
             quotingMessage: content.quotingMessage,
-            command: content.command,
-            documentAttachments: content.documentAttachments,
-            imageAttachments: content.imageAttachments
+            command: content.command
         )
         
         attachmentsVC.content = content.attachments.map {
-            ($0.payload as? AttachmentPreviewProvider) ?? DefaultAttachmentPreviewProvider()
+            if let provider = $0.payload as? AttachmentPreviewProvider {
+                return provider
+            } else {
+                log.warning("""
+                Attachment \($0) doesn't conform to the `AttachmentPreviewProvider` protocol. Add the conformance \
+                to this protocol to avoid using the attachment preview placeholder in the composer.
+                """)
+                return DefaultAttachmentPreviewProvider()
+            }
         }
         composerView.inputMessageView.attachmentsViewContainer.isHidden = content.attachments.isEmpty
 
@@ -347,6 +315,13 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
 
         dismissSuggestions()
+    }
+    
+    open func setupAttachmentsView() {
+        addChildViewController(attachmentsVC, embedIn: composerView.inputMessageView.attachmentsViewContainer)
+        attachmentsVC.didTapRemoveItemButton = { [weak self] index in
+            self?.content.attachments.remove(at: index)
+        }
     }
     
     // MARK: - Actions
@@ -382,6 +357,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 style: .default,
                 handler: { [weak self] _ in
                     guard let self = self else { return }
+                    self.selectedAttachmentType = .file
                     self.present(self.filePickerVC, animated: true, completion: nil)
                 }
             )
@@ -390,6 +366,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 style: .default,
                 handler: { [weak self] _ in
                     guard let self = self else { return }
+                    self.selectedAttachmentType = .image
                     self.present(self.imagePickerVC, animated: true, completion: nil)
                 }
             )
@@ -401,15 +378,24 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
             return actionSheet
         }
-                
-        // Right now it's not possible to mix image and file attachments so we are limiting this option.
-        switch selectedAttachments {
-        case .none:
+        
+        // The UI doesn't support mix of image and file attachments so we are limiting this option.
+        // Files in the message composer are scrolling vertically and images horizontally.
+        // There is no techical limitation for multiple attachment types.
+        if content.attachments.isEmpty {
+            selectedAttachmentType = nil
             present(actionSheet, animated: true, completion: nil)
-        case .media:
-            present(imagePickerVC, animated: true, completion: nil)
-        case .documents:
-            present(filePickerVC, animated: true, completion: nil)
+        } else if let attachmentType = selectedAttachmentType {
+            switch attachmentType {
+            case .image:
+                present(imagePickerVC, animated: true, completion: nil)
+            case .file:
+                present(filePickerVC, animated: true, completion: nil)
+            default:
+                log.error("Error in handling `selectedAttachmentType`. Unexpected attachment type.")
+            }
+        } else {
+            log.error("Error in handling `selectedAttachmentType`. Missing attachment type.")
         }
     }
     
@@ -452,7 +438,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             messageController.createNewReply(
                 text: text,
                 pinning: nil,
-                attachments: attachments,
+                attachments: content.attachments,
                 showReplyInChannel: composerView.checkboxControl.isSelected,
                 quotedMessageId: content.quotingMessage?.id
             )
@@ -462,7 +448,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         channelController.createNewMessage(
             text: text,
             pinning: nil,
-            attachments: attachments,
+            attachments: content.attachments,
             quotedMessageId: content.quotingMessage?.id
         )
     }

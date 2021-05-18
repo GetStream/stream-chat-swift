@@ -11,21 +11,15 @@ public extension _Components {
         public var messageComposerView: _ComposerView<ExtraData>.Type =
             _ComposerView<ExtraData>.self
 
-        public var documentAttachmentView: _ChatDocumentAttachmentView<ExtraData>.Type =
-            _ChatDocumentAttachmentView<ExtraData>.self
-        public var documentAttachmentsFlowLayout: ChatDocumentAttachmentsCollectionViewLayout.Type =
-            ChatDocumentAttachmentsCollectionViewLayout.self
-        public var documentAttachmentsCollectionView: _ChatDocumentAttachmentsCollectionView<ExtraData>.Type =
-            _ChatDocumentAttachmentsCollectionView<ExtraData>.self
-
-        /// A view that displays a collection of image attachments
-        public var imageAttachmentsCollectionView: _ChatImageAttachmentsCollectionView<ExtraData>.Type =
-            _ChatImageAttachmentsCollectionView<ExtraData>.self
+        /// A view controller that handles the attachments.
+        public var attachmentsViewController: _AttachmentsPreviewVC<ExtraData>.Type =
+            _AttachmentsPreviewVC<ExtraData>.self
+        /// A view that holds the attachment views and provide extra functionality over them.
+        public var attachmentCell: AttachmentPreviewContainer.Type = AttachmentPreviewContainer.self
+        /// A view that displays the document attachment.
+        public var fileAttachmentView: FileAttachmentView.Type = FileAttachmentView.self
         /// A view that displays the image attachment.
-        public var imageAttachmentCellView: ChatImageAttachmentView.Type =
-            ChatImageAttachmentView.self
-        public var imageAttachmentCollectionViewCell: _ChatImageAttachmentsCollectionViewCell<ExtraData>.Type =
-            _ChatImageAttachmentsCollectionViewCell<ExtraData>.self
+        public var imageAttachmentView: ImageAttachmentView.Type = ImageAttachmentView.self
 
         /// A view controller that shows suggestions of commands or mentions.
         public var suggestionsViewController: _ChatSuggestionsViewController<ExtraData>.Type =
