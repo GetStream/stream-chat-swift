@@ -24,16 +24,6 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
         .init()
         .withoutAutoresizingMaskConstraints
 
-    public private(set) lazy var titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = appearance.fonts.bodyItalic
-        label.adjustsFontForContentSizeCategory = true
-        label.textAlignment = .center
-        return label
-            .withoutAutoresizingMaskConstraints
-            .withBidirectionalLanguagesSupport
-    }()
-
     public private(set) lazy var separator = UIView()
         .withoutAutoresizingMaskConstraints
 
@@ -59,7 +49,6 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
 
     override open func setUpLayout() {
         addSubview(preview)
-        addSubview(titleLabel)
         addSubview(separator)
         addSubview(actionsStackView)
 
@@ -69,11 +58,7 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
             preview.topAnchor.pin(equalTo: topAnchor),
             preview.heightAnchor.pin(equalTo: preview.widthAnchor),
             
-            titleLabel.topAnchor.pin(equalToSystemSpacingBelow: preview.bottomAnchor, multiplier: 1),
-            titleLabel.leadingAnchor.pin(equalTo: leadingAnchor),
-            titleLabel.trailingAnchor.pin(equalTo: trailingAnchor),
-            
-            separator.topAnchor.pin(equalToSystemSpacingBelow: titleLabel.bottomAnchor, multiplier: 1),
+            separator.topAnchor.pin(equalTo: preview.bottomAnchor),
             separator.leadingAnchor.pin(equalTo: leadingAnchor),
             separator.trailingAnchor.pin(equalTo: trailingAnchor),
             separator.heightAnchor.pin(equalToConstant: 1),
@@ -87,8 +72,6 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
 
     override open func updateContent() {
         preview.content = content
-
-        titleLabel.text = "\"" + (content?.title ?? "") + "\""
 
         actionsStackView.removeAllArrangedSubviews()
         
