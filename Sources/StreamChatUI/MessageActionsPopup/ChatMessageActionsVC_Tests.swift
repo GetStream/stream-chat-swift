@@ -13,11 +13,12 @@ class ChatMessageActionsVC_Tests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        
-        vc = ChatMessageActionsVC()
+
         chatMessageController = .mock()
+        vc = ChatMessageActionsVC()
         vc.messageController = chatMessageController
-        
+        vc.channelConfig = .mock()
+
         chatMessageController.simulateInitial(
             message: ChatMessage.mock(id: .unique, text: "", author: ChatUser.mock(id: .unique)),
             replies: [],
@@ -60,6 +61,7 @@ class ChatMessageActionsVC_Tests: XCTestCase {
 
         let vc = TestView()
         vc.messageController = chatMessageController
+        vc.channelConfig = .mock()
         AssertSnapshot(vc.embedded())
     }
     
