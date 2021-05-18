@@ -14,10 +14,10 @@ extension TimeInterval {
 }
 
 /// Sends events.
-class EventSender<ExtraData: ExtraDataTypes>: Worker {
+class TypingEventsSender<ExtraData: ExtraDataTypes>: Worker {
     /// A timer type.
     var timer: Timer.Type = DefaultTimer.self
-    
+        
     @Atomic private var currentUserTypingTimerControl: TimerControl?
     @Atomic private var currentUserLastTypingDate: Date?
     

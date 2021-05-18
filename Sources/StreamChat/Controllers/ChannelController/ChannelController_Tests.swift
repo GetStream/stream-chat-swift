@@ -2752,7 +2752,7 @@ class ChannelController_Tests: StressTestCase {
 
 private class TestEnvironment<ExtraData: ExtraDataTypes> {
     var channelUpdater: ChannelUpdaterMock<ExtraData>?
-    var eventSender: EventSenderMock<ExtraData>?
+    var eventSender: TypingEventsSenderMock<ExtraData>?
     
     lazy var environment: _ChatChannelController<ExtraData>.Environment = .init(
         channelUpdaterBuilder: { [unowned self] in
@@ -2760,7 +2760,7 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
             return self.channelUpdater!
         },
         eventSenderBuilder: { [unowned self] in
-            self.eventSender = EventSenderMock(database: $0, apiClient: $1)
+            self.eventSender = TypingEventsSenderMock(database: $0, apiClient: $1)
             return self.eventSender!
         }
     )

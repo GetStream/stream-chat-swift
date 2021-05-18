@@ -6,14 +6,14 @@
 @testable import StreamChatTestTools
 import XCTest
 
-class EventSender_Tests: StressTestCase {
+class TypingEventsSender_Tests: StressTestCase {
     typealias ExtraData = NoExtraData
     
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var database: DatabaseContainerMock!
     var time: VirtualTime!
-    var eventSender: EventSender<ExtraData>!
+    var eventSender: TypingEventsSender<ExtraData>!
     
     override func setUp() {
         super.setUp()
@@ -25,7 +25,7 @@ class EventSender_Tests: StressTestCase {
         time = VirtualTime()
         VirtualTimeTimer.time = time
         
-        eventSender = EventSender(database: database, apiClient: apiClient)
+        eventSender = TypingEventsSender(database: database, apiClient: apiClient)
         eventSender.timer = VirtualTimeTimer.self
     }
     
