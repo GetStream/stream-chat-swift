@@ -373,14 +373,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         }
 
         // Bubble view
-        if
-            let content = content,
-            content.imageAttachments.isEmpty,
-            content.giphyAttachments.isEmpty,
-            content.linkAttachments.isEmpty,
-            !content.linkAttachments.isEmpty {
-            bubbleView?.backgroundColor = appearance.colorPalette.highlightedAccentBackground1
-        } else if content?.type == .ephemeral {
+        if content?.type == .ephemeral {
             bubbleView?.backgroundColor = appearance.colorPalette.popoverBackground
         } else {
             bubbleView?.backgroundColor = content?.isSentByCurrentUser == true ?
