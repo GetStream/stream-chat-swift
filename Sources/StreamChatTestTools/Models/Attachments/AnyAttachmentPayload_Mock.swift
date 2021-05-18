@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public extension ChatMessageAttachmentEnvelope {
+public extension AnyAttachmentPayload {
     static let mockFile = try! Self(localFileURL: .localYodaQuote, attachmentType: .file)
     static let mockImage = try! Self(localFileURL: .localYodaImage, attachmentType: .image)
 }
@@ -20,7 +20,7 @@ public extension URL {
         .url(forResource: "yoda", withExtension: "txt")!
 }
 
-public extension ChatMessageAttachmentEnvelope {
+public extension AnyAttachmentPayload {
     func attachment<T: AttachmentPayload>(id: AttachmentId) -> _ChatMessageAttachment<T>? {
         guard let payload = payload as? T else { return nil }
 
@@ -39,7 +39,7 @@ public extension ChatMessageAttachmentEnvelope {
     }
 }
 
-extension ChatMessageAttachmentEnvelope: Equatable {
+extension AnyAttachmentPayload: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         let lhsData = try? JSONEncoder.default.encode(lhs.payload?.asAnyEncodable)
         let rhsData = try? JSONEncoder.default.encode(rhs.payload?.asAnyEncodable)

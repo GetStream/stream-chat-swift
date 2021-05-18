@@ -48,7 +48,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         /// The thread parent message if the composer is currently replying in a thread.
         public let threadMessage: _ChatMessage<ExtraData>?
         /// The attachments of the message.
-        public var attachments: [ChatMessageAttachmentEnvelope]
+        public var attachments: [AnyAttachmentPayload]
         /// The command of the message.
         public var command: Command?
 
@@ -68,7 +68,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             editingMessage: _ChatMessage<ExtraData>?,
             quotingMessage: _ChatMessage<ExtraData>?,
             threadMessage: _ChatMessage<ExtraData>?,
-            attachments: [ChatMessageAttachmentEnvelope],
+            attachments: [AnyAttachmentPayload],
             command: Command?
         ) {
             self.text = text
@@ -614,7 +614,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         guard let url = info[UIImagePickerController.InfoKey.imageURL] as? URL else { return }
         
         do {
-            let attachment = try ChatMessageAttachmentEnvelope(localFileURL: url, attachmentType: .image)
+            let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: .image)
             content.attachments.append(attachment)
         } catch {
             log.assertionFailure(error.localizedDescription)
@@ -627,7 +627,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         content.attachments.append(contentsOf: urls.compactMap {
             do {
-                return try ChatMessageAttachmentEnvelope(localFileURL: $0, attachmentType: .file)
+                return try AnyAttachmentPayload(localFileURL: $0, attachmentType: .file)
             } catch {
                 log.assertionFailure(error.localizedDescription)
                 return nil

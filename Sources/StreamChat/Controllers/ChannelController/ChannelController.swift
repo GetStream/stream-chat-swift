@@ -729,7 +729,7 @@ public extension _ChatChannelController {
         pinning: MessagePinning? = nil,
 //        command: String? = nil,
 //        arguments: String? = nil,
-        attachments: [ChatMessageAttachmentEnvelope] = [],
+        attachments: [AnyAttachmentPayload] = [],
         quotedMessageId: MessageId? = nil,
         extraData: ExtraData.Message = .defaultValue,
         completion: ((Result<MessageId, Error>) -> Void)? = nil

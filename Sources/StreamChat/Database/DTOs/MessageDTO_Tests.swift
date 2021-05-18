@@ -491,7 +491,7 @@ class MessageDTO_Tests: XCTestCase {
         let messagePinning: MessagePinning? = MessagePinning(expirationDate: .unique)
         let messageCommand: String = .unique
         let messageArguments: String = .unique
-        let attachments: [ChatMessageAttachmentEnvelope] = [
+        let attachments: [AnyAttachmentPayload] = [
             .init(payload: TestAttachmentPayload.unique),
             .mockFile,
             .mockImage
@@ -707,7 +707,7 @@ class MessageDTO_Tests: XCTestCase {
         let newMessageCommand: String = .unique
         let newMessageArguments: String = .unique
         let newMessageParentMessageId: String = .unique
-        let newMessageAttachments: [ChatMessageAttachmentEnvelope] = [
+        let newMessageAttachments: [AnyAttachmentPayload] = [
             .init(payload: TestAttachmentPayload.unique),
             .mockFile,
             .mockImage
