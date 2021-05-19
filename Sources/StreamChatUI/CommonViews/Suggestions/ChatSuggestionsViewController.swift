@@ -41,9 +41,8 @@ open class _ChatSuggestionsViewController<ExtraData: ExtraDataTypes>: _ViewContr
     
     /// The collection view of the commands.
     open private(set) lazy var collectionView: _ChatSuggestionsCollectionView<ExtraData> = components
-        .messageComposer
         .suggestionsCollectionView
-        .init(layout: components.messageComposer.suggestionsCollectionViewLayout.init())
+        .init(layout: components.suggestionsCollectionViewLayout.init())
         .withoutAutoresizingMaskConstraints
     
     /// The container view where collectionView is embedded.
@@ -173,8 +172,8 @@ open class _ChatMessageComposerSuggestionsCommandDataSource<ExtraData: ExtraData
 
     private func registerCollectionViewCell() {
         collectionView.register(
-            components.messageComposer.suggestionsCommandCollectionViewCell,
-            forCellWithReuseIdentifier: components.messageComposer.suggestionsCommandCollectionViewCell.reuseId
+            components.suggestionsCommandCollectionViewCell,
+            forCellWithReuseIdentifier: components.suggestionsCommandCollectionViewCell.reuseId
         )
     }
 
@@ -248,8 +247,8 @@ open class _ChatMessageComposerSuggestionsMentionDataSource<ExtraData: ExtraData
 
     private func registerCollectionViewCell() {
         collectionView.register(
-            components.messageComposer.suggestionsMentionCollectionViewCell,
-            forCellWithReuseIdentifier: components.messageComposer.suggestionsMentionCollectionViewCell.reuseId
+            components.suggestionsMentionCollectionViewCell,
+            forCellWithReuseIdentifier: components.suggestionsMentionCollectionViewCell.reuseId
         )
     }
 

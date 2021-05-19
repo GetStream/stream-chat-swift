@@ -19,7 +19,6 @@ open class _ChatMentionSuggestionView<ExtraData: ExtraDataTypes>: _View, ThemePr
 
     /// `_ChatChannelAvatarView` instance which holds photo of user for tagging.
     open private(set) lazy var avatarView: _ChatUserAvatarView<ExtraData> = components
-        .messageComposer
         .mentionAvatarView
         .init()
         .withoutAutoresizingMaskConstraints
