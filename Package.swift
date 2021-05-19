@@ -121,6 +121,8 @@ var streamChatSourcesExcluded: [String] { [
     "APIClient/Endpoints/ChannelEndpoints_Tests.swift",
     "APIClient/Endpoints/ModerationEndpoints_Tests.swift",
     "APIClient/Endpoints/UserEndpoints_Tests.swift",
+    "APIClient/CDNClient_Mock.swift",
+    "APIClient/DefaultCDNClient_Tests.swift",
     "APIClient/APIClient_Tests.swift",
     "APIClient/APIClient_Mock.swift",
     "APIClient/RequestDecoder_Tests.swift",
