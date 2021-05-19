@@ -65,6 +65,10 @@ public struct ChatClientConfig {
     ///
     /// - Parameter apiKey: The API key of the chat app the `ChatClient` connects to.
     ///
+    
+    /// Allows to inject a custom API client for uploading attachments, if not specified `DefaultAttachmentsAPIClient` is used
+    public var customCDNClient: CDNClient?
+    
     public init(apiKey: APIKey) {
         self.apiKey = apiKey
         isClientInActiveMode = !Bundle.main.isAppExtension
