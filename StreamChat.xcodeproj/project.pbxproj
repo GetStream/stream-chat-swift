@@ -688,7 +688,6 @@
 		8AE335AA24FCF99E002B6677 /* InternetConnection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A424FCF999002B6677 /* InternetConnection_Tests.swift */; };
 		8AE8950D24D8660800E852EC /* PingPongEmojiFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE8950B24D85FF200E852EC /* PingPongEmojiFormatter.swift */; };
 		A35757C72613081B00DC914C /* ChatMessageListKeyboardObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A35757C62613081B00DC914C /* ChatMessageListKeyboardObserver.swift */; };
-		A396B764260CCF0900D8D15B /* TitleContainerView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A396B752260CCE7400D8D15B /* TitleContainerView_Tests.swift */; };
 		A39A8AE7263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = A39A8AE6263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift */; };
 		A3BB3FFF261DA74D00365496 /* ContainerStackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3BB3FFE261DA74D00365496 /* ContainerStackView.swift */; };
 		A3C0D774261CA25700A8A1A2 /* ContainerStackView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3C0D773261CA25700A8A1A2 /* ContainerStackView_Tests.swift */; };
@@ -2858,6 +2857,7 @@
 				8850FE86256558A200C8D534 /* ChatChannelListRouter.swift */,
 				2208246925DFD0060033544B /* ChatChannelListRouter_Mock.swift */,
 				DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */,
+				8825334B258CE82500B77352 /* ChatMessageActionsRouter.swift */,
 				8850FE90256558B200C8D534 /* NavigationRouter.swift */,
 			);
 			path = Navigation;
@@ -3839,7 +3839,6 @@
 				88F836602578D1A80039AEC8 /* ChatMessageActionItem.swift */,
 				8825333D258CE7AC00B77352 /* ChatMessageActionsVC.swift */,
 				F86A11012615B94B00D9FE19 /* ChatMessageActionsVC_Tests.swift */,
-				8825334B258CE82500B77352 /* ChatMessageActionsRouter.swift */,
 			);
 			path = MessageActionsPopup;
 			sourceTree = "<group>";
@@ -5346,8 +5345,6 @@
 				799CD04D26555D5500D682F3 /* ChatChannelListRouter_Mock.swift in Sources */,
 				7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */,
 				792057AC264168A6002B145B /* UITestsEnvironmentSetup.swift in Sources */,
-				A396B764260CCF0900D8D15B /* TitleContainerView_Tests.swift in Sources */,
-				A396B764260CCF0900D8D15B /* TitleContainerView_Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

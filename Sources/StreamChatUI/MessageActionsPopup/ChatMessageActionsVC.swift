@@ -34,9 +34,9 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
         messageController.message
     }
     
-    /// The `_ChatMessageActionsRouter` instance responsible for navigation.
-    open private(set) lazy var router = components
-        .messageActionsRouter
+    /// The `AlertsRouter` instance responsible for presenting alerts.
+    open lazy var alertsRouter = components
+        .alertsRouter
         .init(rootViewController: self)
 
     /// `ContainerView` for showing message's actions.
@@ -133,7 +133,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
         DeleteActionItem(
             action: { [weak self] _ in
                 guard let self = self else { return }
-                self.router.showMessageDeletionConfirmationAlert { confirmed in
+                self.alertsRouter.showMessageDeletionConfirmationAlert { confirmed in
                     guard confirmed else { return }
 
                     self.messageController.deleteMessage { _ in

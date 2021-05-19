@@ -69,13 +69,11 @@ class ChatMessageActionsVC_Tests: XCTestCase {
         // Create new config to edit types...
         var components = vc.components
 
-        class TestChatMessageActionsRouter: ChatMessageActionsRouter {}
-
-        components.messageActionsRouter = TestChatMessageActionsRouter.self
-
+        class TestAlertsRouter: AlertsRouter {}
+        components.alertsRouter = TestAlertsRouter.self
         vc.components = components
 
-        XCTAssert(vc.router is TestChatMessageActionsRouter)
+        XCTAssert(vc.alertsRouter is TestAlertsRouter)
     }
 }
 
