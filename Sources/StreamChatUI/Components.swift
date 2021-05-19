@@ -268,8 +268,8 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The router responsible for navigation on message list screen.
     public var messageListRouter: _ChatMessageListRouter<ExtraData>.Type = _ChatMessageListRouter<ExtraData>.self
 
-    /// The router responsible for navigation on message actions screen.
-    public var messageActionsRouter: _ChatMessageActionsRouter<ExtraData>.Type = _ChatMessageActionsRouter<ExtraData>.self
+    /// The router responsible for presenting alerts.
+    public var alertsRouter: AlertsRouter.Type = AlertsRouter.self
     
     public init() {}
 }

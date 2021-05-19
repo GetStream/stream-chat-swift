@@ -5,13 +5,13 @@
 import StreamChat
 import UIKit
 
-public typealias ChatMessageActionsRouter = _ChatMessageActionsRouter<NoExtraData>
-
-/// `ChatRouter` instance for routing of chat message actions.
-open class _ChatMessageActionsRouter<ExtraData: ExtraDataTypes>: ChatRouter<_ChatMessageActionsVC<ExtraData>> {
-    /// Method for showing alert with confirmation of whether a message should be deleted.
+/// A `NavigationRouter` instance responsible for presenting alerts.
+open class AlertsRouter: NavigationRouter<UIViewController> {
+    /// Shows an alert with confirmation for message deletion.
+    ///
     /// - Parameters:
     ///     - confirmed: Completion closure with a `Bool` parameter indicating whether the deletion has been confirmed or not.
+    ///
     open func showMessageDeletionConfirmationAlert(confirmed: @escaping (Bool) -> Void) {
         let alert = UIAlertController(
             title: L10n.Message.Actions.Delete.confirmationTitle,
