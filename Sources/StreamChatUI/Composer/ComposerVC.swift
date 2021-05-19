@@ -163,20 +163,17 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     /// The view of the composer.
     open private(set) lazy var composerView: _ComposerView<ExtraData> = components
-        .messageComposer
         .messageComposerView.init()
         .withoutAutoresizingMaskConstraints
 
     /// The view controller that shows the suggestions when the user is typing.
     open private(set) lazy var suggestionsVC: _ChatSuggestionsViewController<ExtraData> = components
-        .messageComposer
-        .suggestionsViewController
+        .suggestionsVC
         .init()
     
     /// The view controller that shows the suggestions when the user is typing.
     open private(set) lazy var attachmentsVC: _AttachmentsPreviewVC<ExtraData> = components
-        .messageComposer
-        .attachmentsViewController
+        .messageComposerAttachmentsVC
         .init()
 
     /// The view controller for selecting image attachments.

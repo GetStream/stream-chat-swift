@@ -64,7 +64,7 @@ open class _AttachmentsPreviewVC<ExtraData: ExtraDataTypes>: _ViewController, Co
     open var attachmentViews: [UIView] {
         content.enumerated().map { index, attachment in
             let view = attachment.previewView(components: components).withoutAutoresizingMaskConstraints
-            let cell = components.messageComposer.attachmentCell.init().withoutAutoresizingMaskConstraints
+            let cell = components.messageComposerAttachmentCell.init().withoutAutoresizingMaskConstraints
             cell.embed(attachmentView: view)
             cell.discardButtonHandler = { [weak self] in self?.didTapRemoveItemButton?(index) }
             return cell

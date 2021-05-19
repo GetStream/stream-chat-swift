@@ -18,7 +18,7 @@ extension ImageAttachmentPayload: AttachmentPreviewProvider {
 
     /// The view representing the attachment.
     public func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView {
-        let view = components.messageComposer.imageAttachmentView.init()
+        let view = components.messageComposerImageAttachmentView.init()
         view.content = imagePreviewURL
         return view
     }
@@ -29,7 +29,7 @@ extension FileAttachmentPayload: AttachmentPreviewProvider {
 
     /// The view representing the attachment.
     public func previewView<ExtraData: ExtraDataTypes>(components: _Components<ExtraData>) -> UIView {
-        let view = components.messageComposer.fileAttachmentView.init()
+        let view = components.messageComposerFileAttachmentView.init()
         view.content = .init(
             title: title ?? "",
             size: file.size,

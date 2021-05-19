@@ -58,8 +58,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     /// Controller that handles the composer view
     open private(set) lazy var messageComposerVC = components
-        .messageComposer
-        .messageComposerViewController
+        .messageComposerVC
         .init()
     
     /// View displaying status of the channel.

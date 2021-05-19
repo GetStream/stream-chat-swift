@@ -17,7 +17,7 @@ open class _ChatSuggestionsCollectionReusableView<ExtraData: ExtraDataTypes>: UI
 
     /// The suggestions header view.
     open lazy var suggestionsHeader: ChatSuggestionsHeaderView = {
-        let header = components.messageComposer.suggestionsHeaderView.init().withoutAutoresizingMaskConstraints
+        let header = components.suggestionsHeaderView.init().withoutAutoresizingMaskConstraints
         embed(header)
         return header
     }()
