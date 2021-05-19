@@ -26,9 +26,6 @@ extension _ChatMessageImageGallery {
             .withAdjustingFontForContentSizeCategory
 
         public private(set) lazy var loadingIndicator = components
-            .messageList
-            .messageContentSubviews
-            .attachmentSubviews
             .loadingIndicator
             .init()
             .withoutAutoresizingMaskConstraints

@@ -36,7 +36,7 @@ open class _ChatMessageReactionsView<ExtraData: ExtraDataTypes>: _View, ThemePro
         guard let content = content else { return }
 
         content.reactions.forEach { reaction in
-            let itemView = components.messageList.messageReactions.reactionItemView.init()
+            let itemView = components.reactionItemView.init()
             itemView.content = .init(
                 useBigIcon: content.useBigIcons,
                 reaction: reaction,

@@ -34,7 +34,7 @@ open class _ChatMessageFileAttachmentListView<ExtraData: ExtraDataTypes>: _View,
         containerStackView.subviews.forEach { $0.removeFromSuperview() }
 
         content.forEach { attachment in
-            let item = components.messageList.messageContentSubviews.attachmentSubviews.fileAttachmentItemView.init()
+            let item = components.fileAttachmentView.init()
             item.didTapOnAttachment = { [weak self] in self?.didTapOnAttachment?($0) }
             item.content = attachment
             containerStackView.addArrangedSubview(item)

@@ -38,8 +38,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     /// Layout used by the collection view.
     open lazy var messageListLayout: ChatMessageListCollectionViewLayout = components
-        .messageList
-        .collectionLayout
+        .messageListLayout
         .init()
     
     /// View used to display the messages

@@ -29,9 +29,6 @@ extension _ChatMessageFileAttachmentListView {
         
         /// Animated indicator showing progress of uploading of a file.
         open private(set) lazy var loadingIndicator = components
-            .messageList
-            .messageContentSubviews
-            .attachmentSubviews
             .loadingIndicator
             .init()
             .withoutAutoresizingMaskConstraints

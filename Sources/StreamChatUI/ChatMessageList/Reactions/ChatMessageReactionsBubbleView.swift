@@ -15,8 +15,6 @@ open class _ChatMessageReactionsBubbleView<ExtraData: ExtraDataTypes>: _View, Th
     // MARK: - Subviews
 
     public private(set) lazy var contentView = components
-        .messageList
-        .messageReactions
         .reactionsView
         .init()
         .withoutAutoresizingMaskConstraints

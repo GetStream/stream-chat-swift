@@ -27,17 +27,11 @@ open class _ChatMessageGiphyView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
     public private(set) lazy var imageView = UIImageView().withoutAutoresizingMaskConstraints
 
     public private(set) lazy var badge = components
-        .messageList
-        .messageContentSubviews
-        .attachmentSubviews
         .giphyBadgeView
         .init()
         .withoutAutoresizingMaskConstraints
 
     public private(set) lazy var loadingIndicator = components
-        .messageList
-        .messageContentSubviews
-        .attachmentSubviews
         .loadingIndicator
         .init()
         .withoutAutoresizingMaskConstraints

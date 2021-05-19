@@ -52,7 +52,7 @@ final class ChatMessageContentView_Tests: XCTestCase {
         // Create custom components.
         var components = Components.default
         // Inject custom error indicator type.
-        components.messageList.messageContentSubviews.errorIndicator = TestErrorIndicator.self
+        components.messageErrorIndicator = TestErrorIndicator.self
 
         // Create message content view with the provided `message`, `layout`, and `config`
         let view = contentView(

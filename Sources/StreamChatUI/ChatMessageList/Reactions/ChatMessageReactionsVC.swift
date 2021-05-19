@@ -13,8 +13,6 @@ open class _ChatMessageReactionsVC<ExtraData: ExtraDataTypes>: _ViewController, 
     // MARK: - Subviews
 
     public private(set) lazy var reactionsBubble = components
-        .messageList
-        .messageReactions
         .reactionsBubbleView
         .init()
         .withoutAutoresizingMaskConstraints

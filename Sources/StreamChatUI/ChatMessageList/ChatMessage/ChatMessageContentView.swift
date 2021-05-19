@@ -486,9 +486,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     open func createAvatarView() -> ChatAvatarView {
         if authorAvatarView == nil {
             authorAvatarView = components
-                .messageList
-                .messageContentSubviews
-                .authorAvatarView
+                .avatarView
                 .init()
                 .withoutAutoresizingMaskConstraints
         }
@@ -500,9 +498,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     open func createThreadAvatarView() -> ChatAvatarView {
         if threadAvatarView == nil {
             threadAvatarView = components
-                .messageList
-                .messageContentSubviews
-                .authorAvatarView
+                .avatarView
                 .init()
                 .withoutAutoresizingMaskConstraints
         }
@@ -561,8 +557,6 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     open func createReactionsView() -> _ChatMessageReactionsView<ExtraData> {
         if reactionsView == nil {
             reactionsView = components
-                .messageList
-                .messageReactions
                 .reactionsView
                 .init()
                 .withoutAutoresizingMaskConstraints
@@ -575,9 +569,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     open func createErrorIndicatorView() -> ChatMessageErrorIndicator {
         if errorIndicatorView == nil {
             errorIndicatorView = components
-                .messageList
-                .messageContentSubviews
-                .errorIndicator
+                .messageErrorIndicator
                 .init()
                 .withoutAutoresizingMaskConstraints
 

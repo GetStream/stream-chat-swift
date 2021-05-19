@@ -67,20 +67,81 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// An object responsible for message layout options calculations in `ChatMessageListVC/ChatThreadVC`.
     public var messageLayoutOptionsResolver: _ChatMessageLayoutOptionsResolver<ExtraData> = .init()
+    
+    /// The view that shows a loading indicator.
+    public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
 
     // MARK: - Message list components
+
+    /// The collection view that shows the message list.
+    public var messageListCollectionView: ChatMessageListCollectionView<ExtraData>.Type = ChatMessageListCollectionView<ExtraData>
+        .self
+
+    /// The collection view layout used in `messageListCollectionView`.
+    public var messageListLayout: ChatMessageListCollectionViewLayout.Type = ChatMessageListCollectionViewLayout.self
+
+    /// The view that shows the date for currently visible messages on top of message list.
+    public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type = ChatMessageListScrollOverlayView.self
 
     /// The view used to display content of the message, i.e. in the channel detail message list.
     public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
 
     /// The injector used to inject gallery attachment views.
     public var galleryAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GalleryAttachmentViewInjector<ExtraData>.self
+
     /// The injector used to inject link attachment views.
     public var linkAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _LinkAttachmentViewInjector<ExtraData>.self
+
     /// The injector used for injecting giphy attachment views
     public var giphyAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GiphyAttachmentViewInjector<ExtraData>.self
+
     /// The injector used for injecting file attachment views
     public var filesAttachmentInjector: _FilesAttachmentViewInjector<ExtraData>.Type = _FilesAttachmentViewInjector<ExtraData>.self
+
+    /// The view that shows reactions bubble.
+    public var reactionsBubbleView: _ChatMessageReactionsBubbleView<ExtraData>.Type =
+        _ChatMessageDefaultReactionsBubbleView<ExtraData>.self
+
+    /// The view that shows reactions list in a bubble.
+    public var reactionsView: _ChatMessageReactionsView<ExtraData>.Type = _ChatMessageReactionsView<ExtraData>.self
+
+    /// The view that shows a single reaction.
+    public var reactionItemView: _ChatMessageReactionsView<ExtraData>.ItemView.Type =
+        _ChatMessageReactionsView<ExtraData>.ItemView.self
+    
+    /// The view that shows error indicator in `messageContentView`.
+    public var messageErrorIndicator: ChatMessageErrorIndicator.Type = ChatMessageErrorIndicator.self
+
+    /// The view that shows message's file attachments.
+    public var fileAttachmentListView: _ChatMessageFileAttachmentListView<ExtraData>
+        .Type = _ChatMessageFileAttachmentListView<ExtraData>.self
+
+    /// The view that shows a single file attachment.
+    public var fileAttachmentView: _ChatMessageFileAttachmentListView<ExtraData>.ItemView.Type =
+        _ChatMessageFileAttachmentListView<ExtraData>.ItemView.self
+
+    /// The view that shows message's image attachments.
+    public var imageGalleryView: _ChatMessageImageGallery<ExtraData>.Type =
+        _ChatMessageImageGallery<ExtraData>.self
+
+    /// The view that shows an overlay with uploading progress for image attachment that is being uploaded.
+    public var imageUploadingOverlay: _ChatMessageImageGallery<ExtraData>.UploadingOverlay.Type =
+        _ChatMessageImageGallery<ExtraData>.UploadingOverlay.self
+
+    /// The view that shows giphy attachment with actions.
+    public var giphyAttachmentView: _ChatMessageInteractiveAttachmentView<ExtraData>.Type =
+        _ChatMessageInteractiveAttachmentView<ExtraData>.self
+
+    /// The button that shows the attachment action.
+    public var giphyActionButton: _ChatMessageInteractiveAttachmentView<ExtraData>.ActionButton.Type =
+        _ChatMessageInteractiveAttachmentView<ExtraData>.ActionButton.self
+
+    /// The view that shows a content for `.giphy` attachment.
+    public var giphyView: _ChatMessageGiphyView<ExtraData>.Type =
+        _ChatMessageGiphyView<ExtraData>.self
+
+    /// The view that shows a badge on `giphyAttachmentView`.
+    public var giphyBadgeView: _ChatMessageGiphyView<ExtraData>.GiphyBadge.Type = _ChatMessageGiphyView<ExtraData>.GiphyBadge.self
 
     // MARK: - Channel list components
 
@@ -195,9 +256,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// The router responsible for navigation on message actions screen.
     public var messageActionsRouter: _ChatMessageActionsRouter<ExtraData>.Type = _ChatMessageActionsRouter<ExtraData>.self
-
-    public var messageList = MessageListUI()
-
+    
     public init() {}
 }
 
