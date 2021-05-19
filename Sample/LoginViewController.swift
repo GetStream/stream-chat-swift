@@ -120,11 +120,9 @@ extension LoginViewController {
             
             channelList.controller = channelListController
    
-            let navigation = UINavigationController(
-                navigationBarClass: channelList.components.navigationBar.self,
-                toolbarClass: nil
+            let navigation = channelList.components.navigationVC.init(
+                rootViewController: channelList
             )
-            navigation.viewControllers = [channelList]
 
             UIView.transition(with: view.window!, duration: 0.5, options: .transitionFlipFromLeft, animations: {
                 self.view.window?.rootViewController = navigation

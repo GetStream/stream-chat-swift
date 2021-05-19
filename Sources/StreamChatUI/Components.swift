@@ -245,8 +245,8 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     // MARK: - Navigation
 
-    /// The navigation bar.
-    public var navigationBar: ChatNavigationBar.Type = ChatNavigationBar.self
+    /// The navigation controller.
+    public var navigationVC: NavigationVC.Type = NavigationVC.self
 
     /// The router responsible for navigation on channel list screen.
     public var channelListRouter: _ChatChannelListRouter<ExtraData>.Type = _ChatChannelListRouter<ExtraData>.self
