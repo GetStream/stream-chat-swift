@@ -211,7 +211,7 @@ public class _ChatChannelController<ExtraData: ExtraDataTypes>: DataController, 
         client.apiClient
     )
     
-    private lazy var eventSender: EventSender<ExtraData> = self.environment.eventSenderBuilder(
+    private lazy var eventSender: TypingEventsSender<ExtraData> = self.environment.eventSenderBuilder(
         client.databaseContainer,
         client.apiClient
     )
@@ -945,7 +945,7 @@ extension _ChatChannelController {
         var eventSenderBuilder: (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> EventSender<ExtraData> = EventSender.init
+        ) -> TypingEventsSender<ExtraData> = TypingEventsSender.init
     }
 }
 

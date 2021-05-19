@@ -127,7 +127,10 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         ) as! _ChatChannelListCollectionViewCell<ExtraData>
     
         cell.components = components
-        cell.itemView.content = controller.channels[indexPath.row]
+        cell.itemView.content = .init(
+            channel: controller.channels[indexPath.row],
+            currentUserId: controller.client.currentUserId
+        )
 
         cell.swipeableView.delegate = self
         cell.swipeableView.indexPath = indexPath
