@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		2208241625DEE8070033544B /* ChatChannelListCollectionViewCell_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2208241525DEE8070033544B /* ChatChannelListCollectionViewCell_Tests.swift */; };
-		2208246A25DFD0060033544B /* ChatChannelListRouter_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2208246925DFD0060033544B /* ChatChannelListRouter_Mock.swift */; };
 		22086B40259509450007F8C0 /* FileAttachmentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22086B3F259509450007F8C0 /* FileAttachmentView.swift */; };
 		2210525F256FE16600A5F0DB /* CommandLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2210525E256FE16600A5F0DB /* CommandLabelView.swift */; };
 		2236D97B25CC68E400C47F30 /* TestAttachmentEnvelope.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */; };
@@ -288,6 +287,7 @@
 		799C9476247D7E94001F1104 /* TemporaryData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9474247D7D41001F1104 /* TemporaryData.swift */; };
 		799C9479247E3DEA001F1104 /* StreamChatModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 799C9477247E3DEA001F1104 /* StreamChatModel.xcdatamodeld */; };
 		799C947D247E6114001F1104 /* TestError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C947B247E6051001F1104 /* TestError.swift */; };
+		799CD04D26555D5500D682F3 /* ChatChannelListRouter_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2208246925DFD0060033544B /* ChatChannelListRouter_Mock.swift */; };
 		799F611B2530B62C007F218C /* ChannelListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799F611A2530B62C007F218C /* ChannelListQuery_Tests.swift */; };
 		79A0E9AD2498BD0C00E9BD50 /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9AC2498BD0C00E9BD50 /* ChatClient.swift */; };
 		79A0E9AF2498BFD800E9BD50 /* WebSocketClient_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79A0E9AE2498BFD800E9BD50 /* WebSocketClient_Tests.swift */; };
@@ -2393,8 +2393,6 @@
 				AD46C4DA25C431C500B405F8 /* ChatChannelListVC_Tests.swift */,
 				780DFCFB25EF7DA500A39A6E /* ChatChannelListVC+SwiftUI.swift */,
 				780DFD0B25EF80AB00A39A6E /* ChatChannelListVC+SwiftUI_Tests.swift */,
-				8850FE86256558A200C8D534 /* ChatChannelListRouter.swift */,
-				2208246925DFD0060033544B /* ChatChannelListRouter_Mock.swift */,
 				790882F625486B8000896F03 /* ChatChannelListCollectionViewDelegate.swift */,
 				790882FC25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift */,
 				2208241525DEE8070033544B /* ChatChannelListCollectionViewCell_Tests.swift */,
@@ -2422,7 +2420,6 @@
 				886BDE68258A501E00E1CD00 /* Attachments */,
 				E74346B12593546000512C2D /* ChatMessage */,
 				DBC8A5752581476E00B20A82 /* ChatMessageListVC.swift */,
-				DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */,
 				79088331254876C100896F03 /* ChatMessageListCollectionView.swift */,
 				79088330254876C100896F03 /* ChatMessageListCollectionViewLayout.swift */,
 				F8933D9025FFC0050054BBFF /* ChatMessageListCollectionViewLayout_Tests.swift */,
@@ -2858,6 +2855,9 @@
 		7973CE48265413B4004C7CE5 /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				8850FE86256558A200C8D534 /* ChatChannelListRouter.swift */,
+				2208246925DFD0060033544B /* ChatChannelListRouter_Mock.swift */,
+				DB9A3D552582689A00555D36 /* ChatMessageListRouter.swift */,
 				8850FE90256558B200C8D534 /* NavigationRouter.swift */,
 			);
 			path = Navigation;
@@ -5317,7 +5317,6 @@
 				79158D5325F15BF900186102 /* iOS13TestCase.swift in Sources */,
 				AD154C6D25DC3BA000850925 /* ChatCommandSuggestionView_Tests.swift in Sources */,
 				ADFCCD7625C9D4D10024505D /* SnapshotVariant.swift in Sources */,
-				2208246A25DFD0060033544B /* ChatChannelListRouter_Mock.swift in Sources */,
 				64B75B002631700500A466D1 /* ChatMessage_Tests.swift in Sources */,
 				ADAA377125E43C3700C31528 /* ChatSuggestionsViewController_Tests.swift in Sources */,
 				F8933D9125FFC0060054BBFF /* ChatMessageListCollectionViewLayout_Tests.swift in Sources */,
@@ -5344,6 +5343,7 @@
 				F8700108264D144400898FDF /* ChatMessageLinkPreviewView_Tests.swift in Sources */,
 				795296C12582494000435B2E /* ComponentsProvider_Tests.swift in Sources */,
 				225503B825DC59FD00A5A65A /* Helpers.swift in Sources */,
+				799CD04D26555D5500D682F3 /* ChatChannelListRouter_Mock.swift in Sources */,
 				7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */,
 				792057AC264168A6002B145B /* UITestsEnvironmentSetup.swift in Sources */,
 				A396B764260CCF0900D8D15B /* TitleContainerView_Tests.swift in Sources */,
