@@ -676,7 +676,12 @@ private class TestEnvironment<ExtraData: ExtraDataTypes> {
     lazy var environment: _ChatClient<ExtraData>.Environment = { [unowned self] in
         .init(
             apiClientBuilder: {
-                self.apiClient = APIClientMock(sessionConfiguration: $0, requestEncoder: $1, requestDecoder: $2)
+                self.apiClient = APIClientMock(
+                    sessionConfiguration: $0,
+                    requestEncoder: $1,
+                    requestDecoder: $2,
+                    CDNClient: $3
+                )
                 return self.apiClient!
             },
             webSocketClientBuilder: {
