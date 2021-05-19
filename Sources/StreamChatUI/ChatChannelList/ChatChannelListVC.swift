@@ -25,9 +25,10 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }()
     
-    /// The `_ChatChannelListRouter` instance responsible for navigation.
-    open private(set) lazy var router: _ChatChannelListRouter<ExtraData> = components
-        .channelListRouter.init(rootViewController: self)
+    /// A router object responsible for handling navigation actions of this view controller.
+    open lazy var router: _ChatChannelListRouter<ExtraData> = components
+        .channelListRouter
+        .init(rootViewController: self)
     
     /// The `UICollectionViewLayout` that used by `ChatChannelListCollectionView`.
     open private(set) lazy var collectionViewLayout: UICollectionViewLayout = components
@@ -148,7 +149,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         
     open func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let channel = controller.channels[indexPath.row]
-        router.openChat(for: channel)
+        router.showMessageList(for: channel.cid)
     }
         
     open func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
@@ -158,17 +159,11 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
         
     @objc open func didTapOnCurrentUserAvatar(_ sender: Any) {
-        guard let currentUser = userAvatarView.controller?.currentUser else {
-            log.error(
-                "Current user is nil while tapping on CurrentUserAvatar, please check that both controller and currentUser are set"
-            )
-            return
-        }
-        router.openCurrentUserProfile(for: currentUser)
+        router.showCurrentUserProfile()
     }
     
     @objc open func didTapCreateNewChannel(_ sender: Any) {
-        router.openCreateNewChannel()
+        router.showCreateNewChannelFlow()
     }
 
     override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {

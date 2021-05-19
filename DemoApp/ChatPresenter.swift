@@ -7,13 +7,13 @@ import StreamChatUI
 import UIKit
 
 class DemoChatChannelListRouter: _ChatChannelListRouter<NoExtraData> {
-    override func openCreateNewChannel() {
+    override func showCreateNewChannelFlow() {
         let storyboard = UIStoryboard(name: "Main", bundle: .main)
         
         let chatViewController = storyboard.instantiateViewController(withIdentifier: "CreateChatViewController")
             as! CreateChatViewController
         chatViewController.searchController = rootViewController.controller.client.userSearchController()
         
-        navigationController?.pushViewController(chatViewController, animated: true)
+        rootNavigationController?.pushViewController(chatViewController, animated: true)
     }
 }

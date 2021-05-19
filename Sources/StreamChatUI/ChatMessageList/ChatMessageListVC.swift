@@ -66,7 +66,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// View displaying status of the channel.
     ///
     /// The status differs based on the fact if the channel is direct or not.
-    open lazy var titleView: TitleContainerView = components.navigationTitleView.init()
+    open private(set) lazy var titleView: TitleContainerView = components.navigationTitleView.init()
         .withoutAutoresizingMaskConstraints
     
     /// View which displays information about current users who are typing.
@@ -75,7 +75,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         .init()
         .withoutAutoresizingMaskConstraints
 
-    /// Handles navigation actions from messages
+    /// A router object that handles navigation to other view controllers.
     open lazy var router = components
         .messageListRouter
         .init(rootViewController: self)
@@ -366,10 +366,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             let message = cell.messageContentView?.content
         else { return }
         router.showImageGallery(
-            for: message,
+            message: message,
             initialAttachment: attachment,
-            previews: previews,
-            from: self
+            previews: previews
         )
     }
     
@@ -377,11 +376,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         _ attachment: ChatMessageLinkAttachment,
         at indexPath: IndexPath
     ) {
-        router.showPreview(for: attachment.payload.originalURL)
+        router.showLinkPreview(link: attachment.originalURL)
     }
 
     public func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath) {
-        router.showPreview(for: attachment.payload.assetURL)
+        router.showFilePreview(fileURL: attachment.payload.assetURL)
     }
     
     /// Executes the provided action on the message
@@ -399,11 +398,11 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     }
     
     /// Opens thread detail for given `message`
-    open func showThread(for message: _ChatMessage<ExtraData>) {
-        guard let channel = channelController.channel else { log.error("Channel is not available"); return }
+    open func showThread(messageId: MessageId) {
+        guard let cid = channelController.cid else { log.error("Channel is not available"); return }
         router.showThread(
-            for: message,
-            in: channel,
+            messageId: messageId,
+            cid: cid,
             client: channelController.client
         )
     }
@@ -483,7 +482,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             }
         case is ThreadReplyActionItem:
             dismiss(animated: true) { [weak self] in
-                self?.showThread(for: message)
+                self?.showThread(messageId: message.parentMessageId ?? message.id)
             }
         default:
             return
@@ -503,7 +502,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     open func messageContentViewDidTapOnThread(_ indexPath: IndexPath?) {
         guard let indexPath = indexPath else { return log.error("IndexPath is not available") }
-        showThread(for: channelController.messages[indexPath.item])
+        let message = channelController.messages[indexPath.item]
+        showThread(messageId: message.parentMessageId ?? message.id)
     }
     
     open func messageContentViewDidTapOnQuotedMessage(_ indexPath: IndexPath?) {

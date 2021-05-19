@@ -144,7 +144,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         vc.executeLifecycleMethods()
         
         vc.userAvatarView.simulateEvent(.touchUpInside)
-        XCTAssertEqual(mockedRouter.openCurrentUserProfile_currentUser, vc.userAvatarView.controller?.currentUser)
+        XCTAssertTrue(mockedRouter.openCurrentUserProfileCalled)
     }
     
     func test_router_openChat() {
@@ -162,7 +162,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         )
                 
         vc.collectionView(vc.collectionView, didSelectItemAt: IndexPath(item: 0, section: 0))
-        XCTAssertEqual(mockedRouter.openChat_channel, vc.controller.channels.first)
+        XCTAssertEqual(mockedRouter.openChat_channelId, vc.controller.channels.first?.cid)
     }
 
     func test_channelList_loadsNextChannels_whenScrolledToBottom() {
