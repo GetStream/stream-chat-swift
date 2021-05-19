@@ -5,7 +5,7 @@
 	<key>messageList.typingIndicator.users</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
-		<string>%@%#@typing@</string>
+		<string>%1$@%2$#@typing@</string>
 		<key>typing</key>
 		<dict>
 			<key>NSStringFormatSpecTypeKey</key>
@@ -13,11 +13,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>%1$@ is typing</string>
+			<string> is typing</string>
 			<key>one</key>
-			<string>%1$@ and %2$d more is typing</string>
+			<string> and %2$d more is typing</string>
 			<key>other</key>
-			<string>%1$@ and %2$d more are typing</string>
+			<string> and %2$d more are typing</string>
 		</dict>
 	</dict>
 	<key>message.threads.count</key>
