@@ -17,10 +17,7 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
     // MARK: - Subviews
 
     public private(set) lazy var preview = components
-        .messageList
-        .messageContentSubviews
-        .attachmentSubviews
-        .giphyAttachmentView
+        .giphyView
         .init()
         .withoutAutoresizingMaskConstraints
 
@@ -101,10 +98,7 @@ open class _ChatMessageInteractiveAttachmentView<ExtraData: ExtraDataTypes>: _Vi
 
     private func createActionButton(for action: AttachmentAction) -> ActionButton {
         let button = components
-            .messageList
-            .messageContentSubviews
-            .attachmentSubviews
-            .interactiveAttachmentActionButton
+            .giphyActionButton
             .init()
 
         button.didTap = { [weak self] in

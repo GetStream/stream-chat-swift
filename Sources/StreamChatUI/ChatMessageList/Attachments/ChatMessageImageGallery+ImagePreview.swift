@@ -36,18 +36,12 @@ extension _ChatMessageImageGallery {
         }()
 
         public private(set) lazy var loadingIndicator = components
-            .messageList
-            .messageContentSubviews
-            .attachmentSubviews
             .loadingIndicator
             .init()
             .withoutAutoresizingMaskConstraints
 
         public private(set) lazy var uploadingOverlay = components
-            .messageList
-            .messageContentSubviews
-            .attachmentSubviews
-            .imageGalleryItemUploadingOverlay
+            .imageUploadingOverlay
             .init()
             .withoutAutoresizingMaskConstraints
 

@@ -20,8 +20,8 @@ extension ChatClient {
         components.channelUnreadCountView = SlackChatChannelUnreadCountView.self
         appearance.images.newChannel = UIImage(named: "new_message")!
 
-        components.messageList.messageContentSubviews.authorAvatarView = SlackChatAvatarView.self
-        components.messageList.messageContentSubviews.attachmentSubviews.imageGallery = SlackChatMessageImageGallery.self
+        components.messageAuthorAvatarView = SlackChatAvatarView.self
+        components.imageGalleryView = SlackChatMessageImageGallery.self
         
         Appearance.default = appearance
         Components.default = components
