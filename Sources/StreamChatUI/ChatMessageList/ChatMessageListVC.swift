@@ -43,7 +43,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     
     /// View used to display the messages
     open private(set) lazy var collectionView: ChatMessageListCollectionView<ExtraData> = {
-        let collection = ChatMessageListCollectionView<ExtraData>(frame: .zero, collectionViewLayout: messageListLayout)
+        let collection = components
+            .messageListCollectionView
+            .init(layout: messageListLayout)
+            .withoutAutoresizingMaskConstraints
 
         collection.isPrefetchingEnabled = false
         collection.showsHorizontalScrollIndicator = false
@@ -52,7 +55,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         collection.dataSource = self
         collection.delegate = self
 
-        return collection.withoutAutoresizingMaskConstraints
+        return collection
     }()
     
     /// Controller that handles the composer view
