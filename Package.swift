@@ -223,6 +223,7 @@ var streamChatSourcesExcluded: [String] { [
 ] }
 
 var streamChatUIFilesExcluded: [String] { [
+    "ChatMessageList/TypingIndicatorView_Tests.swift",
     "ChatMessageList/ChatMessageListCollectionViewLayout_Tests.swift",
     "ChatMessageList/ChatMessage/ChatMessageContentView_Tests.swift",
     "ChatMessageList/ChatMessage/__Snapshots__/ChatMessageContentView_Tests/test_appearance.default-light-flipped-bubble-continuousBubble-text-quotedMessage-reactions.png",
@@ -314,6 +315,15 @@ var streamChatUIFilesExcluded: [String] { [
     "ChatMessageList/__Snapshots__/TitleContainerView_Tests/test_defaultAppearance.small-dark-empty.png",
     "ChatMessageList/__Snapshots__/TitleContainerView_Tests/test_appearanceCustomization_usingAppearance.small-dark.png",
     "ChatMessageList/__Snapshots__/TitleContainerView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
+    "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_appearanceCustomization_usingSubclassing.small-dark.png",
+    "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_defaultAppearance.default-light.png",
+    "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_appearanceCustomization_usingAppearance.extraExtraExtraLarge-light.png",
+    "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_appearanceCustomization_usingSubclassing.extraExtraExtraLarge-light.png",
+    "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_appearanceCustomization_usingAppearance.default-light.png",
+    "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_defaultAppearance.small-dark.png",
+    "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_defaultAppearance.extraExtraExtraLarge-light.png",
+    "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_appearanceCustomization_usingAppearance.small-dark.png",
+    "ChatMessageList/__Snapshots__/TypingIndicatorView_Tests/test_appearanceCustomization_usingSubclassing.default-light.png",
     "CommonViews/AvatarView/CurrentChatUserAvatarView_Tests.swift",
     "CommonViews/AvatarView/ChatChannelAvatarView_Tests.swift",
     "CommonViews/AvatarView/ChatUserAvatarView_Tests.swift",
