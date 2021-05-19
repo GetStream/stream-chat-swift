@@ -67,6 +67,12 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// The status differs based on the fact if the channel is direct or not.
     open lazy var titleView: TitleContainerView = components.navigationTitleView.init()
         .withoutAutoresizingMaskConstraints
+    
+    /// View which displays information about current users who are typing.
+    public private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = components
+        .typingIndicatorView
+        .init()
+        .withoutAutoresizingMaskConstraints
 
     /// Handles navigation actions from messages
     open lazy var router = components
@@ -119,6 +125,18 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         messageComposerVC.view.trailingAnchor.pin(equalTo: view.safeAreaLayoutGuide.trailingAnchor).isActive = true
         messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
+        
+        if channelController.channel?.config.typingEventsEnabled == true {
+            let typingIndicatorViewHeight: CGFloat = 22
+            
+            view.addSubview(typingIndicatorView)
+            typingIndicatorView.heightAnchor.pin(equalToConstant: typingIndicatorViewHeight).isActive = true
+            typingIndicatorView.pin(anchors: [.leading, .trailing], to: view)
+            typingIndicatorView.bottomAnchor.pin(equalTo: messageComposerVC.view.topAnchor).isActive = true
+            typingIndicatorView.isHidden = true
+            
+            collectionView.contentInset.bottom += typingIndicatorViewHeight
+        }
     }
 
     override open func setUpAppearance() {
@@ -408,6 +426,41 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         updateNavigationTitle()
     }
 
+    open func channelController(
+        _ channelController: _ChatChannelController<ExtraData>,
+        didChangeTypingMembers typingMembers: Set<_ChatChannelMember<ExtraData.User>>
+    ) {
+        let typingMembersWithoutCurrentUser = typingMembers
+            .sorted { $0.id < $1.id }
+            .filter { $0.id != self.channelController.client.currentUserId }
+        
+        if typingMembersWithoutCurrentUser.isEmpty {
+            hideTypingIndicator()
+        } else {
+            showTypingIndicator(typingMembers: typingMembersWithoutCurrentUser)
+        }
+    }
+    
+    /// Shows typing Indicator
+    /// - Parameter typingMembers: typing members gotten from `channelController`
+    open func showTypingIndicator(typingMembers: [_ChatChannelMember<ExtraData.User>]) {
+        // If we somehow cannot fetch any member name, we simply show that `Someone is typing`
+        guard let member = typingMembers.first(where: { user in user.name != nil }), let name = member.name else {
+            typingIndicatorView.content = L10n.MessageList.TypingIndicator.typingUnknown
+            typingIndicatorView.isHidden = false
+            return
+        }
+        
+        typingIndicatorView.content = L10n.MessageList.TypingIndicator.users(name, typingMembers.count - 1)
+        typingIndicatorView.isHidden = false
+    }
+    
+    /// Hides typing Indicator
+    /// - Parameter typingMembers: typing members gotten from `channelController`
+    open func hideTypingIndicator() {
+        typingIndicatorView.isHidden = true
+    }
+    
     // MARK: - _ChatMessageActionsVCDelegate
 
     open func chatMessageActionsVC(
