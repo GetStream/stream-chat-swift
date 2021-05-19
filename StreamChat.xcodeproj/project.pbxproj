@@ -530,7 +530,7 @@
 		884C612A2594A7DB008B70DC /* AttachmentActionRequestBody_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 884C61292594A7DB008B70DC /* AttachmentActionRequestBody_Tests.swift */; };
 		8850B92A255C286B003AED69 /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850B929255C286B003AED69 /* Components.swift */; };
 		8850FE87256558A200C8D534 /* ChatChannelListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850FE86256558A200C8D534 /* ChatChannelListRouter.swift */; };
-		8850FE91256558B200C8D534 /* ChatRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850FE90256558B200C8D534 /* ChatRouter.swift */; };
+		8850FE91256558B200C8D534 /* NavigationRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8850FE90256558B200C8D534 /* NavigationRouter.swift */; };
 		885B3D7725642B3D003E6BDF /* CurrentChatUserAvatarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885B3D7625642B3D003E6BDF /* CurrentChatUserAvatarView.swift */; };
 		885B3D7D25642B88003E6BDF /* CreateChatChannelButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 885B3D7C25642B88003E6BDF /* CreateChatChannelButton.swift */; };
 		8862922925AC720F00D9AE78 /* TokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8862922825AC720F00D9AE78 /* TokenProvider.swift */; };
@@ -1710,7 +1710,7 @@
 		884C61292594A7DB008B70DC /* AttachmentActionRequestBody_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentActionRequestBody_Tests.swift; sourceTree = "<group>"; };
 		8850B929255C286B003AED69 /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
 		8850FE86256558A200C8D534 /* ChatChannelListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListRouter.swift; sourceTree = "<group>"; };
-		8850FE90256558B200C8D534 /* ChatRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRouter.swift; sourceTree = "<group>"; };
+		8850FE90256558B200C8D534 /* NavigationRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationRouter.swift; sourceTree = "<group>"; };
 		885B3D7625642B3D003E6BDF /* CurrentChatUserAvatarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentChatUserAvatarView.swift; sourceTree = "<group>"; };
 		885B3D7C25642B88003E6BDF /* CreateChatChannelButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateChatChannelButton.swift; sourceTree = "<group>"; };
 		8862922825AC720F00D9AE78 /* TokenProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenProvider.swift; sourceTree = "<group>"; };
@@ -2345,6 +2345,7 @@
 				7908830C2548707B00896F03 /* ChatMessageList */,
 				790882BE25486AB000896F03 /* ChatChannelList */,
 				88F8364E2578D1590039AEC8 /* MessageActionsPopup */,
+				7973CE48265413B4004C7CE5 /* Navigation */,
 				88F0D6ED257E446800F4B050 /* Resources */,
 				88F0D6EA257E409E00F4B050 /* Generated */,
 				7908823125432C6400896F03 /* StreamChatUI.h */,
@@ -2852,6 +2853,14 @@
 				22CAFA7525CAE278005935D9 /* RawJSON_Tests.swift */,
 			);
 			path = Payloads;
+			sourceTree = "<group>";
+		};
+		7973CE48265413B4004C7CE5 /* Navigation */ = {
+			isa = PBXGroup;
+			children = (
+				8850FE90256558B200C8D534 /* NavigationRouter.swift */,
+			);
+			path = Navigation;
 			sourceTree = "<group>";
 		};
 		798779F52498E47700015F8B /* MockEnpointResponses */ = {
@@ -3692,7 +3701,6 @@
 				E7073A6225DD67B3003896B9 /* UILabel+Extensions.swift */,
 				E70120152583EBC90036DACD /* CALayer+Extensions.swift */,
 				888123DF255D4D2100070D5A /* UIImageView+Extensions.swift */,
-				8850FE90256558B200C8D534 /* ChatRouter.swift */,
 				224FF6902562F58F00725DD1 /* UIColor+Extensions.swift */,
 				224FF6962562F5AE00725DD1 /* Bundle+Extensions.swift */,
 				AD7702F225EFE1D2004E2F10 /* DateFormatter+Extensions.swift */,
@@ -5141,7 +5149,7 @@
 				F80BCA1E26304FEE00F2107B /* CloseButton.swift in Sources */,
 				22ADD682256C40410098EFEB /* ComposerView.swift in Sources */,
 				E7A37B8425ADA66E0055458F /* ChatSuggestionsHeaderView.swift in Sources */,
-				8850FE91256558B200C8D534 /* ChatRouter.swift in Sources */,
+				8850FE91256558B200C8D534 /* NavigationRouter.swift in Sources */,
 				883051C82630579D0069D731 /* ChatThreadArrowView.swift in Sources */,
 				E798D6D325FF69120002C3B9 /* SwipeableView.swift in Sources */,
 				E701201E2583EBD50036DACD /* CALayer+Extensions.swift in Sources */,
