@@ -955,7 +955,6 @@
 		F87A4866260B3516001653A8 /* SwiftUIViewRepresentable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */; };
 		F87A4956260C6F38001653A8 /* ChatMessageContentView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4955260C6F38001653A8 /* ChatMessageContentView+SwiftUI.swift */; };
 		F87A4960260C6FFA001653A8 /* MessengerChatMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A495F260C6FFA001653A8 /* MessengerChatMessageContentView.swift */; };
-		F87A496A260C7108001653A8 /* MessengerChatMessageCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4969260C7108001653A8 /* MessengerChatMessageCollectionViewCell.swift */; };
 		F87A4974260C8C5A001653A8 /* MessengerChatChannelListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4973260C8C5A001653A8 /* MessengerChatChannelListRouter.swift */; };
 		F87A497E260C8D22001653A8 /* MessengerChatChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A497D260C8D22001653A8 /* MessengerChatChannelViewController.swift */; };
 		F87A4A5A26146DAC001653A8 /* ChatMessageActionControl_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F87A4A5926146DAB001653A8 /* ChatMessageActionControl_Tests.swift */; };
@@ -6019,7 +6018,6 @@
 				F86C87B525F906630000BCA9 /* AppDelegate.swift in Sources */,
 				F87A4974260C8C5A001653A8 /* MessengerChatChannelListRouter.swift in Sources */,
 				F87A4960260C6FFA001653A8 /* MessengerChatMessageContentView.swift in Sources */,
-				F87A496A260C7108001653A8 /* MessengerChatMessageCollectionViewCell.swift in Sources */,
 				F86C87B725F906630000BCA9 /* SceneDelegate.swift in Sources */,
 				F87A497E260C8D22001653A8 /* MessengerChatChannelViewController.swift in Sources */,
 				F86C87DA25F906A90000BCA9 /* MessengerChatChannelList.swift in Sources */,
