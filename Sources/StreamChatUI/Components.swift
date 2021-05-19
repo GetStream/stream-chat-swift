@@ -182,8 +182,21 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var currentUserAvatarView: _CurrentChatUserAvatarView<ExtraData>.Type =
         _CurrentChatUserAvatarView<ExtraData>.self
 
+    // MARK: - Navigation
+
+    /// The navigation bar.
+    public var navigationBar: ChatNavigationBar.Type = ChatNavigationBar.self
+
+    /// The router responsible for navigation on channel list screen.
+    public var channelListRouter: _ChatChannelListRouter<ExtraData>.Type = _ChatChannelListRouter<ExtraData>.self
+
+    /// The router responsible for navigation on message list screen.
+    public var messageListRouter: _ChatMessageListRouter<ExtraData>.Type = _ChatMessageListRouter<ExtraData>.self
+
+    /// The router responsible for navigation on message actions screen.
+    public var messageActionsRouter: _ChatMessageActionsRouter<ExtraData>.Type = _ChatMessageActionsRouter<ExtraData>.self
+
     public var messageList = MessageListUI()
-    public var navigation = Navigation()
 
     public init() {}
 }
