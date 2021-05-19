@@ -176,8 +176,13 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// A type for the view used as avatar when picking users to mention.
     public var mentionAvatarView: _ChatUserAvatarView<ExtraData>.Type = _ChatUserAvatarView<ExtraData>.self
 
+    // MARK: - Current user components
+
+    /// The view that shows current user avatar.
+    public var currentUserAvatarView: _CurrentChatUserAvatarView<ExtraData>.Type =
+        _CurrentChatUserAvatarView<ExtraData>.self
+
     public var messageList = MessageListUI()
-    public var currentUser = CurrentUser()
     public var navigation = Navigation()
 
     public init() {}

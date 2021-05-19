@@ -46,8 +46,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     /// The `CurrentChatUserAvatarView` instance used for displaying avatar of the current user.
     open private(set) lazy var userAvatarView: _CurrentChatUserAvatarView<ExtraData> = components
-        .currentUser
-        .currentUserViewAvatarView.init()
+        .currentUserAvatarView.init()
         .withoutAutoresizingMaskConstraints
     
     /// Reuse identifier of separator
