@@ -842,6 +842,7 @@
 		E73BD9EA264C04AD00E208B7 /* AttachmentPayloadGiphyWithoutActions.json in Resources */ = {isa = PBXBuildFile; fileRef = E73BD9E8264C016400E208B7 /* AttachmentPayloadGiphyWithoutActions.json */; };
 		E73BD9EC264D9B2900E208B7 /* ChatFileAttachmentListView+ItemView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73BD9EB264D9B2900E208B7 /* ChatFileAttachmentListView+ItemView_Tests.swift */; };
 		E73BD9EE264D9B3A00E208B7 /* ChatMessageFileAttachmentListView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E73BD9ED264D9B3A00E208B7 /* ChatMessageFileAttachmentListView_Tests.swift */; };
+		E74DB0112655473300508D22 /* TypingIndicatorView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74DB0102655473300508D22 /* TypingIndicatorView_Tests.swift */; };
 		E7516B162642E11A00DE778C /* GiphyAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7516B152642E11A00DE778C /* GiphyAttachmentViewInjector.swift */; };
 		E768AA892625C18D00328E6E /* TypingIndicatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E768AA882625C18D00328E6E /* TypingIndicatorView.swift */; };
 		E768AAFB2627691600328E6E /* TypingAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E768AAFA2627691600328E6E /* TypingAnimationView.swift */; };
@@ -2032,6 +2033,7 @@
 		E73BD9E8264C016400E208B7 /* AttachmentPayloadGiphyWithoutActions.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = AttachmentPayloadGiphyWithoutActions.json; sourceTree = "<group>"; };
 		E73BD9EB264D9B2900E208B7 /* ChatFileAttachmentListView+ItemView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatFileAttachmentListView+ItemView_Tests.swift"; sourceTree = "<group>"; };
 		E73BD9ED264D9B3A00E208B7 /* ChatMessageFileAttachmentListView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageFileAttachmentListView_Tests.swift; sourceTree = "<group>"; };
+		E74DB0102655473300508D22 /* TypingIndicatorView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingIndicatorView_Tests.swift; sourceTree = "<group>"; };
 		E7516B152642E11A00DE778C /* GiphyAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GiphyAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		E768AA882625C18D00328E6E /* TypingIndicatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingIndicatorView.swift; sourceTree = "<group>"; };
 		E768AAFA2627691600328E6E /* TypingAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingAnimationView.swift; sourceTree = "<group>"; };
@@ -2429,6 +2431,7 @@
 				F8933D9025FFC0050054BBFF /* ChatMessageListCollectionViewLayout_Tests.swift */,
 				A35757C62613081B00DC914C /* ChatMessageListKeyboardObserver.swift */,
 				E768AA882625C18D00328E6E /* TypingIndicatorView.swift */,
+				E74DB0102655473300508D22 /* TypingIndicatorView_Tests.swift */,
 				E768AAFA2627691600328E6E /* TypingAnimationView.swift */,
 				DBC8A563258113F700B20A82 /* ChatThreadVC.swift */,
 				69736BF126413E5D00090B67 /* ChatMessageListScrollOverlayView.swift */,
@@ -5294,6 +5297,7 @@
 				7849AF6725F243C8007817D4 /* ChatChannelListItemView+SwiftUI_Tests.swift in Sources */,
 				F86C887725FA5C020000BCA9 /* ChatChannelAvatarView+SwiftUI_Tests.swift in Sources */,
 				BDDD1EAC2632E32000BA007B /* AppearanceProvider_Tests.swift in Sources */,
+				E74DB0112655473300508D22 /* TypingIndicatorView_Tests.swift in Sources */,
 				ADEB2F8025CC0B8A00EAAEB6 /* XCTestCase+TestImages.swift in Sources */,
 				AD44758F263B46430030E583 /* ConfirmButton_Tests.swift in Sources */,
 				E798D6F125FF6BF70002C3B9 /* SwipeableView_Tests.swift in Sources */,
