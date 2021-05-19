@@ -121,7 +121,7 @@ extension LoginViewController {
             channelList.controller = channelListController
    
             let navigation = UINavigationController(
-                navigationBarClass: channelList.components.navigation.navigationBar.self,
+                navigationBarClass: channelList.components.navigationBar.self,
                 toolbarClass: nil
             )
             navigation.viewControllers = [channelList]

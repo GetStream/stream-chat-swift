@@ -69,7 +69,7 @@ class ChatMessageActionsVC_Tests: XCTestCase {
 
         class TestChatMessageActionsRouter: ChatMessageActionsRouter {}
 
-        components.navigation.messageActionsRouter = TestChatMessageActionsRouter.self
+        components.messageActionsRouter = TestChatMessageActionsRouter.self
 
         vc.components = components
 

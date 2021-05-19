@@ -70,7 +70,6 @@ open class _ChatThreadVC<ExtraData: ExtraDataTypes>:
 
     /// Handles navigation actions from messages
     open lazy var router = components
-        .navigation
         .messageListRouter
         .init(rootViewController: self)
 

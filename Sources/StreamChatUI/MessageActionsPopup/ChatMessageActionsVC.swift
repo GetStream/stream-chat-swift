@@ -32,7 +32,6 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
     
     /// The `_ChatMessageActionsRouter` instance responsible for navigation.
     open private(set) lazy var router = components
-        .navigation
         .messageActionsRouter
         .init(rootViewController: self)
 

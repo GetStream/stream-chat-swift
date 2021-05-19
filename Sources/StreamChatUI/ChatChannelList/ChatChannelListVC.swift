@@ -27,7 +27,6 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     /// The `_ChatChannelListRouter` instance responsible for navigation.
     open private(set) lazy var router: _ChatChannelListRouter<ExtraData> = components
-        .navigation
         .channelListRouter.init(rootViewController: self)
     
     /// The `UICollectionViewLayout` that used by `ChatChannelListCollectionView`.

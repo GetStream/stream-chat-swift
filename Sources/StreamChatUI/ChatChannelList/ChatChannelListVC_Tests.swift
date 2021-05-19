@@ -43,7 +43,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         vc.controller = mockedChannelListController
         
         var components = Components()
-        components.navigation.channelListRouter = ChatChannelListRouter_Mock<NoExtraData>.self
+        components.channelListRouter = ChatChannelListRouter_Mock<NoExtraData>.self
         vc.components = components
 
         channels = .dummy()
