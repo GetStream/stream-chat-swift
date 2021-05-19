@@ -7,9 +7,9 @@ import SwiftUI
 /// Protocol with necessary properties to make `SwiftUIRepresentable` instance
 public protocol SwiftUIRepresentable: AnyObject {
     /// Type used for `content` property
-    associatedtype Content
+    associatedtype ViewContent
     /// Content of a given view
-    var content: Content { get set }
+    var content: ViewContent { get set }
 }
 
 @available(iOS 13.0, *)
@@ -17,7 +17,7 @@ public extension SwiftUIRepresentable where Self: UIView {
     /// Creates `SwiftUIViewRepresentable` instance wrapping the current type that can be used in your SwiftUI view
     /// - Parameters:
     ///     - content: Content of the view. Its value is automatically updated when it's changed
-    static func asView(_ content: Content) -> SwiftUIViewRepresentable<Self> {
+    static func asView(_ content: ViewContent) -> SwiftUIViewRepresentable<Self> {
         SwiftUIViewRepresentable(
             view: self,
             content: content
@@ -29,11 +29,11 @@ public extension SwiftUIRepresentable where Self: UIView {
 /// A concrete type that wraps a view conforming to `SwiftUIRepresentable` and enables using it in SwiftUI via `UIViewRepresentable`
 public struct SwiftUIViewRepresentable<View: UIView & SwiftUIRepresentable>: UIViewRepresentable {
     private let view: View.Type
-    private let content: View.Content
+    private let content: View.ViewContent
     
     init(
         view: View.Type,
-        content: View.Content
+        content: View.ViewContent
     ) {
         self.view = view
         self.content = content
