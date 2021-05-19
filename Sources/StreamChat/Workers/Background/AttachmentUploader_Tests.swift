@@ -67,10 +67,11 @@ final class AttachmentUploader_Tests: StressTestCase {
             // Assert attachment is in `.pendingUpload` state.
             XCTAssertEqual(attachment.localState, .pendingUpload)
             
+            let attachmentModelId = try XCTUnwrap(attachment.asAnyModel()).id
             // Wait attachment uploading begins.
             AssertAsync.willBeEqual(
                 apiClient.uploadFile_attachment?.id,
-                attachment.asAnyModel()?.id
+                attachmentModelId
             )
 
             for progress in stride(from: 0, through: 1, by: 5 * uploader.minSignificantUploadingProgressChange) {
