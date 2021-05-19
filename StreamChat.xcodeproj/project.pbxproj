@@ -744,7 +744,6 @@
 		BD8EBC3A26442E090052199F /* AttachmentsPreviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD8EBC3926442E090052199F /* AttachmentsPreviewVC.swift */; };
 		BDDD1E9B2632C4C900BA007B /* Components+MessageList.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1E942632C4C900BA007B /* Components+MessageList.swift */; };
 		BDDD1E9D2632C4C900BA007B /* Components+Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1E962632C4C900BA007B /* Components+Navigation.swift */; };
-		BDDD1E9E2632C4C900BA007B /* Components+ChannelList.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1E972632C4C900BA007B /* Components+ChannelList.swift */; };
 		BDDD1E9F2632C4C900BA007B /* Components+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1E982632C4C900BA007B /* Components+SwiftUI.swift */; };
 		BDDD1EA02632C4C900BA007B /* Components+CurrentUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1E992632C4C900BA007B /* Components+CurrentUser.swift */; };
 		BDDD1EA12632C4C900BA007B /* Components+MessageComposer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1E9A2632C4C900BA007B /* Components+MessageComposer.swift */; };
@@ -1935,7 +1934,6 @@
 		BDDD1E942632C4C900BA007B /* Components+MessageList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Components+MessageList.swift"; sourceTree = "<group>"; };
 		BDDD1E952632C4C900BA007B /* Components+SwiftUI_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Components+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
 		BDDD1E962632C4C900BA007B /* Components+Navigation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Components+Navigation.swift"; sourceTree = "<group>"; };
-		BDDD1E972632C4C900BA007B /* Components+ChannelList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Components+ChannelList.swift"; sourceTree = "<group>"; };
 		BDDD1E982632C4C900BA007B /* Components+SwiftUI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Components+SwiftUI.swift"; sourceTree = "<group>"; };
 		BDDD1E992632C4C900BA007B /* Components+CurrentUser.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Components+CurrentUser.swift"; sourceTree = "<group>"; };
 		BDDD1E9A2632C4C900BA007B /* Components+MessageComposer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Components+MessageComposer.swift"; sourceTree = "<group>"; };
@@ -2335,7 +2333,6 @@
 				BDDD1EA92632CE3C00BA007B /* Appearance+SwiftUI.swift */,
 				BDDD1EAD2632E6C200BA007B /* Appearance+SwiftUI_Tests.swift */,
 				BDDD1E992632C4C900BA007B /* Components+CurrentUser.swift */,
-				BDDD1E972632C4C900BA007B /* Components+ChannelList.swift */,
 				BDDD1E9A2632C4C900BA007B /* Components+MessageComposer.swift */,
 				BDDD1E942632C4C900BA007B /* Components+MessageList.swift */,
 				BDDD1E962632C4C900BA007B /* Components+Navigation.swift */,
@@ -5175,7 +5172,6 @@
 				BDDD1EAA2632CE3C00BA007B /* Appearance+SwiftUI.swift in Sources */,
 				8850FE87256558A200C8D534 /* ChatChannelListRouter.swift in Sources */,
 				888ABA072594FDE30015937E /* ChatMessageInteractiveAttachmentView.swift in Sources */,
-				BDDD1E9E2632C4C900BA007B /* Components+ChannelList.swift in Sources */,
 				88BD82B02549D18F00369074 /* ChatChannelListItemView.swift in Sources */,
 				A39A8AE7263825F4003453D9 /* ChatMessageLayoutOptionsResolver.swift in Sources */,
 				8825334C258CE82500B77352 /* ChatMessageActionsRouter.swift in Sources */,

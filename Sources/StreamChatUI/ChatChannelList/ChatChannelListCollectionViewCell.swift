@@ -14,15 +14,13 @@ open class _ChatChannelListCollectionViewCell<ExtraData: ExtraDataTypes>: _Colle
     ThemeProvider {
     /// The `ChatChannelListItemView` instance used as content view.
     open private(set) lazy var itemView: _ChatChannelListItemView<ExtraData> = components
-        .channelList
-        .itemView
+        .channelContentView
         .init()
         .withoutAutoresizingMaskConstraints
 
     /// The `SwipeableView` instance which is used for revealing buttons when cell is swiped.
     open private(set) lazy var swipeableView: _SwipeableView<ExtraData> = components
-        .channelList
-        .swipeableView.init()
+        .channelActionsView.init()
         .withoutAutoresizingMaskConstraints
 
     override public func prepareForReuse() {

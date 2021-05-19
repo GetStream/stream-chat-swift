@@ -105,7 +105,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
             let content: (channel: _ChatChannel<NoExtraData>?, currentUserId: UserId?)
             
             var body: some View {
-                components.channelList.itemSubviews.avatarView.asView(content)
+                components.channelAvatarView.asView(content)
                     .frame(width: 50, height: 50)
             }
         }
@@ -121,7 +121,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         let channel = ChatChannel.mock(cid: .unique)
         
         var components = Components()
-        components.channelList.itemSubviews.avatarView = CustomAvatarView.self
+        components.channelAvatarView = CustomAvatarView.self
         let view = CustomView(content: (channel, .unique))
             .environmentObject(components.asObservableObject)
         

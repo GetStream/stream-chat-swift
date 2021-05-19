@@ -13,10 +13,10 @@ extension ChatClient {
         var appearance = Appearance()
         var components = Components()
         
-        components.navigation.channelListRouter = MessengerChatChannelListRouter.self
+        components.channelListRouter = MessengerChatChannelListRouter.self
         appearance.images.pencil = UIImage(systemName: "square.and.pencil")!
         
-        components.channelList.itemView = ChatChannelListItemView.SwiftUIWrapper<MessengerChatChannelListItem>.self
+        components.channelContentView = ChatChannelListItemView.SwiftUIWrapper<MessengerChatChannelListItem>.self
         
         components.messageList.defaultMessageCell = MessengerСhatMessageCollectionViewCell.self
         

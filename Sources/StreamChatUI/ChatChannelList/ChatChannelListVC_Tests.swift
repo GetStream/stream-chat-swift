@@ -90,7 +90,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         }
 
         var components = Components()
-        components.channelList.cellSeparatorReusableView = TestView.self
+        components.channelCellSeparator = TestView.self
 
         vc.components = components
 
@@ -123,7 +123,7 @@ class ChatChannelListVC_Tests: XCTestCase {
         vc.controller = mockedChannelListController
         
         var components = Components()
-        components.channelList.cellSeparatorReusableView = TestSeparatorView.self
+        components.channelCellSeparator = TestSeparatorView.self
         vc.components = components
 
         mockedChannelListController.simulate(
@@ -179,19 +179,14 @@ class ChatChannelListVC_Tests: XCTestCase {
         // Create default ChatChannelListVC which has everything default from `Components`
         let channelListVC = ChatChannelListVC()
 
+        class OtherCollectionLayout: UICollectionViewLayout {}
+
         // Create new config to edit types...
         var components = channelListVC.components
-
-        class OtherCollectionLayout: UICollectionViewLayout {}
-        class OtherCollectionView: UICollectionView {}
-
-        components.channelList.collectionLayout = OtherCollectionLayout.self
-        components.channelList.collectionView = OtherCollectionView.self
-
+        components.channelListLayout = OtherCollectionLayout.self
         channelListVC.components = components
 
         XCTAssert(channelListVC.collectionViewLayout is OtherCollectionLayout)
-        XCTAssert(channelListVC.collectionView is OtherCollectionView)
         XCTAssert(channelListVC.createChannelButton is CreateChatChannelButton)
     }
 }

@@ -13,8 +13,8 @@ extension ChatClient {
         var appearance = Appearance()
         var components = Components()
         
-        components.channelList.itemView = iMessageChatChannelListItemView.self
-        components.channelList.cellSeparatorReusableView = iMessageCellSeparatorView.self
+        components.channelContentView = iMessageChatChannelListItemView.self
+        components.channelCellSeparator = iMessageCellSeparatorView.self
 
         components.navigation.channelListRouter = iMessageChatChannelListRouter.self
         appearance.images.newChannel = UIImage(systemName: "square.and.pencil")!

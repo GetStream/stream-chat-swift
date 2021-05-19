@@ -60,10 +60,7 @@ open class _SwipeableView<ExtraData: ExtraDataTypes>: _View, ComponentsProvider,
     public var indexPath: IndexPath?
 
     /// The `UIStackView` that arranges buttons revealed by swipe gesture.
-    open private(set) lazy var actionItemsStackView: UIStackView = components
-        .channelList
-        .swipeableViewStackView
-        .init()
+    open private(set) lazy var actionItemsStackView: UIStackView = UIStackView()
         .withoutAutoresizingMaskConstraints
 
     override open func setUp() {
