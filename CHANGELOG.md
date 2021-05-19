@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✅ Added
 - Refresh authorization token when WebSocket connection disconnects because the token has expired [#1069](https://github.com/GetStream/stream-chat-swift/pull/1069)
+- Typing indicator inside `ChatMessageListVC` [#1073](https://github.com/GetStream/stream-chat-swift/pull/1073) 
 
 ### 🐞 Fixed
 - Fix crash when opening attachments on iPad [#1060](https://github.com/GetStream/stream-chat-swift/pull/1060) [#997](https://github.com/GetStream/stream-chat-swift/pull/977)
