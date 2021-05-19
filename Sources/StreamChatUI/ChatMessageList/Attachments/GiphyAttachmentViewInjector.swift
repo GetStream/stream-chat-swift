@@ -15,7 +15,11 @@ public typealias GiphyAttachmentViewInjector = _GalleryAttachmentViewInjector<No
 
 public class _GiphyAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
     open lazy var giphyImageView: _ChatMessageInteractiveAttachmentView<ExtraData> = {
-        let giphyView = _ChatMessageInteractiveAttachmentView<ExtraData>().withoutAutoresizingMaskConstraints
+        let giphyView = contentView
+            .components
+            .giphyAttachmentView.init()
+            .withoutAutoresizingMaskConstraints
+        
         giphyView.contentMode = .scaleAspectFit
         giphyView.isUserInteractionEnabled = true
         giphyView.clipsToBounds = true

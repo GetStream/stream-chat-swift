@@ -15,7 +15,10 @@ public typealias FilesAttachmentViewInjector = _FilesAttachmentViewInjector<NoEx
 
 public class _FilesAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
     open lazy var fileAttachmentView: _ChatMessageFileAttachmentListView<ExtraData> = {
-        let attachmentListView = _ChatMessageFileAttachmentListView<ExtraData>()
+        let attachmentListView = contentView
+            .components
+            .fileAttachmentListView
+            .init()
         
         attachmentListView.didTapOnAttachment = { [weak self] attachment in
             guard let delegate = self?.contentView.delegate as? FileActionContentViewDelegate,

@@ -37,7 +37,15 @@ open class ChatMessageListCollectionView<ExtraData: ExtraDataTypes>: UICollectio
     }
     
     private var contentOffsetObservation: NSKeyValueObservation?
-    
+
+    public required init(layout: ChatMessageListCollectionViewLayout) {
+        super.init(frame: .zero, collectionViewLayout: layout)
+    }
+
+    public required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
     override open func didMoveToSuperview() {
         super.didMoveToSuperview()
         

@@ -18,7 +18,10 @@ public protocol GalleryContentViewDelegate: ChatMessageContentViewDelegate {
 public typealias GalleryAttachmentViewInjector = _GalleryAttachmentViewInjector<NoExtraData>
 
 open class _GalleryAttachmentViewInjector<ExtraData: ExtraDataTypes>: _AttachmentViewInjector<ExtraData> {
-    open private(set) lazy var galleryView = _ChatMessageImageGallery<ExtraData>()
+    open private(set) lazy var galleryView = contentView
+        .components
+        .imageGalleryView
+        .init()
         .withoutAutoresizingMaskConstraints
 
     override open func contentViewDidLayout(options: ChatMessageLayoutOptions) {
