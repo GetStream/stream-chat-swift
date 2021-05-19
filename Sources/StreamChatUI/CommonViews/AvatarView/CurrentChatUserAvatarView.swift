@@ -29,7 +29,6 @@ open class _CurrentChatUserAvatarView<ExtraData: ExtraDataTypes>: _Control, Them
     
     /// The view that shows the current user's avatar.
     open private(set) lazy var avatarView: ChatAvatarView = components
-        .currentUser
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
     
