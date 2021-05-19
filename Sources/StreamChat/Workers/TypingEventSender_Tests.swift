@@ -111,4 +111,22 @@ class TypingEventsSender_Tests: StressTestCase {
         time.run(numberOfSeconds: .startTypingEventTimeout)
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
     }
+    
+    func test_typingEventsSender_sendsStopTyping_whenDealocated() {
+        let cid = ChannelId.unique
+        
+        // First send keystroke to store `cid` internally inside `typingEventsSender` to have CID for stopTyping.
+        eventSender.keystroke(in: cid)
+        
+        // Check the start typing event has been sent.
+        let startTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStartTyping)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
+        
+        // Deinit the eventSender
+        eventSender = nil
+        
+        // Make sure the stop typing event has been sent.
+        let stopTypingEndpoint: Endpoint<EmptyResponse> = .sendEvent(cid: cid, eventType: .userStopTyping)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
+    }
 }

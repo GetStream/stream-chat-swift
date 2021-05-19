@@ -17,9 +17,20 @@ extension TimeInterval {
 class TypingEventsSender<ExtraData: ExtraDataTypes>: Worker {
     /// A timer type.
     var timer: Timer.Type = DefaultTimer.self
-        
+    /// ChannelId for channel that typing has occured in. Stored to stop typing when `TypingEventsSender` is dealocated
+    private var typingChannelId: ChannelId?
+    
     @Atomic private var currentUserTypingTimerControl: TimerControl?
     @Atomic private var currentUserLastTypingDate: Date?
+    
+    deinit {
+        // We need to cleanup the typing state when sender is dealocated.
+        guard let currentlyTypingChannelId = typingChannelId else {
+            log.info("There is no cid, skipping stopTyping on deinit.")
+            return
+        }
+        self.stopTyping(in: currentlyTypingChannelId)
+    }
     
     // MARK: Typing events
     
@@ -44,6 +55,8 @@ class TypingEventsSender<ExtraData: ExtraDataTypes>: Worker {
     }
     
     func startTyping(in cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        typingChannelId = cid
+        
         apiClient.request(
             endpoint: .sendEvent(cid: cid, eventType: .userStartTyping)
         ) {
