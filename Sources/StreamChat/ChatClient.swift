@@ -115,7 +115,16 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
         
         let decoder = environment.requestDecoderBuilder()
         
-        let apiClient = environment.apiClientBuilder(urlSessionConfiguration, encoder, decoder)
+        let apiClient = environment.apiClientBuilder(
+            urlSessionConfiguration,
+            encoder,
+            decoder,
+            config.customCDNClient ?? DefaultCDNClient(
+                encoder: encoder,
+                decoder: decoder,
+                sessionConfiguration: urlSessionConfiguration
+            )
+        )
         return apiClient
     }()
     
@@ -341,8 +350,16 @@ extension _ChatClient {
         var apiClientBuilder: (
             _ sessionConfiguration: URLSessionConfiguration,
             _ requestEncoder: RequestEncoder,
-            _ requestDecoder: RequestDecoder
-        ) -> APIClient = { APIClient(sessionConfiguration: $0, requestEncoder: $1, requestDecoder: $2) }
+            _ requestDecoder: RequestDecoder,
+            _ CDNClient: CDNClient
+        ) -> APIClient = {
+            APIClient(
+                sessionConfiguration: $0,
+                requestEncoder: $1,
+                requestDecoder: $2,
+                CDNClient: $3
+            )
+        }
         
         var webSocketClientBuilder: ((
             _ sessionConfiguration: URLSessionConfiguration,
