@@ -263,7 +263,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// For group chat is called every-time the channel changes.
     open func updateNavigationTitle() {
         let title = channelController.channel
-            .flatMap { components.channelList.channelNamer($0, channelController.client.currentUserId) }
+            .flatMap { components.channelNamer($0, channelController.client.currentUserId) }
         
         let subtitle: String? = {
             if channelController.channel?.isDirectMessageChannel == true {

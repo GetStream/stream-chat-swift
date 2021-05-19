@@ -32,14 +32,12 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     /// The `UICollectionViewLayout` that used by `ChatChannelListCollectionView`.
     open private(set) lazy var collectionViewLayout: UICollectionViewLayout = components
-        .channelList
-        .collectionLayout.init()
+        .channelListLayout.init()
     
     /// The `UICollectionView` instance that displays channel list.
-    open private(set) lazy var collectionView: UICollectionView = components
-        .channelList
-        .collectionView.init(frame: .zero, collectionViewLayout: collectionViewLayout)
-        .withoutAutoresizingMaskConstraints
+    open private(set) lazy var collectionView: UICollectionView =
+        UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
+            .withoutAutoresizingMaskConstraints
     
     /// The `UIButton` instance used for navigating to new channel screen creation,
     open private(set) lazy var createChannelButton: UIButton = components
@@ -68,12 +66,12 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         channelsCount = controller.channels.count
         
         collectionView.register(
-            components.channelList.collectionViewCell.self,
+            components.channelCell.self,
             forCellWithReuseIdentifier: collectionViewCellReuseIdentifier
         )
         
         collectionView.register(
-            components.channelList.cellSeparatorReusableView,
+            components.channelCellSeparator,
             forSupplementaryViewOfKind: ListCollectionViewLayout.separatorKind,
             withReuseIdentifier: separatorReuseIdentifier
         )

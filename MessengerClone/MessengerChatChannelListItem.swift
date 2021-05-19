@@ -18,9 +18,7 @@ struct MessengerChatChannelListItem: ChatChannelListItemView.SwiftUIView {
     var body: some View {
         HStack {
             components
-                .channelList
-                .itemSubviews
-                .avatarView
+                .channelAvatarView
                 .asView((dataSource.content, dataSource.content?.membership?.id))
                 .frame(width: 50, height: 50)
             VStack(

@@ -44,54 +44,38 @@ open class _ChatChannelListItemView<ExtraData: ExtraDataTypes>: _View, ThemeProv
     open private(set) lazy var bottomContainer: ContainerStackView = ContainerStackView().withoutAutoresizingMaskConstraints
     
     /// The `UILabel` instance showing the channel name.
-    open private(set) lazy var titleLabel: UILabel = components
-        .channelList
-        .itemSubviews
-        .titleLabel
-        .init()
+    open private(set) lazy var titleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
     
     /// The `UILabel` instance showing the last message or typing members if any.
-    open private(set) lazy var subtitleLabel: UILabel = components
-        .channelList
-        .itemSubviews
-        .subtitleLabel
-        .init()
+    open private(set) lazy var subtitleLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
     
     /// The `UILabel` instance showing the time of the last sent message.
-    open private(set) lazy var timestampLabel: UILabel = components
-        .channelList
-        .itemSubviews
-        .timestampLabel
-        .init()
+    open private(set) lazy var timestampLabel: UILabel = UILabel()
         .withoutAutoresizingMaskConstraints
         .withAdjustingFontForContentSizeCategory
         .withBidirectionalLanguagesSupport
     
     /// The view used to show channels avatar.
     open private(set) lazy var avatarView: _ChatChannelAvatarView<ExtraData> = components
-        .channelList
-        .itemSubviews
-        .avatarView
+        .channelAvatarView
         .init()
         .withoutAutoresizingMaskConstraints
     
     /// The view showing number of unread messages in channel if any.
     open private(set) lazy var unreadCountView: ChatChannelUnreadCountView = components
-        .channelList
-        .itemSubviews
-        .unreadCountView.init()
+        .channelUnreadCountView.init()
         .withoutAutoresizingMaskConstraints
 
     /// Text of `titleLabel` which contains the channel name.
     open var titleText: String? {
-        if let content = content {
-            return components.channelList.channelNamer(content.channel, content.channel.membership?.id)
+        if let channel = content?.channel {
+            return components.channelNamer(channel, channel.membership?.id)
         } else {
             return nil
         }

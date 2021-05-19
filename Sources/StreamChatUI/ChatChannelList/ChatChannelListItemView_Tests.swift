@@ -98,24 +98,6 @@ class ChatChannelListItemView_Tests: XCTestCase {
         AssertSnapshot(view)
     }
 
-    func test_ItemView_usesCorrectComponentsTypes_whenCustomTypesDefined() {
-        // Create default ChatChannelListVC which has everything default from `Components`
-        let itemView = ChatChannelListItemView()
-
-        // Create new config to set custom types...
-        var components = Components()
-
-        components.channelList.itemSubviews.titleLabel = TestLabel.self
-        components.channelList.itemSubviews.subtitleLabel = TestLabel1.self
-        components.channelList.itemSubviews.timestampLabel = TestLabel2.self
-
-        itemView.components = components
-
-        XCTAssert(itemView.titleLabel is TestLabel)
-        XCTAssert(itemView.subtitleLabel is TestLabel1)
-        XCTAssert(itemView.timestampLabel is TestLabel2)
-    }
-
     func test_textProperties_arePropagated() {
         let itemView = ChatChannelListItemView()
         itemView.content = content
@@ -146,7 +128,7 @@ class ChatChannelListItemView_Tests: XCTestCase {
         let itemView = ChatChannelListItemView()
 
         var components = Components()
-        components.channelList.channelNamer = { namerChannel, namerUserId in
+        components.channelNamer = { namerChannel, namerUserId in
             XCTAssertEqual(namerChannel, channel)
             XCTAssertEqual(namerUserId, userId)
             return namerChannel.name

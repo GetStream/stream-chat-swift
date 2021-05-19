@@ -82,7 +82,38 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The injector used for injecting file attachment views
     public var filesAttachmentInjector: _FilesAttachmentViewInjector<ExtraData>.Type = _FilesAttachmentViewInjector<ExtraData>.self
 
-    public var channelList = ChannelList()
+    // MARK: - Channel list components
+
+    /// The logic to generate a name for the given channel.
+    public var channelNamer: ChatChannelNamer<ExtraData> = DefaultChatChannelNamer()
+
+    /// The collection view layout of the channel list.
+    public var channelListLayout: UICollectionViewLayout.Type = ListCollectionViewLayout.self
+
+    /// The `UICollectionViewCell` subclass that shows channel information.
+    public var channelCell: _ChatChannelListCollectionViewCell<ExtraData>.Type =
+        _ChatChannelListCollectionViewCell<ExtraData>.self
+
+    /// The channel cell separator in the channel list.
+    public var channelCellSeparator: UICollectionReusableView.Type = CellSeparatorReusableView.self
+
+    /// The view in the channel cell that shows channel actions on swipe.
+    public var channelActionsView: _SwipeableView<ExtraData>.Type =
+        _SwipeableView<ExtraData>.self
+    
+    /// The view that shows channel information.
+    public var channelContentView: _ChatChannelListItemView<ExtraData>.Type = _ChatChannelListItemView<ExtraData>.self
+
+    /// The view that shows a user avatar including an indicator of the user presence (online/offline).
+    public var channelAvatarView: _ChatChannelAvatarView<ExtraData>.Type = _ChatChannelAvatarView.self
+
+    /// The view that shows a number of unread messages in channel.
+    public var channelUnreadCountView: ChatChannelUnreadCountView.Type = ChatChannelUnreadCountView.self
+
+    /// The view that shows a read/unread status of the last message in channel.
+    public var channelReadStatusView: ChatChannelReadStatusCheckmarkView.Type =
+        ChatChannelReadStatusCheckmarkView.self
+
     public var messageList = MessageListUI()
     public var messageComposer = MessageComposer()
     public var currentUser = CurrentUser()
