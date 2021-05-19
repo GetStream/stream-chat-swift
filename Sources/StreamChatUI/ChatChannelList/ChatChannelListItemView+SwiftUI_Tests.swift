@@ -21,7 +21,7 @@ class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
 
             public var body: some View {
                 HStack {
-                    Image(url: dataSource.content!.imageURL!)
+                    Image(url: dataSource.content!.channel.imageURL!)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .clipped()
@@ -30,7 +30,7 @@ class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
 
                     Spacer()
 
-                    Text(dataSource.content!.name!)
+                    Text(dataSource.content!.channel.name!)
                 }.padding()
             }
         }
@@ -43,7 +43,7 @@ class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
         )
 
         let view = ChatChannelListItemView.SwiftUIWrapper<CustomChannelListItemView>()
-        view.content = channel
+        view.content = .init(channel: channel, currentUserId: nil)
         view.addWidthConstraint()
 
         AssertSnapshot(view)
