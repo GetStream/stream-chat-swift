@@ -66,7 +66,7 @@ public struct ChatClientConfig {
     /// - Parameter apiKey: The API key of the chat app the `ChatClient` connects to.
     ///
     
-    /// Allows to inject a custom API client for uploading attachments, if not specified `DefaultAttachmentsAPIClient` is used
+    /// Allows to inject a custom API client for uploading attachments, if not specified `StreamCDNClient` is used
     public var customCDNClient: CDNClient?
     
     public init(apiKey: APIKey) {

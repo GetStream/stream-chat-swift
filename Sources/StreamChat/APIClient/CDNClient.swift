@@ -17,8 +17,8 @@ public protocol CDNClient {
     )
 }
 
-/// Default implementation of CDNClient
-class DefaultCDNClient: CDNClient {
+/// Default implementation of CDNClient that uses Stream CDN
+class StreamCDNClient: CDNClient {
     private let decoder: RequestDecoder
     private let encoder: RequestEncoder
     private let session: URLSession

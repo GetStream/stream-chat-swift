@@ -8,7 +8,7 @@ import StreamChat
 import StreamChatTestTools
 import XCTest
 
-class DefaultCDNClient_Tests: StressTestCase {
+class StreamCDNClient_Tests: StressTestCase {
     func test_uploadFileEncoderIsCalledWithEndpoint() throws {
         let builder = Builder()
         let client = builder.make()
@@ -215,12 +215,12 @@ private class Builder {
     var sessionConfiguration = URLSessionConfiguration.ephemeral
     let uniqueHeaderValue = String.unique
     
-    func make() -> DefaultCDNClient {
+    func make() -> StreamCDNClient {
         sessionConfiguration.httpAdditionalHeaders?["unique_value"] = uniqueHeaderValue
         RequestRecorderURLProtocol.startTestSession(with: &sessionConfiguration)
         MockNetworkURLProtocol.startTestSession(with: &sessionConfiguration)
         
-        return DefaultCDNClient(
+        return StreamCDNClient(
             encoder: encoder,
             decoder: decoder,
             sessionConfiguration: sessionConfiguration

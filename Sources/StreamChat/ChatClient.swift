@@ -119,7 +119,7 @@ public class _ChatClient<ExtraData: ExtraDataTypes> {
             urlSessionConfiguration,
             encoder,
             decoder,
-            config.customCDNClient ?? DefaultCDNClient(
+            config.customCDNClient ?? StreamCDNClient(
                 encoder: encoder,
                 decoder: decoder,
                 sessionConfiguration: urlSessionConfiguration

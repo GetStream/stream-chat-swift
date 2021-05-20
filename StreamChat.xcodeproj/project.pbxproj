@@ -48,7 +48,7 @@
 		647F66D5261E22C200111B19 /* BannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 647F66D4261E22C200111B19 /* BannerView.swift */; };
 		648EC576261EF9D400B8F05F /* DemoAppCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */; };
 		649968D5264E66EB000515AB /* CDNClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649968D3264E660B000515AB /* CDNClient.swift */; };
-		649968D7264E693E000515AB /* DefaultCDNClient_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649968D6264E693E000515AB /* DefaultCDNClient_Tests.swift */; };
+		649968D7264E693E000515AB /* StreamCDNClient_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649968D6264E693E000515AB /* StreamCDNClient_Tests.swift */; };
 		649968D9264E6A71000515AB /* CDNClient_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649968D8264E6A71000515AB /* CDNClient_Mock.swift */; };
 		649968DB264E6E81000515AB /* ChatMessageAttachment_Sample.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649968DA264E6E81000515AB /* ChatMessageAttachment_Sample.swift */; };
 		649968DD264F0D69000515AB /* MockFunc.swift in Sources */ = {isa = PBXBuildFile; fileRef = 649968DC264F0D69000515AB /* MockFunc.swift */; };
@@ -1223,7 +1223,7 @@
 		647F66D4261E22C200111B19 /* BannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BannerView.swift; sourceTree = "<group>"; };
 		648EC575261EF9D400B8F05F /* DemoAppCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAppCoordinator.swift; sourceTree = "<group>"; };
 		649968D3264E660B000515AB /* CDNClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDNClient.swift; sourceTree = "<group>"; };
-		649968D6264E693E000515AB /* DefaultCDNClient_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultCDNClient_Tests.swift; sourceTree = "<group>"; };
+		649968D6264E693E000515AB /* StreamCDNClient_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamCDNClient_Tests.swift; sourceTree = "<group>"; };
 		649968D8264E6A71000515AB /* CDNClient_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CDNClient_Mock.swift; sourceTree = "<group>"; };
 		649968DA264E6E81000515AB /* ChatMessageAttachment_Sample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachment_Sample.swift; sourceTree = "<group>"; };
 		649968DC264F0D69000515AB /* MockFunc.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFunc.swift; sourceTree = "<group>"; };
@@ -3041,7 +3041,7 @@
 				79DDF811249CD5AC002F4412 /* APIClient_Tests.swift */,
 				792921C624C047DD00116BBB /* APIClient_Mock.swift */,
 				649968D3264E660B000515AB /* CDNClient.swift */,
-				649968D6264E693E000515AB /* DefaultCDNClient_Tests.swift */,
+				649968D6264E693E000515AB /* StreamCDNClient_Tests.swift */,
 				649968D8264E6A71000515AB /* CDNClient_Mock.swift */,
 				7964F3BB249A5E60002A09EC /* RequestEncoder.swift */,
 				7964F3BD249A5E6E002A09EC /* RequestEncoder_Tests.swift */,
@@ -5897,7 +5897,7 @@
 				8819DFDE252622D900FD1A50 /* ModerationEndpoints_Tests.swift in Sources */,
 				F65D9093250A5CD4000B8CEB /* WebSocketConnectEndpoint_Tests.swift in Sources */,
 				790A4C4A252DDD50001F4A23 /* DeviceEndpoints_Tests.swift in Sources */,
-				649968D7264E693E000515AB /* DefaultCDNClient_Tests.swift in Sources */,
+				649968D7264E693E000515AB /* StreamCDNClient_Tests.swift in Sources */,
 				884C612A2594A7DB008B70DC /* AttachmentActionRequestBody_Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
