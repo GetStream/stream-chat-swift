@@ -254,4 +254,19 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
             }
         }
     }
+    
+    /// Freezes/Unfreezes the channel.
+    ///
+    /// Freezing a channel will disallow sending new messages and sending / deleting reactions.
+    /// For more information, see https://getstream.io/chat/docs/ios-swift/freezing_channels/?language=swift
+    ///
+    /// - Parameters:
+    ///   - freeze: Freeze or unfreeze.
+    /// - Parameter cid: Channel id of the channel to be watched
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func freezeChannel(_ freeze: Bool, cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .freezeChannel(freeze, cid: cid)) {
+            completion?($0.error)
+        }
+    }
 }

@@ -65,6 +65,10 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     @Atomic var channelWatchers_query: ChannelWatcherListQuery?
     @Atomic var channelWatchers_completion: ((Error?) -> Void)?
     
+    @Atomic var freezeChannel_freeze: Bool?
+    @Atomic var freezeChannel_cid: ChannelId?
+    @Atomic var freezeChannel_completion: ((Error?) -> Void)?
+    
     // Cleans up all recorded values
     func cleanUp() {
         update_channelQuery = nil
@@ -122,6 +126,10 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
         
         channelWatchers_query = nil
         channelWatchers_completion = nil
+        
+        freezeChannel_freeze = nil
+        freezeChannel_cid = nil
+        freezeChannel_completion = nil
     }
     
     override func update(
@@ -224,5 +232,11 @@ class ChannelUpdaterMock<ExtraData: ExtraDataTypes>: ChannelUpdater<ExtraData> {
     override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Error?) -> Void)? = nil) {
         channelWatchers_query = query
         channelWatchers_completion = completion
+    }
+    
+    override func freezeChannel(_ freeze: Bool, cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        freezeChannel_freeze = freeze
+        freezeChannel_cid = cid
+        freezeChannel_completion = completion
     }
 }
