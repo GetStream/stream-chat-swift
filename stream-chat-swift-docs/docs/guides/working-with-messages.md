@@ -4,17 +4,19 @@ title: Working with Messages
 
 ## Message object
 A message is represented by `ChatMessage` model.
+Depending on combination of its properties messages appear differently, this screenshot showcases the most common types of messages:
+
+<img src="../img/messages-showcase.png" width="40%" />
 
 ## Optimistic updates
 
 Optimistic updates model is applied to messages, meaning that when there is a change to local messages state it is propagated to chat components so it is displayed for users right away and then it's synchronized with backend. In case of synchronization failure users may be prompted to retry the failed action.
 
 <img src="../img/message-failure-resend.png" width="30%" />
-<br/>
 
 This makes `LocalMessageState` one of the most important properties in message's lifecycle, because it's used for keeping messages in sync with backend.
 
-## Get a Message
+## Get a Message by its ID
 
 You can get a single message by its ID:
 
@@ -24,7 +26,7 @@ import StreamChat
 /// Use the `ChatClient` to create a
 /// `ChatMessageController` with the `ChannelId`. 
 let messageController = chatClient.messageController(
-    cid: ChannelId(type: .messaging, id: "general") ,
+    cid: ChannelId(type: .messaging, id: "general"),
     messageId: "message-id" 
 ) 
  
@@ -39,17 +41,12 @@ messageController.synchronize { error in
 
 `ComposerVC` is a UI component that handles messages creation:
 
-```swift
-let composer = ComposerVC()
-composer.createNewMessage(text: "Hello World!")
-```
-
 <img src="../img/composer-ui.png" width="50%" />
 
 If you are using your own component for a message composer you can use `ChatChannelController` to create messages:
 ```swift
 let controller = ChatChannelController(
-    channelQuery: ChannelQuery(cid: "general"),
+    channelQuery: ChannelQuery(cid: ChannelId(type: .messaging, id: "general")),
     client: client
 )
 controller.createNewMessage(
@@ -76,7 +73,7 @@ More on [Quoted](#replying-a-message)  messages could be found in this guide bel
 
 When `createNewMessage` is called, `ChatChannelController` creates a new message locally and schedules it for send.
 
-Uploading is handled by `MessageSender`. It automatically starts 
+Uploading is handled by an internal entity called `MessageSender`. It automatically starts 
 uploading when it detects locally cached messages with `.pendingSend` state. 
 
 There is no need to take care of `MessageSender`, it is created and added to the list of background workers by `ChatClient`.
@@ -98,7 +95,7 @@ This behavior makes it possible to update your UI with the new message immediate
 
 ```swift
 class MyChannelViewController: UIViewController {
-    let controller = ChannelController(cid: <id of the channel>)
+    let controller = ChannelController(cid: <#ChannelId#>)
 
     func sendMessage(text: String) {
         // This method creates a new message locally,
@@ -169,11 +166,11 @@ This behavior makes it possible to update your UI with the updated message immed
 
 ```swift
 class MyChannelViewController: UIViewController {
-    let controller = ChannelController(cid: <id of the channel>)
+    let controller = ChannelController(cid: <#ChannelId#>)
 
     func editMessage(message: ChatMessage, text: String) {
         let messageController = controller.client.messageController(
-            cid: <id of the channel>,
+            cid: <#ChannelId#>,
             messageId: message.id
         )
 
@@ -201,6 +198,12 @@ class MyChannelViewController: UIViewController {
 ```
 
 ## Delete a message
+
+When a user deletes a message it will be hidden for all the rest users in conversation, but it will appear for the user who deleted it like this:
+
+  <img src="../img/message-delete.png" width="50%" />
+
+In an upcoming version it will become customizable, so it will be possible to hide deleted messages for all participants in a conversation.
 
 Message deletion is handled by `ChatMessageController`:
 
@@ -231,7 +234,7 @@ the response it becomes either `nil` if request succeeds or `deletingFailed` if 
 This behavior makes it possible to update your UI with the updated message immediately without blocking the UI:
 ```swift
 class MyChannelViewController: UIViewController {
-    let controller = ChannelController(cid: <id of the channel>)
+    let controller = ChannelController(cid: <#ChannelId#>)
 
     func deleteMessage(message: Message) {
         // Create a `MessageController` for the message you want to delete
@@ -274,10 +277,11 @@ There are two ways of replying a message:
   
     Initiating a thread reply takes a user into thread details screen and the resulting message will look like a normal message that is placed inside the thread. It is also possible to duplicate it to the parent channel.
   
- <img src="../img/thread-reply.png" width="20%" />
+    <img src="../img/thread-details.png" width="20%" />
 
-When a message is sent using `ComposerVC` that has non-nil `content.threadMessage` the message will be created as a reply to `threadMessage`.
-If `content.threadMessage` is nil, the message will be sent as a normal channel message.
+    A message with thread replies appears like this:
+
+    <img src="../img/thread-reply.png" width="20%" />
 
 If you use your own implementation for message composer you can create a **thread reply** for a message with `MessageController`:
 
@@ -298,7 +302,7 @@ messageController.createNewReply(
 A **quoted reply** can be created like this:
 ```swift
 let controller = ChatChannelController(
-    channelQuery: ChannelQuery(cid: "general"),
+    channelQuery: ChannelQuery(cid: ChannelId(type: .messaging, id: "general")),
     client: client
 )
 channelController.createNewMessage(
