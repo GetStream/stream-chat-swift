@@ -129,15 +129,13 @@ When a message is created `ChannelController` sends *stop typing event* for this
 
 ## Edit a message
 
-`ComposerVC` supports editing a message:
+There is an action for editing messages:
+
+<img src="../img/messages-actions.png" width="25%" />
+
+When a user is editing a message `ComposerVC` takes the following appearance:
 
 <img src="../img/composer-edit.png" width="50%" />
-
-
-```swift
-let composer = ComposerVC()
-composer.editMessage(withId: "message-id", newText: "World Hello!")
-```
 
 If you use your own implementation for composer view, the same could be done with `ChatMessageController`:
 
@@ -198,6 +196,11 @@ class MyChannelViewController: UIViewController {
 ```
 
 ## Delete a message
+
+A message can be deleted with the corresponding action:
+
+<img src="../img/messages-actions.png" width="25%" />
+
 
 When a user deletes a message it will be hidden for all the rest users in conversation, but it will appear for the user who deleted it like this:
 
