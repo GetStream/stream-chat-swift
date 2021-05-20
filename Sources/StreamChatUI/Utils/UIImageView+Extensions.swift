@@ -37,7 +37,7 @@ extension UIImageView {
         guard
             let url = url
         else {
-            image = nil
+            image = placeholder
             return nil
         }
 
