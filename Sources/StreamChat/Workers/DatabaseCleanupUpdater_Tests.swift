@@ -6,14 +6,14 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChannelListCleanupUpdater_Tests: StressTestCase {
+final class DatabaseCleanupUpdater_Tests: StressTestCase {
     typealias ExtraData = NoExtraData
         
     var database: DatabaseContainerMock!
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     
-    var channelListCleanupUpdater: ChannelDatabaseCleanupUpdater<ExtraData>?
+    var databaseCleanupUpdater: DatabaseCleanupUpdater<ExtraData>?
     var channelListUpdater: ChannelListUpdaterMock<NoExtraData>!
     
     override func setUp() {
@@ -24,7 +24,7 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
         apiClient = APIClientMock()
         channelListUpdater = ChannelListUpdaterMock(database: database, apiClient: apiClient)
         
-        channelListCleanupUpdater = ChannelDatabaseCleanupUpdater(
+        databaseCleanupUpdater = DatabaseCleanupUpdater<ExtraData>(
             database: database,
             apiClient: apiClient,
             channelListUpdater: channelListUpdater
@@ -35,7 +35,7 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
         apiClient.cleanUp()
         
         AssertAsync {
-            Assert.canBeReleased(&channelListCleanupUpdater)
+            Assert.canBeReleased(&databaseCleanupUpdater)
             Assert.canBeReleased(&database)
             Assert.canBeReleased(&webSocketClient)
             Assert.canBeReleased(&apiClient)
@@ -44,7 +44,7 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
         super.tearDown()
     }
     
-    func test_cleanupChannelList_cleansChannelsData() throws {
+    func test_resetExistingChannelsData_cleansChannelsData() throws {
         let cid1 = ChannelId.unique
         let cid2 = ChannelId.unique
         
@@ -64,7 +64,7 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
             needsRefreshQueries: false
         )
         
-        channelListCleanupUpdater?.cleanupChannelsData()
+        try databaseCleanupUpdater?.resetExistingChannelsData(session: database.viewContext)
         
         let channel1 = try XCTUnwrap(database.viewContext.channel(cid: cid1))
         let channel2 = try XCTUnwrap(database.viewContext.channel(cid: cid2))
@@ -75,7 +75,7 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
         }
     }
     
-    func test_cleanupChannelList_updatesChannels() throws {
+    func test_refetchExistingChannelListQueries_updateQueries() throws {
         let filter1 = Filter<_ChannelListFilterScope<ExtraData>>.query(.cid, text: .unique)
         let query1 = _ChannelListQuery<ExtraData>(filter: filter1)
         try database.createChannelListQuery(filter: filter1)
@@ -84,7 +84,7 @@ final class ChannelListCleanupUpdater_Tests: StressTestCase {
         let query2 = _ChannelListQuery<ExtraData>(filter: filter2)
         try database.createChannelListQuery(filter: filter2)
         
-        channelListCleanupUpdater?.cleanupChannelsData()
+        databaseCleanupUpdater?.refetchExistingChannelListQueries()
         
         AssertAsync.willBeEqual(
             channelListUpdater.update_queries,
