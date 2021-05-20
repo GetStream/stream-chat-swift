@@ -816,4 +816,43 @@ class ChannelUpdater_Tests: StressTestCase {
             Assert.willBeFalse(channel?.lastActiveWatchers.contains(where: { $0.id == firstWatcherId }) ?? true)
         }
     }
+    
+    // MARK: - Freeze channel
+    
+    func test_freezeChannel_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+        let freeze = Bool.random()
+        
+        channelUpdater.freezeChannel(freeze, cid: cid)
+        
+        let referenceEndpoint: Endpoint<EmptyResponse> = .freezeChannel(freeze, cid: cid)
+        
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_freezeChannel_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        let cid = ChannelId.unique
+        let freeze = Bool.random()
+        channelUpdater.freezeChannel(freeze, cid: cid) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        XCTAssertFalse(completionCalled)
+        
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        
+        AssertAsync.willBeTrue(completionCalled)
+    }
+    
+    func test_freezeChannel_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        channelUpdater.freezeChannel(.random(), cid: .unique) { completionCalledError = $0 }
+        
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
 }
