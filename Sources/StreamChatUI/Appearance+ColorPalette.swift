@@ -31,6 +31,7 @@ public extension Appearance {
         public var background3: UIColor = .streamOverlay
         public var background4: UIColor = .streamOverlayDark
         public var background5: UIColor = .streamOverlayDarkStatic
+        public var background6: UIColor = .streamGrayWhisper
 
         public var overlayBackground: UIColor = .streamOverlayLight
         public var popoverBackground: UIColor = .streamWhite
