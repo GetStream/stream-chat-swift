@@ -8,7 +8,7 @@ extension ChatMessageLinkAttachment {
     /// Creates a new `ChatMessageLinkAttachment` object from the provided data.
     public static func mock(
         id: AttachmentId,
-        ogURL: URL? = nil,
+        originalURL: URL,
         title: String? = nil,
         text: String? = nil,
         author: String? = nil,
@@ -20,7 +20,7 @@ extension ChatMessageLinkAttachment {
             id: id,
             type: .linkPreview,
             payload: .init(
-                ogURL: ogURL,
+                originalURL: originalURL,
                 title: title,
                 text: text,
                 author: author,

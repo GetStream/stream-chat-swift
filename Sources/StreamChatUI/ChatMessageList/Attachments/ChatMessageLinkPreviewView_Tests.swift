@@ -18,6 +18,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
         linkPreviewView.pin(anchors: [.width], to: 200)
         linkPreviewView.content = .mock(
             id: .unique,
+            originalURL: .unique(),
             title: "Title",
             text: "Text",
             author: "Youtube",
@@ -39,6 +40,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
     func test_appearance_whenNoAuthor() {
         linkPreviewView.content = .mock(
             id: .unique,
+            originalURL: .unique(),
             title: "Title",
             text: "Text",
             assetURL: TestImages.yoda.url,
@@ -51,6 +53,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
     func test_appearance_whenNoTitle() {
         linkPreviewView.content = .mock(
             id: .unique,
+            originalURL: .unique(),
             text: "Text",
             author: "Youtube",
             assetURL: TestImages.yoda.url,
@@ -63,6 +66,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
     func test_appearance_whenNoTitleAndText() {
         linkPreviewView.content = .mock(
             id: .unique,
+            originalURL: .unique(),
             author: "Youtube",
             assetURL: TestImages.yoda.url,
             previewURL: TestImages.yoda.url
@@ -76,6 +80,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
             .joined(separator: "\n")
         linkPreviewView.content = .mock(
             id: .unique,
+            originalURL: .unique(),
             title: mockContent,
             text: mockContent,
             author: mockContent,
@@ -108,6 +113,7 @@ final class ChatMessageLinkPreviewView_Tests: XCTestCase {
         linkPreviewView.pin(anchors: [.width], to: 200)
         linkPreviewView.content = .mock(
             id: .unique,
+            originalURL: .unique(),
             title: "Title",
             text: "Text",
             author: "Youtube",

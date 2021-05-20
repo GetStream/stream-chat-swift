@@ -10,7 +10,7 @@ public struct LinkAttachmentPayload: AttachmentPayload {
     public static let type: AttachmentType = .linkPreview
 
     /// An original `URL` that was enriched.
-    public let ogURL: URL?
+    public let originalURL: URL
     /// A title (e.g video name in case of enriched `YouTube` link or song name in case of `Spotify` link).
     public let title: String?
     /// A text, usually description of the link content.
@@ -34,7 +34,7 @@ extension LinkAttachmentPayload: Encodable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: AttachmentCodingKeys.self)
 
-        try container.encodeIfPresent(ogURL, forKey: .ogURL)
+        try container.encode(originalURL, forKey: .ogURL)
         try container.encodeIfPresent(title, forKey: .title)
         try container.encodeIfPresent(text, forKey: .text)
         try container.encodeIfPresent(author, forKey: .author)
@@ -51,19 +51,20 @@ extension LinkAttachmentPayload: Decodable {
         let container = try decoder.container(keyedBy: AttachmentCodingKeys.self)
 
         guard
+            let originalURL = try container
+            .decode(String.self, forKey: .ogURL)
+            .attachmentFixedURL,
             let assetURL = (
                 try container.decodeIfPresent(String.self, forKey: .imageURL) ??
                     container.decodeIfPresent(String.self, forKey: .image) ??
                     container.decodeIfPresent(String.self, forKey: .assetURL)
             )?.attachmentFixedURL
         else {
-            throw ClientError.AttachmentDecoding("Link attachment must contain `assetURL`")
+            throw ClientError.AttachmentDecoding("Link attachment must contain `originalURL` and `assetURL`")
         }
 
         self.init(
-            ogURL: try container
-                .decodeIfPresent(String.self, forKey: .ogURL)?
-                .attachmentFixedURL,
+            originalURL: originalURL,
             title: try container
                 .decodeIfPresent(String.self, forKey: .title)?
                 .trimmingCharacters(in: .whitespacesAndNewlines),
