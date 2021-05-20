@@ -377,7 +377,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         _ attachment: ChatMessageLinkAttachment,
         at indexPath: IndexPath
     ) {
-        router.showPreview(for: attachment.payload.ogURL)
+        router.showPreview(for: attachment.payload.originalURL)
     }
 
     public func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath) {
