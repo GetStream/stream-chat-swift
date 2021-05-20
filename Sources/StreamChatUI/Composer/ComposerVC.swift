@@ -81,13 +81,26 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
 
         /// Creates a new content struct with all empty data.
-        static func empty() -> Content {
+        static func initial() -> Content {
             .init(
                 text: "",
                 state: .new,
                 editingMessage: nil,
                 quotingMessage: nil,
                 threadMessage: nil,
+                attachments: [],
+                command: nil
+            )
+        }
+
+        /// Resets the current content state and clears the content.
+        public mutating func clear() {
+            self = .init(
+                text: "",
+                state: .new,
+                editingMessage: nil,
+                quotingMessage: nil,
+                threadMessage: threadMessage,
                 attachments: [],
                 command: nil
             )
@@ -140,7 +153,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
 
     /// The content of the composer.
-    public var content: Content = .empty() {
+    public var content: Content = .initial() {
         didSet {
             updateContentIfNeeded()
         }
@@ -343,7 +356,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             createNewMessage(text: text)
         }
 
-        content = .empty()
+        content.clear()
     }
     
     @objc open func showAttachmentsPicker(sender: UIButton) {
@@ -427,7 +440,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     }
     
     @objc open func clearContent(sender: UIButton) {
-        content = .empty()
+        content.clear()
     }
 
     /// Creates a new message and notifies the delegate that a new message was created.
