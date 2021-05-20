@@ -400,7 +400,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
         // Thread info
         threadReplyCountButton?.setTitleColor(tintColor, for: .normal)
-        if let replyCount = content?.replyCount {
+        if let replyCount = content?.replyCount, replyCount > 0 {
             threadReplyCountButton?.setTitle(L10n.Message.Threads.count(replyCount), for: .normal)
         } else {
             threadReplyCountButton?.setTitle(L10n.Message.Threads.reply, for: .normal)
