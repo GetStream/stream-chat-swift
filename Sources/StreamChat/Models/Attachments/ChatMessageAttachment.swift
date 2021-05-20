@@ -28,7 +28,14 @@ extension _ChatMessageAttachment: Equatable where Payload: Equatable {}
 
 public typealias AnyChatMessageAttachment = _ChatMessageAttachment<Any>
 
-extension AnyChatMessageAttachment {
+/// Converts type-erased attachment to the attachment with the concrete payload.
+///
+/// Attachment with the requested payload type will be returned if the type-erased payload
+/// has a `Payload` instance under the hood OR if it’s a `Data` that can be decoded as a `Payload`.
+///
+/// - Parameter payloadType: The payload type the current type-erased attachment payload should be treated as.
+/// - Returns: The attachment with the requested payload type or `nil`.
+public extension AnyChatMessageAttachment {
     func attachment<Payload: AttachmentPayload>(
         payloadType: Payload.Type
     ) -> _ChatMessageAttachment<Payload>? {
