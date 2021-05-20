@@ -100,7 +100,13 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
             self?.apiClient.request(endpoint: endpoint) {
                 switch $0 {
                 case let .success(payload):
+                    // The sync call was successfull.
+                    // We schedule all events for existing channels for processing...
                     self?.eventNotificationCenter.process(payload.eventPayloads)
+
+                    // ... and refetch the existing quries to see if there are some new channels
+                    self?.databaseCleanupUpdater.refetchExistingChannelListQueries()
+
                 case let .failure(error):
                     log.info("""
                     Backend couldn't handle replaying missing events - there was too many (>1000) events to replay. \
