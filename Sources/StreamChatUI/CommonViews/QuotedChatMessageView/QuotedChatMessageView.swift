@@ -124,6 +124,10 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
         guard let message = content?.message else { return }
         guard let avatarAlignment = content?.avatarAlignment else { return }
 
+        contentContainerView.backgroundColor = message.linkAttachments.isEmpty
+            ? appearance.colorPalette.background
+            : appearance.colorPalette.highlightedAccentBackground1
+
         setAvatar(imageUrl: message.author.imageURL)
         setText(message.text)
         setAttachmentPreview(for: message)
