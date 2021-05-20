@@ -55,11 +55,15 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
         in channel: _ChatChannel<ExtraData>,
         client: _ChatClient<ExtraData>
     ) {
+        // If the parent id is present it means it is part of the thread,
+        // if not, it means it is the root of the thread and we need to pass its own id
+        let threadMessageId = message.parentMessageId ?? message.id
+
         let threadVC = _ChatThreadVC<ExtraData>()
         threadVC.channelController = client.channelController(for: channel.cid)
         threadVC.messageController = client.messageController(
             cid: channel.cid,
-            messageId: message.id
+            messageId: threadMessageId
         )
         navigationController?.show(threadVC, sender: self)
     }
