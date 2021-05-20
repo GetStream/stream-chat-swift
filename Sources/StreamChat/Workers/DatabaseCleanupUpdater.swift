@@ -5,7 +5,7 @@
 import CoreData
 
 /// Cleans up local data for all the existing channels and refetches it from backend
-class ChannelDatabaseCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
+class DatabaseCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
     private let channelListUpdater: ChannelListUpdater<ExtraData>
     
     override init(
@@ -31,29 +31,22 @@ class ChannelDatabaseCleanupUpdater<ExtraData: ExtraDataTypes>: Worker {
         )
     }
     
-    /// Cleans up local data for all the existing channels and refetches it from backend
-    func cleanupChannelsData() {
-        database.write { session in
-            try self.resetAllExistingChannelsData(session: session)
-        } completion: { error in
-            if let error = error {
-                log.error("Failed cleaning up channels data: \(error).")
-            }
-            self.updateChannels()
-        }
-    }
-        
-    /// Resets all existing channels data
-    /// - Parameter session: session for writing into the databse
-    private func resetAllExistingChannelsData(session: DatabaseSession) throws {
+    /// Resets all existing channels data without removing the data from the database. This is used mainly to clean-up
+    /// existing relations between the objects, and prepare the channels for full refetching.
+    ///
+    /// - Parameter session: session for writing into the database.
+    ///
+    func resetExistingChannelsData(session: DatabaseSession) throws {
         if let channels = try (session as? NSManagedObjectContext)?
             .fetch(ChannelDTO.allChannelsFetchRequest) {
-            channels.forEach { $0.resetLocalData() }
+            channels.forEach {
+                $0.resetLocalData()
+            }
         }
     }
     
-    /// Update channels data for all the existing channel queries
-    private func updateChannels() {
+    /// Finds the existing channel list queries in the database and refetches them.
+    func refetchExistingChannelListQueries() {
         let context = database.backgroundReadOnlyContext
         context.perform {
             do {

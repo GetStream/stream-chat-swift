@@ -2,6 +2,7 @@
 // Copyright © 2021 Stream.io Inc. All rights reserved.
 //
 
+import CoreData
 @testable import StreamChat
 @testable import StreamChatTestTools
 import XCTest
@@ -13,7 +14,7 @@ final class MissingEventsPublisher_Tests: StressTestCase {
     var webSocketClient: WebSocketClientMock!
     var apiClient: APIClientMock!
     var publisher: MissingEventsPublisher<ExtraData>?
-    var channelDatabaseCleanupUpdater: ChannelDatabaseCleanupUpdaterMock<ExtraData>!
+    var channelDatabaseCleanupUpdater: DatabaseCleanupUpdater_Mock<ExtraData>!
     
     // MARK: - Setup
     
@@ -23,20 +24,19 @@ final class MissingEventsPublisher_Tests: StressTestCase {
         database = DatabaseContainerMock()
         webSocketClient = WebSocketClientMock()
         apiClient = APIClientMock()
-        channelDatabaseCleanupUpdater = ChannelDatabaseCleanupUpdaterMock(database: database, apiClient: apiClient)
+        channelDatabaseCleanupUpdater = DatabaseCleanupUpdater_Mock(database: database, apiClient: apiClient)
         
         publisher = MissingEventsPublisher(
             database: database,
             eventNotificationCenter: webSocketClient.eventNotificationCenter,
             apiClient: apiClient,
-            channelListCleanupUpdater: channelDatabaseCleanupUpdater
+            databaseCleanupUpdater: channelDatabaseCleanupUpdater
         )
     }
     
     override func tearDown() {
         apiClient.cleanUp()
-        channelDatabaseCleanupUpdater.cleanUp()
-        
+
         AssertAsync {
             Assert.canBeReleased(&publisher)
             Assert.canBeReleased(&database)
@@ -162,13 +162,28 @@ final class MissingEventsPublisher_Tests: StressTestCase {
 
         AssertAsync.willBeEqual(apiClient.request_allRecordedCalls.count, 1)
 
-        XCTAssertFalse(channelDatabaseCleanupUpdater.cleanupChannelsData_called)
         apiClient.test_simulateResponse(
             Result<MissingEventsPayload<ExtraData>, Error>.failure(
                 ClientError(with: ErrorPayload(code: 0, message: "", statusCode: 400))
             )
         )
-        AssertAsync.willBeTrue(channelDatabaseCleanupUpdater.cleanupChannelsData_called)
+
+        var refetchCalled = false
+        channelDatabaseCleanupUpdater.refetchExistingChannelListQueries_body = {
+            refetchCalled = true
+        }
+
+        var cleanupCalledWithSession: DatabaseSession?
+        channelDatabaseCleanupUpdater.resetExistingChannelsData_body = { session in
+            cleanupCalledWithSession = session
+            // Check refetch wasn't called yet
+            XCTAssertFalse(refetchCalled)
+        }
+
+        AssertAsync {
+            Assert.willBeTrue(refetchCalled)
+            Assert.willBeEqual(cleanupCalledWithSession as? NSManagedObjectContext, self.database.writableContext)
+        }
     }
     
     func test_eventsFromPayloadArePublished_ifSuccessfulResponseComes() throws {
