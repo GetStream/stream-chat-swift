@@ -29,8 +29,9 @@ class DefaultCDNClient_Tests: StressTestCase {
             .sample(
                 id: attachmentId,
                 uploadingState: .init(
-                    localFileURL: .sampleYodaImage,
-                    state: .pendingUpload
+                    localFileURL: .localYodaImage,
+                    state: .pendingUpload,
+                    file: .init(type: .jpeg, size: 0, mimeType: nil)
                 )
             ),
             progress: nil,
@@ -53,8 +54,9 @@ class DefaultCDNClient_Tests: StressTestCase {
             client.uploadAttachment(
                 .sample(
                     uploadingState: .init(
-                        localFileURL: .sampleYodaImage,
-                        state: .pendingUpload
+                        localFileURL: .localYodaImage,
+                        state: .pendingUpload,
+                        file: .init(type: .jpeg, size: 0, mimeType: nil)
                     )
                 ),
                 progress: nil,
@@ -89,8 +91,9 @@ class DefaultCDNClient_Tests: StressTestCase {
             client.uploadAttachment(
                 .sample(
                     uploadingState: .init(
-                        localFileURL: .sampleYodaImage,
-                        state: .pendingUpload
+                        localFileURL: .localYodaImage,
+                        state: .pendingUpload,
+                        file: .init(type: .jpeg, size: 0, mimeType: nil)
                     )
                 ),
                 progress: nil,
@@ -130,8 +133,9 @@ class DefaultCDNClient_Tests: StressTestCase {
             client.uploadAttachment(
                 .sample(
                     uploadingState: .init(
-                        localFileURL: .sampleYodaImage,
-                        state: .pendingUpload
+                        localFileURL: .localYodaImage,
+                        state: .pendingUpload,
+                        file: .init(type: .jpeg, size: 0, mimeType: nil)
                     )
                 ),
                 progress: nil,
@@ -154,19 +158,20 @@ class DefaultCDNClient_Tests: StressTestCase {
         let builder = Builder()
         let client = builder.make()
         
-        let attachment = ChatMessageAttachment.sample(
+        let attachment = AnyChatMessageAttachment.sample(
             uploadingState: .init(
-                localFileURL: .sampleYodaImage,
-                state: .pendingUpload
+                localFileURL: .localYodaImage,
+                state: .pendingUpload,
+                file: .init(type: .jpeg, size: 0, mimeType: nil)
             )
         )
         
         let uploadingState = try XCTUnwrap(attachment.uploadingState)
         
         let multipartFormData = MultipartFormData(
-            try Data(contentsOf: .sampleYodaImage),
+            try Data(contentsOf: .localYodaImage),
             fileName: uploadingState.localFileURL.lastPathComponent,
-            mimeType: uploadingState.localFileURL.attachmentFile?.type.mimeType
+            mimeType: uploadingState.file.type.mimeType
         )
 
         let uniquePath: String = .unique
@@ -179,8 +184,9 @@ class DefaultCDNClient_Tests: StressTestCase {
         client.uploadAttachment(
             .sample(
                 uploadingState: .init(
-                    localFileURL: .sampleYodaImage,
-                    state: .pendingUpload
+                    localFileURL: .localYodaImage,
+                    state: .pendingUpload,
+                    file: .init(type: .jpeg, size: 0, mimeType: nil)
                 )
             ),
             progress: nil,

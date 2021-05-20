@@ -6,14 +6,14 @@ import Foundation
 @testable
 import StreamChat
 
-extension ChatMessageAttachment {
+extension AnyChatMessageAttachment {
     static func sample(
         id: AttachmentId = .unique,
         type: AttachmentType = .image,
-        payload: Any? = nil,
+        payload: Any = "payload",
         uploadingState: AttachmentUploadingState? = nil
-    ) -> ChatMessageAttachment {
-        ChatMessageAttachment(
+    ) -> AnyChatMessageAttachment {
+        AnyChatMessageAttachment(
             id: id,
             type: type,
             payload: payload,

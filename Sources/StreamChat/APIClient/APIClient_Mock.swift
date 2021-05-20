@@ -14,7 +14,7 @@ class APIClientMock: APIClient {
     @Atomic var request_completion: Any?
 
     /// The last endpoint `uploadFile` function was called with.
-    @Atomic var uploadFile_attachment: ChatMessageAttachment?
+    @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
     @Atomic var uploadFile_progress: ((Double) -> Void)?
     @Atomic var uploadFile_completion: ((Result<URL, Error>) -> Void)?
     
@@ -65,7 +65,7 @@ class APIClientMock: APIClient {
     }
     
     override func uploadAttachment(
-        _ attachment: ChatMessageAttachment,
+        _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {

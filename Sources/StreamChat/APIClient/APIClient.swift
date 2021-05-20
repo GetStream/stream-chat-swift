@@ -69,7 +69,7 @@ class APIClient {
     }
     
     func uploadAttachment(
-        _ attachment: ChatMessageAttachment,
+        _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {

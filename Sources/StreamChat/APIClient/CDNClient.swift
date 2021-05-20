@@ -11,7 +11,7 @@ public protocol CDNClient {
     ///   - progress: A closure that broadcasts upload progress
     ///   - completion: Returns uploading result on upload completion or failure
     func uploadAttachment(
-        _ attachment: ChatMessageAttachment,
+        _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<URL, Error>) -> Void
     )
@@ -41,7 +41,7 @@ class DefaultCDNClient: CDNClient {
     ///   - progress: A closure that broadcasts upload progress
     ///   - completion: Returns uploading result on upload completion or failure
     func uploadAttachment(
-        _ attachment: ChatMessageAttachment,
+        _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)? = nil,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {
@@ -54,7 +54,7 @@ class DefaultCDNClient: CDNClient {
         let multipartFormData = MultipartFormData(
             fileData,
             fileName: uploadingState.localFileURL.lastPathComponent,
-            mimeType: uploadingState.localFileURL.attachmentFile?.type.mimeType
+            mimeType: uploadingState.file.type.mimeType
         )
         let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id, type: attachment.type)
         

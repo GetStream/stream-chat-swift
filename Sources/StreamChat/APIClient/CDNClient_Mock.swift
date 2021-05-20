@@ -8,7 +8,7 @@ import StreamChatTestTools
 final class CDNClient_Mock: CDNClient {
     lazy var uploadAttachmentMockFunc = MockFunc.mock(for: uploadAttachment)
     func uploadAttachment(
-        _ attachment: ChatMessageAttachment,
+        _ attachment: AnyChatMessageAttachment,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {

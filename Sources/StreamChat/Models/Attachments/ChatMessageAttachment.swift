@@ -26,7 +26,7 @@ extension _ChatMessageAttachment: Equatable where Payload: Equatable {}
 
 // MARK: - Type erasure/recovery
 
-typealias AnyChatMessageAttachment = _ChatMessageAttachment<Any>
+public typealias AnyChatMessageAttachment = _ChatMessageAttachment<Any>
 
 extension AnyChatMessageAttachment {
     func attachment<Payload: AttachmentPayload>(

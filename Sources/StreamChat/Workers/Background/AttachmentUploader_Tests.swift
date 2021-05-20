@@ -146,41 +146,6 @@ final class AttachmentUploader_Tests: StressTestCase {
         AssertAsync.staysTrue(apiClient.request_allRecordedCalls.isEmpty)
     }
 
-    func test_uploader_changesAttachmentState_whenLocalURLIsInvalid() throws {
-        let cid: ChannelId = .unique
-        let messageId: MessageId = .unique
-        let attachmentEnvelope = AttachmentEnvelope(localFileURL: .fakeFile)!
-        let attachmentId = AttachmentId(cid: cid, messageId: messageId, index: 0)
-
-        // Create channel in the database.
-        try database.createChannel(cid: cid, withMessages: false)
-
-        // Create message in the database.
-        try database.createMessage(id: messageId, cid: cid, localState: .pendingSend)
-
-        // Seed attachment with invalid `localURL` to the database.
-        try database.writeSynchronously { session in
-            try session.createNewAttachment(attachment: attachmentEnvelope, id: attachmentId)
-        }
-
-        // Load attachment from the database.
-        let attachment = try XCTUnwrap(database.viewContext.attachment(id: attachmentId))
-        
-        // Wait until AttachmentUploader starts uploading attachment
-        AssertAsync {
-            Assert.willNotBeNil(self.apiClient.uploadFile_completion)
-        }
-        
-        apiClient.uploadFile_completion?(.failure(ClientError.AttachmentUploading(id: attachmentId)))
-
-        AssertAsync {
-            // Assert attachment state eventually becomes `.uploadingFailed`.
-            Assert.willBeEqual(attachment.localState, .uploadingFailed)
-            // Uploading didn't begin.
-            Assert.staysTrue(self.apiClient.request_allRecordedCalls.isEmpty)
-        }
-    }
-
     func test_uploader_doesNotRetainItself() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique

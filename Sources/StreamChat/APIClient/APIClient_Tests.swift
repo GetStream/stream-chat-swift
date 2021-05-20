@@ -181,7 +181,7 @@ class APIClient_Tests: StressTestCase {
     }
     
     func test_uploadAttachment_calls_CDNClient() throws {
-        let attachment = ChatMessageAttachment.sample()
+        let attachment = AnyChatMessageAttachment.sample()
         
         var progress: Double?
         var result: Result<URL, Error>?
@@ -200,7 +200,7 @@ class APIClient_Tests: StressTestCase {
         parameters.1?(sampleProgress)
         XCTAssertEqual(progress, sampleProgress)
         
-        let imageURL = URL.sampleYodaImage
+        let imageURL = URL.localYodaImage
         parameters.2(.success(imageURL))
         XCTAssertEqual(try result?.get(), imageURL)
     }
