@@ -4,12 +4,18 @@
 
 import Foundation
 
+/// A type alias for attachment with `LinkAttachmentPayload` payload type.
+///
+/// The `ChatMessageLinkAttachment` attachment will be added to the message automatically
+/// if the message is sent with the text containing the URL.
 public typealias ChatMessageLinkAttachment = _ChatMessageAttachment<LinkAttachmentPayload>
 
+/// Represents a payload for attachments with `.linkPreview` type.
 public struct LinkAttachmentPayload: AttachmentPayload {
+    /// An attachment type all `LinkAttachmentPayload` instances conform to. Is set to `.linkPreview`.
     public static let type: AttachmentType = .linkPreview
 
-    /// An original `URL` that was enriched.
+    /// An original `URL` that was included into the message text and then enriched.
     public let originalURL: URL
     /// A title (e.g video name in case of enriched `YouTube` link or song name in case of `Spotify` link).
     public let title: String?
@@ -22,7 +28,7 @@ public struct LinkAttachmentPayload: AttachmentPayload {
     public let titleLink: URL?
     /// An image.
     public let assetURL: URL
-    /// A preview image.
+    /// A preview image URL.
     public let previewURL: URL
 }
 

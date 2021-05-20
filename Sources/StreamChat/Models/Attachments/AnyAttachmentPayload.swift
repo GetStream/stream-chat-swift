@@ -4,17 +4,35 @@
 
 import Foundation
 
+/// A protocol an attachment payload type has to conform in order it can be
+/// attached to/exposed on the message.
 public protocol AttachmentPayload: Codable {
+    /// A type of resulting attachment.
     static var type: AttachmentType { get }
 }
 
+/// A type-erased type that wraps either a local file URL that has to be uploaded
+/// and attached to the message OR a custom payload which the message attachment
+/// should contain.
 public struct AnyAttachmentPayload {
+    /// A type of attachment that will be created when the message is sent.
     public let type: AttachmentType
+
+    /// A payload that will exposed on attachment when the message is sent.
     public let payload: Encodable?
+
+    /// A URL referencing to the local file that should be uploaded.
     public let localFileURL: URL?
 }
 
 public extension AnyAttachmentPayload {
+    /// Creates an instance of `AnyAttachmentPayload` with the given payload.
+    ///
+    /// If attached to the new message the attachment with the given payload will be immediately
+    /// available on `ChatMessage` with the `uploadingState == nil` since it doesn't require prior
+    /// uploading.
+    ///
+    /// - Parameter payload: The payload to have the message attachment with.
     init<Payload: AttachmentPayload>(payload: Payload) {
         self.init(
             type: Payload.type,
@@ -23,6 +41,21 @@ public extension AnyAttachmentPayload {
         )
     }
 
+    /// Creates an instance of `AnyAttachmentPayload` with the URL referencing to a local file.
+    ///
+    /// The resulting attachment will have `ImageAttachmentPayload` if `attachmentType == .image`.
+    /// If the type is different from `.image` the attachment will have payload of `FileAttachmentPayload`
+    /// type.
+    ///
+    /// If attached to the new message the attachment with the given payload will be immediately
+    /// available on `ChatMessage` with the `uploadingState` reflecting the file uploading progress.
+    ///
+    /// - Important: Until the message is sent all URLs on exposed attachment will be equal to the given `localFileURL`.
+    ///
+    /// - Parameters:
+    ///   - localFileURL: The local URL referencing to the file.
+    ///   - attachmentType: The type of resulting attachment exposed on the message.
+    /// - Throws: The error if `localFileURL` is not the file URL.
     init(localFileURL: URL, attachmentType: AttachmentType) throws {
         let file = try AttachmentFile(url: localFileURL)
 
