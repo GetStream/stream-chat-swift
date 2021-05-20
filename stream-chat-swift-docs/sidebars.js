@@ -25,6 +25,7 @@ module.exports = {
         'guides/filter-query-guide',
         'guides/multi-tenancy',
         'guides/debugging',
+        'guides/attachments-migration',
       ],
     },
     {
