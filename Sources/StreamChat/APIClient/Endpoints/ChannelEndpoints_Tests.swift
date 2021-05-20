@@ -358,6 +358,23 @@ final class ChannelEndpoints_Tests: XCTestCase {
         
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
     }
+    
+    func test_freezeChannel_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let freeze = Bool.random()
+        
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: "channels/" + cid.apiPath,
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["set": ["frozen": freeze]]
+        )
+        
+        let endpoint: Endpoint<EmptyResponse> = .freezeChannel(freeze, cid: cid)
+        
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+    }
 }
 
 extension ChannelEditDetailPayload where ExtraData == NoExtraData {

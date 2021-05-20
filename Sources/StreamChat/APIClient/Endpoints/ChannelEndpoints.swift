@@ -177,4 +177,14 @@ extension Endpoint {
             body: query
         )
     }
+    
+    static func freezeChannel(_ freeze: Bool, cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: "channels/" + cid.apiPath,
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["set": ["frozen": freeze]]
+        )
+    }
 }
