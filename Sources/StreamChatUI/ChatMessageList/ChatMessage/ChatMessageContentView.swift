@@ -377,7 +377,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             bubbleView?.backgroundColor = appearance.colorPalette.popoverBackground
         } else {
             bubbleView?.backgroundColor = content?.isSentByCurrentUser == true ?
-                appearance.colorPalette.background2 :
+                appearance.colorPalette.background6 :
                 appearance.colorPalette.popoverBackground
         }
 
