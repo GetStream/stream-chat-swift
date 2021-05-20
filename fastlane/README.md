@@ -45,7 +45,7 @@ Builds the latest version of Demo app and uploads it to Firebase
 ```
 fastlane testflight_build
 ```
-Builds the latest version of Demo app and uploads it to Test Flight
+Builds the latest version of Demo app and uploads it to TestFlight
 ### get_next_issue_number
 ```
 fastlane get_next_issue_number
