@@ -89,7 +89,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
                 inlineReplyActionItem()
             ]
 
-            if channelConfig.repliesEnabled {
+            if channelConfig.repliesEnabled && !message.isPartOfThread {
                 actions.append(threadReplyActionItem())
             }
 

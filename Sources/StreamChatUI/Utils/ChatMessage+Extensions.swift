@@ -6,7 +6,7 @@ import Foundation
 import StreamChat
 
 extension _ChatMessage {
-    /// Says whether actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
+    /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
     var isInteractionEnabled: Bool {
         guard
             type != .ephemeral,
@@ -16,7 +16,7 @@ extension _ChatMessage {
         return localState == nil || lastActionFailed
     }
 
-    /// Says whether the last action (`send`, `edit` or `delete`) on the message failed.
+    /// A boolean value that checks if the last action (`send`, `edit` or `delete`) on the message failed.
     var lastActionFailed: Bool {
         switch localState {
         case .sendingFailed, .syncingFailed, .deletingFailed:
@@ -26,12 +26,17 @@ extension _ChatMessage {
         }
     }
 
-    /// Says whether the message is part of message thread.
-    var isPartOfThread: Bool {
+    /// A boolean value that checks if the message is the root of a thread.
+    var isRootOfThread: Bool {
         let isThreadStart = replyCount > 0
         let isThreadReplyInChannel = showReplyInChannel
 
         return isThreadStart || isThreadReplyInChannel
+    }
+
+    /// A boolean value that checks if the message is the part (child) of a thread.
+    var isPartOfThread: Bool {
+        parentMessageId != nil
     }
 
     /// The text which should be shown in a text view inside the message bubble.
@@ -47,7 +52,7 @@ extension _ChatMessage {
         return text
     }
 
-    /// Says whether the message is visible for current user only.
+    /// A boolean value that checks if the message is visible for current user only.
     var onlyVisibleForCurrentUser: Bool {
         guard isSentByCurrentUser else {
             return false
