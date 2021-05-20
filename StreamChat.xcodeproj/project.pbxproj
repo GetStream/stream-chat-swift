@@ -2297,7 +2297,6 @@
 				F6C0020926414E4D0055D110 /* AnyAttachmentPayload.swift */,
 				88BDCA892642B02D0099AD74 /* ChatMessageAttachment.swift */,
 				88089A0126529FD1007D3493 /* ChatMessageAttachment_Tests.swift */,
-				649968DA264E6E81000515AB /* ChatMessageAttachment_Sample.swift */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -2447,6 +2446,7 @@
 				88AA92872547332000BFA0C3 /* MessageReactionPayload.swift */,
 				2236D97A25CC68E400C47F30 /* TestAttachmentEnvelope.swift */,
 				79D7A1CD2593A40900D3C2BF /* ChannelPayload.swift */,
+				649968DA264E6E81000515AB /* ChatMessageAttachment_Sample.swift */,
 			);
 			path = DummyData;
 			sourceTree = "<group>";
