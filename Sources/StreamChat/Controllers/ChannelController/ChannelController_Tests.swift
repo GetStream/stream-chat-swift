@@ -2748,6 +2748,172 @@ class ChannelController_Tests: StressTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    // MARK: - Freeze channel
+    
+    func test_freezeChannel_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = _ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+        
+        // Simulate `freezeChannel` call and assert error is returned
+        var error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.freezeChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+        
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        
+        // Simulate `freezeChannel` call and assert no error is returned
+        error = try waitFor { [callbackQueueID] completion in
+            controller.freezeChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.freezeChannel_completion?(nil)
+        }
+        
+        XCTAssertNil(error)
+    }
+    
+    func test_freezeChannel_callsChannelUpdater() {
+        // Simulate `freezeChannel` call and catch the completion
+        var completionCalled = false
+        controller.freezeChannel { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert cid is passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.freezeChannel_cid, channelId)
+        XCTAssertFalse(completionCalled)
+        
+        // Assert that `frozen: true` is passed as payload
+        XCTAssertEqual(env.channelUpdater!.freezeChannel_freeze, true)
+        
+        // Simulate successful update
+        env.channelUpdater!.freezeChannel_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.freezeChannel_completion = nil
+        
+        AssertAsync {
+            // Assert completion is called
+            Assert.willBeTrue(completionCalled)
+            // `weakController` should be deallocated too
+            Assert.canBeReleased(&weakController)
+        }
+    }
+    
+    func test_freezeChannel_propagatesErrorFromUpdater() {
+        // Simulate `freezeChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.freezeChannel { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.freezeChannel_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
+    
+    // MARK: - Unfreeze channel
+    
+    func test_unfreezeChannel_failsForNewChannels() throws {
+        //  Create `ChannelController` for new channel
+        let query = _ChannelQuery(channelPayload: .unique)
+        setupControllerForNewChannel(query: query)
+        
+        // Simulate `unfreezeChannel` call and assert error is returned
+        var error: Error? = try waitFor { [callbackQueueID] completion in
+            controller.unfreezeChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+        }
+        XCTAssert(error is ClientError.ChannelNotCreatedYet)
+        
+        // Simulate successful backend channel creation
+        env.channelUpdater!.update_channelCreatedCallback?(query.cid!)
+        
+        // Simulate `unfreezeChannel` call and assert no error is returned
+        error = try waitFor { [callbackQueueID] completion in
+            controller.unfreezeChannel { error in
+                AssertTestQueue(withId: callbackQueueID)
+                completion(error)
+            }
+            env.channelUpdater!.freezeChannel_completion?(nil)
+        }
+        
+        XCTAssertNil(error)
+    }
+    
+    func test_unfreezeChannel_callsChannelUpdater() {
+        // Simulate `unfreezeChannel` call and catch the completion
+        var completionCalled = false
+        controller.unfreezeChannel { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+        
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+        
+        // Assert cid is passed to `channelUpdater`, completion is not called yet
+        XCTAssertEqual(env.channelUpdater!.freezeChannel_cid, channelId)
+        XCTAssertFalse(completionCalled)
+        
+        // Assert that `frozen: false` is passed as payload
+        XCTAssertEqual(env.channelUpdater!.freezeChannel_freeze, false)
+        
+        // Simulate successful update
+        env.channelUpdater!.freezeChannel_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.channelUpdater!.freezeChannel_completion = nil
+        
+        AssertAsync {
+            // Assert completion is called
+            Assert.willBeTrue(completionCalled)
+            // `weakController` should be deallocated too
+            Assert.canBeReleased(&weakController)
+        }
+    }
+    
+    func test_unfreezeChannel_propagatesErrorFromUpdater() {
+        // Simulate `freezeChannel` call and catch the completion
+        var completionCalledError: Error?
+        controller.unfreezeChannel { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionCalledError = $0
+        }
+        
+        // Simulate failed update
+        let testError = TestError()
+        env.channelUpdater!.freezeChannel_completion?(testError)
+        
+        // Completion should be called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+    }
 }
 
 private class TestEnvironment<ExtraData: ExtraDataTypes> {
