@@ -311,7 +311,7 @@ extension _ChatMessage {
         if quotedMessage != nil {
             options.insert(.quotedMessage)
         }
-        if isPartOfThread {
+        if isRootOfThread {
             options.insert(.threadInfo)
             options.insert(.continuousBubble)
         }
