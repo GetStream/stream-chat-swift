@@ -406,7 +406,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             threadReplyCountButton?.setTitle(L10n.Message.Threads.reply, for: .normal)
         }
         let latestReplyAuthorAvatar = content?.latestReplies.first?.author.imageURL
-        threadAvatarView?.imageView.loadImage(from: latestReplyAuthorAvatar)
+        threadAvatarView?.imageView.loadImage(
+            from: latestReplyAuthorAvatar,
+            placeholder: appearance.images.userAvatarPlaceholder4
+        )
 
         // Reactions view
         reactionsBubbleView?.tailDirection = content
