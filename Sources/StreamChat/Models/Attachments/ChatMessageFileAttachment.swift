@@ -4,9 +4,16 @@
 
 import Foundation
 
+/// A type alias for attachment with `FileAttachmentPayload` payload type.
+///
+/// The `ChatMessageFileAttachment` attachment will be added to the message automatically
+/// if the message was sent with attached `AnyAttachmentPayload` created with
+/// local URL and `.file` attachment type.
 public typealias ChatMessageFileAttachment = _ChatMessageAttachment<FileAttachmentPayload>
 
+/// Represents a payload for attachments with `.file` type.
 public struct FileAttachmentPayload: AttachmentPayload {
+    /// An attachment type all `FileAttachmentPayload` instances conform to. Is set to `.file`.
     public static let type: AttachmentType = .file
 
     /// A title, usually the name of the file.

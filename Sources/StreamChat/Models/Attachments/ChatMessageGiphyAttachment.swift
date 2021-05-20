@@ -4,9 +4,15 @@
 
 import Foundation
 
+/// A type alias for attachment with `GiphyAttachmentPayload` payload type.
+///
+/// The ephemeral message containing `ChatMessageGiphyAttachment` attachment will be created
+/// when `/giphy` command is used.
 public typealias ChatMessageGiphyAttachment = _ChatMessageAttachment<GiphyAttachmentPayload>
 
+/// Represents a payload for attachments with `.giphy` type.
 public struct GiphyAttachmentPayload: AttachmentPayload {
+    /// An attachment type all `GiphyAttachmentPayload` instances conform to. Is set to `.giphy`.
     public static let type: AttachmentType = .giphy
     
     /// A  title, usually the search request used to find the gif.
