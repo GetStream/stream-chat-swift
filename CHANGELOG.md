@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🐞 Fixed
 - Fix crash when opening attachments on iPad [#1060](https://github.com/GetStream/stream-chat-swift/pull/1060) [#997](https://github.com/GetStream/stream-chat-swift/pull/977)
+- New channels are now visible even if the user was added to them while the connection was interrupted [#1092](https://github.com/GetStream/stream-chat-swift/pull/1092) 
 
 ### 🔄 Changed
 - ⚠️ The default `BaseURL` was changed from `.dublin` to `.usEast` to match other SDKs [#1078](https://github.com/GetStream/stream-chat-swift/pull/1078)
