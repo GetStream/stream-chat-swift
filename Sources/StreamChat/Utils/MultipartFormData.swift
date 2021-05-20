@@ -6,21 +6,24 @@ import Foundation
 
 struct MultipartFormData {
     private static let crlf = "\r\n"
-
-    let boundary: String
+    static let boundary: String = String(
+        format: "chat-%08x%08x",
+        UInt32.random(in: 0...UInt32.max),
+        UInt32.random(in: 0...UInt32.max)
+    )
+    
     let data: Data
     let fileName: String
     let mimeType: String?
 
     init(_ data: Data, fileName: String, mimeType: String? = nil) {
-        boundary = String(format: "chat-%08x%08x", UInt32.random(in: 0...UInt32.max), UInt32.random(in: 0...UInt32.max))
         self.data = data
         self.fileName = fileName
         self.mimeType = mimeType
     }
 
     func getMultipartFormData() -> Data {
-        var data = "--\(boundary)\(MultipartFormData.crlf)".data(using: .utf8, allowLossyConversion: false)!
+        var data = "--\(Self.boundary)\(MultipartFormData.crlf)".data(using: .utf8, allowLossyConversion: false)!
         data.append("Content-Disposition: form-data; name=\"file\"; filename=\"\(fileName)\"\(MultipartFormData.crlf)")
 
         if let mimeType = mimeType {
@@ -29,7 +32,7 @@ struct MultipartFormData {
 
         data.append(MultipartFormData.crlf)
         data.append(self.data)
-        data.append("\(MultipartFormData.crlf)--\(boundary)--\(MultipartFormData.crlf)")
+        data.append("\(MultipartFormData.crlf)--\(Self.boundary)--\(MultipartFormData.crlf)")
 
         return data
     }

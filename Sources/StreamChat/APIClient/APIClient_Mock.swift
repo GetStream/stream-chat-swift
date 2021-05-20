@@ -14,14 +14,14 @@ class APIClientMock: APIClient {
     @Atomic var request_completion: Any?
 
     /// The last endpoint `uploadFile` function was called with.
-    @Atomic var uploadFile_endpoint: Endpoint<FileUploadPayload>?
-    @Atomic var uploadFile_multipartFormData: MultipartFormData?
+    @Atomic var uploadFile_attachment: AnyChatMessageAttachment?
     @Atomic var uploadFile_progress: ((Double) -> Void)?
-    @Atomic var uploadFile_completion: ((Result<FileUploadPayload, Error>) -> Void)?
+    @Atomic var uploadFile_completion: ((Result<URL, Error>) -> Void)?
     
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
     @Atomic var init_requestEncoder: RequestEncoder
     @Atomic var init_requestDecoder: RequestDecoder
+    @Atomic var init_CDNClient: CDNClient
 
     // Cleans up all recorded values
     func cleanUp() {
@@ -30,12 +30,23 @@ class APIClientMock: APIClient {
         request_completion = nil
     }
     
-    override init(sessionConfiguration: URLSessionConfiguration, requestEncoder: RequestEncoder, requestDecoder: RequestDecoder) {
+    override init(
+        sessionConfiguration: URLSessionConfiguration,
+        requestEncoder: RequestEncoder,
+        requestDecoder: RequestDecoder,
+        CDNClient: CDNClient
+    ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
         init_requestDecoder = requestDecoder
+        init_CDNClient = CDNClient
         
-        super.init(sessionConfiguration: sessionConfiguration, requestEncoder: requestEncoder, requestDecoder: requestDecoder)
+        super.init(
+            sessionConfiguration: sessionConfiguration,
+            requestEncoder: requestEncoder,
+            requestDecoder: requestDecoder,
+            CDNClient: CDNClient
+        )
     }
     
     /// Simulates the response of the last `request` method call
@@ -52,18 +63,15 @@ class APIClientMock: APIClient {
         request_completion = completion
         _request_allRecordedCalls.mutate { $0.append((request_endpoint!, request_completion!)) }
     }
-
-    override func uploadFile(
-        endpoint: Endpoint<FileUploadPayload>,
-        multipartFormData: MultipartFormData,
-        progress: ((Double) -> Void)? = nil,
-        completion: @escaping (Result<FileUploadPayload, Error>) -> Void
+    
+    override func uploadAttachment(
+        _ attachment: AnyChatMessageAttachment,
+        progress: ((Double) -> Void)?,
+        completion: @escaping (Result<URL, Error>) -> Void
     ) {
-        uploadFile_endpoint = endpoint
-        uploadFile_multipartFormData = multipartFormData
+        uploadFile_attachment = attachment
         uploadFile_progress = progress
         uploadFile_completion = completion
-        _request_allRecordedCalls.mutate { $0.append((AnyEndpoint(uploadFile_endpoint!), uploadFile_completion!)) }
     }
 }
 
@@ -72,7 +80,8 @@ extension APIClientMock {
         self.init(
             sessionConfiguration: .ephemeral,
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
-            requestDecoder: DefaultRequestDecoder()
+            requestDecoder: DefaultRequestDecoder(),
+            CDNClient: CDNClient_Mock()
         )
     }
 }

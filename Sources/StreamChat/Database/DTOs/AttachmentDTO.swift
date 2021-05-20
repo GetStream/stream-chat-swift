@@ -312,4 +312,12 @@ extension ClientError {
     }
 
     class AttachmentDecoding: ClientError {}
+    
+    class AttachmentUploading: ClientError {
+        init(id: AttachmentId) {
+            super.init(
+                "Failed to upload attachment with id: \(id)"
+            )
+        }
+    }
 }

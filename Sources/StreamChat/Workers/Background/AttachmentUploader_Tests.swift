@@ -66,11 +66,12 @@ final class AttachmentUploader_Tests: StressTestCase {
 
             // Assert attachment is in `.pendingUpload` state.
             XCTAssertEqual(attachment.localState, .pendingUpload)
-
+            
+            let attachmentModelId = try XCTUnwrap(attachment.asAnyModel()).id
             // Wait attachment uploading begins.
             AssertAsync.willBeEqual(
-                apiClient.uploadFile_endpoint.flatMap(AnyEndpoint.init),
-                AnyEndpoint(.uploadAttachment(with: attachmentId, type: attachment.attachmentType))
+                apiClient.uploadFile_attachment?.id,
+                attachmentModelId
             )
 
             for progress in stride(from: 0, through: 1, by: 5 * uploader.minSignificantUploadingProgressChange) {
@@ -82,7 +83,7 @@ final class AttachmentUploader_Tests: StressTestCase {
 
             // Simulate successful backend response with remote file URL.
             let payload = FileUploadPayload(file: .unique())
-            apiClient.uploadFile_completion?(.success(payload))
+            apiClient.uploadFile_completion?(.success(payload.file))
 
             switch envelope.type {
             case .image:
@@ -162,8 +163,8 @@ final class AttachmentUploader_Tests: StressTestCase {
 
         // Wait attachment uploading begins.
         AssertAsync.willBeEqual(
-            apiClient.uploadFile_endpoint.flatMap(AnyEndpoint.init),
-            AnyEndpoint(.uploadAttachment(with: attachmentId, type: attachmentEnvelope.type))
+            apiClient.uploadFile_attachment?.id,
+            attachmentId
         )
 
         // Assert uploader can be released even though uploading is in progress.

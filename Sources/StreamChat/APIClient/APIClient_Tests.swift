@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 class APIClient_Tests: StressTestCase {
@@ -16,6 +17,7 @@ class APIClient_Tests: StressTestCase {
     
     var encoder: TestRequestEncoder!
     var decoder: TestRequestDecoder!
+    var cdnClient: CDNClient_Mock!
     
     override func setUp() {
         super.setUp()
@@ -35,8 +37,15 @@ class APIClient_Tests: StressTestCase {
         
         encoder = TestRequestEncoder(baseURL: baseURL, apiKey: apiKey)
         decoder = TestRequestDecoder()
+        cdnClient = CDNClient_Mock()
+        cdnClient.uploadAttachmentMockFunc.returns(())
         
-        apiClient = APIClient(sessionConfiguration: sessionConfiguration, requestEncoder: encoder, requestDecoder: decoder)
+        apiClient = APIClient(
+            sessionConfiguration: sessionConfiguration,
+            requestEncoder: encoder,
+            requestDecoder: decoder,
+            CDNClient: cdnClient
+        )
     }
     
     override func tearDown() {
@@ -82,45 +91,6 @@ class APIClient_Tests: StressTestCase {
         AssertResultFailure(result, testError)
     }
 
-    func test_uploadFileEncoderIsCalledWithEndpoint() {
-        // Setup mock encoder response (it's not actually used, we just need to return something)
-        let request = URLRequest(url: .unique())
-        encoder.encodeRequest = .success(request)
-
-        // Create a test endpoint
-        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(with: .unique, type: .image)
-
-        // Simulate file uploading
-        apiClient.uploadFile(
-            endpoint: testEndpoint,
-            multipartFormData: .init(Data(), fileName: .unique),
-            completion: { _ in }
-        )
-
-        // Check the encoder is called with the correct endpoint
-        XCTAssertEqual(encoder.encodeRequest_endpoint, AnyEndpoint(testEndpoint))
-    }
-
-    func test_uploadFileEncoderFailingToEncode() throws {
-        // Setup mock encoder response to fail with `testError`
-        let testError = TestError()
-        encoder.encodeRequest = .failure(testError)
-
-        // Create a test endpoint
-        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(with: .unique, type: .image)
-
-        // Create a request and assert the result is failure
-        let result = try waitFor {
-            apiClient.uploadFile(
-                endpoint: testEndpoint,
-                multipartFormData: .init(Data(), fileName: .unique),
-                completion: $0
-            )
-        }
-
-        XCTAssertEqual(result.error as? TestError, testError)
-    }
-
     // MARK: - Networking
     
     func test_callingRequest_createsNetworkRequest() throws {
@@ -147,44 +117,6 @@ class APIClient_Tests: StressTestCase {
             headers: ["surname": "Organa", "unique_value": uniqeHeaderValue],
             queryParameters: ["item": uniqueQueryItem],
             body: try JSONEncoder().encode(["name": "Leia"])
-        )
-    }
-
-    func test_callingUploadFile_createsNetworkRequest() throws {
-        // Create a test request and set it as a response from the encoder
-        let localURL = Bundle(for: MockNetworkURLProtocol.self).url(forResource: "FileUploadPayload", withExtension: "json")!
-        let multipartFormData = MultipartFormData(
-            try Data(contentsOf: localURL),
-            fileName: .unique,
-            mimeType: AttachmentFileType(ext: localURL.pathExtension).mimeType
-        )
-
-        let uniquePath: String = .unique
-        let uniqueQueryItem: String = .unique
-        var testRequest = URLRequest(url: URL(string: "test://test.test/\(uniquePath)?item=\(uniqueQueryItem)")!)
-        testRequest.httpMethod = "post"
-        encoder.encodeRequest = .success(testRequest)
-
-        // Create reference endpoint.
-        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(with: .unique, type: .image)
-
-        // Simulate file uploading.
-        apiClient.uploadFile(
-            endpoint: testEndpoint,
-            multipartFormData: multipartFormData,
-            completion: { _ in }
-        )
-
-        // Check a network request is made with the values from `testRequest`
-        AssertNetworkRequest(
-            method: .post,
-            path: "/" + uniquePath,
-            headers: [
-                "Content-Type": "multipart/form-data; boundary=\(multipartFormData.boundary)",
-                "unique_value": uniqeHeaderValue
-            ],
-            queryParameters: ["item": uniqueQueryItem],
-            body: multipartFormData.getMultipartFormData()
         )
     }
     
@@ -214,41 +146,6 @@ class APIClient_Tests: StressTestCase {
         
         // Check the outgoing data from the encoder is the result data
         AssertResultSuccess(result, TestUser(name: "Luke"))
-    }
-
-    func test_uploadFileSuccess() throws {
-        // Create a test request and set it as a response from the encoder
-        let testRequest = URLRequest(url: .unique())
-        encoder.encodeRequest = .success(testRequest)
-
-        // Set up a successful mock network response for the request
-        let mockResponseData = try JSONEncoder.stream.encode(["file": URL.unique()])
-        MockNetworkURLProtocol.mockResponse(request: testRequest, statusCode: 234, responseBody: mockResponseData)
-
-        // Set up a decoder response
-        // ⚠️ Watch out: the user is different there, so we can distinguish between the incoming data
-        // to the encoder, and the outgoing data).
-        let payload = FileUploadPayload(file: .unique())
-        decoder.decodeRequestResponse = .success(payload)
-
-        // Create a test endpoint (it's actually ignored, because APIClient uses the testRequest returned from the encoder)
-        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(with: .unique, type: .image)
-
-        // Create a request and wait for the completion block
-        let result = try waitFor {
-            apiClient.uploadFile(
-                endpoint: testEndpoint,
-                multipartFormData: .init(Data(), fileName: .unique),
-                completion: $0
-            )
-        }
-
-        // Check the incoming data to the encoder is the URLResponse and data from the network
-        XCTAssertEqual(decoder.decodeRequestResponse_data, mockResponseData)
-        XCTAssertEqual(decoder.decodeRequestResponse_response?.statusCode, 234)
-
-        // Check the outgoing data is from the decoder
-        XCTAssertEqual(try result.get().file, payload.file)
     }
     
     func test_requestFailure() throws {
@@ -282,43 +179,30 @@ class APIClient_Tests: StressTestCase {
         // Check the outgoing error from the encoder is the result data
         AssertResultFailure(result, encoderError)
     }
-
-    func test_uploadFileFailure() throws {
-        // Create a test request and set it as a response from the encoder
-        let testRequest = URLRequest(url: .unique())
-        encoder.encodeRequest = .success(testRequest)
-
-        // We cannot use `TestError` since iOS14 wraps this into another error
-        let networkError = NSError(domain: "TestNetworkError", code: -1, userInfo: nil)
-        let encoderError = TestError()
-
-        // Set up a mock network response from the request
-        MockNetworkURLProtocol.mockResponse(request: testRequest, statusCode: 444, error: networkError)
-
-        // Set up a decoder response to return `encoderError`
-        decoder.decodeRequestResponse = .failure(encoderError)
-
-        // Create a test endpoint (it's actually ignored, because APIClient uses the testRequest returned from the encoder)
-        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(with: .unique, type: .image)
-
-        // Create a request and wait for the completion block
-        let result = try waitFor {
-            apiClient.uploadFile(
-                endpoint: testEndpoint,
-                multipartFormData: .init(Data(), fileName: .unique),
-                completion: $0
-            )
-        }
-
-        // Check the incoming error to the encoder is the error from the response
-        XCTAssertNotNil(decoder.decodeRequestResponse_error)
-
-        // We have to compare error codes, since iOS14 wraps network errors into `NSURLError`
-        // in which we cannot retrieve the wrapper error
-        XCTAssertEqual((decoder.decodeRequestResponse_error as NSError?)?.code, networkError.code)
-
-        // Check the outgoing data is from the decoder
-        XCTAssertEqual(result.error as? TestError, encoderError)
+    
+    func test_uploadAttachment_calls_CDNClient() throws {
+        let attachment = AnyChatMessageAttachment.sample()
+        
+        var progress: Double?
+        var result: Result<URL, Error>?
+        
+        apiClient.uploadAttachment(
+            attachment,
+            progress: { progress = $0 },
+            completion: { result = $0 }
+        )
+        
+        XCTAssertTrue(cdnClient.uploadAttachmentMockFunc.called)
+        
+        let parameters = try XCTUnwrap(cdnClient.uploadAttachmentMockFunc.calls.last)
+        
+        let sampleProgress: Double = 42
+        parameters.1?(sampleProgress)
+        XCTAssertEqual(progress, sampleProgress)
+        
+        let imageURL = URL.localYodaImage
+        parameters.2(.success(imageURL))
+        XCTAssertEqual(try result?.get(), imageURL)
     }
 }
 
