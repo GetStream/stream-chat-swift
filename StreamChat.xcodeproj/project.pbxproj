@@ -975,7 +975,6 @@
 		F8933BDB25FF569E0054BBFF /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		F8933BDC25FF569E0054BBFF /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		F8933D2125FFAB400054BBFF /* APIPathConvertible.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933D2025FFAB400054BBFF /* APIPathConvertible.swift */; };
-		F8933D4225FFAF250054BBFF /* iMessageChatChannelListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933D4125FFAF250054BBFF /* iMessageChatChannelListRouter.swift */; };
 		F8933D9125FFC0060054BBFF /* ChatMessageListCollectionViewLayout_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933D9025FFC0050054BBFF /* ChatMessageListCollectionViewLayout_Tests.swift */; };
 		F8933DF4260209100054BBFF /* SlackChatMessageContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933DF3260209100054BBFF /* SlackChatMessageContentView.swift */; };
 		F8933DFD26020A650054BBFF /* ChatClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933DFC26020A650054BBFF /* ChatClient.swift */; };
@@ -2137,7 +2136,6 @@
 		F87A4865260B3516001653A8 /* SwiftUIViewRepresentable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftUIViewRepresentable.swift; sourceTree = "<group>"; };
 		F87A4955260C6F38001653A8 /* ChatMessageContentView+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageContentView+SwiftUI.swift"; sourceTree = "<group>"; };
 		F87A495F260C6FFA001653A8 /* MessengerChatMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatMessageContentView.swift; sourceTree = "<group>"; };
-		F87A4969260C7108001653A8 /* MessengerChatMessageCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatMessageCollectionViewCell.swift; sourceTree = "<group>"; };
 		F87A4973260C8C5A001653A8 /* MessengerChatChannelListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelListRouter.swift; sourceTree = "<group>"; };
 		F87A497D260C8D22001653A8 /* MessengerChatChannelViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelViewController.swift; sourceTree = "<group>"; };
 		F87A4A5926146DAB001653A8 /* ChatMessageActionControl_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageActionControl_Tests.swift; sourceTree = "<group>"; };
@@ -2157,7 +2155,6 @@
 		F8933BBC25FF56400054BBFF /* SlackChatAvatarView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatAvatarView.swift; sourceTree = "<group>"; };
 		F8933BC325FF56460054BBFF /* Colors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Colors.swift; sourceTree = "<group>"; };
 		F8933D2025FFAB400054BBFF /* APIPathConvertible.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIPathConvertible.swift; sourceTree = "<group>"; };
-		F8933D4125FFAF250054BBFF /* iMessageChatChannelListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelListRouter.swift; sourceTree = "<group>"; };
 		F8933D9025FFC0050054BBFF /* ChatMessageListCollectionViewLayout_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageListCollectionViewLayout_Tests.swift; sourceTree = "<group>"; };
 		F8933DF3260209100054BBFF /* SlackChatMessageContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatMessageContentView.swift; sourceTree = "<group>"; };
 		F8933DFC26020A650054BBFF /* ChatClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClient.swift; sourceTree = "<group>"; };
@@ -4470,7 +4467,6 @@
 				F87A4973260C8C5A001653A8 /* MessengerChatChannelListRouter.swift */,
 				F87A497D260C8D22001653A8 /* MessengerChatChannelViewController.swift */,
 				F87A495F260C6FFA001653A8 /* MessengerChatMessageContentView.swift */,
-				F87A4969260C7108001653A8 /* MessengerChatMessageCollectionViewCell.swift */,
 				F86C88BE25FA65C10000BCA9 /* ImageView.swift */,
 				F86C87B425F906630000BCA9 /* AppDelegate.swift */,
 				F87A481B2608F873001653A8 /* ChatClient.swift */,
@@ -4547,7 +4543,6 @@
 				F8CF04AE25EF7D9F00077209 /* iMessageCellSeparatorView.swift */,
 				F89C23AC25E508DE0082CA5B /* iMessageChatChannelListViewController.swift */,
 				F86D799225E659BA00379BC3 /* iMessageChatChannelViewController.swift */,
-				F8933D4125FFAF250054BBFF /* iMessageChatChannelListRouter.swift */,
 				F81641B225E7A36E00F49800 /* iMessageChatMessageContentView.swift */,
 				F8BA4F9125E694F90078BA9D /* iMessageChatMessageComposerView.swift */,
 				F8BA4FA325E69D8F0078BA9D /* iMessageChatComposerViewController.swift */,
@@ -6066,7 +6061,6 @@
 				F89C23AD25E508DE0082CA5B /* iMessageChatChannelListViewController.swift in Sources */,
 				F8CF04AF25EF7D9F00077209 /* iMessageCellSeparatorView.swift in Sources */,
 				F81641B325E7A36F00F49800 /* iMessageChatMessageContentView.swift in Sources */,
-				F8933D4225FFAF250054BBFF /* iMessageChatChannelListRouter.swift in Sources */,
 				F89C23A925E508DE0082CA5B /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
