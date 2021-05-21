@@ -8,6 +8,10 @@ Depending on combination of its properties messages appear differently, this scr
 
 <img src="../img/messages-showcase.png" width="40%" />
 
+This is how some of `ChatMessage` properties are reflected in views:
+
+<img src="../img/messages-properties.png" width="40%" />
+
 ## Optimistic updates
 
 Optimistic updates model is applied to messages, meaning that when there is a change to local messages state it is propagated to chat components so it is displayed for users right away and then it's synchronized with backend. In case of synchronization failure users may be prompted to retry the failed action.
@@ -280,11 +284,11 @@ There are two ways of replying a message:
   
     Initiating a thread reply takes a user into thread details screen and the resulting message will look like a normal message that is placed inside the thread. It is also possible to duplicate it to the parent channel.
   
-    <img src="../img/thread-details.png" width="20%" />
+    <img src="../img/thread-details.png" width="35%" />
 
     A message with thread replies appears like this:
 
-    <img src="../img/thread-reply.png" width="20%" />
+    <img src="../img/thread-reply.png" width="35%" />
 
 If you use your own implementation for message composer you can create a **thread reply** for a message with `MessageController`:
 
