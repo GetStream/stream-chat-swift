@@ -506,6 +506,12 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         guard firstMentionSymbolBeforeCaret.location != NSNotFound else {
             return nil
         }
+
+        let charIndexBeforeMentionSymbol = firstMentionSymbolBeforeCaret.lowerBound - 1
+        let charRangeBeforeMentionSymbol = NSRange(location: charIndexBeforeMentionSymbol, length: 1)
+        if charIndexBeforeMentionSymbol >= 0, text.substring(with: charRangeBeforeMentionSymbol) != " " {
+            return nil
+        }
         
         let mentionStart = firstMentionSymbolBeforeCaret.upperBound
         let mentionEnd = caretLocation
