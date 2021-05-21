@@ -72,6 +72,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// View for displaying the channel image in the navigation bar.
     open private(set) lazy var channelAvatarView = components
         .channelAvatarView.init()
+        .withoutAutoresizingMaskConstraints
     
     /// View which displays information about current users who are typing.
     public private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = components
@@ -142,6 +143,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             collectionView.contentInset.bottom += typingIndicatorViewHeight
         }
         
+        NSLayoutConstraint.activate([
+            channelAvatarView.widthAnchor.pin(equalTo: channelAvatarView.heightAnchor),
+            channelAvatarView.heightAnchor.pin(equalToConstant: 32)
+        ])
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
     }
 
