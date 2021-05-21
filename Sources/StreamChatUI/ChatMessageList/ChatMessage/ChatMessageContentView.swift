@@ -362,7 +362,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         }
 
         // Text
-        textView?.text = content?.text
+        textView?.text = content?.textContent
 
         // Avatar
         let placeholder = appearance.images.userAvatarPlaceholder1
