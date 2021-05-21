@@ -4,12 +4,9 @@ title: Working with Messages
 
 ## Message object
 A message is represented by `ChatMessage` model.
-Depending on combination of its properties messages appear differently, this screenshot showcases the most common types of messages:
+Depending on combination of its properties messages appear differently, a screenshot on the left showcases the most common types of messages. A screenshot on the right shows how some of `ChatMessage` properties are reflected in views:
 
-<img src="../img/messages-showcase.png" width="40%" />
-
-This is how some of `ChatMessage` properties are reflected in views:
-
+<img src="../img/messages-showcase.png" width="40%"/>
 <img src="../img/messages-properties.png" width="40%" />
 
 ## Optimistic updates
