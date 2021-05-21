@@ -51,7 +51,7 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, Comp
         
         let overlayGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnOverlay))
         overlayGestureRecognizer.cancelsTouchesInView = false
-        view.addGestureRecognizer(overlayGestureRecognizer)
+        blurView.addGestureRecognizer(overlayGestureRecognizer)
     }
 
     override open func setUpAppearance() {

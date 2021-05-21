@@ -37,7 +37,8 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
     /// The `AlertsRouter` instance responsible for presenting alerts.
     open lazy var alertsRouter = components
         .alertsRouter
-        .init(rootViewController: self)
+        // Temporary solution until the actions router works with with the `UIWindow`
+        .init(rootViewController: self.parent ?? self)
 
     /// `ContainerView` for showing message's actions.
     open private(set) lazy var messageActionsContainerStackView = ContainerStackView()
