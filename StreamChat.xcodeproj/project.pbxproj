@@ -963,7 +963,6 @@
 		F8933B9E25FF55E50054BBFF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F8933B9D25FF55E50054BBFF /* Assets.xcassets */; };
 		F8933BA125FF55E50054BBFF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F8933B9F25FF55E50054BBFF /* LaunchScreen.storyboard */; };
 		F8933BBD25FF56400054BBFF /* SlackChatChannelUnreadCountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BB725FF563E0054BBFF /* SlackChatChannelUnreadCountView.swift */; };
-		F8933BBE25FF56400054BBFF /* SlackChatChannelListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BB825FF563F0054BBFF /* SlackChatChannelListRouter.swift */; };
 		F8933BBF25FF56400054BBFF /* SlackChatChannelViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BB925FF563F0054BBFF /* SlackChatChannelViewController.swift */; };
 		F8933BC025FF56400054BBFF /* SlackChatChannelListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BBA25FF563F0054BBFF /* SlackChatChannelListViewController.swift */; };
 		F8933BC125FF56400054BBFF /* SlackChatChannelListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8933BBB25FF563F0054BBFF /* SlackChatChannelListItemView.swift */; };
@@ -2146,7 +2145,6 @@
 		F8933BA025FF55E50054BBFF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F8933BA225FF55E50054BBFF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F8933BB725FF563E0054BBFF /* SlackChatChannelUnreadCountView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatChannelUnreadCountView.swift; sourceTree = "<group>"; };
-		F8933BB825FF563F0054BBFF /* SlackChatChannelListRouter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatChannelListRouter.swift; sourceTree = "<group>"; };
 		F8933BB925FF563F0054BBFF /* SlackChatChannelViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatChannelViewController.swift; sourceTree = "<group>"; };
 		F8933BBA25FF563F0054BBFF /* SlackChatChannelListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatChannelListViewController.swift; sourceTree = "<group>"; };
 		F8933BBB25FF563F0054BBFF /* SlackChatChannelListItemView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SlackChatChannelListItemView.swift; sourceTree = "<group>"; };
@@ -4506,7 +4504,6 @@
 				F8933BC325FF56460054BBFF /* Colors.swift */,
 				F8933BBC25FF56400054BBFF /* SlackChatAvatarView.swift */,
 				F8933BBB25FF563F0054BBFF /* SlackChatChannelListItemView.swift */,
-				F8933BB825FF563F0054BBFF /* SlackChatChannelListRouter.swift */,
 				F8933BBA25FF563F0054BBFF /* SlackChatChannelListViewController.swift */,
 				F87A471F26089DFE001653A8 /* JumpView.swift */,
 				F8933BB725FF563E0054BBFF /* SlackChatChannelUnreadCountView.swift */,
@@ -6030,7 +6027,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F8933DFD26020A650054BBFF /* ChatClient.swift in Sources */,
-				F8933BBE25FF56400054BBFF /* SlackChatChannelListRouter.swift in Sources */,
 				F8933BC425FF56460054BBFF /* Colors.swift in Sources */,
 				F8933BBF25FF56400054BBFF /* SlackChatChannelViewController.swift in Sources */,
 				F8FC489826038BDA00A27DC5 /* SlackChatMessageImageGallery.swift in Sources */,

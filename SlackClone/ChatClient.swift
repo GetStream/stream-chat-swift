@@ -14,13 +14,11 @@ extension ChatClient {
         var components = Components()
 
         components.messageLayoutOptionsResolver = SlackMessageOptionsResolver()
-        components.channelListRouter = SlackChatChannelListRouter.self
+        components.messageListVC = SlackChatChannelViewController.self
         components.avatarView = SlackChatAvatarView.self
         components.channelContentView = SlackChatChannelListItemView.self
         components.channelUnreadCountView = SlackChatChannelUnreadCountView.self
         appearance.images.newChannel = UIImage(named: "new_message")!
-
-        components.messageAuthorAvatarView = SlackChatAvatarView.self
         components.imageGalleryView = SlackChatMessageImageGallery.self
         
         Appearance.default = appearance
