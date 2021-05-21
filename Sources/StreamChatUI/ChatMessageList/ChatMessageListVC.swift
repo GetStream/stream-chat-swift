@@ -69,6 +69,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     open private(set) lazy var titleView: TitleContainerView = components.navigationTitleView.init()
         .withoutAutoresizingMaskConstraints
     
+    /// View for displaying the channel image in the navigation bar.
+    open private(set) lazy var channelAvatarView = components
+        .channelAvatarView.init()
+    
     /// View which displays information about current users who are typing.
     public private(set) lazy var typingIndicatorView: _TypingIndicatorView<ExtraData> = components
         .typingIndicatorView
@@ -105,10 +109,10 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         
         if channelController.channel?.isDirectMessageChannel == true {
             timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { [weak self] _ in
-                self?.updateNavigationTitle()
+                self?.updateNavigationBarContent()
             }
         }
-        updateNavigationTitle()
+        updateNavigationBarContent()
     }
     
     override open func setUpLayout() {
@@ -137,6 +141,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             
             collectionView.contentInset.bottom += typingIndicatorViewHeight
         }
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
     }
 
     override open func setUpAppearance() {
@@ -261,7 +267,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     /// If the channel is direct between two people this method is called repeatedly every minute
     /// to update the online status of the members.
     /// For group chat is called every-time the channel changes.
-    open func updateNavigationTitle() {
+    open func updateNavigationBarContent() {
         let title = channelController.channel
             .flatMap { components.channelNamer($0, channelController.client.currentUserId) }
         
@@ -285,6 +291,8 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         }()
 
         titleView.content = (title: title, subtitle: subtitle)
+        
+        channelAvatarView.content = (channelController.channel, channelController.client.currentUserId)
     }
 
     /// Handles long press action on collection view.
@@ -426,7 +434,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         _ channelController: _ChatChannelController<ExtraData>,
         didUpdateChannel channel: EntityChange<_ChatChannel<ExtraData>>
     ) {
-        updateNavigationTitle()
+        updateNavigationBarContent()
     }
 
     open func channelController(
