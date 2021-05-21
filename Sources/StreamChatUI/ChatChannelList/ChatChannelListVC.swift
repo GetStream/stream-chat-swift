@@ -233,31 +233,70 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
         _ controller: _ChatChannelListController<ExtraData>,
         didChangeChannels changes: [ListChange<_ChatChannel<ExtraData>>]
     ) {
-        let newChannelsCount = controller.channels.count
-        var movedItems: [IndexPath] = []
-        
+        var allIndexes = Set<IndexPath>()
+        var moveIndexes = Set<IndexPathMove>()
+        var insertIndexes = Set<IndexPath>()
+        var removeIndexes = Set<IndexPath>()
+        var updateIndexes = Set<IndexPath>()
+
+        // The verification of conflicts is just a temporary solution
+        // until the root cause of the conflicts has been solved.
+        var hasConflicts = false
+        let verifyConflict = { (indexPath: IndexPath) in
+            let (inserted, _) = allIndexes.insert(indexPath)
+            hasConflicts = !inserted || hasConflicts
+        }
+
+        for change in changes {
+            if hasConflicts {
+                break
+            }
+
+            switch change {
+            case let .insert(_, index):
+                verifyConflict(index)
+                insertIndexes.insert(index)
+            case let .move(_, fromIndex, toIndex):
+                verifyConflict(fromIndex)
+                verifyConflict(toIndex)
+                moveIndexes.insert(IndexPathMove(fromIndex, toIndex))
+            case let .remove(_, index):
+                verifyConflict(index)
+                removeIndexes.insert(index)
+            case let .update(_, index):
+                verifyConflict(index)
+                updateIndexes.insert(index)
+            }
+        }
+
+        if hasConflicts {
+            channelsCount = controller.channels.count
+            collectionView.reloadData()
+
+            logConflicts(
+                moves: moveIndexes,
+                inserts: insertIndexes,
+                updates: updateIndexes,
+                removes: removeIndexes
+            )
+            return
+        }
+
         collectionView.performBatchUpdates(
             {
-                for change in changes {
-                    switch change {
-                    case let .insert(_, index):
-                        collectionView.insertItems(at: [index])
-                    case let .move(_, fromIndex, toIndex):
-                        collectionView.moveItem(at: fromIndex, to: toIndex)
-                        movedItems.append(toIndex)
-                    case let .remove(_, index):
-                        collectionView.deleteItems(at: [index])
-                    case let .update(_, index):
-                        collectionView.reloadItems(at: [index])
-                    }
+                collectionView.insertItems(at: Array(insertIndexes))
+                collectionView.deleteItems(at: Array(removeIndexes))
+                collectionView.reloadItems(at: Array(updateIndexes))
+                moveIndexes.forEach {
+                    collectionView.moveItem(at: $0.fromIndex, to: $0.toIndex)
                 }
                 
-                channelsCount = newChannelsCount
+                channelsCount = controller.channels.count
             },
             completion: { _ in
                 // Move changes from NSFetchController also can mean an update of the content.
                 // Since a `moveItem` in collections do not update the content of the cell, we need to reload those cells.
-                self.collectionView.reloadItems(at: movedItems)
+                self.collectionView.reloadItems(at: Array(moveIndexes.map(\.toIndex)))
             }
         )
     }
@@ -276,4 +315,40 @@ extension _ChatChannelListVC: DataControllerStateDelegate {
             loadingIndicator.stopAnimating()
         }
     }
+}
+
+// MARK: - Helpers for temporary list changes conflicts.
+
+// Temporary struct for list changes protection against conflicts.
+private struct IndexPathMove: Hashable, CustomStringConvertible {
+    var fromIndex: IndexPath
+    var toIndex: IndexPath
+
+    init(_ from: IndexPath, _ to: IndexPath) {
+        fromIndex = from
+        toIndex = to
+    }
+
+    var description: String {
+        "(from: \(fromIndex), to: \(toIndex))"
+    }
+}
+
+private func logConflicts(
+    moves: Set<IndexPathMove>,
+    inserts: Set<IndexPath>,
+    updates: Set<IndexPath>,
+    removes: Set<IndexPath>
+) {
+    log.error("""
+
+    ⚠️ Inconsistent updates from ChatChannelListController.
+    🙏 Please copy the following log and open an issue at: https://github.com/GetStream/stream-chat-swift/issues
+
+    Moves: \(moves)
+    Inserts: \(inserts)
+    updates: \(updates)
+    removes: \(removes)
+
+    """)
 }
