@@ -1,9 +1,4 @@
----
-title: Attachments v4.x migration
----
-
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
+# Attachments v4.x migration
 
 ## Send attachments
 
@@ -38,15 +33,7 @@ Let's see how to create **file/image** and **custom** attachments in `v4.x` and 
 
 ### File/image attachments
 
-<Tabs
-  defaultValue="v4.x"
-  values={[
-    { label: 'v3.2', value: 'v3.2', },
-    { label: 'v4.x', value: 'v4.x', },
-  ]
-}>
-<TabItem value="v3.2">
-
+`Version 3.x`
 ```swift
 // Create an array of `AttachmentEnvelope` objects
 let attachments: [AttachmentEnvelope] = [
@@ -57,9 +44,7 @@ let attachments: [AttachmentEnvelope] = [
 ]
 ```
 
-</TabItem>
-<TabItem value="v4.x">
-
+`Version 4.x`
 ```swift
 // Create an array of `AnyAttachmentPayload` objects
 let attachments: [AnyAttachmentPayload] = [
@@ -70,9 +55,6 @@ let attachments: [AnyAttachmentPayload] = [
 ]
 ```
 
-</TabItem>
-</Tabs>
-
 The `.file` and `.image` attachments are the only built-in attachment types that can be added to the message manually.
 
 ### Custom attachments
@@ -80,15 +62,7 @@ The `.file` and `.image` attachments are the only built-in attachment types that
 To add a custom attachments to the message the custom type has to be created first.
 This is true for both `v3.2` and `v4.x` however there're some differences so let's see what they are:
 
-<Tabs
-  defaultValue="v4.x"
-  values={[
-    { label: 'v3.2', value: 'v3.2'},
-    { label: 'v4.x', value: 'v4.x'},
-  ]
-}>
-<TabItem value="v3.2">
-
+`Version 3.x`
 ```swift
 // Declare a custom type conforming to `AttachmentEnvelope`
 struct Product: AttachmentEnvelope {
@@ -108,9 +82,7 @@ let attachments: [AttachmentEnvelope] = [
 ]
 ```
 
-</TabItem>
-<TabItem value="v4.x">
-
+`Version 4.x`
 ```swift
 // Declare a custom type conforming to `AttachmentPayload`
 struct Product: AttachmentPayload {
@@ -129,9 +101,6 @@ let attachments: [AnyAttachmentPayload] = [
   AnyAttachmentPayload(payload: iPhone)
 ]
 ```
-
-</TabItem>
-</Tabs>
 
 ### Summary
 
@@ -154,15 +123,7 @@ Let's see how at steps **[2]** and **[3]** look in `v4.x` for different kind of 
 
 File attachment requires prior uploading before the message is sent. The local state is exposed for `.file` attachments to track how the uploading goes.
 
-<Tabs
-  defaultValue="v4.x"
-  values={[
-    { label: 'v3.2', value: 'v3.2'},
-    { label: 'v4.x', value: 'v4.x'},
-  ]
-}>
-<TabItem value="v3.2">
-
+`Version 3.x`
 ```swift
 // Get `.file` attachments
 let fileAttachments = message.attachments
@@ -181,9 +142,7 @@ if let file = fileAttachments.first {
 }
 ```
 
-</TabItem>
-<TabItem value="v4.x">
-
+`Version 4.x`
 ```swift
 // Get the first `.file` attachment
 if let file = message.fileAttachments.first {
@@ -197,21 +156,11 @@ if let file = message.fileAttachments.first {
 }
 ```
 
-</TabItem>
-</Tabs>
-
 ### Image attachments
 
 Image attachment requires prior uploading before the message is sent. The local state is exposed for `.image` attachments to track how the uploading goes.
 
-<Tabs
-  defaultValue="v4.x"
-  values={[
-    { label: 'v3.2', value: 'v3.2'},
-    { label: 'v4.x', value: 'v4.x'},
-  ]
-}>
-<TabItem value="v3.2">
+`Version 3.x`
 
 Image attachments are exposed as `ChatMessageDefaultAttachment`. Mandatory fields are **optinal** because of `ChatMessageDefaultAttachment` being used for all built-in attachment types.
 
@@ -233,8 +182,7 @@ if let image = imageAttachments.first {
 }
 ```
 
-</TabItem>
-<TabItem value="v4.x">
+`Version 4.x`
 
 Image attachments are exposed as `ChatMessageImageAttachment`. Mandatory fields are **non-optinal** and can be accessed directly on attachment.
 
@@ -251,21 +199,11 @@ if let image = message.imageAttachments.first {
 }
 ```
 
-</TabItem>
-</Tabs>
-
 ### Giphy attachments
 
 The ephemeral message containing giphy attachment will be created when `/giphy` command is used.
 
-<Tabs
-  defaultValue="v4.x"
-  values={[
-    { label: 'v3.2', value: 'v3.2'},
-    { label: 'v4.x', value: 'v4.x'},
-  ]
-}>
-<TabItem value="v3.2">
+`Version 3.x`
 
 Giphy attachments are exposed as `ChatMessageDefaultAttachment`. Mandatory fields are **optinal** because of `ChatMessageDefaultAttachment` being used for all built-in attachment types.
 
@@ -285,8 +223,7 @@ if let giphy = giphyAttachments.first {
 }
 ```
 
-</TabItem>
-<TabItem value="v4.x">
+`Version 4.x`
 
 Giphy attachments are exposed as `ChatMessageGiphyAttachment`. Mandatory fields are **non-optinal** and can be accessed directly on attachment.
 
@@ -298,21 +235,11 @@ if let giphy = message.giphyAttachments.first {
 }
 ```
 
-</TabItem>
-</Tabs>
-
 ### Link preview attachments
 
 The link attachment will be added to the message automatically if the message is sent with the text containing the URL.
 
-<Tabs
-  defaultValue="v4.x"
-  values={[
-    { label: 'v3.2', value: 'v3.2'},
-    { label: 'v4.x', value: 'v4.x'},
-  ]
-}>
-<TabItem value="v3.2">
+`Version 3.x`
 
 Giphy attachments are exposed as `ChatMessageDefaultAttachment`. Mandatory fields are **optinal** because of `ChatMessageDefaultAttachment` being used for all built-in attachment types.
 
@@ -332,8 +259,7 @@ if let link = linkAttachments.first {
 }
 ```
 
-</TabItem>
-<TabItem value="v4.x">
+`Version 4.x`
 
 Link preview attachments are exposed as `ChatMessageLinkAttachment`. Mandatory fields are **non-optinal** and can be accessed directly on attachment.
 
@@ -345,19 +271,9 @@ if let linkPreview = message.linkAttachments.first {
 }
 ```
 
-</TabItem>
-</Tabs>
-
 ### Custom attachments
 
-<Tabs
-  defaultValue="v4.x"
-  values={[
-    { label: 'v3.2', value: 'v3.2'},
-    { label: 'v4.x', value: 'v4.x'},
-  ]
-}>
-<TabItem value="v3.2">
+`Version 3.x`
 
 - all built-in attachments exposed as `ChatMessageRawAttachment`
 - custom payload is stored in `data: Data?` fields
@@ -385,8 +301,7 @@ if let productAttachment = productAttachments.first {
 }
 ```
 
-</TabItem>
-<TabItem value="v4.x">
+`Version 4.x`
 
 - custom attachments are directly accessible on `ChatMessage`
 - custom payload fields are are directly on attachment thanks to `dynamicMemberLookup`
@@ -406,9 +321,6 @@ if let product = productAttachments.first {
   print(product.name)
 }
 ```
-
-</TabItem>
-</Tabs>
 
 ### Changes summary
 
