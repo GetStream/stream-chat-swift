@@ -15,7 +15,12 @@ open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>:
 {
     /// Shows the view controller with the profile of the current user.
     open func showCurrentUserProfile() {
-        debugPrint("Not implemented", #function)
+        log.error(
+            """
+            Showing current user profile is not handled. Subclass `ChatChannelListRouter` and provide your \
+            implementation of the `\(#function)` method.
+            """
+        )
     }
 
     /// Shows the view controller with messages for the provided cid.
@@ -36,6 +41,11 @@ open class _ChatChannelListRouter<ExtraData: ExtraDataTypes>:
 
     /// Presents the user with the new channel creation flow.
     open func showCreateNewChannelFlow() {
-        debugPrint("Not implemented", #function)
+        log.error(
+            """
+            Showing the new channel flow is not handled. Subclass `ChatChannelListRouter` and provide your \
+            implementation of the `\(#function)` method.
+            """
+        )
     }
 }
