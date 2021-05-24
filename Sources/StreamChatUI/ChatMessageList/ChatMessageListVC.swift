@@ -153,9 +153,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
     override open func setUpAppearance() {
         super.setUpAppearance()
         
-        view.backgroundColor = .white
+        view.backgroundColor = appearance.colorPalette.background
         
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = appearance.colorPalette.background
         
         navigationItem.titleView = titleView
     }

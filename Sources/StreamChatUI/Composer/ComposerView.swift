@@ -106,7 +106,7 @@ open class _ComposerView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         
-        backgroundColor = appearance.colorPalette.popoverBackground
+        backgroundColor = appearance.colorPalette.background
         layer.shadowColor = UIColor.systemGray.cgColor
         layer.shadowOpacity = 1
         layer.shadowOffset = .zero

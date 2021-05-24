@@ -32,6 +32,7 @@ public extension Appearance {
         public var background4: UIColor = .streamOverlayDark
         public var background5: UIColor = .streamOverlayDarkStatic
         public var background6: UIColor = .streamGrayWhisper
+        public var background7: UIColor = .streamDarkGray
 
         public var overlayBackground: UIColor = .streamOverlayLight
         public var popoverBackground: UIColor = .streamWhite
@@ -64,6 +65,7 @@ private extension UIColor {
     static let streamGray = mode(0x7a7a7a, 0x7a7a7a)
     static let streamGrayGainsboro = mode(0xdbdbdb, 0x2d2f2f)
     static let streamGrayWhisper = mode(0xecebeb, 0x1c1e22)
+    static let streamDarkGray = mode(0x7a7a7a, 0x7a7a7a)
     static let streamWhiteSmoke = mode(0xf2f2f2, 0x13151b)
     static let streamWhiteSnow = mode(0xfcfcfc, 0x070a0d)
     static let streamOverlayLight = mode(0xfcfcfc, lightAlpha: 0.9, 0x070a0d, darkAlpha: 0.9)
