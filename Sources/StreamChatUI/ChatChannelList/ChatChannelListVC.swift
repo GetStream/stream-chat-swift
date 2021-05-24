@@ -284,8 +284,8 @@ extension _ChatChannelListVC: _ChatChannelListControllerDelegate {
 
         collectionView.performBatchUpdates(
             {
-                collectionView.insertItems(at: Array(insertIndexes))
                 collectionView.deleteItems(at: Array(removeIndexes))
+                collectionView.insertItems(at: Array(insertIndexes))
                 collectionView.reloadItems(at: Array(updateIndexes))
                 moveIndexes.forEach {
                     collectionView.moveItem(at: $0.fromIndex, to: $0.toIndex)
