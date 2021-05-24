@@ -130,7 +130,10 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         )
 
         cell.swipeableView.delegate = self
-        cell.swipeableView.indexPath = indexPath
+        cell.swipeableView.indexPath = { [weak cell, weak self] in
+            guard let cell = cell else { return nil }
+            return self?.collectionView.indexPath(for: cell)
+        }
         
         return cell
     }
