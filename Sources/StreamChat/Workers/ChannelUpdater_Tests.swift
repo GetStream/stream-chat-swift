@@ -47,8 +47,8 @@ class ChannelUpdater_Tests: StressTestCase {
         // Simulate `update(channelQuery:)` call
         let query = _ChannelQuery<ExtraData>(cid: .unique)
         var completionCalled = false
-        channelUpdater.update(channelQuery: query, completion: { error in
-            XCTAssertNil(error)
+        channelUpdater.update(channelQuery: query, completion: { result in
+            XCTAssertNil(result.error)
             completionCalled = true
         })
         
@@ -71,7 +71,7 @@ class ChannelUpdater_Tests: StressTestCase {
         // Simulate `update(channelQuery:)` call
         let query = _ChannelQuery<ExtraData>(cid: .unique)
         var completionCalledError: Error?
-        channelUpdater.update(channelQuery: query, completion: { completionCalledError = $0 })
+        channelUpdater.update(channelQuery: query, completion: { completionCalledError = $0.error })
         
         // Simulate API response with failure
         let error = TestError()

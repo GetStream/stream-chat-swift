@@ -17,19 +17,23 @@ class ChannelUpdater<ExtraData: ExtraDataTypes>: Worker {
     func update(
         channelQuery: _ChannelQuery<ExtraData>,
         channelCreatedCallback: ((ChannelId) -> Void)? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: ((Result<ChannelPayload<ExtraData>, Error>) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .channel(query: channelQuery)) { (result) in
             do {
                 let payload = try result.get()
                 channelCreatedCallback?(payload.channel.cid)
-                self.database.write { (session) in
+                self.database.write { session in
                     try session.saveChannel(payload: payload)
                 } completion: { error in
-                    completion?(error)
+                    if let error = error {
+                        completion?(.failure(error))
+                        return
+                    }
+                    completion?(.success(payload))
                 }
             } catch {
-                completion?(error)
+                completion?(.failure(error))
             }
         }
     }
