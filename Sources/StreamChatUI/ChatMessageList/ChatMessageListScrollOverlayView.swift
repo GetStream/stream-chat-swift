@@ -28,7 +28,7 @@ open class ChatMessageListScrollOverlayView: _View, AppearanceProvider {
         
         layer.cornerRadius = bounds.height / 2
         
-        backgroundColor = appearance.colorPalette.background4
+        backgroundColor = appearance.colorPalette.background7
         
         textLabel.font = appearance.fonts.footnote
         textLabel.textColor = appearance.colorPalette.staticColorText
