@@ -14,7 +14,7 @@ User Tokens are JWT tokens containing a User ID and used to authenticate a user.
 
 Regular users are the way to go for a most chat apps. They must be authenticated with a JWT token generated with your app's secret key. Ideally, you'll [generate the token in your backend](https://getstream.io/chat/docs/tokens_and_authentication/?language=swift) and provide a closure to fetch it, but for testing purposes we provide a [JWT generator](https://getstream.io/chat/docs/token_generator/?language=swift) and you can set the token statically. It's also possible to [use development tokens](https://getstream.io/chat/docs/node/tokens_and_authentication/#development-tokens), but they must be enabled for your app in the dashboard.
 
-### Static
+#### Static
 
 ```swift
 /// A static token provider. Use it for testing purposes.
@@ -22,7 +22,7 @@ let token = Token("USER_TOKEN")
 let tokenProvider = TokenProvider.static(token)
 ```
 
-### Closure
+#### Closure
 
 ```swift
 /// A token provider that fetches the token from your backend service. Use it in production.
@@ -41,7 +41,7 @@ let tokenProvider = TokenProvider.closure { chatClient, completion in
 }
 ```
 
-### Development
+#### Development
 
 ```swift
 /// A development token provider. Use it for testing purposes.
