@@ -42,13 +42,19 @@ With our workspace now containing our Pods project with dependencies, as well as
 
 ## Swift Package Manager
 
-Add the following to your Package.swift or in Xcode -> File -> Swift Packages -> Add Package Dependency:
+Open your `.xcodeproj`, select the option "Add Package Dependency" in File > Swift Packages, and paste the URL: "https://github.com/getstream/stream-chat-swift".
 
-```swift
-dependencies: [
-    .package(url: "https://github.com/GetStream/stream-chat-swift.git", .upToNextMajor(from: "3.1"))
-]
-```
+![Screenshot shows Xcode with the Add Package Dependency dialog opened and Stream Chat iOS SDK GitHub URL in the input field](/img/spm-00.png)
+
+After pressing next, Xcode will look for the repository and automatically select the latest version tagged. Press next and Xcode will download the dependency.
+
+![Screenshot shows an Xcode screen selecting a dependency version and an Xcode screen downloading that dependency](/img/spm-01.png)
+
+The repository contains 2 targets: StreamChat and StreamChatUI. If you'll use the UI components, select both. If you don't need the UI components, select just StreamChat.
+
+![Screenshot shows an Xcode screen with dependency targets to be selected](/img/spm-02.png)
+
+After you press finish, it's done!
 
 
 :::caution
