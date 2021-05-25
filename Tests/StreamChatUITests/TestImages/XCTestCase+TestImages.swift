@@ -5,22 +5,22 @@
 import Nuke
 import XCTest
 
-extension XCTestCase {
+public extension XCTestCase {
     /// A set of test images and their URL that can be used for testing. These images are also preloaded in Nuke cache.
     enum TestImages {
-        static let vader: (url: URL, image: UIImage) = {
+        public static let vader: (url: URL, image: UIImage) = {
             getImage(withName: "vader")
         }()
         
-        static let yoda: (url: URL, image: UIImage) = {
+        public static let yoda: (url: URL, image: UIImage) = {
             getImage(withName: "yoda")
         }()
 
-        static let r2: (url: URL, image: UIImage) = {
+        public static let r2: (url: URL, image: UIImage) = {
             getImage(withName: "r2")
         }()
 
-        static let chewbacca: (url: URL, image: UIImage) = {
+        public static let chewbacca: (url: URL, image: UIImage) = {
             getImage(withName: "chewbacca")
         }()
         
