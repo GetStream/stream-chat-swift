@@ -9,12 +9,24 @@ To get started integrating Stream Chat in your iOS app, install the `StreamChatU
 In your project's Podfile, add: `pod 'StreamChatUI', '~> 3.1'`. It should look similar to the snippet below.
 
 ```ruby
-target 'ChatDemo' do
+target 'MyProject' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  # Pods for ChatDemo
+  # Pods for MyProject
   pod 'StreamChatUI', '~> 3.1'
+end
+```
+
+The StreamChatUI pod will automatically include the StreamChat dependency. If you want just the StreamChat dependency, without the UI components, add `pod 'StreamChatUI', '~> 3.1'` to your Podfile instead. It should look similar to the snippet below.
+
+```ruby
+target 'MyProject' do
+  # Comment the next line if you don't want to use dynamic frameworks
+  use_frameworks!
+
+  # Pods for MyProject
+  pod 'StreamChat', '~> 3.1'
 end
 ```
 
@@ -24,7 +36,7 @@ Now that we’ve modified our Podfile, let’s go ahead and install the project 
 pod install --repo-update
 ```
 
-The above command will generate the **ChatDemo.xcworkspace** file automatically.
+The above command will generate the **MyProject.xcworkspace** file automatically.
 
 With our workspace now containing our Pods project with dependencies, as well as our original project, let’s go ahead and move over to Xcode to complete the process.
 
