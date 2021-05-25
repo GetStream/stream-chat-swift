@@ -10,7 +10,7 @@ After the SDK is installed, the next step is to decide how we'll handle authenti
 
 User Tokens are JWT tokens containing a User ID and used to authenticate a user. You can [generate these tokens using a server client](https://getstream.io/chat/docs/ios-swift/tokens_and_authentication/?language=swift#generating-tokens) and then use them to authenticate a user in a chat client.
 
-### Regular
+### Regular User
 
 Regular users are the way to go for a most chat apps. They must be authenticated with a JWT token generated with your app's secret key. Ideally, you'll [generate the token in your backend](https://getstream.io/chat/docs/tokens_and_authentication/?language=swift) and provide a closure to fetch it, but for testing purposes we provide a [JWT generator](https://getstream.io/chat/docs/token_generator/?language=swift) and you can set the token statically. It's also possible to [use development tokens](https://getstream.io/chat/docs/node/tokens_and_authentication/#development-tokens), but they must be enabled for your app in the dashboard.
 
