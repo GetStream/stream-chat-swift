@@ -25,7 +25,7 @@ struct MessengerChatMessageContentView: ChatMessageContentView.SwiftUIView {
     typealias ExtraData = NoExtraData
     
     var body: some View {
-        if let message = dataSource.message {
+        if let message = dataSource.content {
             VStack {
                 Text(dateFormatter.string(from: message.createdAt))
                     .font(Font(appearance.fonts.subheadline as CTFont))
@@ -34,12 +34,9 @@ struct MessengerChatMessageContentView: ChatMessageContentView.SwiftUIView {
                     if message.isSentByCurrentUser {
                         Spacer()
                     }
-                    if message.isLastInGroup {
-                        if let imageURL = message.author.imageURL,
-                           !message.isSentByCurrentUser {
-                            ImageView(url: imageURL)
-                                .frame(width: 30, height: 30)
-                        }
+                    if let imageURL = message.author.imageURL {
+                        ImageView(url: imageURL)
+                            .frame(width: 30, height: 30)
                     }
                     VStack(alignment: message.isSentByCurrentUser ? .trailing : .leading) {
                         if !message.text.isEmpty {
@@ -54,17 +51,6 @@ struct MessengerChatMessageContentView: ChatMessageContentView.SwiftUIView {
                                     message.isSentByCurrentUser ? Color(appearance.colorPalette.background2) : Color.blue
                                 )
                                 .cornerRadius(18)
-                        }
-                        if message.attachments.contains(where: { $0.type == .image || $0.type == .giphy || $0.type == .file }) {
-                            components.messageList.messageContentSubviews.attachmentSubviews.attachmentsView
-                                .asView(
-                                    .init(
-                                        attachments: message.attachments.compactMap { $0 as? ChatMessageDefaultAttachment },
-                                        didTapOnAttachment: message.didTapOnAttachment,
-                                        didTapOnAttachmentAction: message.didTapOnAttachmentAction
-                                    )
-                                )
-                                .frame(width: 300, height: 300)
                         }
                     }
                     if !message.isSentByCurrentUser {

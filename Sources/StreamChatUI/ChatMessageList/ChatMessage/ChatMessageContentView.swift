@@ -362,7 +362,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         }
 
         // Text
-        textView?.text = content?.text
+        textView?.text = content?.textContent
 
         // Avatar
         let placeholder = appearance.images.userAvatarPlaceholder1
@@ -400,13 +400,16 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
         // Thread info
         threadReplyCountButton?.setTitleColor(tintColor, for: .normal)
-        if let replyCount = content?.replyCount {
+        if let replyCount = content?.replyCount, replyCount > 0 {
             threadReplyCountButton?.setTitle(L10n.Message.Threads.count(replyCount), for: .normal)
         } else {
             threadReplyCountButton?.setTitle(L10n.Message.Threads.reply, for: .normal)
         }
         let latestReplyAuthorAvatar = content?.latestReplies.first?.author.imageURL
-        threadAvatarView?.imageView.loadImage(from: latestReplyAuthorAvatar)
+        threadAvatarView?.imageView.loadImage(
+            from: latestReplyAuthorAvatar,
+            placeholder: appearance.images.userAvatarPlaceholder4
+        )
 
         // Reactions view
         reactionsBubbleView?.tailDirection = content

@@ -34,10 +34,11 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
         messageController.message
     }
     
-    /// The `_ChatMessageActionsRouter` instance responsible for navigation.
-    open private(set) lazy var router = components
-        .messageActionsRouter
-        .init(rootViewController: self)
+    /// The `AlertsRouter` instance responsible for presenting alerts.
+    open lazy var alertsRouter = components
+        .alertsRouter
+        // Temporary solution until the actions router works with with the `UIWindow`
+        .init(rootViewController: self.parent ?? self)
 
     /// `ContainerView` for showing message's actions.
     open private(set) lazy var messageActionsContainerStackView = ContainerStackView()
@@ -89,7 +90,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
                 inlineReplyActionItem()
             ]
 
-            if channelConfig.repliesEnabled {
+            if channelConfig.repliesEnabled && !message.isPartOfThread {
                 actions.append(threadReplyActionItem())
             }
 
@@ -133,7 +134,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
         DeleteActionItem(
             action: { [weak self] _ in
                 guard let self = self else { return }
-                self.router.showMessageDeletionConfirmationAlert { confirmed in
+                self.alertsRouter.showMessageDeletionConfirmationAlert { confirmed in
                     guard confirmed else { return }
 
                     self.messageController.deleteMessage { _ in

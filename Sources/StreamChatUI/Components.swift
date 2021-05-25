@@ -73,6 +73,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     // MARK: - Message list components
 
+    /// The View Controller used to display content of the message, i.e. in the channel detail message list.
+    public var messageListVC: _ChatMessageListVC<ExtraData>.Type = _ChatMessageListVC<ExtraData>.self
+
     /// The collection view that shows the message list.
     public var messageListCollectionView: ChatMessageListCollectionView<ExtraData>.Type = ChatMessageListCollectionView<ExtraData>
         .self
@@ -82,6 +85,17 @@ public struct _Components<ExtraData: ExtraDataTypes> {
 
     /// The view that shows the date for currently visible messages on top of message list.
     public var messageListScrollOverlayView: ChatMessageListScrollOverlayView.Type = ChatMessageListScrollOverlayView.self
+    /// The View Controller used to display the detail of a message thread.
+    public var threadVC: _ChatThreadVC<ExtraData>.Type = _ChatThreadVC<ExtraData>.self
+
+    /// The View Controller by default used to display long-press menu of the message.
+    public var messagePopupVC: _ChatMessagePopupVC<ExtraData>.Type = _ChatMessagePopupVC<ExtraData>.self
+
+    /// The View Controller used for showing detail of a file message attachment.
+    public var filePreviewVC: ChatMessageAttachmentPreviewVC.Type = ChatMessageAttachmentPreviewVC.self
+
+    /// The View Controller used for showing detail of an image message attachment.
+    public var imagePreviewVC: _ImageGalleryVC<ExtraData>.Type = _ImageGalleryVC<ExtraData>.self
 
     /// The view used to display content of the message, i.e. in the channel detail message list.
     public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
@@ -254,8 +268,8 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The router responsible for navigation on message list screen.
     public var messageListRouter: _ChatMessageListRouter<ExtraData>.Type = _ChatMessageListRouter<ExtraData>.self
 
-    /// The router responsible for navigation on message actions screen.
-    public var messageActionsRouter: _ChatMessageActionsRouter<ExtraData>.Type = _ChatMessageActionsRouter<ExtraData>.self
+    /// The router responsible for presenting alerts.
+    public var alertsRouter: AlertsRouter.Type = AlertsRouter.self
     
     public init() {}
 }

@@ -49,9 +49,9 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, Comp
     override open func setUp() {
         super.setUp()
         
-        let overlayGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnOverlay))
-        overlayGestureRecognizer.cancelsTouchesInView = false
-        view.addGestureRecognizer(overlayGestureRecognizer)
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(didTapOnView))
+        tapRecognizer.cancelsTouchesInView = false
+        view.addGestureRecognizer(tapRecognizer)
     }
 
     override open func setUpAppearance() {
@@ -168,8 +168,17 @@ open class _ChatMessagePopupVC<ExtraData: ExtraDataTypes>: _ViewController, Comp
         NSLayoutConstraint.activate(constraints)
     }
 
-    /// Triggered when `blurView` is tapped.
-    @objc open func didTapOnOverlay() {
+    /// Triggered when `view` is tapped.
+    @objc open func didTapOnView(_ gesture: UITapGestureRecognizer) {
+        let actionsLocation = gesture.location(in: actionsController.view)
+        let reactionsLocation = gesture.location(in: reactionsController?.view)
+        let isGestureInActionsView = actionsController.view.frame.contains(actionsLocation)
+        let isGestureInReactionsView = reactionsController?.view.frame.contains(reactionsLocation) == true
+
+        if isGestureInActionsView || isGestureInReactionsView {
+            return
+        }
+
         dismiss(animated: true)
     }
 }

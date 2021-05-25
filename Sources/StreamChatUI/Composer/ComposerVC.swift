@@ -172,7 +172,12 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     open var userSearchController: _ChatUserSearchController<ExtraData>!
 
     /// A controller that manages the channel that the composer is creating content for.
-    open var channelController: _ChatChannelController<ExtraData>!
+    open var channelController: _ChatChannelController<ExtraData>?
+
+    /// The channel config. If it's a new channel, an empty config should be created. (Not yet supported right now)
+    public var channelConfig: ChannelConfig? {
+        channelController?.channel?.config
+    }
 
     /// The view of the composer.
     open private(set) lazy var composerView: _ComposerView<ExtraData> = components
@@ -247,12 +252,10 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     override open func updateContent() {
         super.updateContent()
 
-        let channelConfig = channelController.channel?.config
-
         composerView.inputMessageView.textView.text = content.text
 
         if !content.isEmpty && channelConfig?.typingEventsEnabled == true {
-            channelController.sendKeystrokeEvent()
+            channelController?.sendKeystrokeEvent()
         }
 
         switch content.state {
@@ -310,7 +313,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         composerView.inputMessageView.attachmentsViewContainer.isHidden = content.attachments.isEmpty
 
         if content.isInsideThread {
-            if channelController.channel?.isDirectMessageChannel == true {
+            if channelController?.channel?.isDirectMessageChannel == true {
                 composerView.checkboxControl.label.text = L10n.Composer.Checkmark.directMessageReply
             } else {
                 composerView.checkboxControl.label.text = L10n.Composer.Checkmark.channelReply
@@ -425,7 +428,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 }
 
             // If attachment uploads is disabled, don't ever show the attachments button
-            if self.channelController.channel?.config.uploadsEnabled == false {
+            if self.channelController?.channel?.config.uploadsEnabled == false {
                 self.composerView.attachmentButton.isHidden = true
             }
         }
@@ -446,18 +449,18 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// Creates a new message and notifies the delegate that a new message was created.
     /// - Parameter text: The text content of the message.
     open func createNewMessage(text: String) {
-        guard let cid = channelController.cid else { return }
+        guard let cid = channelController?.cid else { return }
         defer {
             delegate?.composerDidCreateNewMessage()
         }
 
         if let threadParentMessageId = content.threadMessage?.id {
-            let messageController = channelController.client.messageController(
+            let messageController = channelController?.client.messageController(
                 cid: cid,
                 messageId: threadParentMessageId
             )
 
-            messageController.createNewReply(
+            messageController?.createNewReply(
                 text: text,
                 pinning: nil,
                 attachments: content.attachments,
@@ -467,7 +470,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             return
         }
 
-        channelController.createNewMessage(
+        channelController?.createNewMessage(
             text: text,
             pinning: nil,
             attachments: content.attachments,
@@ -480,13 +483,13 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     ///   - id: The id of the editing message.
     ///   - newText: The new text content of the message.
     open func editMessage(withId id: MessageId, newText: String) {
-        guard let cid = channelController.cid else { return }
-        let messageController = channelController.client.messageController(
+        guard let cid = channelController?.cid else { return }
+        let messageController = channelController?.client.messageController(
             cid: cid,
             messageId: id
         )
         // TODO: Adjust LLC to edit attachments also
-        messageController.editMessage(text: newText)
+        messageController?.editMessage(text: newText)
     }
 
     /// Returns a potential user mention in case the user is currently typing a username.
@@ -501,6 +504,12 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             range: NSRange(location: 0, length: caretLocation)
         )
         guard firstMentionSymbolBeforeCaret.location != NSNotFound else {
+            return nil
+        }
+
+        let charIndexBeforeMentionSymbol = firstMentionSymbolBeforeCaret.lowerBound - 1
+        let charRangeBeforeMentionSymbol = NSRange(location: charIndexBeforeMentionSymbol, length: 1)
+        if charIndexBeforeMentionSymbol >= 0, text.substring(with: charRangeBeforeMentionSymbol) != " " {
             return nil
         }
         
@@ -539,7 +548,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// Shows the command suggestions for the potential command the current user is typing.
     /// - Parameter typingCommand: The potential command that the current user is typing.
     open func showCommandSuggestions(for typingCommand: String) {
-        let availableCommands = channelController.channel?.config.commands ?? []
+        let availableCommands = channelController?.channel?.config.commands ?? []
         var commandHints: [Command] = availableCommands
 
         if !typingCommand.isEmpty {

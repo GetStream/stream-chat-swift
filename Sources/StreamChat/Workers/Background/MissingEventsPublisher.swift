@@ -21,7 +21,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
     // MARK: - Properties
     
     private var connectionObserver: EventObserver?
-    private let channelDatabaseCleanupUpdater: ChannelDatabaseCleanupUpdater<ExtraData>
+    private let databaseCleanupUpdater: DatabaseCleanupUpdater<ExtraData>
     @Atomic private var lastSyncedAt: Date?
     
     // MARK: - Init
@@ -31,7 +31,7 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient
     ) {
-        channelDatabaseCleanupUpdater = ChannelDatabaseCleanupUpdater(database: database, apiClient: apiClient)
+        databaseCleanupUpdater = DatabaseCleanupUpdater(database: database, apiClient: apiClient)
         super.init(
             database: database,
             eventNotificationCenter: eventNotificationCenter,
@@ -44,9 +44,9 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
         apiClient: APIClient,
-        channelListCleanupUpdater: ChannelDatabaseCleanupUpdater<ExtraData>
+        databaseCleanupUpdater: DatabaseCleanupUpdater<ExtraData>
     ) {
-        channelDatabaseCleanupUpdater = channelListCleanupUpdater
+        self.databaseCleanupUpdater = databaseCleanupUpdater
         super.init(
             database: database,
             eventNotificationCenter: eventNotificationCenter,
@@ -100,14 +100,32 @@ class MissingEventsPublisher<ExtraData: ExtraDataTypes>: EventWorker {
             self?.apiClient.request(endpoint: endpoint) {
                 switch $0 {
                 case let .success(payload):
+                    // The sync call was successfull.
+                    // We schedule all events for existing channels for processing...
                     self?.eventNotificationCenter.process(payload.eventPayloads)
+
+                    // ... and refetch the existing quries to see if there are some new channels
+                    self?.databaseCleanupUpdater.refetchExistingChannelListQueries()
+
                 case let .failure(error):
-                    log
-                        .info(
-                            "Backend couldn't handle replaying missing events - there was too many (>1000) events to replay. Cleaning local channels data and refetching it from scratch"
-                        )
+                    log.info("""
+                    Backend couldn't handle replaying missing events - there was too many (>1000) events to replay. \
+                    Cleaning local channels data and refetching it from scratch
+                    """)
+
                     if error.isTooManyMissingEventsToSyncError {
-                        self?.channelDatabaseCleanupUpdater.cleanupChannelsData()
+                        // The sync call failed...
+                        self?.database.write {
+                            // First we need to clean up existing data
+                            try self?.databaseCleanupUpdater.resetExistingChannelsData(session: $0)
+                        } completion: { error in
+                            if let error = error {
+                                log.error("Failed cleaning up channels data: \(error).")
+                                return
+                            }
+                            // Then we have to refetch existing channel list queries
+                            self?.databaseCleanupUpdater.refetchExistingChannelListQueries()
+                        }
                     }
                 }
             }

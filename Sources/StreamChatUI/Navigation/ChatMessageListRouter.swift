@@ -5,24 +5,40 @@
 import StreamChat
 import UIKit
 
+/// A `NavigationRouter` subclass used for navigating from message-list-based view controllers.
 public typealias ChatMessageListRouter = _ChatMessageListRouter<NoExtraData>
 
+/// A `NavigationRouter` subclass used for navigating from message-list-based view controllers.
 open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
-    ChatRouter<UIViewController>,
-    UIViewControllerTransitioningDelegate {
-    public private(set) lazy var transitionController = MessageActionsTransitionController<ExtraData>()
+    // We use UIViewController here because the router is used for both
+    // the channel and thread message lists.
+    NavigationRouter<UIViewController>,
+    UIViewControllerTransitioningDelegate,
+    ComponentsProvider
+{
+    /// The transition controller used to animate `ChatMessagePopupVC` transition.
+    open private(set) lazy var messagePopUpTransitionController = MessageActionsTransitionController<ExtraData>()
 
     /// Feedback generator used when presenting actions controller on selected message
     open var impactFeedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
 
-    public private(set) lazy var zoomTransitionController = ZoomTransitionController()
+    /// The transition controller used to animate photo gallery transition.
+    open private(set) lazy var zoomTransitionController = ZoomTransitionController()
 
+    /// Shows the detail pop-up for the selected message. By default called when the message is long-pressed.
+    ///
+    /// - Parameters:
+    ///   - messageContentView: The source content view of the selected message. It's used to get the information
+    ///   about the source frame for the zoom-like transition.
+    ///   - messageActionsController: The `ChatMessageActionsVC` object which will presented as a part of the pop up.
+    ///   - messageReactionsController: The `ChatMessageReactionsVC` object which will presented as a part of the pop up.
+    ///
     open func showMessageActionsPopUp(
         messageContentView: _ChatMessageContentView<ExtraData>,
         messageActionsController: _ChatMessageActionsVC<ExtraData>,
         messageReactionsController: _ChatMessageReactionsVC<ExtraData>?
     ) {
-        let popup = _ChatMessagePopupVC<ExtraData>()
+        let popup = components.messagePopupVC.init()
         popup.messageContentView = messageContentView
         popup.actionsController = messageActionsController
         popup.reactionsController = messageReactionsController
@@ -35,45 +51,71 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
             right: messageContentView.frame.width - bubbleViewFrame.origin.x - bubbleViewFrame.width
         )
         popup.modalPresentationStyle = .overFullScreen
-        popup.transitioningDelegate = transitionController
+        popup.transitioningDelegate = messagePopUpTransitionController
 
-        transitionController.messageContentView = messageContentView
+        messagePopUpTransitionController.messageContentView = messageContentView
         
         rootViewController.present(popup, animated: true)
     }
-    
-    open func showPreview(for url: URL?) {
-        let preview = ChatMessageAttachmentPreviewVC()
-        preview.content = url
+
+    /// Handles opening of a link URL.
+    ///
+    /// - Parameter url: The URL of the link to preview.
+    ///
+    open func showLinkPreview(link: URL) {
+        UIApplication.shared.open(link)
+    }
+
+    /// Shows a View Controller that show the detail of a file attachment.
+    ///
+    /// - Parameter fileURL: The URL of the file to preview.
+    ///
+    open func showFilePreview(fileURL: URL?) {
+        let preview = components.filePreviewVC.init()
+        preview.content = fileURL
         
         let navigation = UINavigationController(rootViewController: preview)
         rootViewController.present(navigation, animated: true)
     }
 
+    /// Shows the detail View Controller of a message thread.
+    ///
+    /// - Parameters:
+    ///   - messageId: The id if the parent message of the thread.
+    ///   - cid: The `cid` of the channel the message belongs to.
+    ///   - client: The current `ChatClient` instance.
+    ///
     open func showThread(
-        for message: _ChatMessage<ExtraData>,
-        in channel: _ChatChannel<ExtraData>,
+        messageId: MessageId,
+        cid: ChannelId,
         client: _ChatClient<ExtraData>
     ) {
         let threadVC = _ChatThreadVC<ExtraData>()
-        threadVC.channelController = client.channelController(for: channel.cid)
+        threadVC.channelController = client.channelController(for: cid)
         threadVC.messageController = client.messageController(
-            cid: channel.cid,
-            messageId: message.id
+            cid: cid,
+            messageId: messageId
         )
-        navigationController?.show(threadVC, sender: self)
+        rootNavigationController?.show(threadVC, sender: self)
     }
-    
+
+    /// Shows the image gallery VC for the selected photo attachment.
+    ///
+    /// - Parameters:
+    ///   - message: The id of the message the attachment belongs to.
+    ///   - initialAttachment: The attachment to present.
+    ///   - previews: All previewable attachments of the message. This is used for swiping right-left when a single
+    ///   message has multiple previewable attachments.
+    ///
     open func showImageGallery(
-        for message: _ChatMessage<ExtraData>,
+        message: _ChatMessage<ExtraData>,
         initialAttachment: ChatMessageImageAttachment,
-        previews: [ImagePreviewable],
-        from chatMessageListVC: _ChatMessageListVC<ExtraData>
+        previews: [ImagePreviewable]
     ) {
         guard
             let preview = previews.first(where: { $0.content?.id == initialAttachment.id })
         else { return }
-        let imageGalleryVC = _ImageGalleryVC<ExtraData>()
+        let imageGalleryVC = components.imagePreviewVC.init()
         imageGalleryVC.modalPresentationStyle = .overFullScreen
         imageGalleryVC.transitioningDelegate = self
         imageGalleryVC.content = message
@@ -94,7 +136,9 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
         rootViewController.present(imageGalleryVC, animated: true)
     }
 
-    public func animationController(
+    // MARK: - UIViewControllerTransitioningDelegate
+
+    open func animationController(
         forPresented presented: UIViewController,
         presenting: UIViewController,
         source: UIViewController
@@ -106,11 +150,11 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
         )
     }
     
-    public func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+    open func animationController(forDismissed dismissed: UIViewController) -> UIViewControllerAnimatedTransitioning? {
         zoomTransitionController.animationController(forDismissed: dismissed)
     }
     
-    public func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning)
+    open func interactionControllerForDismissal(using animator: UIViewControllerAnimatedTransitioning)
         -> UIViewControllerInteractiveTransitioning? {
         zoomTransitionController.interactionControllerForDismissal(using: animator)
     }

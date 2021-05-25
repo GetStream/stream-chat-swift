@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class MessengerChatChannelViewController: ChatChannelVC {
+final class MessengerChatChannelViewController: ChatMessageListVC {
     private lazy var titleLabel = UILabel()
     private lazy var avatar = ChatChannelAvatarView()
     

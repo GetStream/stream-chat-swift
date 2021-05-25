@@ -12,14 +12,15 @@ extension ChatClient {
         // Register custom UI elements
         var appearance = Appearance()
         var components = Components()
-        
+
         components.channelContentView = iMessageChatChannelListItemView.self
         components.channelCellSeparator = iMessageCellSeparatorView.self
 
-        components.channelListRouter = iMessageChatChannelListRouter.self
         appearance.images.newChannel = UIImage(systemName: "square.and.pencil")!
-        components.messageComposerView = iMessageChatMessageComposerView.self
+        components.messageListVC = iMessageChatChannelViewController.self
         components.messageComposerVC = iMessageChatComposerViewController.self
+        components.messageComposerView = iMessageChatMessageComposerView.self
+        components.messageLayoutOptionsResolver = iMessageChatMessageLayoutOptionsResolver()
 
         Appearance.default = appearance
         Components.default = components
