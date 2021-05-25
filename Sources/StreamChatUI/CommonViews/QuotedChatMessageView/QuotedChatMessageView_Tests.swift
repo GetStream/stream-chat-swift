@@ -5,6 +5,7 @@
 @testable import StreamChat
 import StreamChatTestTools
 @testable import StreamChatUI
+import SwiftUI
 import XCTest
 
 class QuotedChatMessageView_Tests: XCTestCase {
@@ -123,6 +124,28 @@ class QuotedChatMessageView_Tests: XCTestCase {
         view.addSizeConstraints()
 
         AssertSnapshot(view, variants: [.defaultLight])
+    }
+
+    @available(iOS 13.0, *)
+    func test_wrappedInSwiftUI() {
+        struct CustomView: View {
+            @EnvironmentObject var components: Components.ObservableObject
+            let content: QuotedChatMessageView.Content
+
+            var body: some View {
+                components.quotedMessageView.asView(content)
+            }
+        }
+
+        let view = CustomView(
+            content: .init(
+                message: .mock(id: .unique, text: "Hello world!", author: .mock(id: .unique, imageURL: TestImages.yoda.url)),
+                avatarAlignment: .left
+            )
+        )
+        .environmentObject(Components().asObservableObject)
+
+        AssertSnapshot(view)
     }
 }
 

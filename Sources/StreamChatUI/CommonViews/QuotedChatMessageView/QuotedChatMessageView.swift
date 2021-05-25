@@ -6,11 +6,11 @@ import StreamChat
 import UIKit
 
 /// The avatar position in relation with the text message.
-struct QuotedAvatarAlignment: Equatable {
+public struct QuotedAvatarAlignment: Equatable {
     /// The avatar will be aligned to the left, and the message content on the right.
-    static let left = QuotedAvatarAlignment(rawValue: 0)
+    public static let left = QuotedAvatarAlignment(rawValue: 0)
     /// The avatar will be aligned to the right, and the message content on the left.
-    static let right = QuotedAvatarAlignment(rawValue: 1)
+    public static let right = QuotedAvatarAlignment(rawValue: 1)
 
     private let rawValue: Int
 }
@@ -19,13 +19,21 @@ struct QuotedAvatarAlignment: Equatable {
 public typealias QuotedChatMessageView = _QuotedChatMessageView<NoExtraData>
 
 /// A view that displays a quoted message.
-open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
+open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvider, SwiftUIRepresentable {
     /// The content of the view.
     public struct Content {
         /// The quoted message.
-        let message: _ChatMessage<ExtraData>
+        public let message: _ChatMessage<ExtraData>
         /// The avatar position in relation with the text message.
-        let avatarAlignment: QuotedAvatarAlignment
+        public let avatarAlignment: QuotedAvatarAlignment
+
+        public init(
+            message: _ChatMessage<ExtraData>,
+            avatarAlignment: QuotedAvatarAlignment
+        ) {
+            self.message = message
+            self.avatarAlignment = avatarAlignment
+        }
     }
 
     /// The content of this view, composed by the quoted message and the desired avatar alignment.
