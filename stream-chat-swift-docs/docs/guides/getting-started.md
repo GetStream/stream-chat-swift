@@ -17,7 +17,7 @@ Regular users are the way to go for a most chat apps. They must be authenticated
 #### Static
 
 ```swift
-/// A static token provider. Use it for testing purposes.
+/// A static token provider. Use it for setting the token synchronously or for testing purposes.
 let token = Token("USER_TOKEN")
 let tokenProvider = TokenProvider.static(token)
 ```
