@@ -5,7 +5,7 @@
 import Foundation
 import StreamChat
 
-extension _ChatMessage {
+public extension _ChatMessage {
     /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).
     var isInteractionEnabled: Bool {
         guard
@@ -33,7 +33,7 @@ extension _ChatMessage {
         replyCount > 0
     }
 
-    /// A boolean value that checks if the message is the part (child) of a thread.
+    /// A boolean value that checks if the message is part of a thread.
     var isPartOfThread: Bool {
         parentMessageId != nil
     }
