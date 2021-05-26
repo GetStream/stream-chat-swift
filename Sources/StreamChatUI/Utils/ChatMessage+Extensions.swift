@@ -28,10 +28,7 @@ extension _ChatMessage {
 
     /// A boolean value that checks if the message is the root of a thread.
     var isRootOfThread: Bool {
-        let isThreadStart = replyCount > 0
-        let isThreadReplyInChannel = showReplyInChannel
-
-        return isThreadStart || isThreadReplyInChannel
+        replyCount > 0
     }
 
     /// A boolean value that checks if the message is the part (child) of a thread.
