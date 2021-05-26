@@ -68,4 +68,28 @@ final class ChatMessage_Tests: XCTestCase {
         
         XCTAssertEqual(message.lastActiveThreadParticipant?.name, "Second")
     }
+
+    // MARK: - isDeleted
+
+    func test_isDeleted_returnsFalse_forNonDeletedMessage() {
+        let nonDeletedMessage: ChatMessage = .mock(
+            id: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            deletedAt: nil
+        )
+
+        XCTAssertFalse(nonDeletedMessage.isDeleted)
+    }
+
+    func test_isDeleted_returnsTrue_forDeletedMessage() {
+        let deletedMessage: ChatMessage = .mock(
+            id: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            deletedAt: .unique
+        )
+
+        XCTAssertTrue(deletedMessage.isDeleted)
+    }
 }

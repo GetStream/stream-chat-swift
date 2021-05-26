@@ -81,7 +81,7 @@ open class _ChatMessageActionsVC<ExtraData: ExtraDataTypes>: _ViewController, Th
         guard
             let currentUser = messageController.dataStore.currentUser(),
             let message = message,
-            message.deletedAt == nil
+            message.isDeleted == false
         else { return [] }
 
         switch message.localState {

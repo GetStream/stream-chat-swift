@@ -68,7 +68,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
             options.insert(.text)
         }
 
-        guard message.deletedAt == nil else {
+        guard message.isDeleted == false else {
             return options
         }
 
