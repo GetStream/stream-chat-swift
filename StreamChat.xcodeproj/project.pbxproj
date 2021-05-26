@@ -869,7 +869,6 @@
 		E768AAFB2627691600328E6E /* TypingAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E768AAFA2627691600328E6E /* TypingAnimationView.swift */; };
 		E76B2F0425F23EE200E57112 /* CustomUIViewSubclasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = E70A09E925F230EE00C55BBE /* CustomUIViewSubclasses.swift */; };
 		E7734D1C25F9479F004F76B0 /* CellActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7734D0C25F946FF004F76B0 /* CellActionView.swift */; };
-		E795988B265BD78700E3FC25 /* CGPoint+Move.swift in Sources */ = {isa = PBXBuildFile; fileRef = E795988A265BD78700E3FC25 /* CGPoint+Move.swift */; };
 		E798D6D325FF69120002C3B9 /* SwipeableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E798D6D125FF69120002C3B9 /* SwipeableView.swift */; };
 		E798D6F125FF6BF70002C3B9 /* SwipeableView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E798D6D025FF69120002C3B9 /* SwipeableView_Tests.swift */; };
 		E79AC10B25831A1500C3CE5D /* ChatCommandSuggestionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79AC10725831A1500C3CE5D /* ChatCommandSuggestionView.swift */; };
@@ -2075,7 +2074,6 @@
 		E768AAFA2627691600328E6E /* TypingAnimationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingAnimationView.swift; sourceTree = "<group>"; };
 		E7734D0C25F946FF004F76B0 /* CellActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CellActionView.swift; sourceTree = "<group>"; };
 		E791E4D525D3E2DA00B0E076 /* ChatChannelAvatarView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelAvatarView_Tests.swift; sourceTree = "<group>"; };
-		E795988A265BD78700E3FC25 /* CGPoint+Move.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Move.swift"; sourceTree = "<group>"; };
 		E798D6D025FF69120002C3B9 /* SwipeableView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeableView_Tests.swift; sourceTree = "<group>"; };
 		E798D6D125FF69120002C3B9 /* SwipeableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipeableView.swift; sourceTree = "<group>"; };
 		E79AC10625831A1100C3CE5D /* ChatMentionSuggestionCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMentionSuggestionCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -4432,7 +4430,6 @@
 			isa = PBXGroup;
 			children = (
 				E74DB0E72656680900508D22 /* UIView+Annotations.swift */,
-				E795988A265BD78700E3FC25 /* CGPoint+Move.swift */,
 				E74DB10626567FFA00508D22 /* ChatChannelListItemView_Documentation_Tests.swift */,
 			);
 			path = UISDKdocumentation;
@@ -6108,7 +6105,6 @@
 				E74DB0922656631700508D22 /* ChatChannel.swift in Sources */,
 				E74DB0942656631700508D22 /* ChannelId.swift in Sources */,
 				E74DB09C2656631700508D22 /* XCTestCase+TestImages.swift in Sources */,
-				E795988B265BD78700E3FC25 /* CGPoint+Move.swift in Sources */,
 				E74DB0A52656631700508D22 /* TestRunnerEnvironment.swift in Sources */,
 				E74DB0E92656680900508D22 /* UIView+Annotations.swift in Sources */,
 				E74DB0A62656631700508D22 /* iOS13TestCase.swift in Sources */,

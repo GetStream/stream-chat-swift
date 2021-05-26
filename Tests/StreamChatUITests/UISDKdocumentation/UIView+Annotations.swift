@@ -114,7 +114,7 @@ private func createLineAndLabelWithPropertyName(
         var end: CGPoint
         
         let mirror = Mirror(reflecting: parentView)
-        let mirroredView = mirror.children.first { $0.value as? UIView == view }
+        let mirroredView = mirror.children.first { $0.value as? UIView === view }
         
         let propertyDescription = mirroredView!.label!.deletingPrefix("$__lazy_storage_$_")
         
@@ -129,7 +129,7 @@ private func createLineAndLabelWithPropertyName(
                 in: container,
                 color: lineColor
             )
-            end.move(x: -descriptionLabelSize.width / 2, y: -descriptionLabelSize.height)
+            .offsetBy(dx: -descriptionLabelSize.width / 2, dy: -descriptionLabelSize.height)
         case .left:
             end = addLine(
                 fromPoint: .init(x: translated.minX, y: translated.midY),
@@ -137,7 +137,7 @@ private func createLineAndLabelWithPropertyName(
                 in: container,
                 color: lineColor
             )
-            end.move(x: -descriptionLabelSize.width, y: -descriptionLabelSize.height / 2)
+            .offsetBy(dx: -descriptionLabelSize.width, dy: -descriptionLabelSize.height / 2)
         case .bottom:
             end = addLine(
                 fromPoint: .init(x: translated.midX, y: translated.maxY),
@@ -145,7 +145,7 @@ private func createLineAndLabelWithPropertyName(
                 in: container,
                 color: lineColor
             )
-            end.move(x: -descriptionLabelSize.width / 2, y: -descriptionLabelSize.height / 2)
+            .offsetBy(dx: -descriptionLabelSize.width / 2, dy: -descriptionLabelSize.height / 2)
         case .right:
             end = addLine(
                 fromPoint: .init(x: translated.maxX, y: translated.midY),
@@ -153,7 +153,7 @@ private func createLineAndLabelWithPropertyName(
                 in: container,
                 color: lineColor
             )
-            end.move(x: 0, y: -descriptionLabelSize.height / 2)
+            .offsetBy(dx: 0, dy: -descriptionLabelSize.height / 2)
         case .topLeft:
             end = addLine(
                 fromPoint: .init(x: translated.minX, y: translated.minY),
@@ -161,7 +161,7 @@ private func createLineAndLabelWithPropertyName(
                 in: container,
                 color: lineColor
             )
-            end.move(x: -descriptionLabelSize.width, y: -descriptionLabelSize.height / 2)
+            .offsetBy(dx: -descriptionLabelSize.width, dy: -descriptionLabelSize.height / 2)
         case .topRight:
             end = addLine(
                 fromPoint: .init(x: translated.maxX, y: translated.minY),
@@ -169,7 +169,7 @@ private func createLineAndLabelWithPropertyName(
                 in: container,
                 color: lineColor
             )
-            end.move(x: 0, y: -descriptionLabelSize.height / 2)
+            .offsetBy(dx: 0, dy: -descriptionLabelSize.height / 2)
         case .bottomLeft:
             end = addLine(
                 fromPoint: .init(x: translated.minX, y: translated.maxY),
@@ -177,7 +177,7 @@ private func createLineAndLabelWithPropertyName(
                 in: container,
                 color: lineColor
             )
-            end.move(x: -descriptionLabelSize.width, y: -descriptionLabelSize.height / 2)
+            .offsetBy(dx: -descriptionLabelSize.width, dy: -descriptionLabelSize.height / 2)
         case .bottomRight:
             end = addLine(
                 fromPoint: .init(x: translated.maxX, y: translated.maxY),
@@ -185,7 +185,7 @@ private func createLineAndLabelWithPropertyName(
                 in: container,
                 color: lineColor
             )
-            end.move(x: 0, y: -descriptionLabelSize.height / 2)
+            .offsetBy(dx: 0, dy: -descriptionLabelSize.height / 2)
         }
 
         let descriptionLabel = UILabel(frame: .init(origin: end, size: .zero))
@@ -259,53 +259,6 @@ public extension _ChatChannel {
             isFrozen: isFrozen,
             lastActiveMembers: { lastActiveMembers },
             membership: membership,
-            currentlyTypingMembers: currentlyTypingMembers,
-            lastActiveWatchers: { lastActiveWatchers },
-            unreadCount: { unreadCount },
-            watcherCount: watcherCount,
-            memberCount: memberCount,
-            reads: reads,
-            extraData: extraData,
-            latestMessages: { latestMessages },
-            muteDetails: { muteDetails },
-            underlyingContext: nil
-        )
-    }
-    
-    /// Creates a new `_ChatChannel` object for  from the provided data.
-    static func documentationMockDMChannel(
-        name: String? = nil,
-        imageURL: URL? = nil,
-        lastMessageAt: Date? = nil,
-        createdAt: Date = .init(),
-        updatedAt: Date = .init(),
-        deletedAt: Date? = nil,
-        createdBy: _ChatUser<ExtraData.User>? = nil,
-        config: ChannelConfig = .mock(),
-        isFrozen: Bool = false,
-        lastActiveMembers: [_ChatChannelMember<ExtraData.User>] = [],
-        currentlyTypingMembers: Set<_ChatChannelMember<ExtraData.User>> = [],
-        lastActiveWatchers: [_ChatUser<ExtraData.User>] = [],
-        unreadCount: ChannelUnreadCount = .noUnread,
-        watcherCount: Int = 0,
-        memberCount: Int = 0,
-        reads: [_ChatChannelRead<ExtraData>] = [],
-        extraData: ExtraData.Channel = .defaultValue,
-        latestMessages: [_ChatMessage<ExtraData>] = [],
-        muteDetails: MuteDetails? = nil
-    ) -> Self {
-        self.init(
-            cid: .init(type: .messaging, id: "!members" + .newUniqueId),
-            name: name,
-            imageURL: imageURL,
-            lastMessageAt: lastMessageAt,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deletedAt: deletedAt,
-            createdBy: createdBy,
-            config: config,
-            isFrozen: isFrozen,
-            lastActiveMembers: { lastActiveMembers },
             currentlyTypingMembers: currentlyTypingMembers,
             lastActiveWatchers: { lastActiveWatchers },
             unreadCount: { unreadCount },
