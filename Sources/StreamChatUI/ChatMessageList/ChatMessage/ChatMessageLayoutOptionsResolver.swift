@@ -73,7 +73,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         if message.quotedMessage?.id != nil {
             options.insert(.quotedMessage)
         }
-        if message.isRootOfThread {
+        if message.isRootOfThread || message.isPartOfThread {
             options.insert(.threadInfo)
             // The bubbles with thread look like continuous bubbles
             options.insert(.continuousBubble)
