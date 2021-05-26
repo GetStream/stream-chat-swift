@@ -125,7 +125,7 @@ class ChatChannelAvatarView_Tests: XCTestCase {
         let view = CustomView(content: (channel, .unique))
             .environmentObject(components.asObservableObject)
         
-        AssertSnapshot(view)
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 }
 
