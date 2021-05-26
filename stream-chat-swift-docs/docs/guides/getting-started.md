@@ -4,7 +4,7 @@ title: Getting Started
 
 ## User Authentication
 
-After the SDK is installed, the next step is to initialize the chat client with an API Key and authenticate the user. It can be a regular user, or it can be an [anonymous](https://getstream.io/chat/docs/anon/?language=swift) or [guest](https://getstream.io/chat/docs/guest_users/?language=swift) user with limited sets of permissions. The API Key tells the chat client which chat server it should communicate with and it can be found in your dashboard. A `TokenProvider` is the object that will hold your authentication strategy and will tell the `ChatClient` which user you're currently logged in with.
+After the SDK is installed, the next step is to initialize the chat client and authenticate the user. It can be a regular user, or it can be an [anonymous](https://getstream.io/chat/docs/anon/?language=swift) or [guest](https://getstream.io/chat/docs/guest_users/?language=swift) user with limited sets of permissions. A `TokenProvider` is the object that will hold your authentication strategy and will tell the `ChatClient` which user you're currently logged in with.
 
 ## User Tokens
 
@@ -69,6 +69,10 @@ let tokenProvider = TokenProvider.anonymous
 ## Configuration
 
 The next step is to configure a `ChatClient` instance with your API Key and the `tokenProvider` from the previous step. The most simple way to do this is by extending the `ChatClient` class with a shared instance that will be used throughout your app (Singleton). It's also possible to create a chat instance in a convenient entry point and pass it down to your classes / view controllers. (Dependency Injection).
+
+### ChatClientConfig
+
+The `ChatClientConfig` object holds properties that the chat client will use to determine certain behaviors. For example, the `apiKey`, which tells the chat client which chat server to communicate with. It also has the `baseURL` property which tells the chat client which region of the world your server is at, which can be useful to reduce overall latency.
 
 ### Singleton
 
