@@ -103,7 +103,10 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
         contentContainerView.isLayoutMarginsRelativeArrangement = true
         contentContainerView.alignment = .top
 
-        embed(containerView)
+        addSubview(containerView)
+        containerView.pin(to: layoutMarginsGuide)
+        directionalLayoutMargins = .zero
+
         containerView.addArrangedSubview(authorAvatarView)
         containerView.addArrangedSubview(contentContainerView)
         
