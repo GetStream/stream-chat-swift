@@ -318,7 +318,7 @@ extension _ChatMessage {
         if !reactionScores.isEmpty {
             options.insert(.reactions)
         }
-        if lastActionFailed {
+        if isLastActionFailed {
             options.insert(.errorIndicator)
         }
 

@@ -13,11 +13,11 @@ public extension _ChatMessage {
             isDeleted == false
         else { return false }
 
-        return localState == nil || lastActionFailed
+        return localState == nil || isLastActionFailed
     }
 
     /// A boolean value that checks if the last action (`send`, `edit` or `delete`) on the message failed.
-    var lastActionFailed: Bool {
+    var isLastActionFailed: Bool {
         guard isDeleted == false else { return false }
 
         switch localState {

@@ -125,9 +125,9 @@ final class ChatMessage_Tests: XCTestCase {
         }
     }
 
-    // MARK: - lastActionFailed
+    // MARK: - isLastActionFailed
 
-    func test_lastActionFailed_returnsTrue_forNonDeletedMessageWithFailedLocalState() {
+    func test_isLastActionFailed_returnsTrue_forNonDeletedMessageWithFailedLocalState() {
         let failedLocalStates: [LocalMessageState] = [
             .deletingFailed,
             .sendingFailed,
@@ -143,11 +143,11 @@ final class ChatMessage_Tests: XCTestCase {
                 isSentByCurrentUser: true
             )
 
-            XCTAssertTrue(nonDeletedMessageWithFailedLocalState.lastActionFailed)
+            XCTAssertTrue(nonDeletedMessageWithFailedLocalState.isLastActionFailed)
         }
     }
 
-    func test_lastActionFailed_returnsFalse_forNonDeletedMessageWithNonFailedLocalState() {
+    func test_isLastActionFailed_returnsFalse_forNonDeletedMessageWithNonFailedLocalState() {
         let nonFailedLocalStates: [LocalMessageState?] = [
             nil,
             .sending,
@@ -166,11 +166,11 @@ final class ChatMessage_Tests: XCTestCase {
                 isSentByCurrentUser: true
             )
 
-            XCTAssertFalse(nonDeletedMessageWithNonFailedLocalState.lastActionFailed)
+            XCTAssertFalse(nonDeletedMessageWithNonFailedLocalState.isLastActionFailed)
         }
     }
 
-    func test_lastActionFailed_returnsFalse_forDeletedMessage_noMatterTheLocalStateIs() {
+    func test_isLastActionFailed_returnsFalse_forDeletedMessage_noMatterTheLocalStateIs() {
         for localState: LocalMessageState? in [
             nil,
             .pendingSync,
@@ -190,7 +190,7 @@ final class ChatMessage_Tests: XCTestCase {
                 localState: localState
             )
 
-            XCTAssertFalse(deletedMessage.lastActionFailed)
+            XCTAssertFalse(deletedMessage.isLastActionFailed)
         }
     }
 

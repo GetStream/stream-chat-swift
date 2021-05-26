@@ -89,7 +89,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         if !message.reactionScores.isEmpty && channel.config.reactionsEnabled {
             options.insert(.reactions)
         }
-        if message.lastActionFailed {
+        if message.isLastActionFailed {
             options.insert(.errorIndicator)
         }
 
