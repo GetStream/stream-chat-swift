@@ -395,7 +395,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
         // Quoted message view
         quotedMessageView?.content = content?.quotedMessage.map {
-            .init(message: $0, avatarAlignment: $0.isSentByCurrentUser ? .right : .left)
+            .init(message: $0, avatarAlignment: $0.isSentByCurrentUser ? .trailing : .leading)
         }
 
         // Thread info
