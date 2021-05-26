@@ -382,7 +382,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         }
 
         // Metadata
-        onlyVisibleForYouContainer?.isVisible = content?.onlyVisibleForCurrentUser ?? false
+        onlyVisibleForYouContainer?.isVisible = content?.isOnlyVisibleForCurrentUser == true
 
         authorNameLabel?.isVisible = layoutOptions?.contains(.authorName) == true
         authorNameLabel?.text = content?.author.name

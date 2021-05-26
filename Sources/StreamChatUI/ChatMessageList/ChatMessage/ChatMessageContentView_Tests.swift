@@ -294,7 +294,7 @@ extension _ChatMessage {
         if isLastInGroup {
             options.insert(.metadata)
         }
-        if isLastInGroup && onlyVisibleForCurrentUser {
+        if isLastInGroup && isOnlyVisibleForCurrentUser {
             options.insert(.onlyVisibleForYouIndicator)
         }
         if textContent?.isEmpty == false {
