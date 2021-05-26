@@ -193,7 +193,7 @@ final class SimpleChatViewController: UITableViewController, ChatChannelControll
     /// The editing is allowed for non-deleted messages
     ///
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        channelController.messages[indexPath.row].deletedAt == nil
+        channelController.messages[indexPath.row].isDeleted == false
     }
     
     ///

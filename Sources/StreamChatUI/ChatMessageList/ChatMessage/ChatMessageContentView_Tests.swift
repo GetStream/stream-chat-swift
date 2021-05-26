@@ -301,7 +301,7 @@ extension _ChatMessage {
             options.insert(.text)
         }
 
-        guard deletedAt == nil else {
+        guard isDeleted == false else {
             return options
         }
 

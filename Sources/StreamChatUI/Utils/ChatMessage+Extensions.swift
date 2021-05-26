@@ -10,7 +10,7 @@ extension _ChatMessage {
     var isInteractionEnabled: Bool {
         guard
             type != .ephemeral,
-            deletedAt == nil
+            isDeleted == false
         else { return false }
 
         return localState == nil || lastActionFailed
@@ -18,9 +18,11 @@ extension _ChatMessage {
 
     /// A boolean value that checks if the last action (`send`, `edit` or `delete`) on the message failed.
     var lastActionFailed: Bool {
+        guard isDeleted == false else { return false }
+
         switch localState {
         case .sendingFailed, .syncingFailed, .deletingFailed:
-            return deletedAt == nil
+            return true
         default:
             return false
         }
@@ -42,11 +44,7 @@ extension _ChatMessage {
             return nil
         }
 
-        guard deletedAt == nil else {
-            return L10n.Message.deletedMessagePlaceholder
-        }
-
-        return text
+        return isDeleted ? L10n.Message.deletedMessagePlaceholder : text
     }
 
     /// A boolean value that checks if the message is visible for current user only.
@@ -55,7 +53,7 @@ extension _ChatMessage {
             return false
         }
 
-        return deletedAt != nil || type == .ephemeral
+        return isDeleted || type == .ephemeral
     }
 
     /// Returns last active thread participant.
@@ -67,5 +65,10 @@ extension _ChatMessage {
         return threadParticipants
             .sorted(by: { sortingCriteriaDate($0) > sortingCriteriaDate($1) })
             .first
+    }
+
+    /// A boolean value that says if the message is deleted.
+    var isDeleted: Bool {
+        deletedAt != nil
     }
 }
