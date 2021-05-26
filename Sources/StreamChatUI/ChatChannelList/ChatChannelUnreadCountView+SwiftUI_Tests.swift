@@ -31,6 +31,7 @@ class ChatChannelUnreadCountView_SwiftUI_Tests: XCTestCase {
         }
 
         let view = ChatChannelUnreadCountView.SwiftUIWrapper<CustomUnreadCountView>()
+        view.translatesAutoresizingMaskIntoConstraints = false
         view.content = .mock(messages: 20)
         AssertSnapshot(view)
     }
