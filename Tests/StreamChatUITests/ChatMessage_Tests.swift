@@ -9,7 +9,7 @@ import XCTest
 final class ChatMessage_Tests: XCTestCase {
     // MARK: - lastActiveThreadParticipant
 
-    func test_lastActiveThreadParticipantNoThreadParticipants() {
+    func test_lastActiveThreadParticipant_whenNoThreadParticipants_returnsNil() {
         let message = ChatMessage.mock(
             id: .anonymous,
             text: "Text",
@@ -20,7 +20,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertNil(message.lastActiveThreadParticipant)
     }
     
-    func test_lastActiveThreadParticipantReturnsLastActive() {
+    func test_lastActiveThreadParticipant_whenManyParticipants_returnsLastActive() {
         let message = ChatMessage.mock(
             id: .anonymous,
             text: "Text",
@@ -41,7 +41,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(message.lastActiveThreadParticipant?.name, "Second")
     }
     
-    func test_lastActiveThreadParticipantLastActiveIsNotPresentFallbacksToUserUpdatedAt() {
+    func test_lastActiveThreadParticipant_whenLastActiveIsNotPresent_sortsByUpdatedAt() {
         let message = ChatMessage.mock(
             id: .anonymous,
             text: "Text",
@@ -73,7 +73,7 @@ final class ChatMessage_Tests: XCTestCase {
 
     // MARK: - isInteractionEnabled
 
-    func test_isInteractionEnabled_returnsFalse_forEphemeralMessage() {
+    func test_isInteractionEnabled_whenMessageIsEphemeral_returnsFalse() {
         let ephemeralMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -84,7 +84,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertFalse(ephemeralMessage.isInteractionEnabled)
     }
 
-    func test_isInteractionEnabled_returnsFalse_forDeletedMessage() {
+    func test_isInteractionEnabled_whenMessageIsDeleted_returnsFalse() {
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -95,7 +95,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertFalse(deletedMessage.isInteractionEnabled)
     }
 
-    func test_isInteractionEnabled_returnsTrue_forMessageWithoutLocalState() {
+    func test_isInteractionEnabled_whenMessageWithoutLocalState_returnsTrue() {
         let nonDeletedNonEphemeralMessageWithoutLocalState: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -106,7 +106,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertTrue(nonDeletedNonEphemeralMessageWithoutLocalState.isInteractionEnabled)
     }
 
-    func test_isInteractionEnabled_returnsTrue_forMessageWithFailedLocalState() {
+    func test_isInteractionEnabled_whenMessageWithFailedLocalState_returnsTrue() {
         let failedLocalStates: [LocalMessageState] = [
             .deletingFailed,
             .sendingFailed,
@@ -127,7 +127,7 @@ final class ChatMessage_Tests: XCTestCase {
 
     // MARK: - isLastActionFailed
 
-    func test_isLastActionFailed_returnsTrue_forNonDeletedMessageWithFailedLocalState() {
+    func test_isLastActionFailed_whenNonDeletedMessageWithFailedLocalState_returnsTrue() {
         let failedLocalStates: [LocalMessageState] = [
             .deletingFailed,
             .sendingFailed,
@@ -147,7 +147,7 @@ final class ChatMessage_Tests: XCTestCase {
         }
     }
 
-    func test_isLastActionFailed_returnsFalse_forNonDeletedMessageWithNonFailedLocalState() {
+    func test_isLastActionFailed_whenNotDeletedMessageWithFailedLocalState_returnsFalse() {
         let nonFailedLocalStates: [LocalMessageState?] = [
             nil,
             .sending,
@@ -170,7 +170,7 @@ final class ChatMessage_Tests: XCTestCase {
         }
     }
 
-    func test_isLastActionFailed_returnsFalse_forDeletedMessage_noMatterTheLocalStateIs() {
+    func test_isLastActionFailed_whenMessageIsDeleted_returnsFalse() {
         for localState: LocalMessageState? in [
             nil,
             .pendingSync,
@@ -196,7 +196,7 @@ final class ChatMessage_Tests: XCTestCase {
 
     // MARK: - isRootOfThread
 
-    func test_isRootOfThread_returnsFalse_ifMessageIsThreadPart() {
+    func test_isRootOfThread_whenMessageIsPartOfThread_returnsFalse() {
         let threadPartMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -207,7 +207,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertFalse(threadPartMessage.isRootOfThread)
     }
 
-    func test_isRootOfThread_returnsTrue_ifMessageIsThreadRoot() {
+    func test_isRootOfThread_whenMessageIsRootOfThread_returnsTrue() {
         let threadRootMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -219,7 +219,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertTrue(threadRootMessage.isRootOfThread)
     }
 
-    func test_isRootOfThread_returnsFalse_ifMessageDoesNotBelongToThread() {
+    func test_isRootOfThread_whenMessageDoesNotBelongToThread_returnsFalse() {
         let nonThreadMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -233,7 +233,7 @@ final class ChatMessage_Tests: XCTestCase {
 
     // MARK: - isPartOfThread
 
-    func test_isPartOfThread_returnsTrue_ifMessageIsThreadPart() {
+    func test_isPartOfThread_whenMessageIsPartOfThread_returnsTrue() {
         let threadPartMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -244,7 +244,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertTrue(threadPartMessage.isPartOfThread)
     }
 
-    func test_isPartOfThread_returnsFalse_ifMessageIsThreadRoot() {
+    func test_isPartOfThread_whenMessageIsRootOfThread_returnsFalse() {
         let threadRootMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -256,7 +256,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertFalse(threadRootMessage.isPartOfThread)
     }
 
-    func test_isPartOfThread_returnsFalse_ifMessageDoesNotBelongToThread() {
+    func test_isPartOfThread_whenMessageDoesNotBelongToThread_returnsFalse() {
         let nonThreadMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -270,7 +270,7 @@ final class ChatMessage_Tests: XCTestCase {
 
     // MARK: - textContent
 
-    func test_textContent_returnsNil_forEphemeralMessage() {
+    func test_textContent_whenMessageIsEphemeral_returnsNil() {
         let ephemeralMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -281,7 +281,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertNil(ephemeralMessage.textContent)
     }
 
-    func test_textContent_returnsPlaceholder_forNonEphemeralDeletedMessage() {
+    func test_textContent_whenMessageIsNotEphemeralButDeleted_returnsDeletedPlaceholder() {
         let deletedNonEphemeralMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -292,7 +292,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(deletedNonEphemeralMessage.textContent, L10n.Message.deletedMessagePlaceholder)
     }
 
-    func test_textContent_returnsText_forNonEphemeralNonDeletedMessage() {
+    func test_textContent_whenMessageIsNorEphemeralNorDeleted_returnsText() {
         let nonDeletedNonEphemeralMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -304,7 +304,7 @@ final class ChatMessage_Tests: XCTestCase {
 
     // MARK: - isOnlyVisibleForCurrentUser
 
-    func test_isOnlyVisibleForCurrentUser_returnsTrue_forEphemeralMessage_sentByCurrentUser() {
+    func test_isOnlyVisibleForCurrentUser_whenMessageIsEphemeralAndSentByCurrentUser_returnsTrue() {
         let ephemeralMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -316,7 +316,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertTrue(ephemeralMessageFromCurrentUser.isOnlyVisibleForCurrentUser)
     }
 
-    func test_isOnlyVisibleForCurrentUser_returnsTrue_forDeletedMessage_sentByCurrentUser() {
+    func test_isOnlyVisibleForCurrentUser_whenMessageIsDeletedAndSentByCurrentUser_returnsTrue() {
         let deletedMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -328,7 +328,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertTrue(deletedMessageFromCurrentUser.isOnlyVisibleForCurrentUser)
     }
 
-    func test_isOnlyVisibleForCurrentUser_returnsTrue_forDeletedEphemeralMessage_sentByCurrentUser() {
+    func test_isOnlyVisibleForCurrentUser_whenMessageIsDeletedEphemeralAndSentByCurrentUser_returnsTrue() {
         let deletedEphemeralMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -341,7 +341,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertTrue(deletedEphemeralMessageFromCurrentUser.isOnlyVisibleForCurrentUser)
     }
 
-    func test_isOnlyVisibleForCurrentUser_returnsFalse_forMessageSentNotByCurrentUser() {
+    func test_isOnlyVisibleForCurrentUser_whenMessageIsSentNotByCurrentUser_returnsFalse() {
         let deletedEphemeralMessageFromAnotherUser: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -356,7 +356,7 @@ final class ChatMessage_Tests: XCTestCase {
 
     // MARK: - isDeleted
 
-    func test_isDeleted_returnsFalse_forNonDeletedMessage() {
+    func test_isDeleted_whenMessageIsNotDeleted_returnsFalse() {
         let nonDeletedMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -367,7 +367,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertFalse(nonDeletedMessage.isDeleted)
     }
 
-    func test_isDeleted_returnsTrue_forDeletedMessage() {
+    func test_isDeleted_whenMessageIsDeleted_returnsTrue() {
         let deletedMessage: ChatMessage = .mock(
             id: .unique,
             text: .unique,
