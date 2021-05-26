@@ -32,18 +32,10 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         let messageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item)
         let message = messages[messageIndex]
 
-        let isLastInGroup: Bool = {
-            guard indexPath.item > 0 else { return true }
-
-            let nextMessageIndex = messages.index(messages.startIndex, offsetBy: indexPath.item - 1)
-            let nextMessage = messages[nextMessageIndex]
-
-            guard nextMessage.author == message.author else { return true }
-
-            let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
-
-            return delay > minTimeIntervalBetweenMessagesInGroup
-        }()
+        let isLastInSequence = isMessageLastInSequence(
+            messageIndexPath: indexPath,
+            messages: messages
+        )
 
         var options: ChatMessageLayoutOptions = [
             .bubble
@@ -52,13 +44,13 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         if message.isSentByCurrentUser {
             options.insert(.flipped)
         }
-        if !isLastInGroup {
+        if !isLastInSequence {
             options.insert(.continuousBubble)
         }
-        if !isLastInGroup && !message.isSentByCurrentUser {
+        if !isLastInSequence && !message.isSentByCurrentUser {
             options.insert(.avatarSizePadding)
         }
-        if isLastInGroup {
+        if isLastInSequence {
             options.insert(.metadata)
         }
         if message.isOnlyVisibleForCurrentUser {
@@ -72,10 +64,10 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
             return options
         }
 
-        if isLastInGroup && !message.isSentByCurrentUser {
+        if isLastInSequence && !message.isSentByCurrentUser {
             options.insert(.avatar)
         }
-        if isLastInGroup && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
+        if isLastInSequence && !message.isSentByCurrentUser && !channel.isDirectMessageChannel {
             options.insert(.authorName)
         }
         if message.quotedMessage?.id != nil {
@@ -94,5 +86,43 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         }
 
         return options
+    }
+
+    /// Says whether the message at given `indexPath` is the last one in a sequence of messages
+    /// sent by a single user where the time delta between near by messages
+    /// is `<= minTimeIntervalBetweenMessagesInGroup`.
+    ///
+    /// Returns `true` if one of the following conditions is met:
+    ///     1. the message at `messageIndexPath` is the most recent one in the channel
+    ///     2. the message sent after the message at `messageIndexPath` has different author
+    ///     3. the message sent after the message at `messageIndexPath` has the same author but the
+    ///     time delta between messages is bigger than `minTimeIntervalBetweenMessagesInGroup`
+    ///
+    /// - Parameters:
+    ///   - messageIndexPath: The index path of the target message.
+    ///   - messages: The list of loaded channel messages.
+    /// - Returns: Returns `true` if the message ends the sequence of messages from a single author.
+    open func isMessageLastInSequence(
+        messageIndexPath: IndexPath,
+        messages: AnyRandomAccessCollection<_ChatMessage<ExtraData>>
+    ) -> Bool {
+        let messageIndex = messages.index(messages.startIndex, offsetBy: messageIndexPath.item)
+        let message = messages[messageIndex]
+
+        // The current message is the last message so it's either a standalone or last in sequence.
+        guard messageIndexPath.item > 0 else { return true }
+
+        let nextMessageIndex = messages.index(before: messageIndex)
+        let nextMessage = messages[nextMessageIndex]
+
+        // The message after the current one has different author so the current message
+        // is either a standalone or last in sequence.
+        guard nextMessage.author == message.author else { return true }
+
+        let delay = nextMessage.createdAt.timeIntervalSince(message.createdAt)
+
+        // If the message next to the current one is sent with delay > minTimeIntervalBetweenMessagesInGroup,
+        // the current message ends the sequence.
+        return delay > minTimeIntervalBetweenMessagesInGroup
     }
 }
