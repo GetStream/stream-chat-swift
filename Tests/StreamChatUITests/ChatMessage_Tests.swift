@@ -302,9 +302,9 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(nonDeletedNonEphemeralMessage.textContent, nonDeletedNonEphemeralMessage.text)
     }
 
-    // MARK: - onlyVisibleForCurrentUser
+    // MARK: - isOnlyVisibleForCurrentUser
 
-    func test_onlyVisibleForCurrentUser_returnsTrue_forEphemeralMessage_sentByCurrentUser() {
+    func test_isOnlyVisibleForCurrentUser_returnsTrue_forEphemeralMessage_sentByCurrentUser() {
         let ephemeralMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -313,10 +313,10 @@ final class ChatMessage_Tests: XCTestCase {
             isSentByCurrentUser: true
         )
 
-        XCTAssertTrue(ephemeralMessageFromCurrentUser.onlyVisibleForCurrentUser)
+        XCTAssertTrue(ephemeralMessageFromCurrentUser.isOnlyVisibleForCurrentUser)
     }
 
-    func test_onlyVisibleForCurrentUser_returnsTrue_forDeletedMessage_sentByCurrentUser() {
+    func test_isOnlyVisibleForCurrentUser_returnsTrue_forDeletedMessage_sentByCurrentUser() {
         let deletedMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -325,10 +325,10 @@ final class ChatMessage_Tests: XCTestCase {
             isSentByCurrentUser: true
         )
 
-        XCTAssertTrue(deletedMessageFromCurrentUser.onlyVisibleForCurrentUser)
+        XCTAssertTrue(deletedMessageFromCurrentUser.isOnlyVisibleForCurrentUser)
     }
 
-    func test_onlyVisibleForCurrentUser_returnsTrue_forDeletedEphemeralMessage_sentByCurrentUser() {
+    func test_isOnlyVisibleForCurrentUser_returnsTrue_forDeletedEphemeralMessage_sentByCurrentUser() {
         let deletedEphemeralMessageFromCurrentUser: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -338,10 +338,10 @@ final class ChatMessage_Tests: XCTestCase {
             isSentByCurrentUser: true
         )
 
-        XCTAssertTrue(deletedEphemeralMessageFromCurrentUser.onlyVisibleForCurrentUser)
+        XCTAssertTrue(deletedEphemeralMessageFromCurrentUser.isOnlyVisibleForCurrentUser)
     }
 
-    func test_onlyVisibleForCurrentUser_returnsFalse_forMessageSentNotByCurrentUser() {
+    func test_isOnlyVisibleForCurrentUser_returnsFalse_forMessageSentNotByCurrentUser() {
         let deletedEphemeralMessageFromAnotherUser: ChatMessage = .mock(
             id: .unique,
             text: .unique,
@@ -351,7 +351,7 @@ final class ChatMessage_Tests: XCTestCase {
             isSentByCurrentUser: false
         )
 
-        XCTAssertFalse(deletedEphemeralMessageFromAnotherUser.onlyVisibleForCurrentUser)
+        XCTAssertFalse(deletedEphemeralMessageFromAnotherUser.isOnlyVisibleForCurrentUser)
     }
 
     // MARK: - isDeleted

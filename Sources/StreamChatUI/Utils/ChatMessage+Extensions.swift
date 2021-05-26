@@ -48,7 +48,7 @@ public extension _ChatMessage {
     }
 
     /// A boolean value that checks if the message is visible for current user only.
-    var onlyVisibleForCurrentUser: Bool {
+    var isOnlyVisibleForCurrentUser: Bool {
         guard isSentByCurrentUser else {
             return false
         }

@@ -61,7 +61,7 @@ open class _ChatMessageLayoutOptionsResolver<ExtraData: ExtraDataTypes> {
         if isLastInGroup {
             options.insert(.metadata)
         }
-        if message.onlyVisibleForCurrentUser {
+        if message.isOnlyVisibleForCurrentUser {
             options.insert(.onlyVisibleForYouIndicator)
         }
         if message.textContent?.isEmpty == false {
