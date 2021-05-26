@@ -43,6 +43,7 @@ class ChatChannelAvatarView_SwiftUI_Tests: XCTestCase {
 
 private extension UIView {
     func addSizeConstraints() {
+        translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 50),
             widthAnchor.constraint(equalToConstant: 50)
