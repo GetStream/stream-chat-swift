@@ -43,6 +43,8 @@ let tokenProvider = TokenProvider.closure { chatClient, completion in
 
 #### Development
 
+To [use development tokens](https://getstream.io/chat/docs/node/tokens_and_authentication/#development-tokens), they must be enabled for your app in the dashboard.
+
 ```swift
 /// A development token provider. Use it for testing purposes.
 let tokenProvider = TokenProvider.development(userId: "USER_ID")
