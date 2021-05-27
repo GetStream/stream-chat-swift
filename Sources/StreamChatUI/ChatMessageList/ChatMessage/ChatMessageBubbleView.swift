@@ -47,20 +47,20 @@ open class _ChatMessageBubbleView<ExtraData: ExtraDataTypes>: _View, AppearanceP
 
         if message.isSentByCurrentUser {
             if message.type == .ephemeral {
-                return appearance.colorPalette.popoverBackground
+                return appearance.colorPalette.background8
             } else {
                 return appearance.colorPalette.background6
             }
         } else {
-            return appearance.colorPalette.popoverBackground
+            return appearance.colorPalette.background8
         }
     }
 
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        layer.borderColor = appearance.colorPalette.border.cgColor
-        layer.cornerRadius = 16
+        layer.borderColor = appearance.colorPalette.border3.cgColor
+        layer.cornerRadius = 18
         layer.borderWidth = 1
     }
 
