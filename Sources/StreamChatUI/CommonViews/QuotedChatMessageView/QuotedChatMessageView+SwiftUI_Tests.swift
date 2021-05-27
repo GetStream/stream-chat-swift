@@ -44,7 +44,7 @@ class QuotedChatMessageView_SwiftUI_Tests: XCTestCase {
                 text: "Hello World!",
                 author: .mock(id: .unique, imageURL: .localYodaImage)
             ),
-            avatarAlignment: .left
+            avatarAlignment: .leading
         )
         view.backgroundColor = UIColor.white
 

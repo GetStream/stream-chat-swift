@@ -44,6 +44,58 @@ class QuotedChatMessageView_Tests: XCTestCase {
         view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
 
         AssertSnapshot(view)
+
+        view.content = makeContent(text: "", attachments: [attachment.asAnyAttachment])
+
+        AssertSnapshot(view, suffix: "-emptyText")
+    }
+
+    func test_withFileAttachmentAppearance() {
+        let attachment = ChatMessageFileAttachment.mock(
+            id: .unique,
+            title: "Data.csv",
+            assetURL: .unique(),
+            file: AttachmentFile(type: .csv, size: 0, mimeType: nil),
+            localState: nil
+        )
+
+        view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
+
+        AssertSnapshot(view)
+
+        view.content = makeContent(text: "", attachments: [attachment.asAnyAttachment])
+
+        AssertSnapshot(view, suffix: "-emptyText")
+    }
+
+    func test_withLinkAttachmentAppearance() {
+        let attachment = ChatMessageLinkAttachment.mock(
+            id: .unique,
+            originalURL: URL(string: "https://www.yoda.com")!,
+            assetURL: .unique(),
+            previewURL: TestImages.yoda.url
+        )
+
+        view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
+
+        AssertSnapshot(view)
+    }
+
+    func test_withGiphyAttachmentAppearance() {
+        let attachment = ChatMessageGiphyAttachment(
+            id: .unique,
+            type: .giphy,
+            payload: .init(title: "", previewURL: TestImages.yoda.url, actions: []),
+            uploadingState: nil
+        )
+
+        view.content = makeContent(text: "Hello Vader!", attachments: [attachment.asAnyAttachment])
+
+        AssertSnapshot(view)
+
+        view.content = makeContent(text: "", attachments: [attachment.asAnyAttachment])
+
+        AssertSnapshot(view, suffix: "-emptyText")
     }
 
     func test_withLongTextAppearance() {
@@ -140,12 +192,12 @@ class QuotedChatMessageView_Tests: XCTestCase {
         let view = CustomView(
             content: .init(
                 message: .mock(id: .unique, text: "Hello world!", author: .mock(id: .unique, imageURL: TestImages.yoda.url)),
-                avatarAlignment: .left
+                avatarAlignment: .leading
             )
         )
         .environmentObject(Components().asObservableObject)
 
-        AssertSnapshot(view)
+        AssertSnapshot(view, variants: [.defaultLight])
     }
 }
 
