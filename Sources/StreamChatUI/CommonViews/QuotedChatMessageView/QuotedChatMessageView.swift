@@ -49,25 +49,31 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
     }
 
     /// The container view that holds the `authorAvatarView` and the `contentContainerView`.
-    public private(set) lazy var containerView: ContainerStackView = ContainerStackView()
+    open private(set) lazy var containerView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
     /// The avatar view of the author's quoted message.
-    public private(set) lazy var authorAvatarView: ChatAvatarView = components
+    open private(set) lazy var authorAvatarView: ChatAvatarView = components
         .avatarView.init()
         .withoutAutoresizingMaskConstraints
 
     /// The container view that holds the `textView` and the `attachmentPreview`.
-    public private(set) lazy var contentContainerView: ContainerStackView = ContainerStackView()
+    open private(set) lazy var contentContainerView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
 
     /// The `UITextView` that contains quoted message content.
-    public private(set) lazy var textView: UITextView = UITextView()
+    open private(set) lazy var textView: UITextView = UITextView()
         .withoutAutoresizingMaskConstraints
 
     /// The attachment preview view if the quoted message has an attachment.
-    public private(set) lazy var attachmentPreviewView: UIImageView = UIImageView()
+    open private(set) lazy var attachmentPreviewView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
+
+    /// The size of the avatar view that belongs to the author of the quoted message.
+    open var authorAvatarSize: CGSize { .init(width: 24, height: 24) }
+
+    /// The size of the attachments preview.s
+    open var attachmentPreviewSize: CGSize { .init(width: 34, height: 34) }
 
     override open func setUp() {
         super.setUp()
@@ -118,14 +124,10 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
         contentContainerView.addArrangedSubview(attachmentPreviewView)
         contentContainerView.addArrangedSubview(textView)
 
-        let authorAvatarSize = CGSize(width: 24, height: 24)
-
         NSLayoutConstraint.activate([
             authorAvatarView.widthAnchor.pin(equalToConstant: authorAvatarSize.width),
             authorAvatarView.heightAnchor.pin(equalToConstant: authorAvatarSize.height)
         ])
-
-        let attachmentPreviewSize = CGSize(width: 34, height: 34)
 
         NSLayoutConstraint.activate([
             attachmentPreviewView.widthAnchor.pin(equalToConstant: attachmentPreviewSize.width),
