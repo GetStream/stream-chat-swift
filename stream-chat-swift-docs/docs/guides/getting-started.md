@@ -133,7 +133,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         options connectionOptions: UIScene.ConnectionOptions
     ) {
         guard let scene = (scene as? UIWindowScene) else { return }
-        scene.windows.forEach { $0.tintColor = .systemPink }
 
         /// 1: Get the reference to the initial view controller
         let viewController = window?.rootViewController as? ViewController
