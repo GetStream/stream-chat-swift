@@ -76,6 +76,17 @@ The next step is to configure a `ChatClient` instance with your API Key and the 
 
 The `ChatClientConfig` object holds properties that the chat client will use to determine certain behaviors. For example, the `apiKey`, which tells the chat client which chat server to communicate with. It also has the `baseURL` property which tells the chat client which region of the world your server is at, which can be useful to reduce overall latency.
 
+```swift
+/// 1: Create a `ChatClientConfig` instance with the API key.
+let config = ChatClientConfig(apiKeyString: "YOUR_API_KEY")
+
+/// 2: Set the baseURL
+config.baseURL = .usEast
+
+/// 3: Create a `ChatClient` instance with the config and the tokenProvider.
+let chatClient = ChatClient(config: config, tokenProvider: tokenProvider)
+```
+
 ### Singleton
 
 To make a `ChatClient` singleton, we extend the `ChatClient` class with a static shared instance of itself.
@@ -123,6 +134,10 @@ To create a `ChatClient` instance for dependency injection, just instantiate it 
 ```swift
 import StreamChat
 import UIKit
+
+class ViewController: UIViewController {
+    var chatClient: ChatClient!
+}
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     var window: UIWindow?
