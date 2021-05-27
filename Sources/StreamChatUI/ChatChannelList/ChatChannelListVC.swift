@@ -185,7 +185,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         }
     }
 
-    public func swipeableViewWillShowActionViews(for indexPath: IndexPath) {
+    open func swipeableViewWillShowActionViews(for indexPath: IndexPath) {
         // Close other open cells
         collectionView.visibleCells.forEach {
             let cell = ($0 as? _ChatChannelListCollectionViewCell<ExtraData>)
@@ -195,7 +195,7 @@ open class _ChatChannelListVC<ExtraData: ExtraDataTypes>: _ViewController,
         Animate { self.collectionView.layoutIfNeeded() }
     }
 
-    public func swipeableViewActionViews(for indexPath: IndexPath) -> [UIView] {
+    open func swipeableViewActionViews(for indexPath: IndexPath) -> [UIView] {
         let deleteView = CellActionView().withoutAutoresizingMaskConstraints
         deleteView.actionButton.setImage(appearance.images.messageActionDelete, for: .normal)
 
