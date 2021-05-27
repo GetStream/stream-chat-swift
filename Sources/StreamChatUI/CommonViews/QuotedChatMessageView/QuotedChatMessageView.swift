@@ -48,6 +48,15 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
         }
     }
 
+    /// A Boolean value that checks if all attachments are empty.
+    open var isAttachmentsEmpty: Bool {
+        guard let content = self.content else { return true }
+        return content.message.fileAttachments.isEmpty
+            && content.message.imageAttachments.isEmpty
+            && content.message.linkAttachments.isEmpty
+            && content.message.giphyAttachments.isEmpty
+    }
+
     /// The container view that holds the `authorAvatarView` and the `contentContainerView`.
     open private(set) lazy var containerView: ContainerStackView = ContainerStackView()
         .withoutAutoresizingMaskConstraints
@@ -65,7 +74,8 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
     open private(set) lazy var textView: UITextView = UITextView()
         .withoutAutoresizingMaskConstraints
 
-    /// The attachment preview view if the quoted message has an attachment.
+    /// The attachments preview view if the quoted message has attachments.
+    /// The default logic is that the first attachment is displayed on the preview view.
     open private(set) lazy var attachmentPreviewView: UIImageView = UIImageView()
         .withoutAutoresizingMaskConstraints
 
@@ -142,14 +152,21 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
         guard let message = content?.message else { return }
         guard let avatarAlignment = content?.avatarAlignment else { return }
 
+        textView.text = message.text
+
         contentContainerView.backgroundColor = message.linkAttachments.isEmpty
             ? appearance.colorPalette.popoverBackground
             : appearance.colorPalette.highlightedAccentBackground1
 
         setAvatar(imageUrl: message.author.imageURL)
         setAvatarAlignment(avatarAlignment)
-        setText(message.text)
-        setAttachmentPreview(for: message)
+
+        if isAttachmentsEmpty {
+            hideAttachmentPreview()
+        } else {
+            setAttachmentPreview(for: message)
+            showAttachmentPreview()
+        }
     }
 
     /// Sets the avatar image from a url or sets the placeholder image if the url is `nil`.
@@ -157,12 +174,6 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
     open func setAvatar(imageUrl: URL?) {
         let placeholder = appearance.images.userAvatarPlaceholder1
         authorAvatarView.imageView.loadImage(from: imageUrl, placeholder: placeholder)
-    }
-
-    /// Sets the text of the `textView`.
-    /// - Parameter text: The content of the text view.
-    open func setText(_ text: String) {
-        textView.text = text
     }
 
     /// Sets the avatar position in relation of the text bubble.
@@ -190,32 +201,27 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
         }
     }
 
-    /// Sets the attachment view or hides it if no attachment found in the message.
-    /// - Parameter message: The message owner of the attachment.
+    /// Sets the attachment content to the preview view.
+    /// Override this function if you want to provide custom logic to present
+    /// the attachments preview of the message, or if you want to support your custom attachment.
+    /// - Parameter message: The message that contains all the attachments.
     open func setAttachmentPreview(for message: _ChatMessage<ExtraData>) {
         if let filePayload = message.fileAttachments.first?.payload {
-            // TODO: Question for designers.
-            // I'm not sure if it will be possible to provide specific icon for all file formats
-            // so probably we should stick to some generic like other apps do.
             attachmentPreviewView.contentMode = .scaleAspectFit
             attachmentPreviewView.image = appearance.images.fileIcons[filePayload.file.type] ?? appearance.images.fileFallback
-            showAttachmentPreview()
+            textView.text = message.text.isEmpty ? filePayload.title : message.text
         } else if let imagePayload = message.imageAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             attachmentPreviewView.loadImage(from: imagePayload.imageURL)
-            showAttachmentPreview()
-            // TODO: When we will have attachment examples we will set smth
-            // different for different types.
-            if message.text.isEmpty {
-                textView.text = "Photo"
-            }
+            textView.text = message.text.isEmpty ? "Photo" : message.text
         } else if let linkPayload = message.linkAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             attachmentPreviewView.loadImage(from: linkPayload.previewURL)
-            showAttachmentPreview()
-        } else {
-            attachmentPreviewView.image = nil
-            hideAttachmentPreview()
+            textView.text = linkPayload.originalURL.absoluteString
+        } else if let giphyPayload = message.giphyAttachments.first?.payload {
+            attachmentPreviewView.contentMode = .scaleAspectFill
+            attachmentPreviewView.loadImage(from: giphyPayload.previewURL)
+            textView.text = message.text.isEmpty ? "Giphy" : message.text
         }
     }
 
