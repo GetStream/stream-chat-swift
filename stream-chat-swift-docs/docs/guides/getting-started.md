@@ -66,7 +66,7 @@ Anonymous users don't need a special token or any identification, but they can't
 let tokenProvider = TokenProvider.anonymous
 ```
 
-## Configuration
+## ChatClient Configuration
 
 The next step is to configure a `ChatClient` instance with your API Key and the `tokenProvider` from the previous step. The most simple way to do this is by extending the `ChatClient` class with a shared instance that will be used throughout your app (Singleton). It's also possible to create a chat instance in a convenient entry point and pass it down to your classes / view controllers. (Dependency Injection).
 
