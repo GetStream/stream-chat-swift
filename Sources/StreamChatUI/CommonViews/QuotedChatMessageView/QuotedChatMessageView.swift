@@ -5,14 +5,19 @@
 import StreamChat
 import UIKit
 
-/// The avatar position in relation with the text message.
-public struct QuotedAvatarAlignment: Equatable {
-    /// The avatar will be aligned to the left, and the message content on the right.
-    public static let left = QuotedAvatarAlignment(rawValue: 0)
-    /// The avatar will be aligned to the right, and the message content on the left.
-    public static let right = QuotedAvatarAlignment(rawValue: 1)
+/// The quoted author's avatar position in relation with the text message.
+/// New custom alignments can be added with extensions and by overriding the `QuotedChatMessageView.setAvatarAlignment()`.
+public struct QuotedAvatarAlignment: RawRepresentable, Equatable {
+    /// The avatar will be aligned to the leading, and the message content on the trailing.
+    public static let leading = QuotedAvatarAlignment(rawValue: 0)
+    /// The avatar will be aligned to the trailing, and the message content on the leading.
+    public static let trailing = QuotedAvatarAlignment(rawValue: 1)
 
-    private let rawValue: Int
+    public let rawValue: Int
+
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
 }
 
 /// A view that displays a quoted message.
@@ -76,10 +81,10 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
 
     override open func setUpAppearance() {
         super.setUpAppearance()
+
         textView.textContainer.maximumNumberOfLines = 6
         textView.textContainer.lineBreakMode = .byTruncatingTail
         textView.textContainer.lineFragmentPadding = .zero
-
         textView.backgroundColor = .clear
         textView.font = appearance.fonts.subheadline
         textView.textContainerInset = .zero
@@ -140,65 +145,52 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
             : appearance.colorPalette.highlightedAccentBackground1
 
         setAvatar(imageUrl: message.author.imageURL)
+        setAvatarAlignment(avatarAlignment)
         setText(message.text)
         setAttachmentPreview(for: message)
-
-        switch avatarAlignment {
-        case .left:
-            setAvatarPosition(.left)
-        case .right:
-            setAvatarPosition(.right)
-        default:
-            break
-        }
     }
-}
 
-private extension _QuotedChatMessageView {
     /// Sets the avatar image from a url or sets the placeholder image if the url is `nil`.
     /// - Parameter imageUrl: The url of the image.
-    func setAvatar(imageUrl: URL?) {
+    open func setAvatar(imageUrl: URL?) {
         let placeholder = appearance.images.userAvatarPlaceholder1
         authorAvatarView.imageView.loadImage(from: imageUrl, placeholder: placeholder)
     }
 
     /// Sets the text of the `textView`.
     /// - Parameter text: The content of the text view.
-    func setText(_ text: String) {
+    open func setText(_ text: String) {
         textView.text = text
     }
 
-    /// The avatar position in relation of the text bubble.
-    enum AvatarPosition {
-        case left
-        case right
-    }
-
     /// Sets the avatar position in relation of the text bubble.
-    /// - Parameter position: The avatar position.
-    func setAvatarPosition(_ position: AvatarPosition) {
-        authorAvatarView.removeFromSuperview()
-        switch position {
-        case .left:
+    /// - Parameter alignment: The avatar alignment of the author of the quoted message.
+    open func setAvatarAlignment(_ alignment: QuotedAvatarAlignment) {
+        containerView.removeArrangedSubview(authorAvatarView)
+
+        switch alignment {
+        case .leading:
             containerView.insertArrangedSubview(authorAvatarView, at: 0)
             contentContainerView.layer.maskedCorners = [
                 .layerMinXMinYCorner,
                 .layerMaxXMinYCorner,
                 .layerMaxXMaxYCorner
             ]
-        case .right:
+        case .trailing:
             containerView.addArrangedSubview(authorAvatarView)
             contentContainerView.layer.maskedCorners = [
                 .layerMinXMinYCorner,
                 .layerMaxXMinYCorner,
                 .layerMinXMaxYCorner
             ]
+        default:
+            break
         }
     }
 
     /// Sets the attachment view or hides it if no attachment found in the message.
     /// - Parameter message: The message owner of the attachment.
-    func setAttachmentPreview(for message: _ChatMessage<ExtraData>) {
+    open func setAttachmentPreview(for message: _ChatMessage<ExtraData>) {
         if let filePayload = message.fileAttachments.first?.payload {
             // TODO: Question for designers.
             // I'm not sure if it will be possible to provide specific icon for all file formats
@@ -226,14 +218,14 @@ private extension _QuotedChatMessageView {
     }
 
     /// Show the attachment preview view.
-    func showAttachmentPreview() {
+    open func showAttachmentPreview() {
         Animate {
             self.attachmentPreviewView.isHidden = false
         }
     }
 
     /// Hide the attachment preview view.
-    func hideAttachmentPreview() {
+    open func hideAttachmentPreview() {
         Animate {
             self.attachmentPreviewView.isHidden = true
         }

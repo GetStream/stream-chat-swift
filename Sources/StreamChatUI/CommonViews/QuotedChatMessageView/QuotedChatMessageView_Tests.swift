@@ -58,13 +58,13 @@ class QuotedChatMessageView_Tests: XCTestCase {
     }
 
     func test_withAvatarAlignmentRightAppearance() {
-        view.content = makeContent(text: "Hello Vader!", avatarAlignment: .right)
+        view.content = makeContent(text: "Hello Vader!", avatarAlignment: .trailing)
 
         AssertSnapshot(view)
     }
 
     func test_withAvatarAlignmentLeftAppearance() {
-        view.content = makeContent(text: "Hello Vader!", avatarAlignment: .left)
+        view.content = makeContent(text: "Hello Vader!", avatarAlignment: .leading)
 
         AssertSnapshot(view)
     }
@@ -163,7 +163,7 @@ extension QuotedChatMessageView_Tests {
     func makeContent(
         text: String,
         isSentByCurrentUser: Bool = false,
-        avatarAlignment: QuotedAvatarAlignment = .left,
+        avatarAlignment: QuotedAvatarAlignment = .leading,
         attachments: [AnyChatMessageAttachment] = []
     ) -> QuotedChatMessageView.Content {
         let message = ChatMessage.mock(
