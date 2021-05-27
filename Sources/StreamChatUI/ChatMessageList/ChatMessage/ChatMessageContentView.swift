@@ -64,7 +64,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     /// Shows the bubble around message content.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.bubble`.
-    public private(set) var bubbleView: ChatMessageBubbleView?
+    public private(set) var bubbleView: _ChatMessageBubbleView<ExtraData>?
 
     /// Shows message author avatar.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.author`.
@@ -235,12 +235,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             bubbleView.embed(bubbleContentContainer)
 
             if options.contains(.continuousBubble) {
-                bubbleView.roundedCorners = .all
                 mainContainer.layoutMargins.bottom = 0
-            } else if options.contains(.flipped) {
-                bubbleView.roundedCorners = CACornerMask.all.subtracting(.layerMaxXMaxYCorner)
-            } else {
-                bubbleView.roundedCorners = CACornerMask.all.subtracting(.layerMinXMaxYCorner)
             }
 
             bubbleThreadMetaContainer.addArrangedSubview(bubbleView)
@@ -373,13 +368,13 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         }
 
         // Bubble view
-        if content?.type == .ephemeral {
-            bubbleView?.backgroundColor = appearance.colorPalette.popoverBackground
-        } else {
-            bubbleView?.backgroundColor = content?.isSentByCurrentUser == true ?
-                appearance.colorPalette.background6 :
-                appearance.colorPalette.popoverBackground
-        }
+
+        bubbleView?.content = {
+            guard let message = content, let layout = layoutOptions else {
+                return nil
+            }
+            return .init(message: message, layoutOptions: layout)
+        }()
 
         // Metadata
         onlyVisibleForYouContainer?.isVisible = content?.isOnlyVisibleForCurrentUser == true
@@ -526,7 +521,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     /// Instantiates, configures and assigns `bubbleView` when called for the first time.
     /// - Returns: The `bubbleView` subview.
-    open func createBubbleView() -> ChatMessageBubbleView {
+    open func createBubbleView() -> _ChatMessageBubbleView<ExtraData> {
         if bubbleView == nil {
             bubbleView = ChatMessageBubbleView().withoutAutoresizingMaskConstraints
         }
