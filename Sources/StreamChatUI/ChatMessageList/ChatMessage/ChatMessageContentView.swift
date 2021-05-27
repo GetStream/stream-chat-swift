@@ -523,7 +523,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     /// - Returns: The `bubbleView` subview.
     open func createBubbleView() -> _ChatMessageBubbleView<ExtraData> {
         if bubbleView == nil {
-            bubbleView = ChatMessageBubbleView().withoutAutoresizingMaskConstraints
+            bubbleView = components
+                .messageBubbleView
+                .init()
+                .withoutAutoresizingMaskConstraints
         }
         return bubbleView!
     }
