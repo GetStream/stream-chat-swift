@@ -29,7 +29,7 @@ memberListController.synchronize { error in
 
 The endpoint working with members supports filtering on numerous criteria, for example:
 
-### Filter by user.name exact match:
+### Filtering by user.name exact match:
 ```swift
 let memberListController = chatClient.memberListController( 
     query: .init(
@@ -39,7 +39,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-### Filter by part of the user.name
+### Filtering by part of the user.name
 
 ```swift
 let memberListController = chatClient.memberListController( 
@@ -50,7 +50,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-### Autocomplete members by user.name
+### Autocompleting members by user.name
 
 ```swift
 let memberListController = chatClient.memberListController( 
@@ -61,7 +61,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-### Query single a member by id
+### Querying single a member by id
 
 `ChatChannelMemberController` is an entity that allows to work with and observe changes for a specific member.
 It has convenience methods for banning and unbanning a member.
@@ -77,7 +77,7 @@ memberController.ban(for: 10, reason: "spam")
 memberController.unban()
 ```
 
-### Query several members by id
+### Querying several members by id
 
 ```swift
 let memberListController = chatClient.memberListController( 
@@ -88,7 +88,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-### Query channel moderators 
+### Querying channel moderators 
 
 ```swift
 let memberListController = chatClient.memberListController( 
@@ -99,7 +99,7 @@ let memberListController = chatClient.memberListController(
 ) 
 ```
 
-### Query banned members
+### Querying banned members
 
 ```swift
 let memberListController = chatClient.memberListController( 
