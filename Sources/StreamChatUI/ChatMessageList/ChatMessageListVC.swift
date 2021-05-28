@@ -207,7 +207,9 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
             return components.galleryAttachmentInjector
         } else if attachmentCounts.keys.contains(.giphy) {
             return components.giphyAttachmentInjector
-        } else if attachmentCounts.keys.contains(.file) {
+        } else if attachmentCounts.keys.contains(.file) || attachmentCounts.keys.contains(.video) {
+            // TODO: Using FileAttachmentInjector for videos is an interim solution
+            // until we introduce proper preview/injector for videos
             return components.filesAttachmentInjector
         } else if attachmentCounts.keys.contains(.linkPreview) {
             return components.linkAttachmentInjector

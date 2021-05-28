@@ -196,6 +196,8 @@ extension AttachmentDTO {
             attachment = asModel(payloadType: ImageAttachmentPayload.self)?.asAnyAttachment
         case .file:
             attachment = asModel(payloadType: FileAttachmentPayload.self)?.asAnyAttachment
+        case .video:
+            attachment = asModel(payloadType: VideoAttachmentPayload.self)?.asAnyAttachment
         case .giphy:
             attachment = asModel(payloadType: GiphyAttachmentPayload.self)?.asAnyAttachment
         case .linkPreview:
@@ -248,6 +250,15 @@ extension AttachmentDTO {
             guard var file: FileAttachmentPayload = payload() else {
                 log.assertionFailure(
                     "File payload must be decoded to provide the `assetURL` before sending"
+                )
+                return
+            }
+            file.assetURL = uploadedFileURL
+            data = try? JSONEncoder.stream.encode(file)
+        case .video:
+            guard var file: VideoAttachmentPayload = payload() else {
+                log.assertionFailure(
+                    "Video payload must be decoded to provide the `assetURL` before sending"
                 )
                 return
             }

@@ -197,8 +197,8 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     /// The view controller for selecting image attachments.
     open private(set) lazy var imagePickerVC: UIViewController = {
         let picker = UIImagePickerController()
-        picker.mediaTypes = ["public.image"]
-        picker.sourceType = .photoLibrary
+        picker.mediaTypes = UIImagePickerController.availableMediaTypes(for: .savedPhotosAlbum) ?? ["public.image"]
+        picker.sourceType = .savedPhotosAlbum
         picker.delegate = self
         return picker
     }()
@@ -642,14 +642,22 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
-        guard let url = info[UIImagePickerController.InfoKey.imageURL] as? URL else { return }
-        
         do {
-            let attachment = try AnyAttachmentPayload(localFileURL: url, attachmentType: .image)
-            content.attachments.append(attachment)
+            if let imageURL = info[.imageURL] as? URL {
+                // User picked an image
+                let attachment = try AnyAttachmentPayload(localFileURL: imageURL, attachmentType: .image)
+                content.attachments.append(attachment)
+            } else if let videoURL = info[.mediaURL] as? URL {
+                // User picked a video
+                // TODO: after video attachments (`VideoAttachmentInjector`) is properly implemented,
+                // the `attachmentType` should be `video`
+                let attachment = try AnyAttachmentPayload(localFileURL: videoURL, attachmentType: .video)
+                content.attachments.append(attachment)
+            }
         } catch {
             log.assertionFailure(error.localizedDescription)
         }
+        
         picker.dismiss(animated: true, completion: nil)
     }
     
