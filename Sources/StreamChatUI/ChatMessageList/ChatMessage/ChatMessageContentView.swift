@@ -70,6 +70,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.author`.
     public private(set) var authorAvatarView: ChatAvatarView?
 
+    /// Shows a spacer where the author avatar should be.
+    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.avatarSizePadding`.
+    public private(set) var authorAvatarSpacer: UIView?
+
     /// Shows message text content.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.text`.
     public private(set) var textView: UITextView?
@@ -181,34 +185,6 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
         var constraintsToActivate: [NSLayoutConstraint] = []
 
-        // Main container
-        mainContainer.alignment = .trailing
-        mainContainer.isLayoutMarginsRelativeArrangement = true
-        mainContainer.layoutMargins.top = 0
-
-        addSubview(mainContainer)
-        constraintsToActivate += [
-            mainContainer.bottomAnchor.pin(equalTo: bottomAnchor),
-            mainContainer.widthAnchor.pin(
-                lessThanOrEqualTo: widthAnchor,
-                multiplier: maxContentWidthMultiplier
-            )
-        ]
-
-        if options.contains(.flipped) {
-            constraintsToActivate += [
-                mainContainer.trailingAnchor
-                    .pin(equalTo: trailingAnchor)
-                    .almostRequired
-            ]
-        } else {
-            constraintsToActivate += [
-                mainContainer.leadingAnchor
-                    .pin(equalTo: leadingAnchor)
-                    .almostRequired
-            ]
-        }
-
         // Avatar view
         if options.contains(.avatar) {
             let avatarView = createAvatarView()
@@ -216,20 +192,18 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
                 avatarView.widthAnchor.pin(equalToConstant: messageAuthorAvatarSize.width),
                 avatarView.heightAnchor.pin(equalToConstant: messageAuthorAvatarSize.height)
             ]
-
-            mainContainer.addArrangedSubview(avatarView)
         }
 
+        // Avatar spacer
         if options.contains(.avatarSizePadding) {
-            let spacer = UIView().withoutAutoresizingMaskConstraints
-            spacer.isHidden = true
-            constraintsToActivate += [spacer.widthAnchor.pin(equalToConstant: messageAuthorAvatarSize.width)]
-            mainContainer.addArrangedSubview(spacer)
+            let avatarSpacer = createAvatarSpacer()
+            constraintsToActivate += [
+                avatarSpacer.widthAnchor.pin(equalToConstant: messageAuthorAvatarSize.width)
+            ]
         }
 
         // Bubble - Thread - Metadata
         bubbleThreadMetaContainer.alignment = options.contains(.flipped) ? .trailing : .leading
-        mainContainer.addArrangedSubview(bubbleThreadMetaContainer)
 
         // Bubble view
         if options.contains(.bubble) {
@@ -305,7 +279,6 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             let errorIndicatorView = createErrorIndicatorView()
             errorIndicatorView.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
             errorIndicatorView.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
-            addSubview(errorIndicatorView)
 
             constraintsToActivate += [
                 errorIndicatorView.bottomAnchor.pin(equalTo: (bubbleView ?? bubbleContentContainer).bottomAnchor),
@@ -352,6 +325,45 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
                 mainContainer.topAnchor.pin(equalTo: topAnchor)
             ]
         }
+
+        // Main container
+
+        mainContainer.alignment = .bottom
+        mainContainer.isLayoutMarginsRelativeArrangement = true
+        mainContainer.layoutMargins.top = 0
+        insertSubview(mainContainer, at: 0)
+
+        let mainContainerSubviews = [
+            authorAvatarView ?? authorAvatarSpacer,
+            errorIndicatorView,
+            bubbleThreadMetaContainer
+        ].compactMap { $0 }
+
+        if options.contains(.flipped) {
+            mainContainer.addArrangedSubviews(mainContainerSubviews.reversed())
+
+            constraintsToActivate += [
+                mainContainer.trailingAnchor
+                    .pin(equalTo: trailingAnchor)
+                    .almostRequired
+            ]
+        } else {
+            mainContainer.addArrangedSubviews(mainContainerSubviews)
+
+            constraintsToActivate += [
+                mainContainer.leadingAnchor
+                    .pin(equalTo: leadingAnchor)
+                    .almostRequired
+            ]
+        }
+
+        constraintsToActivate += [
+            mainContainer.bottomAnchor.pin(equalTo: bottomAnchor),
+            mainContainer.widthAnchor.pin(
+                lessThanOrEqualTo: widthAnchor,
+                multiplier: maxContentWidthMultiplier
+            )
+        ]
 
         NSLayoutConstraint.activate(constraintsToActivate)
     }
@@ -527,6 +539,15 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
                 .withoutAutoresizingMaskConstraints
         }
         return authorAvatarView!
+    }
+
+    /// Instantiates, configures and assigns `createAvatarSpacer` when called for the first time.
+    /// - Returns: The `authorAvatarSpacer` subview.
+    open func createAvatarSpacer() -> UIView {
+        if authorAvatarSpacer == nil {
+            authorAvatarSpacer = UIView().withoutAutoresizingMaskConstraints
+        }
+        return authorAvatarSpacer!
     }
 
     /// Instantiates, configures and assigns `threadAvatarView` when called for the first time.
