@@ -190,3 +190,29 @@ memberListController
     .sink(receiveValue: { print($0) })
     .store(in: &cancellables)
 ```
+
+### SwiftUI Wrappers
+
+`ChatChannelMemberListController` is fully compatible with SwiftUI:
+
+```swift
+struct MemberListView: View {
+    @StateObject var memberList: ChatChannelMemberListController.ObservableObject
+    
+    var body: some View {
+        VStack {
+            List(memberList.members, id: \.self) { member in
+                HStack {
+                    Text(member.name ?? "Unknown")
+                    Text(member.userRole.rawValue)
+                }
+            }
+        }
+        .onAppear {
+            // call `synchronize()` to update the locally cached data.
+             memberList.controller.synchronize() 
+        }
+        .navigationBarTitle(Text("Members"))
+    }
+}
+```
