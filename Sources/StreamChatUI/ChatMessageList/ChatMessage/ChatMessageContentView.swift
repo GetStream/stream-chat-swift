@@ -97,7 +97,7 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
     public private(set) var onlyVisibleForYouLabel: UILabel?
 
     /// Shows error indicator.
-    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.error`.
+    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.errorIndicator`.
     public private(set) var errorIndicatorView: ChatMessageErrorIndicator?
 
     /// Shows the message quoted by the message this view displays.
@@ -152,6 +152,10 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
     /// The container which holds `onlyVisibleForYouIconImageView` and `onlyVisibleForYouLabel`
     public private(set) var onlyVisibleForYouContainer: ContainerStackView?
+
+    /// The container which holds `errorIndicatorView`
+    /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.errorIndicator`.
+    public private(set) var errorIndicatorContainer: UIView?
 
     /// Constraint between bubble and reactions.
     public private(set) var bubbleToReactionsConstraint: NSLayoutConstraint?
@@ -280,10 +284,14 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             errorIndicatorView.setContentCompressionResistancePriority(.streamRequire, for: .horizontal)
             errorIndicatorView.setContentCompressionResistancePriority(.streamRequire, for: .vertical)
 
+            let errorIndicatorContainer = createErrorIndicatorContainer()
+            errorIndicatorContainer.addSubview(errorIndicatorView)
+
             constraintsToActivate += [
-                errorIndicatorView.bottomAnchor.pin(equalTo: (bubbleView ?? bubbleContentContainer).bottomAnchor),
-                errorIndicatorView.trailingAnchor.pin(equalTo: layoutMarginsGuide.trailingAnchor),
-                bubbleThreadMetaContainer.trailingAnchor.pin(equalTo: errorIndicatorView.centerXAnchor)
+                errorIndicatorView.leadingAnchor.pin(equalTo: errorIndicatorContainer.leadingAnchor),
+                errorIndicatorView.trailingAnchor.pin(equalTo: errorIndicatorContainer.trailingAnchor),
+                errorIndicatorView.topAnchor.pin(equalTo: errorIndicatorContainer.topAnchor),
+                errorIndicatorView.bottomAnchor.pin(equalTo: (bubbleView ?? bubbleContentContainer).bottomAnchor)
             ]
         }
 
@@ -335,12 +343,19 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
 
         let mainContainerSubviews = [
             authorAvatarView ?? authorAvatarSpacer,
-            errorIndicatorView,
+            errorIndicatorContainer,
             bubbleThreadMetaContainer
         ].compactMap { $0 }
 
         if options.contains(.flipped) {
             mainContainer.addArrangedSubviews(mainContainerSubviews.reversed())
+
+            if let errorIndicator = errorIndicatorView {
+                mainContainer.setCustomSpacing(
+                    .init(-errorIndicator.intrinsicContentSize.width / 2),
+                    after: bubbleThreadMetaContainer
+                )
+            }
 
             constraintsToActivate += [
                 mainContainer.trailingAnchor
@@ -349,6 +364,13 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             ]
         } else {
             mainContainer.addArrangedSubviews(mainContainerSubviews)
+
+            if let errorIndicator = errorIndicatorView {
+                mainContainer.setCustomSpacing(
+                    .init(-errorIndicator.intrinsicContentSize.width / 2),
+                    after: errorIndicatorContainer!
+                )
+            }
 
             constraintsToActivate += [
                 mainContainer.leadingAnchor
@@ -636,6 +658,16 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
             errorIndicatorView!.addTarget(self, action: #selector(handleTapOnErrorIndicator), for: .touchUpInside)
         }
         return errorIndicatorView!
+    }
+
+    /// Instantiates, configures and assigns `errorIndicatorContainer` when called for the first time.
+    /// - Returns: The `errorIndicatorContainer` subview.
+    open func createErrorIndicatorContainer() -> UIView {
+        if errorIndicatorContainer == nil {
+            errorIndicatorContainer = UIView().withoutAutoresizingMaskConstraints
+            errorIndicatorContainer!.layer.zPosition = 1
+        }
+        return errorIndicatorContainer!
     }
 
     /// Instantiates, configures and assigns `reactionsBubbleView` when called for the first time.
