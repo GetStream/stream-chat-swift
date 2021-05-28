@@ -2,9 +2,12 @@
 title: Working with Members
 ---
 
-## ChatChannelMember object
-Chat channel members are represented by `ChatChannelMember` model.
+Users that are in a particular channel are members of this channel. Membership allows handling such things as roles, invitations and bans.
+One of the use cases for members is members list for a channel:
 <img src="../img/members-list.png" width="40%" />
+
+## ChatChannelMember object
+Members are represented by `ChatChannelMember` model.
 
 ## ChannelMember vs User
 `ChatChannelMember` is a subclass of `ChatUser` and apart properties typical for users, it also contains such info as member's role (owner, admin, moderator or member), invitation and ban details.
