@@ -4,7 +4,11 @@ title: Working with Members
 
 ## ChatChannelMember object
 Chat channel members are represented by `ChatChannelMember` model.
-It's a subclass of `ChatUser` and apart properties typical for users, it also contains such info as member's role (owner, admin, moderator or member), invitation and ban details.
+<img src="../img/members-list.png" width="40%" />
+
+## ChannelMember vs User
+`ChatChannelMember` is a subclass of `ChatUser` and apart properties typical for users, it also contains such info as member's role (owner, admin, moderator or member), invitation and ban details.
+The difference between these two is that `ChatUser` models represent all the users present on a Stream Chat server, whereas `ChatChannelMember` is user's representation in particular channel. That means that a single user is represented by different `ChatChannelMember` in different channels.
 
 ## Getting all members for a channel
 
@@ -30,7 +34,7 @@ The endpoint working with members supports filtering on numerous criteria, for e
 let memberListController = chatClient.memberListController( 
     query: .init(
         cid: .init(type: .messaging, id: "general"),
-        filter: .equal(.name, to: "Lando")
+        filter: .equal(.name, to: "Lando") // will only match members with name "Lando"
     )
 ) 
 ```
@@ -38,36 +42,39 @@ let memberListController = chatClient.memberListController(
 ### Filter by part of the user.name
 
 ```swift
-// Returns Lando, Conan etc.
 let memberListController = chatClient.memberListController( 
     query: .init(
         cid: .init(type: .messaging, id: "general"),
-        filter: .query(.name, text: "an")
+        filter: .query(.name, text: "an") // Returns Lando, Conan, any name with "an"
     ) 
 ) 
 ```
 
-### Autocomplete users by user.name
-
-```swift
-// TODO explanation?
-let memberListController = chatClient.memberListController( 
-    query: .init(
-        cid: .init(type: .messaging, id: "general"),
-        filter: .autocomplete(.name, text: "La")
-    ) 
-) 
-```
-
-### Query a member by id
+### Autocomplete members by user.name
 
 ```swift
 let memberListController = chatClient.memberListController( 
     query: .init(
         cid: .init(type: .messaging, id: "general"),
-        filter: .equal(.id, to: "user-id")
-    )
+        filter: .autocomplete(.name, text: "La") // Returns all the members with names starting with "La"
+    ) 
 ) 
+```
+
+### Query single a member by id
+
+`ChatChannelMemberController` is an entity that allows to work with and observe changes for a specific member.
+It has convenience methods for banning and unbanning a member.
+
+```swift
+let memberController = chatClient.memberController(
+    userId: "user-id",
+    in: .init(type: .messaging, id: "general")
+)
+
+// Ban a member for 10 minutes
+memberController.ban(for: 10, reason: "spam")
+memberController.unban()
 ```
 
 ### Query several members by id
@@ -99,17 +106,6 @@ let memberListController = chatClient.memberListController(
     query: .init(
         cid: .init(type: .messaging, id: "general"),
         filter: .equal(.isBanned, to: true)
-    ) 
-) 
-```
-
-### Query members with pending invites 
-
-```swift
-let memberListController = chatClient.memberListController( 
-    query: .init(
-        cid: .init(type: .messaging, id: "general"),
-        filter: .equal("invite", to: "pending")
     ) 
 ) 
 ```
@@ -175,33 +171,6 @@ class Controller: ChatChannelMemberListControllerDelegate {
     }
 }
 ```
-
-### With extra data
-```swift
-final class CustomExtraData: ExtraDataTypes { }
-
-final class Controller: _ChatChannelMemberListControllerDelegate {
-    typealias ExtraData = CustomExtraData
-    let memberListController: ChatChannelMemberListController
-
-    init() {
-        memberListController = chatClient.memberListController( 
-            query: .init(cid: .init(type: .messaging, id: "general"), filter: .none) 
-        )
-        memberListController.setDelegate(self)
-    }
-    
-    func memberListController(
-        _ controller: _ChatChannelMemberListController<ExtraData>,
-        didChangeMembers changes: [ListChange<_ChatChannelMember<ExtraData.User>>]
-    ) {
-        // process changes
-    }
-}
-```
-
-// TODO ??
-More information on extra data topic can be found here: ---
 
 ### Using Combine publishers
 
