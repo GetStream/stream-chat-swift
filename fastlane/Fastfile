@@ -238,7 +238,7 @@ end
 
 desc "Get next PR number from github to be used in CHANGELOG"
 lane :get_next_issue_number do
-  result = github_api(api_token: ENV["GITHUB_TOKEN"], path: "/repos/GetStream/stream-chat-swift/issues")
+  result = github_api(api_token: ENV["FASTLANE_GITHUB_TOKEN"], path: "/repos/GetStream/stream-chat-swift/issues")
   
   next_issue_number = result[:json][0]["number"] + 1
   next_issue_link = "[##{next_issue_number}](https://github.com/GetStream/stream-chat-swift/issues/#{next_issue_number})"
