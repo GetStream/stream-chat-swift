@@ -139,13 +139,13 @@ You can only add/remove up to 100 members at once.
 
 ### Leaving a channel
 
-It is possible for a user to leave the channel without moderator-level permissions if channel members have `RemoveOwnChannelMembership` permission:
+Leaving a channel is the same as removing members from a channel, but it's called with the current user id:
 
 ```swift
 let controller = chatClient.channelController(
     for: .init(type: .messaging, id: "general")
 ) 
-controller.removeMembers(userIds: ["my-user-id"])
+controller.removeMembers(userIds: ["current-user-id"])
 ```
 
 ## Observing changes to members
