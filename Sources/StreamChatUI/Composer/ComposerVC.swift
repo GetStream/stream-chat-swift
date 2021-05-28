@@ -371,15 +371,6 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             )
             actionSheet.popoverPresentationController?.sourceView = sender
 
-            let showFilePickerAction = UIAlertAction(
-                title: L10n.Composer.Picker.file,
-                style: .default,
-                handler: { [weak self] _ in
-                    guard let self = self else { return }
-                    self.selectedAttachmentType = .file
-                    self.present(self.filePickerVC, animated: true, completion: nil)
-                }
-            )
             let showImagePickerAction = UIAlertAction(
                 title: L10n.Composer.Picker.image,
                 style: .default,
@@ -389,9 +380,20 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                     self.present(self.imagePickerVC, animated: true, completion: nil)
                 }
             )
+            
+            let showFilePickerAction = UIAlertAction(
+                title: L10n.Composer.Picker.file,
+                style: .default,
+                handler: { [weak self] _ in
+                    guard let self = self else { return }
+                    self.selectedAttachmentType = .file
+                    self.present(self.filePickerVC, animated: true, completion: nil)
+                }
+            )
+            
             let cancelAction = UIAlertAction(title: L10n.Composer.Picker.cancel, style: .cancel)
 
-            [showFilePickerAction, showImagePickerAction, cancelAction].forEach {
+            [showImagePickerAction, showFilePickerAction, cancelAction].forEach {
                 actionSheet.addAction($0)
             }
 
