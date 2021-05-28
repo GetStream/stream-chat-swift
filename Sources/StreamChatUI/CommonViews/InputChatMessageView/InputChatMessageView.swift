@@ -113,7 +113,7 @@ open class _InputChatMessageView<ExtraData: ExtraDataTypes>: _View, ComponentsPr
         if let quotingMessage = content.quotingMessage {
             quotedMessageView.content = .init(
                 message: quotingMessage,
-                avatarAlignment: .left
+                avatarAlignment: .leading
             )
         }
 
