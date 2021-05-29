@@ -5,7 +5,7 @@
 import Foundation
 
 /// A parsed server response error.
-struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertible, Equatable {
+public struct ErrorPayload: LocalizedError, Codable, CustomDebugStringConvertible, Equatable {
     /// The error codes for token-related errors. Typically, a refreshed token is required to recover.
     static let tokenInvadlidErrorCodes = 40...43
     
