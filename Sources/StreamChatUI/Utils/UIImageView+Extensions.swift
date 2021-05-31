@@ -3,14 +3,26 @@
 //
 
 import Nuke
+import StreamChat
 import UIKit
 
 extension UIImageView {
+    /// Load image from URL
+    /// - Parameters:
+    ///   - url: URL of the image.
+    ///   - placeholder: Placeholder to show while the image is loading or in case the loading fails.
+    ///   - resize: Request thumbnail if supported and resize loaded image to match the size of the image view.
+    ///   - preferredSize: Specify the thumbnail and resized image size.
+    ///   - components: dependency injection for components.
+    ///   - completion: Image request completion block.
+    /// - Returns: Active image download task.
     @discardableResult
-    func loadImage(
+    func loadImage<ExtraData: ExtraDataTypes>(
         from url: URL?,
         placeholder: UIImage? = nil,
-        resizeAutomatically: Bool = true,
+        resize: Bool = true,
+        preferredSize: CGSize? = nil,
+        components: _Components<ExtraData>,
         completion: ImageTask.Completion? = nil
     ) -> ImageTask? {
         guard !SystemEnvironment.isTests else {
@@ -35,17 +47,23 @@ extension UIImageView {
         currentImageLoadingTask?.cancel()
 
         guard
-            let url = url
+            var url = url
         else {
             image = placeholder
             return nil
         }
 
-        let preprocessors: [ImageProcessing] = resizeAutomatically && bounds.size != .zero
-            ? [ImageProcessors.Resize(size: bounds.size, contentMode: .aspectFill, crop: true)]
+        let size = preferredSize ?? bounds.size
+        let preprocessors: [ImageProcessing] = resize && size != .zero
+            ? [ImageProcessors.Resize(size: size, contentMode: .aspectFill, crop: true)]
             : []
- 
-        let request = ImageRequest(url: url, processors: preprocessors)
+        
+        if resize && size != .zero {
+            url = components.imageCDN.thumbnailURL(originalURL: url, preferredSize: size)
+        }
+        
+        let imageKey = components.imageCDN.cachingKey(forImage: url)
+        let request = ImageRequest(url: url, processors: preprocessors, options: ImageRequestOptions(filteredURL: imageKey))
         let options = ImageLoadingOptions(placeholder: placeholder)
 
         currentImageLoadingTask = Nuke.loadImage(with: request, options: options, into: self, completion: completion)
