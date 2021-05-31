@@ -240,7 +240,8 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     override open func setUpLayout() {
         super.setUpLayout()
 
-        view.embed(composerView)
+        view.addSubview(composerView)
+        composerView.pin(to: view)
     }
 
     override open func viewDidDisappear(_ animated: Bool) {
