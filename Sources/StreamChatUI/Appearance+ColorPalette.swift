@@ -33,6 +33,7 @@ public extension Appearance {
         public var background5: UIColor = .streamOverlayDarkStatic
         public var background6: UIColor = .streamGrayWhisper
         public var background7: UIColor = .streamDarkGray
+        public var background8: UIColor = .streamWhite
 
         public var overlayBackground: UIColor = .streamOverlayLight
         public var popoverBackground: UIColor = .streamWhite
@@ -46,6 +47,7 @@ public extension Appearance {
         public var lightBorder: UIColor = .streamWhiteSnow
         public var border: UIColor = .streamGrayGainsboro
         public var border2: UIColor = .streamGray
+        public var border3: UIColor = .streamGrayWhisper
 
         // MARK: - Tint and alert
 

@@ -100,6 +100,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     /// The view used to display content of the message, i.e. in the channel detail message list.
     public var messageContentView: _ChatMessageContentView<ExtraData>.Type = _ChatMessageContentView<ExtraData>.self
 
+    /// The view used to display a bubble around a message.
+    public var messageBubbleView: _ChatMessageBubbleView<ExtraData>.Type = _ChatMessageBubbleView<ExtraData>.self
+
     /// The injector used to inject gallery attachment views.
     public var galleryAttachmentInjector: _AttachmentViewInjector<ExtraData>.Type = _GalleryAttachmentViewInjector<ExtraData>.self
 
