@@ -137,7 +137,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 | default `tintColor`  | `tintColor = .systemPink` |
 | ------------- | ------------- |
-| ![Chat UI with default tint color](/img/blue-tint.png)  | ![Chat UI with pink tint color](/img/pink-tint.png)  |
+| ![Chat UI with default tint color](assets/blue-tint.png)  | ![Chat UI with pink tint color](assets/pink-tint.png)  |
 
 ### Changing Layout
 
@@ -197,7 +197,7 @@ class MyChatMessageMetadataView: _ChatMessageMetadataView<MyExtraData> {
 
 | Before  | After |
 | ------------- | ------------- |
-| ![No author mood](/img/change-layout-mood-no.png)  | ![Author mood on](/img/change-layout-mood-on.png)  |
+| ![No author mood](assets/change-layout-mood-no.png)  | ![Author mood on](assets/change-layout-mood-on.png)  |
 
 Once the custom subclass is implemented, it should be injected via `UIConfig` so it is used instead of base UI component.
 > Refer to [Injecting Custom Subclass](#injecting-custom-subclass) chapter below for more information.
@@ -209,7 +209,7 @@ Imagine you are not satisfied with some UI component default layout and you're l
 Let's see how it can be done by the `ChatMessageInteractiveAttachmentView` example:
 | Default layout  | Updated layout |
 | ------------- | ------------- |
-| ![InteractiveAttachmentView-before](/img/change-layout-cow-before.png)  | ![InteractiveAttachmentView-after](/img/change-layout-cow-after.png)  |
+| ![InteractiveAttachmentView-before](assets/change-layout-cow-before.png)  | ![InteractiveAttachmentView-after](assets/change-layout-cow-after.png)  |
 
 As you see, in the `updated layout`:
 * action buttons are arranged vertically;
@@ -271,7 +271,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 ```
 
 For example, this user really loves ducks and has a bad time without them.
-![User sad without duck](/img/sad_duck.png)
+![User sad without duck](assets/sad_duck.png)
 
 Let's help him, by showing 🦆 near message view if it contains "duck" word.
 To achive this we would subclass `ChatMessageContentView`
@@ -315,5 +315,5 @@ final class DuckChatMessageCollectionViewCell: СhatMessageCollectionViewCell {
     override class var messageContentViewClass: _ChatMessageContentView<NoExtraData>.Type { DuckBubbleView.self }
 }
 ```
-![User now happy with duck](/img/happy_duck.png)
+![User now happy with duck](assets/happy_duck.png)
 

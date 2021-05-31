@@ -4,7 +4,7 @@ title: Working with Members
 
 Users that are in a particular channel are members of this channel. Membership allows handling such things as roles, invitations and bans.
 One of the use cases for members is members list for a channel:
-<img src="../img/members-list.png" width="40%" />
+<img src={require("../assets/members-list.png").default} width="40%" />
 
 ## ChatChannelMember object
 Members are represented by `ChatChannelMember` model.

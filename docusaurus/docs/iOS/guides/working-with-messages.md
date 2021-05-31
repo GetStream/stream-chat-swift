@@ -6,14 +6,14 @@ title: Working with Messages
 A message is represented by `ChatMessage` model.
 Depending on combination of its properties messages appear differently, a screenshot on the left showcases the most common types of messages. A screenshot on the right shows how some of `ChatMessage` properties are reflected in views:
 
-<img src="../img/messages-showcase.png" width="40%"/>
-<img src="../img/messages-properties.png" width="40%" />
+<img src={require("../assets/messages-showcase.png").default} width="40%"/>
+<img src={require("../assets/messages-properties.png").default} width="40%" />
 
 ## Optimistic updates
 
 Optimistic updates model is applied to messages, meaning that when there is a change to local messages state it is propagated to chat components so it is displayed for users right away and then it's synchronized with backend. In case of synchronization failure users may be prompted to retry the failed action.
 
-<img src="../img/message-failure-resend.png" width="30%" />
+<img src={require("../assets/message-failure-resend.png").default} width="30%" />
 
 This makes `LocalMessageState` one of the most important properties in message's lifecycle, because it's used for keeping messages in sync with backend.
 
@@ -42,7 +42,7 @@ messageController.synchronize { error in
 
 `ComposerVC` is a UI component that handles messages creation:
 
-<img src="../img/composer-ui.png" width="50%" />
+<img src={require("../assets/composer-ui.png").default} width="50%" />
 
 If you are using your own component for a message composer you can use `ChatChannelController` to create messages:
 ```swift
@@ -132,11 +132,11 @@ When a message is created `ChannelController` sends *stop typing event* for this
 
 There is an action for editing messages:
 
-<img src="../img/messages-actions.png" width="25%" />
+<img src={require("../assets/messages-actions.png").default} width="25%" />
 
 When a user is editing a message `ComposerVC` takes the following appearance:
 
-<img src="../img/composer-edit.png" width="50%" />
+<img src={require("../assets/composer-edit.png").default} width="50%" />
 
 If you use your own implementation for composer view, the same could be done with `ChatMessageController`:
 
@@ -200,12 +200,12 @@ class MyChannelViewController: UIViewController {
 
 A message can be deleted with the corresponding action:
 
-<img src="../img/messages-actions.png" width="25%" />
+<img src={require("../assets/messages-actions.png").default} width="25%" />
 
 
 When a user deletes a message it will be hidden for all the rest users in conversation, but it will appear for the user who deleted it like this:
 
-  <img src="../img/message-delete.png" width="50%" />
+  <img src={require("../assets/message-delete.png").default} width="50%" />
 
 In an upcoming version it will become customizable, so it will be possible to hide deleted messages for all participants in a conversation.
 
@@ -276,16 +276,16 @@ There are two ways of replying a message:
   
   In case if `ComposerVC` is used it looks like this during composing, and the resulting message will show both quoted message and the reply itself.
   
-  <img src="../img/composer-quoted.png" width="50%" />
+  <img src={require("../assets/composer-quoted.png").default} width="50%" />
 * **Thread reply**
   
     Initiating a thread reply takes a user into thread details screen and the resulting message will look like a normal message that is placed inside the thread. It is also possible to duplicate it to the parent channel.
   
-    <img src="../img/thread-details.png" width="35%" />
+    <img src={require("../assets/thread-details.png").default} width="35%" />
 
     A message with thread replies appears like this:
 
-    <img src="../img/thread-reply.png" width="35%" />
+    <img src={require("../assets/thread-reply.png").default} width="35%" />
 
 If you use your own implementation for message composer you can create a **thread reply** for a message with `MessageController`:
 

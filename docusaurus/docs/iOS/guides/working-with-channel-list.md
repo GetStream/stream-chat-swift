@@ -59,7 +59,7 @@ Page size is used to specify how many channels the initial page will show. You c
 
 Displaying the list of channels consists of creating the controller for the list you want to display, passing this controller to a `ChatChannelListVC` instance, and displaying the view controller. To demonstrate:
 
-<img align="right" src="../img/channel-list.png" width="20%" />
+<img align="right" src="..../assets/channel-list.png" width="20%" />
 
 ```swift
 // Create the query for the channel list we desire

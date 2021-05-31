@@ -4,7 +4,7 @@ title: Working with a Channel
 
 ## Getting Channel Data
 
-![](/img/channel-header.png)
+![](../assets/channel-header.png)
 
 Here's how you can get data of a Channel you already know the Channel ID of:
 
