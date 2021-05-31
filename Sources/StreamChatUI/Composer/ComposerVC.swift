@@ -584,7 +584,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             self?.dismissSuggestions()
         }
 
-        showSuggestionsAsChildVC()
+        showSuggestions()
     }
 
     /// Shows the mention suggestions for the potential mention the current user is typing.
@@ -615,7 +615,15 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
             self.dismissSuggestions()
         }
 
-        showSuggestionsAsChildVC()
+        showSuggestions()
+    }
+
+    /// Shows the suggestions view
+    open func showSuggestions() {
+        if !suggestionsVC.isPresented, let parent = parent {
+            parent.addChildViewController(suggestionsVC, targetView: parent.view)
+            suggestionsVC.bottomAnchorView = composerView
+        }
     }
 
     /// Dismisses the suggestions view.
@@ -626,7 +634,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     // MARK: - UITextViewDelegate
 
-    public func textViewDidChange(_ textView: UITextView) {
+    open func textViewDidChange(_ textView: UITextView) {
         // This guard removes the possibility of having a loop when updating the `UITextView`.
         // The aim is that `UITextView.text` is always in sync with `Content.text`.
         // With this in place we have bidirectional binding since if we update `Content.text`
@@ -638,7 +646,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
 
     // MARK: - UIImagePickerControllerDelegate
     
-    public func imagePickerController(
+    open func imagePickerController(
         _ picker: UIImagePickerController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
@@ -655,7 +663,7 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
     
     // MARK: - UIDocumentPickerViewControllerDelegate
     
-    public func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+    open func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
         content.attachments.append(contentsOf: urls.compactMap {
             do {
                 return try AnyAttachmentPayload(localFileURL: $0, attachmentType: .file)
@@ -664,16 +672,5 @@ open class _ComposerVC<ExtraData: ExtraDataTypes>: _ViewController,
                 return nil
             }
         })
-    }
-}
-
-// MARK: - Helpers
-
-private extension _ComposerVC {
-    func showSuggestionsAsChildVC() {
-        if !suggestionsVC.isPresented, let parent = parent {
-            parent.addChildViewController(suggestionsVC, targetView: parent.view)
-            suggestionsVC.bottomAnchorView = composerView
-        }
     }
 }
