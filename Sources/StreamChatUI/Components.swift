@@ -70,6 +70,9 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     
     /// The view that shows a loading indicator.
     public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
+    
+    /// Object with set of function for handling images from CDN
+    public var imageCDN: ImageCDN = StreamImageCDN()
 
     // MARK: - Message list components
 
