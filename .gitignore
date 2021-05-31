@@ -73,3 +73,4 @@ vendor/bundle/
 Example/Carthage/.env
 Example/Carthage/fastlane/report.xml
 Sample/Cocoapods/Podfile.lock
+docusaurus/.env
