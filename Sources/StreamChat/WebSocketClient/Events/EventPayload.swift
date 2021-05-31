@@ -24,6 +24,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         case isChannelHistoryCleared = "clear_history"
         case banReason = "reason"
         case banExpiredAt = "expiration"
+        case parentId = "parent_id"
     }
     
     let eventType: EventType
@@ -42,7 +43,8 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
     let isChannelHistoryCleared: Bool?
     let banReason: String?
     let banExpiredAt: Date?
-    
+    let parentId: MessageId?
+
     init(
         eventType: EventType,
         connectionId: String? = nil,
@@ -59,7 +61,8 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         createdAt: Date? = nil,
         isChannelHistoryCleared: Bool? = nil,
         banReason: String? = nil,
-        banExpiredAt: Date? = nil
+        banExpiredAt: Date? = nil,
+        parentId: MessageId? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -77,6 +80,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         self.isChannelHistoryCleared = isChannelHistoryCleared
         self.banReason = banReason
         self.banExpiredAt = banExpiredAt
+        self.parentId = parentId
     }
     
     init(from decoder: Decoder) throws {
@@ -99,6 +103,7 @@ struct EventPayload<ExtraData: ExtraDataTypes>: Decodable {
         isChannelHistoryCleared = try container.decodeIfPresent(Bool.self, forKey: .isChannelHistoryCleared)
         banReason = try container.decodeIfPresent(String.self, forKey: .banReason)
         banExpiredAt = try container.decodeIfPresent(Date.self, forKey: .banExpiredAt)
+        parentId = try container.decodeIfPresent(MessageId.self, forKey: .parentId)
     }
     
     func event() throws -> Event {
