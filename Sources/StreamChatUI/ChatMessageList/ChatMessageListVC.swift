@@ -131,7 +131,7 @@ open class _ChatMessageListVC<ExtraData: ExtraDataTypes>:
         messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
         
-        if channelController.channel?.config.typingEventsEnabled == true {
+        if channelController.areTypingEventsEnabled {
             let typingIndicatorViewHeight: CGFloat = 22
             
             view.addSubview(typingIndicatorView)
