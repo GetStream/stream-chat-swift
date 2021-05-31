@@ -8,31 +8,10 @@ on:
 
 jobs:
   deploy-docusaurus:
-    name: 'Deploy Docusaurus'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - name: Install Bot SSH Key
-        uses: webfactory/ssh-agent@v0.4.1
-        with:
-          ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
-      - name: Configure git for bot # so that it can push to gh-pages branch
-        run: |
-          git config --global user.email "bahadir+iosbot@getstream.io"
-          git config --global user.name "Stream iOS Bot"
-      - name: Cache node_modules
-        uses: actions/cache@v2
-        id: node-cache
-        with:
-          path: stream-chat-swift-docs/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('stream-chat-swift-docs/yarn.lock') }}
-          restore-keys: ${{ runner.os }}-node- 
-      - name: Install yarn dependencies
-        run: cd stream-chat-swift-docs && yarn install --frozen-lockfile
-      - name: Run markdown-magic
-        run: cd stream-chat-swift-docs && yarn run md-magic --path './docs/*.md'
-      - name: Deploy docusaurus website
+      - uses: actions/checkout@v2
+      - name: Deploy Docusaurus to stream-chat-docusaurus
+        uses: GetStream/push-stream-chat-docusaurus-action@main
         env:
-           USE_SSH: true
-           GIT_USER: Stream-iOS-Bot
-        run: cd stream-chat-swift-docs && yarn deploy
+          DOCUSAURUS_GH_TOKEN: ${{ secrets.DOCUSAURUS_GH_TOKEN }}
