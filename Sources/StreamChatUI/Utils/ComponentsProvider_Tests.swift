@@ -14,7 +14,7 @@ class ComponentsProvider_Tests: XCTestCase {
         let parentView = TestViewWithExtraData<ExtraData>()
         let subView = TestViewWithExtraData<ExtraData>()
         var components = Components()
-        // Set some random subclass to check if the coponents are passed down
+        // Set some random subclass to check if the components are passed down
         components.createChannelButton = TestCreateChannelButton.self
         
         parentView.addSubview(subView)
@@ -32,7 +32,7 @@ class ComponentsProvider_Tests: XCTestCase {
         let intermediateView = UIView()
         let subView = TestViewWithExtraData<ExtraData>()
         var components = Components()
-        // Set some random subclass to check if the coponents are passed down
+        // Set some random subclass to check if the components are passed down
         components.createChannelButton = TestCreateChannelButton.self
         
         parentView.addSubview(intermediateView)
@@ -63,7 +63,7 @@ class ComponentsProvider_Tests: XCTestCase {
     func test_components_passedDownToVCView() {
         let vc = TestViewWithExtraDataController<ExtraData>()
         var components = Components()
-        // Set some random subclass to check if the coponents are passed down
+        // Set some random subclass to check if the components are passed down
         components.createChannelButton = TestCreateChannelButton.self
         
         vc.components = components
@@ -81,7 +81,7 @@ class ComponentsProvider_Tests: XCTestCase {
     func test_vcSubviews_initedFromConfig() {
         let vc = TestViewWithExtraDataController<ExtraData>()
         var components = Components()
-        // Set some random subclass to check if the coponents are passed down
+        // Set some random subclass to check if the components are passed down
         components.createChannelButton = TestCreateChannelButton.self
         
         vc.components = components

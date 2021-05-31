@@ -125,7 +125,7 @@ open class _ChatMessageListRouter<ExtraData: ExtraDataTypes>:
         zoomTransitionController.presentedVCImageView = {
             let cell = imageGalleryVC.attachmentsCollectionView.cellForItem(
                 at: IndexPath(item: imageGalleryVC.currentPage, section: 0)
-            ) as? ImageCollectionViewCell
+            ) as? _ImageCollectionViewCell<ExtraData>
             return cell?.imageView
         }
         zoomTransitionController.presentingImageView = {

@@ -27,7 +27,11 @@ open class _ChatUserAvatarView<ExtraData: ExtraDataTypes>: _View, ThemeProvider 
 
     override open func updateContent() {
         if let url = content?.imageURL {
-            presenceAvatarView.avatarView.imageView.loadImage(from: url)
+            presenceAvatarView.avatarView.imageView.loadImage(
+                from: url,
+                preferredSize: .avatarThumbnailSize,
+                components: components
+            )
         } else {
             presenceAvatarView.avatarView.imageView.image = appearance.images.userAvatarPlaceholder1
         }

@@ -216,7 +216,7 @@ public struct _Components<ExtraData: ExtraDataTypes> {
     public var messageComposerFileAttachmentView: FileAttachmentView.Type = FileAttachmentView.self
 
     /// A view that displays the image attachment.
-    public var messageComposerImageAttachmentView: ImageAttachmentView.Type = ImageAttachmentView.self
+    public var messageComposerImageAttachmentView: _ImageAttachmentView<ExtraData>.Type = _ImageAttachmentView<ExtraData>.self
 
     /// A view controller that shows suggestions of commands or mentions.
     public var suggestionsVC: _ChatSuggestionsViewController<ExtraData>.Type =

@@ -173,7 +173,12 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
     /// - Parameter imageUrl: The url of the image.
     open func setAvatar(imageUrl: URL?) {
         let placeholder = appearance.images.userAvatarPlaceholder1
-        authorAvatarView.imageView.loadImage(from: imageUrl, placeholder: placeholder)
+        authorAvatarView.imageView.loadImage(
+            from: imageUrl,
+            placeholder: placeholder,
+            preferredSize: .avatarThumbnailSize,
+            components: components
+        )
     }
 
     /// Sets the avatar position in relation of the text bubble.
@@ -212,15 +217,15 @@ open class _QuotedChatMessageView<ExtraData: ExtraDataTypes>: _View, ThemeProvid
             textView.text = message.text.isEmpty ? filePayload.title : message.text
         } else if let imagePayload = message.imageAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
-            attachmentPreviewView.loadImage(from: imagePayload.imageURL)
+            attachmentPreviewView.loadImage(from: imagePayload.imageURL, components: components)
             textView.text = message.text.isEmpty ? "Photo" : message.text
         } else if let linkPayload = message.linkAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
-            attachmentPreviewView.loadImage(from: linkPayload.previewURL)
+            attachmentPreviewView.loadImage(from: linkPayload.previewURL, components: components)
             textView.text = linkPayload.originalURL.absoluteString
         } else if let giphyPayload = message.giphyAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
-            attachmentPreviewView.loadImage(from: giphyPayload.previewURL)
+            attachmentPreviewView.loadImage(from: giphyPayload.previewURL, components: components)
             textView.text = message.text.isEmpty ? "Giphy" : message.text
         }
     }
