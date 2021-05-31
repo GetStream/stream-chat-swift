@@ -111,7 +111,30 @@ extension XCTestCase {
         watchers: [UserPayload<NoExtraData>]? = nil,
         includeMembership: Bool = true,
         messages: [MessagePayload<NoExtraData>]? = nil,
-        pinnedMessages: [MessagePayload<NoExtraData>] = []
+        pinnedMessages: [MessagePayload<NoExtraData>] = [],
+        channelConfig: ChannelConfig = .init(
+            reactionsEnabled: true,
+            typingEventsEnabled: true,
+            readEventsEnabled: true,
+            connectEventsEnabled: true,
+            uploadsEnabled: true,
+            repliesEnabled: true,
+            searchEnabled: true,
+            mutesEnabled: true,
+            urlEnrichmentEnabled: true,
+            messageRetention: "1000",
+            maxMessageLength: 100,
+            commands: [
+                .init(
+                    name: "test",
+                    description: "test commant",
+                    set: "test",
+                    args: "test"
+                )
+            ],
+            createdAt: XCTestCase.channelCreatedDate,
+            updatedAt: .unique
+        )
     ) -> ChannelPayload<NoExtraData> {
         var payloadMessages: [MessagePayload<NoExtraData>] = []
         if let messages = messages {
@@ -137,29 +160,7 @@ extension XCTestCase {
                     deletedAt: nil,
                     updatedAt: .unique,
                     createdBy: dummyUser,
-                    config: .init(
-                        reactionsEnabled: true,
-                        typingEventsEnabled: true,
-                        readEventsEnabled: true,
-                        connectEventsEnabled: true,
-                        uploadsEnabled: true,
-                        repliesEnabled: true,
-                        searchEnabled: true,
-                        mutesEnabled: true,
-                        urlEnrichmentEnabled: true,
-                        messageRetention: "1000",
-                        maxMessageLength: 100,
-                        commands: [
-                            .init(
-                                name: "test",
-                                description: "test commant",
-                                set: "test",
-                                args: "test"
-                            )
-                        ],
-                        createdAt: XCTestCase.channelCreatedDate,
-                        updatedAt: .unique
-                    ),
+                    config: channelConfig,
                     isFrozen: true,
                     memberCount: 100,
                     team: .unique,
