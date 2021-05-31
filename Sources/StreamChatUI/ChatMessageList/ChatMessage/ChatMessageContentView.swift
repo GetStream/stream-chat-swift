@@ -368,13 +368,34 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         }
 
         // Bubble view
-
-        bubbleView?.content = {
-            guard let message = content, let layout = layoutOptions else {
-                return nil
+        bubbleView?.content = content.map { message in
+            var backgroundColor: UIColor {
+                if message.isSentByCurrentUser {
+                    if message.type == .ephemeral {
+                        return appearance.colorPalette.background8
+                    } else {
+                        return appearance.colorPalette.background6
+                    }
+                } else {
+                    return appearance.colorPalette.background8
+                }
             }
-            return .init(message: message, layoutOptions: layout)
-        }()
+            
+            var roundedCorners: CACornerMask {
+                if layoutOptions?.contains(.continuousBubble) == true {
+                    return .all
+                } else if layoutOptions?.contains(.flipped) == true {
+                    return CACornerMask.all.subtracting(.layerMaxXMaxYCorner)
+                } else {
+                    return CACornerMask.all.subtracting(.layerMinXMaxYCorner)
+                }
+            }
+            
+            return .init(
+                backgroundColor: backgroundColor,
+                roundedCorners: roundedCorners
+            )
+        }
 
         // Metadata
         onlyVisibleForYouContainer?.isVisible = content?.isOnlyVisibleForCurrentUser == true
