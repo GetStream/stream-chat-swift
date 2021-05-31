@@ -131,7 +131,7 @@ open class _ChatMessageLinkPreviewView<ExtraData: ExtraDataTypes>: _Control, The
 
         authorLabel.textColor = tintColor
 
-        imagePreview.loadImage(from: payload?.previewURL)
+        imagePreview.loadImage(from: payload?.previewURL, components: components)
         imagePreview.isHidden = isImageHidden
 
         authorLabel.text = payload?.author

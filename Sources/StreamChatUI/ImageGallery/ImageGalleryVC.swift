@@ -119,8 +119,8 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
         attachmentsCollectionView.dataSource = self
         attachmentsCollectionView.delegate = self
         attachmentsCollectionView.register(
-            ImageCollectionViewCell.self,
-            forCellWithReuseIdentifier: ImageCollectionViewCell.reuseId
+            _ImageCollectionViewCell<ExtraData>.self,
+            forCellWithReuseIdentifier: _ImageCollectionViewCell<ExtraData>.reuseId
         )
         
         closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
@@ -271,9 +271,9 @@ open class _ImageGalleryVC<ExtraData: ExtraDataTypes>:
     open func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let image = images[indexPath.item]
         let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: ImageCollectionViewCell.reuseId,
+            withReuseIdentifier: _ImageCollectionViewCell<ExtraData>.reuseId,
             for: indexPath
-        ) as! ImageCollectionViewCell
+        ) as! _ImageCollectionViewCell<ExtraData>
         cell.content = image
         cell.imageSingleTapped = { [weak self] in
             self?.imageSingleTapped()

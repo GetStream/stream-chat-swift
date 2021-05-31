@@ -362,7 +362,12 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         // Avatar
         let placeholder = appearance.images.userAvatarPlaceholder1
         if let imageURL = content?.author.imageURL {
-            authorAvatarView?.imageView.loadImage(from: imageURL, placeholder: placeholder)
+            authorAvatarView?.imageView.loadImage(
+                from: imageURL,
+                placeholder: placeholder,
+                preferredSize: .avatarThumbnailSize,
+                components: components
+            )
         } else {
             authorAvatarView?.imageView.image = placeholder
         }
@@ -424,7 +429,9 @@ open class _ChatMessageContentView<ExtraData: ExtraDataTypes>: _View, ThemeProvi
         let latestReplyAuthorAvatar = content?.latestReplies.first?.author.imageURL
         threadAvatarView?.imageView.loadImage(
             from: latestReplyAuthorAvatar,
-            placeholder: appearance.images.userAvatarPlaceholder4
+            placeholder: appearance.images.userAvatarPlaceholder4,
+            preferredSize: .avatarThumbnailSize,
+            components: components
         )
 
         // Reactions view

@@ -5,8 +5,10 @@
 import StreamChat
 import UIKit
 
+public typealias ImageAttachmentView = _ImageAttachmentView<NoExtraData>
+
 /// A view that displays the image attachment.
-open class ImageAttachmentView: _View, AppearanceProvider {
+open class _ImageAttachmentView<ExtraData: ExtraDataTypes>: _View, ThemeProvider {
     open var width: CGFloat = 100
     open var height: CGFloat = 100
     
@@ -42,6 +44,6 @@ open class ImageAttachmentView: _View, AppearanceProvider {
     override open func updateContent() {
         super.updateContent()
         
-        imageView.loadImage(from: content)
+        imageView.loadImage(from: content, components: components)
     }
 }

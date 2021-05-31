@@ -6,7 +6,7 @@ import Nuke
 import StreamChat
 import UIKit
 
-/// Propeties necessary for image to be previewed.
+/// Properties necessary for image to be previewed.
 public protocol ImagePreviewable {
     /// Content containing image attachment.
     var content: ChatMessageImageAttachment? { get }
@@ -74,7 +74,11 @@ extension _ChatMessageImageGallery {
             loadingIndicator.isVisible = true
             imageView.layoutIfNeeded()
             imageTask = imageView
-                .loadImage(from: attachment?.payload.imagePreviewURL, resizeAutomatically: false) { [weak self] _ in
+                .loadImage(
+                    from: attachment?.payload.imagePreviewURL,
+                    resize: false,
+                    components: components
+                ) { [weak self] _ in
                     self?.loadingIndicator.isVisible = false
                     self?.imageTask = nil
                 }
